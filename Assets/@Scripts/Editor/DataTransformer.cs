@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class DataTransformer : EditorWindow
 {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 
     [MenuItem("Tools/DeleteGameData ")]
     public static void DeleteGameData()
@@ -71,5 +71,5 @@ public class DataTransformer : EditorWindow
         return value.Split('&').Select(x => ConvertValue<T>(x)).ToList();
     }
 
-#endif
+//#endif
 }
