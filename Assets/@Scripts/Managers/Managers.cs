@@ -32,6 +32,11 @@ public class Managers : MonoBehaviour
     public static UIManager UI { get { return Instance?._ui; } }
     #endregion
 
+    public static string GetString(int id)
+    {
+        // line = line.Replace("{COMMA}", ",");
+        return null;
+    }
 
     public static void Init()
     {

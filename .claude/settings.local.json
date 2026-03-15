@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/stopresent/Unity/RE001/Assets/@Resources -name \"*.prefab\" 2>/dev/null | head -20)",
+      "Bash(find /c/stopresent/Unity/RE001/Assets -path \"*/Resources/*\" -name \"*UI*\" -type f 2>/dev/null | head -20)",
+      "Bash(find /c/stopresent/Unity/RE001/Assets/@Scripts -name \"*.cs\" | xargs grep -l \"UI_GameScene\\\\|GetText\\\\|GetImage\\\\|GetButton\" | head -20)"
+    ]
+  }
+}
