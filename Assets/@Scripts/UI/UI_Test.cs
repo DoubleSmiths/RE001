@@ -1,19 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class UI_Test : MonoBehaviour
-{
-    public GameObject rect;
-    void Start()
-    {
-        rect.GetComponent<RectTransform>().position = new Vector3(0, -300f, 0); // ¿µÈ¥ »óÁ¡ ÃÊ±â »óÅÂ
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-}
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UI_Test : MonoBehaviour
+{
+    public GameObject rect;
+    void Start()
+    {
+        rect.GetComponent<RectTransform>().position = new Vector3(0, -300f, 0); // ì˜í˜¼ ìƒì  ì´ˆê¸° ìƒíƒœ
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}

@@ -1,27 +1,27 @@
-using System.Collections;
-using UnityEngine;
-
-/// <summary>
-/// ÄÚ·çÆ¾ ÇÊ¿äÇÑ ¸Å´ÏÀú¿¡¼­ ²ø¾î´Ù ¾µ·Á°í ¸¸µë
-/// </summary>
-public class CoroutineManager : MonoBehaviour
-{
-    private static MonoBehaviour monoInstance;
-
-    [RuntimeInitializeOnLoadMethod]
-    private static void Initializer()
-    {
-        monoInstance = new GameObject($"[{nameof(CoroutineManager)}]").AddComponent<CoroutineManager>();
-        DontDestroyOnLoad(monoInstance.gameObject);
-    }
-
-    public new static Coroutine StartCoroutine(IEnumerator coroutine)
-    {
-        return monoInstance.StartCoroutine(coroutine);
-    }
-
-    public new static void StopCoroutine(Coroutine coroutine)
-    {
-        monoInstance.StopCoroutine(coroutine);
-    }
+using System.Collections;
+using UnityEngine;
+
+/// <summary>
+/// ì½”ë£¨í‹´ í•„ìš”í•œ ë§¤ë‹ˆì €ì—ì„œ ëŒì–´ë‹¤ ì“¸ë ¤ê³  ë§Œë“¬
+/// </summary>
+public class CoroutineManager : MonoBehaviour
+{
+    private static MonoBehaviour monoInstance;
+
+    [RuntimeInitializeOnLoadMethod]
+    private static void Initializer()
+    {
+        monoInstance = new GameObject($"[{nameof(CoroutineManager)}]").AddComponent<CoroutineManager>();
+        DontDestroyOnLoad(monoInstance.gameObject);
+    }
+
+    public new static Coroutine StartCoroutine(IEnumerator coroutine)
+    {
+        return monoInstance.StartCoroutine(coroutine);
+    }
+
+    public new static void StopCoroutine(Coroutine coroutine)
+    {
+        monoInstance.StopCoroutine(coroutine);
+    }
 }
