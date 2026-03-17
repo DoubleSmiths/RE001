@@ -69,6 +69,7 @@ public class Define
     public enum Scene
     {
         Unknown,
+        GameScene,
         TitleScene,
         HubScene,
         BattleScene,
@@ -98,6 +99,7 @@ public class Define
     public enum Sound
     {
         Bgm,
+        SubBgm,
         Effect,
         Max,
     }

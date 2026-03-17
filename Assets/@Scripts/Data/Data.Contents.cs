@@ -342,4 +342,64 @@ namespace Data
         }
     }
     #endregion
+
+    #region PlayerStatusData
+    [Serializable]
+    public class PlayerStatusData
+    {
+        public int DataId;
+        public string Class;
+        public int ClassProficiency;
+        public int AdvRank;
+        public int Level;
+        public int NowExp;
+        public int StartHP;
+        public int StatusPoint;
+        public int Elixir;
+        public int StartStrength;
+        public int StartVital;
+        public int StartAgility;
+        public int StartMagic;
+        public List<string> StartSkills;
+        public List<int> StartSkillLevels;
+    }
+
+    [Serializable]
+    public class PlayerStatusDataLoader : ILoader<int, PlayerStatusData>
+    {
+        public List<PlayerStatusData> playerStatuses = new List<PlayerStatusData>();
+        public Dictionary<int, PlayerStatusData> MakeDict()
+        {
+            var dict = new Dictionary<int, PlayerStatusData>();
+            foreach (var item in playerStatuses)
+                dict.Add(item.DataId, item);
+            return dict;
+        }
+    }
+    #endregion
+
+    #region ScriptData
+    [Serializable]
+    public class ScriptData
+    {
+        public int DataId;
+        public string Kr;
+        public string En;
+        public string Jp;
+        public string Ch;
+    }
+
+    [Serializable]
+    public class ScriptDataLoader : ILoader<int, ScriptData>
+    {
+        public List<ScriptData> scripts = new List<ScriptData>();
+        public Dictionary<int, ScriptData> MakeDict()
+        {
+            var dict = new Dictionary<int, ScriptData>();
+            foreach (var item in scripts)
+                dict.Add(item.DataId, item);
+            return dict;
+        }
+    }
+    #endregion
 }

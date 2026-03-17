@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,18 +76,18 @@ public static class Util
     }
 
     //Enum값중 랜덤값 반환
-    public static T GetRandomEnumValue<T>() where T : struct, Enum
-    {
-        Type type = typeof(T);
+    //public static T GetRandomEnumValue<T>() where T : struct, Enum
+    //{
+    //    Type type = typeof(T);
 
-        if (!_enumDict.ContainsKey(type))
-            _enumDict[type] = Enum.GetValues(type);
+    //    if (!_enumDict.ContainsKey(type))
+    //        _enumDict[type] = Enum.GetValues(type);
 
-        Array values = _enumDict[type];
+    //    Array values = _enumDict[type];
 
-        int index = UnityEngine.Random.Range(0, values.Length);
-        return (T)values.GetValue(index);
-    }
+    //    int index = UnityEngine.Random.Range(0, values.Length);
+    //    return (T)values.GetValue(index);
+    //}
 
     //string값 으로 Enum값 찾기
     public static T ParseEnum<T>(string value)
@@ -95,20 +95,20 @@ public static class Util
         return (T)Enum.Parse(typeof(T), value, true);
     }
 
-    public static SkillType GetSkillTypeFromInt(int value)
-    {
-        foreach (SkillType skillType in Enum.GetValues(typeof(SkillType)))
-        {
-            int minValue = (int)skillType;
-            int maxValue = minValue + 5; // 100501~ 100506 사이 값이면 100501값 리턴
+    //public static SkillType GetSkillTypeFromInt(int value)
+    //{
+    //    foreach (SkillType skillType in Enum.GetValues(typeof(SkillType)))
+    //    {
+    //        int minValue = (int)skillType;
+    //        int maxValue = minValue + 5; // 100501~ 100506 사이 값이면 100501값 리턴
 
-            if (value >= minValue && value <= maxValue)
-            {
-                return skillType;
-            }
-        }
+    //        if (value >= minValue && value <= maxValue)
+    //        {
+    //            return skillType;
+    //        }
+    //    }
 
-        Debug.LogError($" Faild add skill : {value}");
-        return SkillType.None;
-    }
+    //    Debug.LogError($" Faild add skill : {value}");
+    //    return SkillType.None;
+    //}
 }

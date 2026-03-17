@@ -1,41 +1,42 @@
 using Data;
 using Newtonsoft.Json;
 using UnityEngine;
+using System.Collections.Generic ;
 
 public interface ILoader<Key, Value>
 {
-    System.Collections.Generic.Dictionary<Key, Value> MakeDict();
+    Dictionary<Key, Value> MakeDict();
 }
 
 public class DataManager
 {
-    public System.Collections.Generic.Dictionary<int, Data.CreatureData>      CreatureDic       { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.CreatureData>();
-    public System.Collections.Generic.Dictionary<int, Data.EquipmentData>     EquipmentDic      { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.EquipmentData>();
-    public System.Collections.Generic.Dictionary<int, Data.EquipEnhanceData>  EquipEnhanceDic   { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.EquipEnhanceData>();
-    public System.Collections.Generic.Dictionary<int, Data.SkillData>         SkillDic          { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.SkillData>();
-    public System.Collections.Generic.Dictionary<int, Data.ItemData>          ItemDic           { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.ItemData>();
-    public System.Collections.Generic.Dictionary<int, Data.AreaData>          AreaDic           { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.AreaData>();
-    public System.Collections.Generic.Dictionary<int, Data.QuestData>         QuestDic          { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.QuestData>();
-    public System.Collections.Generic.Dictionary<int, Data.DialogueData>      DialogueDic       { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.DialogueData>();
-    public System.Collections.Generic.Dictionary<int, Data.MinMonData>        MinMonDic         { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.MinMonData>();
-    public System.Collections.Generic.Dictionary<int, Data.ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.ForgeRecipeData>();
-    public System.Collections.Generic.Dictionary<int, Data.CraftRecipeData>   CraftRecipeDic    { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.CraftRecipeData>();
-    public System.Collections.Generic.Dictionary<int, Data.LevelData>         LevelDic          { get; private set; } = new System.Collections.Generic.Dictionary<int, Data.LevelData>();
+    public Dictionary<int, CreatureData>      CreatureDic       { get; private set; } = new Dictionary<int, CreatureData>();
+    public Dictionary<int, EquipmentData>     EquipmentDic      { get; private set; } = new Dictionary<int, EquipmentData>();
+    public Dictionary<int, EquipEnhanceData>  EquipEnhanceDic   { get; private set; } = new Dictionary<int, EquipEnhanceData>();
+    public Dictionary<int, SkillData>         SkillDic          { get; private set; } = new Dictionary<int, SkillData>();
+    public Dictionary<int, ItemData>          ItemDic           { get; private set; } = new Dictionary<int, ItemData>();
+    public Dictionary<int, AreaData>          AreaDic           { get; private set; } = new Dictionary<int, AreaData>();
+    public Dictionary<int, QuestData>         QuestDic          { get; private set; } = new Dictionary<int, QuestData>();
+    public Dictionary<int, DialogueData>      DialogueDic       { get; private set; } = new Dictionary<int, DialogueData>();
+    public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
+    public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
+    public Dictionary<int, CraftRecipeData>   CraftRecipeDic    { get; private set; } = new Dictionary<int, CraftRecipeData>();
+    public Dictionary<int, LevelData>         LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
 
     public void Init()
     {
-        CreatureDic     = LoadJson<Data.CreatureDataLoader,     int, Data.CreatureData>    ("CreatureData").MakeDict();
-        EquipmentDic    = LoadJson<Data.EquipmentDataLoader,    int, Data.EquipmentData>   ("EquipmentData").MakeDict();
-        EquipEnhanceDic = LoadJson<Data.EquipEnhanceDataLoader, int, Data.EquipEnhanceData>("EquipEnhanceData").MakeDict();
-        SkillDic        = LoadJson<Data.SkillDataLoader,        int, Data.SkillData>       ("SkillData").MakeDict();
-        ItemDic         = LoadJson<Data.ItemDataLoader,         int, Data.ItemData>        ("ItemData").MakeDict();
-        AreaDic         = LoadJson<Data.AreaDataLoader,         int, Data.AreaData>        ("AreaData").MakeDict();
-        QuestDic        = LoadJson<Data.QuestDataLoader,        int, Data.QuestData>       ("QuestData").MakeDict();
-        DialogueDic     = LoadJson<Data.DialogueDataLoader,     int, Data.DialogueData>    ("DialogueData").MakeDict();
-        MinMonDic       = LoadJson<Data.MinMonDataLoader,       int, Data.MinMonData>      ("MinMonData").MakeDict();
-        ForgeRecipeDic  = LoadJson<Data.ForgeRecipeDataLoader,  int, Data.ForgeRecipeData> ("ForgeRecipeData").MakeDict();
-        CraftRecipeDic  = LoadJson<Data.CraftRecipeDataLoader,  int, Data.CraftRecipeData> ("CraftRecipeData").MakeDict();
-        LevelDic        = LoadJson<Data.LevelDataLoader,        int, Data.LevelData>       ("LevelData").MakeDict();
+        CreatureDic     = LoadJson<CreatureDataLoader,     int, CreatureData>    ("CreatureData").MakeDict();
+        EquipmentDic    = LoadJson<EquipmentDataLoader,    int, EquipmentData>   ("EquipmentData").MakeDict();
+        EquipEnhanceDic = LoadJson<EquipEnhanceDataLoader, int, EquipEnhanceData>("EquipEnhanceData").MakeDict();
+        SkillDic        = LoadJson<SkillDataLoader,        int, SkillData>       ("SkillData").MakeDict();
+        ItemDic         = LoadJson<ItemDataLoader,         int, ItemData>        ("ItemData").MakeDict();
+        AreaDic         = LoadJson<AreaDataLoader,         int, AreaData>        ("AreaData").MakeDict();
+        QuestDic        = LoadJson<QuestDataLoader,        int, QuestData>       ("QuestData").MakeDict();
+        DialogueDic     = LoadJson<DialogueDataLoader,     int, DialogueData>    ("DialogueData").MakeDict();
+        MinMonDic       = LoadJson<MinMonDataLoader,       int, MinMonData>      ("MinMonData").MakeDict();
+        ForgeRecipeDic  = LoadJson<ForgeRecipeDataLoader,  int, ForgeRecipeData> ("ForgeRecipeData").MakeDict();
+        CraftRecipeDic  = LoadJson<CraftRecipeDataLoader,  int, CraftRecipeData> ("CraftRecipeData").MakeDict();
+        LevelDic        = LoadJson<LevelDataLoader,        int, LevelData>       ("LevelData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

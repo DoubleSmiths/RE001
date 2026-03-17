@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -78,7 +78,7 @@ public abstract class UI_Base : MonoBehaviour
                 evt.OnClickHandler -= action;
                 evt.OnClickHandler += action;
                 break;
-            case Define.UIEvent.Preseed:
+            case Define.UIEvent.Pressed:
                 evt.OnPressedHandler -= action;
                 evt.OnPressedHandler += action;
                 break;

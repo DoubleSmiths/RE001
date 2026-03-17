@@ -10,13 +10,13 @@ public class Managers : MonoBehaviour
     ObjectManager _object = new ObjectManager();
     QuestManager  _quest  = new QuestManager();
     MinMonManager _minMon = new MinMonManager();
-    TimeManager   _time;
+    //TimeManager   _time;
 
     public static GameManager   Game   { get { return Instance?._game; } }
     public static ObjectManager Object { get { return Instance?._object; } }
     public static QuestManager  Quest  { get { return Instance?._quest; } }
     public static MinMonManager MinMon { get { return Instance?._minMon; } }
-    public static TimeManager   Time   { get { return Instance?._time; } }
+    //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 
     #region Core
@@ -50,7 +50,7 @@ public class Managers : MonoBehaviour
         DontDestroyOnLoad(go);
         s_instance = go.GetComponent<Managers>();
         s_instance._sound.Init();
-        s_instance._time = go.AddComponent<TimeManager>();
+        //s_instance._time = go.AddComponent<TimeManager>();
     }
 
     public static void Clear()
