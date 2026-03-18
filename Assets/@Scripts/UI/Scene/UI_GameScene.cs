@@ -54,6 +54,7 @@ public class UI_GameScene : UI_Scene
     {
         PlayerBar,
         BTMButtonGroup,
+        QuestFollow,
     }
     #endregion
 
