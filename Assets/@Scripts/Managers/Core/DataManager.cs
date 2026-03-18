@@ -25,18 +25,18 @@ public class DataManager
 
     public void Init()
     {
-        CreatureDic     = LoadJson<CreatureDataLoader,     int, CreatureData>    ("CreatureData").MakeDict();
-        EquipmentDic    = LoadJson<EquipmentDataLoader,    int, EquipmentData>   ("EquipmentData").MakeDict();
-        EquipEnhanceDic = LoadJson<EquipEnhanceDataLoader, int, EquipEnhanceData>("EquipEnhanceData").MakeDict();
-        SkillDic        = LoadJson<SkillDataLoader,        int, SkillData>       ("SkillData").MakeDict();
-        ItemDic         = LoadJson<ItemDataLoader,         int, ItemData>        ("ItemData").MakeDict();
-        AreaDic         = LoadJson<AreaDataLoader,         int, AreaData>        ("AreaData").MakeDict();
-        QuestDic        = LoadJson<QuestDataLoader,        int, QuestData>       ("QuestData").MakeDict();
-        DialogueDic     = LoadJson<DialogueDataLoader,     int, DialogueData>    ("DialogueData").MakeDict();
-        MinMonDic       = LoadJson<MinMonDataLoader,       int, MinMonData>      ("MinMonData").MakeDict();
-        ForgeRecipeDic  = LoadJson<ForgeRecipeDataLoader,  int, ForgeRecipeData> ("ForgeRecipeData").MakeDict();
-        CraftRecipeDic  = LoadJson<CraftRecipeDataLoader,  int, CraftRecipeData> ("CraftRecipeData").MakeDict();
-        LevelDic        = LoadJson<LevelDataLoader,        int, LevelData>       ("LevelData").MakeDict();
+        //CreatureDic     = LoadJson<CreatureDataLoader,     int, CreatureData>    ("CreatureData").MakeDict();
+        //EquipmentDic    = LoadJson<EquipmentDataLoader,    int, EquipmentData>   ("EquipmentData").MakeDict();
+        //EquipEnhanceDic = LoadJson<EquipEnhanceDataLoader, int, EquipEnhanceData>("EquipEnhanceData").MakeDict();
+        //SkillDic        = LoadJson<SkillDataLoader,        int, SkillData>       ("SkillData").MakeDict();
+        //ItemDic         = LoadJson<ItemDataLoader,         int, ItemData>        ("ItemData").MakeDict();
+        //AreaDic         = LoadJson<AreaDataLoader,         int, AreaData>        ("AreaData").MakeDict();
+        //QuestDic        = LoadJson<QuestDataLoader,        int, QuestData>       ("QuestData").MakeDict();
+        //DialogueDic     = LoadJson<DialogueDataLoader,     int, DialogueData>    ("DialogueData").MakeDict();
+        //MinMonDic       = LoadJson<MinMonDataLoader,       int, MinMonData>      ("MinMonData").MakeDict();
+        //ForgeRecipeDic  = LoadJson<ForgeRecipeDataLoader,  int, ForgeRecipeData> ("ForgeRecipeData").MakeDict();
+        //CraftRecipeDic  = LoadJson<CraftRecipeDataLoader,  int, CraftRecipeData> ("CraftRecipeData").MakeDict();
+        //LevelDic        = LoadJson<LevelDataLoader,        int, LevelData>       ("LevelData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

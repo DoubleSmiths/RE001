@@ -1,0 +1,27 @@
+﻿{
+  "playerStatuses": [
+    {
+      "DataId": 99999999,
+      "Class": "Traveler",
+      "ClassProficiency": 0,
+      "AdvRank": 0,
+      "Level": 1,
+      "NowExp": 0,
+      "StartHP": 100,
+      "StatusPoint": 0,
+      "Elixir": 0,
+      "StartStrength": 1,
+      "StartVital": 1,
+      "StartAgility": 1,
+      "StartMagic": 1,
+      "StartSkills": [
+        "MemoryExpansion",
+        "OverwhelmingCharisma"
+      ],
+      "StartSkillLevels": [
+        1,
+        1
+      ]
+    }
+  ]
+}

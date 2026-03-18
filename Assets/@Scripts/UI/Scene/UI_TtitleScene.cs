@@ -44,7 +44,7 @@ public class UI_TtitleScene : UI_Scene
         GetButton((int)Buttons.StartButton).gameObject.BindEvent(() =>
         {
             if (isPreload)
-                Managers.Scene.LoadScene(Define.Scene.HubScene, transform);
+                Managers.Scene.LoadScene(Define.Scene.GameScene, transform);
         });
         GetButton((int)Buttons.StartButton).gameObject.SetActive(false);
 
@@ -55,6 +55,7 @@ public class UI_TtitleScene : UI_Scene
     {
         Init();
     }
+
     private void Start()
     {
         Managers.Resource.LoadAllAsync<Object>("PreLoad", (key, count, totalCount) =>
