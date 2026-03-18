@@ -40,7 +40,7 @@ public class UI_TtitleScene : UI_Scene
         BindObject(typeof(GameObjects));
 
         GetObject((int)GameObjects.Slider).GetComponent<Slider>().value = 0;
-        // �׽�Ʈ��
+        // 테스트
         GetButton((int)Buttons.StartButton).gameObject.BindEvent(() =>
         {
             if (isPreload)

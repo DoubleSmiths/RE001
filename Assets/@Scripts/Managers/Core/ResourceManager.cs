@@ -1,4 +1,4 @@
-﻿using DG.Tweening.Plugins.Core.PathCore;
+using DG.Tweening.Plugins.Core.PathCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
