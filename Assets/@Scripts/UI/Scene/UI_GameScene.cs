@@ -13,8 +13,7 @@ public class UI_GameScene : UI_Scene
         PlayerHPBarGuage,
         PlayerEXPBarGuage,
         PortraitImg,
-        PlayerRankText,
-        PlayerLevelText,
+
     }
 
     enum Texts
@@ -36,6 +35,8 @@ public class UI_GameScene : UI_Scene
         RankTxt,
         PlayerHPBarText,
         PlayerEXPTextPercent,
+        PlayerRankText,
+        PlayerLevelText,
     }
 
     enum Buttons

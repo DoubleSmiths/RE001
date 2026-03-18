@@ -12,7 +12,8 @@
       "Read(//c/Users/mamy4/Documents/**)",
       "Bash(ffmpeg:*)",
       "Bash(where ffmpeg:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(find /c/stopresent/Unity/RE001/Assets -type f \\\\\\(-name *.prefab -o -name *.unity \\\\\\))"
     ]
   }
 }
