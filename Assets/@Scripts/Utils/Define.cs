@@ -75,6 +75,12 @@ public class Define
         BattleScene,
     }
 
+    public enum AreaType
+    {
+        Village1,
+        Battle,
+    }
+
     public enum TabType
     {
         Status,

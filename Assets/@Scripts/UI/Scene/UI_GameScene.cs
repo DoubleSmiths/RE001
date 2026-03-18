@@ -48,9 +48,6 @@ public class UI_GameScene : UI_Scene
         EquipmentButton,
         SkillButton,
         BestiaryButton,
-        GuildButton,
-        AlchemyButton,
-        TravelButton,
     }
 
     enum GameObjects
@@ -58,8 +55,11 @@ public class UI_GameScene : UI_Scene
         PlayerBar,
         BTMButtonGroup,
         QuestFollow,
+        AreaBtnGroupSlot,
     }
     #endregion
+
+    UI_AreaBtnGroup _currentBtnGroup;
 
     public override bool Init()
     {
@@ -89,6 +89,9 @@ public class UI_GameScene : UI_Scene
         SetInfo();
         RefreshTabLocks();
 
+        // TODO : 플레이어의 현재 구역에 따라 EnterArea 호출
+        EnterArea(AreaType.Village1);
+
         return true;
     }
 
@@ -98,6 +101,22 @@ public class UI_GameScene : UI_Scene
             Managers.Quest.OnTabUnlocked -= OnTabUnlocked;
         if (Managers.Game != null)
             Managers.Game.OnResourceChanged -= RefreshCurrency;
+    }
+
+    // ────────────────────────────────────────
+    //  구역 전환
+    // ────────────────────────────────────────
+    public void EnterArea(AreaType area)
+    {
+        if (_currentBtnGroup != null)
+            Managers.Resource.Destroy(_currentBtnGroup.gameObject);
+
+        Transform slot = GetObject((int)GameObjects.AreaBtnGroupSlot).transform;
+        string prefabName = $"UI_{area}BtnGroup";
+
+        GameObject go = Managers.Resource.Instantiate(prefabName, slot);
+        _currentBtnGroup = go.GetComponent<UI_AreaBtnGroup>();
+        _currentBtnGroup.Setup(this);
     }
 
     // ────────────────────────────────────────
@@ -157,7 +176,6 @@ public class UI_GameScene : UI_Scene
         bool hasCompanion = companionId != -1;
 
         GetObject((int)GameObjects.BTMButtonGroup); // 참조 확인용
-        // 동행 박스: 동행 중일 때만 표시
         GetImage((int)Images.BestiaryBtnFollowingBox).gameObject.SetActive(hasCompanion);
         if (hasCompanion)
             GetText((int)Texts.BestiaryBtnFollowingNumTxt).text = "1";
@@ -179,7 +197,6 @@ public class UI_GameScene : UI_Scene
     {
         var button = GetButton((int)btn);
         button.interactable = interactable;
-        // New 뱃지 숨김 처리
         switch (btn)
         {
             case Buttons.InventoryButton:
@@ -281,8 +298,4 @@ public class UI_GameScene : UI_Scene
     {
         // TODO: UI_BestiaryPopup 열기
     }
-
-    // TODO : Guild, Alchemy, Travel 버튼 핸들러 추가
-    // TODO : 현재 마을이 어디냐에 따라서 버튼 활성화/비활성화 처리 (현재는 Village1만 있음)
-
 }
