@@ -13,7 +13,7 @@ public class UI_GameScene : UI_Scene
         PlayerHPBarGuage,
         PlayerEXPBarGuage,
         PortraitImg,
-
+        ForFadeImage,
     }
 
     enum Texts
@@ -48,6 +48,9 @@ public class UI_GameScene : UI_Scene
         EquipmentButton,
         SkillButton,
         BestiaryButton,
+        GuildButton,
+        AlchemyButton,
+        TravelButton,
     }
 
     enum GameObjects
@@ -76,6 +79,9 @@ public class UI_GameScene : UI_Scene
         GetButton((int)Buttons.EquipmentButton).gameObject.BindEvent(OnClickEquipment);
         GetButton((int)Buttons.SkillButton).gameObject.BindEvent(OnClickSkill);
         GetButton((int)Buttons.BestiaryButton).gameObject.BindEvent(OnClickBestiary);
+
+        // Fade
+        FadeInOut(GetImage((int)Images.ForFadeImage));
 
         // 퀘스트 이벤트
         Managers.Quest.OnTabUnlocked += OnTabUnlocked;
@@ -275,4 +281,8 @@ public class UI_GameScene : UI_Scene
     {
         // TODO: UI_BestiaryPopup 열기
     }
+
+    // TODO : Guild, Alchemy, Travel 버튼 핸들러 추가
+    // TODO : 현재 마을이 어디냐에 따라서 버튼 활성화/비활성화 처리 (현재는 Village1만 있음)
+
 }
