@@ -10,11 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Packed Assets1
+  m_Name: VFX
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Packed Assets1
+  m_GroupName: VFX
   m_GUID: cb7de324111cdd740b3dfabf9e061035
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: ac4cf49d13e8830488fd20a29a1f195e
+    m_Address: Star_01_Anim_13_a
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 17daaa5f2ba129c438d7f930823c6356, type: 2}
   m_SchemaSet:

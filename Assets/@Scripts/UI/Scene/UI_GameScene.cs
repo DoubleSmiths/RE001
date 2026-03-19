@@ -80,6 +80,9 @@ public class UI_GameScene : UI_Scene
         GetButton((int)Buttons.SkillButton).gameObject.BindEvent(OnClickSkill);
         GetButton((int)Buttons.BestiaryButton).gameObject.BindEvent(OnClickBestiary);
 
+        // Camera Setting
+        gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
+
         // Fade
         FadeInOut(GetImage((int)Images.ForFadeImage));
 
