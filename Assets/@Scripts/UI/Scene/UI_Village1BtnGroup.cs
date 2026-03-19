@@ -7,15 +7,15 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GuildButton,
         AlchemyButton,
         TravelButton,
-        BackButton,
+        //BackButton,
     }
 
     enum GameObjects
     {
-        MainBtnGroup,
-        GuildBtnGroup,
-        AlchemyBtnGroup,
-        TravelBtnGroup,
+        Village1MainBtnGroup,
+        Village1GuildBtnGroup,
+        Village1AlchemyBtnGroup,
+        Village1MonasteryBtnGroup,
     }
 
     public override bool Init()
@@ -28,9 +28,11 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.GuildButton).gameObject.BindEvent(OnClickGuild);
         GetButton((int)Buttons.AlchemyButton).gameObject.BindEvent(OnClickAlchemy);
         GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
-        GetButton((int)Buttons.BackButton).gameObject.BindEvent(OnClickBack);
+        //GetButton((int)Buttons.BackButton).gameObject.BindEvent(OnClickBack);
 
-        ShowGroup(GameObjects.MainBtnGroup);
+        HideAllGroup();
+
+        ShowGroup(GameObjects.Village1MainBtnGroup);
 
         return true;
     }
@@ -41,8 +43,16 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             GetObject((int)g).SetActive(g == group);
     }
 
-    void OnClickGuild()   => ShowGroup(GameObjects.GuildBtnGroup);
-    void OnClickAlchemy() => ShowGroup(GameObjects.AlchemyBtnGroup);
-    void OnClickTravel()  => ShowGroup(GameObjects.TravelBtnGroup);
-    void OnClickBack()    => ShowGroup(GameObjects.MainBtnGroup);
+    void HideAllGroup()
+    {
+        GetObject((int)GameObjects.Village1MainBtnGroup).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Village1GuildBtnGroup).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Village1AlchemyBtnGroup).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Village1AlchemyBtnGroup).gameObject.SetActive(false);
+    }
+
+    void OnClickGuild()   => ShowGroup(GameObjects.Village1GuildBtnGroup);
+    void OnClickAlchemy() => ShowGroup(GameObjects.Village1AlchemyBtnGroup);
+    void OnClickTravel()  => ShowGroup(GameObjects.Village1MonasteryBtnGroup);
+    void OnClickBack()    => ShowGroup(GameObjects.Village1MainBtnGroup);
 }
