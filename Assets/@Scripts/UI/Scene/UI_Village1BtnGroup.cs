@@ -1,4 +1,4 @@
-using Unity.VisualScripting;
+using DG.Tweening;
 using UnityEngine;
 using static Define;
 
@@ -8,6 +8,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         GuildButton,
         AlchemyButton,
+        MonasteryButton,
+        TempButton1,
+        TempButton2,
         TravelButton,
         Village1GuildExitButton,
         Village1AlchemyExitButton,
@@ -102,10 +105,11 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(false);
 
+
         // TODO : 해금된 버튼이 있으면 Image, Text 를 SetActive(true)로 변경.
         // TODO : 이벤트 ID 확인 후 VFX 켜기, NEW Text 켜기, 
 
-
+        OnClickMain();
     }
 
     void ShowGroup(GameObjects group)
@@ -127,6 +131,27 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         HideAllGroup();
 
         ShowGroup(GameObjects.Village1MainBtnGroup);
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
+            .DOAnchorPos(Vector2.zero, 0.25f)
+            .From(new Vector2(-150f, 12f))
+            .SetEase(Ease.OutQuad));
+
+        seq.AppendCallback(() =>
+        {
+            GetButton((int)Buttons.GuildButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
+            GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
+            GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
+            GetButton((int)Buttons.TempButton1).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
+            GetButton((int)Buttons.TempButton2).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
+            GetButton((int)Buttons.TravelButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
+        });
+
+        seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
+            .DOAnchorPos(new Vector2(150f, 12f), 0.15f)
+            .SetEase(Ease.OutQuad));
+
     }
 
     void OnClickGuild()

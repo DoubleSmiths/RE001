@@ -1,10 +1,11 @@
+using DG;
 using DG.Tweening;
+using System.Net.Http.Headers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using DG;
 using static Define;
-using System.Net.Http.Headers;
+using static UnityEngine.GraphicsBuffer;
 
 public abstract class UI_AreaBtnGroup : UI_Base
 {
@@ -44,5 +45,35 @@ public abstract class UI_AreaBtnGroup : UI_Base
         //text.DOFade(1f, 2f).From(0.3f).SetEase(Ease.Linear);
         //go.transform.DOScale(1f, 0.1f).SetDelay(2.01f).SetEase(Ease.InOutBack);
 
+    }
+
+    public void NameTextInAnim(RectTransform target)
+    {
+        Sequence seq = DOTween.Sequence();
+
+        target.DOKill();
+        seq?.Kill();
+
+        // 왼쪽에서 → 원래 위치로
+        seq.Append(
+            target.DOAnchorPos(Vector2.zero, 0.25f)
+                .From(new Vector2(-150f, 12f))
+                .SetEase(Ease.OutQuad)
+        );
+
+    }
+
+    public void NameTextOutAnim(RectTransform target)
+    {
+        Sequence seq = DOTween.Sequence();
+
+        target.DOKill();
+        seq?.Kill();
+
+        // 원래 위치 → 오른쪽
+        seq.Append(
+            target.DOAnchorPos(new Vector2(150f, 12f), 0.15f)
+                .SetEase(Ease.OutQuad)
+        );
     }
 }
