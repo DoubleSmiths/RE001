@@ -26,7 +26,7 @@ public class UI_CharacterPopup : UI_Popup
         MRESDetailGroup,
         RECOVDetailGroup,
         DROPRATEDetailGroup,
-        StatDetailFrame1,
+        StatDetailFrame_1,
         STRDetailGroup1,
         DEXDetailGroup1,
         Xbutton,
@@ -87,7 +87,7 @@ public class UI_CharacterPopup : UI_Popup
         Right,
         _1,
         _2,
-        Layout3,
+        Layout_3,
     }
 
     #endregion
@@ -108,6 +108,10 @@ public class UI_CharacterPopup : UI_Popup
         DOTweenAnimation popupAnim = GetButton((int)Buttons.CharacterPopupBackground).gameObject.GetComponent<DOTweenAnimation>();
         GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(() => OnClickBG(popupAnim));
         OpenAnimation(popupAnim);
+
+        GetImage((int)Images.StatDetailFrame).gameObject.SetActive(false);
+        GetImage((int)Images.StatDetailFrame_1).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Layout_3).gameObject.SetActive(false);
         return true;
     }
 

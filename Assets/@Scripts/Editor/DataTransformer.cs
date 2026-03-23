@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using ExcelDataReader;
+using System.Data;
 
 public class DataTransformer : EditorWindow
 {
@@ -42,7 +44,7 @@ public class DataTransformer : EditorWindow
     {
         PlayerStatusDataLoader loader = new PlayerStatusDataLoader();
 
-        var rows = ReadCsv($"{Application.dataPath}{EXCEL_PATH}/PlayerStatusData.csv");
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/PlayerStatusData.xlsx");
 
         for (int y = 3; y < rows.Count; y++)
         {
@@ -87,7 +89,7 @@ public class DataTransformer : EditorWindow
     {
         ScriptDataLoader loader = new ScriptDataLoader();
 
-        var rows = ReadCsv($"{Application.dataPath}{EXCEL_PATH}/ScriptData.csv");
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/ScriptData.xlsx");
 
         for (int y = 1; y < rows.Count; y++)
         {
@@ -185,6 +187,46 @@ public class DataTransformer : EditorWindow
         return rows;
     }
 
+    /// <summary>xlsx 파일을 읽어 List<List<string>> 형태로 반환</summary>
+    /// <param name="filePath">xlsx 파일 절대 경로</param>
+    /// <param name="sheetIndex">읽을 시트 인덱스 (기본값 0 = 첫 번째 시트)</param>
+    static List<List<string>> ReadXlsx(string filePath, int sheetIndex = 0)
+    {
+        // Windows에서 코드 페이지 인코딩 등록 (ExcelDataReader 필수)
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+        var rows = new List<List<string>>();
+
+        using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var reader = ExcelReaderFactory.CreateReader(stream))
+        {
+            DataSet dataSet = reader.AsDataSet(new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                {
+                    UseHeaderRow = false  // 헤더를 코드에서 직접 건너뜀 (기존 CSV 방식 유지)
+                }
+            });
+
+            if (sheetIndex >= dataSet.Tables.Count)
+            {
+                Debug.LogError($"[DataTransformer] 시트 인덱스 {sheetIndex} 가 존재하지 않습니다.");
+                return rows;
+            }
+
+            DataTable table = dataSet.Tables[sheetIndex];
+
+            foreach (DataRow dataRow in table.Rows)
+            {
+                var row = new List<string>();
+                foreach (var cell in dataRow.ItemArray)
+                    row.Add(cell?.ToString() ?? "");
+                rows.Add(row);
+            }
+        }
+
+        return rows;
+    }
     static List<string> SplitLines(string value)
     {
         if (string.IsNullOrEmpty(value))
