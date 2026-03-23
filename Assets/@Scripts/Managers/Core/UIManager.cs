@@ -198,19 +198,19 @@ public class UIManager
 
     public void RefreshTimeScale()
     {
-        if (SceneManager.GetActiveScene().name != Define.Scene.GameScene.ToString())
-        {
-            Time.timeScale = 1;
-            return;
-        }
+        //if (SceneManager.GetActiveScene().name != Define.Scene.GameScene.ToString())
+        //{
+        //    Time.timeScale = 1;
+        //    return;
+        //}
 
-        if (_popupStack.Count > 0 || IsActiveSoulShop == true)
-            Time.timeScale = 0;
-        else
-            Time.timeScale = 1;
+        //if (_popupStack.Count > 0 || IsActiveSoulShop == true)
+        //    Time.timeScale = 0;
+        //else
+        //    Time.timeScale = 1;
     
-        DOTween.timeScale = 1;
-        OnTimeScaleChanged?.Invoke((int)Time.timeScale);
+        //DOTween.timeScale = 1;
+        //OnTimeScaleChanged?.Invoke((int)Time.timeScale);
     }
 
     #region 임시

@@ -275,6 +275,7 @@ public class UI_GameScene : UI_Scene
     void OnClickCharacter()
     {
         // TODO: UI_CharacterPopup 열기
+        Managers.UI.ShowPopupUI<UI_CharacterPopup>();
     }
 
     void OnClickInventory()

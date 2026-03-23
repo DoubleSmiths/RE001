@@ -14,7 +14,10 @@
       "Bash(where ffmpeg:*)",
       "Bash(pip install:*)",
       "Bash(find /c/stopresent/Unity/RE001/Assets -type f \\\\\\(-name *.prefab -o -name *.unity \\\\\\))",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(cd /tmp)",
+      "Bash(unzip -o \"C:/stopresent/Unity/RE001/Documents/기획안/기획서v2_03.19.pptx\" -d /tmp/pptx_extract/v2_03_19)",
+      "Bash(done)"
     ]
   }
 }

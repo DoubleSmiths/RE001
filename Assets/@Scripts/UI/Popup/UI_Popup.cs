@@ -11,6 +11,10 @@ public class UI_Popup : UI_Base
             return false;
 
         Managers.UI.SetCanvas(gameObject, true);
+
+        // Camera Setting
+        gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
+
         return true;
     }
 
