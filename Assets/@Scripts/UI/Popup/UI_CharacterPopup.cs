@@ -92,8 +92,7 @@ public class UI_CharacterPopup : UI_Popup
 
     #endregion
 
-    Tween _popupTween;
-
+    
     public override bool Init()
     {
         if (base.Init() == false)
@@ -106,32 +105,31 @@ public class UI_CharacterPopup : UI_Popup
         BindObject(typeof(GameObjects));
         #endregion
 
-        GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(() => OnClickBG());
-
-        OpenAnimation();
+        DOTweenAnimation popupAnim = GetButton((int)Buttons.CharacterPopupBackground).gameObject.GetComponent<DOTweenAnimation>();
+        GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(() => OnClickBG(popupAnim));
+        OpenAnimation(popupAnim);
         return true;
     }
 
-    void OpenAnimation()
+
+    public void OpenAnimation(DOTweenAnimation doanim)
     {
-        DOTweenAnimation popupAnim = GetButton((int)Buttons.CharacterPopupBackground).gameObject.GetComponent<DOTweenAnimation>();
-        popupAnim.DOKill();
-        popupAnim.CreateTween();
-        _popupTween = popupAnim.tween;
-        _popupTween.SetAutoKill(false);
-        _popupTween.SetUpdate(true);
-        _popupTween.OnRewind(() =>
+        doanim.DOKill();
+        doanim.CreateTween();
+        doanim.tween.SetAutoKill(false);
+        doanim.tween.SetUpdate(true);
+        doanim.tween.OnRewind(() =>
         {
             ClosePopupUI();
         });
 
-        _popupTween.Restart();
+        doanim.tween.Restart();
     }
 
-    void OnClickBG()
+    public void OnClickBG(DOTweenAnimation doanim)
     {
-        _popupTween.Goto(_popupTween.Duration(), false);
-        _popupTween.PlayBackwards();
+        doanim.tween.Goto(doanim.tween.Duration(), false);
+        doanim.tween.PlayBackwards();
     }
 
 }

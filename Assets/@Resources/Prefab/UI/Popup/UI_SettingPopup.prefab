@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8341777093214851172}
   - component: {fileID: 3875514288518872013}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: _
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 2785957965922022968}
   - component: {fileID: 264343192335914926}
   - component: {fileID: 8541986767051493674}
+  - component: {fileID: 3393023632668464677}
   m_Layer: 5
   m_Name: UI_SettingPopup
   m_TagString: Untagged
@@ -177,6 +178,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3393023632668464677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375242910218751474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8833179b694ab4a9708a8b726acf4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_SettingPopup
 --- !u!1 &1486217775003694849
 GameObject:
   m_ObjectHideFlags: 0
@@ -1515,7 +1528,7 @@ GameObject:
   - component: {fileID: 5049781276642575720}
   - component: {fileID: 148476349814982487}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: _
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2007,7 +2020,7 @@ MonoBehaviour:
   animationType: 7
   targetType: 3
   forcedTargetType: 0
-  autoPlay: 1
+  autoPlay: 0
   useTargetAsV3: 0
   endValueFloat: 0
   endValueV3: {x: 0, y: 0, z: 0}
@@ -2809,7 +2822,7 @@ GameObject:
   - component: {fileID: 8042665884014052878}
   - component: {fileID: 8905812677052646924}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: _
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4256,7 +4269,7 @@ GameObject:
   - component: {fileID: 5857750965029693183}
   - component: {fileID: 1543729106360468171}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: _
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

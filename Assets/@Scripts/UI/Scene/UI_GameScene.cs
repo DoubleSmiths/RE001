@@ -270,6 +270,7 @@ public class UI_GameScene : UI_Scene
     void OnClickOption()
     {
         // TODO: UI_SettingsPopup 열기
+        Managers.UI.ShowPopupUI<UI_SettingPopup>();
     }
 
     void OnClickCharacter()
