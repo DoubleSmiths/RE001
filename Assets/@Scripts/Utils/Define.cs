@@ -108,6 +108,12 @@ public class Define
         English,
     }
 
+    public enum FontType
+    {
+        UI,        // 언어에 따라 폰트 변경 (KR: DOSSaemmul / EN: PF_Stardust)
+        Dialogue,  // 항상 고정 (Cafe24 Klassic)
+    }
+
     public enum Sound
     {
         Bgm,
@@ -125,6 +131,38 @@ public class Define
         BeginDrag,
         Drag,
         EndDrag,
+    }
+    #endregion
+
+    #region LocalizeKey
+    // LocalizationData001.xlsx의 TextKey와 1:1 대응
+    // 오타 방지 및 자동완성 지원
+    public static class LocalizeKey
+    {
+        // ── GlobalButtons ──
+        public const string TravelBtnText = "TravelBtnText";
+        public const string ExitBtnText   = "ExitBtnText";
+        public const string TalkBtnText   = "TalkBtnText";
+
+        // ── ButtomButtons (하단 탭) ──
+        public const string CharacterText  = "CharacterText";
+        public const string InventoryText  = "InventoryText";
+        public const string PotionText     = "PotionText";
+        public const string EquipmentText  = "EquipmentText";
+        public const string SkillText      = "SkillText";
+        public const string BestiaryText   = "BestiaryText";
+
+        // ── TownAsdalButtons (마을 버튼) ──
+        public const string GuildText     = "GuildText";
+        public const string AlchemyText   = "AlchemyText";
+        public const string MonasteryText = "MonasteryText";
+
+        // ── SettingPopup ──
+        public const string SettingBGMText    = "SettingBGMText";
+        public const string SettingSFXText    = "SettingSFXText";
+        public const string SettingEffectText = "SettingEffectText";
+        public const string SettingPopupText  = "SettingPopupText";
+        public const string SettingShakeText  = "SettingShakeText";
     }
     #endregion
 }

@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using static Define;
+using static Util;
 
 public class UI_GameScene : UI_Scene
 {
@@ -68,7 +69,7 @@ public class UI_GameScene : UI_Scene
     float _displayCrystal;
 
     static readonly Color _goldColor    = Color.white;                      // #FFFFFF
-    static readonly Color _crystalColor = new Color(0f, 0.953f, 1f);        // #00F3FF
+    static readonly Color _crystalColor = new Color(0f, 0.953f, 1f, 80f / 225f);        // #00F3FF
     static readonly Color _increaseColor = new Color(0f, 1f, 0f);           // #00FF00
     static readonly Color _decreaseColor = new Color(1f, 0f, 0f);           // #FF0000
 
@@ -81,6 +82,21 @@ public class UI_GameScene : UI_Scene
         BindImage(typeof(Images));
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
+
+        // 폰트 등록 (숫자 텍스트는 Inspector에서 개별 지정)
+        ApplyFont(GetText((int)Texts.CharacterButtonText),  FontType.UI);
+        ApplyFont(GetText((int)Texts.InventoryButtonText),  FontType.UI);
+        ApplyFont(GetText((int)Texts.InventoryButtonNewTxt),FontType.UI);
+        ApplyFont(GetText((int)Texts.PotionButtonText),     FontType.UI);
+        ApplyFont(GetText((int)Texts.PotionButtonNewTxt),   FontType.UI);
+        ApplyFont(GetText((int)Texts.EquipmentButtonText),  FontType.UI);
+        ApplyFont(GetText((int)Texts.EquipmentButtonNewTxt),FontType.UI);
+        ApplyFont(GetText((int)Texts.SkillButtonText),      FontType.UI);
+        ApplyFont(GetText((int)Texts.SkillButtonNewTxt),    FontType.UI);
+        ApplyFont(GetText((int)Texts.BestiaryButtonText),   FontType.UI);
+        ApplyFont(GetText((int)Texts.BestiaryBtnNewTxt),    FontType.UI);
+        ApplyFont(GetText((int)Texts.PlayerRankText),       FontType.UI);
+        ApplyFont(GetText((int)Texts.PlayerLevelText),      FontType.UI);
 
         // 버튼 이벤트
         GetButton((int)Buttons.OptionBtn).gameObject.BindEvent(OnClickOption);
@@ -210,12 +226,12 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshTexts()
     {
-        GetText((int)Texts.CharacterButtonText).text  = Localize("CharacterText");
-        GetText((int)Texts.InventoryButtonText).text  = Localize("InventoryText");
-        GetText((int)Texts.PotionButtonText).text     = Localize("PotionText");
-        GetText((int)Texts.EquipmentButtonText).text  = Localize("EquipmentText");
-        GetText((int)Texts.SkillButtonText).text      = Localize("SkillText");
-        GetText((int)Texts.BestiaryButtonText).text   = Localize("BestiaryText");
+        GetText((int)Texts.CharacterButtonText).text  = Localize(LocalizeKey.CharacterText);
+        GetText((int)Texts.InventoryButtonText).text  = Localize(LocalizeKey.InventoryText);
+        GetText((int)Texts.PotionButtonText).text     = Localize(LocalizeKey.PotionText);
+        GetText((int)Texts.EquipmentButtonText).text  = Localize(LocalizeKey.EquipmentText);
+        GetText((int)Texts.SkillButtonText).text      = Localize(LocalizeKey.SkillText);
+        GetText((int)Texts.BestiaryButtonText).text   = Localize(LocalizeKey.BestiaryText);
     }
 
     public void UpdateHP(float current, float max)

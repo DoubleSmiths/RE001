@@ -7,12 +7,16 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static Define;
 using Sequence = DG.Tweening.Sequence;
 
 public abstract class UI_Base : MonoBehaviour
 {
     protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
     protected bool _init = false;
+
+    // 폰트 등록 목록 (text, fontType)
+    readonly List<(TMP_Text text, FontType fontType)> _fontEntries = new();
 
     public virtual bool Init()
     {
@@ -22,9 +26,49 @@ public abstract class UI_Base : MonoBehaviour
         _init = true;
         return true;
     }
+
     private void Start()
     {
         Init();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged -= RefreshAllFonts;
+    }
+
+    // ────────────────────────────────────────
+    //  폰트 관리
+    // ────────────────────────────────────────
+
+    /// <summary>
+    /// 텍스트에 FontType을 지정한다.
+    /// 첫 호출 시 즉시 폰트를 적용하고, 이후 언어 변경 시 자동으로 갱신된다.
+    /// </summary>
+    protected void ApplyFont(TMP_Text text, FontType fontType)
+    {
+        if (text == null) return;
+
+        // 첫 등록 시 이벤트 구독
+        if (_fontEntries.Count == 0)
+            Managers.Game.OnLanguageChanged += RefreshAllFonts;
+
+        _fontEntries.Add((text, fontType));
+        SetFont(text, fontType);
+    }
+
+    void RefreshAllFonts()
+    {
+        foreach (var (text, type) in _fontEntries)
+            if (text != null) SetFont(text, type);
+    }
+
+    void SetFont(TMP_Text text, FontType type)
+    {
+        if (Managers.Font == null) return;
+        var font = Managers.Font.GetFont(type);
+        if (font != null) text.font = font;
     }
 
     protected void Bind<T>(Type type) where T : UnityEngine.Object

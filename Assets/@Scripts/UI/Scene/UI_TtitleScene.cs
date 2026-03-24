@@ -1,6 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class UI_TtitleScene : UI_Scene
 {
@@ -67,6 +68,8 @@ public class UI_TtitleScene : UI_Scene
                 isPreload = true;
                 Managers.Data.Init();
                 Managers.Game.Init();
+                Managers.Font.Init();
+                Managers.Sound.Init();
                 StartAnimation();
             }
         });

@@ -20,15 +20,17 @@ public class Managers : MonoBehaviour
     #endregion
 
     #region Core
-    DataManager    _data     = new DataManager();
-    PoolManager    _pool     = new PoolManager();
+    DataManager     _data     = new DataManager();
+    FontManager     _font     = new FontManager();
+    PoolManager     _pool     = new PoolManager();
     ResourceManager _resource = new ResourceManager();
     SceneManagerEx  _scene    = new SceneManagerEx();
     SoundManager    _sound    = new SoundManager();
     UIManager       _ui       = new UIManager();
 
-    public static DataManager    Data     { get { return Instance?._data; } }
-    public static PoolManager    Pool     { get { return Instance?._pool; } }
+    public static DataManager     Data     { get { return Instance?._data; } }
+    public static FontManager     Font     { get { return Instance?._font; } }
+    public static PoolManager     Pool     { get { return Instance?._pool; } }
     public static ResourceManager Resource { get { return Instance?._resource; } }
     public static SceneManagerEx  Scene    { get { return Instance?._scene; } }
     public static SoundManager    Sound    { get { return Instance?._sound; } }
@@ -49,7 +51,7 @@ public class Managers : MonoBehaviour
 
         DontDestroyOnLoad(go);
         s_instance = go.GetComponent<Managers>();
-        s_instance._sound.Init();
+        //s_instance._sound.Init();
         //s_instance._time = go.AddComponent<TimeManager>();
     }
 
