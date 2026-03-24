@@ -1,3 +1,5 @@
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using static Define;
 
@@ -60,6 +62,15 @@ public class UI_GameScene : UI_Scene
     #endregion
 
     UI_AreaBtnGroup _currentBtnGroup;
+
+    // 재화 Lerp용 표시값
+    float _displayGold;
+    float _displayCrystal;
+
+    static readonly Color _goldColor    = Color.white;                      // #FFFFFF
+    static readonly Color _crystalColor = Color.white;                      // #FFFFFF
+    static readonly Color _increaseColor = new Color(0f, 1f, 0f);           // #00FF00
+    static readonly Color _decreaseColor = new Color(1f, 0f, 0f);           // #FF0000
 
     public override bool Init()
     {
@@ -127,7 +138,12 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     public void SetInfo()
     {
-        RefreshCurrency();
+        // 재화 초기값 즉시 표시 (Lerp 없이)
+        _displayGold    = Managers.Game.Gold;
+        _displayCrystal = Managers.Game.Crystal;
+        GetText((int)Texts.MainGoldText).text    = Managers.Game.Gold.ToString("N0");
+        GetText((int)Texts.MainCrystalText).text = Managers.Game.Crystal.ToString("N0");
+
         RefreshPlayerBar();
         RefreshBestiaryFollowing();
 
@@ -139,8 +155,35 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshCurrency()
     {
-        GetText((int)Texts.MainGoldText).text    = Managers.Game.Gold.ToString("N0");
-        GetText((int)Texts.MainCrystalText).text = Managers.Game.Crystal.ToString("N0");
+        int newGold    = Managers.Game.Gold;
+        int newCrystal = Managers.Game.Crystal;
+
+        // 증감 색상 플래시
+        if (newGold != (int)_displayGold)
+            FlashCurrencyText(GetText((int)Texts.MainGoldText), newGold > _displayGold, _goldColor);
+        if (newCrystal != (int)_displayCrystal)
+            FlashCurrencyText(GetText((int)Texts.MainCrystalText), newCrystal > _displayCrystal, _crystalColor);
+
+        // Lerp 갱신
+        DOTween.To(() => _displayGold, x =>
+        {
+            _displayGold = x;
+            GetText((int)Texts.MainGoldText).text = ((int)x).ToString("N0");
+        }, newGold, 0.5f).SetEase(Ease.OutQuad);
+
+        DOTween.To(() => _displayCrystal, x =>
+        {
+            _displayCrystal = x;
+            GetText((int)Texts.MainCrystalText).text = ((int)x).ToString("N0");
+        }, newCrystal, 0.5f).SetEase(Ease.OutQuad);
+    }
+
+    void FlashCurrencyText(TMP_Text text, bool increased, Color originalColor)
+    {
+        Color flash = increased ? _increaseColor : _decreaseColor;
+        text.DOKill();
+        text.DOColor(flash, 0.1f)
+            .OnComplete(() => text.DOColor(originalColor, 0.3f));
     }
 
     // ────────────────────────────────────────
@@ -149,7 +192,12 @@ public class UI_GameScene : UI_Scene
     void RefreshPlayerBar()
     {
         int lv = Managers.Game.Level;
-        GetText((int)Texts.RankTxt).text = $"Lv.{lv}";
+        GetText((int)Texts.PlayerLevelText).text = $"Lv.{lv}";
+        GetText((int)Texts.PlayerRankText).text  = Managers.Game.PlayerName;
+
+        // TODO: 직업에 따라 PortraitImg 스프라이트 교체
+        // Managers.Resource.LoadAsync<Sprite>($"Portrait_{jobType}", sprite =>
+        //     GetImage((int)Images.PortraitImg).sprite = sprite);
     }
 
     public void UpdateHP(float current, float max)
@@ -167,7 +215,7 @@ public class UI_GameScene : UI_Scene
 
     public void OnLevelUp(int newLevel)
     {
-        GetText((int)Texts.RankTxt).text = $"Lv.{newLevel}";
+        GetText((int)Texts.PlayerLevelText).text = $"Lv.{newLevel}";
     }
 
     // ────────────────────────────────────────
@@ -269,7 +317,12 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void OnClickOption()
     {
-        // TODO: UI_SettingsPopup 열기
+        // 기획서 스펙: Scale / Duration 0.07 / OutQuad / Loops 2 / Yoyo / To 0.75
+        GetButton((int)Buttons.OptionBtn).transform
+            .DOScale(0.75f, 0.07f)
+            .SetEase(Ease.OutQuad)
+            .SetLoops(2, LoopType.Yoyo);
+
         Managers.UI.ShowPopupUI<UI_SettingPopup>();
     }
 
@@ -303,4 +356,30 @@ public class UI_GameScene : UI_Scene
     {
         // TODO: UI_BestiaryPopup 열기
     }
+
+#if UNITY_EDITOR
+    // ────────────────────────────────────────
+    //  [테스트] 재화 증감 애니메이션 확인
+    //  Inspector에서 호출하거나 Update에서 키 입력으로 사용
+    // ────────────────────────────────────────
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) TestGoldIncrease();
+        if (Input.GetKeyDown(KeyCode.Alpha2)) TestGoldDecrease();
+        if (Input.GetKeyDown(KeyCode.Alpha3)) TestCrystalIncrease();
+        if (Input.GetKeyDown(KeyCode.Alpha4)) TestCrystalDecrease();
+    }
+
+    [ContextMenu("Test/Gold +500")]
+    public void TestGoldIncrease()  => Managers.Game.Gold += 500;
+
+    [ContextMenu("Test/Gold -500")]
+    public void TestGoldDecrease()  => Managers.Game.Gold = Mathf.Max(0, Managers.Game.Gold - 500);
+
+    [ContextMenu("Test/Crystal +100")]
+    public void TestCrystalIncrease() => Managers.Game.Crystal += 100;
+
+    [ContextMenu("Test/Crystal -100")]
+    public void TestCrystalDecrease() => Managers.Game.Crystal = Mathf.Max(0, Managers.Game.Crystal - 100);
+#endif
 }
