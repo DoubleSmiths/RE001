@@ -402,4 +402,64 @@ namespace Data
         }
     }
     #endregion
+
+    #region DialogueScriptData
+    // DialogueData001.xlsx 파싱 결과
+    // 시트명(GroupKey) → 대사 라인 목록으로 접근
+    [Serializable]
+    public class DialogueScriptLine
+    {
+        public int    TextKey;
+        public string Kor;
+        public string Eng;
+    }
+
+    [Serializable]
+    public class DialogueScriptGroup
+    {
+        public string GroupKey;  // 시트명 (예: "GuildQuest1Text")
+        public List<DialogueScriptLine> Lines = new List<DialogueScriptLine>();
+    }
+
+    [Serializable]
+    public class DialogueScriptLoader : ILoader<string, DialogueScriptGroup>
+    {
+        public List<DialogueScriptGroup> groups = new List<DialogueScriptGroup>();
+        public Dictionary<string, DialogueScriptGroup> MakeDict()
+        {
+            var dict = new Dictionary<string, DialogueScriptGroup>();
+            foreach (var g in groups)
+                dict[g.GroupKey] = g;
+            return dict;
+        }
+    }
+    #endregion
+
+    #region LocalizationData
+    // LocalizationData001.xlsx 파싱 결과
+    // TextKey → 언어별 텍스트로 접근
+    [Serializable]
+    public class LocalizationEntry
+    {
+        public string TextKey;
+        public string Kor;
+        public string Eng;
+    }
+
+    [Serializable]
+    public class LocalizationLoader : ILoader<string, LocalizationEntry>
+    {
+        public List<LocalizationEntry> entries = new List<LocalizationEntry>();
+        public Dictionary<string, LocalizationEntry> MakeDict()
+        {
+            var dict = new Dictionary<string, LocalizationEntry>();
+            foreach (var e in entries)
+            {
+                if (!dict.ContainsKey(e.TextKey))
+                    dict[e.TextKey] = e;
+            }
+            return dict;
+        }
+    }
+    #endregion
 }

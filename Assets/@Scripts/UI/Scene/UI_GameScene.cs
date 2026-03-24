@@ -68,7 +68,7 @@ public class UI_GameScene : UI_Scene
     float _displayCrystal;
 
     static readonly Color _goldColor    = Color.white;                      // #FFFFFF
-    static readonly Color _crystalColor = Color.white;                      // #FFFFFF
+    static readonly Color _crystalColor = new Color(0f, 0.953f, 1f);        // #00F3FF
     static readonly Color _increaseColor = new Color(0f, 1f, 0f);           // #00FF00
     static readonly Color _decreaseColor = new Color(1f, 0f, 0f);           // #FF0000
 

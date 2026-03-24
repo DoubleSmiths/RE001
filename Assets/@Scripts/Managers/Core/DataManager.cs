@@ -21,22 +21,26 @@ public class DataManager
     public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
     public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
     public Dictionary<int, CraftRecipeData>   CraftRecipeDic    { get; private set; } = new Dictionary<int, CraftRecipeData>();
-    public Dictionary<int, LevelData>         LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
+    public Dictionary<int, LevelData>                    LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
+    public Dictionary<string, DialogueScriptGroup>       DialogueScriptDic { get; private set; } = new Dictionary<string, DialogueScriptGroup>();
+    public Dictionary<string, LocalizationEntry>         LocalizationDic   { get; private set; } = new Dictionary<string, LocalizationEntry>();
 
     public void Init()
     {
-        //CreatureDic     = LoadJson<CreatureDataLoader,     int, CreatureData>    ("CreatureData").MakeDict();
-        //EquipmentDic    = LoadJson<EquipmentDataLoader,    int, EquipmentData>   ("EquipmentData").MakeDict();
-        //EquipEnhanceDic = LoadJson<EquipEnhanceDataLoader, int, EquipEnhanceData>("EquipEnhanceData").MakeDict();
-        //SkillDic        = LoadJson<SkillDataLoader,        int, SkillData>       ("SkillData").MakeDict();
-        //ItemDic         = LoadJson<ItemDataLoader,         int, ItemData>        ("ItemData").MakeDict();
-        //AreaDic         = LoadJson<AreaDataLoader,         int, AreaData>        ("AreaData").MakeDict();
-        //QuestDic        = LoadJson<QuestDataLoader,        int, QuestData>       ("QuestData").MakeDict();
-        //DialogueDic     = LoadJson<DialogueDataLoader,     int, DialogueData>    ("DialogueData").MakeDict();
-        //MinMonDic       = LoadJson<MinMonDataLoader,       int, MinMonData>      ("MinMonData").MakeDict();
-        //ForgeRecipeDic  = LoadJson<ForgeRecipeDataLoader,  int, ForgeRecipeData> ("ForgeRecipeData").MakeDict();
-        //CraftRecipeDic  = LoadJson<CraftRecipeDataLoader,  int, CraftRecipeData> ("CraftRecipeData").MakeDict();
-        //LevelDic        = LoadJson<LevelDataLoader,        int, LevelData>       ("LevelData").MakeDict();
+        //CreatureDic       = LoadJson<CreatureDataLoader,      int,    CreatureData>       ("CreatureData").MakeDict();
+        //EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();
+        //EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
+        //SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
+        //ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("ItemData").MakeDict();
+        //AreaDic           = LoadJson<AreaDataLoader,          int,    AreaData>           ("AreaData").MakeDict();
+        //QuestDic          = LoadJson<QuestDataLoader,         int,    QuestData>          ("QuestData").MakeDict();
+        //DialogueDic       = LoadJson<DialogueDataLoader,      int,    DialogueData>       ("DialogueData").MakeDict();
+        //MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
+        //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
+        //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
+        //LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
+        DialogueScriptDic = LoadJson<DialogueScriptLoader,    string, DialogueScriptGroup>("DialogueScriptData").MakeDict();
+        LocalizationDic   = LoadJson<LocalizationLoader,      string, LocalizationEntry>  ("LocalizationData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

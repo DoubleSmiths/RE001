@@ -1,0 +1,104 @@
+﻿{
+  "groups": [
+    {
+      "GroupKey": "GuildOnQuestText",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "재료는 구해 오신건가요?",
+          "Eng": "You got the materials?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "많이 한가하신가 보군요.",
+          "Eng": "Seems like\nyou’ve got nothing better to do."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "용건이 없으시다면 저는 이만.",
+          "Eng": "If that's all, I have work to do."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "안녕하세요, 처음 뵙는 분이시군요.",
+          "Eng": "Welcome to the Adventurer's Guild."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "첫 방문이기에 협회 규정에 따라\n자가 증명을 진행하겠습니다.",
+          "Eng": "Our policy requires newcomers\nto verify their status as an adventurer."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "현재 소지하고 계신 [<#00B9FF>모험가 증명서</color>]를\n제출해 주시기를 바랍니다.",
+          "Eng": "Your [<#00B9FF>Adventurer's Certificate</color>, please?"
+        },
+        {
+          "TextKey": 4,
+          "Kor": "<i>아</i>, 신규등록을 원하신다는 말씀인가요?",
+          "Eng": "<i>Sigh</i>… You haven't registered?  "
+        },
+        {
+          "TextKey": 5,
+          "Kor": "신규등록을 하시려면 우선 최소 증명 조건인\n[<#2DFF00><b></b>젤리 퐁</color>]을 <#2DFF00><b>2</b></color>개를 가져와 주세요.\n퐁이도 잡지 못하는 모험가는 없으니까요..",
+          "Eng": "If you would like to register with us,\nyou will need to supply us with <#2DFF00><b>2</b></color> [<#2DFF00><b></b>Ponn Jellies</color>].\nAny adventurer should be able to handle a couple of Ponns.."
+        },
+        {
+          "TextKey": 6,
+          "Kor": "퐁이는 [<#B0FF06>산들바람 숲</color>]에 서식하고 있어요.\n그곳으로 가실 수 있게 [<#00B9FF>임시 통행증</color>]을\n발급해 드리겠습니다.",
+          "Eng": "The Pongs reside in the\n[<#B0FF06>Breezing Wind Forest</color>]. \nI'll grant you a [<#00B9FF>Temporary Permit</color>]."
+        },
+        {
+          "TextKey": 7,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest2Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요, 재료는 구해오셨나요?",
+          "Eng": "Back again. Did you bring the materials?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n그럼 협회 규정에 따라\n<color=#00B9FF>[<color=#6F6F6F>1</color>]급 모험가 증명서</color>를 발급해 드리겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nI will issue your\n<color=#00B9FF>[<color=#6F6F6F>1</color>]-rank Adventurer Certificate</color>."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<color=#00B9FF>[<color=#6F6F6F>1</color>]급 모험가 증명서</color>를 발급받으실 때는\n확인만을 위한 절차라 재료를 따로\n제출하실 필요가 없습니다.",
+          "Eng": "When issuing your\n<color=#00B9FF>[<color=#6F6F6F>1</color>]-rank Adventurer Certificate</color>,\nthis is merely a verification procedure.\nNo materials are required."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "또한, <#00B9FF>[<#6F6F6F>1</color>]급 모험가</color>로 승격함에 따라\n [<#B0FF06>산들바람 숲</color>]으로의 출입이 가능해졌으며\n[<#00B9FF>연금공방</color>]시설 이용이 가능해졌습니다.",
+          "Eng": "Furthermore, upon your promotion to a\n<color=#00B9FF>[<color=#6F6F6F>1</color>]-rank Adventurer</color>,\naccess to the <color=#B0FF06>Breezing Wing Forest</color>\nhas been granted, and the <color=#00B9FF>Alchemy</color> is\nnow available for use."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "위처럼, <#00B9FF>모험가 등급</color>에 따라 <#2DFF00>출입 가능 지역과\n이용 가능 시설들이 확장</color>되며\n<#00B9FF>등급</color>은 방금과 같이 <#2DFF00>특정 물품을 협회에 제출</color>\n함으로써 올리실 수 있습니다.",
+          "Eng": "As shown, access to regions and\navailable facilities expand according\nto your <color=#00B9FF>Adventurer Rank</color>.\nYour <color=#00B9FF>rank</color> can be increased by submitting specific items to the guild."
+        },
+        {
+          "TextKey": 6,
+          "Kor": "혹시나 물어보실까봐 미리 말씀드리지만\n<#00B9FF>[<#858585>2</color>]급 모험가</color>로 진급하기 위해선\n[<#2DFF00><b>폴짝 젤리</b></color>] <#2DFF00><b>5</b></color>개가 필요합니다.",
+          "Eng": "Before you ask,\nto reach <color=#00B9FF>[<color=#858585>2</color>]-rank Adventurer</color>,\nyou’ll need 5 <color=#2DFF00><b>Bouncing Jelly</b></color>."
+        },
+        {
+          "TextKey": 7,
+          "Kor": "그럼 다음에 다시 뵙죠.",
+          "Eng": "Until next time."
+        }
+      ]
+    }
+  ]
+}

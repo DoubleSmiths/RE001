@@ -29,6 +29,8 @@ public class DataTransformer : EditorWindow
     {
         ParsePlayerStatusData();
         ParseScriptData();
+        ParseDialogueScriptData();
+        ParseLocalizationData();
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExcel 완료");
     }
@@ -112,6 +114,74 @@ public class DataTransformer : EditorWindow
     }
 
     // -------------------------------------------------------------------
+    // DialogueData001.xlsx
+    //   시트별: Row 0 = 헤더(TextKey, Kor, Eng), Row 1+ = 데이터
+    //   시트명이 대화 그룹 키가 됨 (예: GuildQuest1Text)
+    // -------------------------------------------------------------------
+    static void ParseDialogueScriptData()
+    {
+        DialogueScriptLoader loader = new DialogueScriptLoader();
+
+        string path = $"{Application.dataPath}{EXCEL_PATH}/DialogueData001.xlsx";
+        var sheets = ReadAllXlsxSheets(path);
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            var group = new DialogueScriptGroup { GroupKey = sheetName };
+
+            for (int y = 1; y < rows.Count; y++)  // Row 0 = 헤더 스킵
+            {
+                List<string> row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0]))
+                    continue;
+
+                group.Lines.Add(new DialogueScriptLine
+                {
+                    TextKey = ConvertValue<int>(row[0]),
+                    Kor     = row.Count > 1 ? row[1] : "",
+                    Eng     = row.Count > 2 ? row[2] : "",
+                });
+            }
+
+            loader.groups.Add(group);
+        }
+
+        WriteJson("DialogueScriptData", loader);
+    }
+
+    // -------------------------------------------------------------------
+    // LocalizationData001.xlsx
+    //   35개 시트 전체를 병합 → TextKey(string) 기준 단일 딕셔너리
+    //   Row 0 = 헤더(TextKey, Kor, Eng), Row 1+ = 데이터
+    // -------------------------------------------------------------------
+    static void ParseLocalizationData()
+    {
+        LocalizationLoader loader = new LocalizationLoader();
+
+        string path = $"{Application.dataPath}{EXCEL_PATH}/LocalizationData001.xlsx";
+        var sheets = ReadAllXlsxSheets(path);
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            for (int y = 1; y < rows.Count; y++)  // Row 0 = 헤더 스킵
+            {
+                List<string> row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0]))
+                    continue;
+
+                loader.entries.Add(new LocalizationEntry
+                {
+                    TextKey = row[0],
+                    Kor     = row.Count > 1 ? row[1] : "",
+                    Eng     = row.Count > 2 ? row[2] : "",
+                });
+            }
+        }
+
+        WriteJson("LocalizationData", loader);
+    }
+
+    // -------------------------------------------------------------------
     // 공용 헬퍼
     // -------------------------------------------------------------------
 
@@ -185,6 +255,38 @@ public class DataTransformer : EditorWindow
         }
 
         return rows;
+    }
+
+    /// <summary>xlsx의 모든 시트를 읽어 (시트명, 행 목록) 리스트로 반환</summary>
+    static List<(string name, List<List<string>> rows)> ReadAllXlsxSheets(string filePath)
+    {
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+        var result = new List<(string, List<List<string>>)>();
+
+        using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var reader = ExcelReaderFactory.CreateReader(stream))
+        {
+            DataSet dataSet = reader.AsDataSet(new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = false }
+            });
+
+            foreach (DataTable table in dataSet.Tables)
+            {
+                var rows = new List<List<string>>();
+                foreach (DataRow dataRow in table.Rows)
+                {
+                    var row = new List<string>();
+                    foreach (var cell in dataRow.ItemArray)
+                        row.Add(cell?.ToString() ?? "");
+                    rows.Add(row);
+                }
+                result.Add((table.TableName, rows));
+            }
+        }
+
+        return result;
     }
 
     /// <summary>xlsx 파일을 읽어 List<List<string>> 형태로 반환</summary>

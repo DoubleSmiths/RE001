@@ -17,7 +17,11 @@
       "Bash(xargs grep:*)",
       "Bash(cd /tmp)",
       "Bash(unzip -o \"C:/stopresent/Unity/RE001/Documents/기획안/기획서v2_03.19.pptx\" -d /tmp/pptx_extract/v2_03_19)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(unzip -l DialogueData001.xlsx)",
+      "Bash(unzip -q \"C:/stopresent/Unity/RE001/Assets/@Resources/Data/Excel/DialogueData001.xlsx\")",
+      "Bash(rm -rf *)",
+      "Bash(unzip -q \"C:/stopresent/Unity/RE001/Assets/@Resources/Data/Excel/LocalizationData001.xlsx\")"
     ]
   }
 }
