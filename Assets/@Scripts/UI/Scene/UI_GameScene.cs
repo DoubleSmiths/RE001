@@ -114,7 +114,10 @@ public class UI_GameScene : UI_Scene
         if (Managers.Quest != null)
             Managers.Quest.OnTabUnlocked -= OnTabUnlocked;
         if (Managers.Game != null)
+        {
             Managers.Game.OnResourceChanged -= RefreshCurrency;
+            Managers.Game.OnLanguageChanged  -= RefreshTexts;
+        }
     }
 
     // ────────────────────────────────────────
@@ -146,8 +149,10 @@ public class UI_GameScene : UI_Scene
 
         RefreshPlayerBar();
         RefreshBestiaryFollowing();
+        RefreshTexts();
 
         Managers.Game.OnResourceChanged += RefreshCurrency;
+        Managers.Game.OnLanguageChanged  += RefreshTexts;
     }
 
     // ────────────────────────────────────────
@@ -198,6 +203,19 @@ public class UI_GameScene : UI_Scene
         // TODO: 직업에 따라 PortraitImg 스프라이트 교체
         // Managers.Resource.LoadAsync<Sprite>($"Portrait_{jobType}", sprite =>
         //     GetImage((int)Images.PortraitImg).sprite = sprite);
+    }
+
+    // ────────────────────────────────────────
+    //  텍스트 로컬라이징
+    // ────────────────────────────────────────
+    void RefreshTexts()
+    {
+        GetText((int)Texts.CharacterButtonText).text  = Localize("CharacterText");
+        GetText((int)Texts.InventoryButtonText).text  = Localize("InventoryText");
+        GetText((int)Texts.PotionButtonText).text     = Localize("PotionText");
+        GetText((int)Texts.EquipmentButtonText).text  = Localize("EquipmentText");
+        GetText((int)Texts.SkillButtonText).text      = Localize("SkillText");
+        GetText((int)Texts.BestiaryButtonText).text   = Localize("BestiaryText");
     }
 
     public void UpdateHP(float current, float max)

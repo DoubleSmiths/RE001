@@ -67,6 +67,16 @@ public static class Util
         return point;
     }
 
+    /// <summary>TextKey로 현재 언어의 텍스트를 반환. 키가 없으면 key 자체를 반환.</summary>
+    public static string Localize(string key)
+    {
+        var dic = Managers.Data?.LocalizationDic;
+        if (dic == null || !dic.TryGetValue(key, out var entry))
+            return key;
+
+        return Managers.Game.Language == Define.Language.Korean ? entry.Kor : entry.Eng;
+    }
+
     public static Color HexToColor(string color)
     {
         Color parsedColor;

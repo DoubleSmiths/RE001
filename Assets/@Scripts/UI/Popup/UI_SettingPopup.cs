@@ -1,5 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
+using static Define;
 
 public class UI_SettingPopup : UI_Popup
 {
@@ -66,9 +68,51 @@ public class UI_SettingPopup : UI_Popup
         OpenAnimation(popupAnim);
         GetButton((int)Buttons.SettingPopupBackground).gameObject.BindEvent(() => OnClickBG(popupAnim));
 
+        GetButton((int)Buttons.KorBtn).gameObject.BindEvent(OnClickKorean);
+        GetButton((int)Buttons.EngBtn).gameObject.BindEvent(OnClickEnglish);
+
+        RefreshLanguageButtons();
+
         return true;
     }
 
+    // ────────────────────────────────────────
+    //  언어 선택
+    // ────────────────────────────────────────
+    void OnClickKorean()
+    {
+        if (Managers.Game.Language == Language.Korean) return;
+        Managers.Game.Language = Language.Korean;
+        RefreshLanguageButtons();
+    }
+
+    void OnClickEnglish()
+    {
+        if (Managers.Game.Language == Language.English) return;
+        Managers.Game.Language = Language.English;
+        RefreshLanguageButtons();
+    }
+
+    // 선택된 버튼: 불투명 / 미선택: 반투명
+    void RefreshLanguageButtons()
+    {
+        bool isKorean = Managers.Game.Language == Language.Korean;
+        SetButtonSelected(GetButton((int)Buttons.KorBtn), isKorean);
+        SetButtonSelected(GetButton((int)Buttons.EngBtn), !isKorean);
+    }
+
+    void SetButtonSelected(Button btn, bool selected)
+    {
+        var group = btn.transform.GetComponent<CanvasGroup>();
+        if (group != null)
+            group.alpha = selected ? 1f : 0.4f;
+        else
+            btn.image.color = selected ? Color.white : new Color(1f, 1f, 1f, 0.4f);
+    }
+
+    // ────────────────────────────────────────
+    //  팝업 애니메이션
+    // ────────────────────────────────────────
     public void OpenAnimation(DOTweenAnimation doanim)
     {
         doanim.DOKill();

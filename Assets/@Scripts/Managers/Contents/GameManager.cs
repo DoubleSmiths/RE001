@@ -151,7 +151,15 @@ public class GameManager
     // ── 마물 도감 ──
     public List<int> DiscoveredMonsterIds => _gameData.DiscoveredMonsterIds;
 
+    // ── 언어 ──
+    public Define.Language Language
+    {
+        get => (Define.Language)PlayerPrefs.GetInt("Language", (int)Define.Language.Korean);
+        set { PlayerPrefs.SetInt("Language", (int)value); OnLanguageChanged?.Invoke(); }
+    }
+
     // ── 이벤트 ──
+    public event Action OnLanguageChanged;
     public event Action OnResourceChanged;
     public event Action EquipInfoChanged;
     public event Action<Equipment> OnEquipmentForged;

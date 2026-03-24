@@ -102,6 +102,12 @@ public class Define
         S,
     }
 
+    public enum Language
+    {
+        Korean,
+        English,
+    }
+
     public enum Sound
     {
         Bgm,
