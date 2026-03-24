@@ -85,6 +85,11 @@ public static class Util
         return parsedColor;
     }
 
+    public static bool IntToBool(int value)
+    {
+        return value > 0;
+    }
+
     //Enum값중 랜덤값 반환
     //public static T GetRandomEnumValue<T>() where T : struct, Enum
     //{

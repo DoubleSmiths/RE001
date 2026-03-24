@@ -68,10 +68,10 @@ public class UI_GameScene : UI_Scene
     float _displayGold;
     float _displayCrystal;
 
-    static readonly Color _goldColor    = Color.white;                      // #FFFFFF
+    static readonly Color _goldColor    = Color.white;                                  // #FFFFFF
     static readonly Color _crystalColor = new Color(0f, 0.953f, 1f, 80f / 225f);        // #00F3FF
-    static readonly Color _increaseColor = new Color(0f, 1f, 0f);           // #00FF00
-    static readonly Color _decreaseColor = new Color(1f, 0f, 0f);           // #FF0000
+    static readonly Color _increaseColor = new Color(0f, 1f, 0f);                       // #00FF00
+    static readonly Color _decreaseColor = new Color(1f, 0f, 0f);                       // #FF0000
 
     public override bool Init()
     {
@@ -111,10 +111,13 @@ public class UI_GameScene : UI_Scene
         gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
 
         // Fade
-        FadeInOut(GetImage((int)Images.ForFadeImage));
+        //FadeInOut(GetImage((int)Images.ForFadeImage));
 
         // 퀘스트 이벤트
         Managers.Quest.OnTabUnlocked += OnTabUnlocked;
+
+        // TODO : 퀘스트가 있을 때는 SetActive(true)로 설정
+        GetObject((int)GameObjects.QuestFollow).gameObject.SetActive(false);
 
         SetInfo();
         RefreshTabLocks();
@@ -125,8 +128,10 @@ public class UI_GameScene : UI_Scene
         return true;
     }
 
-    void OnDestroy()
+    public override void OnDestroy()
     {
+        base.OnDestroy();
+
         if (Managers.Quest != null)
             Managers.Quest.OnTabUnlocked -= OnTabUnlocked;
         if (Managers.Game != null)
@@ -135,6 +140,7 @@ public class UI_GameScene : UI_Scene
             Managers.Game.OnLanguageChanged  -= RefreshTexts;
         }
     }
+
 
     // ────────────────────────────────────────
     //  구역 전환

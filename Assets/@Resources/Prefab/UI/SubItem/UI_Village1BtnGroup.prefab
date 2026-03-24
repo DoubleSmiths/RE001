@@ -1193,7 +1193,6 @@ GameObject:
   - component: {fileID: 7804850125231891174}
   - component: {fileID: 378125279361170176}
   - component: {fileID: 3927376397801296829}
-  - component: {fileID: 1765299236094084134}
   - component: {fileID: 2640003719132424232}
   m_Layer: 5
   m_Name: AlchemyButton
@@ -1307,21 +1306,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1765299236094084134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1287528103279949264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  preset: 0
-  onEnableBehaviour: 2
-  onDisableBehaviour: 0
 --- !u!114 &2640003719132424232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2547,7 +2531,6 @@ GameObject:
   - component: {fileID: 4761462565402368669}
   - component: {fileID: 931448240724725794}
   - component: {fileID: 8999872069229308506}
-  - component: {fileID: 4536679498467510484}
   - component: {fileID: 830506503893974860}
   m_Layer: 5
   m_Name: MonasteryButton
@@ -2661,21 +2644,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4536679498467510484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763507710529654415}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  preset: 0
-  onEnableBehaviour: 2
-  onDisableBehaviour: 0
 --- !u!114 &830506503893974860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4161,7 +4129,6 @@ GameObject:
   - component: {fileID: 8313606562794627229}
   - component: {fileID: 5445734813769961887}
   - component: {fileID: 2557364310348358447}
-  - component: {fileID: 5205859054625220948}
   - component: {fileID: 5714075028298708148}
   m_Layer: 5
   m_Name: TravelButton
@@ -4275,21 +4242,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5205859054625220948
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2867661871508845714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  preset: 0
-  onEnableBehaviour: 2
-  onDisableBehaviour: 0
 --- !u!114 &5714075028298708148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5309,7 +5261,6 @@ GameObject:
   - component: {fileID: 7532722149555754388}
   - component: {fileID: 4430908576712114932}
   - component: {fileID: 3650457087714685002}
-  - component: {fileID: 8656537420187214950}
   - component: {fileID: 6102870026244147607}
   m_Layer: 5
   m_Name: GuildButton
@@ -5422,21 +5373,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &8656537420187214950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3181515442018135156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  preset: 0
-  onEnableBehaviour: 2
-  onDisableBehaviour: 0
 --- !u!114 &6102870026244147607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9400,7 +9336,6 @@ GameObject:
   - component: {fileID: 6679332056792024285}
   - component: {fileID: 8180440400131911488}
   - component: {fileID: 1985495279176605552}
-  - component: {fileID: 6965393866291731700}
   - component: {fileID: 3470424551876035467}
   m_Layer: 5
   m_Name: TempButton1
@@ -9512,21 +9447,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6965393866291731700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4695364045551188336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  preset: 0
-  onEnableBehaviour: 2
-  onDisableBehaviour: 0
 --- !u!114 &3470424551876035467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9722,7 +9642,6 @@ GameObject:
   - component: {fileID: 6923984544885298782}
   - component: {fileID: 8390991170358201443}
   - component: {fileID: 3811119037260970217}
-  - component: {fileID: 7714747756958848895}
   - component: {fileID: 4499273176247172821}
   m_Layer: 5
   m_Name: TempButton2
@@ -9834,21 +9753,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &7714747756958848895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4783261167893367176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  preset: 0
-  onEnableBehaviour: 2
-  onDisableBehaviour: 0
 --- !u!114 &4499273176247172821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10376,7 +10280,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}

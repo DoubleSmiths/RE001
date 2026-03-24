@@ -32,7 +32,7 @@ public abstract class UI_Base : MonoBehaviour
         Init();
     }
 
-    protected virtual void OnDestroy()
+    public virtual void OnDestroy()
     {
         if (Managers.Game != null)
             Managers.Game.OnLanguageChanged -= RefreshAllFonts;

@@ -1,6 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 using static Define;
+using static Util;
 
 public class UI_Village1BtnGroup : UI_AreaBtnGroup
 {
@@ -132,24 +133,36 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         ShowGroup(GameObjects.Village1MainBtnGroup);
 
+        GetButton((int)Buttons.GuildButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.TempButton1).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.TempButton2).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.TravelButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+
         Sequence seq = DOTween.Sequence();
         seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
             .DOAnchorPos(Vector2.zero, 0.25f)
-            .From(new Vector2(-150f, 12f))
+            .From(new Vector2(-170f, 0f))
             .SetEase(Ease.OutQuad));
 
-        seq.AppendCallback(() =>
-        {
-            GetButton((int)Buttons.GuildButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
-            GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
-            GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
-            GetButton((int)Buttons.TempButton1).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
-            GetButton((int)Buttons.TempButton2).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
-            GetButton((int)Buttons.TravelButton).gameObject.GetComponent<DOTweenAnimation>().DOPlay();
-        });
+        seq.AppendInterval(0.1f);
+
+        seq.AppendCallback(() => GetButton((int)Buttons.GuildButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => GetButton((int)Buttons.TempButton1).gameObject.GetComponent<DOTweenAnimation>().DORestart());
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => GetButton((int)Buttons.TempButton2).gameObject.GetComponent<DOTweenAnimation>().DORestart());
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => GetButton((int)Buttons.TravelButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
+        seq.AppendInterval(0.1f);
 
         seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
-            .DOAnchorPos(new Vector2(150f, 12f), 0.15f)
+            .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
             .SetEase(Ease.OutQuad));
 
     }
@@ -175,5 +188,5 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         ShowGroup(GameObjects.Village1MonasteryBtnGroup);
     }
 
-    
+
 }
