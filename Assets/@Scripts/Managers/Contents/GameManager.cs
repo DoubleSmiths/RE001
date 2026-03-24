@@ -74,6 +74,7 @@ public class GameData
     public List<int>    CompletedQuestIds    = new List<int>();
     public List<string> UnlockedTabs         = new List<string>();
     public List<int>    UnlockedAreaIds      = new List<int>();
+    public List<int>    ActivationManager    = new List<int>( new int[Enum.GetValues(typeof(ActivationKey)).Length]);
 
     // 마물 도감
     public List<int> DiscoveredMonsterIds = new List<int>();
@@ -147,6 +148,11 @@ public class GameManager
     public List<int>    CompletedQuestIds    => _gameData.CompletedQuestIds;
     public List<string> UnlockedTabs         => _gameData.UnlockedTabs;
     public List<int>    UnlockedAreaIds      => _gameData.UnlockedAreaIds;
+    public List<int> ActivationManager
+    {
+        get { return _gameData.ActivationManager; }
+        set { _gameData.ActivationManager = value; SaveGame(); }
+    }
 
     // ── 마물 도감 ──
     public List<int> DiscoveredMonsterIds => _gameData.DiscoveredMonsterIds;
@@ -287,6 +293,9 @@ public class GameManager
             string path = Application.persistentDataPath + "/SaveData.json";
             if (File.Exists(path))
                 File.Delete(path);
+
+            FirstSetting();
+
             return false;
         }
 
@@ -298,5 +307,11 @@ public class GameManager
             _gameData = data;
 
         return true;
+    }
+
+    public void FirstSetting()
+    {
+        // 1이면 켜야하는 것.
+        ActivationManager[(int)ActivationKey.Village1GuildVFX] = 1;
     }
 }

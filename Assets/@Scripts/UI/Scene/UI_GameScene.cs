@@ -141,6 +141,10 @@ public class UI_GameScene : UI_Scene
         }
     }
 
+    public void FadeInOut()
+    {
+        FadeInOut(GetImage((int)Images.ForFadeImage));
+    }
 
     // ────────────────────────────────────────
     //  구역 전환

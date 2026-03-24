@@ -15,8 +15,26 @@ MonoBehaviour:
   m_GroupName: Sprites
   m_GUID: 31f3d87ba38907e46ac5702fde4203d2
   m_SerializeEntries:
-  - m_GUID: 69b041325e91c3843a6323ff03c16e40
-    m_Address: flame1
+  - m_GUID: 0b0e5f56167efbf4f8962df951496266
+    m_Address: Background_Monastery.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20563f006e588ab4584edce03619b6af
+    m_Address: Background_Village1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d3bf63ac21ca4a43a4fdc3553973224
+    m_Address: Background_Alchemy.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c594672b4d23cd9469897120ab2b3684
+    m_Address: Background_Guild.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

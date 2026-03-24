@@ -132,6 +132,17 @@ public class Define
         Drag,
         EndDrag,
     }
+
+    public enum ActivationKey
+    {
+        Village1GuildVFX,
+        AlchemyButtonNewTxt,
+        Village1AlchemyVFX_Sub1,
+        MonasteryButtonNewTxt,
+        MonasteryVFX_Sub1,
+        Village1TravelQuestVFX,
+        TravelButtonNewTxt,
+    }
     #endregion
 
     #region LocalizeKey
@@ -165,4 +176,5 @@ public class Define
         public const string SettingShakeText  = "SettingShakeText";
     }
     #endregion
+
 }

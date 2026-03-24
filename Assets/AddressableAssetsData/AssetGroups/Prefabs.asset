@@ -14,7 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Prefabs
   m_GUID: 1bdb1fe29632760458f6e434c58bb730
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 7e70db0f739fc74408876ab9c05d647f
+    m_Address: GuildNPC
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 17daaa5f2ba129c438d7f930823c6356, type: 2}
   m_SchemaSet:

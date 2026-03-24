@@ -168,8 +168,8 @@ public abstract class UI_Base : MonoBehaviour
     public void FadeInOut(Image image)
     {
         Sequence seq = DOTween.Sequence();
-        seq.Append(image.DOFade(1f, 0.5f));
-        seq.Append(image.DOFade(0f, 0.5f));
+        seq.Append(image.DOFade(1f, 1f));
+        seq.Append(image.DOFade(0f, 1f));
     }
 
 }

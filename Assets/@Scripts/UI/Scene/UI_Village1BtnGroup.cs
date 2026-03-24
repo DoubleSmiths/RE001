@@ -1,4 +1,5 @@
 using DG.Tweening;
+using UnityEditor.U2D;
 using UnityEngine;
 using static Define;
 using static Util;
@@ -97,7 +98,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetText((int)Texts.TravelButtonText).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(false);
 
-        GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(false);
+        //GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1GuildVFX]));
+        GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(true);
         GetObject((int)GameObjects.Village1AlchemyVFX_Sub1).gameObject.SetActive(false);
         GetObject((int)GameObjects.MonasteryVFX_Sub1).gameObject.SetActive(false);
         GetObject((int)GameObjects.Village1TravelQuestVFX).gameObject.SetActive(false);
@@ -115,8 +117,10 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void ShowGroup(GameObjects group)
     {
-        foreach (GameObjects g in System.Enum.GetValues(typeof(GameObjects)))
-            GetObject((int)g).SetActive(g == group);
+        GetObject((int)GameObjects.Village1MainBtnGroup).SetActive(group == GameObjects.Village1MainBtnGroup);
+        GetObject((int)GameObjects.Village1GuildBtnGroup).SetActive(group == GameObjects.Village1GuildBtnGroup);
+        GetObject((int)GameObjects.Village1AlchemyBtnGroup).SetActive(group == GameObjects.Village1AlchemyBtnGroup);
+        GetObject((int)GameObjects.Village1MonasteryBtnGroup).SetActive(group == GameObjects.Village1MonasteryBtnGroup);
     }
 
     void HideAllGroup()
@@ -130,17 +134,31 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnClickMain()
     {
         HideAllGroup();
+        
+        GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+        _gameScene.FadeInOut();
 
         ShowGroup(GameObjects.Village1MainBtnGroup);
 
-        GetButton((int)Buttons.GuildButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.TempButton1).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.TempButton2).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.TravelButton).gameObject.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.GuildButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.TempButton1).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.TempButton2).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+        GetButton((int)Buttons.TravelButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
 
         Sequence seq = DOTween.Sequence();
+        seq.AppendInterval(1f);
+
+        seq.AppendCallback(() =>
+        {
+            GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Village1");
+
+            // TODO NPC들 제거
+            GameObject guildNPC = GameObject.Find("GuildNPC");
+            if (guildNPC != null ) Destroy(guildNPC);
+        });
+
         seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
             .DOAnchorPos(Vector2.zero, 0.25f)
             .From(new Vector2(-170f, 0f))
@@ -148,6 +166,11 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         seq.AppendInterval(0.1f);
 
+        seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
+            .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
+            .SetEase(Ease.OutQuad));
+
+        seq.AppendInterval(0.1f);
         seq.AppendCallback(() => GetButton((int)Buttons.GuildButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
@@ -159,11 +182,10 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendCallback(() => GetButton((int)Buttons.TempButton2).gameObject.GetComponent<DOTweenAnimation>().DORestart());
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => GetButton((int)Buttons.TravelButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
-        seq.AppendInterval(0.1f);
 
-        seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
-            .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
-            .SetEase(Ease.OutQuad));
+        //seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
+        //    .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
+        //    .SetEase(Ease.OutQuad));
 
     }
 
@@ -171,7 +193,18 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         HideAllGroup();
 
-        ShowGroup(GameObjects.Village1GuildBtnGroup);
+        // TODO : Player Move Anim, Fade In Out, Chang BG + Add NPC Sprite
+        GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+        _gameScene.FadeInOut();
+
+        Sequence seq = DOTween.Sequence();
+        seq.AppendInterval(1f);
+        seq.AppendCallback(() =>
+            {
+                GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Guild");
+                Managers.Resource.Instantiate("GuildNPC").GetComponent<Animator>().Play("Receptionist");
+                ShowGroup(GameObjects.Village1GuildBtnGroup);
+            });
     }
 
     void OnClickAlchemy()
