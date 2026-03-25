@@ -6,18 +6,7 @@ using static Util;
 
 public class UI_Village1BtnGroup : UI_AreaBtnGroup
 {
-    enum Buttons
-    {
-        GuildButton,
-        AlchemyButton,
-        MonasteryButton,
-        TempButton1,
-        TempButton2,
-        TravelButton,
-        Village1GuildExitButton,
-        Village1AlchemyExitButton,
-        Village1MonasteryExitButton,
-    }
+    #region Enum
 
     enum Images
     {
@@ -37,19 +26,44 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         MonasteryButtonNewTxt,
         TravelButtonText,
         TravelButtonNewTxt,
+        Village1GuildNameText,
+    }
+
+    enum Buttons
+    {
+        GuildButton,
+        AlchemyButton,
+        MonasteryButton,
+        TempButton1,
+        TempButton2,
+        TravelButton,
+        Village1GuildTalkButton,
+        Village1GuildQuestButton,
+        Village1GuildExitButton,
+        Village1AlchemyTalkButton,
+        CustomOrderButton,
+        Village1AlchemyExitButton,
+        Village1MonasteryTalkButton,
+        MonasteryClassButton,
+        Village1MonasteryExitButton,
     }
 
     enum GameObjects
     {
         Village1MainBtnGroup,
-        Village1GuildBtnGroup,
-        Village1AlchemyBtnGroup,
-        Village1MonasteryBtnGroup,
         Village1GuildVFX,
         Village1AlchemyVFX_Sub1,
         MonasteryVFX_Sub1,
         Village1TravelQuestVFX,
+        Village1GuildBtnGroup,
+        Village1GuildTalkVFX,
+        Village1AlchemyBtnGroup,
+        Village1MonasteryBtnGroup,
     }
+
+    #endregion
+
+
 
     public override bool Init()
     {
@@ -66,6 +80,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(OnClickMain);
         GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(OnClickMain);
         GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(OnClickMain);
+        GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
 
         SetInfo();
 
@@ -221,5 +236,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         ShowGroup(GameObjects.Village1MonasteryBtnGroup);
     }
 
-
+    void OnClickVillage1GuildTalkButton()
+    {
+        // TODO : 길드 NPC와의 대화창 생성 
+    }
 }
