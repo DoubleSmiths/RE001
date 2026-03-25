@@ -63,8 +63,6 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     #endregion
 
-
-
     public override bool Init()
     {
         if (!base.Init()) return false;
@@ -77,9 +75,20 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetImage((int)Images.GuildButtonIcon).gameObject.BindEvent(OnClickGuild);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.BindEvent(OnClickAlchemy);
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
-        GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(OnClickMain);
-        GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(OnClickMain);
-        GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(OnClickMain);
+        GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() => {
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+            _gameScene.FadeInOut();
+            OnClickMain(); });
+        GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() => {
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+            _gameScene.FadeInOut();
+            OnClickMain();
+        });
+        GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(() => {
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+            _gameScene.FadeInOut();
+            OnClickMain();
+        });
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
 
         SetInfo();
@@ -101,6 +110,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         ShowGroup(GameObjects.Village1MainBtnGroup);
 
+        // TODO : 해금된 아이콘과 텍스트는 SetActive(true)로 해야됨.
         //GetImage((int)Images.GuildButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.MonasteryButtonIcon).gameObject.SetActive(false);
@@ -113,16 +123,15 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetText((int)Texts.TravelButtonText).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(false);
 
-        //GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1GuildVFX]));
-        GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(true);
-        GetObject((int)GameObjects.Village1AlchemyVFX_Sub1).gameObject.SetActive(false);
-        GetObject((int)GameObjects.MonasteryVFX_Sub1).gameObject.SetActive(false);
-        GetObject((int)GameObjects.Village1TravelQuestVFX).gameObject.SetActive(false);
+        //GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(true);
+        GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1GuildVFX]));
+        GetObject((int)GameObjects.Village1AlchemyVFX_Sub1).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1AlchemyVFX_Sub1]));
+        GetObject((int)GameObjects.MonasteryVFX_Sub1).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.MonasteryVFX_Sub1]));
+        GetObject((int)GameObjects.Village1TravelQuestVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1TravelQuestVFX]));
 
-        GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(false);
-        GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(false);
-        GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(false);
-
+        GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.AlchemyButtonNewTxt]));
+        GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.MonasteryButtonNewTxt]));
+        GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.TravelButtonNewTxt]));
 
         // TODO : 해금된 버튼이 있으면 Image, Text 를 SetActive(true)로 변경.
         // TODO : 이벤트 ID 확인 후 VFX 켜기, NEW Text 켜기, 
@@ -150,10 +159,17 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         HideAllGroup();
 
-        GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
-        _gameScene.FadeInOut();
+        //GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+        //_gameScene.FadeInOut();
 
         ShowGroup(GameObjects.Village1MainBtnGroup);
+
+        GetButton((int)Buttons.GuildButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.TempButton1).gameObject.SetActive(false);
+        GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
+        GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
         GetButton((int)Buttons.GuildButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
         GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
@@ -184,6 +200,16 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
             .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
             .SetEase(Ease.OutQuad));
+
+        seq.AppendCallback(() =>
+        {
+            GetButton((int)Buttons.GuildButton).gameObject.SetActive(true);
+            GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(true);
+            GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(true);
+            GetButton((int)Buttons.TempButton1).gameObject.SetActive(true);
+            GetButton((int)Buttons.TempButton2).gameObject.SetActive(true);
+            GetButton((int)Buttons.TravelButton).gameObject.SetActive(true);
+        });
 
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => GetButton((int)Buttons.GuildButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
