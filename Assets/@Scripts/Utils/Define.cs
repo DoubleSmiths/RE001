@@ -133,6 +133,15 @@ public class Define
         EndDrag,
     }
 
+    public enum DialogueEmotion
+    {
+        Normal,
+        Angry,
+        Scared,
+        Happy,
+        Sad,
+    }
+
     public enum ActivationKey
     {
         Village1GuildVFX,

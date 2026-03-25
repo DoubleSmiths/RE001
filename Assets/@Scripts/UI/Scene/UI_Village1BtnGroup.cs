@@ -149,7 +149,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnClickMain()
     {
         HideAllGroup();
-        
+
         GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
         _gameScene.FadeInOut();
 
@@ -171,7 +171,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
             // TODO NPC들 제거
             GameObject guildNPC = GameObject.Find("GuildNPC");
-            if (guildNPC != null ) Destroy(guildNPC);
+            if (guildNPC != null) Destroy(guildNPC);
         });
 
         seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
@@ -239,5 +239,10 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnClickVillage1GuildTalkButton()
     {
         // TODO : 길드 NPC와의 대화창 생성 
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+                 groupKey: "GuildQuest1Text",
+                 speakerName: "접수원 아가씨",
+                 portrait: null,
+                 onFinished: () => Debug.Log("대화 종료"));
     }
 }

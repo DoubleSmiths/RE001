@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using static Define;
+using Data;
 
 public class UI_DialoguePopup : UI_Popup
 {
@@ -30,6 +34,18 @@ public class UI_DialoguePopup : UI_Popup
 
     #endregion
 
+    DialogueAnimator _animator;
+
+    List<DialogueScriptLine> _lines;
+    int _lineIndex;
+    bool _isTypingDone;
+    Action _onFinished;
+
+    private void Awake()
+    {
+        Init();
+    }
+
     public override bool Init()
     {
         if (base.Init() == false)
@@ -40,28 +56,91 @@ public class UI_DialoguePopup : UI_Popup
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
-        GetImage((int)Images.TextBoxDialogueFrame).gameObject.BindEvent(OnClickTextBoxDialogueFrame);
+        _animator = gameObject.GetOrAddComponent<DialogueAnimator>();
+
+        GetImage((int)Images.DialogueNextImage).gameObject.SetActive(false);
+        GetImage((int)Images.Panel).gameObject.BindEvent(OnClickTextBoxDialogueFrame);
 
         return true;
     }
 
-    public void SetInfo()
+    /// <summary>
+    /// groupKey : DialogueScriptDic의 키 (예: "GuildQuest1Text")
+    /// speakerName : 대화창 이름 표시
+    /// portrait : 초상화 (없으면 null)
+    /// onFinished : 마지막 대사 후 클릭 시 콜백
+    /// </summary>
+    public void SetInfo(string groupKey, string speakerName, Sprite portrait = null, Action onFinished = null)
     {
-        GetText((int)Texts.DialogueName).text = "TestName";
-        GetText((int)Texts.DialogueText).text = "TestDialogue";
+        if (!Managers.Data.DialogueScriptDic.TryGetValue(groupKey, out var group))
+        {
+            Debug.LogWarning($"[DialoguePopup] GroupKey 없음: {groupKey}");
+            return;
+        }
 
-        GetImage((int)Images.CharacterImage).sprite = Managers.Resource.Load<Sprite>("receptionist_sigh");
+        _lines = group.Lines;
+        _lineIndex = 0;
+        _onFinished = onFinished;
+
+        GetText((int)Texts.DialogueName).text = speakerName;
+        GetImage((int)Images.DialogueNextImage).gameObject.SetActive(false);
+
+        if (portrait != null)
+        {
+            var portraitImage = GetImage((int)Images.CharacterImage);
+            portraitImage.sprite = portrait;
+            _animator.EnterPortrait(portraitImage);
+            _animator.SetPortraitSpeaking(portraitImage, true);
+        }
+
+        var inFrame = GetObject((int)GameObjects.In_Frame).GetComponent<RectTransform>();
+        _animator.OpenBox(inFrame, () => ShowLine(_lineIndex));
+    }
+
+    void ShowLine(int index)
+    {
+        _isTypingDone = false;
+        GetImage((int)Images.DialogueNextImage).gameObject.SetActive(false);
+
+        string content = Managers.Game.Language == Language.Korean
+            ? _lines[index].Kor
+            : _lines[index].Eng;
+
+        Debug.Log($"[Dialogue] ShowLine({index}/{_lines.Count - 1}): {content}");
+
+        _animator.PlayTyping(
+            GetText((int)Texts.DialogueText),
+            content,
+            DialogueEmotion.Normal,
+            onComplete: () =>
+            {
+                _isTypingDone = true;
+                bool isLast = _lineIndex >= _lines.Count - 1;
+                GetImage((int)Images.DialogueNextImage).gameObject.SetActive(!isLast);
+            }
+        );
     }
 
     void OnClickTextBoxDialogueFrame()
     {
-        // TODO : 글자가 다안나오면 한번에 다 나오기 -> DialogueNextImage 켜기
-        // 글자가 다 나오면 다음 글자 시작
+        Debug.Log($"[Dialogue] Click - isTypingDone:{_isTypingDone}, lineIndex:{_lineIndex}, total:{_lines?.Count}");
 
+        if (!_isTypingDone)
+        {
+            _animator.SkipTyping(GetText((int)Texts.DialogueText));
+            return;
+        }
+
+        _lineIndex++;
+
+        if (_lineIndex < _lines.Count)
+        {
+            ShowLine(_lineIndex);
+        }
+        else
+        {
+            Managers.UI.ClosePopupUI();
+            _onFinished?.Invoke();
+        }
     }
-
-    ///
-    /// Addressable에서 Sprites그룹에 속한 것들을 보고 그 이름의 마지막에 .sprite가 붙어있지 않으면 붙게해주는 스크립트를 생성해줘.
-    ///
-
 }
