@@ -184,7 +184,7 @@ public class PrefabEnumGenerator : EditorWindow
 
         foreach (char c in name)
         {
-            if (char.IsLetterOrDigit(c))
+            if (char.IsLetterOrDigit(c) || c == '_')
             {
                 sb.Append(nextUpper ? char.ToUpper(c) : c);
                 nextUpper = false;
