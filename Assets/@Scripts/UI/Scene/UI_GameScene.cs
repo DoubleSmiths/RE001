@@ -389,6 +389,7 @@ public class UI_GameScene : UI_Scene
     void OnClickEquipment()
     {
         // TODO: UI_EquipmentPopup 열기
+        Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo();
     }
 
     void OnClickSkill()

@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b6e983b924aaf047aa32077ea08ebcc
+    m_Address: UI_InvSlot
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96ae37e6a6536ad4b8fca28166b0de80
     m_Address: UI_DialoguePopup
     m_ReadOnly: 0
@@ -41,6 +47,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7c37953d793659409cd1df65f369a36
     m_Address: UI_SettingPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce935eb8a4c100140acd862a97bca16e
+    m_Address: UI_InventoryPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
