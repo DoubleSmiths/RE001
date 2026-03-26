@@ -65,6 +65,11 @@ public class UI_ItemPopup : UI_Popup
 
     #endregion
 
+    private void Awake()
+    {
+        Init();
+    }
+
     public override bool Init()
     {
         if (base.Init() == false)
@@ -75,7 +80,20 @@ public class UI_ItemPopup : UI_Popup
         BindText(typeof(Texts));
         BindObject(typeof(GameObjects));
 
+        GetButton((int)Buttons.ItemPopupBackground).gameObject.BindEvent(OnClickItemPopupBackground);
+
         return true;
+    }
+
+
+    public void SetInfo()
+    {
+
+    }
+
+    void OnClickItemPopupBackground()
+    {
+        ClosePopupUI();
     }
 
 }

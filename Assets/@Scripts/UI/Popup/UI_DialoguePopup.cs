@@ -93,6 +93,9 @@ public class UI_DialoguePopup : UI_Popup
             _animator.SetPortraitSpeaking(portraitImage, true);
         }
 
+        // For Test
+        GetImage((int)Images.CharacterImage).gameObject.GetComponent<Animator>().Play("recep_normal");
+
         var inFrame = GetObject((int)GameObjects.In_Frame).GetComponent<RectTransform>();
         _animator.OpenBox(inFrame, () => ShowLine(_lineIndex));
     }

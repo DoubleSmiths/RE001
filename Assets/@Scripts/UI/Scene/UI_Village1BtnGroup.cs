@@ -269,6 +269,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                  groupKey: "GuildQuest1Text",
                  speakerName: "접수원 아가씨",
                  portrait: null,
-                 onFinished: () => Debug.Log("대화 종료"));
+                 onFinished: () => { Managers.UI.ShowPopupUI<UI_ItemPopup>(); }); // TODO : 현재 상황에 맞는 이벤트로 행동.
+
+
     }
 }
