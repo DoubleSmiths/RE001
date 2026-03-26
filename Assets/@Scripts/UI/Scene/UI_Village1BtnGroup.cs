@@ -38,7 +38,6 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         TempButton2,
         TravelButton,
         Village1GuildTalkButton,
-        Village1GuildQuestButton,
         Village1GuildExitButton,
         Village1AlchemyTalkButton,
         CustomOrderButton,
@@ -54,7 +53,6 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1GuildVFX,
         Village1AlchemyVFX_Sub1,
         MonasteryVFX_Sub1,
-        Village1TravelQuestVFX,
         Village1GuildBtnGroup,
         Village1GuildTalkVFX,
         Village1AlchemyBtnGroup,
@@ -127,9 +125,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1GuildVFX]));
         GetObject((int)GameObjects.Village1AlchemyVFX_Sub1).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1AlchemyVFX_Sub1]));
         GetObject((int)GameObjects.MonasteryVFX_Sub1).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.MonasteryVFX_Sub1]));
-        GetObject((int)GameObjects.Village1TravelQuestVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1TravelQuestVFX]));
-
-        GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.AlchemyButtonNewTxt]));
+GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.AlchemyButtonNewTxt]));
         GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.MonasteryButtonNewTxt]));
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.TravelButtonNewTxt]));
 

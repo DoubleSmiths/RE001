@@ -39,15 +39,8 @@ public class Define
         Epic,
     }
 
-    public enum QuestType
-    {
-        KillMonster,
-        ReachArea,
-        GetItem,
-        TalkNpc,
-    }
-
     public enum SkillCategory
+public enum SkillCategory
     {
         Talent,
         Memory,

@@ -70,10 +70,7 @@ public class GameData
     public List<MinMonSaveData> OwnedMinMons    = new List<MinMonSaveData>();
     public int                  CompanionMinMonId = -1;
 
-    // 퀘스트 / 해금
-    public List<int>    CompletedQuestIds    = new List<int>();
-    public List<string> UnlockedTabs         = new List<string>();
-    public List<int>    UnlockedAreaIds      = new List<int>();
+    // 해금
     public List<int>    ActivationManager    = new List<int>( new int[Enum.GetValues(typeof(ActivationKey)).Length]);
 
     // 마물 도감
@@ -144,10 +141,7 @@ public class GameManager
         set { _gameData.CompanionMinMonId = value; SaveGame(); }
     }
 
-    // ── 퀘스트 / 해금 ──
-    public List<int>    CompletedQuestIds    => _gameData.CompletedQuestIds;
-    public List<string> UnlockedTabs         => _gameData.UnlockedTabs;
-    public List<int>    UnlockedAreaIds      => _gameData.UnlockedAreaIds;
+    // ── 해금 ──
     public List<int> ActivationManager
     {
         get { return _gameData.ActivationManager; }

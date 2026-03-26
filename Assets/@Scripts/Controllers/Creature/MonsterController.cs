@@ -86,9 +86,6 @@ public class MonsterController : CreatureController
             _target.GainExp(RewardExp);
         }
 
-        // 퀘스트 알림
-        Managers.Quest.OnMonsterKilled(DataId);
-
         // 사망 연출 후 풀 반환
         transform.DOScale(Vector3.zero, 0.3f)
             .SetEase(Ease.InBack)

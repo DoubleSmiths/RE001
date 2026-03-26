@@ -113,9 +113,6 @@ public class UI_GameScene : UI_Scene
         // Fade
         //FadeInOut(GetImage((int)Images.ForFadeImage));
 
-        // 퀘스트 이벤트
-        Managers.Quest.OnTabUnlocked += OnTabUnlocked;
-
         // TODO : 퀘스트가 있을 때는 SetActive(true)로 설정
         GetObject((int)GameObjects.QuestFollow).gameObject.SetActive(false);
 
@@ -132,8 +129,6 @@ public class UI_GameScene : UI_Scene
     {
         base.OnDestroy();
 
-        if (Managers.Quest != null)
-            Managers.Quest.OnTabUnlocked -= OnTabUnlocked;
         if (Managers.Game != null)
         {
             Managers.Game.OnResourceChanged -= RefreshCurrency;
@@ -281,11 +276,11 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshTabLocks()
     {
-        SetTabInteractable(Buttons.InventoryButton,  Managers.Quest.IsTabUnlocked(TabType.Bag.ToString()));
-        SetTabInteractable(Buttons.PotionButton,     Managers.Quest.IsTabUnlocked(TabType.Potion.ToString()));
-        SetTabInteractable(Buttons.EquipmentButton,  Managers.Quest.IsTabUnlocked(TabType.Equipment.ToString()));
-        SetTabInteractable(Buttons.SkillButton,      Managers.Quest.IsTabUnlocked(TabType.Skill.ToString()));
-        SetTabInteractable(Buttons.BestiaryButton,   Managers.Quest.IsTabUnlocked(TabType.Bestiary.ToString()));
+        SetTabInteractable(Buttons.InventoryButton,  true);
+        SetTabInteractable(Buttons.PotionButton,     true);
+        SetTabInteractable(Buttons.EquipmentButton,  true);
+        SetTabInteractable(Buttons.SkillButton,      true);
+        SetTabInteractable(Buttons.BestiaryButton,   true);
     }
 
     void SetTabInteractable(Buttons btn, bool interactable)
@@ -311,11 +306,6 @@ public class UI_GameScene : UI_Scene
                 GetImage((int)Images.BestiaryBtnNewIcon).gameObject.SetActive(false);
                 break;
         }
-    }
-
-    void OnTabUnlocked(string tabName)
-    {
-        RefreshTabLocks();
     }
 
     // ────────────────────────────────────────

@@ -16,8 +16,7 @@ public class DataManager
     public Dictionary<int, SkillData>         SkillDic          { get; private set; } = new Dictionary<int, SkillData>();
     public Dictionary<int, ItemData>          ItemDic           { get; private set; } = new Dictionary<int, ItemData>();
     public Dictionary<int, AreaData>          AreaDic           { get; private set; } = new Dictionary<int, AreaData>();
-    public Dictionary<int, QuestData>         QuestDic          { get; private set; } = new Dictionary<int, QuestData>();
-    public Dictionary<int, DialogueData>      DialogueDic       { get; private set; } = new Dictionary<int, DialogueData>();
+public Dictionary<int, DialogueData>      DialogueDic       { get; private set; } = new Dictionary<int, DialogueData>();
     public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
     public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
     public Dictionary<int, CraftRecipeData>   CraftRecipeDic    { get; private set; } = new Dictionary<int, CraftRecipeData>();
@@ -33,8 +32,7 @@ public class DataManager
         //SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
         //ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("ItemData").MakeDict();
         //AreaDic           = LoadJson<AreaDataLoader,          int,    AreaData>           ("AreaData").MakeDict();
-        //QuestDic          = LoadJson<QuestDataLoader,         int,    QuestData>          ("QuestData").MakeDict();
-        //DialogueDic       = LoadJson<DialogueDataLoader,      int,    DialogueData>       ("DialogueData").MakeDict();
+//DialogueDic       = LoadJson<DialogueDataLoader,      int,    DialogueData>       ("DialogueData").MakeDict();
         //MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
         //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();

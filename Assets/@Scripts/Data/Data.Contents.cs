@@ -154,7 +154,6 @@ namespace Data
         public string Description;
         public string BackgroundLabel;
         public List<int> MonsterIds = new List<int>();
-        public int UnlockQuestId;
     }
 
     [Serializable]
@@ -171,41 +170,11 @@ namespace Data
     }
     #endregion
 
-    #region QuestData
-    [Serializable]
-    public class QuestData
-    {
-        public int DataId;
-        public QuestType Type;
-        public int TargetId;
-        public int TargetCount;
-        public int RewardGold;
-        public int RewardCrystal;
-        public string UnlockTabName;
-        public int UnlockAreaId;
-        public int NextQuestId;
-    }
-
-    [Serializable]
-    public class QuestDataLoader : ILoader<int, QuestData>
-    {
-        public List<QuestData> quests = new List<QuestData>();
-        public Dictionary<int, QuestData> MakeDict()
-        {
-            var dict = new Dictionary<int, QuestData>();
-            foreach (var item in quests)
-                dict.Add(item.DataId, item);
-            return dict;
-        }
-    }
-    #endregion
-
-    #region DialogueData
+#region DialogueData
     [Serializable]
     public class DialogueLine
     {
         public string Text;
-        public int UnlockQuestId;
     }
 
     [Serializable]
@@ -303,7 +272,6 @@ namespace Data
         public int DataId;
         public CraftCategory Category;
         public int ResultItemId;
-        public int UnlockQuestId;
         public List<CraftMaterial> Materials = new List<CraftMaterial>();
     }
 
