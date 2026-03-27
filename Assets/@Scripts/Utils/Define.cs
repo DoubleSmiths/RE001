@@ -40,7 +40,6 @@ public class Define
     }
 
     public enum SkillCategory
-public enum SkillCategory
     {
         Talent,
         Memory,
@@ -154,28 +153,28 @@ public enum SkillCategory
     {
         // ── GlobalButtons ──
         public const string TravelBtnText = "TravelBtnText";
-        public const string ExitBtnText   = "ExitBtnText";
-        public const string TalkBtnText   = "TalkBtnText";
+        public const string ExitBtnText = "ExitBtnText";
+        public const string TalkBtnText = "TalkBtnText";
 
         // ── ButtomButtons (하단 탭) ──
-        public const string CharacterText  = "CharacterText";
-        public const string InventoryText  = "InventoryText";
-        public const string PotionText     = "PotionText";
-        public const string EquipmentText  = "EquipmentText";
-        public const string SkillText      = "SkillText";
-        public const string BestiaryText   = "BestiaryText";
+        public const string CharacterText = "CharacterText";
+        public const string InventoryText = "InventoryText";
+        public const string PotionText = "PotionText";
+        public const string EquipmentText = "EquipmentText";
+        public const string SkillText = "SkillText";
+        public const string BestiaryText = "BestiaryText";
 
         // ── TownAsdalButtons (마을 버튼) ──
-        public const string GuildText     = "GuildText";
-        public const string AlchemyText   = "AlchemyText";
+        public const string GuildText = "GuildText";
+        public const string AlchemyText = "AlchemyText";
         public const string MonasteryText = "MonasteryText";
 
         // ── SettingPopup ──
-        public const string SettingBGMText    = "SettingBGMText";
-        public const string SettingSFXText    = "SettingSFXText";
+        public const string SettingBGMText = "SettingBGMText";
+        public const string SettingSFXText = "SettingSFXText";
         public const string SettingEffectText = "SettingEffectText";
-        public const string SettingPopupText  = "SettingPopupText";
-        public const string SettingShakeText  = "SettingShakeText";
+        public const string SettingPopupText = "SettingPopupText";
+        public const string SettingShakeText = "SettingShakeText";
     }
     #endregion
 
