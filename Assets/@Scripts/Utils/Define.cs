@@ -144,6 +144,27 @@ public class Define
         Village1TravelQuestVFX,
         TravelButtonNewTxt,
     }
+
+    public enum QuestCompleteType
+    {
+        ITEM_ACQUIRE,
+        ITEM_COUNT,
+        ANIM_END,
+        MULTI,
+    }
+
+    public enum QuestUnlockType
+    {
+        UI_BUTTON,
+        SUBQUEST_START,
+    }
+
+    public enum QuestConditionType
+    {
+        BTN_CLICK,
+        ITEM_ACQUIRE,
+        ITEM_COUNT,
+    }
     #endregion
 
     #region LocalizeKey

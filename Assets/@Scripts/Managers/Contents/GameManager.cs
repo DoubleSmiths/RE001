@@ -75,6 +75,10 @@ public class GameData
 
     // 마물 도감
     public List<int> DiscoveredMonsterIds = new List<int>();
+
+    // 퀘스트
+    public int          CurrentQuestID = 1;
+    public List<string> UnlockedBtnIds = new List<string>();
 }
 
 // ──────────────────────────────────────────────
@@ -158,11 +162,31 @@ public class GameManager
         set { PlayerPrefs.SetInt("Language", (int)value); OnLanguageChanged?.Invoke(); }
     }
 
+    // ── 퀘스트 ──
+    public int CurrentQuestID
+    {
+        get => _gameData.CurrentQuestID;
+        set { _gameData.CurrentQuestID = value; }
+    }
+
+    public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;
+
+    public void AddUnlockedBtn(string btnId)
+    {
+        if (!_gameData.UnlockedBtnIds.Contains(btnId))
+        {
+            _gameData.UnlockedBtnIds.Add(btnId);
+            SaveGame();
+        }
+    }
+
     // ── 이벤트 ──
     public event Action OnLanguageChanged;
     public event Action OnResourceChanged;
     public event Action EquipInfoChanged;
     public event Action<Equipment> OnEquipmentForged;
+    public event Action<int> OnItemAdded;    // dataId
+    public event Action<int> OnItemChanged;  // dataId (추가/제거 모두)
 
     // ────────────────────────────────────────
     //  Init
@@ -247,6 +271,8 @@ public class GameManager
         else
             Inventory.Add(new InventoryItem { DataId = dataId, Count = count });
         SaveGame();
+        OnItemAdded?.Invoke(dataId);
+        OnItemChanged?.Invoke(dataId);
     }
 
     public void RemoveItem(int dataId, int count = 1)
@@ -257,6 +283,7 @@ public class GameManager
         if (existing.Count <= 0)
             Inventory.Remove(existing);
         SaveGame();
+        OnItemChanged?.Invoke(dataId);
     }
 
     public bool HasItem(int dataId, int count = 1)

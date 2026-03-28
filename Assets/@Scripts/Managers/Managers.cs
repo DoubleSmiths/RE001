@@ -9,11 +9,13 @@ public class Managers : MonoBehaviour
     GameManager  _game   = new GameManager();
     ObjectManager _object = new ObjectManager();
     MinMonManager _minMon = new MinMonManager();
+    QuestManager  _quest  = new QuestManager();
     //TimeManager   _time;
 
     public static GameManager   Game   { get { return Instance?._game; } }
     public static ObjectManager Object { get { return Instance?._object; } }
     public static MinMonManager MinMon { get { return Instance?._minMon; } }
+    public static QuestManager  Quest  { get { return Instance?._quest; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 

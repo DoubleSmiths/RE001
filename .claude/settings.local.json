@@ -21,7 +21,8 @@
       "Bash(unzip -l DialogueData001.xlsx)",
       "Bash(unzip -q \"C:/stopresent/Unity/RE001/Assets/@Resources/Data/Excel/DialogueData001.xlsx\")",
       "Bash(rm -rf *)",
-      "Bash(unzip -q \"C:/stopresent/Unity/RE001/Assets/@Resources/Data/Excel/LocalizationData001.xlsx\")"
+      "Bash(unzip -q \"C:/stopresent/Unity/RE001/Assets/@Resources/Data/Excel/LocalizationData001.xlsx\")",
+      "Bash(cd:*)"
     ]
   }
 }

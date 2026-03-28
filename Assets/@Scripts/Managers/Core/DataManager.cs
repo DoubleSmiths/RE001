@@ -23,6 +23,10 @@ public Dictionary<int, DialogueData>      DialogueDic       { get; private set; 
     public Dictionary<int, LevelData>                    LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
     public Dictionary<string, DialogueScriptGroup>       DialogueScriptDic { get; private set; } = new Dictionary<string, DialogueScriptGroup>();
     public Dictionary<string, LocalizationEntry>         LocalizationDic   { get; private set; } = new Dictionary<string, LocalizationEntry>();
+    public Dictionary<int, QuestData>                QuestDic          { get; private set; } = new Dictionary<int, QuestData>();
+    public Dictionary<int, List<QuestConditionData>> QuestConditionDic { get; private set; } = new Dictionary<int, List<QuestConditionData>>();
+    public Dictionary<int, List<QuestNotifyData>>    QuestNotifyDic    { get; private set; } = new Dictionary<int, List<QuestNotifyData>>();
+    public Dictionary<int, List<QuestUnlockData>>    QuestUnlockDic    { get; private set; } = new Dictionary<int, List<QuestUnlockData>>();
 
     public void Init()
     {
@@ -39,6 +43,10 @@ public Dictionary<int, DialogueData>      DialogueDic       { get; private set; 
         //LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
         DialogueScriptDic = LoadJson<DialogueScriptLoader,    string, DialogueScriptGroup>("DialogueScriptData").MakeDict();
         LocalizationDic   = LoadJson<LocalizationLoader,      string, LocalizationEntry>  ("LocalizationData").MakeDict();
+        QuestDic          = LoadJson<QuestDataLoader,      int, QuestData>                ("QuestData").MakeDict();
+        QuestConditionDic = LoadJson<QuestConditionLoader, int, List<QuestConditionData>> ("QuestConditionData").MakeDict();
+        QuestNotifyDic    = LoadJson<QuestNotifyLoader,    int, List<QuestNotifyData>>    ("QuestNotifyData").MakeDict();
+        QuestUnlockDic    = LoadJson<QuestUnlockLoader,    int, List<QuestUnlockData>>    ("QuestUnlockData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

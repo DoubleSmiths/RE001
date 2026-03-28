@@ -430,4 +430,118 @@ namespace Data
         }
     }
     #endregion
+
+    #region QuestData
+
+    [Serializable]
+    public class QuestData
+    {
+        public int    QuestID;
+        public string QuestName;
+        public QuestCompleteType CompleteType;
+        public string CompleteTarget;  // ITEM_ACQUIRE/ITEM_COUNT: int DataId as string | ANIM_END: animId string | MULTI: empty
+        public int    CompleteCount;   // ITEM_COUNT only
+        public string FollowItemID;    // int DataId as string, empty = no Follow UI
+        public string FollowItemName;  // display text
+        public int    FollowCount;
+        public string AnimationID;     // empty = no animation on quest start
+        public bool   AnimBlocking;
+        public string DialogueID;      // empty = use NPC default dialogue
+    }
+
+    [Serializable]
+    public class QuestDataLoader : ILoader<int, QuestData>
+    {
+        public List<QuestData> quests = new List<QuestData>();
+        public Dictionary<int, QuestData> MakeDict()
+        {
+            var dict = new Dictionary<int, QuestData>();
+            foreach (var q in quests)
+                dict[q.QuestID] = q;
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class QuestConditionData
+    {
+        public int    QuestID;
+        public int    Order;
+        public QuestConditionType ConditionType;
+        public string Target;  // BTN_CLICK: btnId | ITEM_ACQUIRE/ITEM_COUNT: int DataId as string
+        public int    Count;   // ITEM_COUNT only
+    }
+
+    [Serializable]
+    public class QuestConditionLoader : ILoader<int, List<QuestConditionData>>
+    {
+        public List<QuestConditionData> conditions = new List<QuestConditionData>();
+        public Dictionary<int, List<QuestConditionData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<QuestConditionData>>();
+            foreach (var c in conditions)
+            {
+                if (!dict.ContainsKey(c.QuestID))
+                    dict[c.QuestID] = new List<QuestConditionData>();
+                dict[c.QuestID].Add(c);
+            }
+            foreach (var list in dict.Values)
+                list.Sort((a, b) => a.Order.CompareTo(b.Order));
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class QuestNotifyData
+    {
+        public int    QuestID;
+        public int    Order;
+        public string BtnID;
+    }
+
+    [Serializable]
+    public class QuestNotifyLoader : ILoader<int, List<QuestNotifyData>>
+    {
+        public List<QuestNotifyData> notifies = new List<QuestNotifyData>();
+        public Dictionary<int, List<QuestNotifyData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<QuestNotifyData>>();
+            foreach (var n in notifies)
+            {
+                if (!dict.ContainsKey(n.QuestID))
+                    dict[n.QuestID] = new List<QuestNotifyData>();
+                dict[n.QuestID].Add(n);
+            }
+            foreach (var list in dict.Values)
+                list.Sort((a, b) => a.Order.CompareTo(b.Order));
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class QuestUnlockData
+    {
+        public int    QuestID;
+        public QuestUnlockType UnlockType;
+        public string TargetID;
+    }
+
+    [Serializable]
+    public class QuestUnlockLoader : ILoader<int, List<QuestUnlockData>>
+    {
+        public List<QuestUnlockData> unlocks = new List<QuestUnlockData>();
+        public Dictionary<int, List<QuestUnlockData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<QuestUnlockData>>();
+            foreach (var u in unlocks)
+            {
+                if (!dict.ContainsKey(u.QuestID))
+                    dict[u.QuestID] = new List<QuestUnlockData>();
+                dict[u.QuestID].Add(u);
+            }
+            return dict;
+        }
+    }
+
+    #endregion
 }

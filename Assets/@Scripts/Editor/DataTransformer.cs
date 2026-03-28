@@ -9,6 +9,7 @@ using UnityEditor;
 using UnityEngine;
 using ExcelDataReader;
 using System.Data;
+using static Define;
 
 public class DataTransformer : EditorWindow
 {
@@ -31,6 +32,7 @@ public class DataTransformer : EditorWindow
         ParseScriptData();
         ParseDialogueScriptData();
         ParseLocalizationData();
+        ParseQuestData();
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExcel 완료");
     }
@@ -179,6 +181,99 @@ public class DataTransformer : EditorWindow
         }
 
         WriteJson("LocalizationData", loader);
+    }
+
+    // -------------------------------------------------------------------
+    // QuestDataSheet.xlsx
+    //   시트: Quest | Quest_Condition | Quest_Notify | Quest_Unlock
+    //   Row 0: 헤더, Row 1+: 데이터. 첫 컬럼 비어있으면 스킵.
+    //   _로 시작하는 시트(_Ref 등)는 무시.
+    // -------------------------------------------------------------------
+    static void ParseQuestData()
+    {
+        string path = $"{Application.dataPath}{EXCEL_PATH}/QuestData.xlsx";
+        var sheets = ReadAllXlsxSheets(path);
+
+        var questLoader     = new QuestDataLoader();
+        var conditionLoader = new QuestConditionLoader();
+        var notifyLoader    = new QuestNotifyLoader();
+        var unlockLoader    = new QuestUnlockLoader();
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            if (sheetName.StartsWith("_")) continue;
+
+            for (int y = 1; y < rows.Count; y++)
+            {
+                var row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+
+                switch (sheetName)
+                {
+                    case "Quest":
+                    {
+                        int i = 0;
+                        var d = new QuestData();
+                        d.QuestID        = ConvertValue<int>(row[i++]);
+                        d.QuestName      = ConvertValue<string>(row[i++]);
+                        d.CompleteType   = ConvertValue<QuestCompleteType>(row[i++]);
+                        d.CompleteTarget = i < row.Count ? row[i++] : "";
+                        d.CompleteCount  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.FollowItemID   = i < row.Count ? row[i++] : "";
+                        d.FollowItemName = i < row.Count ? row[i++] : "";
+                        d.FollowCount    = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.AnimationID    = i < row.Count ? row[i++] : "";
+                        d.AnimBlocking   = i < row.Count && row[i++].ToUpper() == "TRUE";
+                        d.DialogueID     = i < row.Count ? row[i++] : "";
+                        questLoader.quests.Add(d);
+                        break;
+                    }
+                    case "Quest_Condition":
+                    {
+                        int i = 0;
+                        var d = new QuestConditionData();
+                        d.QuestID       = ConvertValue<int>(row[i++]);
+                        d.Order         = ConvertValue<int>(row[i++]);
+                        d.ConditionType = ConvertValue<QuestConditionType>(row[i++]);
+                        d.Target        = i < row.Count ? row[i++] : "";
+                        d.Count         = 0;
+                        if (d.ConditionType == QuestConditionType.ITEM_COUNT && d.Target.Contains(":"))
+                        {
+                            var parts = d.Target.Split(':');
+                            d.Target = parts[0];
+                            d.Count  = ConvertValue<int>(parts[1]);
+                        }
+                        conditionLoader.conditions.Add(d);
+                        break;
+                    }
+                    case "Quest_Notify":
+                    {
+                        int i = 0;
+                        var d = new QuestNotifyData();
+                        d.QuestID = ConvertValue<int>(row[i++]);
+                        d.Order   = ConvertValue<int>(row[i++]);
+                        d.BtnID   = i < row.Count ? row[i++] : "";
+                        notifyLoader.notifies.Add(d);
+                        break;
+                    }
+                    case "Quest_Unlock":
+                    {
+                        int i = 0;
+                        var d = new QuestUnlockData();
+                        d.QuestID    = ConvertValue<int>(row[i++]);
+                        d.UnlockType = ConvertValue<QuestUnlockType>(row[i++]);
+                        d.TargetID   = i < row.Count ? row[i++] : "";
+                        unlockLoader.unlocks.Add(d);
+                        break;
+                    }
+                }
+            }
+        }
+
+        WriteJson("QuestData",          questLoader);
+        WriteJson("QuestConditionData", conditionLoader);
+        WriteJson("QuestNotifyData",    notifyLoader);
+        WriteJson("QuestUnlockData",    unlockLoader);
     }
 
     // -------------------------------------------------------------------
