@@ -57,6 +57,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1GuildTalkVFX,
         Village1AlchemyBtnGroup,
         Village1MonasteryBtnGroup,
+        Village1GuildQuestVFX,
+        ExitQuestVFX,
+
     }
 
     #endregion
@@ -73,16 +76,20 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetImage((int)Images.GuildButtonIcon).gameObject.BindEvent(OnClickGuild);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.BindEvent(OnClickAlchemy);
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
-        GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() => {
-            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
-            _gameScene.FadeInOut();
-            OnClickMain(); });
-        GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() => {
+        GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() =>
+        {
             GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
             _gameScene.FadeInOut();
             OnClickMain();
         });
-        GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(() => {
+        GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() =>
+        {
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+            _gameScene.FadeInOut();
+            OnClickMain();
+        });
+        GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(() =>
+        {
             GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
             _gameScene.FadeInOut();
             OnClickMain();
@@ -90,6 +97,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
+        RefreshNotify();
 
         SetInfo();
 
@@ -127,7 +135,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1GuildVFX]));
         GetObject((int)GameObjects.Village1AlchemyVFX_Sub1).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1AlchemyVFX_Sub1]));
         GetObject((int)GameObjects.MonasteryVFX_Sub1).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.MonasteryVFX_Sub1]));
-GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.AlchemyButtonNewTxt]));
+        GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.AlchemyButtonNewTxt]));
         GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.MonasteryButtonNewTxt]));
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.TravelButtonNewTxt]));
 
@@ -273,17 +281,21 @@ GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.
                      Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(9001);  // 아이템 획득 팝업
                  });  // TODO : 현재 상황에 맞는 이벤트로 행동.
 
-
-
     }
 
     void RefreshNotify()
     {
+        // TODO : UI_Village1BtnGroup에 있는 느낌표 오브젝트 다 연결하기.
         var list = Managers.Quest.GetCurrentNotifyList();
+        // TODO Define으로 만들어서 오타 확률 줄이자.
         bool guildNotify = list.Exists(n => n.BtnID == "BTN_GUILD");
         bool talkNotify = list.Exists(n => n.BtnID == "BTN_GUILD_TALK");
+        bool test1 = list.Exists(n => n.BtnID == "BTN_EXIT");
+        bool test2 = list.Exists(n => n.BtnID == "BTN_EXIT");
 
-        GetObject((int)GameObjects.Village1GuildVFX).SetActive(guildNotify);
-        GetObject((int)GameObjects.Village1GuildTalkVFX).SetActive(talkNotify);
+        GetObject((int)GameObjects.Village1GuildVFX)?.SetActive(guildNotify);
+        GetObject((int)GameObjects.Village1GuildTalkVFX)?.SetActive(talkNotify);
+        GetObject((int)GameObjects.Village1GuildQuestVFX)?.SetActive(test1);
+        GetObject((int)GameObjects.ExitQuestVFX)?.SetActive(test2);
     }
 }

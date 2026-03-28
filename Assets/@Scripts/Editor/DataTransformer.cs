@@ -32,6 +32,7 @@ public class DataTransformer : EditorWindow
         ParseScriptData();
         ParseDialogueScriptData();
         ParseLocalizationData();
+        ParseItemData();
         ParseQuestData();
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExcel 완료");
@@ -455,5 +456,37 @@ public class DataTransformer : EditorWindow
             return new List<T>();
 
         return value.Split('&').Select(x => ConvertValue<T>(x)).ToList();
+    }
+
+    // -------------------------------------------------------------------
+    // ItemData.xlsx
+    //   Row 0: 헤더 (DataId, Name, Grade, Description, SpriteName, FoundLocation)
+    //   Row 1+: 데이터. 첫 컬럼 비어있으면 스킵.
+    // -------------------------------------------------------------------
+    static void ParseItemData()
+    {
+        ItemDataLoader loader = new ItemDataLoader();
+
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/ItemData.xlsx");
+
+        for (int y = 1; y < rows.Count; y++)
+        {
+            List<string> row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0]))
+                continue;
+
+            int i = 0;
+            ItemData d = new ItemData();
+            d.DataId        = ConvertValue<int>(row[i++]);
+            d.Name          = i < row.Count ? row[i++] : "";
+            d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Common;
+            d.Description   = i < row.Count ? row[i++] : "";
+            d.SpriteName    = i < row.Count ? row[i++] : "";
+            d.FoundLocation = i < row.Count ? row[i++] : "";
+
+            loader.items.Add(d);
+        }
+
+        WriteJson("ItemData", loader);
     }
 }
