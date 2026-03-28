@@ -21,8 +21,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a7b02366bb53da4d97d15c18259ec17
+    m_Address: QuestConditionData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b7322019b4ba4ae48bfd1c320dfc1565
     m_Address: PlayerStatusData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb0d3187a8da6744ea1939b02bc38166
+    m_Address: QuestUnlockData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c738a4bfee0d2a7448f228018cc14ceb
+    m_Address: QuestData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -35,6 +53,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d579df4a38905b4458efa418ca239009
     m_Address: DialogueScriptData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e39a1612ac08d6f42884a4b8cbaba0d5
+    m_Address: QuestNotifyData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

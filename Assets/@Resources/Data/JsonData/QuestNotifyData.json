@@ -1,0 +1,89 @@
+﻿{
+  "notifies": [
+    {
+      "QuestID": 1,
+      "Order": 1,
+      "BtnID": "BTN_GUILD"
+    },
+    {
+      "QuestID": 1,
+      "Order": 2,
+      "BtnID": "BTN_GUILD_TALK"
+    },
+    {
+      "QuestID": 2,
+      "Order": 1,
+      "BtnID": "BTN_EXIT"
+    },
+    {
+      "QuestID": 3,
+      "Order": 1,
+      "BtnID": "BTN_EXIT"
+    },
+    {
+      "QuestID": 3,
+      "Order": 2,
+      "BtnID": "BTN_JOURNEY"
+    },
+    {
+      "QuestID": 3,
+      "Order": 3,
+      "BtnID": "BTN_EXPLORE"
+    },
+    {
+      "QuestID": 3,
+      "Order": 4,
+      "BtnID": "BTN_MAP_BREEZING_WIND_FOREST"
+    },
+    {
+      "QuestID": 3,
+      "Order": 5,
+      "BtnID": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE"
+    },
+    {
+      "QuestID": 4,
+      "Order": 1,
+      "BtnID": "BTN_BATTLE_SCENE_JOURNEY"
+    },
+    {
+      "QuestID": 4,
+      "Order": 2,
+      "BtnID": "BTN_GUILD"
+    },
+    {
+      "QuestID": 4,
+      "Order": 3,
+      "BtnID": "BTN_GUILD_QUEST"
+    },
+    {
+      "QuestID": 5,
+      "Order": 1,
+      "BtnID": "BTN_EXIT"
+    },
+    {
+      "QuestID": 6,
+      "Order": 1,
+      "BtnID": "BTN_EXIT"
+    },
+    {
+      "QuestID": 6,
+      "Order": 2,
+      "BtnID": "BTN_JOURNEY"
+    },
+    {
+      "QuestID": 6,
+      "Order": 3,
+      "BtnID": "BTN_EXPLORE"
+    },
+    {
+      "QuestID": 6,
+      "Order": 4,
+      "BtnID": "BTN_MAP_BREEZING_WIND_FOREST"
+    },
+    {
+      "QuestID": 6,
+      "Order": 5,
+      "BtnID": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE"
+    }
+  ]
+}

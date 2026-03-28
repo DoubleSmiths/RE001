@@ -1,0 +1,82 @@
+﻿{
+  "quests": [
+    {
+      "QuestID": 1,
+      "QuestName": "협회 방문",
+      "CompleteType": 0,
+      "CompleteTarget": "ITEM_TEMP_PASS",
+      "CompleteCount": 1,
+      "FollowItemID": "",
+      "FollowItemName": "",
+      "FollowCount": 0,
+      "AnimationID": "",
+      "AnimBlocking": false,
+      "DialogueID": "GuildQuest1Text"
+    },
+    {
+      "QuestID": 2,
+      "QuestName": "여정 해금",
+      "CompleteType": 2,
+      "CompleteTarget": "ANIM_JOURNEY_UNLOCK",
+      "CompleteCount": 0,
+      "FollowItemID": "ITEM_JELLYPONG",
+      "FollowItemName": "젤리 퐁",
+      "FollowCount": 2,
+      "AnimationID": "ANIM_JOURNEY_UNLOCK",
+      "AnimBlocking": true,
+      "DialogueID": ""
+    },
+    {
+      "QuestID": 3,
+      "QuestName": "1급 모험가 퀘",
+      "CompleteType": 1,
+      "CompleteTarget": "ITEM_JELLYPONG",
+      "CompleteCount": 2,
+      "FollowItemID": "ITEM_JELLYPONG",
+      "FollowItemName": "젤리 퐁",
+      "FollowCount": 2,
+      "AnimationID": "",
+      "AnimBlocking": false,
+      "DialogueID": ""
+    },
+    {
+      "QuestID": 4,
+      "QuestName": "1급 모험가 완료 보고",
+      "CompleteType": 3,
+      "CompleteTarget": "",
+      "CompleteCount": 0,
+      "FollowItemID": "ITEM_JELLYPONG",
+      "FollowItemName": "젤리 퐁",
+      "FollowCount": 2,
+      "AnimationID": "",
+      "AnimBlocking": false,
+      "DialogueID": "GuildQuest2Text"
+    },
+    {
+      "QuestID": 5,
+      "QuestName": "연금공방 해금",
+      "CompleteType": 2,
+      "CompleteTarget": "ANIM_ALCHEMY_UNLOCK",
+      "CompleteCount": 0,
+      "FollowItemID": "ITEM_RABIJELLY",
+      "FollowItemName": "폴짝 젤리",
+      "FollowCount": 5,
+      "AnimationID": "ANIM_ALCHEMY_UNLOCK",
+      "AnimBlocking": true,
+      "DialogueID": ""
+    },
+    {
+      "QuestID": 6,
+      "QuestName": "2급 모험가 퀘",
+      "CompleteType": 1,
+      "CompleteTarget": "ITEM_RABIJELLY",
+      "CompleteCount": 5,
+      "FollowItemID": "ITEM_RABIJELLY",
+      "FollowItemName": "폴짝 젤리",
+      "FollowCount": 5,
+      "AnimationID": "",
+      "AnimBlocking": false,
+      "DialogueID": ""
+    }
+  ]
+}

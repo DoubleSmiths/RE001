@@ -1,0 +1,24 @@
+﻿{
+  "unlocks": [
+    {
+      "QuestID": 2,
+      "UnlockType": 0,
+      "TargetID": "BTN_BAG"
+    },
+    {
+      "QuestID": 2,
+      "UnlockType": 0,
+      "TargetID": "BTN_JOURNEY"
+    },
+    {
+      "QuestID": 5,
+      "UnlockType": 0,
+      "TargetID": "BTN_ALCHEMY"
+    },
+    {
+      "QuestID": 5,
+      "UnlockType": 1,
+      "TargetID": "SUBQUEST_1"
+    }
+  ]
+}

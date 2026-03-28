@@ -1,0 +1,18 @@
+﻿{
+  "conditions": [
+    {
+      "QuestID": 4,
+      "Order": 1,
+      "ConditionType": 0,
+      "Target": "BTN_GUILD_QUEST",
+      "Count": 0
+    },
+    {
+      "QuestID": 4,
+      "Order": 2,
+      "ConditionType": 1,
+      "Target": "ITEM_PASS_NORMAL",
+      "Count": 0
+    }
+  ]
+}
