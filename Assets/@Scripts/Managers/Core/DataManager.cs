@@ -34,7 +34,7 @@ public Dictionary<int, DialogueData>      DialogueDic       { get; private set; 
         //EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();
         //EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
         //SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
-        //ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("ItemData").MakeDict();
+        ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("ItemData").MakeDict();
         //AreaDic           = LoadJson<AreaDataLoader,          int,    AreaData>           ("AreaData").MakeDict();
 //DialogueDic       = LoadJson<DialogueDataLoader,      int,    DialogueData>       ("DialogueData").MakeDict();
         //MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();

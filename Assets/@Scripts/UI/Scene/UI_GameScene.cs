@@ -239,6 +239,7 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.BestiaryButtonText).text   = Localize(LocalizeKey.BestiaryText);
     }
 
+
     public void UpdateHP(float current, float max)
     {
         GetImage((int)Images.PlayerHPBarGuage).fillAmount = max > 0 ? current / max : 0f;

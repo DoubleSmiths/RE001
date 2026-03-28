@@ -89,6 +89,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         });
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
 
+        Managers.Quest.OnNotifyChanged += RefreshNotify;
+
         SetInfo();
 
         return true;
@@ -265,8 +267,23 @@ GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(IntToBool(Managers.
                  groupKey: "GuildQuest1Text",
                  speakerName: "접수원 아가씨",
                  portrait: null,
-                 onFinished: () => { Managers.UI.ShowPopupUI<UI_ItemPopup>(); }); // TODO : 현재 상황에 맞는 이벤트로 행동.
+                 onFinished: () =>
+                 {
+                     Managers.Game.AddItem(9001);          // 임시통행증 지급 → OnItemAdded 발행
+                     Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(9001);  // 아이템 획득 팝업
+                 });  // TODO : 현재 상황에 맞는 이벤트로 행동.
 
 
+
+    }
+
+    void RefreshNotify()
+    {
+        var list = Managers.Quest.GetCurrentNotifyList();
+        bool guildNotify = list.Exists(n => n.BtnID == "BTN_GUILD");
+        bool talkNotify = list.Exists(n => n.BtnID == "BTN_GUILD_TALK");
+
+        GetObject((int)GameObjects.Village1GuildVFX).SetActive(guildNotify);
+        GetObject((int)GameObjects.Village1GuildTalkVFX).SetActive(talkNotify);
     }
 }
