@@ -16,10 +16,10 @@ public class TextToTMPConverter
         Convert("UI_GameScene");
     }
 
-    [MenuItem("Tools/Convert Text to TMP in UI_GameScene_Legacy")]
+    [MenuItem("Tools/Convert Text to TMP UI_Test")]
     static void ConvertLegacyOnly()
     {
-        Convert("UI_GameScene_Legacy");
+        Convert("UI_Test");
     }
 
     static void Convert(string rootName)
