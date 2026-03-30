@@ -45,6 +45,10 @@ public abstract class UI_AreaBtnGroup : UI_Base
         //text.DOFade(1f, 2f).From(0.3f).SetEase(Ease.Linear);
         //go.transform.DOScale(1f, 0.1f).SetDelay(2.01f).SetEase(Ease.InOutBack);
 
+        // TODO : 애니메이션이 끝난 후에 버튼이 활성화되도록 설정
+         seq.OnComplete(() => go.GetComponent<Button>().interactable = true);
+        // TODO : 해금 되었습니다 팝업 띄우기
+
     }
 
     public void NameTextInAnim(RectTransform target)

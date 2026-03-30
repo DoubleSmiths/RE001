@@ -59,7 +59,10 @@ public class QuestManager
     {
         if (!TryGetCurrentQuest(out var quest)) return;
 
-        if (quest.CompleteType == QuestCompleteType.MULTI)
+        if (quest.CompleteType == QuestCompleteType.BTN_CLICK
+            && quest.CompleteTarget == btnId)
+            CompleteQuest(CurrentQuestID);
+        else if (quest.CompleteType == QuestCompleteType.MULTI)
             MarkMultiCondition(QuestConditionType.BTN_CLICK, btnId);
     }
 

@@ -16,8 +16,8 @@
     {
       "QuestID": 2,
       "QuestName": "여정 해금",
-      "CompleteType": 2,
-      "CompleteTarget": "ANIM_JOURNEY_UNLOCK",
+      "CompleteType": 4,
+      "CompleteTarget": "GUILD_EXIT_QUEST_VFX",
       "CompleteCount": 0,
       "FollowItemID": "1001",
       "FollowItemName": "젤리 퐁",

@@ -116,6 +116,8 @@ public class UI_GameScene : UI_Scene
         // TODO : 퀘스트가 있을 때는 SetActive(true)로 설정
         GetObject((int)GameObjects.QuestFollow).gameObject.SetActive(false);
 
+        Managers.Quest.OnBtnUnlocked += OnBtnUnlocked;
+
         SetInfo();
         RefreshTabLocks();
 
@@ -134,6 +136,9 @@ public class UI_GameScene : UI_Scene
             Managers.Game.OnResourceChanged -= RefreshCurrency;
             Managers.Game.OnLanguageChanged  -= RefreshTexts;
         }
+
+        if (Managers.Quest != null)
+            Managers.Quest.OnBtnUnlocked -= OnBtnUnlocked;
     }
 
     public void FadeInOut()
@@ -277,11 +282,21 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshTabLocks()
     {
-        SetTabInteractable(Buttons.InventoryButton,  true);
-        SetTabInteractable(Buttons.PotionButton,     true);
-        SetTabInteractable(Buttons.EquipmentButton,  true);
-        SetTabInteractable(Buttons.SkillButton,      true);
-        SetTabInteractable(Buttons.BestiaryButton,   true);
+        var unlocked = Managers.Game.UnlockedBtnIds;
+        SetTabInteractable(Buttons.InventoryButton, unlocked.Contains(UNLOCK_INVENTORY_BUTTON));
+        SetTabInteractable(Buttons.PotionButton,    false);
+        SetTabInteractable(Buttons.EquipmentButton, false);
+        SetTabInteractable(Buttons.SkillButton,     false);
+        SetTabInteractable(Buttons.BestiaryButton,  false);
+    }
+
+    void OnBtnUnlocked(string btnId)
+    {
+        if (btnId == UNLOCK_INVENTORY_BUTTON)
+        {
+            GetButton((int)Buttons.InventoryButton).interactable = true;
+            ShowNewBadge(TabType.Bag);
+        }
     }
 
     void SetTabInteractable(Buttons btn, bool interactable)
@@ -291,18 +306,24 @@ public class UI_GameScene : UI_Scene
         switch (btn)
         {
             case Buttons.InventoryButton:
+                GetButton((int)Buttons.InventoryButton).gameObject.SetActive(interactable);
                 GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(false);
+                GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(false);
                 break;
             case Buttons.PotionButton:
+                GetButton((int)Buttons.PotionButton).gameObject.SetActive(interactable);
                 GetText((int)Texts.PotionButtonNewTxt).gameObject.SetActive(false);
                 break;
             case Buttons.EquipmentButton:
+                //GetButton((int)Buttons.EquipmentButton).gameObject.SetActive(interactable);
                 GetText((int)Texts.EquipmentButtonNewTxt).gameObject.SetActive(false);
                 break;
             case Buttons.SkillButton:
+                //GetButton((int)Buttons.SkillButton).gameObject.SetActive(interactable);
                 GetText((int)Texts.SkillButtonNewTxt).gameObject.SetActive(false);
                 break;
             case Buttons.BestiaryButton:
+                GetButton((int)Buttons.BestiaryButton).gameObject.SetActive(interactable);
                 GetText((int)Texts.BestiaryBtnNewTxt).gameObject.SetActive(false);
                 GetImage((int)Images.BestiaryBtnNewIcon).gameObject.SetActive(false);
                 break;

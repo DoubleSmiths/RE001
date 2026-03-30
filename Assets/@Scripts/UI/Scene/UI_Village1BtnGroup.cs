@@ -78,6 +78,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     #endregion
 
+    bool _pendingTravelUnlock = false;
 
     public override bool Init()
     {
@@ -93,6 +94,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
         GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() =>
         {
+            Managers.Quest.CheckButtonClick(GUILD_EXIT_QUEST_VFX);
             GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
             _gameScene.FadeInOut();
             OnClickMain();
@@ -112,11 +114,34 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
+        Managers.Quest.OnBtnUnlocked   += OnBtnUnlocked;
         RefreshNotify();
 
         SetInfo();
 
+        // 저장된 해금 상태 복원 (애니메이션 없이)
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_TRAVEL_BUTTON))
+        {
+            GetImage((int)Images.TravelButtonIcon).gameObject.SetActive(true);
+            GetText((int)Texts.TravelButtonText).gameObject.SetActive(true);
+        }
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Quest != null)
+        {
+            Managers.Quest.OnNotifyChanged -= RefreshNotify;
+            Managers.Quest.OnBtnUnlocked   -= OnBtnUnlocked;
+        }
+    }
+
+    void OnBtnUnlocked(string btnId)
+    {
+        if (btnId == UNLOCK_TRAVEL_BUTTON)
+            _pendingTravelUnlock = true;
     }
 
     private void Update()
@@ -245,10 +270,24 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => GetButton((int)Buttons.TravelButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
 
-        //seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
-        //    .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
-        //    .SetEase(Ease.OutQuad));
+        seq.AppendCallback(() =>
+        {
+            //var travelBtn = GetButton((int)Buttons.TravelButton).gameObject;
+            //var dotweenAnim = travelBtn.GetComponent<DOTweenAnimation>();
+            //dotweenAnim.DORestart();
 
+            if (!_pendingTravelUnlock) return;
+            _pendingTravelUnlock = false;
+
+            //float delay = dotweenAnim != null ? dotweenAnim.duration : 0.5f;
+            DOVirtual.DelayedCall(0.5f, () =>
+            {
+                //dotweenAnim?.DOKill();
+                UnlockButtonAnim(GetButton((int)Buttons.TravelButton).gameObject,
+                                 GetImage((int)Images.TravelButtonIcon),
+                                 GetText((int)Texts.TravelButtonText));
+            });
+        });
     }
 
     void OnClickGuild()
@@ -282,13 +321,18 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         HideAllGroup();
 
-        ShowGroup(GameObjects.Village1MonasteryBtnGroup);
+        //TODO : 던전 진입 팝업 띄우기.
+
+
+        //ShowGroup(GameObjects.Village1MonasteryBtnGroup);
     }
 
     void OnClickVillage1GuildTalkButton()
     {
         string dialogueId = Managers.Quest.GetCurrentDialogueID();
 
+        // TODO : 대사 ID가 null이거나 빈 문자열이면 NPC 기본 대사 보여주기. 현재는 임시로 "GuildReceptionistDefaultDialogue"로 설정해둠. 데이터 시트에 추가 예정.
+        // TODO : 길드 접수원이 아닌 Dialogue도 추가될 수 있으니, Dialogue ID에 따라 NPC 이름, 초상화도 변경할 수 있도록 수정해야할듯.
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: dialogueId,
             speakerName: "접수원 아가씨",
