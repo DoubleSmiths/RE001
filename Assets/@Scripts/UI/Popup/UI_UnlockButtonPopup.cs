@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Util;
 
 public class UI_UnlockButtonPopup : UI_Popup
 {
@@ -59,11 +60,11 @@ public class UI_UnlockButtonPopup : UI_Popup
     }
 
     // 어떤 버튼이 해금되는지에 따라 정보를 세팅하는 함수
-    public void SetInfo(string iconSprite, int iconNameId, int iconDescId)
+    public void SetInfo(string iconSprite, string iconNameId, string iconDescId)
     {
         GetImage((int)Images.Icon).sprite = Managers.Resource.Load<Sprite>(iconSprite);
-        //GetText((int)Texts.IconNameText).text = Managers.Data.LocalizationDic[].GetText(iconNameId);
-        //GetText((int)Texts.TextTMP).text = Managers.Language.GetText(iconDescId);
+        GetText((int)Texts.IconNameText).text = Localize(iconNameId);
+        GetText((int)Texts.TextTMP).text = Localize(iconDescId);
     }
 
     public void OnClickContent()

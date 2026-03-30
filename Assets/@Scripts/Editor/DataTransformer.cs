@@ -29,7 +29,6 @@ public class DataTransformer : EditorWindow
     public static void ParseExcel()
     {
         ParsePlayerStatusData();
-        ParseScriptData();
         ParseDialogueScriptData();
         ParseLocalizationData();
         ParseItemData();
@@ -86,37 +85,6 @@ public class DataTransformer : EditorWindow
     }
 
     // -------------------------------------------------------------------
-    // ScriptData.csv
-    //   Row 0: 영문 필드명 (헤더)
-    //   Row 1+: 실제 데이터
-    // -------------------------------------------------------------------
-    static void ParseScriptData()
-    {
-        ScriptDataLoader loader = new ScriptDataLoader();
-
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/ScriptData.xlsx");
-
-        for (int y = 1; y < rows.Count; y++)
-        {
-            List<string> row = rows[y];
-            if (row.Count == 0 || string.IsNullOrEmpty(row[0]))
-                continue;
-
-            int i = 0;
-            ScriptData data = new ScriptData();
-            data.DataId = ConvertValue<int>(row[i++]);
-            data.Kr     = i < row.Count ? ConvertValue<string>(row[i++]) : "";
-            data.En     = i < row.Count ? ConvertValue<string>(row[i++]) : "";
-            data.Jp     = i < row.Count ? ConvertValue<string>(row[i++]) : "";
-            data.Ch     = i < row.Count ? ConvertValue<string>(row[i++]) : "";
-
-            loader.scripts.Add(data);
-        }
-
-        WriteJson("ScriptData", loader);
-    }
-
-    // -------------------------------------------------------------------
     // DialogueData001.xlsx
     //   시트별: Row 0 = 헤더(TextKey, Kor, Eng), Row 1+ = 데이터
     //   시트명이 대화 그룹 키가 됨 (예: GuildQuest1Text)
@@ -125,7 +93,7 @@ public class DataTransformer : EditorWindow
     {
         DialogueScriptLoader loader = new DialogueScriptLoader();
 
-        string path = $"{Application.dataPath}{EXCEL_PATH}/DialogueData001.xlsx";
+        string path = $"{Application.dataPath}{EXCEL_PATH}/DialogueData.xlsx";
         var sheets = ReadAllXlsxSheets(path);
 
         foreach (var (sheetName, rows) in sheets)
@@ -161,7 +129,7 @@ public class DataTransformer : EditorWindow
     {
         LocalizationLoader loader = new LocalizationLoader();
 
-        string path = $"{Application.dataPath}{EXCEL_PATH}/LocalizationData001.xlsx";
+        string path = $"{Application.dataPath}{EXCEL_PATH}/LocalizationData.xlsx";
         var sheets = ReadAllXlsxSheets(path);
 
         foreach (var (sheetName, rows) in sheets)

@@ -346,31 +346,6 @@ namespace Data
     }
     #endregion
 
-    #region ScriptData
-    [Serializable]
-    public class ScriptData
-    {
-        public int DataId;
-        public string Kr;
-        public string En;
-        public string Jp;
-        public string Ch;
-    }
-
-    [Serializable]
-    public class ScriptDataLoader : ILoader<int, ScriptData>
-    {
-        public List<ScriptData> scripts = new List<ScriptData>();
-        public Dictionary<int, ScriptData> MakeDict()
-        {
-            var dict = new Dictionary<int, ScriptData>();
-            foreach (var item in scripts)
-                dict.Add(item.DataId, item);
-            return dict;
-        }
-    }
-    #endregion
-
     #region DialogueScriptData
     // DialogueData001.xlsx 파싱 결과
     // 시트명(GroupKey) → 대사 라인 목록으로 접근
