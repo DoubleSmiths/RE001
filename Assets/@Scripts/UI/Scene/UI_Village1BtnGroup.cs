@@ -255,6 +255,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         HideAllGroup();
 
+        Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_VFX);
+
         // TODO : Player Move Anim, Fade In Out, Chang BG + Add NPC Sprite
         GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
         _gameScene.FadeInOut();
@@ -285,17 +287,13 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickVillage1GuildTalkButton()
     {
-        // TODO : 길드 NPC와의 대화창 생성 
-        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
-                 groupKey: "GuildQuest1Text",
-                 speakerName: "접수원 아가씨",
-                 portrait: null,
-                 onFinished: () =>
-                 {
-                     Managers.Game.AddItem(9001);          // 임시통행증 지급 → OnItemAdded 발행
-                     Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(9001);  // 아이템 획득 팝업
-                 });  // TODO : 현재 상황에 맞는 이벤트로 행동.
+        string dialogueId = Managers.Quest.GetCurrentDialogueID();
 
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: dialogueId,
+            speakerName: "접수원 아가씨",
+            portrait: null,
+            onFinished: () => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX));
     }
 
     void RefreshNotify()

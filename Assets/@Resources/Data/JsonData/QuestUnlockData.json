@@ -1,6 +1,11 @@
 ﻿{
   "unlocks": [
     {
+      "QuestID": 1,
+      "UnlockType": 2,
+      "TargetID": "9001"
+    },
+    {
       "QuestID": 2,
       "UnlockType": 0,
       "TargetID": "BTN_BAG"

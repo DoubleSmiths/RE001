@@ -157,6 +157,7 @@ public class Define
     {
         UI_BUTTON,
         SUBQUEST_START,
+        ITEM_REWARD,    // 퀘스트 완료 시 아이템 지급
     }
 
     public enum QuestConditionType

@@ -148,10 +148,10 @@ public class QuestManager
 
     void CompleteQuest(int questId)
     {
-        ProcessUnlocks(questId);
-
         int nextId = questId + 1;
-        SetCurrentQuest(nextId);
+        SetCurrentQuest(nextId);   // 먼저 퀘스트 전환 → CurrentQuestID = nextId
+
+        ProcessUnlocks(questId);   // 이후 보상 지급 (AddItem 이벤트가 발행돼도 이미 다음 퀘스트 기준으로 체크)
     }
 
     void RollbackTo(int questId)
@@ -190,6 +190,14 @@ public class QuestManager
 
                 case QuestUnlockType.SUBQUEST_START:
                     // TODO: SubQuest 시스템 연동
+                    break;
+
+                case QuestUnlockType.ITEM_REWARD:
+                    if (int.TryParse(unlock.TargetID, out int itemId))
+                    {
+                        Managers.Game.AddItem(itemId);
+                        Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(itemId);
+                    }
                     break;
             }
         }
