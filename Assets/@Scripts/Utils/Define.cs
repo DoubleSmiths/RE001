@@ -199,4 +199,40 @@ public class Define
     }
     #endregion
 
+    #region NotifyKey
+    // QuestNotifyData.BtnID / QuestConditionData.Target(BTN_CLICK) 과 1:1 대응
+    // 오타 방지 및 자동완성 지원
+
+    // Village1 Main Btn Group
+    //public const string BTN_GUILD      = "BTN_GUILD";
+    //public const string BTN_GUILD_TALK = "BTN_GUILD_TALK";
+    //public const string BTN_EXIT       = "BTN_EXIT";
+    public const string VILLAGE1_GUILD_VFX = "VILLAGE1_GUILD_VFX";
+    public const string ALCHEMY_BUTTON_NEW_TXT = "ALCHEMY_BUTTON_NEW_TXT";
+    public const string VILLAGE1_ALCHEMY_VFX_SUB1 = "VILLAGE1_ALCHEMY_VFX_SUB1";
+    public const string MONASTERY_BUTTON_NEW_TXT = "MONASTERY_BUTTON_NEW_TXT";
+    public const string MONASTERY_VFX_SUB1 = "MONASTERY_VFX_SUB1";
+    public const string TRAVEL_BUTTON_NEW_TXT = "TRAVEL_BUTTON_NEW_TXT";
+    public const string VILLAGE1_TRAVEL_QUEST_VFX = "VILLAGE1_TRAVEL_QUEST_VFX";
+
+    // Village1 Build Btn Group
+    public const string VILLAGE1_GUILD_TALK_VFX = "VILLAGE1_GUILD_TALK_VFX";
+    public const string VILLAGE1_GUILD_QUEST_VFX = "VILLAGE1_GUILD_QUEST_VFX";
+    public const string GUILD_EXIT_QUEST_VFX = "GUILD_EXIT_QUEST_VFX";
+
+    // Village1 Alchemy Btn Group
+    public const string VILLAGE1_ALCHEMY_TALK_VFX = "VILLAGE1_ALCHEMY_TALK_VFX";
+    public const string VILLAGE1_ALCHEMY_TALK_VFX_SUB1 = "VILLAGE1_ALCHEMY_TALK_VFX_SUB1";
+    public const string VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT = "VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT";
+    public const string VILLAGE1_ALCHEMY_QUEST_VFX = "VILLAGE1_ALCHEMY_QUEST_VFX";
+    public const string ALCHEMY_EXIT_QUEST_VFX = "ALCHEMY_EXIT_QUEST_VFX";
+
+    // Village1 Monastery Btn Group
+    public const string VILLAGE1_MONASTERY_TALK_VFX = "VILLAGE1_MONASTERY_TALK_VFX";
+    public const string VILLAGE1_MONASTERY_TALK_VFX_SUB1 = "VILLAGE1_MONASTERY_TALK_VFX_SUB1";
+    public const string VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT = "VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT";
+    public const string VILLAGE1_MONASTERY_QUEST_VFX = "VILLAGE1_MONASTERY_QUEST_VFX";
+    public const string MONASTERY_EXIT_QUEST_VFX = "MONASTERY_EXIT_QUEST_VFX";
+    #endregion
+
 }

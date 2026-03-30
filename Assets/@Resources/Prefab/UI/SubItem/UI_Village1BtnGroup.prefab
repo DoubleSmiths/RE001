@@ -3210,7 +3210,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8111747543681059704}
   m_Layer: 5
-  m_Name: ExitQuestVFX
+  m_Name: AlchemyExitQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3727,7 +3727,7 @@ GameObject:
   m_Component:
   - component: {fileID: 501772326959068962}
   m_Layer: 5
-  m_Name: Village1GuildQuestVFX
+  m_Name: Village1MonasteryQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4610,7 +4610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1306211824507252711}
   m_Layer: 5
-  m_Name: ExitQuestVFX
+  m_Name: GuildExitQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4819,7 +4819,7 @@ GameObject:
   - component: {fileID: 3940836006426859161}
   - component: {fileID: 8711595768802576831}
   m_Layer: 5
-  m_Name: CustomOrderButtonNewTxt
+  m_Name: AlchemyCustomOrderButtonNewTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13239,7 +13239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3819038759582370126}
   m_Layer: 5
-  m_Name: Village1AlchemyTalkVFX
+  m_Name: Village1MonasteryTalkVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13280,7 +13280,7 @@ GameObject:
   - component: {fileID: 3053496470576081986}
   - component: {fileID: 3652653665531229904}
   m_Layer: 5
-  m_Name: CustomOrderButtonNewTxt
+  m_Name: MonasteryCustomOrderButtonNewTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13720,7 +13720,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3705418407392302673}
   m_Layer: 5
-  m_Name: ExitQuestVFX
+  m_Name: MonasteryExitQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15134,7 +15134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3929788000664736093}
   m_Layer: 5
-  m_Name: Village1GuildQuestVFX
+  m_Name: Village1AlchemyQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17551,7 +17551,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6961363744869941417}
   m_Layer: 5
-  m_Name: Village1AlchemyTalkVFX_Sub1
+  m_Name: Village1MonasteryTalkVFX_Sub1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
