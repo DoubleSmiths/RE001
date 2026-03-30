@@ -49,7 +49,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
         seq.OnComplete(() =>
         {
             go.GetComponent<Button>().interactable = true;
-            Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>();
+            Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", 10001, 10002);
         }
         );
         // TODO : 해금 되었습니다 팝업 띄우기

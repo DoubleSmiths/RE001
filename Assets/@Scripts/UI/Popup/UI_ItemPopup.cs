@@ -89,6 +89,7 @@ public class UI_ItemPopup : UI_Popup
     public void SetInfo(int id)
     {
         // TODO : ID에 맞는 아이템 팝업 열기.
+        
     }
 
     void OnClickItemPopupBackground()

@@ -17,7 +17,7 @@ public class UI_UnlockButtonPopup : UI_Popup
 
     enum Texts
     {
-        Text,
+        IconNameText,
         TextTMP,
     }
 
@@ -36,6 +36,10 @@ public class UI_UnlockButtonPopup : UI_Popup
 
     #endregion
 
+    private void Awake()
+    {
+        Init();
+    }
 
     public override bool Init()
     {
@@ -49,16 +53,20 @@ public class UI_UnlockButtonPopup : UI_Popup
         BindObject(typeof(GameObjects));
         #endregion
 
+        GetImage((int)Images.Content).gameObject.BindEvent(OnClickContent);
+
         return true;
     }
 
     // 어떤 버튼이 해금되는지에 따라 정보를 세팅하는 함수
-    public void SetInfo()
+    public void SetInfo(string iconSprite, int iconNameId, int iconDescId)
     {
-        
+        GetImage((int)Images.Icon).sprite = Managers.Resource.Load<Sprite>(iconSprite);
+        //GetText((int)Texts.IconNameText).text = Managers.Data.LocalizationDic[].GetText(iconNameId);
+        //GetText((int)Texts.TextTMP).text = Managers.Language.GetText(iconDescId);
     }
 
-    public void OnClickBlockImg()
+    public void OnClickContent()
     {
         ClosePopupUI();
     }
