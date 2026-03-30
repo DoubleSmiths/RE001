@@ -294,6 +294,7 @@ public class UI_GameScene : UI_Scene
     {
         if (btnId == UNLOCK_INVENTORY_BUTTON)
         {
+            GetButton((int)Buttons.InventoryButton).gameObject.SetActive(true);
             GetButton((int)Buttons.InventoryButton).interactable = true;
             ShowNewBadge(TabType.Bag);
         }

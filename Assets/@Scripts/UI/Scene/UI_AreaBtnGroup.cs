@@ -49,11 +49,9 @@ public abstract class UI_AreaBtnGroup : UI_Base
         seq.OnComplete(() =>
         {
             go.GetComponent<Button>().interactable = true;
-            // TODO : 해금 되었습니다 팝업 띄우기, 데이터 세팅.
-
+            // TODO : 해금 되었습니다 팝업 띄우기, 어떤 버튼인지 데이터 세팅. switch로 분기? 고민 해야할듯.
             Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.EquipmentText);
-        }
-        );
+        });
 
     }
 
