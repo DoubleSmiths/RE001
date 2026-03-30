@@ -144,14 +144,6 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             _pendingTravelUnlock = true;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            UnlockButtonAnim(GetButton((int)Buttons.AlchemyButton).gameObject, GetImage((int)Images.AlchemyButtonIcon), GetText((int)Texts.AlchemyButtonText));
-        }
-    }
-
     void SetInfo()
     {
         HideAllGroup();

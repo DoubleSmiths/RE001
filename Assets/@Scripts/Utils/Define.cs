@@ -174,6 +174,8 @@ public class Define
     // 오타 방지 및 자동완성 지원
     public static class LocalizeKey
     {
+        public const string TestKey = "TestKey";
+
         // ── GlobalButtons ──
         public const string TravelBtnText = "TravelBtnText";
         public const string ExitBtnText = "ExitBtnText";

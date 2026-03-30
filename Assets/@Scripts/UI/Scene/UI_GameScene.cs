@@ -421,10 +421,21 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void Update()
     {
+
+
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha1)) TestGoldIncrease();
         if (Input.GetKeyDown(KeyCode.Alpha2)) TestGoldDecrease();
         if (Input.GetKeyDown(KeyCode.Alpha3)) TestCrystalIncrease();
         if (Input.GetKeyDown(KeyCode.Alpha4)) TestCrystalDecrease();
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.TestKey);
+        }
+
+
+#endif
     }
 
     [ContextMenu("Test/Gold +500")]

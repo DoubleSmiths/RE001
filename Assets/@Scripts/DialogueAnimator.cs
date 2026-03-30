@@ -27,6 +27,21 @@ public class DialogueAnimator : MonoBehaviour
 
     public bool IsTypingDone => _isTypingDone;
 
+    // 글자별 알파 페이드인용
+    TMP_Text _animTMP;
+    float[]  _charAlphas;
+    bool     _isAnimating;
+
+    // TMP는 매 프레임 메시를 재갱신하므로 LateUpdate에서 알파를 강제 적용
+    void LateUpdate()
+    {
+        if (!_isAnimating || _animTMP == null || _charAlphas == null) return;
+
+        for (int i = 0; i < _charAlphas.Length; i++)
+            SetCharAlpha(_animTMP, i, _charAlphas[i]);
+        _animTMP.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+    }
+
     // ────────────────────────────────────────
     //  Box
     // ────────────────────────────────────────
@@ -89,22 +104,46 @@ public class DialogueAnimator : MonoBehaviour
             _typingCoroutine = null;
         }
 
-        text.maxVisibleCharacters = text.text.Length;
+        // 모든 글자 알파를 즉시 1로 직접 적용
+        if (_animTMP != null && _charAlphas != null)
+        {
+            for (int i = 0; i < _charAlphas.Length; i++)
+            {
+                _charAlphas[i] = 1f;
+                SetCharAlpha(_animTMP, i, 1f);
+            }
+            _animTMP.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+        }
+
+        _isAnimating = false;
         _isTypingDone = true;
         _onTypingComplete?.Invoke();
     }
 
     IEnumerator CoTyping(TMP_Text text, string content)
     {
-        text.text = content;
-        text.maxVisibleCharacters = 0;
+        _animTMP = text;
+        _isAnimating = true;
 
-        for (int i = 0; i <= content.Length; i++)
+        text.text = content;
+        text.ForceMeshUpdate();
+
+        int charCount = text.textInfo.characterCount;
+        _charAlphas = new float[charCount]; // 기본값 0
+
+        for (int i = 0; i < charCount; i++)
         {
-            text.maxVisibleCharacters = i;
+            int index = i;
+            DOTween.To(() => _charAlphas[index], a => _charAlphas[index] = a, 1f, _typingSpeed * 2f)
+                   .SetUpdate(true);
+
             yield return new WaitForSecondsRealtime(_typingSpeed);
         }
 
+        // 마지막 글자 페이드인 완료 대기
+        yield return new WaitForSecondsRealtime(_typingSpeed * 2f);
+
+        _isAnimating = false;
         _isTypingDone = true;
         _onTypingComplete?.Invoke();
     }
@@ -180,6 +219,22 @@ public class DialogueAnimator : MonoBehaviour
     // ────────────────────────────────────────
     //  Util
     // ────────────────────────────────────────
+
+    void SetCharAlpha(TMP_Text tmp, int charIndex, float alpha)
+    {
+        var charInfo = tmp.textInfo.characterInfo[charIndex];
+        if (!charInfo.isVisible) return;
+
+        int meshIndex   = charInfo.materialReferenceIndex;
+        int vertexIndex = charInfo.vertexIndex;
+        Color32[] colors = tmp.textInfo.meshInfo[meshIndex].colors32;
+
+        byte a = (byte)(alpha * 255);
+        colors[vertexIndex + 0].a = a;
+        colors[vertexIndex + 1].a = a;
+        colors[vertexIndex + 2].a = a;
+        colors[vertexIndex + 3].a = a;
+    }
 
     CanvasGroup GetOrAddCanvasGroup(GameObject go)
     {

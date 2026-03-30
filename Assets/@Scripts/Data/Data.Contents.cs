@@ -170,36 +170,6 @@ namespace Data
     }
     #endregion
 
-#region DialogueData
-    [Serializable]
-    public class DialogueLine
-    {
-        public string Text;
-    }
-
-    [Serializable]
-    public class DialogueData
-    {
-        public int DataId;
-        public string NpcName;
-        public string NpcIllustration;
-        public List<DialogueLine> Lines = new List<DialogueLine>();
-    }
-
-    [Serializable]
-    public class DialogueDataLoader : ILoader<int, DialogueData>
-    {
-        public List<DialogueData> dialogues = new List<DialogueData>();
-        public Dictionary<int, DialogueData> MakeDict()
-        {
-            var dict = new Dictionary<int, DialogueData>();
-            foreach (var item in dialogues)
-                dict.Add(item.DataId, item);
-            return dict;
-        }
-    }
-    #endregion
-
     #region MinMonData
     [Serializable]
     public class MinMonData
