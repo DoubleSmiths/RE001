@@ -198,7 +198,8 @@ public class GameManager
         if (LoadGame())
             return;
 
-        PlayerPrefs.SetInt("ISFIRST", 1);
+        // 할때마다 처음상태로 하고싶으면 1로 바꿔야하는 것.
+        PlayerPrefs.SetInt("ISFIRST", 0);
         SaveGame();
     }
 
