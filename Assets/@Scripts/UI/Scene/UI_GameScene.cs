@@ -391,7 +391,7 @@ public class UI_GameScene : UI_Scene
 
     void OnClickInventory()
     {
-        // TODO: UI_InventoryPopup 열기
+        Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo();
     }
 
     void OnClickPotion()
