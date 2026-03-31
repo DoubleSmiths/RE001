@@ -255,7 +255,7 @@ public class UI_GameScene : UI_Scene
         foreach (InventoryItem item in Managers.Game.Inventory)
         {
             // TODO : 아이템 ID 범위는 예시입니다. 실제로는 게임 디자인에 맞게 조정해야 합니다.
-            if (item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000 && item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000 && item.IsNew)
+            if (item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000 || item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000 && item.IsNew)
             {
                 flag = true;
                 GetText((int)Texts.InventoryButtonNewTxt)?.gameObject?.SetActive(true);

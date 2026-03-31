@@ -74,6 +74,9 @@ public class UI_InventoryPopup : UI_Popup
 
         GetButton((int)Buttons.InventoryPopupBackground).gameObject.BindEvent(OnClickInventoryPopupBackground);
         GetButton((int)Buttons.InventorySortBtn).gameObject.BindEvent(OnClickInventorySortBtn);
+        GetButton((int)Buttons.ImportantBagBtn).gameObject.BindEvent(OnClickImportantBagBtn);
+        GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(false);
+        RefreshImportantBagNewTxt();
 
         SetInfo();
         SetText();
@@ -93,42 +96,19 @@ public class UI_InventoryPopup : UI_Popup
     {
         // 기존 슬롯 제거
         ClearChildren(GetObject((int)GameObjects.Content).transform);
-        ClearChildren(GetObject((int)GameObjects.ImportantThingsList).transform);
 
         // 인벤토리를 일반/중요 아이템으로 분류
         List<InventoryItem> normalItems = new List<InventoryItem>();
-        List<InventoryItem> importantItems = new List<InventoryItem>();
 
         foreach (InventoryItem item in Managers.Game.Inventory)
         {
             Debug.Log($"Inventory Item: DataId={item.DataId}, Count={item.Count}");
 
-            if (item.DataId >= IMPORTANT_ITEM_ID_MIN)
-                importantItems.Add(item);
-            else
+            if (item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000)
                 normalItems.Add(item);
 
             // TODO : 아이템을 클릭하면 아이템 정보 팝업이 뜨고, NEW 안나오게 설정하기.
             //item.IsNew = false;
-        }
-
-        // 중요 아이템 슬롯 세팅
-        Transform importantParent = GetObject((int)GameObjects.ImportantThingsList).transform;
-        for (int i = 0; i < IMPORTANT_SLOT_COUNT; i++)
-        {
-            UI_ImportantSlot slot = Managers.UI.MakeSubItem<UI_ImportantSlot>(importantParent, pooling: false);
-            slot.gameObject.name = $"ImportantSlot_{i}";
-            if (i < importantItems.Count)
-            {
-                ItemData data = GetItemData(importantItems[i].DataId);
-                slot.SetInfo(importantItems[i], data);
-            }
-            else
-            {
-                slot.SetInfo();
-            }
-
-            Managers.Game.OnInventoryNewChanged += RefreshImportantBagNewTxt;
         }
 
         // 일반 아이템 슬롯 세팅
@@ -199,7 +179,39 @@ public class UI_InventoryPopup : UI_Popup
         GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(true);
 
         // 여기서 중요 아이템만
+        ClearChildren(GetObject((int)GameObjects.ImportantThingsList).transform);
 
+        List<InventoryItem> importantItems = new List<InventoryItem>();
+
+        foreach (InventoryItem item in Managers.Game.Inventory)
+        {
+            Debug.Log($"Inventory Item: DataId={item.DataId}, Count={item.Count}");
+
+            if (item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000)
+                importantItems.Add(item);
+
+            // TODO : 아이템을 클릭하면 아이템 정보 팝업이 뜨고, NEW 안나오게 설정하기.
+            //item.IsNew = false;
+        }
+
+        // 중요 아이템 슬롯 세팅
+        Transform importantParent = GetObject((int)GameObjects.ImportantThingsList).transform;
+        for (int i = 0; i < IMPORTANT_SLOT_COUNT; i++)
+        {
+            UI_ImportantSlot slot = Managers.UI.MakeSubItem<UI_ImportantSlot>(importantParent, pooling: false);
+            slot.gameObject.name = $"ImportantSlot_{i}";
+            if (i < importantItems.Count)
+            {
+                ItemData data = GetItemData(importantItems[i].DataId);
+                slot.SetInfo(importantItems[i], data);
+            }
+            else
+            {
+                slot.SetInfo();
+            }
+
+            Managers.Game.OnInventoryNewChanged += RefreshImportantBagNewTxt;
+        }
     }
 
     public void RefreshImportantBagNewTxt()
