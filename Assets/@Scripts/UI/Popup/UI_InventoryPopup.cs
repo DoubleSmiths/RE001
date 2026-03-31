@@ -198,10 +198,14 @@ public class UI_InventoryPopup : UI_Popup
     {
         GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(true);
 
+        // 여기서 중요 아이템만
+
     }
 
     public void RefreshImportantBagNewTxt()
     {
+        if (this == null) return; // Destroy 예약 후 OnDestroy 전에 호출될 수 있으므로 방어
+
         // TODO : 중요 아이템만 확인하게 해야 됨.
         bool flag = false;
         foreach (InventoryItem item in Managers.Game.Inventory)
@@ -209,11 +213,11 @@ public class UI_InventoryPopup : UI_Popup
             if (item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000 && item.IsNew)
             {
                 flag = true;
-                GetText((int)Texts.ImportantBagNewTxt).gameObject.SetActive(true);
+                GetText((int)Texts.ImportantBagNewTxt)?.gameObject?.SetActive(true);
                 break;
             }
         }
 
-        if (!flag) GetText((int)Texts.ImportantBagNewTxt).gameObject.SetActive(false);
+        if (!flag) GetText((int)Texts.ImportantBagNewTxt)?.gameObject?.SetActive(false);
     }
 }

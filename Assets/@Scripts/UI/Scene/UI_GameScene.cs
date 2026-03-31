@@ -258,12 +258,12 @@ public class UI_GameScene : UI_Scene
             if (item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000 && item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000 && item.IsNew)
             {
                 flag = true;
-                GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(true);
+                GetText((int)Texts.InventoryButtonNewTxt)?.gameObject?.SetActive(true);
                 break;
             }
         }
 
-        if (!flag) GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(false);
+        if (!flag) GetText((int)Texts.InventoryButtonNewTxt)?.gameObject?.SetActive(false);
     }
 
     public void UpdateHP(float current, float max)
