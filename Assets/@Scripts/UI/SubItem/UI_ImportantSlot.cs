@@ -73,5 +73,8 @@ public class UI_ImportantSlot : UI_Base
 
         // 아이템 상세 정보 UI 열기 (예시)
         Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(inventoryItem.DataId);
+
+        Managers.Game.SaveGame();
+
     }
 }
