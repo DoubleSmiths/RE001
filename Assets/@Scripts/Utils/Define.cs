@@ -256,4 +256,8 @@ public class Define
     public const string UNLOCK_TRAVEL_BUTTON    = "UNLOCK_TRAVEL_BUTTON";
     #endregion
 
+    public const int ITEM_ID_MIN = 1000;
+    public const int EQUIP_ID_MIN = 2000;
+    public const int POTION_ID_MIN = 3000;
+    public const int IMPORTANT_ITEM_ID_MIN = 9000;
 }

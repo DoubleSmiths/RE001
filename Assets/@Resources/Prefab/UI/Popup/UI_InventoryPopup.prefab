@@ -1531,7 +1531,7 @@ GameObject:
   - component: {fileID: 8512179337595244085}
   - component: {fileID: 4268826899426830123}
   m_Layer: 5
-  m_Name: Text
+  m_Name: ImportantBagBtnText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3583,6 +3583,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4193031529858833067}
     m_Modifications:
+    - target: {fileID: 1044177501507596534, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6462009744165519730, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3667,6 +3671,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_InvSlot (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7526951180771635414, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3685,6 +3693,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4193031529858833067}
     m_Modifications:
+    - target: {fileID: 1044177501507596534, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6462009744165519730, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3769,6 +3781,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_InvSlot (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 7526951180771635414, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3787,6 +3803,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4193031529858833067}
     m_Modifications:
+    - target: {fileID: 1044177501507596534, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6462009744165519730, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3871,6 +3891,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_InvSlot (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7526951180771635414, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3889,6 +3913,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4193031529858833067}
     m_Modifications:
+    - target: {fileID: 1044177501507596534, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6462009744165519730, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3973,6 +4001,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_InvSlot (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7526951180771635414, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3991,6 +4023,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4193031529858833067}
     m_Modifications:
+    - target: {fileID: 1044177501507596534, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6462009744165519730, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4075,6 +4111,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_InvSlot (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7526951180771635414, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4093,6 +4133,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4193031529858833067}
     m_Modifications:
+    - target: {fileID: 1044177501507596534, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6462009744165519730, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4176,6 +4220,10 @@ PrefabInstance:
     - target: {fileID: 7493236524693038117, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
       propertyPath: m_Name
       value: UI_InvSlot
+      objectReference: {fileID: 0}
+    - target: {fileID: 7526951180771635414, guid: 5b6e983b924aaf047aa32077ea08ebcc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

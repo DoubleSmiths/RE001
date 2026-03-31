@@ -23,11 +23,7 @@ public class UI_InventoryPopup : UI_Popup
         title,
         InvSlotNewTxt,
         ImportantBagNewTxt,
-        ImportantSlotNewTxt,
-        ImportantSlotNewTxt_1,
-        ImportantSlotNewTxt_2,
-        ImportantSlotNewTxt_3,
-        ImportantSlotNewTxt_4,
+        ImportantBagBtnText,
     }
 
     enum Buttons
@@ -36,11 +32,6 @@ public class UI_InventoryPopup : UI_Popup
         UI_InvSlot,
         InventorySortBtn,
         ImportantBagBtn,
-        ImportantSlot,
-        ImportantSlot_1,
-        ImportantSlot_2,
-        ImportantSlot_3,
-        ImportantSlot_4,
     }
 
     enum GameObjects
@@ -59,8 +50,8 @@ public class UI_InventoryPopup : UI_Popup
 
     // 번호에 따라 장비, 소비, 퀘스트, 기타로 구분 (지금은 테스트로 9000 이상은 중요 아이템으로 간주)
     private const int IMPORTANT_ITEM_ID_MIN = 9000;
-    private const int IMPORTANT_SLOT_COUNT  = 5;
-    private const int NORMAL_SLOT_COUNT     = 25;
+    private const int IMPORTANT_SLOT_COUNT = 5;
+    private const int NORMAL_SLOT_COUNT = 25;
     private const int OPEN_SLOT_COUNT = 15;
 
 
@@ -85,6 +76,7 @@ public class UI_InventoryPopup : UI_Popup
         GetButton((int)Buttons.InventorySortBtn).gameObject.BindEvent(OnClickInventorySortBtn);
 
         SetInfo();
+        SetText();
 
         return true;
     }
@@ -104,7 +96,7 @@ public class UI_InventoryPopup : UI_Popup
         ClearChildren(GetObject((int)GameObjects.ImportantThingsList).transform);
 
         // 인벤토리를 일반/중요 아이템으로 분류
-        List<InventoryItem> normalItems    = new List<InventoryItem>();
+        List<InventoryItem> normalItems = new List<InventoryItem>();
         List<InventoryItem> importantItems = new List<InventoryItem>();
 
         foreach (InventoryItem item in Managers.Game.Inventory)
@@ -136,6 +128,7 @@ public class UI_InventoryPopup : UI_Popup
                 slot.SetInfo();
             }
 
+            Managers.Game.OnInventoryNewChanged += RefreshImportantBagNewTxt;
         }
 
         // 일반 아이템 슬롯 세팅
@@ -159,8 +152,22 @@ public class UI_InventoryPopup : UI_Popup
                 // 슬롯이 열려있는 경우
                 invSlot.SetOpenBlock();
             }
-            
+
         }
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        Managers.Game.OnInventoryNewChanged -= RefreshImportantBagNewTxt;
+    }
+
+    public void SetText()
+    {
+        // TODO : 언어에 따라 텍스트 변경하기
+        //GetText((int)Texts.ImportantBagBtnText).text = Util.Localize("ImportantBagBtnText");
+
     }
 
     private ItemData GetItemData(int dataId)
@@ -185,5 +192,28 @@ public class UI_InventoryPopup : UI_Popup
     {
         Managers.Game.Inventory.Sort((a, b) => a.DataId.CompareTo(b.DataId));
         SetInfo();
+    }
+
+    public void OnClickImportantBagBtn()
+    {
+        GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(true);
+
+    }
+
+    public void RefreshImportantBagNewTxt()
+    {
+        // TODO : 중요 아이템만 확인하게 해야 됨.
+        bool flag = false;
+        foreach (InventoryItem item in Managers.Game.Inventory)
+        {
+            if (item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000 && item.IsNew)
+            {
+                flag = true;
+                GetText((int)Texts.ImportantBagNewTxt).gameObject.SetActive(true);
+                break;
+            }
+        }
+
+        if (!flag) GetText((int)Texts.ImportantBagNewTxt).gameObject.SetActive(false);
     }
 }
