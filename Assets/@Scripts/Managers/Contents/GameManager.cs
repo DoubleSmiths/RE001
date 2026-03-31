@@ -13,7 +13,20 @@ public class InventoryItem
 {
     public int DataId;
     public int Count;
-    public bool IsNew;
+    public bool isNew;
+    public bool IsNew
+    {
+        get => isNew;
+        set
+        {
+            if (isNew != value)
+            {
+                isNew = value;
+                Managers.Game.OnInventoryNewChanged?.Invoke();
+                Managers.Game.SaveGame();
+            }
+        }
+    }
 }
 
 [Serializable]
@@ -195,8 +208,9 @@ public class GameManager
     public event Action OnResourceChanged;
     public event Action EquipInfoChanged;
     public event Action<Equipment> OnEquipmentForged;
-    public event Action<int> OnItemAdded;    // dataId
-    public event Action<int> OnItemChanged;  // dataId (추가/제거 모두)
+    public event Action<int> OnItemAdded;         // dataId
+    public event Action<int> OnItemChanged;       // dataId (추가/제거 모두)
+    public Action      OnInventoryNewChanged; // IsNew 상태 변경
 
     // ────────────────────────────────────────
     //  Init
@@ -287,6 +301,14 @@ public class GameManager
         SaveGame();
         OnItemAdded?.Invoke(dataId);
         OnItemChanged?.Invoke(dataId);
+    }
+
+    public void ClearItemNew(int dataId)
+    {
+        var item = Inventory.Find(i => i.DataId == dataId);
+        if (item == null || !item.IsNew) return;
+        item.IsNew = false;
+        OnInventoryNewChanged?.Invoke();
     }
 
     public void RemoveItem(int dataId, int count = 1)

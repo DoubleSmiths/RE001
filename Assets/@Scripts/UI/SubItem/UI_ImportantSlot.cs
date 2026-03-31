@@ -68,13 +68,9 @@ public class UI_ImportantSlot : UI_Base
 
     void OnClickGameObject(InventoryItem inventoryItem)
     {
-        inventoryItem.IsNew = false; // 클릭 시 "New" 상태 해제
-        GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(inventoryItem.IsNew);
+        Managers.Game.ClearItemNew(inventoryItem.DataId);
+        GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(false);
 
-        // 아이템 상세 정보 UI 열기 (예시)
         Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(inventoryItem.DataId);
-
-        Managers.Game.SaveGame();
-
     }
 }

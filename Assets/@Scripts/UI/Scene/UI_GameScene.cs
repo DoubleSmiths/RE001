@@ -120,6 +120,7 @@ public class UI_GameScene : UI_Scene
 
         SetInfo();
         RefreshTabLocks();
+        RefreshBTMButtonGroup();
 
         // TODO : 플레이어의 현재 구역에 따라 EnterArea 호출
         EnterArea(AreaType.Village1);
@@ -133,8 +134,9 @@ public class UI_GameScene : UI_Scene
 
         if (Managers.Game != null)
         {
-            Managers.Game.OnResourceChanged -= RefreshCurrency;
-            Managers.Game.OnLanguageChanged  -= RefreshTexts;
+            Managers.Game.OnResourceChanged    -= RefreshCurrency;
+            Managers.Game.OnLanguageChanged     -= RefreshTexts;
+            Managers.Game.OnInventoryNewChanged -= RefreshBTMButtonGroup;
         }
 
         if (Managers.Quest != null)
@@ -178,8 +180,9 @@ public class UI_GameScene : UI_Scene
         RefreshTexts();
         RefreshBTMButtonGroup();
 
-        Managers.Game.OnResourceChanged += RefreshCurrency;
-        Managers.Game.OnLanguageChanged  += RefreshTexts;
+        Managers.Game.OnResourceChanged     += RefreshCurrency;
+        Managers.Game.OnLanguageChanged      += RefreshTexts;
+        Managers.Game.OnInventoryNewChanged  += RefreshBTMButtonGroup;
     }
 
     // ────────────────────────────────────────
@@ -247,15 +250,18 @@ public class UI_GameScene : UI_Scene
 
     public void RefreshBTMButtonGroup()
     {
+        bool flag = false;
         foreach (InventoryItem item in Managers.Game.Inventory)
         {
             if (item.IsNew)
             {
+                flag = true;
                 GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(true);
                 break;
             }
-
         }
+
+        if (!flag) GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(false);
     }
 
     public void UpdateHP(float current, float max)
