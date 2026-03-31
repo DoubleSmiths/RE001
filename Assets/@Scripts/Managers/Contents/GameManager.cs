@@ -80,6 +80,9 @@ public class GameData
     // 퀘스트
     public int          CurrentQuestID = 1;
     public List<string> UnlockedBtnIds = new List<string>();
+
+    // 마지막 장소
+    public Village1Group LastVillage1Group = Village1Group.Main;
 }
 
 // ──────────────────────────────────────────────
@@ -171,6 +174,12 @@ public class GameManager
     }
 
     public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;
+
+    public Village1Group LastVillage1Group
+    {
+        get => _gameData.LastVillage1Group;
+        set { _gameData.LastVillage1Group = value; SaveGame(); }
+    }
 
     public void AddUnlockedBtn(string btnId)
     {

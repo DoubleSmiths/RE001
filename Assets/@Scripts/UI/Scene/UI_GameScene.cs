@@ -176,6 +176,7 @@ public class UI_GameScene : UI_Scene
         RefreshPlayerBar();
         RefreshBestiaryFollowing();
         RefreshTexts();
+        RefreshBTMButtonGroup();
 
         Managers.Game.OnResourceChanged += RefreshCurrency;
         Managers.Game.OnLanguageChanged  += RefreshTexts;
@@ -244,6 +245,18 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.BestiaryButtonText).text   = Localize(LocalizeKey.BestiaryText);
     }
 
+    public void RefreshBTMButtonGroup()
+    {
+        foreach (InventoryItem item in Managers.Game.Inventory)
+        {
+            if (item.IsNew)
+            {
+                GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(true);
+                break;
+            }
+
+        }
+    }
 
     public void UpdateHP(float current, float max)
     {
@@ -306,10 +319,13 @@ public class UI_GameScene : UI_Scene
         button.interactable = interactable;
         switch (btn)
         {
+            case Buttons.CharacterButton:
+                GetButton((int)Buttons.CharacterButton).gameObject.SetActive(interactable);
+                GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(false);
+                break;
             case Buttons.InventoryButton:
                 GetButton((int)Buttons.InventoryButton).gameObject.SetActive(interactable);
                 GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(false);
-                GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(false);
                 break;
             case Buttons.PotionButton:
                 GetButton((int)Buttons.PotionButton).gameObject.SetActive(interactable);
@@ -338,6 +354,9 @@ public class UI_GameScene : UI_Scene
     {
         switch (tab)
         {
+            case TabType.Status:
+                GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(true);
+                break;
             case TabType.Bag:
                 GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(true);
                 break;
@@ -346,7 +365,6 @@ public class UI_GameScene : UI_Scene
                 break;
             case TabType.Equipment:
                 GetText((int)Texts.EquipmentButtonNewTxt).gameObject.SetActive(true);
-                GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(true);
                 break;
             case TabType.Skill:
                 GetText((int)Texts.SkillButtonNewTxt).gameObject.SetActive(true);
@@ -402,7 +420,7 @@ public class UI_GameScene : UI_Scene
     void OnClickEquipment()
     {
         // TODO: UI_EquipmentPopup 열기
-        Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo();
+        //Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo();
     }
 
     void OnClickSkill()

@@ -73,6 +73,14 @@ public class Define
         Battle,
     }
 
+    public enum Village1Group
+    {
+        Main,
+        Guild,
+        Alchemy,
+        Monastery,
+    }
+
     public enum TabType
     {
         Status,

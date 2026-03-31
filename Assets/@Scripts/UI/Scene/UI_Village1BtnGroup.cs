@@ -174,7 +174,31 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // TODO : 해금된 버튼이 있으면 Image, Text 를 SetActive(true)로 변경.
         // TODO : 이벤트 ID 확인 후 VFX 켜기, NEW Text 켜기, 
 
-        OnClickMain();
+        RestoreLastGroup();
+    }
+
+    void RestoreLastGroup()
+    {
+        switch (Managers.Game.LastVillage1Group)
+        {
+            case Village1Group.Guild:
+                HideAllGroup();
+                GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Guild");
+                Managers.Resource.Instantiate("GuildNPC").GetComponent<Animator>().Play("Receptionist");
+                ShowGroup(GameObjects.Village1GuildBtnGroup);
+                break;
+            case Village1Group.Alchemy:
+                HideAllGroup();
+                ShowGroup(GameObjects.Village1AlchemyBtnGroup);
+                break;
+            case Village1Group.Monastery:
+                HideAllGroup();
+                ShowGroup(GameObjects.Village1MonasteryBtnGroup);
+                break;
+            default:
+                OnClickMain();
+                break;
+        }
     }
 
     void ShowGroup(GameObjects group)
@@ -195,6 +219,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickMain()
     {
+        Managers.Game.LastVillage1Group = Village1Group.Main;
         HideAllGroup();
 
         //GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
@@ -296,6 +321,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendInterval(1f);
         seq.AppendCallback(() =>
             {
+                Managers.Game.LastVillage1Group = Village1Group.Guild;
                 GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Guild");
                 Managers.Resource.Instantiate("GuildNPC").GetComponent<Animator>().Play("Receptionist");
                 ShowGroup(GameObjects.Village1GuildBtnGroup);
@@ -304,6 +330,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickAlchemy()
     {
+        Managers.Game.LastVillage1Group = Village1Group.Alchemy;
         HideAllGroup();
 
         ShowGroup(GameObjects.Village1AlchemyBtnGroup);
