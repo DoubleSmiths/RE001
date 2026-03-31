@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Data;
 
 public class UI_InventoryPopup : UI_Popup
 {
@@ -55,6 +57,11 @@ public class UI_InventoryPopup : UI_Popup
 
     #endregion
 
+    // 번호에 따라 장비, 소비, 퀘스트, 기타로 구분 (지금은 테스트로 9000 이상은 중요 아이템으로 간주)
+    private const int IMPORTANT_ITEM_ID_MIN = 9000;
+    private const int IMPORTANT_SLOT_COUNT  = 5;
+    private const int NORMAL_SLOT_COUNT     = 15;
+
     private void Awake()
     {
         Init();
@@ -73,37 +80,87 @@ public class UI_InventoryPopup : UI_Popup
         #endregion
 
         GetButton((int)Buttons.InventoryPopupBackground).gameObject.BindEvent(OnClickInventoryPopupBackground);
+        GetButton((int)Buttons.InventorySortBtn).gameObject.BindEvent(OnClickInventorySortBtn);
 
         SetInfo();
 
         return true;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            OnClickInventorySortBtn();
+        }
+    }
+
     public void SetInfo()
     {
-        // TODO : 인벤토리 팝업에 필요한 정보 세팅 (인벤토리 슬롯, 중요 아이템 슬롯 등)
-        // 기본적으로 15개가 사용할 수 있는 슬롯이고, 10개는 해금을 해야 쓸 수 있는 슬롯, 5개는 중요 아이템 슬롯이다.
+        // 기존 슬롯 제거
+        ClearChildren(GetObject((int)GameObjects.Content).transform);
+        ClearChildren(GetObject((int)GameObjects.ImportantThingsList).transform);
 
-        // 인벤토리 슬롯 세팅
-        // 일반적인 아이템은 UI_InvSlot 프리팹을 사용하여 슬롯을 생성하고, 중요 아이템은 UI_ImportantSlot 프리팹을 사용하여 슬롯을 생성.
+        // 인벤토리를 일반/중요 아이템으로 분류
+        List<InventoryItem> normalItems    = new List<InventoryItem>();
+        List<InventoryItem> importantItems = new List<InventoryItem>();
 
-        // UI_ImportantSlot은 ImportantThingsList에 자식으로 생성되어야 하며, UI_InvSlot은 InventoryList의 Content에 자식으로 생성되어야 함.
-
-        for (int i = 0; i < 5; i++)
+        foreach (InventoryItem item in Managers.Game.Inventory)
         {
-            // 중요 아이템 슬롯 생성
-            UI_ImportantSlot importantSlot = Managers.UI.MakeSubItem<UI_ImportantSlot>(GetObject((int)GameObjects.ImportantThingsList).transform);
-            // TODO : 중요 아이템 슬롯에 아이템 정보 세팅 (아이템 아이콘, 이름 등)
+            Debug.Log($"Inventory Item: DataId={item.DataId}, Count={item.Count}");
+
+            if (item.DataId >= IMPORTANT_ITEM_ID_MIN)
+                importantItems.Add(item);
+            else
+                normalItems.Add(item);
         }
 
-        for (int i = 0; i < 15; i++)
+        // 중요 아이템 슬롯 세팅
+        Transform importantParent = GetObject((int)GameObjects.ImportantThingsList).transform;
+        for (int i = 0; i < IMPORTANT_SLOT_COUNT; i++)
         {
-            // 일반 아이템 슬롯 생성
-            UI_InvSlot invSlot = Managers.UI.MakeSubItem<UI_InvSlot>(GetObject((int)GameObjects.Content).transform);
-            // TODO : 일반 아이템 슬롯에 아이템 정보 세팅 (아이템 아이콘, 이름 등)
+            UI_ImportantSlot slot = Managers.UI.MakeSubItem<UI_ImportantSlot>(importantParent);
+            slot.gameObject.name = $"ImportantSlot_{i}";
+            if (i < importantItems.Count)
+            {
+                ItemData data = GetItemData(importantItems[i].DataId);
+                slot.SetInfo(importantItems[i], data);
+            }
+            else
+            {
+                slot.SetInfo();
+            }
         }
 
-        return;
+        // 일반 아이템 슬롯 세팅
+        Transform contentParent = GetObject((int)GameObjects.Content).transform;
+        for (int i = 0; i < NORMAL_SLOT_COUNT; i++)
+        {
+            UI_InvSlot invSlot = Managers.UI.MakeSubItem<UI_InvSlot>(contentParent);
+            invSlot.gameObject.name = $"InvSlot_{i}";
+            if (i < normalItems.Count)
+            {
+                ItemData data = GetItemData(normalItems[i].DataId);
+                invSlot.SetInfo(normalItems[i], data);
+            }
+            else
+            {
+                invSlot.SetInfo();
+            }
+        }
+    }
+
+    private ItemData GetItemData(int dataId)
+    {
+        ItemData data;
+        Managers.Data.ItemDic.TryGetValue(dataId, out data);
+        return data;
+    }
+
+    private void ClearChildren(Transform parent)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+            Managers.Resource.Destroy(parent.GetChild(i).gameObject);
     }
 
     public void OnClickInventoryPopupBackground()
@@ -111,4 +168,9 @@ public class UI_InventoryPopup : UI_Popup
         ClosePopupUI();
     }
 
+    public void OnClickInventorySortBtn()
+    {
+        Managers.Game.Inventory.Sort((a, b) => a.DataId.CompareTo(b.DataId));
+        SetInfo();
+    }
 }

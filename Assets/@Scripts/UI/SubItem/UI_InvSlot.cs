@@ -1,4 +1,6 @@
 using UnityEngine;
+using Data;
+using static Define;
 
 public class UI_InvSlot : UI_Base
 {
@@ -21,7 +23,7 @@ public class UI_InvSlot : UI_Base
 
     enum Buttons
     {
-        UI_InvSlot,
+        //UI_InvSlot,
     }
 
     enum GameObjects
@@ -30,6 +32,8 @@ public class UI_InvSlot : UI_Base
     }
 
     #endregion
+
+    private void Awake() { Init(); }
 
     public override bool Init()
     {
@@ -46,9 +50,35 @@ public class UI_InvSlot : UI_Base
         return true;
     }
 
-    public void SetInfo()
+    public void SetInfo(InventoryItem inventoryItem = null, ItemData itemData = null)
     {
+        bool hasItem = inventoryItem != null && itemData != null;
 
+        // 아이템 아이콘
+        Sprite sprite = hasItem ? Managers.Resource.Load<Sprite>(itemData.SpriteName) : null;
+        GetImage((int)Images.Img).sprite = sprite;
+        GetImage((int)Images.Img).gameObject.SetActive(sprite != null);
+
+        // 개수 (2개 이상일 때만 표시)
+        bool showCount = hasItem && inventoryItem.Count > 1;
+        GetText((int)Texts.AmountTxt).text = showCount ? inventoryItem.Count.ToString() : "";
+        GetText((int)Texts.AmountTxt).gameObject.SetActive(showCount);
+
+        // 등급 글로우
+        GetImage((int)Images.Glow).gameObject.SetActive(hasItem);
+        if (hasItem)
+            GetImage((int)Images.Glow).color = GetGradeColor(itemData.Grade);
     }
 
+    private Color GetGradeColor(EquipGrade grade)
+    {
+        switch (grade)
+        {
+            //case EquipGrade.Uncommon: return new Color(0.2f, 0.8f, 0.2f);
+            case EquipGrade.Uncommon: return new Color(0.6f, 0.2f, 0.8f);
+            case EquipGrade.Rare:     return new Color(0.2f, 0.4f, 1f);
+            case EquipGrade.Epic:     return new Color(0.6f, 0.2f, 0.8f);
+            default:                  return new Color(0.7f, 0.7f, 0.7f);
+        }
+    }
 }

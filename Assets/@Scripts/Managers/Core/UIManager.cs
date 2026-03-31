@@ -89,7 +89,7 @@ public class UIManager
             name = typeof(T).Name;
 
         GameObject go = Managers.Resource.Instantiate($"{name}", parent, pooling);
-        go.transform.SetParent(parent);
+        go.transform.SetParent(parent, false);
         return Util.GetOrAddComponent<T>(go);
     }
 

@@ -435,6 +435,24 @@ public class UI_GameScene : UI_Scene
             Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.TestKey);
         }
 
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Managers.Game.AddItem(1001, 1); // 예시: 아이템 ID 1001을 1개 추가
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Managers.Game.AddItem(9001, 1);
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Managers.Game.RemoveItem(1001, 1);
+            Managers.Game.RemoveItem(9001, 1);
+
+        }
 
 #endif
     }

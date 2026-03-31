@@ -5,7 +5,7 @@
       "Name": "젤리 퐁",
       "Grade": 0,
       "Description": "풍 슬라임이 떨어뜨리는 젤리.",
-      "SpriteName": "item_jellypong",
+      "SpriteName": "Slime_Green_Drop",
       "FoundLocation": "신들바람 숲"
     },
     {
@@ -19,17 +19,17 @@
     {
       "DataId": 9001,
       "Name": "임시통행증",
-      "Grade": 0,
+      "Grade": 3,
       "Description": "모험가협회에서 발급한 임시 통행증. 숲 입구까지 이동할 수 있다.",
-      "SpriteName": "item_temp_pass",
+      "SpriteName": "Pass1",
       "FoundLocation": "모험가협회"
     },
     {
       "DataId": 9002,
       "Name": "일반통행증",
-      "Grade": 1,
+      "Grade": 3,
       "Description": "1급 모험가에게 발급되는 통행증. 더 넓은 지역으로 이동할 수 있다.",
-      "SpriteName": "item_pass_normal",
+      "SpriteName": "Pass2",
       "FoundLocation": "모험가협회"
     }
   ]
