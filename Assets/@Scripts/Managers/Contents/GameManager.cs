@@ -13,6 +13,7 @@ public class InventoryItem
 {
     public int DataId;
     public int Count;
+    public bool IsNew;
 }
 
 [Serializable]
@@ -268,9 +269,12 @@ public class GameManager
     {
         var existing = Inventory.Find(i => i.DataId == dataId);
         if (existing != null)
+        {
             existing.Count += count;
+            existing.IsNew = true;
+        }
         else
-            Inventory.Add(new InventoryItem { DataId = dataId, Count = count });
+            Inventory.Add(new InventoryItem { DataId = dataId, Count = count, IsNew = true });
         SaveGame();
         OnItemAdded?.Invoke(dataId);
         OnItemChanged?.Invoke(dataId);

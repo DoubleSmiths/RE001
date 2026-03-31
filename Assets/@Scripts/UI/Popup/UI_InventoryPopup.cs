@@ -60,7 +60,9 @@ public class UI_InventoryPopup : UI_Popup
     // 번호에 따라 장비, 소비, 퀘스트, 기타로 구분 (지금은 테스트로 9000 이상은 중요 아이템으로 간주)
     private const int IMPORTANT_ITEM_ID_MIN = 9000;
     private const int IMPORTANT_SLOT_COUNT  = 5;
-    private const int NORMAL_SLOT_COUNT     = 15;
+    private const int NORMAL_SLOT_COUNT     = 25;
+    private const int OPEN_SLOT_COUNT = 15;
+
 
     private void Awake()
     {
@@ -113,13 +115,16 @@ public class UI_InventoryPopup : UI_Popup
                 importantItems.Add(item);
             else
                 normalItems.Add(item);
+
+            // TODO : 아이템을 클릭하면 아이템 정보 팝업이 뜨고, NEW 안나오게 설정하기.
+            //item.IsNew = false;
         }
 
         // 중요 아이템 슬롯 세팅
         Transform importantParent = GetObject((int)GameObjects.ImportantThingsList).transform;
         for (int i = 0; i < IMPORTANT_SLOT_COUNT; i++)
         {
-            UI_ImportantSlot slot = Managers.UI.MakeSubItem<UI_ImportantSlot>(importantParent);
+            UI_ImportantSlot slot = Managers.UI.MakeSubItem<UI_ImportantSlot>(importantParent, pooling: false);
             slot.gameObject.name = $"ImportantSlot_{i}";
             if (i < importantItems.Count)
             {
@@ -130,13 +135,14 @@ public class UI_InventoryPopup : UI_Popup
             {
                 slot.SetInfo();
             }
+
         }
 
         // 일반 아이템 슬롯 세팅
         Transform contentParent = GetObject((int)GameObjects.Content).transform;
         for (int i = 0; i < NORMAL_SLOT_COUNT; i++)
         {
-            UI_InvSlot invSlot = Managers.UI.MakeSubItem<UI_InvSlot>(contentParent);
+            UI_InvSlot invSlot = Managers.UI.MakeSubItem<UI_InvSlot>(contentParent, pooling: false);
             invSlot.gameObject.name = $"InvSlot_{i}";
             if (i < normalItems.Count)
             {
@@ -147,6 +153,13 @@ public class UI_InventoryPopup : UI_Popup
             {
                 invSlot.SetInfo();
             }
+
+            if (i < OPEN_SLOT_COUNT)
+            {
+                // 슬롯이 열려있는 경우
+                invSlot.SetOpenBlock();
+            }
+            
         }
     }
 

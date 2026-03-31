@@ -1,5 +1,6 @@
-using UnityEngine;
 using Data;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class UI_ImportantSlot : UI_Base
 {
@@ -41,6 +42,7 @@ public class UI_ImportantSlot : UI_Base
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
         #endregion
+
         return true;
     }
 
@@ -57,5 +59,19 @@ public class UI_ImportantSlot : UI_Base
         bool showCount = hasItem && inventoryItem.Count > 1;
         GetText((int)Texts.AmountTxt).text = showCount ? inventoryItem.Count.ToString() : "";
         GetText((int)Texts.AmountTxt).gameObject.SetActive(showCount);
+
+        // "New" 표시
+        GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(hasItem && inventoryItem.IsNew);
+
+        GetImage((int)Images.GameObject).gameObject.BindEvent(() => { OnClickGameObject(inventoryItem); });
+    }
+
+    void OnClickGameObject(InventoryItem inventoryItem)
+    {
+        inventoryItem.IsNew = false; // 클릭 시 "New" 상태 해제
+        GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(inventoryItem.IsNew);
+
+        // 아이템 상세 정보 UI 열기 (예시)
+        Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(inventoryItem.DataId);
     }
 }
