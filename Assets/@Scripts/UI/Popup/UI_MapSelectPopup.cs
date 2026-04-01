@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Define;
 
 public class UI_MapSelectPopup : UI_Popup
 {
@@ -95,18 +96,78 @@ public class UI_MapSelectPopup : UI_Popup
         if (base.Init() == false)
             return false;
 
-        #region Bind
         BindImage(typeof(Images));
         BindText(typeof(Texts));
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
-        #endregion
+
+        GetButton((int)Buttons.MapSelectBackground).gameObject.BindEvent(ClosePopupUI);
+        GetButton((int)Buttons.Buttonto_FieldType).gameObject.BindEvent(OnClickFieldType);
+        GetButton((int)Buttons.ButtonBWFType).gameObject.BindEvent(OnClickBWFType);
+        GetButton((int)Buttons.MapSelectBWF_EntryBtn).gameObject.BindEvent(OnClickBWFEntry);
+        GetButton((int)Buttons.ButtonMapSelectGO).gameObject.BindEvent(OnClickGo);
+        GetButton((int)Buttons.ButtonMapSelectBack).gameObject.BindEvent(OnClickBack);
+
+        Managers.Quest.OnNotifyChanged += RefreshNotify;
+        RefreshNotify();
 
         return true;
     }
 
+    void OnDestroy()
+    {
+        if (Managers.Quest != null)
+            Managers.Quest.OnNotifyChanged -= RefreshNotify;
+    }
+
     public void SetInfo()
     {
-        // TODO : 맵 선택 팝업에 필요한 정보들 세팅
+        GetObject((int)GameObjects.TownTypeContent).SetActive(false);
+        GetObject((int)GameObjects.BWFTypeContent).SetActive(false);
+    }
+
+    void RefreshNotify()
+    {
+        var list = Managers.Quest.GetCurrentNotifyList();
+
+        bool journeyOrExploreNotify = list.Exists(n => n.BtnID == BTN_JOURNEY)
+                                   || list.Exists(n => n.BtnID == BTN_EXPLORE);
+        bool mapNotify   = list.Exists(n => n.BtnID == BTN_MAP_BREEZING_WIND_FOREST);
+        bool stageNotify = list.Exists(n => n.BtnID == BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE);
+
+        GetObject((int)GameObjects.to_FieldQuestVFX)?.SetActive(journeyOrExploreNotify);
+        GetObject((int)GameObjects.ButtontoBWFVFX)?.SetActive(mapNotify);
+        GetObject((int)GameObjects.MapSelectBWF_EntryVFX)?.SetActive(stageNotify);
+    }
+
+    void OnClickFieldType()
+    {
+        Managers.Quest.CheckButtonClick(BTN_EXPLORE);
+        GetObject((int)GameObjects.TownTypeContent).SetActive(false);
+        GetObject((int)GameObjects.BWFTypeContent).SetActive(true);
+    }
+
+    void OnClickBWFType()
+    {
+        Managers.Quest.CheckButtonClick(BTN_MAP_BREEZING_WIND_FOREST);
+    }
+
+    void OnClickBWFEntry()
+    {
+        Managers.Quest.CheckButtonClick(BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE);
+    }
+
+    void OnClickGo()
+    {
+        Managers.Quest.CheckButtonClick(BTN_JOURNEY);
+        ClosePopupUI();
+        // TODO: 선택된 스테이지로 전투 씬 진입
+        // Managers.Scene.LoadScene(Scene.BattleScene);
+    }
+
+    void OnClickBack()
+    {
+        GetObject((int)GameObjects.TownTypeContent).SetActive(false);
+        GetObject((int)GameObjects.BWFTypeContent).SetActive(false);
     }
 }
