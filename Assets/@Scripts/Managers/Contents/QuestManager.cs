@@ -221,4 +221,19 @@ public class QuestManager
     {
         return Managers.Data.QuestDic.TryGetValue(CurrentQuestID, out quest);
     }
+
+#if UNITY_EDITOR
+    /// <summary>[에디터 전용] 지정한 퀘스트 ID로 즉시 이동 (이벤트 재발행)</summary>
+    public void JumpToQuest(int questId)
+    {
+        CurrentQuestID = questId;
+        _metConditions.Clear();
+        Managers.Game.CurrentQuestID = questId;
+        Managers.Game.SaveGame();
+
+        OnQuestChanged?.Invoke(questId);
+        OnNotifyChanged?.Invoke();
+        OnFollowUIChanged?.Invoke(questId);
+    }
+#endif
 }

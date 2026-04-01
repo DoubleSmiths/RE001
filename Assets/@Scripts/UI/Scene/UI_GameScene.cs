@@ -7,15 +7,35 @@ using static Util;
 public class UI_GameScene : UI_Scene
 {
     #region Enum
+
     enum Images
     {
+        CurrencyBar,
+        MainGoldImg,
+        MainCrystalImg,
+        ButtomDisplayer,
+        ButtonDisplayerBackground,
+        Frame,
+        Frame2,
+        CharacterButtonIcon,
         CharacterBtnNewIcon,
+        InventoryButtonIcon,
+        PotionButtonIcon,
+        EquipmentButtonIcon,
+        SkillButtonIcon,
+        BestiaryButtonIcon,
         BestiaryBtnNewIcon,
         BestiaryBtnFollowingBox,
-        CurrencyBar,
+        PlayerHPBarGroup,
+        PlayerHPBarFrame,
         PlayerHPBarGuage,
+        PlayerEXPBarGroup,
+        PlayerEXPBarFrame,
         PlayerEXPBarGuage,
+        PlayerPortraitFrame,
+        PortraitMask,
         PortraitImg,
+        Main_QuestFollow,
         ForFadeImage,
     }
 
@@ -37,30 +57,62 @@ public class UI_GameScene : UI_Scene
         BestiaryBtnNewTxt,
         RankTxt,
         PlayerHPBarText,
+        PlayerEXPTextFlat,
         PlayerEXPTextPercent,
         PlayerRankText,
         PlayerLevelText,
+        Quest_NeedItemNameTxt,
+        Quest_NeedItemAmountTxt,
     }
 
     enum Buttons
     {
         OptionBtn,
+        GuildButton,
+        GuildButton1,
+        GuildButton2,
+        GuildButton3,
+        GuildButton4,
+        TravelButtonOnBattle,
         CharacterButton,
         InventoryButton,
         PotionButton,
         EquipmentButton,
         SkillButton,
         BestiaryButton,
+        ExitButton,
     }
 
     enum GameObjects
     {
-        PlayerBar,
-        BTMButtonGroup,
-        QuestFollow,
+        FIXED,
+        InFrame,
+        MainGoldShow,
+        MainCrystalShow,
         AreaBtnGroupSlot,
+        OnBattleBtns,
+        OnBattleMainBtnGroup,
+        TravelButtonOnBattleQuestVFX,
+        BTMButtonGroup,
+        BTMButtonUnlockHelper,
+        Layout,
+        Dust_01,
+        Ring_01,
+        ExitQuestVFX,
+        PlayerBar,
+        PlayerHPBarGuageBox,
+        PlayerEXPBarGuageBox,
+        PlayerPortraitGroup,
+        QuestFollow,
+        TxtGroup,
+        Quest_Done_Effect,
+        GlowDot_Lens_01,
+        GlowDot_Lens_02,
+        GlowDot_02,
     }
+
     #endregion
+
 
     UI_AreaBtnGroup _currentBtnGroup;
 
@@ -113,10 +165,9 @@ public class UI_GameScene : UI_Scene
         // Fade
         //FadeInOut(GetImage((int)Images.ForFadeImage));
 
-        // TODO : 퀘스트가 있을 때는 SetActive(true)로 설정
-        GetObject((int)GameObjects.QuestFollow).gameObject.SetActive(false);
-
-        Managers.Quest.OnBtnUnlocked += OnBtnUnlocked;
+        Managers.Quest.OnFollowUIChanged += RefreshQuestFollow;
+        Managers.Quest.OnBtnUnlocked    += OnBtnUnlocked;
+        RefreshQuestFollow(Managers.Quest.CurrentQuestID);
 
         SetInfo();
         RefreshTabLocks();
@@ -140,7 +191,10 @@ public class UI_GameScene : UI_Scene
         }
 
         if (Managers.Quest != null)
-            Managers.Quest.OnBtnUnlocked -= OnBtnUnlocked;
+        {
+            Managers.Quest.OnFollowUIChanged -= RefreshQuestFollow;
+            Managers.Quest.OnBtnUnlocked     -= OnBtnUnlocked;
+        }
     }
 
     public void FadeInOut()
@@ -311,6 +365,26 @@ public class UI_GameScene : UI_Scene
         SetTabInteractable(Buttons.BestiaryButton,  false);
     }
 
+    void RefreshQuestFollow(int questId)
+    {
+        Data.QuestData quest = Managers.Quest.GetCurrentFollowUI();
+        GameObject followObj = GetObject((int)GameObjects.QuestFollow);
+
+        if (quest == null)
+        {
+            followObj.SetActive(false);
+            return;
+        }
+
+        int itemId = int.Parse(quest.FollowItemID);
+        int current = Managers.Game.GetItemCount(itemId);
+
+        GetText((int)Texts.Quest_NeedItemNameTxt).text   = quest.FollowItemName;
+        GetText((int)Texts.Quest_NeedItemAmountTxt).text = $"{current}/{quest.FollowCount}";
+
+        followObj.SetActive(true);
+    }
+
     void OnBtnUnlocked(string btnId)
     {
         if (btnId == UNLOCK_INVENTORY_BUTTON)
@@ -461,6 +535,10 @@ public class UI_GameScene : UI_Scene
             Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.TestKey);
         }
 
+        if (Input.GetKeyDown(KeyCode.F1)) TestJumpToQuest(1);
+        if (Input.GetKeyDown(KeyCode.F2)) TestJumpToQuest(2);
+        if (Input.GetKeyDown(KeyCode.F3)) TestJumpToQuest(3);
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             Managers.Game.AddItem(1001, 1); // 예시: 아이템 ID 1001을 1개 추가
@@ -481,6 +559,20 @@ public class UI_GameScene : UI_Scene
         }
 
 #endif
+    }
+
+    [ContextMenu("Test/Jump to Quest 1")]
+    public void TestJumpToQuest1() => TestJumpToQuest(1);
+
+    [ContextMenu("Test/Jump to Quest 2")]
+    public void TestJumpToQuest2() => TestJumpToQuest(2);
+
+    [ContextMenu("Test/Jump to Quest 3")]
+    public void TestJumpToQuest3() => TestJumpToQuest(3);
+
+    void TestJumpToQuest(int questId)
+    {
+        Managers.Quest.JumpToQuest(questId);
     }
 
     [ContextMenu("Test/Gold +500")]
