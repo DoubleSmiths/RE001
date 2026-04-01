@@ -18,7 +18,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
     }
 
 
-    public void UnlockButtonAnim(GameObject go, Image image, TMP_Text text)
+    public void UnlockButtonAnim(GameObject go, Image image, TMP_Text text, System.Action onComplete = null)
     {
         // 이벤트는 Image와 연결해야한다!
 
@@ -39,20 +39,11 @@ public abstract class UI_AreaBtnGroup : UI_Base
         seq.Join(text.DOFade(1f, 2f).From(0.3f).SetEase(Ease.Linear));
         seq.Join(go.transform.DOScale(1f, 0.1f).SetDelay(2.01f).SetEase(Ease.InOutBack));
 
-        //go.transform.DOShakePosition(2f, new Vector3(0.7f, 0.7f, 1f), 27, 40.1f, false, false).SetEase(Ease.OutQuad);
-        //go.transform.DOScale(1.15f, 2f).SetEase(Ease.Linear);
-        //image.DOFade(1f, 2f).SetEase(Ease.InQuint);
-        //text.DOFade(1f, 2f).From(0.3f).SetEase(Ease.Linear);
-        //go.transform.DOScale(1f, 0.1f).SetDelay(2.01f).SetEase(Ease.InOutBack);
-
-        // TODO : 애니메이션이 끝난 후에 버튼이 활성화되도록 설정
         seq.OnComplete(() =>
         {
             go.GetComponent<Button>().interactable = true;
-            // TODO : 해금 되었습니다 팝업 띄우기, 어떤 버튼인지 데이터 세팅. switch로 분기? 고민 해야할듯.
-            Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.EquipmentText);
+            onComplete?.Invoke();
         });
-
     }
 
     public void NameTextInAnim(RectTransform target)

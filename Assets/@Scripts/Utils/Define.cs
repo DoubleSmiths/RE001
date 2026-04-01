@@ -227,6 +227,14 @@ public class Define
     public const string TRAVEL_BUTTON_NEW_TXT = "TRAVEL_BUTTON_NEW_TXT";
     public const string VILLAGE1_TRAVEL_QUEST_VFX = "VILLAGE1_TRAVEL_QUEST_VFX";
 
+    public const string BTN_EXIT = "BTN_EXIT";
+
+    // Travel UI (미구현)
+    public const string BTN_JOURNEY = "BTN_JOURNEY";
+    public const string BTN_EXPLORE = "BTN_EXPLORE";
+    public const string BTN_MAP_BREEZING_WIND_FOREST = "BTN_MAP_BREEZING_WIND_FOREST";
+    public const string BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE = "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE";
+
     // Village1 Build Btn Group
     public const string VILLAGE1_GUILD_TALK_VFX = "VILLAGE1_GUILD_TALK_VFX";
     public const string VILLAGE1_GUILD_QUEST_VFX = "VILLAGE1_GUILD_QUEST_VFX";

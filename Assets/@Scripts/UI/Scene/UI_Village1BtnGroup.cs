@@ -78,7 +78,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     #endregion
 
-    bool _pendingTravelUnlock = false;
+    string _pendingUnlockBtnId = null;
 
     public override bool Init()
     {
@@ -140,8 +140,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnBtnUnlocked(string btnId)
     {
-        if (btnId == UNLOCK_TRAVEL_BUTTON)
-            _pendingTravelUnlock = true;
+        _pendingUnlockBtnId = btnId;
     }
 
     void SetInfo()
@@ -289,22 +288,27 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         seq.AppendCallback(() =>
         {
-            //var travelBtn = GetButton((int)Buttons.TravelButton).gameObject;
-            //var dotweenAnim = travelBtn.GetComponent<DOTweenAnimation>();
-            //dotweenAnim.DORestart();
+            if (string.IsNullOrEmpty(_pendingUnlockBtnId)) return;
+            string unlockId = _pendingUnlockBtnId;
+            _pendingUnlockBtnId = null;
 
-            if (!_pendingTravelUnlock) return;
-            _pendingTravelUnlock = false;
-
-            //float delay = dotweenAnim != null ? dotweenAnim.duration : 0.5f;
-            DOVirtual.DelayedCall(0.5f, () =>
-            {
-                //dotweenAnim?.DOKill();
-                UnlockButtonAnim(GetButton((int)Buttons.TravelButton).gameObject,
-                                 GetImage((int)Images.TravelButtonIcon),
-                                 GetText((int)Texts.TravelButtonText));
-            });
+            DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId));
         });
+    }
+
+    void TryPlayUnlockAnim(string btnId)
+    {
+        switch (btnId)
+        {
+            case UNLOCK_TRAVEL_BUTTON:
+                UnlockButtonAnim(
+                    GetButton((int)Buttons.TravelButton).gameObject,
+                    GetImage((int)Images.TravelButtonIcon),
+                    GetText((int)Texts.TravelButtonText),
+                    onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
+                        .SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.EquipmentText)); // TODO : 정상적인 텍스트로 변경.
+                break;
+        }
     }
 
     void OnClickGuild()
@@ -383,6 +387,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         bool monasteryVfxNotify = list.Exists(n => n.BtnID == MONASTERY_VFX_SUB1);
         bool TravelButtonNewNotify = list.Exists(n => n.BtnID == TRAVEL_BUTTON_NEW_TXT);
         bool village1TravelQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_TRAVEL_QUEST_VFX);
+        //bool village1TravelQuestVfxNotify = list.Exists(n => n.BtnID == BTN_EXIT);
 
         #region Village1MainBtnGroup
         GetObject((int)GameObjects.Village1GuildVFX)?.SetActive(village1GuildNotify);
