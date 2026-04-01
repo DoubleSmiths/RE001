@@ -19,6 +19,7 @@ public class PrefabEnumGenerator : EditorWindow
     private List<string> gameObjectNames = new List<string>();
 
     private string previewText = "";
+    private bool removeDuplicates = true;
 
     [MenuItem("Tools/Prefab Enum Generator")]
     public static void ShowWindow()
@@ -34,6 +35,8 @@ public class PrefabEnumGenerator : EditorWindow
         prefabFolderPath = EditorGUILayout.TextField("Prefab Folder Path", prefabFolderPath);
         selectedPrefab = (GameObject)EditorGUILayout.ObjectField("Prefab", selectedPrefab, typeof(GameObject), false);
         outputFileName = EditorGUILayout.TextField("Output File Name", outputFileName);
+
+        removeDuplicates = EditorGUILayout.Toggle("중복 제거", removeDuplicates);
 
         EditorGUILayout.Space();
 
@@ -74,7 +77,8 @@ public class PrefabEnumGenerator : EditorWindow
 
         CollectComponents(selectedPrefab.transform);
 
-        RemoveDuplicatesAcrossAll();
+        if (removeDuplicates)
+            RemoveDuplicatesAcrossAll();
 
         previewText = BuildEnumText();
         Repaint();
