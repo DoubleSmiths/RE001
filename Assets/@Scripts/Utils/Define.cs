@@ -268,4 +268,10 @@ public class Define
     public const int EQUIP_ID_MIN = 2000;
     public const int POTION_ID_MIN = 3000;
     public const int IMPORTANT_ITEM_ID_MIN = 9000;
+
+    public const string DEFAULT_COLOR = "FFFFFF";
+    public const string SHORTAGE_COLOR = "FEA400";
+    public const string EMPTY_COLOR = "FF0000";
+    public const string COMPLETE_COLOR = "00FF00";
+    public const string QUEST_FOLLOW_DEFAULT_COLOR = "FFC84E";
 }

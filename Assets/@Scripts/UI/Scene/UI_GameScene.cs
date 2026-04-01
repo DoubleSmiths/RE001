@@ -36,6 +36,7 @@ public class UI_GameScene : UI_Scene
         PortraitMask,
         PortraitImg,
         Main_QuestFollow,
+        Main_QuestFollowColor,
         ForFadeImage,
     }
 
@@ -115,12 +116,13 @@ public class UI_GameScene : UI_Scene
 
 
     UI_AreaBtnGroup _currentBtnGroup;
+    int _followActiveQuestId = -1;
 
     // 재화 Lerp용 표시값
     float _displayGold;
     float _displayCrystal;
 
-    static readonly Color _goldColor    = Color.white;                                  // #FFFFFF
+    static readonly Color _goldColor = Color.white;                                  // #FFFFFF
     static readonly Color _crystalColor = new Color(0f, 0.953f, 1f, 80f / 225f);        // #00F3FF
     static readonly Color _increaseColor = new Color(0f, 1f, 0f);                       // #00FF00
     static readonly Color _decreaseColor = new Color(1f, 0f, 0f);                       // #FF0000
@@ -136,19 +138,19 @@ public class UI_GameScene : UI_Scene
         BindObject(typeof(GameObjects));
 
         // 폰트 등록 (숫자 텍스트는 Inspector에서 개별 지정)
-        ApplyFont(GetText((int)Texts.CharacterButtonText),  FontType.UI);
-        ApplyFont(GetText((int)Texts.InventoryButtonText),  FontType.UI);
-        ApplyFont(GetText((int)Texts.InventoryButtonNewTxt),FontType.UI);
-        ApplyFont(GetText((int)Texts.PotionButtonText),     FontType.UI);
-        ApplyFont(GetText((int)Texts.PotionButtonNewTxt),   FontType.UI);
-        ApplyFont(GetText((int)Texts.EquipmentButtonText),  FontType.UI);
-        ApplyFont(GetText((int)Texts.EquipmentButtonNewTxt),FontType.UI);
-        ApplyFont(GetText((int)Texts.SkillButtonText),      FontType.UI);
-        ApplyFont(GetText((int)Texts.SkillButtonNewTxt),    FontType.UI);
-        ApplyFont(GetText((int)Texts.BestiaryButtonText),   FontType.UI);
-        ApplyFont(GetText((int)Texts.BestiaryBtnNewTxt),    FontType.UI);
-        ApplyFont(GetText((int)Texts.PlayerRankText),       FontType.UI);
-        ApplyFont(GetText((int)Texts.PlayerLevelText),      FontType.UI);
+        ApplyFont(GetText((int)Texts.CharacterButtonText), FontType.UI);
+        ApplyFont(GetText((int)Texts.InventoryButtonText), FontType.UI);
+        ApplyFont(GetText((int)Texts.InventoryButtonNewTxt), FontType.UI);
+        ApplyFont(GetText((int)Texts.PotionButtonText), FontType.UI);
+        ApplyFont(GetText((int)Texts.PotionButtonNewTxt), FontType.UI);
+        ApplyFont(GetText((int)Texts.EquipmentButtonText), FontType.UI);
+        ApplyFont(GetText((int)Texts.EquipmentButtonNewTxt), FontType.UI);
+        ApplyFont(GetText((int)Texts.SkillButtonText), FontType.UI);
+        ApplyFont(GetText((int)Texts.SkillButtonNewTxt), FontType.UI);
+        ApplyFont(GetText((int)Texts.BestiaryButtonText), FontType.UI);
+        ApplyFont(GetText((int)Texts.BestiaryBtnNewTxt), FontType.UI);
+        ApplyFont(GetText((int)Texts.PlayerRankText), FontType.UI);
+        ApplyFont(GetText((int)Texts.PlayerLevelText), FontType.UI);
 
         // 버튼 이벤트
         GetButton((int)Buttons.OptionBtn).gameObject.BindEvent(OnClickOption);
@@ -162,11 +164,14 @@ public class UI_GameScene : UI_Scene
         // Camera Setting
         gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
 
+        // 초기화 시 퀘스트 동행 UI는 비활성화 상태로 시작 (필요 시 활성화)
+        GetObject((int)GameObjects.QuestFollow).gameObject.SetActive(false);
+
         // Fade
         //FadeInOut(GetImage((int)Images.ForFadeImage));
 
         Managers.Quest.OnFollowUIChanged += RefreshQuestFollow;
-        Managers.Quest.OnBtnUnlocked    += OnBtnUnlocked;
+        Managers.Quest.OnBtnUnlocked += OnBtnUnlocked;
         RefreshQuestFollow(Managers.Quest.CurrentQuestID);
 
         SetInfo();
@@ -185,15 +190,16 @@ public class UI_GameScene : UI_Scene
 
         if (Managers.Game != null)
         {
-            Managers.Game.OnResourceChanged    -= RefreshCurrency;
-            Managers.Game.OnLanguageChanged     -= RefreshTexts;
+            Managers.Game.OnResourceChanged -= RefreshCurrency;
+            Managers.Game.OnLanguageChanged -= RefreshTexts;
             Managers.Game.OnInventoryNewChanged -= RefreshBTMButtonGroup;
+            Managers.Game.OnItemChanged -= OnFollowItemChanged;
         }
 
         if (Managers.Quest != null)
         {
             Managers.Quest.OnFollowUIChanged -= RefreshQuestFollow;
-            Managers.Quest.OnBtnUnlocked     -= OnBtnUnlocked;
+            Managers.Quest.OnBtnUnlocked -= OnBtnUnlocked;
         }
     }
 
@@ -224,9 +230,9 @@ public class UI_GameScene : UI_Scene
     public void SetInfo()
     {
         // 재화 초기값 즉시 표시 (Lerp 없이)
-        _displayGold    = Managers.Game.Gold;
+        _displayGold = Managers.Game.Gold;
         _displayCrystal = Managers.Game.Crystal;
-        GetText((int)Texts.MainGoldText).text    = Managers.Game.Gold.ToString("N0");
+        GetText((int)Texts.MainGoldText).text = Managers.Game.Gold.ToString("N0");
         GetText((int)Texts.MainCrystalText).text = Managers.Game.Crystal.ToString("N0");
 
         RefreshPlayerBar();
@@ -234,9 +240,10 @@ public class UI_GameScene : UI_Scene
         RefreshTexts();
         RefreshBTMButtonGroup();
 
-        Managers.Game.OnResourceChanged     += RefreshCurrency;
-        Managers.Game.OnLanguageChanged      += RefreshTexts;
-        Managers.Game.OnInventoryNewChanged  += RefreshBTMButtonGroup;
+        Managers.Game.OnResourceChanged += RefreshCurrency;
+        Managers.Game.OnLanguageChanged += RefreshTexts;
+        Managers.Game.OnInventoryNewChanged += RefreshBTMButtonGroup;
+        Managers.Game.OnItemChanged += OnFollowItemChanged;
     }
 
     // ────────────────────────────────────────
@@ -244,7 +251,7 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshCurrency()
     {
-        int newGold    = Managers.Game.Gold;
+        int newGold = Managers.Game.Gold;
         int newCrystal = Managers.Game.Crystal;
 
         // 증감 색상 플래시
@@ -282,7 +289,7 @@ public class UI_GameScene : UI_Scene
     {
         int lv = Managers.Game.Level;
         GetText((int)Texts.PlayerLevelText).text = $"Lv.{lv}";
-        GetText((int)Texts.PlayerRankText).text  = Managers.Game.PlayerName;
+        GetText((int)Texts.PlayerRankText).text = Managers.Game.PlayerName;
 
         // TODO: 직업에 따라 PortraitImg 스프라이트 교체
         // Managers.Resource.LoadAsync<Sprite>($"Portrait_{jobType}", sprite =>
@@ -294,12 +301,12 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshTexts()
     {
-        GetText((int)Texts.CharacterButtonText).text  = Localize(LocalizeKey.CharacterText);
-        GetText((int)Texts.InventoryButtonText).text  = Localize(LocalizeKey.InventoryText);
-        GetText((int)Texts.PotionButtonText).text     = Localize(LocalizeKey.PotionText);
-        GetText((int)Texts.EquipmentButtonText).text  = Localize(LocalizeKey.EquipmentText);
-        GetText((int)Texts.SkillButtonText).text      = Localize(LocalizeKey.SkillText);
-        GetText((int)Texts.BestiaryButtonText).text   = Localize(LocalizeKey.BestiaryText);
+        GetText((int)Texts.CharacterButtonText).text = Localize(LocalizeKey.CharacterText);
+        GetText((int)Texts.InventoryButtonText).text = Localize(LocalizeKey.InventoryText);
+        GetText((int)Texts.PotionButtonText).text = Localize(LocalizeKey.PotionText);
+        GetText((int)Texts.EquipmentButtonText).text = Localize(LocalizeKey.EquipmentText);
+        GetText((int)Texts.SkillButtonText).text = Localize(LocalizeKey.SkillText);
+        GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BestiaryText);
     }
 
     public void RefreshBTMButtonGroup()
@@ -359,10 +366,20 @@ public class UI_GameScene : UI_Scene
     {
         var unlocked = Managers.Game.UnlockedBtnIds;
         SetTabInteractable(Buttons.InventoryButton, unlocked.Contains(UNLOCK_INVENTORY_BUTTON));
-        SetTabInteractable(Buttons.PotionButton,    false);
+        SetTabInteractable(Buttons.PotionButton, false);
         SetTabInteractable(Buttons.EquipmentButton, false);
-        SetTabInteractable(Buttons.SkillButton,     false);
-        SetTabInteractable(Buttons.BestiaryButton,  false);
+        SetTabInteractable(Buttons.SkillButton, false);
+        SetTabInteractable(Buttons.BestiaryButton, false);
+    }
+
+    void OnFollowItemChanged(int dataId)
+    {
+        Data.QuestData quest = Managers.Quest.GetCurrentFollowUI();
+        if (quest == null) return;
+        if (!int.TryParse(quest.FollowItemID, out int followId)) return;
+        if (followId != dataId) return;
+
+        RefreshQuestFollow(Managers.Quest.CurrentQuestID);
     }
 
     void RefreshQuestFollow(int questId)
@@ -373,16 +390,35 @@ public class UI_GameScene : UI_Scene
         if (quest == null)
         {
             followObj.SetActive(false);
+            _followActiveQuestId = -1;
             return;
         }
 
         int itemId = int.Parse(quest.FollowItemID);
         int current = Managers.Game.GetItemCount(itemId);
 
-        GetText((int)Texts.Quest_NeedItemNameTxt).text   = quest.FollowItemName;
+        GetText((int)Texts.Quest_NeedItemNameTxt).text = quest.FollowItemName;
         GetText((int)Texts.Quest_NeedItemAmountTxt).text = $"{current}/{quest.FollowCount}";
 
-        followObj.SetActive(true);
+        bool wasInactive = !followObj.activeSelf;
+        if (!followObj.activeSelf)
+        {
+            followObj.SetActive(true);
+            GetImage((int)Images.Main_QuestFollow).GetComponent<DOTweenAnimation>().DORestart();
+        }
+        else followObj.SetActive(true);
+
+        bool isDone = current >= quest.FollowCount;
+        ColorUtility.TryParseHtmlString($"#{(isDone ? Define.COMPLETE_COLOR : Define.QUEST_FOLLOW_DEFAULT_COLOR)}", out Color color);
+        GetImage((int)Images.Main_QuestFollowColor).color = color;
+
+        if (isDone && _followActiveQuestId != questId)
+            GetObject((int)GameObjects.Quest_Done_Effect).GetComponent<ParticleSystem>().Play();
+
+        _followActiveQuestId = questId;
+
+        if (wasInactive)
+            GetImage((int)Images.Main_QuestFollow).GetComponent<DOTweenAnimation>().DORestart();
     }
 
     void OnBtnUnlocked(string btnId)
@@ -463,9 +499,9 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     public void BindPlayer(PlayerController player)
     {
-        player.OnHpChanged  += (cur, max) => UpdateHP(cur, max);
-        player.OnExpChanged += (cur, req)  => UpdateEXP(cur, req);
-        player.OnLevelUp    += (lv)        => OnLevelUp(lv);
+        player.OnHpChanged += (cur, max) => UpdateHP(cur, max);
+        player.OnExpChanged += (cur, req) => UpdateEXP(cur, req);
+        player.OnLevelUp += (lv) => OnLevelUp(lv);
         UpdateHP(player.Hp, player.MaxHp);
     }
 
@@ -576,10 +612,10 @@ public class UI_GameScene : UI_Scene
     }
 
     [ContextMenu("Test/Gold +500")]
-    public void TestGoldIncrease()  => Managers.Game.Gold += 500;
+    public void TestGoldIncrease() => Managers.Game.Gold += 500;
 
     [ContextMenu("Test/Gold -500")]
-    public void TestGoldDecrease()  => Managers.Game.Gold = Mathf.Max(0, Managers.Game.Gold - 500);
+    public void TestGoldDecrease() => Managers.Game.Gold = Mathf.Max(0, Managers.Game.Gold - 500);
 
     [ContextMenu("Test/Crystal +100")]
     public void TestCrystalIncrease() => Managers.Game.Crystal += 100;

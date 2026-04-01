@@ -183,7 +183,10 @@ public class GameManager
     public int CurrentQuestID
     {
         get => _gameData.CurrentQuestID;
-        set { _gameData.CurrentQuestID = value; }
+        set { 
+            _gameData.CurrentQuestID = value; 
+            Debug.Log($"CurrentQuestID set to {value}");
+        }
     }
 
     public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;
