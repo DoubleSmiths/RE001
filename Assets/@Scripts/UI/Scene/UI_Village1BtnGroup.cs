@@ -112,6 +112,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             OnClickMain();
         });
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
+        GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
         Managers.Quest.OnBtnUnlocked   += OnBtnUnlocked;
@@ -345,9 +346,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         HideAllGroup();
 
         //TODO : 던전 진입 팝업 띄우기.
-
-
-        //ShowGroup(GameObjects.Village1MonasteryBtnGroup);
+        Managers.UI.ShowPopupUI<UI_MapSelectPopup>().SetInfo();
     }
 
     void OnClickVillage1GuildTalkButton()

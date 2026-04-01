@@ -15,21 +15,41 @@ public class UI_MapSelectPopup : UI_Popup
         Decor_description_line_Image,
         MapSelectPopupBtmFrame,
         PlaceType,
+        PlaceTypeTownImage,
+        AdventureImage,
         TownType,
+        TownImage,
         EFrame,
         FieldType,
-        Image_2,
+        FieldTypeAdventureImage,
         BWFType,
-        TitleText_1,
+        BWFTypeFrame,
+        BWFTypeTitle,
+        TitleTextFrame,
+        MapSelectBWF_EntryBtnFrame,
+        MapSelectBWF_EntryBtnImage,
+        MapSelectBWFBtnFrame,
+        MapSelectBWFBtnImage,
         BtmGroup,
     }
 
     enum Texts
     {
+        XbuttonText,
         MapSelectPopupTitleText,
         MapSelectPopupMapNameText,
+        PlaceTypeTownText,
+        AdventrueText,
+        TownTypeTownText,
+        MapSelectAsdalBtnText,
         MapSelectPopup_CurrentLocationTxt,
-        GameObject_1,
+        FieldTypeAdventureText,
+        ButtonBWFTypeText,
+        BWFTypeTitleText,
+        MapSelectBWF_EntryBtnText,
+        MapSelectBWFBtnText,
+        ButtonMapSelectBackText,
+        ButtonMapSelectGOText,
     }
 
     enum Buttons
@@ -54,22 +74,39 @@ public class UI_MapSelectPopup : UI_Popup
         MapSelectPopup,
         to_TownButtonQuestVFX,
         to_FieldQuestVFX,
+        TownTypeContent,
         AsdalButtonQuestVFX,
         MapSelectPopupActiveEf,
+        Content,
         ButtontoBWFVFX,
+        BWFTypeContent,
         MapSelectBWF_EntryVFX,
     }
 
     #endregion
 
+    private void Awake()
+    {
+        Init();
+    }
 
     public override bool Init()
     {
         if (base.Init() == false)
             return false;
 
+        #region Bind
+        BindImage(typeof(Images));
+        BindText(typeof(Texts));
+        BindButton(typeof(Buttons));
+        BindObject(typeof(GameObjects));
+        #endregion
 
         return true;
     }
 
+    public void SetInfo()
+    {
+        // TODO : 맵 선택 팝업에 필요한 정보들 세팅
+    }
 }
