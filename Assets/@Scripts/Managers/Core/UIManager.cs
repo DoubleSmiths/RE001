@@ -158,7 +158,7 @@ public class UIManager
     public UI_Toast ShowToast(string msg)
     {
         string name = typeof(UI_Toast).Name;
-        GameObject go = Managers.Resource.Instantiate($"{name}", pooling: true);
+        GameObject go = Managers.Resource.Instantiate($"{name}", pooling: false);
         UI_Toast popup = Util.GetOrAddComponent<UI_Toast>(go);
         popup.SetInfo(msg);
         _toastStack.Push(popup);
@@ -169,7 +169,7 @@ public class UIManager
 
     IEnumerator CoCloseToastUI()
     {
-       yield return new WaitForSeconds(1f);
+       yield return new WaitForSeconds(3f);
        CloseToastUI();
     }
 

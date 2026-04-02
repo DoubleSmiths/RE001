@@ -91,8 +91,12 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         //var btn = GetButton((int)Buttons.TravelButton).gameObject;
         //btn.SetActive(false);
 
+        // Toast Test
+        Managers.UI.ShowToast("산들바람 숲(잎구)");
+
         Sequence seq = DOTween.Sequence();
 
+        // TODO : 버튼들이 퍼지는 애니메이션 추가, 아래가 그거긴함. 버튼에 이미지가 없던데 뭐가 들어가는 지 모름.
         for (int i = 0; i < 6; i++)
         {
             //if (i == (int)Buttons.TravelButton) continue;
@@ -105,8 +109,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         //seq.AppendInterval(0.2f);
         //seq.AppendCallback(() => btn.SetActive(true));
         //seq.AppendCallback(() => btn.GetComponent<DOTweenAnimation>()?.DORestart());
-        // TODO : 버튼들이 퍼지는 애니메이션 추가
         // TODO : 던전 이름 나오는 애니메이션 추가
+
+        // 캐릭터 애니메이션은 여기서 달리기로 바꿔야하나?
     }
 
     void RefreshNotify()

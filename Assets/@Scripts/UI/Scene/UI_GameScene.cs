@@ -606,13 +606,12 @@ public class UI_GameScene : UI_Scene
         if (Input.GetKeyDown(KeyCode.A))
         {
             Managers.Game.AddItem(1001, 1); // 예시: 아이템 ID 1001을 1개 추가
-
         }
-
+        if (Input.GetKeyDown(KeyCode.S))
+            Managers.UI.ShowToast("산들바람 숲(잎구)");
         if (Input.GetKeyDown(KeyCode.E))
         {
             Managers.Game.AddItem(9001, 1);
-
         }
 
         if (Input.GetKeyDown(KeyCode.D))

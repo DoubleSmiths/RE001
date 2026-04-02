@@ -15,6 +15,7 @@ public class PlayerController : CreatureController
     {
         if (!base.Init()) return false;
         ObjectType = ObjectType.Player;
+        State = Define.State.Idle;
         RefreshStats();
         return true;
     }
@@ -25,13 +26,13 @@ public class PlayerController : CreatureController
     void Update()
     {
         if (State == Define.State.Dead) return;
-        AutoAttack();
+        //AutoAttack();
     }
 
     void FixedUpdate()
     {
         if (State == Define.State.Dead) return;
-        MovePlayer();
+        //MovePlayer();
     }
 
     // ────────────────────────────────────────
