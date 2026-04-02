@@ -155,16 +155,16 @@ public abstract class UI_Base : MonoBehaviour
         contentObject.transform.DOScale(1f, 0.1f).SetEase(Ease.InOutBack).SetUpdate(true);
     }
 
-    public void FadeIn(Image image)
+    public void FadeIn(Image image, Action onComplete = null)
     {
-        image.DOFade(0f, 1f);
+        image.DOFade(0f, 1f).OnComplete(() => onComplete?.Invoke());
     }
 
-    public void FadeOut(Image image)
+    public void FadeOut(Image image, Action onComplete = null)
     {
-        image.DOFade(1f, 1f);
+        image.DOFade(1f, 1f).OnComplete(() => onComplete?.Invoke());
     }
-    
+
     public void FadeInOut(Image image)
     {
         Sequence seq = DOTween.Sequence();

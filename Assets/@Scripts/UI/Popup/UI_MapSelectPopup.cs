@@ -114,7 +114,7 @@ public class UI_MapSelectPopup : UI_Popup
         return true;
     }
 
-    void OnDestroy()
+    public override void OnDestroy()
     {
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
@@ -160,9 +160,11 @@ public class UI_MapSelectPopup : UI_Popup
     void OnClickGo()
     {
         Managers.Quest.CheckButtonClick(BTN_JOURNEY);
-        ClosePopupUI();
-        // TODO: 선택된 스테이지로 전투 씬 진입
-        // Managers.Scene.LoadScene(Scene.BattleScene);
+        //ClosePopupUI();
+        Managers.UI.CloseAllPopupUI();
+
+        UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
+        gameScene?.EnterAreaWithFade(AreaType.Battle);
     }
 
     void OnClickBack()

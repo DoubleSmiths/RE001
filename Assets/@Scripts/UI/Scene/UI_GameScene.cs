@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static Define;
 using static Util;
 
@@ -211,7 +212,33 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     //  구역 전환
     // ────────────────────────────────────────
+
+    /// <summary>페이드 없이 즉시 구역 전환 (씬 초기 로드용)</summary>
     public void EnterArea(AreaType area)
+    {
+        SwapAreaBtnGroup(area);
+    }
+
+    /// <summary>
+    /// FadeOut → onBlack(배경 교체) → BtnGroup 교체 → FadeIn → PlayEnterAnimation 순으로 구역 전환.
+    /// </summary>
+    public void EnterAreaWithFade(AreaType area, System.Action onBlack = null)
+    {
+        Image fade = GetImage((int)Images.ForFadeImage);
+
+        FadeOut(fade, onComplete: () =>
+        {
+            onBlack?.Invoke();
+            SwapAreaBtnGroup(area);
+
+            FadeIn(fade, onComplete: () =>
+            {
+                _currentBtnGroup?.PlayEnterAnimation();
+            });
+        });
+    }
+
+    void SwapAreaBtnGroup(AreaType area)
     {
         if (_currentBtnGroup != null)
             Managers.Resource.Destroy(_currentBtnGroup.gameObject);
@@ -591,6 +618,12 @@ public class UI_GameScene : UI_Scene
         {
             Managers.Game.RemoveItem(1001, 1);
             Managers.Game.RemoveItem(9001, 1);
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            // TODO : 전투로 이동
 
         }
 

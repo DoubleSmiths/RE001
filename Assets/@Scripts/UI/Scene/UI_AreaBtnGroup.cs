@@ -17,6 +17,9 @@ public abstract class UI_AreaBtnGroup : UI_Base
         Init();
     }
 
+    /// <summary>구역 전환 후 FadeIn 완료 시점에 호출. 하위 클래스에서 진입 연출을 구현한다.</summary>
+    public virtual void PlayEnterAnimation() { }
+
 
     public void UnlockButtonAnim(GameObject go, Image image, TMP_Text text, System.Action onComplete = null)
     {

@@ -627,6 +627,7 @@ GameObject:
   - component: {fileID: 1880073541}
   - component: {fileID: 1880073540}
   - component: {fileID: 1880073542}
+  - component: {fileID: 1880073543}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -730,6 +731,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1880073543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880073539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7078a1073a73a2341a5b1daf3ad28186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  MaxHp: 100
+  Hp: 100
+  Atk: 10
+  Def: 0
+  MoveSpeed: 3
+  AtkRange: 1.5
+  AtkCooldown: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
