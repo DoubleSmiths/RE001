@@ -157,19 +157,23 @@ public abstract class UI_Base : MonoBehaviour
 
     public void FadeIn(Image image, Action onComplete = null)
     {
-        image.DOFade(0f, 1f).OnComplete(() => onComplete?.Invoke());
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        seq.Append(image.DOFade(0f, 1f).SetUpdate(true));
+        seq.OnComplete(() => onComplete?.Invoke());
     }
 
     public void FadeOut(Image image, Action onComplete = null)
     {
-        image.DOFade(1f, 1f).OnComplete(() => onComplete?.Invoke());
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        seq.Append(image.DOFade(1f, 1f).SetUpdate(true));
+        seq.OnComplete(() => onComplete?.Invoke());
     }
 
     public void FadeInOut(Image image)
     {
-        Sequence seq = DOTween.Sequence();
-        seq.Append(image.DOFade(1f, 1f));
-        seq.Append(image.DOFade(0f, 1f));
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        seq.Append(image.DOFade(1f, 1f).SetUpdate(true));
+        seq.Append(image.DOFade(0f, 1f).SetUpdate(true));
     }
 
 }

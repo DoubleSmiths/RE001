@@ -128,6 +128,7 @@ public class UI_GameScene : UI_Scene
     static readonly Color _increaseColor = new Color(0f, 1f, 0f);                       // #00FF00
     static readonly Color _decreaseColor = new Color(1f, 0f, 0f);                       // #FF0000
 
+
     public override bool Init()
     {
         if (base.Init() == false)
@@ -225,17 +226,17 @@ public class UI_GameScene : UI_Scene
     public void EnterAreaWithFade(AreaType area, System.Action onBlack = null)
     {
         Image fade = GetImage((int)Images.ForFadeImage);
+        if (fade == null) return;
 
-        FadeOut(fade, onComplete: () =>
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        seq.Append(fade.DOFade(1f, 0.5f).SetUpdate(true));
+        seq.AppendCallback(() =>
         {
             onBlack?.Invoke();
             SwapAreaBtnGroup(area);
-
-            FadeIn(fade, onComplete: () =>
-            {
-                _currentBtnGroup?.PlayEnterAnimation();
-            });
         });
+        seq.Append(fade.DOFade(0f, 0.5f).SetUpdate(true));
+        seq.OnComplete(() => _currentBtnGroup?.PlayEnterAnimation());
     }
 
     void SwapAreaBtnGroup(AreaType area)
@@ -624,7 +625,12 @@ public class UI_GameScene : UI_Scene
         if (Input.GetKeyDown(KeyCode.J))
         {
             // TODO : 전투로 이동
+            //Managers.Quest.CheckButtonClick(BTN_JOURNEY);
+            //ClosePopupUI();
+            Managers.UI.CloseAllPopupUI();
 
+            UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
+            gameScene?.EnterAreaWithFade(AreaType.Battle);
         }
 
 #endif

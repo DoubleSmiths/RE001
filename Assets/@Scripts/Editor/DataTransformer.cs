@@ -33,6 +33,7 @@ public class DataTransformer : EditorWindow
         ParseLocalizationData();
         ParseItemData();
         ParseQuestData();
+        ParseCreatureData();
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExcel 완료");
     }
@@ -424,6 +425,45 @@ public class DataTransformer : EditorWindow
             return new List<T>();
 
         return value.Split('&').Select(x => ConvertValue<T>(x)).ToList();
+    }
+
+    // -------------------------------------------------------------------
+    // CreatureData.xlsx
+    //   Row 0: 영문 필드명, Row 1: 타입, Row 2: 한글 설명, Row 3+: 데이터
+    //   첫 컬럼 비어있으면 스킵.
+    // -------------------------------------------------------------------
+    static void ParseCreatureData()
+    {
+        CreatureDataLoader loader = new CreatureDataLoader();
+
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/CreatureData.xlsx");
+
+        for (int y = 3; y < rows.Count; y++)
+        {
+            List<string> row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0]))
+                continue;
+
+            int i = 0;
+            CreatureData d = new CreatureData();
+            d.DataId      = ConvertValue<int>(row[i++]);
+            d.Name        = i < row.Count ? row[i++] : "";
+            d.PrefabLabel = i < row.Count ? row[i++] : "";
+            d.IconLabel   = i < row.Count ? row[i++] : "";
+            d.MaxHp       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.Atk         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.Def         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.MoveSpeed   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.TotalExp    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.RewardGold  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.DropItemId  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.DropCount   = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.DropChance  = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+
+            loader.creatures.Add(d);
+        }
+
+        WriteJson("CreatureData", loader);
     }
 
     // -------------------------------------------------------------------
