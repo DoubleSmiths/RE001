@@ -23,6 +23,7 @@ public class BackgroundScroller : MonoBehaviour
 
     readonly List<LayerData> _layers = new List<LayerData>();
     float _camLeftEdge;
+    public bool IsScrolling { get; set; } = true;
 
     void Start()
     {
@@ -67,6 +68,8 @@ public class BackgroundScroller : MonoBehaviour
 
     void Update()
     {
+        if (!IsScrolling) return;
+
         float dt = Time.deltaTime;
 
         foreach (LayerData layer in _layers)

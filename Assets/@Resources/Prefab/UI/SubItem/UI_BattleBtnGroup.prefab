@@ -361,7 +361,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3061297222896569107}
-  - component: {fileID: 4500010321265679509}
+  - component: {fileID: 2121037054004340506}
   m_Layer: 5
   m_Name: UI_BattleBtnGroup
   m_TagString: Untagged
@@ -389,7 +389,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4500010321265679509
+--- !u!114 &2121037054004340506
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -398,7 +398,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1212137683408701185}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc3d0ce81cbbdfe4da9236fede7e9d26, type: 3}
+  m_Script: {fileID: 11500000, guid: 6576e82052a958f4b8edd41241e49fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_BattleBtnGroup
 --- !u!1 &1287528103279949264

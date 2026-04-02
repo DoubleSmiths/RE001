@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Prefabs
   m_GUID: 1bdb1fe29632760458f6e434c58bb730
   m_SerializeEntries:
+  - m_GUID: 29b4149b197f76440a7736e72116b9f4
+    m_Address: CH1BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7e70db0f739fc74408876ab9c05d647f
     m_Address: GuildNPC
     m_ReadOnly: 0

@@ -47,6 +47,12 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     #endregion
 
+    // TODO : 그냥 여기서 전투까지 하기.
+
+    private void Awake()
+    {
+        Init();
+    }
 
     public override bool Init()
     {
@@ -59,6 +65,14 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
         RefreshNotify();
+        ChangeMap();
+
+        for (int i = 0; i < 6; i++)
+        {
+            //if (i == (int)Buttons.TravelButton) continue;
+            var tempBtn = GetButton(i).gameObject;
+            tempBtn.SetActive(false);
+        }
 
         return true;
     }
@@ -71,13 +85,26 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     public override void PlayEnterAnimation()
     {
-        var btn = GetButton((int)Buttons.TravelButton).gameObject;
-        btn.SetActive(false);
+        // TODO : DOTweenAnimation이랑 같이 쓰는게 맞는지 모르겠음. DOTweenAnimation은 애니메이션이 끝나면 자동으로 꺼지는게 아니라서, 애니메이션이 끝난 후에 버튼을 활성화하는 방식으로 해야할듯.
+        // TODO : DOTweenAnimation가 있는 자식들을 다 가져오기
+
+        //var btn = GetButton((int)Buttons.TravelButton).gameObject;
+        //btn.SetActive(false);
 
         Sequence seq = DOTween.Sequence();
-        seq.AppendInterval(0.2f);
-        seq.AppendCallback(() => btn.SetActive(true));
-        seq.AppendCallback(() => btn.GetComponent<DOTweenAnimation>()?.DORestart());
+
+        for (int i = 0; i < 6; i++)
+        {
+            //if (i == (int)Buttons.TravelButton) continue;
+            var tempBtn = GetButton(i).gameObject;
+
+            seq.AppendCallback(() => tempBtn.SetActive(true));
+            seq.AppendInterval(0.1f);
+            seq.AppendCallback(() => tempBtn.GetComponent<DOTweenAnimation>()?.DORestart());
+        }
+        //seq.AppendInterval(0.2f);
+        //seq.AppendCallback(() => btn.SetActive(true));
+        //seq.AppendCallback(() => btn.GetComponent<DOTweenAnimation>()?.DORestart());
         // TODO : 버튼들이 퍼지는 애니메이션 추가
         // TODO : 던전 이름 나오는 애니메이션 추가
     }
@@ -91,8 +118,17 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     void OnClickTravel()
     {
+        GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        Destroy(GameObject.Find("CH1BG")); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
+
         UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
         // TODO : Village1이 아니라 마지막 마을로 해야 됨. 아직은 데이터 없음.
         gameScene?.EnterAreaWithFade(AreaType.Village1);
+    }
+
+    void ChangeMap()
+    {
+        GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+        Managers.Resource.Instantiate("CH1BG"); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
     }
 }
