@@ -24,13 +24,13 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void Update()
     {
-        if (State == CreatureState.Dead) return;
+        if (State == Define.State.Dead) return;
         AutoAttack();
     }
 
     void FixedUpdate()
     {
-        if (State == CreatureState.Dead) return;
+        if (State == Define.State.Dead) return;
         MovePlayer();
     }
 
@@ -39,9 +39,9 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void MovePlayer()
     {
-        if (State == CreatureState.Attack) return;
+        if (State == Define.State.Attack) return;
         //_rb.linearVelocity = new Vector2(MoveSpeed, _rb.linearVelocity.y);
-        State = CreatureState.Moving;
+        State = Define.State.Moving;
     }
 
     // ────────────────────────────────────────
@@ -58,7 +58,7 @@ public class PlayerController : CreatureController
         if (dist > AtkRange) return;
 
         _lastAtkTime = Time.time;
-        State = CreatureState.Attack;
+        State = Define.State.Attack;
         nearest.OnDamaged(Atk);
         StartCoroutine(CoResetStateAfterAttack(0.3f));
     }
@@ -70,7 +70,7 @@ public class PlayerController : CreatureController
         float minDist = float.MaxValue;
         foreach (var m in monsters)
         {
-            if (m.State == CreatureState.Dead) continue;
+            if (m.State == Define.State.Dead) continue;
             float d = Vector2.Distance(transform.position, m.transform.position);
             if (d < minDist) { minDist = d; nearest = m; }
         }
@@ -80,8 +80,8 @@ public class PlayerController : CreatureController
     IEnumerator CoResetStateAfterAttack(float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (State != CreatureState.Dead)
-            State = CreatureState.Moving;
+        if (State != Define.State.Dead)
+            State = Define.State.Moving;
     }
 
     // ────────────────────────────────────────

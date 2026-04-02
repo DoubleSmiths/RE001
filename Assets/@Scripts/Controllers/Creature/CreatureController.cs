@@ -19,15 +19,40 @@ public abstract class CreatureController : BaseController
 
     protected float _lastAtkTime = -999f;
 
-    protected CreatureState _state = CreatureState.Idle;
-    public CreatureState State
+    protected State _state = Define.State.Idle;
+    //public State State
+    //{
+    //    get => _state;
+    //    set
+    //    {
+    //        if (_state == value) return;
+    //        _state = value;
+    //        UpdateAnimation();
+    //    }
+    //}
+
+    public virtual Define.State State
     {
-        get => _state;
+        get { return _state; }
         set
         {
-            if (_state == value) return;
             _state = value;
-            UpdateAnimation();
+
+            Animator anim = GetComponent<Animator>();
+            switch (_state)
+            {
+                case Define.State.Dead:
+                    break;
+                case Define.State.Idle:
+                    anim.CrossFade("Idle", 0.1f);
+                    break;
+                case Define.State.Moving:
+                    anim.CrossFade("Run", 0.1f);
+                    break;
+                case Define.State.Attack:
+                    anim.CrossFade("Attack", 0.1f, -1, 0);
+                    break;
+            }
         }
     }
 
@@ -44,11 +69,11 @@ public abstract class CreatureController : BaseController
     protected virtual void UpdateAnimation()
     {
         if (_anim == null) return;
-        _anim.SetBool("IsMoving", _state == CreatureState.Moving);
-        _anim.SetBool("IsDead",   _state == CreatureState.Dead);
-        if (_state == CreatureState.Attack)
+        _anim.SetBool("IsMoving", _state == Define.State.Moving);
+        _anim.SetBool("IsDead", _state == Define.State.Dead);
+        if (_state == Define.State.Attack)
             _anim.SetTrigger("Attack");
-        if (_state == CreatureState.OnDamaged)
+        if (_state == Define.State.OnDamaged)
             _anim.SetTrigger("OnDamaged");
     }
 
@@ -70,7 +95,7 @@ public abstract class CreatureController : BaseController
 
     protected virtual void OnDead()
     {
-        State = CreatureState.Dead;
+        State = Define.State.Dead;
         if (_rb != null)
             _rb.linearVelocity = Vector2.zero;
     }

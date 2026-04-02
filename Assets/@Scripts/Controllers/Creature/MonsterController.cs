@@ -38,7 +38,7 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     void FixedUpdate()
     {
-        if (State == CreatureState.Dead) return;
+        if (State == Define.State.Dead) return;
         if (_target == null) return;
 
         float dist = Vector2.Distance(transform.position, _target.transform.position);
@@ -51,18 +51,18 @@ public class MonsterController : CreatureController
 
     void ChaseTarget()
     {
-        if (State == CreatureState.Attack) return;
+        if (State == Define.State.Attack) return;
         Vector2 dir = ((Vector2)_target.transform.position - (Vector2)transform.position).normalized;
         //_rb.linearVelocity = new Vector2(dir.x * MoveSpeed, _rb.linearVelocity.y);
         FlipToward(_target.transform.position.x);
-        State = CreatureState.Moving;
+        State = Define.State.Moving;
     }
 
     void TryAttack()
     {
         if (Time.time < _lastAtkTime + AtkCooldown) return;
         _lastAtkTime = Time.time;
-        State = CreatureState.Attack;
+        State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
         _target.OnDamaged(Atk);
         StartCoroutine(CoResetStateAfterAttack(0.4f));
@@ -71,8 +71,8 @@ public class MonsterController : CreatureController
     IEnumerator CoResetStateAfterAttack(float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (State != CreatureState.Dead)
-            State = CreatureState.Moving;
+        if (State != Define.State.Dead)
+            State = Define.State.Moving;
     }
 
     // ────────────────────────────────────────

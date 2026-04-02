@@ -5,7 +5,7 @@ using static Util;
 public class Define
 {
     #region Enum
-    public enum CreatureState
+    public enum State
     {
         Idle,
         Moving,
