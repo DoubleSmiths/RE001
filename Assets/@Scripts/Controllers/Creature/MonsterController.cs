@@ -5,18 +5,27 @@ using static Define;
 
 public class MonsterController : CreatureController
 {
-    [Header("Monster Info")]
-    public int   DataId;
-    public int   RewardGold = 1;
-    public float RewardExp  = 10f;
+    public int DataId { get; private set; }
 
-    PlayerController _target;
+    Data.CreatureData _data;
+    PlayerController  _target;
 
     public override bool Init()
     {
         if (!base.Init()) return false;
         ObjectType = ObjectType.Monster;
         return true;
+    }
+
+    public void SetInfo(int dataId)
+    {
+        DataId = dataId;
+        if (!Managers.Data.CreatureDic.TryGetValue(dataId, out _data)) return;
+
+        MaxHp = _data.MaxHp;
+        Hp    = _data.MaxHp;
+        Atk   = _data.Atk;
+        Def   = _data.Def;
     }
 
     void Start()
@@ -44,7 +53,7 @@ public class MonsterController : CreatureController
     {
         if (State == CreatureState.Attack) return;
         Vector2 dir = ((Vector2)_target.transform.position - (Vector2)transform.position).normalized;
-        _rb.linearVelocity = new Vector2(dir.x * MoveSpeed, _rb.linearVelocity.y);
+        //_rb.linearVelocity = new Vector2(dir.x * MoveSpeed, _rb.linearVelocity.y);
         FlipToward(_target.transform.position.x);
         State = CreatureState.Moving;
     }
@@ -82,9 +91,13 @@ public class MonsterController : CreatureController
         // 보상
         if (_target != null)
         {
-            Managers.Game.Gold += RewardGold;
-            _target.GainExp(RewardExp);
+            if (_data != null) Managers.Game.Gold += _data.RewardGold;
+            _target.GainExp(_data?.TotalExp ?? 0f);
         }
+
+        // 아이템 드롭
+        if (_data != null && _data.DropItemId > 0 && Random.value <= _data.DropChance)
+            Managers.Game.AddItem(_data.DropItemId, _data.DropCount);
 
         // 사망 연출 후 풀 반환
         transform.DOScale(Vector3.zero, 0.3f)

@@ -40,7 +40,7 @@ public class PlayerController : CreatureController
     void MovePlayer()
     {
         if (State == CreatureState.Attack) return;
-        _rb.linearVelocity = new Vector2(MoveSpeed, _rb.linearVelocity.y);
+        //_rb.linearVelocity = new Vector2(MoveSpeed, _rb.linearVelocity.y);
         State = CreatureState.Moving;
     }
 

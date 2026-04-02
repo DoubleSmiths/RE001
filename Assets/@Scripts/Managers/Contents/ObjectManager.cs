@@ -40,6 +40,22 @@ public class ObjectManager
 
     public void Clear() { }
 
+    public MonsterController SpawnMonster(int dataId, Vector3 pos)
+    {
+        if (!Managers.Data.CreatureDic.TryGetValue(dataId, out var data))
+        {
+            Debug.LogWarning($"[ObjectManager] CreatureData not found: {dataId}");
+            return null;
+        }
+
+        GameObject go = Managers.Resource.Instantiate(data.PrefabLabel, MonsterTransform);
+        go.transform.position = pos;
+
+        MonsterController mc = go.GetOrAddComponent<MonsterController>();
+        mc.SetInfo(dataId);
+        return mc;
+    }
+
     public void ShowDamageFont(Vector2 pos, float damage, Transform parent, bool isCritical = false)
     {
         string prefabName = isCritical ? "CriticalDamageFont" : "DamageFont";

@@ -1,0 +1,34 @@
+﻿{
+  "creatures": [
+    {
+      "DataId": 2001,
+      "Name": "젤리 퐁",
+      "PrefabLabel": "Slime",
+      "IconLabel": "",
+      "MaxHp": 30.0,
+      "Atk": 5.0,
+      "Def": 0.0,
+      "MoveSpeed": 2.0,
+      "TotalExp": 10.0,
+      "RewardGold": 5,
+      "DropItemId": 1001,
+      "DropCount": 1,
+      "DropChance": 1.0
+    },
+    {
+      "DataId": 2002,
+      "Name": "라비 슬라임",
+      "PrefabLabel": "RabiSlime",
+      "IconLabel": "",
+      "MaxHp": 40.0,
+      "Atk": 7.0,
+      "Def": 0.0,
+      "MoveSpeed": 2.5,
+      "TotalExp": 15.0,
+      "RewardGold": 8,
+      "DropItemId": 1002,
+      "DropCount": 1,
+      "DropChance": 1.0
+    }
+  ]
+}

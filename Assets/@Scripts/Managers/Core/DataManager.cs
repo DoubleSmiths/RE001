@@ -29,7 +29,7 @@ public class DataManager
 
     public void Init()
     {
-        //CreatureDic       = LoadJson<CreatureDataLoader,      int,    CreatureData>       ("CreatureData").MakeDict();
+        CreatureDic       = LoadJson<CreatureDataLoader,      int,    CreatureData>       ("CreatureData").MakeDict();
         //EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();
         //EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
         //SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();

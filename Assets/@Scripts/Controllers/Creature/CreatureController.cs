@@ -13,7 +13,7 @@ public abstract class CreatureController : BaseController
     public float Hp      = 100f;
     public float Atk     = 10f;
     public float Def     = 0f;
-    public float MoveSpeed = 3f;
+    //public float MoveSpeed = 3f;
     public float AtkRange  = 1.5f;
     public float AtkCooldown = 1f;
 

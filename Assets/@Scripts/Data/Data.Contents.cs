@@ -17,6 +17,11 @@ namespace Data
         public float Def;
         public float MoveSpeed;
         public float TotalExp;
+        public int RewardGold;
+        // 드롭 아이템 (DropItemId == 0 이면 드롭 없음)
+        public int DropItemId;
+        public int DropCount;
+        public float DropChance; // 0~1
     }
 
     [Serializable]
