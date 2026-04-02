@@ -7,8 +7,33 @@ public class GameScene : BaseScene
 
     PlayerController _player;
 
+#if UNITY_EDITOR
+    bool isPreload = false;
+
     private void Awake()
     {
+        Managers.Resource.LoadAllAsync<Object>("PreLoad", (key, count, totalCount) =>
+        {
+            //GetObject((int)GameObjects.Slider).GetComponent<Slider>().value = (float)count / totalCount;
+            if (count == totalCount)
+            {
+                //GetButton((int)Buttons.StartButton).gameObject.SetActive(true);
+                isPreload = true;
+                Managers.Data.Init();
+                Managers.Game.Init();
+                Managers.Font.Init();
+                Managers.Sound.Init();
+                Managers.Quest.Init();
+                Init();
+                _game = Managers.Game;
+                //StartAnimation();
+            }
+        });
+    }
+#else
+    private void Awake()
+    {
+
         Init();
 
         // TODO : 게임 데이터 불러오기
@@ -17,6 +42,7 @@ public class GameScene : BaseScene
         // Fade 효과를 UI_Scene에 배치?
 
     }
+#endif
 
     protected override void Init()
     {
