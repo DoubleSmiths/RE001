@@ -632,6 +632,16 @@ public class UI_GameScene : UI_Scene
             gameScene?.EnterAreaWithFade(AreaType.Battle);
         }
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (Managers.Game.Player.State == State.Idle)
+                Managers.Game.Player.State = State.Moving;
+            else if (Managers.Game.Player.State == State.Moving)
+                Managers.Game.Player.State = State.Attack;
+            else if (Managers.Game.Player.State == State.Attack)
+                Managers.Game.Player.State = State.Idle;
+        }
+
 #endif
     }
 

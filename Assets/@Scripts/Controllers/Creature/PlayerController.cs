@@ -146,4 +146,9 @@ public class PlayerController : CreatureController
         base.OnDead();
         // TODO: 게임 오버 연출
     }
+
+    public void AttackTrigger()
+    {
+
+    }
 }

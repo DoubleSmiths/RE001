@@ -26,6 +26,8 @@ public class GameScene : BaseScene
                 Managers.Quest.Init();
                 Init();
                 _game = Managers.Game;
+                _player = FindAnyObjectByType<PlayerController>();
+                Managers.Game.Player = _player;
                 //StartAnimation();
             }
         });

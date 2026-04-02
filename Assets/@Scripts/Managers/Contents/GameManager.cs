@@ -96,6 +96,8 @@ public class GameData
 
     // 마지막 장소
     public Village1Group LastVillage1Group = Village1Group.Main;
+
+
 }
 
 // ──────────────────────────────────────────────
@@ -104,6 +106,7 @@ public class GameData
 public class GameManager
 {
     GameData _gameData = new GameData();
+    public PlayerController Player { get; set; }
     string   _path;
 
     // ── 재화 ──
