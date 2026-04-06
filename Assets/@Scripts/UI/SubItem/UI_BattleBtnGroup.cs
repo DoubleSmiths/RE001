@@ -175,6 +175,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         Transform monsterRoot = Managers.Object.MonsterTransform;
         for (int i = monsterRoot.childCount - 1; i >= 0; i--)
             Managers.Resource.Destroy(monsterRoot.GetChild(i).gameObject);
+
+        // 남아있는 몬스터 HP바 전부 제거
+        if (Managers.UI.SceneUI != null)
+        {
+            foreach (var bar in Managers.UI.SceneUI.GetComponentsInChildren<UI_MonsterHPBar>(true))
+                Managers.Resource.Destroy(bar.gameObject);
+        }
     }
 
     void RefreshNotify()
