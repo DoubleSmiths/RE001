@@ -16,11 +16,39 @@ public class TextToTMPConverter
         Convert("UI_GameScene");
     }
 
-    [MenuItem("Tools/Convert Text to TMP UI_Test")]
-    static void ConvertLegacyOnly()
+    [MenuItem("Tools/Convert Selected to TMP")]
+    static void ConvertSelected()
     {
-        Convert("UI_Test");
+        GameObject selected = Selection.activeGameObject;
+        if (selected == null)
+        {
+            Debug.LogError("[TextToTMPConverter] 변환할 오브젝트를 선택하세요.");
+            return;
+        }
+
+        string assetPath = AssetDatabase.GetAssetPath(selected);
+
+        if (!string.IsNullOrEmpty(assetPath))
+        {
+            // Project 뷰에서 선택한 프리펩 에셋
+            GameObject contents = PrefabUtility.LoadPrefabContents(assetPath);
+            int count = ConvertTexts(contents);
+            PrefabUtility.SaveAsPrefabAsset(contents, assetPath);
+            PrefabUtility.UnloadPrefabContents(contents);
+            AssetDatabase.Refresh();
+            Debug.Log($"[TextToTMPConverter] '{selected.name}' Text → TMP 교체 완료: {count}개");
+        }
+        else
+        {
+            // Hierarchy에서 선택한 씬 오브젝트
+            int count = ConvertTexts(selected);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log($"[TextToTMPConverter] '{selected.name}' Text → TMP 교체 완료: {count}개");
+        }
     }
+
+    [MenuItem("Tools/Convert Selected to TMP", true)]
+    static bool ConvertSelectedValidate() => Selection.activeGameObject != null;
 
     static void Convert(string rootName)
     {
@@ -30,13 +58,19 @@ public class TextToTMPConverter
             Debug.LogError($"[TextToTMPConverter] '{rootName}' 을(를) 씬에서 찾을 수 없습니다.");
             return;
         }
+        int converted = ConvertTexts(root);
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        Debug.Log($"[TextToTMPConverter] '{rootName}' 하위 Text → TextMeshProUGUI 교체 완료: {converted}개");
+    }
 
+    static int ConvertTexts(GameObject root)
+    {
         Text[] texts = root.GetComponentsInChildren<Text>(true);
 
         if (texts.Length == 0)
         {
-            Debug.Log($"[TextToTMPConverter] '{rootName}' 하위에 레거시 Text 컴포넌트가 없습니다.");
-            return;
+            Debug.Log($"[TextToTMPConverter] '{root.name}' 하위에 레거시 Text 컴포넌트가 없습니다.");
+            return 0;
         }
 
         int converted = 0;
@@ -85,9 +119,7 @@ public class TextToTMPConverter
             converted++;
         }
 
-        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-
-        Debug.Log($"[TextToTMPConverter] '{rootName}' 하위 Text → TextMeshProUGUI 교체 완료: {converted}개");
+        return converted;
     }
 
     static TextAlignmentOptions ConvertAlignment(TextAnchor anchor)
