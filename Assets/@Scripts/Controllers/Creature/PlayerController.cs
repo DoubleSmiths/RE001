@@ -54,6 +54,7 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void AutoAttack()
     {
+        if (State == Define.State.Attack) return;
         if (Time.time < _lastAtkTime + AtkCooldown) return;
 
         MonsterController nearest = FindNearestMonster();
@@ -65,7 +66,7 @@ public class PlayerController : CreatureController
         _lastAtkTime = Time.time;
         State = Define.State.Attack;
         nearest.OnDamaged(Atk);
-        StartCoroutine(CoResetStateAfterAttack(0.3f));
+        StartCoroutine(CoResetStateAfterAttack());
     }
 
     MonsterController FindNearestMonster()
@@ -82,11 +83,22 @@ public class PlayerController : CreatureController
         return nearest;
     }
 
-    IEnumerator CoResetStateAfterAttack(float delay)
+    IEnumerator CoResetStateAfterAttack()
     {
-        yield return new WaitForSeconds(delay);
+        yield return null;
+
+        // CrossFade 전환이 끝나고 Attack 상태로 진입할 때까지 대기
+        while (_anim != null && !_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            yield return null;
+
+        // Attack 애니메이션이 끝날 때까지 대기
+        while (_anim != null &&
+               _anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") &&
+               _anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+            yield return null;
+
         if (State != Define.State.Dead)
-            State = Define.State.Moving;
+            State = Define.State.Idle;
     }
 
     // ────────────────────────────────────────
