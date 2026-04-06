@@ -28,6 +28,8 @@ public class GameScene : BaseScene
                 _game = Managers.Game;
                 _player = FindAnyObjectByType<PlayerController>();
                 Managers.Game.Player = _player;
+                if (_player != null)
+                    _ui.BindPlayer(_player);
                 //StartAnimation();
             }
         });
