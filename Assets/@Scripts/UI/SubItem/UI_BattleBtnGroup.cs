@@ -47,7 +47,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     #endregion
 
-    // TODO : 그냥 여기서 전투까지 하기.
+    Coroutine _battleCoroutine;
 
     private void Awake()
     {
@@ -65,7 +65,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
         RefreshNotify();
+
+        //Set();
         ChangeMap();
+        Managers.Game.Player.State = State.Moving; // 일단 바로 무빙으로.
 
         for (int i = 0; i < 6; i++)
         {
@@ -79,8 +82,20 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     public override void OnDestroy()
     {
+        EndBattle();
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
+    }
+
+    public void Set()
+    {
+        Sequence seq = DOTween.Sequence();
+        seq.AppendInterval(1.0f);
+        seq.AppendCallback(() =>
+        {
+            ChangeMap();
+            Managers.Game.Player.State = State.Moving;
+        });
     }
 
     public override void PlayEnterAnimation()
@@ -112,6 +127,47 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         // TODO : 던전 이름 나오는 애니메이션 추가
 
         // 캐릭터 애니메이션은 여기서 달리기로 바꿔야하나?
+
+        StartBattle();
+    }
+
+    void StartBattle()
+    {
+        PlayerController player = Managers.Game.Player;
+        if (player == null) return;
+
+        player.StartBattle();
+        _battleCoroutine = StartCoroutine(CoBattleLoop());
+    }
+
+    System.Collections.IEnumerator CoBattleLoop()
+    {
+        PlayerController player = Managers.Game.Player;
+        Transform monsterRoot = Managers.Object.MonsterTransform;
+        Vector3 spawnPos = player.transform.position + Vector3.right * 8f;
+
+        while (true)
+        {
+            Managers.Object.SpawnMonster(2001, spawnPos); // TODO : 일단 2001로 고정인데, 나중에 데이터로 관리해야할듯
+            yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    void EndBattle()
+    {
+        Managers.Game.Player?.StopBattle();
+
+        if (_battleCoroutine != null)
+        {
+            StopCoroutine(_battleCoroutine);
+            _battleCoroutine = null;
+        }
+
+        // 남아있는 몬스터 전부 제거
+        Transform monsterRoot = Managers.Object.MonsterTransform;
+        for (int i = monsterRoot.childCount - 1; i >= 0; i--)
+            Managers.Resource.Destroy(monsterRoot.GetChild(i).gameObject);
     }
 
     void RefreshNotify()
@@ -123,6 +179,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     void OnClickTravel()
     {
+        EndBattle();
+
         GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
         Destroy(GameObject.Find("CH1BG")); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
 

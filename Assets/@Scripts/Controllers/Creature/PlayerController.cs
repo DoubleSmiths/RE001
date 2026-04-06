@@ -9,6 +9,7 @@ public class PlayerController : CreatureController
     public event System.Action<int>          OnLevelUp;
 
     float _expRequired = 100f;
+    bool _inBattle;
 
     // ── 스탯 (레벨 / 장비 반영) ──
     public override bool Init()
@@ -20,13 +21,16 @@ public class PlayerController : CreatureController
         return true;
     }
 
+    public void StartBattle() { _inBattle = true; }
+    public void StopBattle()  { _inBattle = false; State = Define.State.Moving; }
+
     // ────────────────────────────────────────
     //  Update
     // ────────────────────────────────────────
     void Update()
     {
         if (State == Define.State.Dead) return;
-        //AutoAttack();
+        if (_inBattle) AutoAttack();
     }
 
     void FixedUpdate()

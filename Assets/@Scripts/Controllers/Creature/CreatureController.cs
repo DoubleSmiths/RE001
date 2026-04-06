@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using static Define;
+using static Util;
 
 public abstract class CreatureController : BaseController
 {
@@ -13,7 +14,7 @@ public abstract class CreatureController : BaseController
     public float Hp      = 100f;
     public float Atk     = 10f;
     public float Def     = 0f;
-    //public float MoveSpeed = 3f;
+    public float MoveSpeed = 2f;
     public float AtkRange  = 1.5f;
     public float AtkCooldown = 1f;
 
@@ -60,9 +61,9 @@ public abstract class CreatureController : BaseController
     {
         if (!base.Init()) return false;
 
-        _rb     = GetComponent<Rigidbody2D>();
-        _anim   = GetComponent<Animator>();
-        _sprite = GetComponent<SpriteRenderer>();
+        _rb     = gameObject.GetOrAddComponent<Rigidbody2D>();
+        _anim   = gameObject.GetOrAddComponent<Animator>();
+        _sprite = gameObject.GetOrAddComponent<SpriteRenderer>();
         return true;
     }
 

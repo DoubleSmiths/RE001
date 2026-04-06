@@ -22,10 +22,11 @@ public class MonsterController : CreatureController
         DataId = dataId;
         if (!Managers.Data.CreatureDic.TryGetValue(dataId, out _data)) return;
 
-        MaxHp = _data.MaxHp;
-        Hp    = _data.MaxHp;
-        Atk   = _data.Atk;
-        Def   = _data.Def;
+        MaxHp      = _data.MaxHp;
+        Hp         = _data.MaxHp;
+        Atk        = _data.Atk;
+        Def        = _data.Def;
+        MoveSpeed  = _data.MoveSpeed;
     }
 
     void Start()
@@ -53,9 +54,9 @@ public class MonsterController : CreatureController
     {
         if (State == Define.State.Attack) return;
         Vector2 dir = ((Vector2)_target.transform.position - (Vector2)transform.position).normalized;
-        //_rb.linearVelocity = new Vector2(dir.x * MoveSpeed, _rb.linearVelocity.y);
-        FlipToward(_target.transform.position.x);
-        State = Define.State.Moving;
+        _rb.linearVelocity = new Vector2(dir.x * MoveSpeed, _rb.linearVelocity.y);
+        //FlipToward(_target.transform.position.x);
+        State = Define.State.Idle;
     }
 
     void TryAttack()
