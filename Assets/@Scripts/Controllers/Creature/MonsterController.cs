@@ -6,9 +6,12 @@ using static Define;
 public class MonsterController : CreatureController
 {
     public int DataId { get; private set; }
+    public event System.Action<float, float> OnHpChanged; // current, max
+    public event System.Action OnEngaged; // 첫 공격 시점
 
     Data.CreatureData _data;
     PlayerController  _target;
+    bool _hasEngaged;
 
     public override bool Init()
     {
@@ -66,6 +69,13 @@ public class MonsterController : CreatureController
         State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
         _target.OnDamaged(Atk);
+
+        if (!_hasEngaged)
+        {
+            _hasEngaged = true;
+            OnEngaged?.Invoke();
+        }
+
         StartCoroutine(CoResetStateAfterAttack(0.4f));
     }
 
@@ -82,6 +92,7 @@ public class MonsterController : CreatureController
     public override void OnDamaged(float damage)
     {
         base.OnDamaged(damage);
+        OnHpChanged?.Invoke(Hp, MaxHp);
     }
 
     protected override void OnDead()

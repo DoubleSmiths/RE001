@@ -119,6 +119,8 @@ public class UI_GameScene : UI_Scene
     UI_AreaBtnGroup _currentBtnGroup;
     int _followActiveQuestId = -1;
 
+    private void Awake() { Init(); }
+
     // 재화 Lerp용 표시값
     float _displayGold;
     float _displayCrystal;

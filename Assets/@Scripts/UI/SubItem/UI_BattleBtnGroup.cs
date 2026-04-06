@@ -148,7 +148,14 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         while (true)
         {
-            Managers.Object.SpawnMonster(2001, spawnPos); // TODO : 일단 2001로 고정인데, 나중에 데이터로 관리해야할듯
+            MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos); // TODO : 일단 2001로 고정인데, 나중에 데이터로 관리해야할듯
+            if (mc != null)
+            {
+                mc.OnEngaged += () =>
+                {
+                    Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
+                };
+            }
             yield return new WaitUntil(() => monsterRoot.childCount == 0);
             yield return new WaitForSeconds(1f);
         }
