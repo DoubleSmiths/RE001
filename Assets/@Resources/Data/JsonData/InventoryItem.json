@@ -1,0 +1,28 @@
+﻿{
+  "items": [
+    {
+      "DataId": 10001,
+      "Name": "ItemJellyPongNameText",
+      "Grade": 0,
+      "Description": "ItemJellyPongDescText",
+      "SpriteName": "Slime_Green_Drop",
+      "FoundLocation": "PlaceNameBWF0Text"
+    },
+    {
+      "DataId": 10002,
+      "Name": "ItemRabiJellyNameText",
+      "Grade": 0,
+      "Description": "ItemRabiJellyDescText",
+      "SpriteName": "item_rabijelly",
+      "FoundLocation": "PlaceNameBWF0Text"
+    },
+    {
+      "DataId": 10003,
+      "Name": "ItemPongyaPearlNameText",
+      "Grade": 1,
+      "Description": "ItemPongyaPearlDescText",
+      "SpriteName": "SlimeSkill_Drop",
+      "FoundLocation": "PlaceNameBWF0Text"
+    }
+  ]
+}

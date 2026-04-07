@@ -16,44 +16,64 @@
       "Eng": "TALK"
     },
     {
+      "TextKey": "ItemNeededText",
+      "Kor": "필요 재료",
+      "Eng": "REQ. ITEMS"
+    },
+    {
+      "TextKey": "DescriptionText",
+      "Kor": "설명",
+      "Eng": "DESCRIP"
+    },
+    {
+      "TextKey": "NextInfoText",
+      "Kor": "다음단계 정보",
+      "Eng": "NEXT INFO"
+    },
+    {
+      "TextKey": "CraftText",
+      "Kor": "제작",
+      "Eng": "CRAFT"
+    },
+    {
       "TextKey": "TestKey",
       "Kor": "[<#2DFF00><b>여정</b></color>]이 해금되었습니다.\n<size=10>이제 소유한 통행증의 허가 범위 내 \n알게 된 모든 장소들로 자유로운 \n이동이 가능해 졌습니다.</size>",
       "Eng": "This is Test.This is Test.This is Test.This is Test.This is Test.This is Test.This is Test.This is Test.This is Test.This is Test.This is Test.This is Test."
     },
     {
-      "TextKey": "CharacterText",
+      "TextKey": "BtmCharacterBtnText",
       "Kor": "상태",
       "Eng": "CHAR"
     },
     {
-      "TextKey": "InventoryText",
+      "TextKey": "BtmInventoryBtnText",
       "Kor": "가방",
       "Eng": "INVEN"
     },
     {
-      "TextKey": "PotionText",
+      "TextKey": "BtmPotionBtnText",
       "Kor": "물약",
       "Eng": "POTION"
     },
     {
-      "TextKey": "EquipmentText",
+      "TextKey": "BtmEquipmentBtnText",
       "Kor": "장비",
       "Eng": "EQUIP"
     },
     {
-      "TextKey": "SkillText",
+      "TextKey": "BtmSkillBtnText",
       "Kor": "기술",
       "Eng": "SKILL"
     },
     {
-      "TextKey": "BeastiaryText",
+      "TextKey": "BtmBeastiaryBtnText",
       "Kor": "도감",
       "Eng": "BEASTI"
     },
     {
       "TextKey": "GuildText",
       "Kor": "모험가협회",
-      "Eng": "GUILD"
+      "Eng": "ADV.GUILD"
     },
     {
       "TextKey": "QuestText",
@@ -92,788 +112,398 @@
     },
     {
       "TextKey": "StrengthText",
-      "Kor": "",
+      "Kor": "근력",
       "Eng": "STR"
     },
     {
       "TextKey": "VitialityText",
-      "Kor": "",
+      "Kor": "체력",
       "Eng": "VIT"
     },
     {
       "TextKey": "AgilityText",
-      "Kor": "",
+      "Kor": "민첩",
       "Eng": "AGI"
     },
     {
       "TextKey": "MagicText",
-      "Kor": "",
+      "Kor": "마력",
       "Eng": "MAG"
     },
     {
       "TextKey": "PhysicalAttackText",
-      "Kor": "",
+      "Kor": "물리공격력",
       "Eng": "P.ATK"
     },
     {
       "TextKey": "MagicalAttackText",
-      "Kor": "",
+      "Kor": "마법공격력",
       "Eng": "M.ATK"
     },
     {
       "TextKey": "CriticalText",
-      "Kor": "",
+      "Kor": "치명타",
       "Eng": "CRIT"
     },
     {
       "TextKey": "CriticalDamageText",
-      "Kor": "",
+      "Kor": "치명타피해",
       "Eng": "C.DMG"
     },
     {
       "TextKey": "AccuracyText",
-      "Kor": "",
+      "Kor": "명중률",
       "Eng": "ACC"
     },
     {
       "TextKey": "AttackSpeedText",
-      "Kor": "",
+      "Kor": "공격속도",
       "Eng": "AS"
     },
     {
       "TextKey": "MaxHitPointText",
-      "Kor": "",
+      "Kor": "최대체력",
       "Eng": "MaxHP"
     },
     {
       "TextKey": "DefenseText",
-      "Kor": "",
+      "Kor": "방어력",
       "Eng": "DEF"
     },
     {
       "TextKey": "PhysicalResistanceText",
-      "Kor": "",
+      "Kor": "물리저항",
       "Eng": "P.RES"
     },
     {
       "TextKey": "MagicalResistanceText",
-      "Kor": "",
+      "Kor": "마법저항",
       "Eng": "M.RES"
     },
     {
       "TextKey": "EvadeText",
-      "Kor": "",
+      "Kor": "회피율",
       "Eng": "EVD"
     },
     {
       "TextKey": "RecoveryText",
-      "Kor": "",
+      "Kor": "회복력",
       "Eng": "RECOV"
     },
     {
       "TextKey": "ExperienceGainText",
-      "Kor": "",
+      "Kor": "성장률",
       "Eng": "EXP GAIN"
     },
     {
       "TextKey": "DropRateText",
-      "Kor": "",
+      "Kor": "획득률",
       "Eng": "DROP RATE"
     },
     {
-      "TextKey": "TitleText",
+      "TextKey": "FlatRecovText",
+      "Kor": "기본 회복량",
+      "Eng": "FLAT RECOV."
+    },
+    {
+      "TextKey": "MaxHPRecovText",
+      "Kor": "최대 체력 회복량",
+      "Eng": "MAX HP RECOV."
+    },
+    {
+      "TextKey": "TotalRecovText",
+      "Kor": "총 회복량",
+      "Eng": "TOTAL RECOV."
+    },
+    {
+      "TextKey": "PotionCDText",
+      "Kor": "재생산시간",
+      "Eng": "COOLDOWN"
+    },
+    {
+      "TextKey": "BaseStatText",
+      "Kor": "기본",
+      "Eng": "BASE"
+    },
+    {
+      "TextKey": "IncreseStatText",
+      "Kor": "증가율",
+      "Eng": "INCRE"
+    },
+    {
+      "TextKey": "BoostStatText",
+      "Kor": "증폭률",
+      "Eng": "BOOST"
+    },
+    {
+      "TextKey": "CharPopupTitleText",
       "Kor": "상태정보",
       "Eng": "CHARACTER"
     },
     {
-      "TextKey": "StatPointText",
+      "TextKey": "CharPopupStatPointText",
       "Kor": "능력점수",
       "Eng": "POINTS"
     },
     {
-      "TextKey": "ElixirText",
+      "TextKey": "CharPopupElixirText",
       "Kor": "달빛영약",
       "Eng": "ELIXIR"
     },
     {
-      "TextKey": "AttributeDetailText",
+      "TextKey": "CharPopupAttributeDetailText",
       "Kor": "능력 상세정보",
       "Eng": "ATTRIBUTE DETAIL"
     },
     {
-      "TextKey": "OffenseText",
+      "TextKey": "CharPopupOffenseText",
       "Kor": "공세",
       "Eng": "OFFENSE"
     },
     {
-      "TextKey": "DefenseText",
+      "TextKey": "CharPopupDefenseText",
       "Kor": "수비",
       "Eng": "DEFENSE"
     },
     {
-      "TextKey": "UtilityText",
+      "TextKey": "CharPopupUtilityText",
       "Kor": "유틸",
       "Eng": "GENERAL"
     },
     {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
+      "TextKey": "RarityBasicText",
+      "Kor": "<color=white>일반</color>",
+      "Eng": "<color=white>[Basic]</color>"
     },
     {
-      "TextKey": "DailyMissionTitleText ",
-      "Kor": "일일 미션",
-      "Eng": ""
+      "TextKey": "RarityAbnormalText",
+      "Kor": "<color=lime>[고급]</color>",
+      "Eng": "<color=lime>[Abnormal]</color>"
     },
     {
-      "TextKey": "WeeklyMissionTitleText",
-      "Kor": "주간 미션",
-      "Eng": ""
+      "TextKey": "RarityRareText",
+      "Kor": "<color=aqua>[희귀]</color>",
+      "Eng": "<color=aqua>[Rare]</color>"
     },
     {
-      "TextKey": "DailyMissionCompleteText",
-      "Kor": "완료",
-      "Eng": ""
+      "TextKey": "RarityExceptionalText",
+      "Kor": "<color=magenta>[진귀]</color>",
+      "Eng": "<color=magenta>[Exceptional]</color>"
     },
     {
-      "TextKey": "DailyMissionRemainingTimeValueText",
-      "Kor": "남은 시간",
-      "Eng": ""
+      "TextKey": "RarityLegendaryText",
+      "Kor": "<color=yellow>[전설]</color>",
+      "Eng": "<color=yellow>[Legendary]</color>"
     },
     {
-      "TextKey": "WeeklyMissionCompleteText",
-      "Kor": "완료",
-      "Eng": ""
+      "TextKey": "RarityMysticText",
+      "Kor": "<color=red>[신화]</color>",
+      "Eng": "<color=red>[Mythic]</color>"
     },
     {
-      "TextKey": "WeeklyMissionRemainingTimeValueText",
-      "Kor": "남은 시간",
-      "Eng": ""
+      "TextKey": "RarityREQUISITEText",
+      "Kor": "<color=magenta>[귀중]</color>",
+      "Eng": "<color=magenta>[REQUISITE]</color>"
     },
     {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
+      "TextKey": "ItemJellyPongNameText",
+      "Kor": "젤리 퐁",
+      "Eng": "PONG'S JELLY"
     },
     {
-      "TextKey": "CheckOutPopupTitleText",
-      "Kor": "출석 체크",
-      "Eng": ""
+      "TextKey": "ItemRabiJellyNameText",
+      "Kor": "폴짝 젤리",
+      "Eng": "RABIJELLY"
     },
     {
-      "TextKey": "CheckOutDescriptionText",
-      "Kor": "출석일수 30일이 지나면 보드가 초기화됩니다.",
-      "Eng": ""
+      "TextKey": "ItemPongyaPearlNameText",
+      "Kor": "퐁이진주",
+      "Eng": "PONGYA PEARL"
     },
     {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH1NameText",
+      "Kor": "장비 강화 주문서",
+      "Eng": "SCROLL OF ENH."
     },
     {
-      "TextKey": "TotalDamagePopupTitleText",
-      "Kor": "총 데미지",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH2NameText",
+      "Kor": "고급 장비 강화 주문서",
+      "Eng": "MAGICAL SCROLL OF ENH."
     },
     {
-      "TextKey": "OfflineRewardPopupTitleText",
-      "Kor": "오프라인 보상",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH3NameText",
+      "Kor": "고대 장비 강화 주문서",
+      "Eng": "ANCIENT SCROLL OF ENH."
     },
     {
-      "TextKey": "OfflineRewardCommentText",
-      "Kor": "더 많은 스테이지를 클리어하면 더 많은 보상을 얻습니다.",
-      "Eng": "More stages, more rewrd"
+      "TextKey": "ItemScrollOfENH4NameText",
+      "Kor": "이그누스의 인정",
+      "Eng": "IGNUS' BOON"
     },
     {
-      "TextKey": "TotalTimeText",
-      "Kor": "총 시간",
-      "Eng": ""
+      "TextKey": "ItemMastersSigil1NameText",
+      "Kor": "장인의 인장 : 1단계",
+      "Eng": "MASTER'S SIGIL I"
     },
     {
-      "TextKey": "ButtonCommentText",
-      "Kor": "최대 24시간 보상",
-      "Eng": ""
+      "TextKey": "ItemMastersSigil2NameText",
+      "Kor": "장인의 인장 : 2단계",
+      "Eng": "MASTER'S SIGIL V"
     },
     {
-      "TextKey": "FastRewardText",
-      "Kor": "빠른 보상",
-      "Eng": ""
+      "TextKey": "ItemMastersSigil3NameText",
+      "Kor": "장인의 인장 : 3단계",
+      "Eng": "MASTER'S SIGIL X"
     },
     {
-      "TextKey": "ClaimButtonText",
-      "Kor": "얻기",
-      "Eng": ""
+      "TextKey": "ItemTempPermitNameText",
+      "Kor": "임시 통행증",
+      "Eng": "TEMP. PERMIT"
     },
     {
-      "TextKey": "FastRewardPopupTitleText",
-      "Kor": "빠른 보상",
-      "Eng": ""
+      "TextKey": "ItemRegularPermitNameText",
+      "Kor": "일반 통행증",
+      "Eng": "REGULAR PERMIT"
     },
     {
-      "TextKey": "FastRewardCommentText",
-      "Kor": "보상 수익 300분 즉시 적립",
-      "Eng": "Earn 300 minutes of reward revenue immediately"
+      "TextKey": "HPPotion1NameText",
+      "Kor": "보급형 회복물약",
+      "Eng": "BUDGET RECOV. POTION"
     },
     {
-      "TextKey": "ADFreeText",
-      "Kor": "Free",
-      "Eng": ""
+      "TextKey": "HPPotion2NameText",
+      "Kor": "소형 회복물약",
+      "Eng": "SMALL RECOV. POTION"
     },
     {
-      "TextKey": "RewardPopupTitleText",
-      "Kor": "보상",
-      "Eng": ""
+      "TextKey": "SPDPotion1NameText",
+      "Kor": "보급형 신속물약",
+      "Eng": "BUDGET HASTE POTION"
     },
     {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
+      "TextKey": "SPDPotion2NameText",
+      "Kor": "신속물약",
+      "Eng": "HASTE POTION"
     },
     {
-      "TextKey": "CardListResetText",
-      "Kor": "초기화",
-      "Eng": ""
+      "TextKey": "ItemJellyPongDescText",
+      "Kor": "퐁이의 조각.\n\n퐁이로 부터 쉽게 얻을 수 있으며\n종종 약초학에 사용된다.",
+      "Eng": "A byproduct of Pong which\ncan be easily obtained.\n\nIt is often used in alchemy."
     },
     {
-      "TextKey": "MonsterCommentText",
-      "Kor": "몬스터가 몰려옵니다",
-      "Eng": ""
+      "TextKey": "ItemRabiJellyDescText",
+      "Kor": "폴짝 퐁의 젤리.\n\n젤리 퐁과는 다르게\n길쭉한 모양이 특징이다.",
+      "Eng": "Rabipong’s jelly.\n\nUnlike Pong's jelly,\nit has an elongated shape."
     },
     {
-      "TextKey": "BossCommentText",
-      "Kor": "보스 등장",
-      "Eng": ""
+      "TextKey": "ItemPongyaPearlDescText",
+      "Kor": "아주 오랜 기간 살아온\n퐁에게서 얻을 수 있는 진주.\n\n아주 희귀하진 않지만,\n마법사들 사이에서 종종 거래되곤 한다.",
+      "Eng": "A pearl that can be obtained\nfrom Pong which has lived\nfor a very long time.\n\nIt is often traded among wizards."
     },
     {
-      "TextKey": "CharacterLevelupTitleText",
-      "Kor": "LEVEL UP!",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH1DescText",
+      "Kor": "장비를 강화시켜 주는 주문서.\n\n성공 시 장비의 성능을 향상시켜 주지만\n실패 시 장비의 내구도가 감소한다.",
+      "Eng": "A scroll that can \nstrengthen equipment.\n\nWhen successful, it enhances equipment\nbut when it fails, its durability \nwill decrease."
     },
     {
-      "TextKey": "SkillSelectTitleText",
-      "Kor": "스킬 선택",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH2DescText",
+      "Kor": "장비를 강화시켜 주는 고급 주문서.\n\n이 주문서를 사용하여 강화할 시\n실패에 따른 내구도 감소율을 줄여준다.",
+      "Eng": "An advanced scroll \nthat can strengthen equipment.\n\nUsing this scroll,\nthe durability loss upon failure\nwill be mitigated."
     },
     {
-      "TextKey": "CardRefreshText",
-      "Kor": "새로고침",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH3DescText",
+      "Kor": "장비를 강화시켜 주는 고대 주문서.\n\n이 주문서를 사용하여 강화할 시\n실패에 따른 내구도 감소율을 없애준다.",
+      "Eng": "An ancient scroll that can \nstrengthen equipment.\n\nUsing this scroll,  \ndurability loss upon failure\nwill be eliminated."
     },
     {
-      "TextKey": "ADRefreshText",
-      "Kor": "새로고침",
-      "Eng": ""
+      "TextKey": "ItemScrollOfENH4DescText",
+      "Kor": "설화 속에 등장하는 궁극의 주문서.\n확정적으로 장비를 강화시켜 준다.\n\n'운을 거스르는 것, 그것이야말로\n진정한 실력 아니겠나.'\n- 이그누스",
+      "Eng": "This scroll appears in folk tales,\nand is said to enhance any weapon\nwithout fail.\n\n'Overcoming the odds,\nisn't that true skill?'\n-Ignus"
     },
     {
-      "TextKey": "SkillSelectCommentText",
-      "Kor": "배울 스킬을 선택하십시오.",
-      "Eng": "Select a skill to learn."
+      "TextKey": "ItemMastersSigil1DescText",
+      "Kor": "잠재된 힘이 깃든 인장.\n\n사용 시 잠재력이 약간 증가한다.",
+      "Eng": "A sigil infused with latent power.\n\nIncreases potential slightly upon use."
     },
     {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": "Tap to close"
+      "TextKey": "ItemMastersSigil2DescText",
+      "Kor": "잠재된 힘이 깃든 인장.\n\n사용 시 잠재력이 적당히 증가한다.",
+      "Eng": "A sigil infused with latent power.\n\nIncreases potential moderately upon use."
     },
     {
-      "TextKey": "LearnSkillCommentText",
-      "Kor": "스킬 입수!",
-      "Eng": "Obtain Skill !"
+      "TextKey": "ItemMastersSigil3DescText",
+      "Kor": "잠재된 힘이 깃든 인장.\n\n사용 시 잠재력이 상당히 증가한다.",
+      "Eng": "A sigil infused with latent power.\n\nIncreases potential greatly upon use."
     },
     {
-      "TextKey": "ContinuePopupTitleText",
-      "Kor": "CONTINUE",
-      "Eng": "CONTINUE"
+      "TextKey": "ItemTempPermitDescText",
+      "Kor": "모험가 협회에서\n발급해 준 임시 통행증\n\n마구잡이로 휘갈겨 써진 필기체가\n얼마나 발급해  주기\n귀찮았는지를 보여주고 있다(...)",
+      "Eng": "A temporary pass issued by the guild.\n\nThe haphazardly scribbled handwriting\nshows how cumbersome it was to issue.\n(ouch..)"
     },
     {
-      "TextKey": "ContinueButtonText",
-      "Kor": "계속하기",
-      "Eng": ""
+      "TextKey": "ItemRegularPermitDescText",
+      "Kor": "모험가 협회에서 발급받은 통행증.\n\n임시 통행증에 정식 인증 인장을 덧붙였다.\n진짜 그냥 위에 덧붙여서 잘못하면 \n떨어질 것 같다.\n이런 게 인증이 된다고...?",
+      "Eng": "A pass issued by the guild.\n\nAn official certification seal \nis added to the temporary pass.\nOne wrong move, and it ooks\nlike it will fall apart.\nCan this really be used as a pass?"
     },
     {
-      "TextKey": "ADContinueText",
-      "Kor": "계속하기",
-      "Eng": ""
+      "TextKey": "HPPotion1DescText",
+      "Kor": "연금공방에서 처음으로 받은 회복물약.\n자체적으로 물약을 생산하는 신기한 병이다.\n\n아주 약한 체리향이 나지만\n맛은 . . . 더럽게 없다.",
+      "Eng": "The first healing potion received\nfrom the alchemy workshop.\nComes with a mysterious bottle that\nreplenishes on its own.\n\n\nIt has a very weak cherry scent,\nbut its taste is . . . yeah."
     },
     {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
+      "TextKey": "HPPotion2DescText",
+      "Kor": "보급형 물약보다 많이 뚱뚱해졌다.\n효과가 사이즈에 비례하는건가. .\n신비하게도 무게는 동일하다고 한다.\n\n맛은 . . . 여전하다.\n(개선이 시급하다.)",
+      "Eng": "A lot fatter than the budget potion.\nIs bigger really better?\nSurprisingly, it still weighs the same.\n\nThe taste . . . requires an urgent fix."
     },
     {
-      "TextKey": "TotalDamagePopupTitleText",
-      "Kor": "총 데미지",
-      "Eng": ""
+      "TextKey": "SPDPotion1DescText",
+      "Kor": "첫 제작의뢰로 제작한 신속 물약.\n사용된 재료는 초록색인데\n결과물은 노란색인 이상한 물건이다.\n\n물어보니 가져간 재료는 인증용이고\n다른 재료로 만들었다나 뭐라나. .",
+      "Eng": "The haste potion: my first ever commission.\n\nThe ingredients were green,\nbut the potion is a suspicious yellow.\n\nWhy did it turn yellow?\nLet's not think about that."
     },
     {
-      "TextKey": "GameoverPopupTitleText",
-      "Kor": "게임 오버",
-      "Eng": ""
+      "TextKey": "SPDPotion2DescText",
+      "Kor": "[아직 내용이 없습니다.]",
+      "Eng": "[아직 내용이 없습니다.]"
     },
     {
-      "TextKey": "LastWaveText",
-      "Kor": "마지막 웨이브",
-      "Eng": ""
+      "TextKey": "PlaceEverywhereText",
+      "Kor": "모든 장소",
+      "Eng": "EVERYWHERE"
     },
     {
-      "TextKey": "ConfirmButtonText",
-      "Kor": "OK",
-      "Eng": "OK"
+      "TextKey": "PlaceNameTownAsdalText",
+      "Kor": "아스달 마을",
+      "Eng": "TOWN ASDAL"
     },
     {
-      "TextKey": "GameResultPopupTitleText",
-      "Kor": "게임 결과",
-      "Eng": ""
+      "TextKey": "PlaceNameBWF0Text",
+      "Kor": "산들바람 숲",
+      "Eng": "BREEZEWOOD FOREST"
     },
     {
-      "TextKey": "ResultSurvivalTimeText",
-      "Kor": "생존 시간",
-      "Eng": ""
+      "TextKey": "PlaceNameBWF1Text",
+      "Kor": "산들바람 숲(입구)",
+      "Eng": "BREEZEWOOD ENTRANCE"
     },
     {
-      "TextKey": "ConfirmButtonText",
-      "Kor": "OK",
-      "Eng": "OK"
+      "TextKey": "PlaceNameBWF2Text",
+      "Kor": "산들바람 숲(갈림길)",
+      "Eng": "BREEZEWOOD CROSSROADS"
     },
     {
-      "TextKey": "PauseTitleText",
-      "Kor": "일시정지",
-      "Eng": ""
+      "TextKey": "PlaceNameBWF3Text",
+      "Kor": "산들바람 숲(중심부)",
+      "Eng": "BREEZEWOOD HEART"
     },
     {
-      "TextKey": "OwnBattleSkillInfoText",
-      "Kor": "전투 스킬",
-      "Eng": "BATTLE SKILL"
+      "TextKey": "TravelUnlockText",
+      "Kor": "<noparse></noparse>[<#2DFF00><b>여정</b></color>]이 해금되었습니다.\n\n<size=10>이제 소유한 통행증의 허가 범위 내\n알게 된 모든 장소들로 자유로운\n이동이 가능해 졌습니다.</size>",
+      "Eng": "[<#2DFF00><b>TRAVEL</b></color>]\nhas been unlocked.\n\n<size=10>Now you can travel anywhere\nyou have marked within\nthe permitted range \nof the pass you own.</size>"
     },
     {
-      "TextKey": "OwnSupportSkillInfoText",
-      "Kor": "서포트 스킬",
-      "Eng": "SUPPORT SKILL"
-    },
-    {
-      "TextKey": "BackToHomeTitleText",
-      "Kor": "게임 포기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackToHameContentText",
-      "Kor": "지금 그만두면 보상을 모두 잃습니다.\\n로비로 돌아가시겠습니까?",
-      "Eng": "You won't get a reward.\\nback to  home?"
-    },
-    {
-      "TextKey": "ResumeText",
-      "Kor": "돌아가기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "QuitText",
-      "Kor": "그만둔다",
-      "Eng": ""
-    },
-    {
-      "TextKey": "PackageTitleText",
-      "Kor": "패키지 상점",
-      "Eng": ""
-    },
-    {
-      "TextKey": "DailyShopTitleText",
-      "Kor": "일일 상점",
-      "Eng": ""
-    },
-    {
-      "TextKey": "RefreshTimerText",
-      "Kor": "리셋 남은 시간",
-      "Eng": ""
-    },
-    {
-      "TextKey": "GachaTitleText",
-      "Kor": "가챠 상점",
-      "Eng": ""
-    },
-    {
-      "TextKey": "DiaShopTitleText",
-      "Kor": "다이아 상점",
-      "Eng": ""
-    },
-    {
-      "TextKey": "KeyShopTitleText",
-      "Kor": "열쇠 상점",
-      "Eng": ""
-    },
-    {
-      "TextKey": "GoldShopTitleText",
-      "Kor": "골드 상점",
-      "Eng": ""
-    },
-    {
-      "TextKey": "DiaShopCommentText",
-      "Kor": "첫 구매 시 2배, 1회 한정",
-      "Eng": ""
-    },
-    {
-      "TextKey": "StagePackageTitleText",
-      "Kor": "챕터 패키지",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BeginnerPackageTitleText",
-      "Kor": "비기너 패키지",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BeginnerPackageBuyLimitText",
-      "Kor": "1회 한정",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BeginnerPackageDiscountText",
-      "Kor": "가치",
-      "Eng": ""
-    },
-    {
-      "TextKey": "PickupGachaCommentText",
-      "Kor": "픽업가챠 코멘트 (출시 상품마다 이름이 다름 주의)",
-      "Eng": ""
-    },
-    {
-      "TextKey": "PickupGachaTitleText",
-      "Kor": "픽업 가챠 타이틀 (출시 상품마다 이름이 다름 주의)",
-      "Eng": ""
-    },
-    {
-      "TextKey": "CommonGachaTitleText",
-      "Kor": "일반 가챠",
-      "Eng": ""
-    },
-    {
-      "TextKey": "AdvancedGachaTitleText",
-      "Kor": "고급 가챠",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BuyLimitText",
-      "Kor": "제한 시간",
-      "Eng": ""
-    },
-    {
-      "TextKey": "OpenOneButtonText",
-      "Kor": "1회 열기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "OpenTenButtonText",
-      "Kor": "10회 열기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "PickupGachaGuaranteedCountText",
-      "Kor": "픽업 보장 : ",
-      "Eng": ""
-    },
-    {
-      "TextKey": "AdvancedGachaGuaranteedCountText",
-      "Kor": "보장 :",
-      "Eng": ""
-    },
-    {
-      "TextKey": "CommonGachaOpenButtonText",
-      "Kor": "열기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "AdvancedGachaOpenButtonText",
-      "Kor": "열기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "GachaListPopupTitleText",
-      "Kor": "상품 확률",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipmentGradeSkillText",
-      "Kor": "등급 스킬",
-      "Eng": ""
-    },
-    {
-      "TextKey": "SkipButtonText",
-      "Kor": "스킵",
-      "Eng": ""
-    },
-    {
-      "TextKey": "RewardPopupTitleText",
-      "Kor": "오픈 결과",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipInventoryTlileText",
-      "Kor": "장비",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ItemInventoryTlileText",
-      "Kor": "아이템",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipmentGradeSkillText",
-      "Kor": "등급 스킬",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipButtonText",
-      "Kor": "장착",
-      "Eng": ""
-    },
-    {
-      "TextKey": "UnequipButtonText",
-      "Kor": "해제",
-      "Eng": ""
-    },
-    {
-      "TextKey": "LevelupButtonText",
-      "Kor": "레벨업",
-      "Eng": ""
-    },
-    {
-      "TextKey": "MergeButtonText",
-      "Kor": "합성",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ImprovLevelText",
-      "Kor": "최대 레벨",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ImprovATKText",
-      "Kor": "공격력",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ImprovHPText",
-      "Kor": "체력",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipmentTlileText",
-      "Kor": "장비",
-      "Eng": ""
-    },
-    {
-      "TextKey": "SortButtonText",
-      "Kor": "정렬",
-      "Eng": ""
-    },
-    {
-      "TextKey": "MergeAllButtonText",
-      "Kor": "모두 합성",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipmentResetPopupTitleText",
-      "Kor": "장비 리셋",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ResetInfoCommentText",
-      "Kor": "레벨 초기화 시 레벨업 재료와 골드를 100% 돌려드립니다.",
-      "Eng": ""
-    },
-    {
-      "TextKey": "DowngradeCommentText",
-      "Kor": "레벨 초기화 시 레벨업 재료와 골드를 100% 돌려드립니다.",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipmentResetButtonText",
-      "Kor": "레벨 초기화",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipmentDowngradeButtonText",
-      "Kor": "다운그레이드",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ResetTapToggleText",
-      "Kor": "초기화",
-      "Eng": ""
-    },
-    {
-      "TextKey": "DowngradeTapToggleText",
-      "Kor": "다운그레이드",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "MergeResultCommentText",
-      "Kor": "합성 결과",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ImprovLevelText",
-      "Kor": "최대 레벨",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ImprovATKText",
-      "Kor": "공격력",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ImprovHPText",
-      "Kor": "체력",
-      "Eng": ""
-    },
-    {
-      "TextKey": "CharacterInventoryTlileText",
-      "Kor": "캐릭터 목록",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EnhanceButtonText",
-      "Kor": "강화",
-      "Eng": ""
-    },
-    {
-      "TextKey": "EquipButtonText",
-      "Kor": "장착",
-      "Eng": ""
-    },
-    {
-      "TextKey": "LevelUpButtonText",
-      "Kor": "레벨업",
-      "Eng": ""
-    },
-    {
-      "TextKey": "SettingTlileText",
-      "Kor": "설정",
-      "Eng": ""
-    },
-    {
-      "TextKey": "UserInfoText",
-      "Kor": "유저 정보",
-      "Eng": ""
-    },
-    {
-      "TextKey": "SoundEffectText",
-      "Kor": "효과음",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackgroundSoundText",
-      "Kor": "배경음",
-      "Eng": ""
-    },
-    {
-      "TextKey": "JoystickText",
-      "Kor": "조이스틱",
-      "Eng": ""
-    },
-    {
-      "TextKey": "LanguageText",
-      "Kor": "언어",
-      "Eng": ""
-    },
-    {
-      "TextKey": "TermsOfServiceButtonText",
-      "Kor": "서비스 이용약관",
-      "Eng": ""
-    },
-    {
-      "TextKey": "PrivacyPolicyButtonText",
-      "Kor": "개인정보 처리방침",
-      "Eng": ""
-    },
-    {
-      "TextKey": "FeedbackButtonText",
-      "Kor": "Feedback",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ErrorFixButtonText",
-      "Kor": "Error Fix",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackgroundText",
-      "Kor": "탭하여 닫기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ConfirmButtonText",
-      "Kor": "확인",
-      "Eng": ""
-    },
-    {
-      "TextKey": "KoreanText",
-      "Kor": "한국어",
-      "Eng": "한국어"
-    },
-    {
-      "TextKey": "EnglishText ",
-      "Kor": "English",
-      "Eng": "English"
-    },
-    {
-      "TextKey": "JapaneseText ",
-      "Kor": "",
-      "Eng": ""
-    },
-    {
-      "TextKey": "SimplifiedText",
-      "Kor": "",
-      "Eng": ""
-    },
-    {
-      "TextKey": "TraditionalText",
-      "Kor": "",
-      "Eng": ""
-    },
-    {
-      "TextKey": "FranceText",
-      "Kor": "",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackToBattleTitleText",
-      "Kor": "이어서 하기",
-      "Eng": ""
-    },
-    {
-      "TextKey": "BackToBattleContentText",
-      "Kor": "진행중인 전투가 있습니다.\\n계속하시겠습니까?",
-      "Eng": ""
-    },
-    {
-      "TextKey": "ConfirmText",
-      "Kor": "OK",
-      "Eng": ""
-    },
-    {
-      "TextKey": "CancelText",
-      "Kor": "취소",
-      "Eng": ""
+      "TextKey": "AlchemyUnlockText",
+      "Kor": "<noparse></noparse>[<#2DFF00><b>연금공방</b></color>]이 해금되었습니다.\n\n<size=10>이제 탐험 시 물약을 사용하실 수\n있게 되었으며 연금공방을 통해\n물약의 기능들을 해금하거나\n향상하실 수 있게 되었습니다.</size>",
+      "Eng": "[<#2DFF00><b>ALCHEMY</b></color>]\nhas been unlocked.\n\n<size=10>Now you can now use potions.\nUnlock or improve their functions\nthrough alchemy.</size>"
     }
   ]
 }

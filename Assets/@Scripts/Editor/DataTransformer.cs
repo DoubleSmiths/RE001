@@ -25,6 +25,255 @@ public class DataTransformer : EditorWindow
             File.Delete(path);
     }
 
+    // ─── Google Sheets URL ───────────────────────────────────────────────────
+    // 구글 시트 → 공유 → "링크 있는 사용자 - 뷰어" 공개 공유 필요.
+    // 편집 URL의 /edit?... 부분을 /export?format=xlsx 로 바꿔서 입력.
+    // 예) https://docs.google.com/spreadsheets/d/{ID}/export?format=xlsx
+    const string GSHEET_PLAYER_STATUS  = "https://docs.google.com/spreadsheets/d/11w2mraXSr6FyI7FH1Gx4W0EdeQxHJEeU/export?format=xlsx";
+    const string GSHEET_DIALOGUE       = "https://docs.google.com/spreadsheets/d/10JL5JYylyN-e4d_p6kPb7VvvdQi6ZLYn/export?format=xlsx";
+    const string GSHEET_LOCALIZATION   = "https://docs.google.com/spreadsheets/d/1ydclXzn6lWwzlzMNw9lBOPUSDeg4Ats2/export?format=xlsx";
+    const string GSHEET_QUEST          = "https://docs.google.com/spreadsheets/d/15AJ-UkoIjEfQjdjmGt54MkUJBbrvSFEk/export?format=xlsx";
+    const string GSHEET_CREATURE       = "https://docs.google.com/spreadsheets/d/1p60TBb00k4vpMCQJIcBvUiuqp2yzY4Lh/export?format=xlsx";
+    const string GSHEET_ITEM           = "https://docs.google.com/spreadsheets/d/1W5hzYceXWPzKPUG7cSOKwQ_tflHzIr9J/export?format=xlsx";
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [MenuItem("Tools/ParseExcelFromGoogleSheets")]
+    public static void ParseExcelFromGoogleSheets()
+    {
+        GS_ParsePlayerStatusData();
+        GS_ParseDialogueScriptData();
+        GS_ParseLocalizationData();
+        GS_ParseItemData();
+        GS_ParseQuestData();
+        GS_ParseCreatureData();
+        AssetDatabase.Refresh();
+        Debug.Log("[DataTransformer] ParseExcelFromGoogleSheets 완료");
+    }
+
+    static void GS_ParsePlayerStatusData()
+    {
+        PlayerStatusDataLoader loader = new PlayerStatusDataLoader();
+        var rows = ReadXlsx(DownloadGoogleSheet(GSHEET_PLAYER_STATUS));
+
+        for (int y = 3; y < rows.Count; y++)
+        {
+            List<string> row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+
+            int i = 0;
+            PlayerStatusData data = new PlayerStatusData();
+            data.DataId           = ConvertValue<int>(row[i++]);
+            data.Class            = ConvertValue<string>(row[i++]);
+            data.ClassProficiency = ConvertValue<int>(row[i++]);
+            data.AdvRank          = ConvertValue<int>(row[i++]);
+            data.Level            = ConvertValue<int>(row[i++]);
+            data.NowExp           = ConvertValue<int>(row[i++]);
+            data.StartHP          = ConvertValue<int>(row[i++]);
+            data.StatusPoint      = ConvertValue<int>(row[i++]);
+            data.Elixir           = ConvertValue<int>(row[i++]);
+            data.StartStrength    = ConvertValue<int>(row[i++]);
+            data.StartVital       = ConvertValue<int>(row[i++]);
+            data.StartAgility     = ConvertValue<int>(row[i++]);
+            data.StartMagic       = ConvertValue<int>(row[i++]);
+
+            string skillRaw   = i < row.Count ? row[i++] : "";
+            string skillLvRaw = i < row.Count ? row[i++] : "";
+            data.StartSkills      = SplitLines(skillRaw).Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
+            data.StartSkillLevels = SplitLines(skillLvRaw).Select(s => s.Trim()).Where(s => s.Length > 0).Select(s => ConvertValue<int>(s)).ToList();
+
+            loader.playerStatuses.Add(data);
+        }
+        WriteJson("PlayerStatusData", loader);
+    }
+
+    static void GS_ParseDialogueScriptData()
+    {
+        DialogueScriptLoader loader = new DialogueScriptLoader();
+        var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_DIALOGUE));
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            var group = new DialogueScriptGroup { GroupKey = sheetName };
+            for (int y = 1; y < rows.Count; y++)
+            {
+                List<string> row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                group.Lines.Add(new DialogueScriptLine
+                {
+                    TextKey = ConvertValue<int>(row[0]),
+                    Kor     = row.Count > 1 ? row[1] : "",
+                    Eng     = row.Count > 2 ? row[2] : "",
+                });
+            }
+            loader.groups.Add(group);
+        }
+        WriteJson("DialogueScriptData", loader);
+    }
+
+    static void GS_ParseLocalizationData()
+    {
+        LocalizationLoader loader = new LocalizationLoader();
+        var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_LOCALIZATION));
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            for (int y = 1; y < rows.Count; y++)
+            {
+                List<string> row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                loader.entries.Add(new LocalizationEntry
+                {
+                    TextKey = row[0],
+                    Kor     = row.Count > 1 ? row[1] : "",
+                    Eng     = row.Count > 2 ? row[2] : "",
+                });
+            }
+        }
+        WriteJson("LocalizationData", loader);
+    }
+
+    static void GS_ParseQuestData()
+    {
+        var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_QUEST));
+
+        var questLoader     = new QuestDataLoader();
+        var conditionLoader = new QuestConditionLoader();
+        var notifyLoader    = new QuestNotifyLoader();
+        var unlockLoader    = new QuestUnlockLoader();
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            if (sheetName.StartsWith("_")) continue;
+            for (int y = 1; y < rows.Count; y++)
+            {
+                var row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                switch (sheetName)
+                {
+                    case "Quest":
+                    {
+                        int i = 0;
+                        var d = new QuestData();
+                        d.QuestID        = ConvertValue<int>(row[i++]);
+                        d.QuestName      = ConvertValue<string>(row[i++]);
+                        d.CompleteType   = ConvertValue<QuestCompleteType>(row[i++]);
+                        d.CompleteTarget = i < row.Count ? row[i++] : "";
+                        d.CompleteCount  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.FollowItemID   = i < row.Count ? row[i++] : "";
+                        d.FollowItemName = i < row.Count ? row[i++] : "";
+                        d.FollowCount    = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.AnimationID    = i < row.Count ? row[i++] : "";
+                        d.AnimBlocking   = i < row.Count && row[i++].ToUpper() == "TRUE";
+                        d.DialogueID     = i < row.Count ? row[i++] : "";
+                        questLoader.quests.Add(d);
+                        break;
+                    }
+                    case "Quest_Condition":
+                    {
+                        int i = 0;
+                        var d = new QuestConditionData();
+                        d.QuestID       = ConvertValue<int>(row[i++]);
+                        d.Order         = ConvertValue<int>(row[i++]);
+                        d.ConditionType = ConvertValue<QuestConditionType>(row[i++]);
+                        d.Target        = i < row.Count ? row[i++] : "";
+                        d.Count         = 0;
+                        if (d.ConditionType == QuestConditionType.ITEM_COUNT && d.Target.Contains(":"))
+                        {
+                            var parts = d.Target.Split(':');
+                            d.Target = parts[0];
+                            d.Count  = ConvertValue<int>(parts[1]);
+                        }
+                        conditionLoader.conditions.Add(d);
+                        break;
+                    }
+                    case "Quest_Notify":
+                    {
+                        int i = 0;
+                        var d = new QuestNotifyData();
+                        d.QuestID = ConvertValue<int>(row[i++]);
+                        d.Order   = ConvertValue<int>(row[i++]);
+                        d.BtnID   = i < row.Count ? row[i++] : "";
+                        notifyLoader.notifies.Add(d);
+                        break;
+                    }
+                    case "Quest_Unlock":
+                    {
+                        int i = 0;
+                        var d = new QuestUnlockData();
+                        d.QuestID    = ConvertValue<int>(row[i++]);
+                        d.UnlockType = ConvertValue<QuestUnlockType>(row[i++]);
+                        d.TargetID   = i < row.Count ? row[i++] : "";
+                        unlockLoader.unlocks.Add(d);
+                        break;
+                    }
+                }
+            }
+        }
+        WriteJson("QuestData",          questLoader);
+        WriteJson("QuestConditionData", conditionLoader);
+        WriteJson("QuestNotifyData",    notifyLoader);
+        WriteJson("QuestUnlockData",    unlockLoader);
+    }
+
+    static void GS_ParseCreatureData()
+    {
+        CreatureDataLoader loader = new CreatureDataLoader();
+        var rows = ReadXlsx(DownloadGoogleSheet(GSHEET_CREATURE));
+
+        for (int y = 3; y < rows.Count; y++)
+        {
+            List<string> row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+
+            int i = 0;
+            CreatureData d = new CreatureData();
+            d.DataId      = ConvertValue<int>(row[i++]);
+            d.Name        = i < row.Count ? row[i++] : "";
+            d.PrefabLabel = i < row.Count ? row[i++] : "";
+            d.IconLabel   = i < row.Count ? row[i++] : "";
+            d.MaxHp       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.Atk         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.Def         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.MoveSpeed   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.TotalExp    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.RewardGold  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.DropItemId  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.DropCount   = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.DropChance  = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            loader.creatures.Add(d);
+        }
+        WriteJson("CreatureData", loader);
+    }
+
+    static void GS_ParseItemData()
+    {
+        var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_ITEM));
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            if (sheetName.StartsWith("_")) continue;
+
+            ItemDataLoader loader = new ItemDataLoader();
+            for (int y = 1; y < rows.Count; y++)
+            {
+                List<string> row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+
+                int i = 0;
+                ItemData d = new ItemData();
+                d.DataId        = ConvertValue<int>(row[i++]);
+                d.Name          = i < row.Count ? row[i++] : "";
+                d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
+                d.Description   = i < row.Count ? row[i++] : "";
+                d.SpriteName    = i < row.Count ? row[i++] : "";
+                d.FoundLocation = i < row.Count ? row[i++] : "";
+                loader.items.Add(d);
+            }
+            WriteJson(sheetName, loader);
+        }
+    }
+
     [MenuItem("Tools/ParseExcel %#K")]
     public static void ParseExcel()
     {
@@ -249,6 +498,75 @@ public class DataTransformer : EditorWindow
     // -------------------------------------------------------------------
     // 공용 헬퍼
     // -------------------------------------------------------------------
+
+    /// <summary>구글 시트 URL에서 xlsx를 다운로드해 MemoryStream으로 반환</summary>
+    static MemoryStream DownloadGoogleSheet(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+        {
+            Debug.LogError("[DataTransformer] 구글 시트 URL이 비어 있습니다. GSHEET_* 상수를 채워주세요.");
+            return null;
+        }
+        Debug.Log($"[DataTransformer] 다운로드 중: {url}");
+        using var client = new System.Net.WebClient();
+        return new MemoryStream(client.DownloadData(url));
+    }
+
+    /// <summary>xlsx의 모든 시트를 읽어 (시트명, 행 목록) 리스트로 반환 (Stream 오버로드)</summary>
+    static List<(string name, List<List<string>> rows)> ReadAllXlsxSheets(Stream stream)
+    {
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+        var result = new List<(string, List<List<string>>)>();
+        using (var reader = ExcelReaderFactory.CreateReader(stream))
+        {
+            DataSet dataSet = reader.AsDataSet(new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = false }
+            });
+            foreach (DataTable table in dataSet.Tables)
+            {
+                var rows = new List<List<string>>();
+                foreach (DataRow dataRow in table.Rows)
+                {
+                    var row = new List<string>();
+                    foreach (var cell in dataRow.ItemArray)
+                        row.Add(cell?.ToString() ?? "");
+                    rows.Add(row);
+                }
+                result.Add((table.TableName, rows));
+            }
+        }
+        return result;
+    }
+
+    /// <summary>xlsx 파일을 읽어 List&lt;List&lt;string&gt;&gt; 형태로 반환 (Stream 오버로드)</summary>
+    static List<List<string>> ReadXlsx(Stream stream, int sheetIndex = 0)
+    {
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+        var rows = new List<List<string>>();
+        using (var reader = ExcelReaderFactory.CreateReader(stream))
+        {
+            DataSet dataSet = reader.AsDataSet(new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = false }
+            });
+            if (sheetIndex >= dataSet.Tables.Count)
+            {
+                Debug.LogError($"[DataTransformer] 시트 인덱스 {sheetIndex} 가 존재하지 않습니다.");
+                return rows;
+            }
+            foreach (DataRow dataRow in dataSet.Tables[sheetIndex].Rows)
+            {
+                var row = new List<string>();
+                foreach (var cell in dataRow.ItemArray)
+                    row.Add(cell?.ToString() ?? "");
+                rows.Add(row);
+            }
+        }
+        return rows;
+    }
 
     /// <summary>RFC 4180을 준수하는 CSV 전체 파싱 (따옴표 내 줄바꿈 지원)</summary>
     static List<List<string>> ReadCsv(string filePath)
@@ -487,7 +805,7 @@ public class DataTransformer : EditorWindow
             ItemData d = new ItemData();
             d.DataId        = ConvertValue<int>(row[i++]);
             d.Name          = i < row.Count ? row[i++] : "";
-            d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Common;
+            d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
             d.Description   = i < row.Count ? row[i++] : "";
             d.SpriteName    = i < row.Count ? row[i++] : "";
             d.FoundLocation = i < row.Count ? row[i++] : "";

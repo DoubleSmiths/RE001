@@ -15,8 +15,20 @@ MonoBehaviour:
   m_GroupName: Data
   m_GUID: f71fea23cdd56ae4a8eaca389697d4ff
   m_SerializeEntries:
+  - m_GUID: 0e3f9a20d045e5249978a74c960333a8
+    m_Address: Equipment
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3a7b02366bb53da4d97d15c18259ec17
     m_Address: QuestConditionData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43b8f3cda7506b2428f06746653d1915
+    m_Address: RequisiteItem
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -29,6 +41,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d2a61f322e05ee4c9f5bc999bce45f0
     m_Address: ItemData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b3763385e8ddfd4e83fab7082ddf90c
+    m_Address: HPPotion
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -65,6 +83,18 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e39a1612ac08d6f42884a4b8cbaba0d5
     m_Address: QuestNotifyData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9f699eb5d92b2346adb44a51fd8bcfb
+    m_Address: InventoryItem
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eac39a9ae29364446bbaae3d42f8f39e
+    m_Address: SpeedPotion
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

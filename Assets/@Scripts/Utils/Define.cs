@@ -33,10 +33,13 @@ public class Define
 
     public enum EquipGrade
     {
-        Common,
-        Uncommon,
+        Basic,
+        Abnormal,
         Rare,
-        Epic,
+        Exceptional,
+        Legendary,
+        Mystic,
+        REQUISITE,
     }
 
     public enum SkillCategory

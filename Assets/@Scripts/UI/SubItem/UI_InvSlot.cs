@@ -80,10 +80,14 @@ public class UI_InvSlot : UI_Base
     {
         switch (grade)
         {
+            // TODO : 등급별 색상 조정 필요
+             case EquipGrade.Basic:    return new Color(0.7f, 0.7f, 0.7f);
+             case EquipGrade.Abnormal: return new Color(0.2f, 0.8f, 0.2f);
+
             //case EquipGrade.Uncommon: return new Color(0.2f, 0.8f, 0.2f);
-            case EquipGrade.Uncommon: return new Color(0.6f, 0.2f, 0.8f);
-            case EquipGrade.Rare:     return new Color(0.2f, 0.4f, 1f);
-            case EquipGrade.Epic:     return new Color(0.6f, 0.2f, 0.8f);
+            //case EquipGrade.Uncommon: return new Color(0.6f, 0.2f, 0.8f);
+            //case EquipGrade.Rare:     return new Color(0.2f, 0.4f, 1f);
+            //case EquipGrade.Epic:     return new Color(0.6f, 0.2f, 0.8f);
             default:                  return new Color(0.7f, 0.7f, 0.7f);
         }
     }
