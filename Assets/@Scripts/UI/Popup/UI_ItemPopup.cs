@@ -1,4 +1,8 @@
+using Data;
+using DG.Tweening;
 using UnityEngine;
+using static Define;
+using static Util;
 
 public class UI_ItemPopup : UI_Popup
 {
@@ -21,6 +25,8 @@ public class UI_ItemPopup : UI_Popup
         DuriShowPanel,
         Flash_USETHIS,
         Xbutton,
+        ItemPopupImgGroupGlow,
+        ItemPopupTitleGlow,
     }
 
     enum Texts
@@ -65,6 +71,9 @@ public class UI_ItemPopup : UI_Popup
 
     #endregion
 
+    bool _isClosing = false;
+    RectTransform _frameRT;
+
     private void Awake()
     {
         Init();
@@ -80,21 +89,109 @@ public class UI_ItemPopup : UI_Popup
         BindText(typeof(Texts));
         BindObject(typeof(GameObjects));
 
-        GetButton((int)Buttons.ItemPopupBackground).gameObject.BindEvent(OnClickItemPopupBackground);
+        _frameRT = GetObject((int)GameObjects.ItemPopup).GetComponent<RectTransform>();
+
+        GetButton((int)Buttons.ItemPopupBackground).gameObject.BindEvent(() => OnClickBG());
+
+        GetImage((int)Images.DuriShowPanel).gameObject.SetActive(false);
+
+        OpenAnimation();
 
         return true;
     }
 
-
     public void SetInfo(int id)
     {
-        // TODO : ID에 맞는 아이템 팝업 열기.
-        
+        if (!Managers.Data.ItemDic.TryGetValue(id, out ItemData data))
+        {
+            Debug.LogWarning($"[UI_ItemPopup] ItemData 없음: {id}");
+            return;
+        }
+
+        // 아이템 이름
+        GetText((int)Texts.ItemPopupItemName).text = Localize(data.Name);
+
+        // 등급명 + 색상
+        GetText((int)Texts.ItemPopupItemDesc_Rare).text  = GetGradeName(data.Grade);
+        GetImage((int)Images.ItemPopupImgGroupGlow).color = GetGradeColor(data.Grade);
+        GetImage((int)Images.ItemPopupTitleGlow).color = GetGradeColor(data.Grade);
+        //GetText((int)Texts.ItemPopupItemDesc_Rare).color = GetGradeColor(data.Grade);
+
+        // 발견 장소
+        GetText((int)Texts.ItemPopupItemDesc_Found).text = Localize(data.FoundLocation);
+
+        // 설명
+        GetText((int)Texts.ItemPopupItemDesc).text = Localize(data.Description);
+
+        // 아이템 아이콘
+        Sprite sprite = Managers.Resource.Load<Sprite>(data.SpriteName);
+        GetImage((int)Images.ItemImg).sprite = sprite;
+
+        // 보유 개수 (0이면 숨김)
+        int count = Managers.Game.GetItemCount(id);
+        GetText((int)Texts.AmountText).text = count.ToString();
+        GetText((int)Texts.AmountText).gameObject.SetActive(count > 0);
     }
 
-    void OnClickItemPopupBackground()
+    // ── 애니메이션 ───────────────────────────────────────────
+
+    void OpenAnimation()
     {
-        ClosePopupUI();
+        _isClosing = false;
+        if (_frameRT == null) return;
+
+        _frameRT.DOKill();
+        _frameRT.anchoredPosition = new Vector2(0f, -120f);
+        _frameRT.DOAnchorPosY(0f, 0.5f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
     }
 
+    void OnClickBG()
+    {
+        if (_isClosing) return;
+        _isClosing = true;
+
+        if (_frameRT == null) { ClosePopupUI(); return; }
+
+        _frameRT.DOKill();
+        _frameRT.DOAnchorPosY(-120f, 0.5f)
+                .SetEase(Ease.InBack)
+                .SetUpdate(true)
+                .OnComplete(() => ClosePopupUI());
+    }
+
+    // ── 등급 헬퍼 ────────────────────────────────────────────
+
+    static string GetGradeName(EquipGrade grade)
+    {
+        bool kor = Managers.Game.Language == Language.Korean;
+        return grade switch
+        {
+            EquipGrade.Basic       => kor ? "일반" : "BASIC",
+            EquipGrade.Abnormal    => kor ? "고급" : "ABNORMAL",
+            EquipGrade.Rare        => kor ? "희귀" : "RARE",
+            EquipGrade.Exceptional => kor ? "진귀" : "EXCEPTIONAL",
+            EquipGrade.Legendary   => kor ? "전설" : "LEGENDARY",
+            EquipGrade.Mystic      => kor ? "신화" : "MYSTIC",
+            EquipGrade.REQUISITE   => kor ? "귀중" : "REQUISITE",
+            _                      => grade.ToString(),
+        };
+    }
+
+    // 슬라이드 8 기준 등급 색상
+    static Color GetGradeColor(EquipGrade grade)
+    {
+        return grade switch
+        {
+            EquipGrade.Basic       => new Color32(255, 255, 255, 200),
+            EquipGrade.Abnormal    => HexToColor("1A9600"),
+            EquipGrade.Rare        => HexToColor("0064C8"),
+            EquipGrade.Exceptional => HexToColor("9600FF"),
+            EquipGrade.Legendary   => HexToColor("C58C00"),
+            EquipGrade.Mystic      => HexToColor("960E00"),
+            EquipGrade.REQUISITE   => HexToColor("DD008F"),
+            _                      => Color.white,
+        };
+    }
 }

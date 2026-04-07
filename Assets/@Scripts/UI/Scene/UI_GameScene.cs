@@ -623,6 +623,11 @@ public class UI_GameScene : UI_Scene
 
         }
 
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(10001);
+        }
+
         if (Input.GetKeyDown(KeyCode.J))
         {
             // TODO : 전투로 이동

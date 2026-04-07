@@ -15,6 +15,9 @@ public class DataManager
     public Dictionary<int, EquipEnhanceData>  EquipEnhanceDic   { get; private set; } = new Dictionary<int, EquipEnhanceData>();
     public Dictionary<int, SkillData>         SkillDic          { get; private set; } = new Dictionary<int, SkillData>();
     public Dictionary<int, ItemData>          ItemDic           { get; private set; } = new Dictionary<int, ItemData>();
+    public Dictionary<int, ItemData>          RequisiteItemDic  { get; private set; } = new Dictionary<int, ItemData>();
+    public Dictionary<int, HPPotionData>      HPPotionDic       { get; private set; } = new Dictionary<int, HPPotionData>();
+    public Dictionary<int, SpeedPotionData>   SpeedPotionDic    { get; private set; } = new Dictionary<int, SpeedPotionData>();
     public Dictionary<int, AreaData>          AreaDic           { get; private set; } = new Dictionary<int, AreaData>();
     public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
     public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
@@ -33,7 +36,10 @@ public class DataManager
         //EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();
         //EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
         //SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
-        ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("ItemData").MakeDict();
+        ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("InventoryItem").MakeDict();
+        RequisiteItemDic  = LoadJson<ItemDataLoader,          int,    ItemData>           ("RequisiteItem").MakeDict();
+        HPPotionDic       = LoadJson<HPPotionDataLoader,      int,    HPPotionData>       ("HPPotion").MakeDict();
+        SpeedPotionDic    = LoadJson<SpeedPotionDataLoader,   int,    SpeedPotionData>    ("SpeedPotion").MakeDict();
         //AreaDic           = LoadJson<AreaDataLoader,          int,    AreaData>           ("AreaData").MakeDict();
         //MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
         //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
