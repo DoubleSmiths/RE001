@@ -2,103 +2,86 @@
   "notifies": [
     {
       "QuestID": 1,
-      "QuestType": null,
       "Order": 1,
       "BtnID": "VILLAGE1_GUILD_VFX"
     },
     {
       "QuestID": 1,
-      "QuestType": null,
       "Order": 2,
       "BtnID": "VILLAGE1_GUILD_TALK_VFX"
     },
     {
       "QuestID": 2,
-      "QuestType": null,
       "Order": 1,
       "BtnID": "GUILD_EXIT_QUEST_VFX"
     },
     {
       "QuestID": 3,
-      "QuestType": null,
       "Order": 1,
       "BtnID": "VILLAGE1_TRAVEL_QUEST_VFX"
     },
     {
       "QuestID": 3,
-      "QuestType": null,
       "Order": 2,
       "BtnID": "BTN_JOURNEY"
     },
     {
       "QuestID": 3,
-      "QuestType": null,
       "Order": 3,
       "BtnID": "BTN_EXPLORE"
     },
     {
       "QuestID": 3,
-      "QuestType": null,
       "Order": 4,
       "BtnID": "BTN_MAP_BREEZING_WIND_FOREST"
     },
     {
       "QuestID": 3,
-      "QuestType": null,
       "Order": 5,
       "BtnID": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE"
     },
     {
       "QuestID": 4,
-      "QuestType": null,
       "Order": 1,
       "BtnID": "BTN_BATTLE_SCENE_JOURNEY"
     },
     {
       "QuestID": 4,
-      "QuestType": null,
       "Order": 2,
       "BtnID": "BTN_GUILD"
     },
     {
       "QuestID": 4,
-      "QuestType": null,
       "Order": 3,
       "BtnID": "BTN_GUILD_QUEST"
     },
     {
       "QuestID": 5,
-      "QuestType": null,
       "Order": 1,
       "BtnID": "BTN_EXIT"
     },
     {
       "QuestID": 6,
-      "QuestType": null,
       "Order": 1,
       "BtnID": "BTN_EXIT"
     },
     {
       "QuestID": 6,
-      "QuestType": null,
       "Order": 2,
       "BtnID": "BTN_JOURNEY"
     },
     {
       "QuestID": 6,
-      "QuestType": null,
       "Order": 3,
       "BtnID": "BTN_EXPLORE"
     },
     {
       "QuestID": 6,
-      "QuestType": null,
       "Order": 4,
       "BtnID": "BTN_MAP_BREEZING_WIND_FOREST"
     },
     {
       "QuestID": 6,
-      "QuestType": null,
       "Order": 5,
       "BtnID": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE"
     }

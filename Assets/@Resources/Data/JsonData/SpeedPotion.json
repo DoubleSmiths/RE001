@@ -1,12 +1,22 @@
 ﻿{
-  "items": [
+  "potions": [
     {
       "DataId": 40001,
       "Name": "SPDPotion1NameText",
       "Grade": 0,
       "Description": "SPDPotion1DescText",
       "SpriteName": "Speed_Potion1",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 1,
+      "AtkSpeedBonus": 0.2,
+      "Duration": 15,
+      "Cooldown": 30,
+      "NeededItemIDs": [
+        1001
+      ],
+      "NeededItemAmounts": [
+        2
+      ]
     },
     {
       "DataId": 40002,
@@ -14,7 +24,17 @@
       "Grade": 0,
       "Description": "SPDPotion1DescText",
       "SpriteName": "Speed_Potion1",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 2,
+      "AtkSpeedBonus": 0.25,
+      "Duration": 15,
+      "Cooldown": 30,
+      "NeededItemIDs": [
+        1001
+      ],
+      "NeededItemAmounts": [
+        10
+      ]
     },
     {
       "DataId": 40003,
@@ -22,7 +42,17 @@
       "Grade": 0,
       "Description": "SPDPotion1DescText",
       "SpriteName": "Speed_Potion1",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 3,
+      "AtkSpeedBonus": 0.3,
+      "Duration": 15,
+      "Cooldown": 30,
+      "NeededItemIDs": [
+        1001
+      ],
+      "NeededItemAmounts": [
+        20
+      ]
     },
     {
       "DataId": 40004,
@@ -30,7 +60,19 @@
       "Grade": 1,
       "Description": "SPDPotion2DescText",
       "SpriteName": "Speed_Potion2",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 1,
+      "AtkSpeedBonus": 0.3,
+      "Duration": 20,
+      "Cooldown": 30,
+      "NeededItemIDs": [
+        1001,
+        1002
+      ],
+      "NeededItemAmounts": [
+        20,
+        5
+      ]
     }
   ]
 }

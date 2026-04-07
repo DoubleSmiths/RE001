@@ -125,6 +125,7 @@ namespace Data
     #endregion
 
     #region ItemData
+    // InventoryItem / RequisiteItem / Equipment 시트 공용
     [Serializable]
     public class ItemData
     {
@@ -145,6 +146,70 @@ namespace Data
             var dict = new Dictionary<int, ItemData>();
             foreach (var item in items)
                 dict.Add(item.DataId, item);
+            return dict;
+        }
+    }
+    #endregion
+
+    #region HPPotionData
+    [Serializable]
+    public class HPPotionData
+    {
+        public int DataId;
+        public string Name;
+        public EquipGrade Grade;
+        public string Description;
+        public string SpriteName;
+        public string WhereTo;
+        public int Step;
+        public int FlatRecov;
+        public int MaxHPRecov;
+        public int Cooldown;
+        public List<int> NeededItemIDs     = new List<int>();
+        public List<int> NeededItemAmounts = new List<int>();
+    }
+
+    [Serializable]
+    public class HPPotionDataLoader : ILoader<int, HPPotionData>
+    {
+        public List<HPPotionData> potions = new List<HPPotionData>();
+        public Dictionary<int, HPPotionData> MakeDict()
+        {
+            var dict = new Dictionary<int, HPPotionData>();
+            foreach (var p in potions)
+                dict.Add(p.DataId, p);
+            return dict;
+        }
+    }
+    #endregion
+
+    #region SpeedPotionData
+    [Serializable]
+    public class SpeedPotionData
+    {
+        public int DataId;
+        public string Name;
+        public EquipGrade Grade;
+        public string Description;
+        public string SpriteName;
+        public string WhereTo;
+        public int Step;
+        public float AtkSpeedBonus;
+        public int Duration;
+        public int Cooldown;
+        public List<int> NeededItemIDs     = new List<int>();
+        public List<int> NeededItemAmounts = new List<int>();
+    }
+
+    [Serializable]
+    public class SpeedPotionDataLoader : ILoader<int, SpeedPotionData>
+    {
+        public List<SpeedPotionData> potions = new List<SpeedPotionData>();
+        public Dictionary<int, SpeedPotionData> MakeDict()
+        {
+            var dict = new Dictionary<int, SpeedPotionData>();
+            foreach (var p in potions)
+                dict.Add(p.DataId, p);
             return dict;
         }
     }

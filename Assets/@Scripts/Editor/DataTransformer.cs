@@ -254,24 +254,95 @@ public class DataTransformer : EditorWindow
         {
             if (sheetName.StartsWith("_")) continue;
 
-            ItemDataLoader loader = new ItemDataLoader();
-            for (int y = 1; y < rows.Count; y++)
+            switch (sheetName)
             {
-                List<string> row = rows[y];
-                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
-
-                int i = 0;
-                ItemData d = new ItemData();
-                d.DataId        = ConvertValue<int>(row[i++]);
-                d.Name          = i < row.Count ? row[i++] : "";
-                d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
-                d.Description   = i < row.Count ? row[i++] : "";
-                d.SpriteName    = i < row.Count ? row[i++] : "";
-                d.FoundLocation = i < row.Count ? row[i++] : "";
-                loader.items.Add(d);
+                case "InventoryItem":
+                case "RequisiteItem":
+                case "Equipment":
+                {
+                    var loader = new ItemDataLoader();
+                    for (int y = 1; y < rows.Count; y++)
+                    {
+                        var row = rows[y];
+                        if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                        int i = 0;
+                        var d = new ItemData();
+                        d.DataId        = ConvertValue<int>(row[i++]);
+                        d.Name          = i < row.Count ? row[i++] : "";
+                        d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
+                        d.Description   = i < row.Count ? row[i++] : "";
+                        d.SpriteName    = i < row.Count ? row[i++] : "";
+                        d.FoundLocation = i < row.Count ? row[i++] : "";
+                        loader.items.Add(d);
+                    }
+                    WriteJson(sheetName, loader);
+                    break;
+                }
+                case "HPPotion":
+                {
+                    var loader = new HPPotionDataLoader();
+                    for (int y = 1; y < rows.Count; y++)
+                    {
+                        var row = rows[y];
+                        if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                        int i = 0;
+                        var d = new HPPotionData();
+                        d.DataId        = ConvertValue<int>(row[i++]);
+                        d.Name          = i < row.Count ? row[i++] : "";
+                        d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
+                        d.Description   = i < row.Count ? row[i++] : "";
+                        d.SpriteName    = i < row.Count ? row[i++] : "";
+                        d.WhereTo       = i < row.Count ? row[i++] : "";
+                        d.Step          = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.FlatRecov     = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.MaxHPRecov    = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.Cooldown      = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.NeededItemIDs     = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
+                        d.NeededItemAmounts = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
+                        loader.potions.Add(d);
+                    }
+                    WriteJson(sheetName, loader);
+                    break;
+                }
+                case "SpeedPotion":
+                {
+                    var loader = new SpeedPotionDataLoader();
+                    for (int y = 1; y < rows.Count; y++)
+                    {
+                        var row = rows[y];
+                        if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                        int i = 0;
+                        var d = new SpeedPotionData();
+                        d.DataId        = ConvertValue<int>(row[i++]);
+                        d.Name          = i < row.Count ? row[i++] : "";
+                        d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
+                        d.Description   = i < row.Count ? row[i++] : "";
+                        d.SpriteName    = i < row.Count ? row[i++] : "";
+                        d.WhereTo       = i < row.Count ? row[i++] : "";
+                        d.Step          = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.AtkSpeedBonus = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+                        d.Duration      = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.Cooldown      = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.NeededItemIDs     = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
+                        d.NeededItemAmounts = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
+                        loader.potions.Add(d);
+                    }
+                    WriteJson(sheetName, loader);
+                    break;
+                }
+                default:
+                    Debug.LogWarning($"[DataTransformer] ItemData 시트 '{sheetName}' 는 파서가 없습니다.");
+                    break;
             }
-            WriteJson(sheetName, loader);
         }
+    }
+
+    /// <summary>"NONE" 또는 빈 값은 빈 리스트, 쉼표 구분 정수 목록 파싱</summary>
+    static List<int> ParseIntList(string value)
+    {
+        if (string.IsNullOrEmpty(value) || value.Equals("NONE", System.StringComparison.OrdinalIgnoreCase))
+            return new List<int>();
+        return value.Split(',').Select(s => ConvertValue<int>(s.Trim())).ToList();
     }
 
     [MenuItem("Tools/ParseExcel %#K")]

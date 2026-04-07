@@ -1,12 +1,18 @@
 ﻿{
-  "items": [
+  "potions": [
     {
       "DataId": 30001,
       "Name": "HPPotion1NameText",
       "Grade": 0,
       "Description": "HPPotion1DescText",
       "SpriteName": "HP_Potion1",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 1,
+      "FlatRecov": 1,
+      "MaxHPRecov": 0,
+      "Cooldown": 2,
+      "NeededItemIDs": [],
+      "NeededItemAmounts": []
     },
     {
       "DataId": 30002,
@@ -14,7 +20,17 @@
       "Grade": 0,
       "Description": "HPPotion1DescText",
       "SpriteName": "HP_Potion1",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 2,
+      "FlatRecov": 2,
+      "MaxHPRecov": 0,
+      "Cooldown": 3,
+      "NeededItemIDs": [
+        1001
+      ],
+      "NeededItemAmounts": [
+        2
+      ]
     },
     {
       "DataId": 30003,
@@ -22,7 +38,17 @@
       "Grade": 0,
       "Description": "HPPotion1DescText",
       "SpriteName": "HP_Potion1",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 3,
+      "FlatRecov": 3,
+      "MaxHPRecov": 0,
+      "Cooldown": 3,
+      "NeededItemIDs": [
+        1001
+      ],
+      "NeededItemAmounts": [
+        10
+      ]
     },
     {
       "DataId": 30004,
@@ -30,7 +56,19 @@
       "Grade": 1,
       "Description": "HPPotion2DescText",
       "SpriteName": "HP_Potion2",
-      "FoundLocation": "AlchemyText"
+      "WhereTo": "AlchemyText",
+      "Step": 1,
+      "FlatRecov": 5,
+      "MaxHPRecov": 0,
+      "Cooldown": 3,
+      "NeededItemIDs": [
+        1001,
+        1002
+      ],
+      "NeededItemAmounts": [
+        20,
+        5
+      ]
     }
   ]
 }

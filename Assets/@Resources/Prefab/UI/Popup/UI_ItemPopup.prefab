@@ -736,6 +736,7 @@ GameObject:
   - component: {fileID: 8190573860236004434}
   - component: {fileID: 6163304017711650751}
   - component: {fileID: 6728823753851864943}
+  - component: {fileID: 7855142212227817373}
   m_Layer: 5
   m_Name: UI_ItemPopup
   m_TagString: Untagged
@@ -826,6 +827,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7855142212227817373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579441337809238232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41e23c7005ed5e4abd27357244ab8b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_ItemPopup
 --- !u!1 &1624171307773587836
 GameObject:
   m_ObjectHideFlags: 0
