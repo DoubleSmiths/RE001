@@ -71,9 +71,6 @@ public class UI_ItemPopup : UI_Popup
 
     #endregion
 
-    bool _isClosing = false;
-    RectTransform _frameRT;
-
     private void Awake()
     {
         Init();
@@ -135,31 +132,31 @@ public class UI_ItemPopup : UI_Popup
 
     // ── 애니메이션 ───────────────────────────────────────────
 
-    void OpenAnimation()
-    {
-        _isClosing = false;
-        if (_frameRT == null) return;
+    //void OpenAnimation()
+    //{
+    //    _isClosing = false;
+    //    if (_frameRT == null) return;
 
-        _frameRT.DOKill();
-        _frameRT.anchoredPosition = new Vector2(0f, -120f);
-        _frameRT.DOAnchorPosY(0f, 0.5f)
-                .SetEase(Ease.OutBack)
-                .SetUpdate(true);
-    }
+    //    _frameRT.DOKill();
+    //    _frameRT.anchoredPosition = new Vector2(0f, -120f);
+    //    _frameRT.DOAnchorPosY(0f, 0.5f)
+    //            .SetEase(Ease.OutBack)
+    //            .SetUpdate(true);
+    //}
 
-    void OnClickBG()
-    {
-        if (_isClosing) return;
-        _isClosing = true;
+    //void OnClickBG()
+    //{
+    //    if (_isClosing) return;
+    //    _isClosing = true;
 
-        if (_frameRT == null) { ClosePopupUI(); return; }
+    //    if (_frameRT == null) { ClosePopupUI(); return; }
 
-        _frameRT.DOKill();
-        _frameRT.DOAnchorPosY(-120f, 0.5f)
-                .SetEase(Ease.InBack)
-                .SetUpdate(true)
-                .OnComplete(() => ClosePopupUI());
-    }
+    //    _frameRT.DOKill();
+    //    _frameRT.DOAnchorPosY(-120f, 0.5f)
+    //            .SetEase(Ease.InBack)
+    //            .SetUpdate(true)
+    //            .OnComplete(() => ClosePopupUI());
+    //}
 
     // ── 등급 헬퍼 ────────────────────────────────────────────
 
