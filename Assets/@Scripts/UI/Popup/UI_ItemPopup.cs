@@ -111,8 +111,8 @@ public class UI_ItemPopup : UI_Popup
 
         // 등급명 + 색상
         GetText((int)Texts.ItemPopupItemDesc_Rare).text  = GetGradeName(data.Grade);
-        GetImage((int)Images.ItemPopupImgGroupGlow).color = GetGradeColor(data.Grade);
-        GetImage((int)Images.ItemPopupTitleGlow).color = GetGradeColor(data.Grade);
+        GetImage((int)Images.ItemPopupImgGroupGlow).color = Util.GetGradeColor(data.Grade);
+        GetImage((int)Images.ItemPopupTitleGlow).color = Util.GetGradeColor(data.Grade);
         //GetText((int)Texts.ItemPopupItemDesc_Rare).color = GetGradeColor(data.Grade);
 
         // 발견 장소

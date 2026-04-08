@@ -153,7 +153,8 @@ public class UI_InventoryPopup : UI_Popup
     private ItemData GetItemData(int dataId)
     {
         ItemData data;
-        Managers.Data.ItemDic.TryGetValue(dataId, out data);
+        if (!Managers.Data.ItemDic.TryGetValue(dataId, out data) && !Managers.Data.RequisiteItemDic.TryGetValue(dataId, out data))
+            return null;
         return data;
     }
 

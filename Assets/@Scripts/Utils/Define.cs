@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using static Util;
 
@@ -366,10 +366,11 @@ public class Define
     public const string MYTHIC_BUTTON_CHECK = "Mythic_Button_Check.sprite";
     public const string MYTHIC_BUTTON_RETURN = "Mythic_Button_Return.sprite";
 
-    public const int ITEM_ID_MIN = 1000;
-    public const int EQUIP_ID_MIN = 2000;
-    public const int POTION_ID_MIN = 3000;
-    public const int IMPORTANT_ITEM_ID_MIN = 9000;
+    public const int ITEM_ID_MIN = 10000;
+    public const int EQUIP_ID_MIN = 50000;
+    public const int POTION_ID_MIN = 30000;
+    public const int SPEED_POTION_ID_MIN = 40000;
+    public const int IMPORTANT_ITEM_ID_MIN = 20000;
 
     // COLOR
     public const string DEFAULT_COLOR = "FFFFFF";

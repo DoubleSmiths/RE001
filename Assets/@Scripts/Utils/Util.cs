@@ -110,20 +110,18 @@ public static class Util
         return (T)Enum.Parse(typeof(T), value, true);
     }
 
-    //public static SkillType GetSkillTypeFromInt(int value)
-    //{
-    //    foreach (SkillType skillType in Enum.GetValues(typeof(SkillType)))
-    //    {
-    //        int minValue = (int)skillType;
-    //        int maxValue = minValue + 5; // 100501~ 100506 사이 값이면 100501값 리턴
-
-    //        if (value >= minValue && value <= maxValue)
-    //        {
-    //            return skillType;
-    //        }
-    //    }
-
-    //    Debug.LogError($" Faild add skill : {value}");
-    //    return SkillType.None;
-    //}
+    public static Color GetGradeColor(EquipGrade grade)
+    {
+        return grade switch
+        {
+            EquipGrade.Basic => new Color32(255, 255, 255, 200),
+            EquipGrade.Abnormal => HexToColor("1A9600"),
+            EquipGrade.Rare => HexToColor("0064C8"),
+            EquipGrade.Exceptional => HexToColor("9600FF"),
+            EquipGrade.Legendary => HexToColor("C58C00"),
+            EquipGrade.Mystic => HexToColor("960E00"),
+            EquipGrade.REQUISITE => HexToColor("DD008F"),
+            _ => Color.white,
+        };
+    }
 }
