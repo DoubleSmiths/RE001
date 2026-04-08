@@ -99,7 +99,8 @@ public class UI_ItemPopup : UI_Popup
 
     public void SetInfo(int id)
     {
-        if (!Managers.Data.ItemDic.TryGetValue(id, out ItemData data))
+        ItemData data;
+        if (!Managers.Data.ItemDic.TryGetValue(id, out data) && !Managers.Data.RequisiteItemDic.TryGetValue(id, out data))
         {
             Debug.LogWarning($"[UI_ItemPopup] ItemData 없음: {id}");
             return;
