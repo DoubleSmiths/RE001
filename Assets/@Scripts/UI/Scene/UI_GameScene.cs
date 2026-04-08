@@ -125,6 +125,14 @@ public class UI_GameScene : UI_Scene
     float _displayGold;
     float _displayCrystal;
 
+    // HP/EXP 이전값 추적
+    float _prevHp  = -1f;
+    float _prevExp = -1f;
+
+    static readonly Color _barWhite = Color.white;
+    static readonly Color _barHurt  = new Color32(0xFF, 0x00, 0x00, 0xFF); // FF0000
+    static readonly Color _barHeal  = new Color32(0x58, 0xFF, 0x00, 0xFF); // 58FF00
+
     static readonly Color _goldColor = Color.white;                                  // #FFFFFF
     static readonly Color _crystalColor = new Color(0f, 0.953f, 1f, 80f / 225f);        // #00F3FF
     static readonly Color _increaseColor = new Color(0f, 1f, 0f);                       // #00FF00
@@ -359,15 +367,57 @@ public class UI_GameScene : UI_Scene
 
     public void UpdateHP(float current, float max)
     {
-        GetImage((int)Images.PlayerHPBarGuage).fillAmount = max > 0 ? current / max : 0f;
-        GetText((int)Texts.PlayerHPBarText).text = $"{(int)current} / {(int)max}";
+        // bar: fill Lerp
+        Image bar = GetImage((int)Images.PlayerHPBarGuage);
+        bar.DOKill();
+        bar.DOFillAmount(max > 0 ? current / max : 0f, 0.2f).SetEase(Ease.OutQuad).SetUpdate(true);
+
+        // 텍스트 갱신
+        TMP_Text hpText = GetText((int)Texts.PlayerHPBarText);
+        hpText.text = $"{(int)current} / {(int)max}";
+
+        // 텍스트 색상 플래시 (초기 설정 시 스킵)
+        if (_prevHp >= 0f)
+        {
+            bool isHurt = current < _prevHp;
+            Color flash = isHurt ? _barHurt : _barHeal;
+
+            hpText.DOKill();
+            hpText.DOColor(flash, 0.17f).SetUpdate(true)
+                  .OnComplete(() => hpText.DOColor(_barWhite, 0.17f).SetUpdate(true));
+
+            // 회복 시 텍스트 Scale 증감
+            if (!isHurt)
+                hpText.transform.DOScale(1.05f, 0.17f).SetUpdate(true)
+                      .OnComplete(() => hpText.transform.DOScale(1f, 0.17f).SetUpdate(true));
+        }
+
+        _prevHp = current;
     }
 
     public void UpdateEXP(float current, float required)
     {
-        GetImage((int)Images.PlayerEXPBarGuage).fillAmount = required > 0 ? current / required : 0f;
-        GetText((int)Texts.PlayerEXPTextPercent).text =
-            required > 0 ? $"{(int)(current / required * 100)}%" : "0%";
+        // bar: fill Lerp
+        Image bar = GetImage((int)Images.PlayerEXPBarGuage);
+        bar.DOKill();
+        bar.DOFillAmount(required > 0 ? current / required : 0f, 0.2f).SetEase(Ease.OutQuad).SetUpdate(true);
+
+        // 퍼센트 텍스트 (##.####% 형식)
+        TMP_Text expText = GetText((int)Texts.PlayerEXPTextPercent);
+        expText.text = required > 0 ? $"{current / required * 100f:F4}%" : "0.0000%";
+
+        // EXP 증가 시 텍스트 플래시 + Scale
+        if (_prevExp >= 0f && current > _prevExp)
+        {
+            expText.DOKill();
+            expText.DOColor(_barHeal, 0.17f).SetUpdate(true)
+                   .OnComplete(() => expText.DOColor(_barWhite, 0.17f).SetUpdate(true));
+
+            expText.transform.DOScale(1.05f, 0.17f).SetUpdate(true)
+                   .OnComplete(() => expText.transform.DOScale(1f, 0.17f).SetUpdate(true));
+        }
+
+        _prevExp = current;
     }
 
     public void OnLevelUp(int newLevel)
@@ -596,6 +646,10 @@ public class UI_GameScene : UI_Scene
         if (Input.GetKeyDown(KeyCode.Alpha3)) TestCrystalIncrease();
         if (Input.GetKeyDown(KeyCode.Alpha4)) TestCrystalDecrease();
 
+        if (Input.GetKeyDown(KeyCode.Alpha5)) TestHPDamage();
+        if (Input.GetKeyDown(KeyCode.Alpha6)) TestHPHeal();
+        if (Input.GetKeyDown(KeyCode.Alpha7)) TestEXPGain();
+
         if (Input.GetKeyDown(KeyCode.T))
         {
             Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.TestKey);
@@ -677,5 +731,32 @@ public class UI_GameScene : UI_Scene
 
     [ContextMenu("Test/Crystal -100")]
     public void TestCrystalDecrease() => Managers.Game.Crystal = Mathf.Max(0, Managers.Game.Crystal - 100);
+
+    // ── HP / EXP 바 애니메이션 테스트 ──────────────────────────
+    float _testHp  = 100f;
+    float _testExp = 0f;
+    const float TEST_MAX_HP  = 100f;
+    const float TEST_MAX_EXP = 100f;
+
+    [ContextMenu("Test/HP -30 (Hurt)")]
+    public void TestHPDamage()
+    {
+        _testHp = Mathf.Max(0f, _testHp - 30f);
+        UpdateHP(_testHp, TEST_MAX_HP);
+    }
+
+    [ContextMenu("Test/HP +20 (Heal)")]
+    public void TestHPHeal()
+    {
+        _testHp = Mathf.Min(TEST_MAX_HP, _testHp + 20f);
+        UpdateHP(_testHp, TEST_MAX_HP);
+    }
+
+    [ContextMenu("Test/EXP +25")]
+    public void TestEXPGain()
+    {
+        _testExp = Mathf.Min(TEST_MAX_EXP, _testExp + 25f);
+        UpdateEXP(_testExp, TEST_MAX_EXP);
+    }
 #endif
 }
