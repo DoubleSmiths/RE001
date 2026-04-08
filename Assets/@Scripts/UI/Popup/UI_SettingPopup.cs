@@ -135,38 +135,41 @@ public class UI_SettingPopup : UI_Popup
 
     public void RefreshButtons()
     {
-        OnClickBGMSoundON();
-        OnClickSFXSoundON();
-        OnClickPopupOn();
-        OnClickShakeOn();
+        UpdateToggleButton((int)Buttons.SettingPopupBGMONBtn, Managers.Game.IsBGSoundOn);
+        UpdateToggleButton((int)Buttons.SettingPopupSFXONBtn, Managers.Game.IsSFXOn);
+        UpdateToggleButton((int)Buttons.SettingPopupPopupONBtn, Managers.Game.IsCreateAtkTextOn);
+        UpdateToggleButton((int)Buttons.SettingPopupShakeONBtn, Managers.Game.IsShakeOn);
+    }
+
+    void UpdateToggleButton(int buttonType, bool isOn)
+    {
+        Image image = GetButton(buttonType).GetComponent<Image>();
+        image.sprite = Managers.Resource.Load<Sprite>(isOn ? Define.MYTHIC_BUTTON_CHECK : Define.MYTHIC_BUTTON_X);
+        image.color = isOn ? _greenColor : Color.white;
     }
 
     public void OnClickBGMSoundON()
     {
         Managers.Game.IsBGSoundOn = !Managers.Game.IsBGSoundOn;
-        GetButton((int)Buttons.SettingPopupBGMONBtn).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>(Managers.Game.IsBGSoundOn ? Define.MYTHIC_BUTTON_CHECK : Define.MYTHIC_BUTTON_X);
-        GetButton((int)Buttons.SettingPopupBGMONBtn).GetComponent<Image>().color = Managers.Game.IsBGSoundOn ? _greenColor : Color.white;
+        UpdateToggleButton((int)Buttons.SettingPopupBGMONBtn, Managers.Game.IsBGSoundOn);
     }
 
     public void OnClickSFXSoundON()
     {
         Managers.Game.IsSFXOn = !Managers.Game.IsSFXOn;
-        GetButton((int)Buttons.SettingPopupSFXONBtn).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>(Managers.Game.IsSFXOn ? Define.MYTHIC_BUTTON_CHECK : Define.MYTHIC_BUTTON_X);
-        GetButton((int)Buttons.SettingPopupSFXONBtn).GetComponent<Image>().color = Managers.Game.IsSFXOn ? _greenColor : Color.white;
+        UpdateToggleButton((int)Buttons.SettingPopupSFXONBtn, Managers.Game.IsSFXOn);
     }
 
     public void OnClickPopupOn()
     {
         Managers.Game.IsCreateAtkTextOn = !Managers.Game.IsCreateAtkTextOn;
-        GetButton((int)Buttons.SettingPopupPopupONBtn).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>(Managers.Game.IsCreateAtkTextOn ? Define.MYTHIC_BUTTON_CHECK : Define.MYTHIC_BUTTON_X);
-            GetButton((int)Buttons.SettingPopupPopupONBtn).GetComponent<Image>().color = Managers.Game.IsCreateAtkTextOn ? _greenColor : Color.white;
+        UpdateToggleButton((int)Buttons.SettingPopupPopupONBtn, Managers.Game.IsCreateAtkTextOn);
     }
 
     public void OnClickShakeOn()
     {
         Managers.Game.IsShakeOn = !Managers.Game.IsShakeOn;
-        GetButton((int)Buttons.SettingPopupShakeONBtn).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>(Managers.Game.IsShakeOn ? Define.MYTHIC_BUTTON_CHECK : Define.MYTHIC_BUTTON_X);
-        GetButton((int)Buttons.SettingPopupShakeONBtn).GetComponent<Image>().color = Managers.Game.IsShakeOn ? _greenColor : Color.white;
+        UpdateToggleButton((int)Buttons.SettingPopupShakeONBtn, Managers.Game.IsShakeOn);
     }
 
 }
