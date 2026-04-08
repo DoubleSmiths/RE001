@@ -307,7 +307,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.TravelButtonIcon),
                     GetText((int)Texts.TravelButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.EquipmentText)); // TODO : 정상적인 텍스트로 변경.
+                        .SetInfo("Travel_Icon", LocalizeKey.ItemTempPermitNameText, LocalizeKey.TravelUnlockText)); // TODO : 정상적인 텍스트로 변경.
                 break;
         }
     }
