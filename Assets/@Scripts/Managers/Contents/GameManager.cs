@@ -73,6 +73,12 @@ public class GameData
     public int    Gold       = 0;
     public int    Crystal    = 0;
 
+    // 환경설정
+    public bool _isBGSoundOn        = true;
+    public bool _isSFXOn            = true;
+    public bool _isCreateAtkTextOn    = true;
+    public bool _isShakeOn          = true;
+
     // 장비
     public List<Equipment>                    OwnedEquipments    = new List<Equipment>();
     public Dictionary<EquipSlotType, Equipment> EquippedEquipments = new Dictionary<EquipSlotType, Equipment>();
@@ -120,6 +126,31 @@ public class GameManager
     {
         get => _gameData.Crystal;
         set { _gameData.Crystal = value; OnResourceChanged?.Invoke(); SaveGame(); }
+    }
+
+    // ── 환경설정 ──
+    public bool IsBGSoundOn
+    {
+        get => _gameData._isBGSoundOn;
+        set { _gameData._isBGSoundOn = value; SaveGame(); }
+    }
+
+    public bool IsSFXOn
+    {
+        get => _gameData._isSFXOn;
+        set { _gameData._isSFXOn = value; SaveGame(); }
+    }
+
+    public bool IsCreateAtkTextOn
+    {
+        get => _gameData._isCreateAtkTextOn;
+        set { _gameData._isCreateAtkTextOn = value; SaveGame(); }
+    }
+
+    public bool IsShakeOn
+    {
+        get => _gameData._isShakeOn;
+        set { _gameData._isShakeOn = value; SaveGame(); }
     }
 
     // ── 캐릭터 ──

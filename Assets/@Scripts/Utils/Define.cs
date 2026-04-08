@@ -267,11 +267,17 @@ public class Define
     public const string UNLOCK_TRAVEL_BUTTON    = "UNLOCK_TRAVEL_BUTTON";
     #endregion
 
+    // Mythic_Button
+    public const string MYTHIC_BUTTON_X = "Mythic_Button_X.sprite";
+    public const string MYTHIC_BUTTON_CHECK = "Mythic_Button_Check.sprite";
+    public const string MYTHIC_BUTTON_RETURN = "Mythic_Button_Return.sprite";
+
     public const int ITEM_ID_MIN = 1000;
     public const int EQUIP_ID_MIN = 2000;
     public const int POTION_ID_MIN = 3000;
     public const int IMPORTANT_ITEM_ID_MIN = 9000;
 
+    // COLOR
     public const string DEFAULT_COLOR = "FFFFFF";
     public const string SHORTAGE_COLOR = "FEA400";
     public const string EMPTY_COLOR = "FF0000";
