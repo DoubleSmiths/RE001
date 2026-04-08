@@ -51,6 +51,80 @@ public class DataTransformer : EditorWindow
         Debug.Log("[DataTransformer] ParseExcelFromGoogleSheets 완료");
     }
 
+    // ─── LocalizeKey 자동 생성 ──────────────────────────────────────────────────
+    // GSHEET_LOCALIZATION의 모든 시트에서 1열(TextKey)을 읽어
+    // Define.cs의 LocalizeKey 클래스를 덮어씁니다.
+    [MenuItem("Tools/GenerateLocalizeKeys")]
+    public static void GenerateLocalizeKeys()
+    {
+        var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_LOCALIZATION));
+
+        var sb      = new StringBuilder();
+        var allKeys = new HashSet<string>();
+
+        sb.AppendLine("    #region LocalizeKey");
+        sb.AppendLine("    // LocalizationData의 TextKey와 1:1 대응 (자동 생성 - Tools/GenerateLocalizeKeys)");
+        sb.AppendLine("    public static class LocalizeKey");
+        sb.AppendLine("    {");
+
+        foreach (var (sheetName, rows) in sheets)
+        {
+            var sheetKeys = new List<string>();
+            for (int y = 1; y < rows.Count; y++)
+            {
+                var row = rows[y];
+                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                string key = row[0].Trim();
+                if (allKeys.Add(key))   // 중복 제거
+                    sheetKeys.Add(key);
+            }
+            if (sheetKeys.Count == 0) continue;
+
+            sb.AppendLine($"        // ── {sheetName} ──");
+            foreach (string key in sheetKeys)
+            {
+                // C# 식별자로 사용할 수 없는 문자 치환 (공백·특수문자 → '_')
+                string safeName = System.Text.RegularExpressions.Regex.Replace(key, @"[^A-Za-z0-9_]", "_");
+                if (char.IsDigit(safeName[0])) safeName = "_" + safeName;
+                sb.AppendLine($"        public const string {safeName} = \"{key}\";");
+            }
+            sb.AppendLine();
+        }
+
+        sb.Append("    }");
+        sb.AppendLine();
+        sb.Append("    #endregion");
+
+        // Define.cs에서 #region LocalizeKey ... #endregion 블록을 교체
+        string definePath = $"{Application.dataPath}/@Scripts/Utils/Define.cs";
+        string original   = File.ReadAllText(definePath, Encoding.UTF8);
+
+        const string REGION_TAG   = "    #region LocalizeKey";
+        const string ENDREGION_TAG = "    #endregion";
+
+        int regionStart = original.IndexOf(REGION_TAG, System.StringComparison.Ordinal);
+        if (regionStart < 0)
+        {
+            Debug.LogError("[GenerateLocalizeKeys] Define.cs에서 '#region LocalizeKey'를 찾을 수 없습니다.");
+            return;
+        }
+        int endregionStart = original.IndexOf(ENDREGION_TAG, regionStart, System.StringComparison.Ordinal);
+        if (endregionStart < 0)
+        {
+            Debug.LogError("[GenerateLocalizeKeys] Define.cs에서 '#endregion'을 찾을 수 없습니다.");
+            return;
+        }
+        int blockEnd = endregionStart + ENDREGION_TAG.Length;
+
+        string newContent = original.Substring(0, regionStart)
+                          + sb.ToString()
+                          + original.Substring(blockEnd);
+
+        File.WriteAllText(definePath, newContent, Encoding.UTF8);
+        AssetDatabase.Refresh();
+        Debug.Log($"[GenerateLocalizeKeys] {allKeys.Count}개 키 생성 완료 → Define.LocalizeKey");
+    }
+
     static void GS_ParsePlayerStatusData()
     {
         PlayerStatusDataLoader loader = new PlayerStatusDataLoader();

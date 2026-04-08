@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using static Util;
 
@@ -181,36 +181,130 @@ public class Define
     #endregion
 
     #region LocalizeKey
-    // LocalizationData001.xlsx의 TextKey와 1:1 대응
-    // 오타 방지 및 자동완성 지원
+    // LocalizationData의 TextKey와 1:1 대응 (자동 생성 - Tools/GenerateLocalizeKeys)
     public static class LocalizeKey
     {
-        public const string TestKey = "TestKey";
-
         // ── GlobalButtons ──
         public const string TravelBtnText = "TravelBtnText";
         public const string ExitBtnText = "ExitBtnText";
         public const string TalkBtnText = "TalkBtnText";
+        public const string ItemNeededText = "ItemNeededText";
+        public const string DescriptionText = "DescriptionText";
+        public const string NextInfoText = "NextInfoText";
+        public const string CraftText = "CraftText";
+        public const string TestKey = "TestKey";
 
-        // ── ButtomButtons (하단 탭) ──
-        public const string CharacterText = "CharacterText";
-        public const string InventoryText = "InventoryText";
-        public const string PotionText = "PotionText";
-        public const string EquipmentText = "EquipmentText";
-        public const string SkillText = "SkillText";
-        public const string BestiaryText = "BestiaryText";
+        // ── ButtomButtons ──
+        public const string BtmCharacterBtnText = "BtmCharacterBtnText";
+        public const string BtmInventoryBtnText = "BtmInventoryBtnText";
+        public const string BtmPotionBtnText = "BtmPotionBtnText";
+        public const string BtmEquipmentBtnText = "BtmEquipmentBtnText";
+        public const string BtmSkillBtnText = "BtmSkillBtnText";
+        public const string BtmBeastiaryBtnText = "BtmBeastiaryBtnText";
 
-        // ── TownAsdalButtons (마을 버튼) ──
+        // ── TownAsdalButtons ──
         public const string GuildText = "GuildText";
+        public const string QuestText = "QuestText";
         public const string AlchemyText = "AlchemyText";
+        public const string CommissionText = "CommissionText";
         public const string MonasteryText = "MonasteryText";
+        public const string AnointmentText = "AnointmentText";
+        public const string SmithyText = "SmithyText";
+        public const string ForgeText = "ForgeText";
 
-        // ── SettingPopup ──
-        public const string SettingBGMText = "SettingBGMText";
-        public const string SettingSFXText = "SettingSFXText";
-        public const string SettingEffectText = "SettingEffectText";
-        public const string SettingPopupText = "SettingPopupText";
-        public const string SettingShakeText = "SettingShakeText";
+        // ── StatText ──
+        public const string StrengthText = "StrengthText";
+        public const string VitialityText = "VitialityText";
+        public const string AgilityText = "AgilityText";
+        public const string MagicText = "MagicText";
+        public const string PhysicalAttackText = "PhysicalAttackText";
+        public const string MagicalAttackText = "MagicalAttackText";
+        public const string CriticalText = "CriticalText";
+        public const string CriticalDamageText = "CriticalDamageText";
+        public const string AccuracyText = "AccuracyText";
+        public const string AttackSpeedText = "AttackSpeedText";
+        public const string MaxHitPointText = "MaxHitPointText";
+        public const string DefenseText = "DefenseText";
+        public const string PhysicalResistanceText = "PhysicalResistanceText";
+        public const string MagicalResistanceText = "MagicalResistanceText";
+        public const string EvadeText = "EvadeText";
+        public const string RecoveryText = "RecoveryText";
+        public const string ExperienceGainText = "ExperienceGainText";
+        public const string DropRateText = "DropRateText";
+        public const string FlatRecovText = "FlatRecovText";
+        public const string MaxHPRecovText = "MaxHPRecovText";
+        public const string TotalRecovText = "TotalRecovText";
+        public const string PotionCDText = "PotionCDText";
+        public const string BaseStatText = "BaseStatText";
+        public const string IncreseStatText = "IncreseStatText";
+        public const string BoostStatText = "BoostStatText";
+
+        // ── CharacterPopup ──
+        public const string CharPopupTitleText = "CharPopupTitleText";
+        public const string CharPopupStatPointText = "CharPopupStatPointText";
+        public const string CharPopupElixirText = "CharPopupElixirText";
+        public const string CharPopupAttributeDetailText = "CharPopupAttributeDetailText";
+        public const string CharPopupOffenseText = "CharPopupOffenseText";
+        public const string CharPopupDefenseText = "CharPopupDefenseText";
+        public const string CharPopupUtilityText = "CharPopupUtilityText";
+
+        // ── ItemRarity ──
+        public const string RarityBasicText = "RarityBasicText";
+        public const string RarityAbnormalText = "RarityAbnormalText";
+        public const string RarityRareText = "RarityRareText";
+        public const string RarityExceptionalText = "RarityExceptionalText";
+        public const string RarityLegendaryText = "RarityLegendaryText";
+        public const string RarityMysticText = "RarityMysticText";
+        public const string RarityREQUISITEText = "RarityREQUISITEText";
+
+        // ── ItemName ──
+        public const string ItemJellyPongNameText = "ItemJellyPongNameText";
+        public const string ItemRabiJellyNameText = "ItemRabiJellyNameText";
+        public const string ItemPongyaPearlNameText = "ItemPongyaPearlNameText";
+        public const string ItemScrollOfENH1NameText = "ItemScrollOfENH1NameText";
+        public const string ItemScrollOfENH2NameText = "ItemScrollOfENH2NameText";
+        public const string ItemScrollOfENH3NameText = "ItemScrollOfENH3NameText";
+        public const string ItemScrollOfENH4NameText = "ItemScrollOfENH4NameText";
+        public const string ItemMastersSigil1NameText = "ItemMastersSigil1NameText";
+        public const string ItemMastersSigil2NameText = "ItemMastersSigil2NameText";
+        public const string ItemMastersSigil3NameText = "ItemMastersSigil3NameText";
+        public const string ItemTempPermitNameText = "ItemTempPermitNameText";
+        public const string ItemRegularPermitNameText = "ItemRegularPermitNameText";
+        public const string HPPotion1NameText = "HPPotion1NameText";
+        public const string HPPotion2NameText = "HPPotion2NameText";
+        public const string SPDPotion1NameText = "SPDPotion1NameText";
+        public const string SPDPotion2NameText = "SPDPotion2NameText";
+
+        // ── ItemDesc ──
+        public const string ItemJellyPongDescText = "ItemJellyPongDescText";
+        public const string ItemRabiJellyDescText = "ItemRabiJellyDescText";
+        public const string ItemPongyaPearlDescText = "ItemPongyaPearlDescText";
+        public const string ItemScrollOfENH1DescText = "ItemScrollOfENH1DescText";
+        public const string ItemScrollOfENH2DescText = "ItemScrollOfENH2DescText";
+        public const string ItemScrollOfENH3DescText = "ItemScrollOfENH3DescText";
+        public const string ItemScrollOfENH4DescText = "ItemScrollOfENH4DescText";
+        public const string ItemMastersSigil1DescText = "ItemMastersSigil1DescText";
+        public const string ItemMastersSigil2DescText = "ItemMastersSigil2DescText";
+        public const string ItemMastersSigil3DescText = "ItemMastersSigil3DescText";
+        public const string ItemTempPermitDescText = "ItemTempPermitDescText";
+        public const string ItemRegularPermitDescText = "ItemRegularPermitDescText";
+        public const string HPPotion1DescText = "HPPotion1DescText";
+        public const string HPPotion2DescText = "HPPotion2DescText";
+        public const string SPDPotion1DescText = "SPDPotion1DescText";
+        public const string SPDPotion2DescText = "SPDPotion2DescText";
+
+        // ── PlaceName ──
+        public const string PlaceEverywhereText = "PlaceEverywhereText";
+        public const string PlaceNameTownAsdalText = "PlaceNameTownAsdalText";
+        public const string PlaceNameBWF0Text = "PlaceNameBWF0Text";
+        public const string PlaceNameBWF1Text = "PlaceNameBWF1Text";
+        public const string PlaceNameBWF2Text = "PlaceNameBWF2Text";
+        public const string PlaceNameBWF3Text = "PlaceNameBWF3Text";
+
+        // ── UnlockText ──
+        public const string TravelUnlockText = "TravelUnlockText";
+        public const string AlchemyUnlockText = "AlchemyUnlockText";
+
     }
     #endregion
 

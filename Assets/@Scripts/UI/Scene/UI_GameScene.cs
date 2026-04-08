@@ -339,12 +339,12 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshTexts()
     {
-        GetText((int)Texts.CharacterButtonText).text = Localize(LocalizeKey.CharacterText);
-        GetText((int)Texts.InventoryButtonText).text = Localize(LocalizeKey.InventoryText);
-        GetText((int)Texts.PotionButtonText).text = Localize(LocalizeKey.PotionText);
-        GetText((int)Texts.EquipmentButtonText).text = Localize(LocalizeKey.EquipmentText);
-        GetText((int)Texts.SkillButtonText).text = Localize(LocalizeKey.SkillText);
-        GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BestiaryText);
+        GetText((int)Texts.CharacterButtonText).text = Localize(LocalizeKey.BtmCharacterBtnText);
+        GetText((int)Texts.InventoryButtonText).text = Localize(LocalizeKey.BtmInventoryBtnText);
+        GetText((int)Texts.PotionButtonText).text = Localize(LocalizeKey.BtmPotionBtnText);
+        GetText((int)Texts.EquipmentButtonText).text = Localize(LocalizeKey.BtmEquipmentBtnText);
+        GetText((int)Texts.SkillButtonText).text = Localize(LocalizeKey.BtmSkillBtnText);
+        GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BtmBeastiaryBtnText);
     }
 
     public void RefreshBTMButtonGroup()
