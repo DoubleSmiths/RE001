@@ -62,9 +62,10 @@ public class UI_ImportantSlot : UI_Base
         GetText((int)Texts.AmountTxt).gameObject.SetActive(showCount);
 
         // 등급 글로우
-        GetImage((int)Images.Glow).gameObject.SetActive(hasItem);
+        var glowImage = GetImage((int)Images.Glow);
+        glowImage.gameObject.SetActive(hasItem);
         if (hasItem)
-            GetImage((int)Images.Glow).color = Util.GetGradeColor(itemData.Grade);
+            glowImage.color = Util.GetGradeColor(itemData.Grade);
 
         // "New" 표시
         GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(hasItem && inventoryItem.IsNew);

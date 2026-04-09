@@ -1,4 +1,5 @@
 using Data;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Define;
@@ -54,6 +55,7 @@ public class UI_InvSlot : UI_Base
     public void SetInfo(InventoryItem inventoryItem = null, ItemData itemData = null)
     {
         bool hasItem = inventoryItem != null && itemData != null;
+        GetImage((int)Images.BlockImg).gameObject.SetActive(false);
 
         // 아이템 아이콘
         Sprite sprite = hasItem ? Managers.Resource.Load<Sprite>(itemData.SpriteName) : null;
@@ -65,24 +67,41 @@ public class UI_InvSlot : UI_Base
         GetText((int)Texts.AmountTxt).text = showCount ? inventoryItem.Count.ToString() : "";
         GetText((int)Texts.AmountTxt).gameObject.SetActive(showCount);
 
-        // 등급 글로우
-        GetImage((int)Images.Glow).gameObject.SetActive(hasItem);
-        if (hasItem)
-            GetImage((int)Images.Glow).color = Util.GetGradeColor(itemData.Grade);
+        // 등급 글로우 (잠긴 슬롯 기본값 0F0F0F, SetOpenBlock에서 열린 슬롯 색상으로 덮어씀)
+        var glowImage = GetImage((int)Images.Glow);
+        glowImage.gameObject.SetActive(true);
+        glowImage.color = hasItem ? Util.GetGradeColor(itemData.Grade) : new Color32(15, 15, 15, 255);
 
         // 새 아이템 표시
         GetText((int)Texts.InvSlotNewTxt).gameObject.SetActive(hasItem && inventoryItem.IsNew);
 
-        GetImage((int)Images.GameObject).gameObject.BindEvent( () => { OnClickGameObject(inventoryItem); });
+        if (hasItem)
+            GetImage((int)Images.GameObject).gameObject.BindEvent(() => { OnClickGameObject(inventoryItem); });
     }
 
     public void SetOpenBlock()
     {
         GetImage((int)Images.BlockImg).gameObject.SetActive(false);
+        // 열린 빈 슬롯: Glow FFFFFF alpha 40
+        GetImage((int)Images.Glow).color = new Color32(255, 255, 255, 40);
+    }
+
+    public void SetBlock()
+    {
+        GetImage((int)Images.BlockImg).gameObject.SetActive(true);
+        // 막힌 빈 슬롯: Glow 0F0F0F alpha 255
+        GetImage((int)Images.Glow).color = Util.HexToColor("0F0F0F");
     }
 
     void OnClickGameObject(InventoryItem inventoryItem)
     {
+        // anim
+        transform.DOKill();
+        transform.localScale = Vector3.one;
+        transform.DOPunchScale(new Vector3(-0.25f, 0.15f, 1f), 0.3f, 10, 1f)
+                 .SetEase(Ease.OutQuad)
+                 .SetUpdate(true);
+
         Managers.Game.ClearItemNew(inventoryItem.DataId);
         GetText((int)Texts.InvSlotNewTxt).gameObject.SetActive(false);
 

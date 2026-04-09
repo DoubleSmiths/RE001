@@ -145,7 +145,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         PlayerController player = Managers.Game.Player;
         Transform monsterRoot = Managers.Object.MonsterTransform;
-        //Vector3 spawnPos = player.transform.position + Vector3.right * 8f;
         Vector3 spawnPos = new Vector3(5, 2, 0);
 
         while (true)

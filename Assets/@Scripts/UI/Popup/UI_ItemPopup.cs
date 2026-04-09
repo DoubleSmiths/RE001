@@ -177,19 +177,4 @@ public class UI_ItemPopup : UI_Popup
         };
     }
 
-    // 슬라이드 8 기준 등급 색상
-    static Color GetGradeColor(EquipGrade grade)
-    {
-        return grade switch
-        {
-            EquipGrade.Basic       => new Color32(255, 255, 255, 200),
-            EquipGrade.Abnormal    => HexToColor("1A9600"),
-            EquipGrade.Rare        => HexToColor("0064C8"),
-            EquipGrade.Exceptional => HexToColor("9600FF"),
-            EquipGrade.Legendary   => HexToColor("C58C00"),
-            EquipGrade.Mystic      => HexToColor("960E00"),
-            EquipGrade.REQUISITE   => HexToColor("DD008F"),
-            _                      => Color.white,
-        };
-    }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using Data;
 
@@ -52,7 +53,7 @@ public class UI_InventoryPopup : UI_Popup
     private const int IMPORTANT_ITEM_ID_MIN = 9000;
     private const int IMPORTANT_SLOT_COUNT = 5;
     private const int NORMAL_SLOT_COUNT = 25;
-    private const int OPEN_SLOT_COUNT = 15;
+    private const int OPEN_SLOT_COUNT = 16;
 
 
     private void Awake()
@@ -72,6 +73,7 @@ public class UI_InventoryPopup : UI_Popup
         BindObject(typeof(GameObjects));
         #endregion
         _frameRT = GetObject((int)GameObjects.InventoryPopup).GetComponent<RectTransform>();
+        OpenAnimation();
 
         GetButton((int)Buttons.InventoryPopupBackground).gameObject.BindEvent(OnClickBG);
         GetButton((int)Buttons.InventorySortBtn).gameObject.BindEvent(OnClickInventorySortBtn);
@@ -123,17 +125,17 @@ public class UI_InventoryPopup : UI_Popup
                 ItemData data = GetItemData(normalItems[i].DataId);
                 invSlot.SetInfo(normalItems[i], data);
             }
+            else if (i < OPEN_SLOT_COUNT)
+            {
+                // 슬롯이 열려있는 경우
+                invSlot.SetInfo();
+                invSlot.SetOpenBlock();
+            }
             else
             {
                 invSlot.SetInfo();
+                invSlot.SetBlock();
             }
-
-            if (i < OPEN_SLOT_COUNT)
-            {
-                // 슬롯이 열려있는 경우
-                invSlot.SetOpenBlock();
-            }
-
         }
     }
 
@@ -163,11 +165,6 @@ public class UI_InventoryPopup : UI_Popup
     {
         for (int i = parent.childCount - 1; i >= 0; i--)
             Managers.Resource.Destroy(parent.GetChild(i).gameObject);
-    }
-
-    public void OnClickInventoryPopupBackground()
-    {
-        ClosePopupUI();
     }
 
     public void OnClickInventorySortBtn()
