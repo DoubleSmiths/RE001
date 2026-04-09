@@ -79,6 +79,7 @@ public class UI_InventoryPopup : UI_Popup
         GetButton((int)Buttons.InventorySortBtn).gameObject.BindEvent(OnClickInventorySortBtn);
         GetButton((int)Buttons.ImportantBagBtn).gameObject.BindEvent(OnClickImportantBagBtn);
         GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(false);
+        Managers.Game.OnInventoryNewChanged += RefreshImportantBagNewTxt;
         RefreshImportantBagNewTxt();
 
         SetInfo();
@@ -175,25 +176,24 @@ public class UI_InventoryPopup : UI_Popup
 
     public void OnClickImportantBagBtn()
     {
-        GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(true);
+        // 패널 등장 애니메이션 (slide10: Scale FROM x0,y1,z0 / 0.15s / OutQuad)
+        var box = GetImage((int)Images.ImportantThingsBox).gameObject;
+        box.SetActive(true);
+        box.transform.DOKill();
+        box.transform.localScale = new Vector3(0f, 1f, 0f);
+        box.transform.DOScale(Vector3.one, 0.15f).SetEase(Ease.OutQuad).SetUpdate(true);
 
-        // 여기서 중요 아이템만
         ClearChildren(GetObject((int)GameObjects.ImportantThingsList).transform);
 
         List<InventoryItem> importantItems = new List<InventoryItem>();
 
         foreach (InventoryItem item in Managers.Game.Inventory)
         {
-            Debug.Log($"Inventory Item: DataId={item.DataId}, Count={item.Count}");
-
             if (item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000)
                 importantItems.Add(item);
-
-            // TODO : 아이템을 클릭하면 아이템 정보 팝업이 뜨고, NEW 안나오게 설정하기.
-            //item.IsNew = false;
         }
 
-        // 중요 아이템 슬롯 세팅
+        // 중요 아이템 슬롯 세팅 (획득 순서: 왼쪽 위부터 오른쪽으로)
         Transform importantParent = GetObject((int)GameObjects.ImportantThingsList).transform;
         for (int i = 0; i < IMPORTANT_SLOT_COUNT; i++)
         {
@@ -208,8 +208,7 @@ public class UI_InventoryPopup : UI_Popup
             {
                 slot.SetInfo();
             }
-
-            Managers.Game.OnInventoryNewChanged += RefreshImportantBagNewTxt;
+            slot.PlayOpenAnim(i * 0.05f);
         }
     }
 

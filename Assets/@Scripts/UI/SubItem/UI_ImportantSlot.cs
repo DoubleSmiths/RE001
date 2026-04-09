@@ -1,4 +1,5 @@
 using Data;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,7 +11,6 @@ public class UI_ImportantSlot : UI_Base
     {
         GameObject,
         Frame,
-        Glow,
         Img,
     }
 
@@ -61,16 +61,24 @@ public class UI_ImportantSlot : UI_Base
         GetText((int)Texts.AmountTxt).text = showCount ? inventoryItem.Count.ToString() : "";
         GetText((int)Texts.AmountTxt).gameObject.SetActive(showCount);
 
-        // 등급 글로우
-        var glowImage = GetImage((int)Images.Glow);
-        glowImage.gameObject.SetActive(hasItem);
-        if (hasItem)
-            glowImage.color = Util.GetGradeColor(itemData.Grade);
-
         // "New" 표시
         GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(hasItem && inventoryItem.IsNew);
 
         GetImage((int)Images.GameObject).gameObject.BindEvent(() => { OnClickGameObject(inventoryItem); });
+
+        if (hasItem)
+            GetImage((int)Images.Frame).color = Util.HexToColor("FF00C0"); // 프레임 색상 (예시: 마젠타색?)
+    }
+
+    // 슬롯 등장 애니메이션 (slide10: Scale FROM x0,y1,z0 / 0.15s / OutQuad)
+    public void PlayOpenAnim(float delay = 0f)
+    {
+        transform.DOKill();
+        transform.localScale = new Vector3(0f, 1f, 0f);
+        transform.DOScale(Vector3.one, 0.15f)
+                 .SetEase(Ease.OutQuad)
+                 .SetDelay(delay)
+                 .SetUpdate(true);
     }
 
     void OnClickGameObject(InventoryItem inventoryItem)

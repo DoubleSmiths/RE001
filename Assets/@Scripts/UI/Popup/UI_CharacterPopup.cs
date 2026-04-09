@@ -105,9 +105,11 @@ public class UI_CharacterPopup : UI_Popup
         BindObject(typeof(GameObjects));
         #endregion
 
-        DOTweenAnimation popupAnim = GetButton((int)Buttons.CharacterPopupBackground).gameObject.GetComponent<DOTweenAnimation>();
-        GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(() => OnClickBG(popupAnim));
-        OpenAnimation(popupAnim);
+        //DOTweenAnimation popupAnim = GetButton((int)Buttons.CharacterPopupBackground).gameObject.GetComponent<DOTweenAnimation>();
+        _frameRT = GetObject((int)GameObjects.CharacterPopup).gameObject.GetComponent<RectTransform>();
+        GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(() => OnClickBG());
+        OpenAnimation();
+        //OpenAnimation(popupAnim);
 
         GetImage((int)Images.StatDetailFrame).gameObject.SetActive(false);
         GetImage((int)Images.StatDetailFrame_1).gameObject.SetActive(false);
@@ -130,10 +132,10 @@ public class UI_CharacterPopup : UI_Popup
         doanim.tween.Restart();
     }
 
-    public void OnClickBG(DOTweenAnimation doanim)
-    {
-        doanim.tween.Goto(doanim.tween.Duration(), false);
-        doanim.tween.PlayBackwards();
-    }
+    //public void OnClickBG(DOTweenAnimation doanim)
+    //{
+    //    doanim.tween.Goto(doanim.tween.Duration(), false);
+    //    doanim.tween.PlayBackwards();
+    //}
 
 }

@@ -2201,6 +2201,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd0788deb447e954c87112f06a7c8daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_CharacterPopup
+  _isClosing: 0
+  _frameRT: {fileID: 0}
 --- !u!1 &753037374795201220
 GameObject:
   m_ObjectHideFlags: 0
@@ -16742,7 +16744,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3010841241536076287}
+  m_Father: {fileID: 722150933098763221}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -23502,7 +23504,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1683880980247166625}
   - {fileID: 4266338503947673652}
   - {fileID: 1887647703728739969}
   m_Father: {fileID: 722150933098763221}
@@ -25284,6 +25285,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1683880980247166625}
   - {fileID: 3010841241536076287}
   m_Father: {fileID: 4896872681106048370}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
