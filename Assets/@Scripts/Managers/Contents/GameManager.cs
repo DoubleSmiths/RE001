@@ -70,8 +70,10 @@ public class GameData
     public string PlayerName = "여행자";
     public int    Level      = 1;
     public float  Exp        = 0f;
-    public int    Gold       = 0;
-    public int    Crystal    = 0;
+    public int    Gold        = 0;
+    public int    Crystal     = 0;
+    public int    StatusPoint = 0;
+    public int    Elixir      = 0;
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -126,6 +128,18 @@ public class GameManager
     {
         get => _gameData.Crystal;
         set { _gameData.Crystal = value; OnResourceChanged?.Invoke(); SaveGame(); }
+    }
+
+    public int StatusPoint
+    {
+        get => _gameData.StatusPoint;
+        set { _gameData.StatusPoint = value; SaveGame(); }
+    }
+
+    public int Elixir
+    {
+        get => _gameData.Elixir;
+        set { _gameData.Elixir = value; SaveGame(); }
     }
 
     // ── 환경설정 ──
