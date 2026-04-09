@@ -206,7 +206,6 @@ public class UI_CharacterPopup : UI_Popup
     readonly int[] _statBaseValues = new int[4];  // 팝업 열릴 때의 기준값
 
     bool _detailOpen = false;
-    int  _selectedMain = -1; // PATKDetailGroup 등 선택된 메인스탯 인덱스
 
     PlayerController _player;
 
@@ -246,11 +245,12 @@ public class UI_CharacterPopup : UI_Popup
 
         BindStatButtons();
 
+
         // ── 메인 스탯 그룹 클릭
-        GetButton((int)Buttons.PATKDetailGroup).gameObject.BindEvent(() => OnClickMainStatGroup(0));
-        GetButton((int)Buttons.HPDetailGroup).gameObject.BindEvent(()   => OnClickMainStatGroup(1));
-        GetButton((int)Buttons.MATKDetailGroup).gameObject.BindEvent(() => OnClickMainStatGroup(2));
-        GetButton((int)Buttons.DEFDetailGroup).gameObject.BindEvent(()  => OnClickMainStatGroup(3));
+        GetButton((int)Buttons.PATKDetailGroup).gameObject.BindEvent(() => OnClickMainStatGroup((int)Buttons.PATKDetailGroup, (int)GameObjects.PATKSubTexts));
+        GetButton((int)Buttons.HPDetailGroup).gameObject.BindEvent(()   => OnClickMainStatGroup((int)Buttons.HPDetailGroup, (int)GameObjects.HPSubTexts));
+        GetButton((int)Buttons.MATKDetailGroup).gameObject.BindEvent(() => OnClickMainStatGroup((int)Buttons.MATKDetailGroup, (int)GameObjects.MATKSubTexts));
+        GetButton((int)Buttons.DEFDetailGroup).gameObject.BindEvent(()  => OnClickMainStatGroup((int)Buttons.DEFDetailGroup, (int)GameObjects.DEFSubTexts));
 
         // ── 초기 상태 ──
         GetObject((int)GameObjects.PATKSubTexts).gameObject.SetActive(false);
@@ -438,22 +438,28 @@ public class UI_CharacterPopup : UI_Popup
     }
 
     // ────────────────────────────────────────────────────
-    //  메인 스탯 그룹 클릭 
+    //  메인 스탯 그룹 클릭
     // ────────────────────────────────────────────────────
-    void OnClickMainStatGroup(int idx)
-    {
-        // 이미 선택된 그룹 클릭 시 상세 패널 닫기
-        // 배경 늘어남, sub text active, sub text anim 등 추가 가능
 
-        RectTransform rt = GetButton(idx).gameObject.GetComponent<RectTransform>();
+    void OnClickMainStatGroup(int frameIdx, int TextBoxIdx)
+    {
+        GameObject subTexts = GetObject(TextBoxIdx);
+        bool isOpen = subTexts.activeSelf;
+
+        RectTransform rt = GetButton(frameIdx).GetComponent<RectTransform>();
         rt.DOKill();
         rt.localScale = Vector3.one;
-        rt.DOSizeDelta(new Vector2(60f, 46f), 0.3f)
-            .SetEase(Ease.Linear);
-        //t.DOScale(0.9f, 0.05f)
-        // .SetEase(Ease.OutQuad)
-        // .SetLoops(2, LoopType.Yoyo)
-        // .SetUpdate(true);
+
+        if (isOpen)
+        {
+            subTexts.SetActive(false);
+            rt.DOSizeDelta(new Vector2(60f, 16f), 0.3f).SetEase(Ease.Linear);
+        }
+        else
+        {
+            subTexts.SetActive(true);
+            rt.DOSizeDelta(new Vector2(60f, 46f), 0.3f).SetEase(Ease.Linear);
+        }
     }
 
     // ────────────────────────────────────────────────────
