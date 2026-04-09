@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using static Define;
 using static UnityEngine.RuleTile.TilingRuleOutput;
@@ -134,4 +135,21 @@ public static class Util
             _ => Color.white,
         };
     }
+
+    public static void SetTMPOutline(TMP_Text tmp, Color32 color, float width = 0.15f)
+    {
+        tmp.outlineColor = color;
+        tmp.outlineWidth = width;
+    }
+
+    public static void SetTMPUnderlay(TMP_Text tmp, Color32 color, float offsetX, float offsetY, float softness = 0f)
+    {
+        Material mat = tmp.fontMaterial;
+        mat.EnableKeyword("UNDERLAY_ON");
+        mat.SetColor(ShaderUtilities.ID_UnderlayColor, color);
+        mat.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, offsetX);
+        mat.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, offsetY);
+        mat.SetFloat(ShaderUtilities.ID_UnderlaySoftness, softness);
+    }
+
 }

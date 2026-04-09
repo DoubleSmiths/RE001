@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 6993689997686751053}
   - component: {fileID: 3474909423378146689}
   m_Layer: 5
-  m_Name: Text
+  m_Name: ElixirText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4659,7 +4659,7 @@ GameObject:
   - component: {fileID: 8959276685530554925}
   - component: {fileID: 4779469516450636019}
   m_Layer: 5
-  m_Name: StatPointsTxt
+  m_Name: PointsStatPointsTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9648,7 +9648,7 @@ GameObject:
   - component: {fileID: 6160721080946183794}
   - component: {fileID: 7334461025751404286}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: VITStatNameTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16832,7 +16832,7 @@ GameObject:
   - component: {fileID: 8907990603822917109}
   - component: {fileID: 7422725069388843348}
   m_Layer: 5
-  m_Name: Text
+  m_Name: PointsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18519,7 +18519,7 @@ GameObject:
   - component: {fileID: 2304256101368288453}
   - component: {fileID: 5851836230765960373}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: STRStatNameTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19406,7 +19406,7 @@ GameObject:
   - component: {fileID: 9123304940960653374}
   - component: {fileID: 958173153922855258}
   m_Layer: 5
-  m_Name: Mask
+  m_Name: StatDetailBtnMask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21184,7 +21184,7 @@ GameObject:
   - component: {fileID: 2283795785429582526}
   - component: {fileID: 4556639383942694801}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: DEXStatNameTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25219,7 +25219,7 @@ GameObject:
   - component: {fileID: 2118219655469190912}
   - component: {fileID: 2185790422545840156}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: MAGStatNameTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

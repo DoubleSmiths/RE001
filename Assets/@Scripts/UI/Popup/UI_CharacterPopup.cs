@@ -32,6 +32,7 @@ public class UI_CharacterPopup : UI_Popup
         RECOVDetailGroup,
         DROP_RATEDetailGroup,
         Xbutton,
+        StatDetailBtnMask,
         PATKUnderArrowImage,
         MATKUnderArrowImage,
         HPUnderArrowImage,
@@ -41,8 +42,6 @@ public class UI_CharacterPopup : UI_Popup
     enum Texts
     {
         title,
-        StatPointsTxt,
-        ElixirPointsTxt,
         STRAmountTxt,
         STRInvPoint,
         VITAmountTxt,
@@ -114,6 +113,14 @@ public class UI_CharacterPopup : UI_Popup
         RECOVStatNum,
         DROP_RATEStatString,
         DROP_RATEStatNum,
+        PointsText,
+        PointsStatPointsTxt,
+        ElixirText,
+        ElixirPointsTxt,
+        STRStatNameTxt,
+        VITStatNameTxt,
+        DEXStatNameTxt,
+        MAGStatNameTxt,
     }
 
     enum Buttons
@@ -242,6 +249,25 @@ public class UI_CharacterPopup : UI_Popup
         GetButton((int)Buttons.StatResetBtn).gameObject.BindEvent(() => OnClickStatRestAndConfirmAnim(GetButton((int)Buttons.StatResetBtn).gameObject.transform));
         GetButton((int)Buttons.StatConfirmBtn).gameObject.BindEvent(OnClickStatConfirm);
         GetButton((int)Buttons.StatConfirmBtn).gameObject.BindEvent(() => OnClickStatRestAndConfirmAnim(GetButton((int)Buttons.StatConfirmBtn).gameObject.transform));
+
+        // TextMat
+        Util.SetTMPUnderlay(GetText((int)Texts.PointsText), new Color32(0xFF, 0x00, 0x00, 0xFF), 0.1f, -0.1f);
+        Util.SetTMPUnderlay(GetText((int)Texts.PointsStatPointsTxt), new Color32(0xFF, 0x00, 0x00, 0xFF), 0.1f, -0.1f);
+        Util.SetTMPUnderlay(GetText((int)Texts.STRStatNameTxt), new Color32(0xFF, 0xC0, 0x00, 0xFF), 0.2f, -0.2f);
+        Util.SetTMPUnderlay(GetText((int)Texts.VITStatNameTxt), new Color32(0xFF, 0xC0, 0x00, 0xFF), 0.2f, -0.2f);
+        Util.SetTMPUnderlay(GetText((int)Texts.DEXStatNameTxt), new Color32(0xFF, 0xC0, 0x00, 0xFF), 0.2f, -0.2f);
+        Util.SetTMPUnderlay(GetText((int)Texts.MAGStatNameTxt), new Color32(0xFF, 0xC0, 0x00, 0xFF), 0.2f, -0.2f);
+
+        //Material PointsTextMat = GetText((int)Texts.PointsText).fontMaterial;
+        //PointsTextMat.EnableKeyword("UNDERLAY_ON");
+        //PointsTextMat.SetColor(ShaderUtilities.ID_UnderlayColor, new Color32(0xFF, 0x00, 0x00, 0xFF));
+        //PointsTextMat.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 0.1f);
+        //PointsTextMat.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, -0.1f);
+        //Material PointsStatPointsTxtMat = GetText((int)Texts.PointsStatPointsTxt).fontMaterial;
+        //PointsStatPointsTxtMat.EnableKeyword("UNDERLAY_ON");
+        //PointsStatPointsTxtMat.SetColor(ShaderUtilities.ID_UnderlayColor, new Color32(0xFF, 0x00, 0x00, 0xFF));
+        //PointsStatPointsTxtMat.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 0.1f);
+        //PointsStatPointsTxtMat.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, -0.1f);
 
         BindStatButtons();
 
@@ -506,7 +532,7 @@ public class UI_CharacterPopup : UI_Popup
     {
         if (_player == null) return;
 
-        GetText((int)Texts.StatPointsTxt).text  = Managers.Game.StatusPoint.ToString();
+        GetText((int)Texts.PointsStatPointsTxt).text  = Managers.Game.StatusPoint.ToString();
         GetText((int)Texts.ElixirPointsTxt).text = Managers.Game.Elixir.ToString();
 
         // 4대 기본 스탯 그룹
