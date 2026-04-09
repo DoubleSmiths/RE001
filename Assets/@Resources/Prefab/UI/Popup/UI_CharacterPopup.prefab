@@ -10154,7 +10154,7 @@ GameObject:
   - component: {fileID: 8872172042564509199}
   - component: {fileID: 3320693531369721707}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: StatConfirmBtnGrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15878,7 +15878,7 @@ GameObject:
   - component: {fileID: 4561761768596972964}
   - component: {fileID: 380641838224958208}
   m_Layer: 5
-  m_Name: Image
+  m_Name: StatDetailBtnGrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15924,7 +15924,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.5764706, g: 0.2901961, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16432,7 +16432,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -43, y: 4.5}
+  m_AnchoredPosition: {x: -50, y: 4.5}
   m_SizeDelta: {x: 12, y: 12}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &8996811210829094467
@@ -22984,7 +22984,7 @@ GameObject:
   - component: {fileID: 5275099306158887301}
   - component: {fileID: 5629036088757616615}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: StatResetBtnGrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

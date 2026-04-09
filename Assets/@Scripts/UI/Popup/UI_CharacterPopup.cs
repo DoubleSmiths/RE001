@@ -31,6 +31,9 @@ public class UI_CharacterPopup : UI_Popup
         STRDetailGroup1,
         DEXDetailGroup1,
         Xbutton,
+        StatResetBtnGrow,
+        StatDetailBtnGrow,
+        StatConfirmBtnGrow,
     }
 
     enum Texts
