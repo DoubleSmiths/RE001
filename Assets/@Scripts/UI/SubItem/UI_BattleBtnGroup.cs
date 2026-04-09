@@ -68,7 +68,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         //Set();
         ChangeMap();
-        Managers.Game.Player.State = State.Moving; // 일단 바로 무빙으로.
+        Managers.Game.Player.State = State.Moving;
+        Managers.Game.Player.StartBattle(); // _inBattle = true (PlayEnterAnimation 미호출 환경 대비)
 
         for (int i = 0; i < 6; i++)
         {
@@ -144,7 +145,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         PlayerController player = Managers.Game.Player;
         Transform monsterRoot = Managers.Object.MonsterTransform;
-        Vector3 spawnPos = player.transform.position + Vector3.right * 8f;
+        //Vector3 spawnPos = player.transform.position + Vector3.right * 8f;
+        Vector3 spawnPos = new Vector3(5, 2, 0);
 
         while (true)
         {

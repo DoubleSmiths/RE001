@@ -10,6 +10,7 @@ public class UI_ImportantSlot : UI_Base
     {
         GameObject,
         Frame,
+        Glow,
         Img,
     }
 
@@ -59,6 +60,11 @@ public class UI_ImportantSlot : UI_Base
         bool showCount = hasItem && inventoryItem.Count > 1;
         GetText((int)Texts.AmountTxt).text = showCount ? inventoryItem.Count.ToString() : "";
         GetText((int)Texts.AmountTxt).gameObject.SetActive(showCount);
+
+        // 등급 글로우
+        GetImage((int)Images.Glow).gameObject.SetActive(hasItem);
+        if (hasItem)
+            GetImage((int)Images.Glow).color = Util.GetGradeColor(itemData.Grade);
 
         // "New" 표시
         GetText((int)Texts.ImportantSlotNewTxt).gameObject.SetActive(hasItem && inventoryItem.IsNew);

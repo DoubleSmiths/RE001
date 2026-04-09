@@ -71,8 +71,9 @@ public class UI_InventoryPopup : UI_Popup
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
         #endregion
+        _frameRT = GetObject((int)GameObjects.InventoryPopup).GetComponent<RectTransform>();
 
-        GetButton((int)Buttons.InventoryPopupBackground).gameObject.BindEvent(OnClickInventoryPopupBackground);
+        GetButton((int)Buttons.InventoryPopupBackground).gameObject.BindEvent(OnClickBG);
         GetButton((int)Buttons.InventorySortBtn).gameObject.BindEvent(OnClickInventorySortBtn);
         GetButton((int)Buttons.ImportantBagBtn).gameObject.BindEvent(OnClickImportantBagBtn);
         GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(false);

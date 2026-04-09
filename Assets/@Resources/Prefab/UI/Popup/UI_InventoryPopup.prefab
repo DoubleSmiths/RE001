@@ -95,7 +95,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3113550177594851784
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1305,12 +1305,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4383364387692863964}
+  m_Father: {fileID: 942778947116803703}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.03124237, y: 0}
+  m_SizeDelta: {x: 0.0625, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8023051483314421417
 CanvasRenderer:
@@ -2198,6 +2198,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f545c0fa73dd57943852ce65d15dfb4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_InventoryPopup
+  _isClosing: 0
+  _frameRT: {fileID: 0}
 --- !u!1 &6347161932432435022
 GameObject:
   m_ObjectHideFlags: 0
@@ -2226,7 +2228,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1705221815663435804}
   - {fileID: 4321237507731237028}
   - {fileID: 6270011314537774585}
   - {fileID: 3113550177594851784}
@@ -2970,6 +2971,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1705221815663435804}
   - {fileID: 4383364387692863964}
   m_Father: {fileID: 5349198658380634858}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3336,7 +3338,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.5, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 5.51, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5738221873458044959
 CanvasRenderer:

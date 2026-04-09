@@ -87,11 +87,15 @@ public class PlayerController : CreatureController
     {
         yield return null;
 
-        // CrossFade 전환이 끝나고 Attack 상태로 진입할 때까지 대기
+        // Attack 애니메이션 진입 대기 (타임아웃 1초 → Animator에 Attack 상태 없어도 탈출)
+        float timeout = Time.time + 1f;
         while (_anim != null && !_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        {
+            if (Time.time >= timeout) break;
             yield return null;
+        }
 
-        // Attack 애니메이션이 끝날 때까지 대기
+        // Attack 애니메이션 완료 대기
         while (_anim != null &&
                _anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") &&
                _anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
