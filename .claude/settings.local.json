@@ -24,7 +24,8 @@
       "Bash(unzip -q \"C:/stopresent/Unity/RE001/Assets/@Resources/Data/Excel/LocalizationData001.xlsx\")",
       "Bash(cd:*)",
       "Bash(head -10 grep -rn \"item_jellypong\\\\|item_temp_pass\" /c/stopresent/Unity/RE001/Assets/@Resources/)",
-      "Bash(head -5 grep -n \"^public class InventoryItem\\\\|^    public class InventoryItem\\\\|InventoryItem\" /c/stopresent/Unity/RE001/Assets/@Scripts/Data/*.cs)"
+      "Bash(head -5 grep -n \"^public class InventoryItem\\\\|^    public class InventoryItem\\\\|InventoryItem\" /c/stopresent/Unity/RE001/Assets/@Scripts/Data/*.cs)",
+      "Bash(pip show:*)"
     ]
   }
 }

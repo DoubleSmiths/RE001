@@ -11,6 +11,10 @@ public class PlayerController : CreatureController
     float _expRequired = 100f;
     bool _inBattle;
 
+    // ── 플레이어 전용 스탯 ──
+    public float GrowthRate = 100f;  // 성장률 % (경험치 획득량에 곱함)
+    public float DropRate   = 100f;  // 획득률 % (몬스터 드롭률에 곱함)
+
     // ── 스탯 (레벨 / 장비 반영) ──
     public override bool Init()
     {
@@ -65,7 +69,13 @@ public class PlayerController : CreatureController
 
         _lastAtkTime = Time.time;
         State = Define.State.Attack;
-        nearest.OnDamaged(Atk);
+        // 명중률 판정 (100% 이상이면 skip)
+        if (Accuracy < 100f && UnityEngine.Random.value > Accuracy / 100f) return;
+
+        // 치명타 판정
+        bool isCrit = UnityEngine.Random.value < Mathf.Min(CritRate, 100f) / 100f;
+        float finalAtk = PhysicalAtk * (isCrit ? CritDamage / 100f : 1f);
+        nearest.OnDamaged(finalAtk);
         StartCoroutine(CoResetStateAfterAttack());
     }
 
@@ -116,7 +126,7 @@ public class PlayerController : CreatureController
 
     public void GainExp(float amount)
     {
-        Managers.Game.Exp += amount;
+        Managers.Game.Exp += amount * (GrowthRate / 100f);
         CheckLevelUp();
         OnExpChanged?.Invoke(Managers.Game.Exp, _expRequired);
     }
@@ -153,9 +163,10 @@ public class PlayerController : CreatureController
         }
 
         // 기본 성장식으로 스탯 계산
-        MaxHp = 100 + (lv - 1) * 20;
-        Atk   = 10  + (lv - 1) * 2;
-        Def   = 0   + (lv - 1) * 1;
+        MaxHp       = 100 + (lv - 1) * 20;
+        PhysicalAtk = 10  + (lv - 1) * 2;
+        MagicAtk    = 10  + (lv - 1) * 2;
+        Def         = 0   + (lv - 1) * 1;
 
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);

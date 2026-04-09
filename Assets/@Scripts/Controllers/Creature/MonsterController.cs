@@ -25,11 +25,20 @@ public class MonsterController : CreatureController
         DataId = dataId;
         if (!Managers.Data.CreatureDic.TryGetValue(dataId, out _data)) return;
 
-        MaxHp      = _data.MaxHp;
-        Hp         = _data.MaxHp;
-        Atk        = _data.Atk;
-        Def        = _data.Def;
-        MoveSpeed  = _data.MoveSpeed;
+        MaxHp           = _data.MaxHp;
+        Hp              = _data.MaxHp;
+        PhysicalAtk     = _data.PhysicalAtk;
+        MagicAtk        = _data.MagicAtk;
+        CritRate        = _data.CritRate;
+        CritDamage      = _data.CritDamage;
+        Accuracy        = _data.Accuracy;
+        AtkSpeed        = _data.AtkSpeed;
+        Def             = _data.Def;
+        PhysicalResist  = _data.PhysicalResist;
+        MagicResist     = _data.MagicResist;
+        Evasion         = _data.Evasion;
+        RecoveryRate    = _data.RecoveryRate;
+        MoveSpeed       = _data.MoveSpeed;
     }
 
     void Start()
@@ -68,7 +77,7 @@ public class MonsterController : CreatureController
         _lastAtkTime = Time.time;
         State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
-        _target.OnDamaged(Atk);
+        _target.OnDamaged(PhysicalAtk);
 
         if (!_hasEngaged)
         {

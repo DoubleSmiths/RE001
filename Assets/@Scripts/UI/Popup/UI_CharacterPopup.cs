@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -114,7 +115,41 @@ public class UI_CharacterPopup : UI_Popup
         GetImage((int)Images.StatDetailFrame).gameObject.SetActive(false);
         GetImage((int)Images.StatDetailFrame_1).gameObject.SetActive(false);
         GetObject((int)GameObjects.Layout_3).gameObject.SetActive(false);
+
+        PlayerController player = Managers.Game.Player;
+        if (player != null)
+            SetInfo(player);
+
         return true;
+    }
+
+    public void SetInfo(PlayerController player)
+    {
+        // ── 기본 스탯 (4대 스탯) ──
+        SetGroupValue(GetButton((int)Buttons.PATKDetailGroup).gameObject, Util.FormatStat(player.PhysicalAtk));
+        SetGroupValue(GetButton((int)Buttons.MATKDetailGroup).gameObject, Util.FormatStat(player.MagicAtk));
+        SetGroupValue(GetButton((int)Buttons.HPDetailGroup).gameObject,   Util.FormatStat(player.MaxHp));
+        SetGroupValue(GetButton((int)Buttons.DEFDetailGroup).gameObject,  Util.FormatStat(player.Def));
+
+        // ── 상세 능력치 ──
+        SetGroupValue(GetImage((int)Images.CCDetailGroup).gameObject,       Util.FormatStat(player.CritRate,    2, percent: true));
+        SetGroupValue(GetImage((int)Images.CDMGDetailGroup).gameObject,     Util.FormatStat(player.CritDamage,  0, percent: true));
+        SetGroupValue(GetImage((int)Images.ACCDetailGroup).gameObject,      Util.FormatStat(player.Accuracy,    1, percent: true));
+        SetGroupValue(GetImage((int)Images.ASDetailGroup).gameObject,       Util.FormatStat(player.AtkSpeed,    0, percent: true));
+        SetGroupValue(GetImage((int)Images.PRESDetailGroup).gameObject,     Util.FormatStat(player.PhysicalResist, 2, percent: true));
+        SetGroupValue(GetImage((int)Images.MRESDetailGroup).gameObject,     Util.FormatStat(player.MagicResist, 2, percent: true));
+        SetGroupValue(GetImage((int)Images.EVADetailGroup).gameObject,      Util.FormatStat(player.Evasion,     2, percent: true));
+        SetGroupValue(GetImage((int)Images.RECOVDetailGroup).gameObject,    Util.FormatStat(player.RecoveryRate,1, percent: true));
+        SetGroupValue(GetImage((int)Images.EXPRATEDetailGroup).gameObject,  Util.FormatStat(player.GrowthRate,  0, percent: true));
+        SetGroupValue(GetImage((int)Images.DROPRATEDetailGroup).gameObject, Util.FormatStat(player.DropRate,    0, percent: true));
+    }
+
+    // 그룹 내 마지막 TMP_Text를 값 표시 텍스트로 사용
+    void SetGroupValue(GameObject group, string value)
+    {
+        TMP_Text[] texts = group.GetComponentsInChildren<TMP_Text>();
+        if (texts.Length > 0)
+            texts[texts.Length - 1].text = value;
     }
 
 

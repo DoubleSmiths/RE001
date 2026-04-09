@@ -22,7 +22,8 @@ public class DataManager
     public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
     public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
     public Dictionary<int, CraftRecipeData>   CraftRecipeDic    { get; private set; } = new Dictionary<int, CraftRecipeData>();
-    public Dictionary<int, LevelData>                    LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
+    public Dictionary<int, LevelData>          LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
+    public Dictionary<int, PlayerStatusData>   PlayerStatusDic   { get; private set; } = new Dictionary<int, PlayerStatusData>();
     public Dictionary<string, DialogueScriptGroup>       DialogueScriptDic { get; private set; } = new Dictionary<string, DialogueScriptGroup>();
     public Dictionary<string, LocalizationEntry>         LocalizationDic   { get; private set; } = new Dictionary<string, LocalizationEntry>();
     public Dictionary<int, QuestData>                QuestDic          { get; private set; } = new Dictionary<int, QuestData>();
@@ -45,6 +46,7 @@ public class DataManager
         //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
         //LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
+        //PlayerStatusDic   = LoadJson<PlayerStatusDataLoader,  int,    PlayerStatusData>   ("PlayerStatusData").MakeDict();
         DialogueScriptDic = LoadJson<DialogueScriptLoader,    string, DialogueScriptGroup>("DialogueScriptData").MakeDict();
         LocalizationDic   = LoadJson<LocalizationLoader,      string, LocalizationEntry>  ("LocalizationData").MakeDict();
         QuestDic          = LoadJson<QuestDataLoader,      int, QuestData>                ("QuestData").MakeDict();

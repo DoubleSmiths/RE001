@@ -110,6 +110,16 @@ public static class Util
         return (T)Enum.Parse(typeof(T), value, true);
     }
 
+    /// <summary>
+    /// 슬라이드 18 표기 규칙: decimals=0이면 정수, 양수면 해당 자리까지 반올림.
+    /// percent=true이면 끝에 % 붙임.
+    /// </summary>
+    public static string FormatStat(float value, int decimals = 0, bool percent = false)
+    {
+        string text = decimals > 0 ? value.ToString($"F{decimals}") : ((int)Mathf.Round(value)).ToString();
+        return percent ? text + "%" : text;
+    }
+
     public static Color GetGradeColor(EquipGrade grade)
     {
         return grade switch

@@ -10,13 +10,25 @@ public abstract class CreatureController : BaseController
     protected SpriteRenderer _sprite;
 
     [Header("Stats")]
-    public float MaxHp   = 100f;
-    public float Hp      = 100f;
-    public float Atk     = 10f;
-    public float Def     = 0f;
-    public float MoveSpeed = 2f;
-    public float AtkRange  = 1.5f;
-    public float AtkCooldown = 1f;
+    public float MaxHp          = 100f;
+    public float Hp             = 100f;
+    // ── 공격 ──
+    public float PhysicalAtk    = 10f;   // 물리공격력
+    public float MagicAtk       = 10f;   // 마법공격력
+    public float CritRate       = 0f;    // 치명타 % (표기 상한 없음, 적용은 100%까지)
+    public float CritDamage     = 150f;  // 치명타피해 %
+    public float Accuracy       = 80f;   // 명중률 %
+    public float AtkSpeed       = 100f;  // 공격속도 %
+    // ── 방어 ──
+    public float Def            = 0f;    // 방어력 (최종 피해에서 수치만큼 감소)
+    public float PhysicalResist = 0f;    // 물리저항 %
+    public float MagicResist    = 0f;    // 마법저항 %
+    public float Evasion        = 0f;    // 회피율 %
+    public float RecoveryRate   = 0f;    // 회복력 % (체력 회복 효과에 곱함)
+    // ── 이동/전투 ──
+    public float MoveSpeed      = 2f;
+    public float AtkRange       = 1.5f;
+    public float AtkCooldown    = 1f;
 
     protected float _lastAtkTime = -999f;
 
@@ -78,9 +90,15 @@ public abstract class CreatureController : BaseController
             _anim.SetTrigger("OnDamaged");
     }
 
-    public virtual void OnDamaged(float damage)
+    // isPhysical: true=물리, false=마법
+    public virtual void OnDamaged(float damage, bool isPhysical = true)
     {
-        float dmg = Mathf.Max(0, damage - Def);
+        // 회피율 판정 (치명타/물리저항/마법저항 100% 초과는 표기만, 적용은 100%까지)
+        float appliedEvasion = Mathf.Min(Evasion, 100f);
+        if (UnityEngine.Random.value < appliedEvasion / 100f) return;
+
+        float resist = isPhysical ? Mathf.Min(PhysicalResist, 100f) : Mathf.Min(MagicResist, 100f);
+        float dmg = Mathf.Max(0, damage - damage * (resist / 100f) - Def);
         Hp -= dmg;
         Managers.Object.ShowDamageFont(transform.position, dmg, transform, isCritical: false);
 

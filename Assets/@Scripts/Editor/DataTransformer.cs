@@ -146,15 +146,27 @@ public class DataTransformer : EditorWindow
             data.StartHP          = ConvertValue<int>(row[i++]);
             data.StatusPoint      = ConvertValue<int>(row[i++]);
             data.Elixir           = ConvertValue<int>(row[i++]);
-            data.StartStrength    = ConvertValue<int>(row[i++]);
-            data.StartVital       = ConvertValue<int>(row[i++]);
-            data.StartAgility     = ConvertValue<int>(row[i++]);
-            data.StartMagic       = ConvertValue<int>(row[i++]);
+            data.StartStrength = ConvertValue<int>(row[i++]);
+            data.StartVital    = ConvertValue<int>(row[i++]);
+            data.StartAgility  = ConvertValue<int>(row[i++]);
+            data.StartMagic    = ConvertValue<int>(row[i++]);
 
             string skillRaw   = i < row.Count ? row[i++] : "";
             string skillLvRaw = i < row.Count ? row[i++] : "";
             data.StartSkills      = SplitLines(skillRaw).Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
             data.StartSkillLevels = SplitLines(skillLvRaw).Select(s => s.Trim()).Where(s => s.Length > 0).Select(s => ConvertValue<int>(s)).ToList();
+
+            // 신규 컬럼 (StartSkill_Lv 뒤에 추가)
+            data.StartCritRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartCritDamage     = i < row.Count ? ConvertValue<float>(row[i++]) : 150f;
+            data.StartAccuracy       = i < row.Count ? ConvertValue<float>(row[i++]) : 80f;
+            data.StartAtkSpeed       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            data.StartPhysicalResist = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartMagicResist    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartEvasion        = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartRecoveryRate   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartGrowthRate     = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            data.StartDropRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
 
             loader.playerStatuses.Add(data);
         }
@@ -306,15 +318,26 @@ public class DataTransformer : EditorWindow
             d.Name        = i < row.Count ? row[i++] : "";
             d.PrefabLabel = i < row.Count ? row[i++] : "";
             d.IconLabel   = i < row.Count ? row[i++] : "";
+            // 기존 컬럼 순서 유지 (Atk → PhysicalAtk 헤더 변경만)
             d.MaxHp       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
-            d.Atk         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.PhysicalAtk = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.Def         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.MoveSpeed   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.TotalExp    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
-            d.RewardGold  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-            d.DropItemId  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-            d.DropCount   = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+            d.RewardGold  = i < row.Count ? ConvertValue<int>(row[i++])   : 0;
+            d.DropItemId  = i < row.Count ? ConvertValue<int>(row[i++])   : 0;
+            d.DropCount   = i < row.Count ? ConvertValue<int>(row[i++])   : 0;
             d.DropChance  = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            // 신규 컬럼 (뒤에 추가)
+            d.MagicAtk       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.CritRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.CritDamage     = i < row.Count ? ConvertValue<float>(row[i++]) : 150f;
+            d.Accuracy       = i < row.Count ? ConvertValue<float>(row[i++]) : 80f;
+            d.AtkSpeed       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            d.PhysicalResist = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.MagicResist    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.Evasion        = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.RecoveryRate   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             loader.creatures.Add(d);
         }
         WriteJson("CreatureData", loader);

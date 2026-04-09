@@ -13,8 +13,17 @@ namespace Data
         public string PrefabLabel;
         public string IconLabel;
         public float MaxHp;
-        public float Atk;
+        public float PhysicalAtk;
+        public float MagicAtk;
+        public float CritRate;
+        public float CritDamage     = 150f;
+        public float Accuracy       = 80f;
+        public float AtkSpeed       = 100f;
         public float Def;
+        public float PhysicalResist;
+        public float MagicResist;
+        public float Evasion;
+        public float RecoveryRate;
         public float MoveSpeed;
         public float TotalExp;
         public int RewardGold;
@@ -368,6 +377,17 @@ namespace Data
         public int StartVital;
         public int StartAgility;
         public int StartMagic;
+        // ── 상세 능력치 초기값 (슬라이드 18) ──
+        public float StartCritRate      = 0f;
+        public float StartCritDamage    = 150f;
+        public float StartAccuracy      = 80f;
+        public float StartAtkSpeed      = 100f;
+        public float StartPhysicalResist = 0f;
+        public float StartMagicResist   = 0f;
+        public float StartEvasion       = 0f;
+        public float StartRecoveryRate  = 0f;
+        public float StartGrowthRate    = 100f;
+        public float StartDropRate      = 100f;
         public List<string> StartSkills;
         public List<int> StartSkillLevels;
     }
