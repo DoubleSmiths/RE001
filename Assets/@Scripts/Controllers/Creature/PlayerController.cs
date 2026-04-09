@@ -68,9 +68,11 @@ public class PlayerController : CreatureController
         if (dist > AtkRange) return;
 
         _lastAtkTime = Time.time;
-        State = Define.State.Attack;
-        // 명중률 판정 (100% 이상이면 skip)
+
+        // 명중률 판정 (100% 이상이면 skip) — 미스는 State 변경 없이 쿨타임만 소모
         if (Accuracy < 100f && UnityEngine.Random.value > Accuracy / 100f) return;
+
+        State = Define.State.Attack;
 
         // 치명타 판정
         bool isCrit = UnityEngine.Random.value < Mathf.Min(CritRate, 100f) / 100f;
@@ -118,7 +120,7 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     //  HP / EXP
     // ────────────────────────────────────────
-    public override void OnDamaged(float damage)
+    public override void OnDamaged(float damage, bool isPhysical = true)
     {
         base.OnDamaged(damage);
         OnHpChanged?.Invoke(Hp, MaxHp);

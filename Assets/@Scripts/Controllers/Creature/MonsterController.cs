@@ -98,7 +98,7 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     //  피격 / 사망
     // ────────────────────────────────────────
-    public override void OnDamaged(float damage)
+    public override void OnDamaged(float damage, bool isPhysical = true)
     {
         base.OnDamaged(damage);
         OnHpChanged?.Invoke(Hp, MaxHp);

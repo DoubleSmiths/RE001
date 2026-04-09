@@ -937,7 +937,7 @@ public class DataTransformer : EditorWindow
             d.PrefabLabel = i < row.Count ? row[i++] : "";
             d.IconLabel   = i < row.Count ? row[i++] : "";
             d.MaxHp       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
-            d.Atk         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.PhysicalAtk = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.Def         = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.MoveSpeed   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.TotalExp    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;

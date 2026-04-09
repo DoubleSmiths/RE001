@@ -10,17 +10,25 @@
       "StartHP": 100,
       "StatusPoint": 0,
       "Elixir": 0,
-      "StartStrength": 1,
-      "StartVital": 1,
-      "StartAgility": 1,
-      "StartMagic": 1,
+      "StartStrength": 0,
+      "StartVital": 0,
+      "StartAgility": 0,
+      "StartMagic": 0,
+      "StartCritRate": 0.0,
+      "StartCritDamage": 150.0,
+      "StartAccuracy": 80.0,
+      "StartAtkSpeed": 100.0,
+      "StartPhysicalResist": 0.0,
+      "StartMagicResist": 0.0,
+      "StartEvasion": 0.0,
+      "StartRecoveryRate": 0.0,
+      "StartGrowthRate": 100.0,
+      "StartDropRate": 100.0,
       "StartSkills": [
-        "MemoryExpansion",
-        "OverwhelmingCharisma"
+        "0"
       ],
       "StartSkillLevels": [
-        1,
-        1
+        0
       ]
     }
   ]
