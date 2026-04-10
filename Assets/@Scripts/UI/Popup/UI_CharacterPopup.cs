@@ -211,6 +211,8 @@ public class UI_CharacterPopup : UI_Popup
     // 순서: 0=STR, 1=VIT, 2=DEX, 3=MAG
     readonly int[] _statDeltas     = new int[4];  // 이번에 투자할 포인트
     readonly int[] _statBaseValues = new int[4];  // 팝업 열릴 때의 기준값
+    static readonly Color s_ColGreen = new Color32(0x00, 0xFF, 0x00, 0xFF); // 증가 표시
+    static readonly Color s_ColShake = new Color32(0xB7, 0x00, 0x00, 0xFF); // 포인트 부족
 
     bool _detailOpen = false;
 
@@ -404,7 +406,10 @@ public class UI_CharacterPopup : UI_Popup
         btnObj.BindEvent(() =>
         {
             if (!AddStat(statIdx))
+            {
+                PlayNoPointFeedback(btnObj.transform, statIdx);
                 return;
+            }
 
             SelectArrowStatButtonAnim(btnObj.transform);
         });
@@ -584,6 +589,55 @@ public class UI_CharacterPopup : UI_Popup
             Texts.DEFBaseStatNum, Texts.DEFIncreaseStatNum, Texts.DEFBoostStatNum, Texts.DEFStatNum,
             defBase, _player.DefRate, _player.DefAmp, defFinal);
 
+        // 능력 점수 올림에 따라서 텍스 변함.
+        if (_statDeltas[0] != 0)
+        {
+            GetText((int)Texts.STRAmountTxt).color = s_ColGreen;
+            GetText((int)Texts.PATKBaseStatNum).color = s_ColGreen;
+            GetText((int)Texts.PATKStatNum).color = s_ColGreen;   
+        }
+        else
+        {
+            GetText((int)Texts.STRAmountTxt).color = Color.white;
+            GetText((int)Texts.PATKBaseStatNum).color = Color.white;
+            GetText((int)Texts.PATKStatNum).color = Color.white;
+        }
+
+        if (_statDeltas[1] != 0)
+        {
+            GetText((int)Texts.VITAmountTxt).color = s_ColGreen;
+            GetText((int)Texts.HPBaseStatNum).color = s_ColGreen;
+            GetText((int)Texts.HPStatNum).color = s_ColGreen;
+        }
+        else
+        {
+            GetText((int)Texts.VITAmountTxt).color = Color.white;
+            GetText((int)Texts.HPBaseStatNum).color = Color.white;
+            GetText((int)Texts.HPStatNum).color = Color.white;
+        }
+
+        if (_statDeltas[2] != 0)
+        {
+            GetText((int)Texts.DEXAmountTxt).color = s_ColGreen;
+        }
+        else
+        {
+            GetText((int)Texts.DEXAmountTxt).color = Color.white;
+        }
+
+        if (_statDeltas[3] != 0)
+        {
+            GetText((int)Texts.MAGAmountTxt).color = s_ColGreen;
+            GetText((int)Texts.MATKBaseStatNum).color = s_ColGreen;
+            GetText((int)Texts.MATKStatNum).color = s_ColGreen;
+        }
+        else
+        {
+            GetText((int)Texts.MAGAmountTxt).color = Color.white;
+            GetText((int)Texts.MATKBaseStatNum).color = Color.white;
+            GetText((int)Texts.MATKStatNum).color = Color.white;
+        }
+
         // ── STR/VIT/DEX/MAG 투자 포인트 ──
         GetText((int)Texts.STRInvPoint).text = _statDeltas[0].ToString();
         GetText((int)Texts.VITInvPoint).text = _statDeltas[1].ToString();
@@ -640,5 +694,26 @@ public class UI_CharacterPopup : UI_Popup
         TMP_Text[] texts = group.GetComponentsInChildren<TMP_Text>();
         if (texts.Length > 0)
             texts[0].text = label;
+    }
+
+    // 능력점수 없을 때 > Btn — B70000 0.3s 플래시 + Shake
+    void PlayNoPointFeedback(Transform btnTransform, int statIdx)
+    {
+        TMP_Text valueTxt = GetText((int)Texts.PointsStatPointsTxt);
+        if (valueTxt == null) return;
+
+        valueTxt.DOKill();
+        valueTxt.transform.DOKill();
+
+        //해당 그룹 값 텍스트 B70000 플래시
+        valueTxt.color = s_ColShake;
+
+        valueTxt.DOColor(Color.white, 0.15f)
+            .SetDelay(0.3f)
+            .SetUpdate(true);
+
+        // 버튼 Shake
+        valueTxt.transform.DOShakePosition(0.3f, new Vector3(0.8f, 0f, 0f), 50, 90)
+                    .SetUpdate(true);
     }
 }
