@@ -20,7 +20,6 @@ public abstract class UI_AreaBtnGroup : UI_Base
     /// <summary>구역 전환 후 FadeIn 완료 시점에 호출. 하위 클래스에서 진입 연출을 구현한다.</summary>
     public virtual void PlayEnterAnimation() { }
 
-
     public void UnlockButtonAnim(GameObject go, Image image, TMP_Text text, System.Action onComplete = null)
     {
         // 이벤트는 Image와 연결해야한다!
@@ -49,33 +48,36 @@ public abstract class UI_AreaBtnGroup : UI_Base
         });
     }
 
-    public void NameTextInAnim(RectTransform target)
+    public void PlaceNameAnim(RectTransform rt)
     {
+        rt.DOKill();
+
         Sequence seq = DOTween.Sequence();
 
-        target.DOKill();
-        seq?.Kill();
-
-        // 왼쪽에서 → 원래 위치로
+        // FROM (-150, 12) → 현재 위치
         seq.Append(
-            target.DOAnchorPos(Vector2.zero, 0.25f)
-                .From(new Vector2(-150f, 12f))
-                .SetEase(Ease.OutQuad)
+            rt.DOAnchorPos(new Vector2(0f, 12f), 0.25f)
+              .From(new Vector2(-150f, 12f))
+              .SetEase(Ease.OutQuad)
         );
 
+        // 대기
+        seq.AppendInterval(0.6f);
+
+        // TO (150, 12)
+        seq.Append(
+            rt.DOAnchorPos(new Vector2(150f, 12f), 0.15f)
+              .SetEase(Ease.OutQuad));
     }
 
-    public void NameTextOutAnim(RectTransform target)
+    public void ButtonMoveAnim(RectTransform rt, float fromX, float fromY, float toX, float toY)
     {
-        Sequence seq = DOTween.Sequence();
+        rt.gameObject.SetActive(true);
 
-        target.DOKill();
-        seq?.Kill();
+        rt.DOKill();
 
-        // 원래 위치 → 오른쪽
-        seq.Append(
-            target.DOAnchorPos(new Vector2(150f, 12f), 0.15f)
-                .SetEase(Ease.OutQuad)
-        );
+        rt.DOAnchorPos(new Vector2(toX, toY), 0.3f)
+          .From(new Vector2(fromX, fromY))
+          .SetEase(Ease.OutBack);
     }
 }

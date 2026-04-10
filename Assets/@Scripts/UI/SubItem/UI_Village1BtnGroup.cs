@@ -237,7 +237,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         //GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
         //_gameScene.FadeInOut();
-
+        PlaceNameAnim(GetText((int)Texts.Village1NameText).GetComponent<RectTransform>());
         ShowGroup(GameObjects.Village1MainBtnGroup);
 
         GetButton((int)Buttons.GuildButton).gameObject.SetActive(false);
@@ -247,15 +247,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
         GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
-        GetButton((int)Buttons.GuildButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.TempButton1).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.TempButton2).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        GetButton((int)Buttons.TravelButton).gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-
         Sequence seq = DOTween.Sequence();
-        seq.AppendInterval(1f);
 
         seq.AppendCallback(() =>
         {
@@ -266,39 +258,20 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             if (guildNPC != null) Destroy(guildNPC);
         });
 
-        seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
-            .DOAnchorPos(Vector2.zero, 0.25f)
-            .From(new Vector2(-170f, 0f))
-            .SetEase(Ease.OutQuad));
+        seq.AppendInterval(1f);
 
-        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.GuildButton).GetComponent<RectTransform>(), 0, 0, -51.5f, 45.5f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.AlchemyButton).GetComponent<RectTransform>(), 0, 0, 0.5f, 45.5f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 0, 0, 52.5f, 45.5f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
 
-        seq.Append(GetText((int)Texts.Village1NameText).gameObject.GetComponent<RectTransform>()
-            .DOAnchorPos(new Vector2(170f, 0f), 0.15f)
-            .SetEase(Ease.OutQuad));
-
-        seq.AppendCallback(() =>
-        {
-            GetButton((int)Buttons.GuildButton).gameObject.SetActive(true);
-            GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(true);
-            GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(true);
-            GetButton((int)Buttons.TempButton1).gameObject.SetActive(true);
-            GetButton((int)Buttons.TempButton2).gameObject.SetActive(true);
-            GetButton((int)Buttons.TravelButton).gameObject.SetActive(true);
-        });
-
-        seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => GetButton((int)Buttons.GuildButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
-        seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => GetButton((int)Buttons.AlchemyButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
-        seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => GetButton((int)Buttons.MonasteryButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
-        seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => GetButton((int)Buttons.TempButton1).gameObject.GetComponent<DOTweenAnimation>().DORestart());
-        seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => GetButton((int)Buttons.TempButton2).gameObject.GetComponent<DOTweenAnimation>().DORestart());
-        seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => GetButton((int)Buttons.TravelButton).gameObject.GetComponent<DOTweenAnimation>().DORestart());
 
         seq.AppendCallback(() =>
         {
