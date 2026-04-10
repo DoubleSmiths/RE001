@@ -32,6 +32,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1GuildNameText,
         AlchemyCustomOrderButtonNewTxt,
         MonasteryCustomOrderButtonNewTxt,
+        Village1AlchemyNameText,
+        Village1MonasteryNameText,
     }
 
     enum Buttons
@@ -89,6 +91,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         BindText(typeof(Texts));
         BindObject(typeof(GameObjects));
 
+        TextOutlines();
+
         GetImage((int)Images.GuildButtonIcon).gameObject.BindEvent(OnClickGuild);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.BindEvent(OnClickAlchemy);
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
@@ -137,6 +141,15 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
             Managers.Quest.OnBtnUnlocked   -= OnBtnUnlocked;
         }
+    }
+
+    void TextOutlines()
+    {
+        Util.SetTMPUnderlay(GetText((int)Texts.Village1NameText), new Color32(0xCF, 0xA9, 0x36, 0x76), 0.2f, -0.2f);
+        Util.SetTMPUnderlay(GetText((int)Texts.Village1GuildNameText), new Color32(0xCF, 0xA9, 0x36, 0x76), 0.2f, -0.2f);
+        Util.SetTMPUnderlay(GetText((int)Texts.Village1AlchemyNameText), new Color32(0xCF, 0xA9, 0x36, 0x76), 0.2f, -0.2f);
+        Util.SetTMPUnderlay(GetText((int)Texts.Village1MonasteryNameText), new Color32(0xCF, 0xA9, 0x36, 0x76), 0.2f, -0.2f);
+        
     }
 
     void OnBtnUnlocked(string btnId)

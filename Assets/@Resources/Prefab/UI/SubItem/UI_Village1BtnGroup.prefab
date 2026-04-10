@@ -5497,7 +5497,7 @@ GameObject:
   - component: {fileID: 8739033720360394520}
   - component: {fileID: 6146404457935647616}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Village1AlchemyNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10236,7 +10236,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBAA8\uD5D8\uAC00\uD611\uD68C"
+  m_text: "\uC544\uC2A4\uB2EC \uB9C8\uC744"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a5adc10b9d766a140a38d8ae73ae75c3, type: 2}
   m_sharedMaterial: {fileID: -2631789914168860940, guid: a5adc10b9d766a140a38d8ae73ae75c3, type: 2}
@@ -11759,7 +11759,7 @@ GameObject:
   - component: {fileID: 8822244100164871}
   - component: {fileID: 4636348842285222945}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Village1MonasteryNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
