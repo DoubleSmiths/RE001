@@ -279,6 +279,7 @@ public class UI_CharacterPopup : UI_Popup
         GetButton((int)Buttons.DEFDetailGroup).gameObject.BindEvent(()  => OnClickMainStatGroup((int)Buttons.DEFDetailGroup, (int)GameObjects.DEFSubTexts));
 
         // ── 초기 상태 ──
+        GetImage((int)Images.StatDetailBtnMask).gameObject.SetActive(false);
         GetObject((int)GameObjects.PATKSubTexts).gameObject.SetActive(false);
         GetObject((int)GameObjects.MATKSubTexts).gameObject.SetActive(false);
         GetObject((int)GameObjects.HPSubTexts).gameObject.SetActive(false);
@@ -459,8 +460,21 @@ public class UI_CharacterPopup : UI_Popup
         GameObject frame = GetImage((int)Images.StatDetailFrame).gameObject;
         frame.SetActive(_detailOpen);
 
-        //if (_detailOpen)
-        //    PlayDetailOpenAnim(frame.transform);
+        if (_detailOpen)
+        {
+            PlayDetailOpenAnim(frame.transform);
+            GetImage((int)Images.StatDetailBtnMask).gameObject.SetActive(true);
+            GetButton((int)Buttons.StatDetailBtn).GetComponent<Image>().color = new Color32(0xFF, 0xD0, 0x00, 0xFF);
+            GetImage((int)Images.StatDetailBtnMask).color = new Color32(0xFF, 0xBA, 0x00, 0xA0);
+            GetImage((int)Images.StatDetailBtnGrow).color = new Color32(0x00, 0x00, 0x00, 0xFF);
+        }
+        else
+        {
+            GetImage((int)Images.StatDetailBtnMask).gameObject.SetActive(false);
+            GetButton((int)Buttons.StatDetailBtn).GetComponent<Image>().color = new Color32(0xFF, 0xFF, 0xFF, 0xB4);
+            GetImage((int)Images.StatDetailBtnMask).color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+            GetImage((int)Images.StatDetailBtnGrow).color = new Color32(0x00, 0x00, 0x00, 0xFF);
+        }
     }
 
     // ────────────────────────────────────────────────────
