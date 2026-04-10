@@ -546,38 +546,77 @@ public class UI_CharacterPopup : UI_Popup
     {
         if (_player == null) return;
 
-        GetText((int)Texts.PointsStatPointsTxt).text  = Managers.Game.StatusPoint.ToString();
-        GetText((int)Texts.ElixirPointsTxt).text = Managers.Game.Elixir.ToString();
+        GetText((int)Texts.PointsStatPointsTxt).text = Managers.Game.StatusPoint.ToString();
+        GetText((int)Texts.ElixirPointsTxt).text     = Managers.Game.Elixir.ToString();
 
-        // 4대 기본 스탯 그룹
-        SetGroupValue(GetButton((int)Buttons.PATKDetailGroup).gameObject, Util.FormatStat(_player.PhysicalAtk + _statDeltas[0] * 2f));
-        SetGroupValue(GetButton((int)Buttons.HPDetailGroup).gameObject,   Util.FormatStat(_player.MaxHp       + _statDeltas[1] * 20f));
-        SetGroupValue(GetButton((int)Buttons.MATKDetailGroup).gameObject, Util.FormatStat(_player.MagicAtk    + _statDeltas[3] * 2f));
-        SetGroupValue(GetButton((int)Buttons.DEFDetailGroup).gameObject,  Util.FormatStat(_player.Def));
+        // ── 미리보기용 기본값 (스탯 포인트 투자분 반영) ──
+        float patkBase = _player.PhysicalAtk + _statDeltas[0] * 2f;
+        float hpBase   = _player.MaxHp       + _statDeltas[1] * 20f;
+        float matkBase = _player.MagicAtk    + _statDeltas[3] * 2f;
+        float defBase  = _player.Def;
 
-        // STR/VIT/DEX/MAG 투자 포인트 표시
+        // ── 최종 = 기본 * (1 + 증가율/100) * 증폭률 ──
+        float patkFinal = patkBase * (1f + _player.PhysicalAtkRate / 100f) * _player.PhysicalAtkAmp;
+        float hpFinal   = hpBase   * (1f + _player.MaxHpRate        / 100f) * _player.MaxHpAmp;
+        float matkFinal = matkBase * (1f + _player.MagicAtkRate     / 100f) * _player.MagicAtkAmp;
+        float defFinal  = defBase  * (1f + _player.DefRate           / 100f) * _player.DefAmp;
+
+        // ── 버튼 (접힌 상태) → 최종 능력치 ──
+        SetGroupValue(GetButton((int)Buttons.PATKDetailGroup).gameObject, Util.FormatStat(patkFinal));
+        SetGroupValue(GetButton((int)Buttons.HPDetailGroup).gameObject,   Util.FormatStat(hpFinal));
+        SetGroupValue(GetButton((int)Buttons.MATKDetailGroup).gameObject, Util.FormatStat(matkFinal));
+        SetGroupValue(GetButton((int)Buttons.DEFDetailGroup).gameObject,  Util.FormatStat(defFinal));
+
+        // ── 확장 서브텍스트 → 기본 / +증가율% / x증폭률 / 최종 ──
+        RefreshStatSubTexts(
+            Texts.PATKBaseStatNum, Texts.PATKIncreaseStatNum, Texts.PATKBoostStatNum, Texts.PATKStatNum,
+            patkBase, _player.PhysicalAtkRate, _player.PhysicalAtkAmp, patkFinal);
+
+        RefreshStatSubTexts(
+            Texts.HPBaseStatNum, Texts.HPIncreaseStatNum, Texts.HPBoostStatNum, Texts.HPStatNum,
+            hpBase, _player.MaxHpRate, _player.MaxHpAmp, hpFinal);
+
+        RefreshStatSubTexts(
+            Texts.MATKBaseStatNum, Texts.MATKIncreaseStatNum, Texts.MATKBoostStatNum, Texts.MATKStatNum,
+            matkBase, _player.MagicAtkRate, _player.MagicAtkAmp, matkFinal);
+
+        RefreshStatSubTexts(
+            Texts.DEFBaseStatNum, Texts.DEFIncreaseStatNum, Texts.DEFBoostStatNum, Texts.DEFStatNum,
+            defBase, _player.DefRate, _player.DefAmp, defFinal);
+
+        // ── STR/VIT/DEX/MAG 투자 포인트 ──
         GetText((int)Texts.STRInvPoint).text = _statDeltas[0].ToString();
         GetText((int)Texts.VITInvPoint).text = _statDeltas[1].ToString();
         GetText((int)Texts.DEXInvPoint).text = _statDeltas[2].ToString();
         GetText((int)Texts.MAGInvPoint).text = _statDeltas[3].ToString();
 
-        // STR/VIT/DEX/MAG 현재 합산값
+        // ── STR/VIT/DEX/MAG 현재 합산값 ──
         GetText((int)Texts.STRAmountTxt).text = Util.FormatStat(_player.PhysicalAtk + _statDeltas[0] * 2f);
         GetText((int)Texts.VITAmountTxt).text = Util.FormatStat(_player.MaxHp       + _statDeltas[1] * 20f);
         GetText((int)Texts.DEXAmountTxt).text = Util.FormatStat(_player.Accuracy    + _statDeltas[2] * 1f);
         GetText((int)Texts.MAGAmountTxt).text = Util.FormatStat(_player.MagicAtk    + _statDeltas[3] * 2f);
 
-        // 상세 스탯
-        SetGroupValue(GetImage((int)Images.CCDetailGroup).gameObject,       Util.FormatStat(_player.CritRate,      2, percent: true));
-        SetGroupValue(GetImage((int)Images.CDMGDetailGroup).gameObject,     Util.FormatStat(_player.CritDamage,    0, percent: true));
-        SetGroupValue(GetImage((int)Images.ACCDetailGroup).gameObject,      Util.FormatStat(_player.Accuracy,      1, percent: true));
-        SetGroupValue(GetImage((int)Images.ASDetailGroup).gameObject,       Util.FormatStat(_player.AtkSpeed,      0, percent: true));
-        SetGroupValue(GetImage((int)Images.P_RESDetailGroup).gameObject,     Util.FormatStat(_player.PhysicalResist,2, percent: true));
-        SetGroupValue(GetImage((int)Images.M_RESDetailGroup).gameObject,     Util.FormatStat(_player.MagicResist,   2, percent: true));
-        SetGroupValue(GetImage((int)Images.EVADetailGroup).gameObject,      Util.FormatStat(_player.Evasion,       2, percent: true));
-        SetGroupValue(GetImage((int)Images.RECOVDetailGroup).gameObject,    Util.FormatStat(_player.RecoveryRate,  1, percent: true));
-        SetGroupValue(GetImage((int)Images.EXP_RATEDetailGroup).gameObject,  Util.FormatStat(_player.GrowthRate,    0, percent: true));
-        SetGroupValue(GetImage((int)Images.DROP_RATEDetailGroup).gameObject, Util.FormatStat(_player.DropRate,      0, percent: true));
+        // ── 상세 스탯 ──
+        SetGroupValue(GetImage((int)Images.CCDetailGroup).gameObject,        Util.FormatStat(_player.CritRate,       2, percent: true));
+        SetGroupValue(GetImage((int)Images.CDMGDetailGroup).gameObject,      Util.FormatStat(_player.CritDamage,     0, percent: true));
+        SetGroupValue(GetImage((int)Images.ACCDetailGroup).gameObject,       Util.FormatStat(_player.Accuracy,       1, percent: true));
+        SetGroupValue(GetImage((int)Images.ASDetailGroup).gameObject,        Util.FormatStat(_player.AtkSpeed,       0, percent: true));
+        SetGroupValue(GetImage((int)Images.P_RESDetailGroup).gameObject,     Util.FormatStat(_player.PhysicalResist, 2, percent: true));
+        SetGroupValue(GetImage((int)Images.M_RESDetailGroup).gameObject,     Util.FormatStat(_player.MagicResist,    2, percent: true));
+        SetGroupValue(GetImage((int)Images.EVADetailGroup).gameObject,       Util.FormatStat(_player.Evasion,        2, percent: true));
+        SetGroupValue(GetImage((int)Images.RECOVDetailGroup).gameObject,     Util.FormatStat(_player.RecoveryRate,   1, percent: true));
+        SetGroupValue(GetImage((int)Images.EXP_RATEDetailGroup).gameObject,  Util.FormatStat(_player.GrowthRate,     0, percent: true));
+        SetGroupValue(GetImage((int)Images.DROP_RATEDetailGroup).gameObject, Util.FormatStat(_player.DropRate,       0, percent: true));
+    }
+
+    // 기본 / +증가율% / x증폭률 / 최종을 각 Texts enum에 채움
+    void RefreshStatSubTexts(Texts baseNum, Texts rateNum, Texts ampNum, Texts finalNum,
+                             float baseVal, float rate, float amp, float finalVal)
+    {
+        GetText((int)baseNum).text  = Util.FormatStat(baseVal);
+        GetText((int)rateNum).text  = "+" + rate.ToString("F0") + "%";
+        GetText((int)ampNum).text   = "x" + amp.ToString("G4");
+        GetText((int)finalNum).text = Util.FormatStat(finalVal);
     }
 
     public void SetInfo(PlayerController player)

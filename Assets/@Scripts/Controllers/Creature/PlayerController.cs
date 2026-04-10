@@ -76,7 +76,7 @@ public class PlayerController : CreatureController
 
         // 치명타 판정
         bool isCrit = UnityEngine.Random.value < Mathf.Min(CritRate, 100f) / 100f;
-        float finalAtk = PhysicalAtk * (isCrit ? CritDamage / 100f : 1f);
+        float finalAtk = FinalPhysicalAtk * (isCrit ? CritDamage / 100f : 1f);
         nearest.OnDamaged(finalAtk);
         StartCoroutine(CoResetStateAfterAttack());
     }

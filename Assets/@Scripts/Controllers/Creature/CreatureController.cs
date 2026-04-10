@@ -13,18 +13,37 @@ public abstract class CreatureController : BaseController
     public float MaxHp          = 100f;
     public float Hp             = 100f;
     // ── 공격 ──
-    public float PhysicalAtk    = 10f;   // 물리공격력
-    public float MagicAtk       = 10f;   // 마법공격력
+    public float PhysicalAtk    = 10f;   // 물리공격력 [기본]
+    public float MagicAtk       = 10f;   // 마법공격력 [기본]
     public float CritRate       = 0f;    // 치명타 % (표기 상한 없음, 적용은 100%까지)
     public float CritDamage     = 150f;  // 치명타피해 %
     public float Accuracy       = 80f;   // 명중률 %
     public float AtkSpeed       = 100f;  // 공격속도 %
     // ── 방어 ──
-    public float Def            = 0f;    // 방어력 (최종 피해에서 수치만큼 감소)
+    public float Def            = 0f;    // 방어력 [기본]
     public float PhysicalResist = 0f;    // 물리저항 %
     public float MagicResist    = 0f;    // 마법저항 %
     public float Evasion        = 0f;    // 회피율 %
     public float RecoveryRate   = 0f;    // 회복력 % (체력 회복 효과에 곱함)
+
+    // ── 증가율 / 증폭률 (장비·버프로 누적) ──
+    // 최종 = 기본 * (1 + 증가율/100) * 증폭률
+    [Header("Rate & Amp")]
+    public float PhysicalAtkRate = 0f;   // 물리공격력 증가율 %  (+n% 표기)
+    public float PhysicalAtkAmp  = 1f;   // 물리공격력 증폭률     (xn  표기)
+    public float MagicAtkRate    = 0f;
+    public float MagicAtkAmp     = 1f;
+    public float MaxHpRate       = 0f;
+    public float MaxHpAmp        = 1f;
+    public float DefRate         = 0f;
+    public float DefAmp          = 1f;
+
+    // ── 최종 능력치 프로퍼티 ──
+    public float FinalPhysicalAtk => PhysicalAtk * (1f + PhysicalAtkRate / 100f) * PhysicalAtkAmp;
+    public float FinalMagicAtk    => MagicAtk    * (1f + MagicAtkRate    / 100f) * MagicAtkAmp;
+    public float FinalMaxHp       => MaxHp       * (1f + MaxHpRate        / 100f) * MaxHpAmp;
+    public float FinalDef         => Def         * (1f + DefRate          / 100f) * DefAmp;
+
     // ── 이동/전투 ──
     public float MoveSpeed      = 2f;
     public float AtkRange       = 1.5f;
@@ -98,7 +117,7 @@ public abstract class CreatureController : BaseController
         if (UnityEngine.Random.value < appliedEvasion / 100f) return;
 
         float resist = isPhysical ? Mathf.Min(PhysicalResist, 100f) : Mathf.Min(MagicResist, 100f);
-        float dmg = Mathf.Max(0, damage - damage * (resist / 100f) - Def);
+        float dmg = Mathf.Max(0, damage - damage * (resist / 100f) - FinalDef);
         Hp -= dmg;
         Managers.Object.ShowDamageFont(transform.position, dmg, transform, isCritical: false);
 
