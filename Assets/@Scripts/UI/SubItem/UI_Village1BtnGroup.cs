@@ -151,10 +151,31 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
         GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() =>
         {
-            Managers.Quest.CheckButtonClick(GUILD_EXIT_QUEST_VFX);
-            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
-            _gameScene.FadeInOut();
-            OnClickMain();
+            Sequence seq = DOTween.Sequence();
+
+            seq.AppendCallback(() =>
+            {
+                Managers.Quest.CheckButtonClick(GUILD_EXIT_QUEST_VFX);
+                GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+
+                // 버튼 애님.
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildTalkButton).GetComponent<RectTransform>(), -53f, 113f, -100f, 113f, Ease.InBack);
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildQuestButton).GetComponent<RectTransform>(), 0f, 186f, 75f, 186f, Ease.InBack);
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton1).GetComponent<RectTransform>(), 51f, 186f, 75f, 186f, Ease.InBack); // fromx => 75f?
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton2).GetComponent<RectTransform>(), 0f, 133f, 75f, 133f, Ease.InBack);
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton3).GetComponent<RectTransform>(), 51f, 133f, 120f, 133f, Ease.InBack);
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildExitButton).GetComponent<RectTransform>(), 0f, 59f, 0f, 0f, Ease.InBack);
+                _gameScene.FadeInOut();
+            });
+
+            seq.AppendInterval(0.3f);
+
+            seq.AppendCallback(() => { PlaceNameAnim(GetText((int)Texts.Village1NameText).rectTransform); });
+
+            seq.AppendInterval(0.5f);
+
+            seq.AppendCallback(() => { OnClickMain(); });
+            
         });
         GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() =>
         {
@@ -353,26 +374,43 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickGuild()
     {
-        HideAllGroup();
-
-        ShowGroup(GameObjects.Village1GuildBtnGroup);
-
-        // Active false 설정
-        GetButton((int)Buttons.Village1GuildTalkButton).gameObject.SetActive(false);
-        GetButton((int)Buttons.Village1GuildQuestButton).gameObject.SetActive(false);
-        GetButton((int)Buttons.Village1GuildNothingButton1).gameObject.SetActive(false);
-        GetButton((int)Buttons.Village1GuildNothingButton2).gameObject.SetActive(false);
-        GetButton((int)Buttons.Village1GuildNothingButton3).gameObject.SetActive(false);
-        GetButton((int)Buttons.Village1GuildExitButton).gameObject.SetActive(false);
-
-        Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_VFX);
-
         Sequence seq = DOTween.Sequence();
-        // TODO : Player Move Anim, Fade In Out, Chang BG + Add NPC Sprite
-        GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
-        _gameScene.FadeInOut();
-        PlaceNameAnim(GetText((int)Texts.Village1GuildNameText).GetComponent<RectTransform>());
 
+        seq.AppendCallback(() =>
+        {
+            // ButtonOffAnim 로비의 버튼 백 애님.
+            ButtonMoveAnim(GetButton((int)Buttons.GuildButton).GetComponent<RectTransform>(), -51.5f, 45.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.AlchemyButton).GetComponent<RectTransform>(), 0.5f, 45.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 52.5f, 45.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), -51.5f, -21.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0.5f, -21.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 52.5f, -21.5f, 0, 0, Ease.InBack);
+        });
+        
+        seq.AppendInterval(0.3f);
+
+        seq.AppendCallback(() =>
+        {
+            HideAllGroup();
+
+            ShowGroup(GameObjects.Village1GuildBtnGroup);
+
+            // Active false 설정
+            GetButton((int)Buttons.Village1GuildTalkButton).gameObject.SetActive(false);
+            GetButton((int)Buttons.Village1GuildQuestButton).gameObject.SetActive(false);
+            GetButton((int)Buttons.Village1GuildNothingButton1).gameObject.SetActive(false);
+            GetButton((int)Buttons.Village1GuildNothingButton2).gameObject.SetActive(false);
+            GetButton((int)Buttons.Village1GuildNothingButton3).gameObject.SetActive(false);
+            GetButton((int)Buttons.Village1GuildExitButton).gameObject.SetActive(false);
+
+            Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_VFX);
+
+            // TODO : Player Move Anim, Fade In Out, Chang BG + Add NPC Sprite
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+            _gameScene.FadeInOut();
+            PlaceNameAnim(GetText((int)Texts.Village1GuildNameText).GetComponent<RectTransform>());
+        });
+        
         seq.AppendInterval(0.5f);
         seq.AppendCallback(() =>
             {
@@ -382,15 +420,6 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             });
 
         seq.AppendInterval(0.5f);
-
-        /*
-         1: x -53, y 113 (FROM x -100, y 113) 
-2: x 0, y 186 (FROM x 75, y 186)
-3: x 51, y 186 (FROM x 51, y 186)
-4: x 0, y 133 (FROM x 75, y 133)
-5: x 51, y 133 (FROM x 120, y 133)
-6: x 0, y 59 (FROM x 0, y 0)
-         */
 
         // 버튼 애님.
         seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildTalkButton).GetComponent<RectTransform>(), -100f, 113f, -53f, 113f));

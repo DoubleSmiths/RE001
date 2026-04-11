@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Define;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 using static UnityEngine.GraphicsBuffer;
 
 public abstract class UI_AreaBtnGroup : UI_Base
@@ -70,7 +71,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
               .SetEase(Ease.OutQuad));
     }
 
-    public void ButtonMoveAnim(RectTransform rt, float fromX, float fromY, float toX, float toY)
+    public void ButtonMoveAnim(RectTransform rt, float fromX, float fromY, float toX, float toY, Ease ease = Ease.OutBack)
     {
         rt.gameObject.SetActive(true);
 
@@ -78,6 +79,6 @@ public abstract class UI_AreaBtnGroup : UI_Base
 
         rt.DOAnchorPos(new Vector2(toX, toY), 0.3f)
           .From(new Vector2(fromX, fromY))
-          .SetEase(Ease.OutBack);
+          .SetEase(ease);
     }
 }
