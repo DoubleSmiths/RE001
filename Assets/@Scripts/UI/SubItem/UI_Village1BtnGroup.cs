@@ -17,6 +17,31 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         AlchemyButtonIcon,
         MonasteryButtonIcon,
         TravelButtonIcon,
+        Village1GuildTalkButtonImage,
+        Village1GuildTalkButtonIcon,
+        Village1GuildQuestButtonIcon,
+        Village1GuildNothingButton1Icon,
+        Village1GuildNothingButton2Icon,
+        Village1GuildNothingButton3Icon,
+        Village1GuildExitButtonIcon,
+        Village1AlchemyTalkButtonImage,
+        Village1AlchemyTalkButtonIcon,
+        Village1AlchemyTalkButtonImage2,
+        Village1AlchemyTalkButtonIcon2,
+        CustomOrderButtonIcon,
+        Village1AlchemyNothingButton1Icon,
+        Village1AlchemyNothingButton2Icon,
+        Village1AlchemyNothingButton3Icon,
+        Village1AlchemyExitButtonIcon,
+        Village1MonasteryTalkButtonImage,
+        Village1MonasteryTalkButtonIcon,
+        Village1MonasteryTalkButtonImage2,
+        Village1MonasteryTalkButtonIcon2,
+        MonasteryClassButtonIcon,
+        Village1MonasteryNothingButton1Icon,
+        Village1MonasteryNothingButton2Icon,
+        Village1MonasteryNothingButton3Icon,
+        Village1MonasteryExitButtonIcon,
     }
 
     enum Texts
@@ -30,10 +55,28 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         TravelButtonText,
         TravelButtonNewTxt,
         Village1GuildNameText,
-        AlchemyCustomOrderButtonNewTxt,
-        MonasteryCustomOrderButtonNewTxt,
+        Village1GuildTalkButtonText,
+        Village1GuildQuestButtonText,
+        Village1GuildNothingButton1Text,
+        Village1GuildNothingButton2Text,
+        Village1GuildNothingButton3Text,
+        Village1GuildExitButtonText,
         Village1AlchemyNameText,
+        Village1AlchemyTalkButtonText,
+        CustomOrderButtonText,
+        AlchemyCustomOrderButtonNewTxt,
+        Village1AlchemyNothingButton1Text,
+        Village1AlchemyNothingButton2Text,
+        Village1AlchemyNothingButton3Text,
+        Village1AlchemyExitButtonText,
         Village1MonasteryNameText,
+        Village1MonasteryTalkButtonText,
+        MonasteryClassButtonText,
+        MonasteryCustomOrderButtonNewTxt,
+        Village1MonasteryNothingButton1Text,
+        Village1MonasteryNothingButton2Text,
+        Village1MonasteryNothingButton3Text,
+        Village1MonasteryExitButtonText,
     }
 
     enum Buttons
@@ -46,12 +89,21 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         TravelButton,
         Village1GuildTalkButton,
         Village1GuildQuestButton,
+        Village1GuildNothingButton1,
+        Village1GuildNothingButton2,
+        Village1GuildNothingButton3,
         Village1GuildExitButton,
         Village1AlchemyTalkButton,
         CustomOrderButton,
+        Village1AlchemyNothingButton1,
+        Village1AlchemyNothingButton2,
+        Village1AlchemyNothingButton3,
         Village1AlchemyExitButton,
         Village1MonasteryTalkButton,
         MonasteryClassButton,
+        Village1MonasteryNothingButton1,
+        Village1MonasteryNothingButton2,
+        Village1MonasteryNothingButton3,
         Village1MonasteryExitButton,
     }
 
@@ -79,6 +131,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     }
 
     #endregion
+
 
     string _pendingUnlockBtnId = null;
 
@@ -302,21 +355,56 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         HideAllGroup();
 
+        ShowGroup(GameObjects.Village1GuildBtnGroup);
+
+        // Active false 설정
+        GetButton((int)Buttons.Village1GuildTalkButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.Village1GuildQuestButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.Village1GuildNothingButton1).gameObject.SetActive(false);
+        GetButton((int)Buttons.Village1GuildNothingButton2).gameObject.SetActive(false);
+        GetButton((int)Buttons.Village1GuildNothingButton3).gameObject.SetActive(false);
+        GetButton((int)Buttons.Village1GuildExitButton).gameObject.SetActive(false);
+
         Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_VFX);
 
+        Sequence seq = DOTween.Sequence();
         // TODO : Player Move Anim, Fade In Out, Chang BG + Add NPC Sprite
         GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
         _gameScene.FadeInOut();
+        PlaceNameAnim(GetText((int)Texts.Village1GuildNameText).GetComponent<RectTransform>());
 
-        Sequence seq = DOTween.Sequence();
-        seq.AppendInterval(1f);
+        seq.AppendInterval(0.5f);
         seq.AppendCallback(() =>
             {
                 Managers.Game.LastVillage1Group = Village1Group.Guild;
                 GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Guild");
                 Managers.Resource.Instantiate("GuildNPC").GetComponent<Animator>().Play("Receptionist");
-                ShowGroup(GameObjects.Village1GuildBtnGroup);
             });
+
+        seq.AppendInterval(0.5f);
+
+        /*
+         1: x -53, y 113 (FROM x -100, y 113) 
+2: x 0, y 186 (FROM x 75, y 186)
+3: x 51, y 186 (FROM x 51, y 186)
+4: x 0, y 133 (FROM x 75, y 133)
+5: x 51, y 133 (FROM x 120, y 133)
+6: x 0, y 59 (FROM x 0, y 0)
+         */
+
+        // 버튼 애님.
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildTalkButton).GetComponent<RectTransform>(), -100f, 113f, -53f, 113f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildQuestButton).GetComponent<RectTransform>(), 75f, 186f, 0f, 186f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton1).GetComponent<RectTransform>(), 75f, 186f, 51f, 186f)); // fromx => 75f?
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton2).GetComponent<RectTransform>(), 75f, 133f, 0f, 133f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton3).GetComponent<RectTransform>(), 120f, 133f, 51f, 133f));
+        seq.AppendInterval(0.07f);
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.Village1GuildExitButton).GetComponent<RectTransform>(), 0f, 0f, 0f, 59f));
+        //seq.AppendInterval(0.07f);
     }
 
     void OnClickAlchemy()
