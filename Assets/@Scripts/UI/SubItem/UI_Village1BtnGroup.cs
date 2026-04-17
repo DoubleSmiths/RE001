@@ -153,29 +153,65 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         {
             Sequence seq = DOTween.Sequence();
 
+            // t=0 : 버튼 OutBack 역재생 + 페이드 시작 (FadeInOut: 0.4 out + 0.15 wait + 0.5 in)
             seq.AppendCallback(() =>
             {
                 Managers.Quest.CheckButtonClick(GUILD_EXIT_QUEST_VFX);
                 GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
 
-                // 버튼 애님.
                 ButtonMoveAnim(GetButton((int)Buttons.Village1GuildTalkButton).GetComponent<RectTransform>(), -53f, 113f, -100f, 113f, Ease.InBack);
                 ButtonMoveAnim(GetButton((int)Buttons.Village1GuildQuestButton).GetComponent<RectTransform>(), 0f, 186f, 75f, 186f, Ease.InBack);
-                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton1).GetComponent<RectTransform>(), 51f, 186f, 75f, 186f, Ease.InBack); // fromx => 75f?
+                ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton1).GetComponent<RectTransform>(), 51f, 186f, 75f, 186f, Ease.InBack);
                 ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton2).GetComponent<RectTransform>(), 0f, 133f, 75f, 133f, Ease.InBack);
                 ButtonMoveAnim(GetButton((int)Buttons.Village1GuildNothingButton3).GetComponent<RectTransform>(), 51f, 133f, 120f, 133f, Ease.InBack);
                 ButtonMoveAnim(GetButton((int)Buttons.Village1GuildExitButton).GetComponent<RectTransform>(), 0f, 59f, 0f, 0f, Ease.InBack);
+
                 _gameScene.FadeInOut();
             });
 
-            seq.AppendInterval(0.3f);
+            // t=0.4 : 화면이 검게 덮인 순간 BG 교체 + NPC 제거 + 메인 그룹 전환 (시각적 팝 제거)
+            seq.AppendInterval(0.4f);
+            seq.AppendCallback(() =>
+            {
+                Managers.Game.LastVillage1Group = Village1Group.Main;
+                HideAllGroup();
+                ShowGroup(GameObjects.Village1MainBtnGroup);
 
-            seq.AppendCallback(() => { PlaceNameAnim(GetText((int)Texts.Village1NameText).rectTransform); });
+                GetButton((int)Buttons.GuildButton).gameObject.SetActive(false);
+                GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(false);
+                GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(false);
+                GetButton((int)Buttons.TempButton1).gameObject.SetActive(false);
+                GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
+                GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
+                var bgGO = GameObject.Find("BackgroundImage");
+                if (bgGO != null)
+                    bgGO.GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Village1");
+
+                var npc = GameObject.Find("GuildNPC(Clone)") ?? GameObject.Find("GuildNPC");
+                if (npc != null) Destroy(npc);
+            });
+
+            // t=0.55 : 페이드 인 시작 시점에 장소 텍스트 1회만 재생
+            seq.AppendInterval(0.15f);
+            seq.AppendCallback(() =>
+            {
+                PlaceNameAnim(GetText((int)Texts.Village1NameText).GetComponent<RectTransform>());
+            });
+
+            // t=1.05 : 페이드 인 완료 직후 TYPE 1 버튼 순차 등장 (0.07s 간격)
             seq.AppendInterval(0.5f);
-
-            seq.AppendCallback(() => { OnClickMain(); });
-            
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.GuildButton).GetComponent<RectTransform>(), 0, 0, -51.5f, 45.5f));
+            seq.AppendInterval(0.07f);
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.AlchemyButton).GetComponent<RectTransform>(), 0, 0, 0.5f, 45.5f));
+            seq.AppendInterval(0.07f);
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 0, 0, 52.5f, 45.5f));
+            seq.AppendInterval(0.07f);
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
+            seq.AppendInterval(0.07f);
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
+            seq.AppendInterval(0.07f);
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
         });
         GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() =>
         {
