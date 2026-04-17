@@ -37,12 +37,20 @@ public class UI_PotionDetailPopup : UI_Popup
     GameObject _reqItemGroup;
     GameObject _reqItemList;
     GameObject _reqItemTitle;
+    GameObject _reqDecorLine;        // Decor_description_line (긴 막대)
     GameObject _switchPanelBtn;
     GameObject _cantCraftBtn;
     GameObject _craftBtn;
     GameObject _nextLvlBtn;
     GameObject _backBtn;
     RectTransform[] _reqItemBoxes;   // ReqItemBox1_1 ~ 5
+
+    // 재료 보유량 스텁 (실제 인벤토리 연동 시 교체)
+    static readonly Dictionary<int, int> _inventoryStub = new Dictionary<int, int>
+    {
+        { 1001, 5 },  // HP Step 2는 1001 2개 필요 → 충족 | Step 3은 10개 필요 → 부족
+        { 1002, 0 },
+    };
 
     Vector2 _frameOrigin;
 
@@ -89,6 +97,7 @@ public class UI_PotionDetailPopup : UI_Popup
         _reqItemGroup = _frame.Find("FrameImg/ReqItemGroup").gameObject;
         _reqItemList  = _reqItemGroup.transform.Find("ReqItemList").gameObject;
         _reqItemTitle = _reqItemGroup.transform.Find("GameObject").gameObject; // "REQ. ITEMS" title
+        _reqDecorLine = _reqItemGroup.transform.Find("__1").gameObject;        // Decor_description_line
         var titleTmp = _reqItemTitle.GetComponentInChildren<TMP_Text>(true);
         if (titleTmp != null) titleTmp.text = "필요 재료";
         _maxLvlTxt    = _reqItemGroup.transform.Find("MaxLvlTxt").GetComponent<TMP_Text>();
@@ -226,8 +235,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         if (showCraftUI)
         {
-            // 재료 충족 여부 — 인벤토리 연동은 후속. 지금은 모두 '충족'으로 가정.
-            bool canCraft = true;
+            bool canCraft = HasEnoughMaterials(data);
             _craftBtn.SetActive(canCraft);
             _cantCraftBtn.SetActive(!canCraft);
             _nextLvlBtn.SetActive(true);
@@ -242,14 +250,44 @@ public class UI_PotionDetailPopup : UI_Popup
             var box = _reqItemBoxes[i];
             bool use = i < n;
             box.gameObject.SetActive(use);
-            if (use)
+            if (!use) continue;
+
+            int itemId = data.NeededItemIDs[i];
+            int required = data.NeededItemAmounts[i];
+            int have = _inventoryStub.TryGetValue(itemId, out var h) ? h : 0;
+
+            // Amount: 보유/필요. 부족하면 빨강.
+            var amount = box.Find("AmountTxt")?.GetComponent<TMP_Text>();
+            if (amount != null)
             {
-                // AmountTxt 갱신 — 보유량 미연동(스텁 15로 표시). 실제 인벤토리 연동은 후속.
-                var amount = box.Find("AmountTxt")?.GetComponent<TMP_Text>();
-                if (amount != null) amount.text = $"15/{data.NeededItemAmounts[i]}";
-                // Img 교체도 여기서(sprite 로드) 가능
+                amount.text = $"{have}/{required}";
+                amount.color = have >= required ? Color.white : new Color32(0xFF, 0x55, 0x55, 0xFF);
+            }
+
+            // 아이콘: ItemDic에 해당 DataId 있으면 SpriteName 기반 로드. 없으면 prefab default 유지.
+            var img = box.Find("Img")?.GetComponent<Image>();
+            if (img != null && img.gameObject.activeSelf == false)
+                img.gameObject.SetActive(true);
+            if (img != null && Managers.Data.ItemDic.TryGetValue(itemId, out var itemData))
+            {
+                var sp = Managers.Resource.Load<Sprite>(itemData.SpriteName);
+                if (sp != null) img.sprite = sp;
             }
         }
+    }
+
+    /// <summary>모든 필요 재료를 충족하는지 체크 (스텁 인벤토리 기준).</summary>
+    bool HasEnoughMaterials(HPPotionData data)
+    {
+        if (data == null || data.NeededItemIDs == null) return true;
+        for (int i = 0; i < data.NeededItemIDs.Count; i++)
+        {
+            int itemId = data.NeededItemIDs[i];
+            int required = data.NeededItemAmounts[i];
+            int have = _inventoryStub.TryGetValue(itemId, out var h) ? h : 0;
+            if (have < required) return false;
+        }
+        return true;
     }
 
     // ────────────────────────────────────────
@@ -273,6 +311,7 @@ public class UI_PotionDetailPopup : UI_Popup
         {
             _reqItemList.SetActive(false);
             _reqItemTitle.SetActive(false);
+            if (_reqDecorLine != null) _reqDecorLine.SetActive(false);
             _cantCraftBtn.SetActive(false);
             _craftBtn.SetActive(false);
             _nextLvlBtn.SetActive(false);
@@ -286,6 +325,7 @@ public class UI_PotionDetailPopup : UI_Popup
             _descText.gameObject.SetActive(false);
             _reqItemList.SetActive(true);
             _reqItemTitle.SetActive(true);
+            if (_reqDecorLine != null) _reqDecorLine.SetActive(true);
             if (_switchBtnLabel != null) _switchBtnLabel.text = "설명";
 
             // 재료/버튼 상태는 ApplyData가 결정하므로 여기서 다시 재계산
@@ -307,7 +347,7 @@ public class UI_PotionDetailPopup : UI_Popup
                 }
                 else if (showCraftUI)
                 {
-                    bool canCraft = true; // 인벤토리 연동 후속
+                    bool canCraft = HasEnoughMaterials(data);
                     _craftBtn.SetActive(canCraft);
                     _cantCraftBtn.SetActive(!canCraft);
                     _nextLvlBtn.SetActive(true);
@@ -424,6 +464,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
         seq.Append(_myFrameRT.DOShakeAnchorPos(1.1f, strength: new Vector3(1.5f, 0f, 0f), vibrato: 21, randomness: 0f).SetEase(Ease.OutQuad));
+        seq.AppendCallback(() => SpawnCraftFX());
         seq.Append(_myFrameRT.DOPunchScale(new Vector3(0.2f, 0.2f, 1f), 0.3f, vibrato: 4, elasticity: 1f).SetEase(Ease.OutQuad));
         seq.OnComplete(() =>
         {
@@ -432,6 +473,47 @@ public class UI_PotionDetailPopup : UI_Popup
             RefreshAll();
             _craftBusy = false;
         });
+    }
+
+    /// <summary>S40: 제작 시 FX 스폰 — 중앙 splash + 물약 아이콘 upgrade sparkle.</summary>
+    void SpawnCraftFX()
+    {
+        // 팝업 중앙과 아이콘의 월드 좌표. Canvas(Screen Space - Camera)의 plane distance를 벗어나면
+        // UI 뒤로 묻히므로 카메라 방향으로 z를 살짝 당겨준다.
+        SpawnFXAt("FX_splash_spark_floor", _myFrameRT.position);
+        SpawnFXAt("FX_splash_spark_air",   _potionImg.rectTransform.position);
+    }
+
+    void SpawnFXAt(string key, Vector3 worldPos, float lifetime = 2f)
+    {
+        var go = Managers.Resource.Instantiate(key);
+        if (go == null) return;
+
+        // UI canvas에 parent시키되 world position 유지. z를 카메라 쪽으로 당겨 UI 앞에 그리도록.
+        go.transform.SetParent(_frame, worldPositionStays: true);
+        go.transform.position = worldPos + new Vector3(0f, 0f, -1f); // UI 앞쪽
+
+        // 자체 Canvas + overrideSorting으로 팝업 Canvas(sortingOrder=12)보다 위에 렌더.
+        var canvas = go.AddComponent<UnityEngine.Canvas>();
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = 9999;
+
+        // Particle renderer sortingOrder도 같이 상향.
+        foreach (var psr in go.GetComponentsInChildren<UnityEngine.ParticleSystemRenderer>(true))
+        {
+            psr.sortingOrder = 9999;
+        }
+
+        // 명시적 Play + 즉시 Emit (prefab의 rateOverTime/burst 설정 미흡 방어).
+        foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true))
+        {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Clear(true);
+            ps.Play(true);
+            ps.Emit(30);
+        }
+
+        Destroy(go, lifetime);
     }
 
     void PunchBtnScale(Transform btn)
