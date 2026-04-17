@@ -105,6 +105,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0721fb65aaddc94b9ad4c800ad45f10
+    m_Address: UI_PotionDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee9364dda7844574e990e48211048f4e
+    m_Address: UI_SkillDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 17daaa5f2ba129c438d7f930823c6356, type: 2}
   m_SchemaSet:

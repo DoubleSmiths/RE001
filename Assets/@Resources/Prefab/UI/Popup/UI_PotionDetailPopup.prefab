@@ -10553,6 +10553,7 @@ GameObject:
   - component: {fileID: 5890242547051015646}
   - component: {fileID: 517853578385339679}
   - component: {fileID: 6488727286744670548}
+  - component: {fileID: 7310000000000000002}
   m_Layer: 5
   m_Name: UI_PotionDetailPopup
   m_TagString: Untagged
@@ -16292,3 +16293,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &7310000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5703636090654488533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72253588697898249874ee3fe81796ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
