@@ -49,7 +49,24 @@ public static class PopupTestMenu
         };
     }
 
-    [MenuItem("Test/Navigate to Alchemy Scene %#5", false, 200)]
+    [MenuItem("Test/Open Potion Popup (S41) %#6", false, 104)]
+    static void OpenPotionPopup()
+    {
+        if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
+        Managers.UI.ShowPopupUI<UI_PotionPopup>().SetInfo();
+    }
+
+    [MenuItem("Test/Toggle AutoPotion Memorized %#7", false, 105)]
+    static void ToggleMemorized()
+    {
+        const string PREF = "PotionPopup.Memorized";
+        int cur = UnityEngine.PlayerPrefs.GetInt(PREF, 0);
+        UnityEngine.PlayerPrefs.SetInt(PREF, cur == 0 ? 1 : 0);
+        UnityEngine.PlayerPrefs.Save();
+        Debug.Log($"[Test] AutoPotion Memorized = {(cur == 0 ? "ON (기억 후)" : "OFF (기억 전)")}");
+    }
+
+    [MenuItem("Test/Navigate to Alchemy Scene %#0", false, 200)]
     static void NavigateToAlchemy()
     {
         if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }

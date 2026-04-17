@@ -45,13 +45,6 @@ public class UI_PotionDetailPopup : UI_Popup
     GameObject _backBtn;
     RectTransform[] _reqItemBoxes;   // ReqItemBox1_1 ~ 5
 
-    // 재료 보유량 스텁 (실제 인벤토리 연동 시 교체)
-    static readonly Dictionary<int, int> _inventoryStub = new Dictionary<int, int>
-    {
-        { 1001, 5 },  // HP Step 2는 1001 2개 필요 → 충족 | Step 3은 10개 필요 → 부족
-        { 1002, 0 },
-    };
-
     Vector2 _frameOrigin;
 
     // 현재 표시 중인 물약 DataId (HPPotionDic 기준). -1 = 미설정.
@@ -141,9 +134,9 @@ public class UI_PotionDetailPopup : UI_Popup
     /// <summary>
     /// dataId: HPPotionDic의 DataId. (-1이면 기본 30001)
     /// </summary>
-    public void SetInfo(int dataId = 30001, bool fromCustomOrder = true)
+    public void SetInfo(int dataId = -1, bool fromCustomOrder = true)
     {
-        _currentDataId  = dataId > 0 ? dataId : 30001;
+        _currentDataId  = ResolvePotionDataId(dataId);
         _fromCustomOrder = fromCustomOrder;
 
         // 팝업을 새로 열 때는 항상 재료 목록 / 현재 단계 상태로 시작 (S38 스펙)
@@ -173,7 +166,8 @@ public class UI_PotionDetailPopup : UI_Popup
         var data = GetData(_currentDataId);
         if (data == null) return;
 
-        ApplyData(data, isPreview: false);
+        StopBlink();
+        ApplyData(data);
         RefreshPanelMode();
     }
 
@@ -193,7 +187,7 @@ public class UI_PotionDetailPopup : UI_Popup
         return Managers.Game.Language == Define.Language.Korean ? entry.Kor : entry.Eng;
     }
 
-    void ApplyData(HPPotionData data, bool isPreview)
+    void ApplyData(HPPotionData data)
     {
         // HP 계열만 노출 (SPD 텍스트 그룹 숨김)
         _hpTextsGroup.SetActive(true);
@@ -201,8 +195,9 @@ public class UI_PotionDetailPopup : UI_Popup
 
         _nameText.text = Localize(data.Name);
         _rankText.text = $"{data.Step}단계";
+        _rankText.color = Color.white;
 
-        int maxHp = 1000; // 표기용 기준 체력 (실제 플레이어 HP 연동은 후속)
+        int maxHp = Managers.Game.GetPlayerMaxHp();
         int pHealAmount = data.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * data.MaxHPRecov / 100f);
         int totalHeal   = data.FlatRecov + pHealAmount;
 
@@ -218,11 +213,12 @@ public class UI_PotionDetailPopup : UI_Popup
         var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
         if (sp != null) _potionImg.sprite = sp;
 
-        // 필요 재료
-        UpdateReqItems(data);
+        var nextData = GetNextData(_currentDataId);
 
-        // 이 물약이 HP 계열의 마지막 단계면 MAX LEVEL (다음 등급으로 승급 로직은 후속)
-        var nextData = GetData(_currentDataId + 1);
+        // 필요 재료는 다음 단계 업그레이드 기준으로 표시
+        UpdateReqItems(nextData);
+
+        // 이 물약이 HP 계열의 마지막 단계면 MAX LEVEL
         bool isMaxLevel = nextData == null;
         _maxLvlTxt.gameObject.SetActive(isMaxLevel);
 
@@ -235,7 +231,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         if (showCraftUI)
         {
-            bool canCraft = HasEnoughMaterials(data);
+            bool canCraft = HasEnoughMaterials(nextData);
             _craftBtn.SetActive(canCraft);
             _cantCraftBtn.SetActive(!canCraft);
             _nextLvlBtn.SetActive(true);
@@ -244,6 +240,13 @@ public class UI_PotionDetailPopup : UI_Popup
 
     void UpdateReqItems(HPPotionData data)
     {
+        if (data == null)
+        {
+            foreach (var box in _reqItemBoxes)
+                box.gameObject.SetActive(false);
+            return;
+        }
+
         int n = data.NeededItemIDs != null ? data.NeededItemIDs.Count : 0;
         for (int i = 0; i < _reqItemBoxes.Length; i++)
         {
@@ -254,7 +257,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
             int itemId = data.NeededItemIDs[i];
             int required = data.NeededItemAmounts[i];
-            int have = _inventoryStub.TryGetValue(itemId, out var h) ? h : 0;
+            int have = Managers.Game.GetItemCount(itemId);
 
             // Amount: 보유/필요. 부족하면 빨강.
             var amount = box.Find("AmountTxt")?.GetComponent<TMP_Text>();
@@ -268,7 +271,7 @@ public class UI_PotionDetailPopup : UI_Popup
             var img = box.Find("Img")?.GetComponent<Image>();
             if (img != null && img.gameObject.activeSelf == false)
                 img.gameObject.SetActive(true);
-            if (img != null && Managers.Data.ItemDic.TryGetValue(itemId, out var itemData))
+            if (img != null && TryGetItemData(itemId, out var itemData))
             {
                 var sp = Managers.Resource.Load<Sprite>(itemData.SpriteName);
                 if (sp != null) img.sprite = sp;
@@ -276,7 +279,7 @@ public class UI_PotionDetailPopup : UI_Popup
         }
     }
 
-    /// <summary>모든 필요 재료를 충족하는지 체크 (스텁 인벤토리 기준).</summary>
+    /// <summary>모든 필요 재료를 충족하는지 체크.</summary>
     bool HasEnoughMaterials(HPPotionData data)
     {
         if (data == null || data.NeededItemIDs == null) return true;
@@ -284,7 +287,7 @@ public class UI_PotionDetailPopup : UI_Popup
         {
             int itemId = data.NeededItemIDs[i];
             int required = data.NeededItemAmounts[i];
-            int have = _inventoryStub.TryGetValue(itemId, out var h) ? h : 0;
+            int have = Managers.Game.GetItemCount(itemId);
             if (have < required) return false;
         }
         return true;
@@ -332,7 +335,7 @@ public class UI_PotionDetailPopup : UI_Popup
             var data = GetData(_currentDataId);
             if (data != null)
             {
-                var next = GetData(_currentDataId + 1);
+                var next = GetNextData(_currentDataId);
                 bool isMaxLevel = next == null;
                 _maxLvlTxt.gameObject.SetActive(isMaxLevel);
 
@@ -347,7 +350,7 @@ public class UI_PotionDetailPopup : UI_Popup
                 }
                 else if (showCraftUI)
                 {
-                    bool canCraft = HasEnoughMaterials(data);
+                    bool canCraft = HasEnoughMaterials(next);
                     _craftBtn.SetActive(canCraft);
                     _cantCraftBtn.SetActive(!canCraft);
                     _nextLvlBtn.SetActive(true);
@@ -363,7 +366,7 @@ public class UI_PotionDetailPopup : UI_Popup
     void OnClickNextLvl()
     {
         PunchBtnScale(_nextLvlBtn.transform);
-        var next = GetData(_currentDataId + 1);
+        var next = GetNextData(_currentDataId);
         if (next == null) return;
 
         _previewNext = true;
@@ -395,14 +398,14 @@ public class UI_PotionDetailPopup : UI_Popup
         if (sp != null) _potionImg.sprite = sp;
 
         // 능력치: ▶ 표기 + 변화 색상
-        int maxHp = 1000;
+        int maxHp = Managers.Game.GetPlayerMaxHp();
         int pCur  = curr.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * curr.MaxHPRecov / 100f);
         int pNext = next.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * next.MaxHPRecov / 100f);
         int totalCur  = curr.FlatRecov + pCur;
         int totalNext = next.FlatRecov + pNext;
 
         _flatHeal.text  = FmtStat("기본 회복량",       curr.FlatRecov,   next.FlatRecov);
-        _pHeal.text     = FmtStat("최대 체력 회복량", curr.MaxHPRecov,  next.MaxHPRecov, suffix: "%");
+        _pHeal.text     = FmtStat("최대 체력 회복량", pCur,             pNext);
         _totalHeal.text = FmtStat("총 회복량",         totalCur,         totalNext);
         // 재생산시간은 값이 작을수록 좋으므로 색상 방향 반전
         _cooldown.text  = FmtStat("재생산시간",        curr.Cooldown,    next.Cooldown,   suffix: "초", lowerIsBetter: true);
@@ -457,8 +460,9 @@ public class UI_PotionDetailPopup : UI_Popup
     void OnClickCraft()
     {
         PunchBtnScale(_craftBtn.transform);
-        var next = GetData(_currentDataId + 1);
+        var next = GetNextData(_currentDataId);
         if (next == null) return; // 최대 레벨은 제작 불가
+        if (!Managers.Game.CanCraftHPPotion(_currentDataId)) return;
 
         _craftBusy = true;
 
@@ -468,7 +472,9 @@ public class UI_PotionDetailPopup : UI_Popup
         seq.Append(_myFrameRT.DOPunchScale(new Vector3(0.2f, 0.2f, 1f), 0.3f, vibrato: 4, elasticity: 1f).SetEase(Ease.OutQuad));
         seq.OnComplete(() =>
         {
-            _currentDataId = _currentDataId + 1;
+            if (Managers.Game.TryCraftHPPotion(_currentDataId, out var craftedDataId))
+                _currentDataId = craftedDataId;
+
             _previewNext = false;
             RefreshAll();
             _craftBusy = false;
@@ -521,6 +527,36 @@ public class UI_PotionDetailPopup : UI_Popup
         btn.DOKill();
         btn.localScale = Vector3.one;
         btn.DOScale(0.9f, 0.07f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo).SetUpdate(true);
+    }
+
+    int ResolvePotionDataId(int requestedDataId)
+    {
+        if (requestedDataId > 0 && Managers.Data.HPPotionDic.ContainsKey(requestedDataId))
+            return requestedDataId;
+
+        int currentDataId = Managers.Game.CurrentHPPotionDataId;
+        if (Managers.Data.HPPotionDic.ContainsKey(currentDataId))
+            return currentDataId;
+
+        return 30001;
+    }
+
+    HPPotionData GetNextData(int currentDataId)
+    {
+        int nextDataId = Managers.Game.GetNextHPPotionDataId(currentDataId);
+        return nextDataId > 0 ? GetData(nextDataId) : null;
+    }
+
+    bool TryGetItemData(int itemId, out ItemData itemData)
+    {
+        if (Managers.Data.ItemDic.TryGetValue(itemId, out itemData))
+            return true;
+
+        if (Managers.Data.RequisiteItemDic.TryGetValue(itemId, out itemData))
+            return true;
+
+        itemData = null;
+        return false;
     }
 
     // ────────────────────────────────────────

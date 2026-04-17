@@ -46,7 +46,7 @@ public class DataManager
         //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
         //LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
-        //PlayerStatusDic   = LoadJson<PlayerStatusDataLoader,  int,    PlayerStatusData>   ("PlayerStatusData").MakeDict();
+        PlayerStatusDic   = LoadJson<PlayerStatusDataLoader,  int,    PlayerStatusData>   ("PlayerStatusData").MakeDict();
         DialogueScriptDic = LoadJson<DialogueScriptLoader,    string, DialogueScriptGroup>("DialogueScriptData").MakeDict();
         LocalizationDic   = LoadJson<LocalizationLoader,      string, LocalizationEntry>  ("LocalizationData").MakeDict();
         QuestDic          = LoadJson<QuestDataLoader,      int, QuestData>                ("QuestData").MakeDict();

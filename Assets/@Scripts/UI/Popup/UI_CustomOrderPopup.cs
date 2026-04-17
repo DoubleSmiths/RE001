@@ -270,7 +270,7 @@ public class UI_CustomOrderPopup : UI_Popup
 
         // 슬라이드 36: 해금된 아이템만 클릭 → 상세 팝업 호출. 잠긴 아이템은 상호작용 불가.
         // HPPotionDic 기준: 30001=HP Grade0 Step1, 30004=HP Grade1 Step1 (데이터 파일 참조)
-        BindItemClick("CustomOrderHPPotionIcon",              () => OpenPotionDetail(30001),   unlocked: true);
+        BindItemClick("CustomOrderHPPotionIcon",              () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId), unlocked: true);
         BindItemClick("CustomOrderSPDPotionIcon",             () => OpenPotionDetail(-1),      unlocked: false);
         BindItemClick("CustomOrderLuckPotionIcon",            () => OpenPotionDetail(-1),      unlocked: false);
         BindItemClick("CustomOrder_AutoPotionCooltimeSkill", () => OpenSkillDetail(0),         unlocked: false);

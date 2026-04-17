@@ -101,6 +101,7 @@ public class GameData
     // 퀘스트
     public int          CurrentQuestID = 1;
     public List<string> UnlockedBtnIds = new List<string>();
+    public int          CurrentHPPotionDataId = POTION_ID_MIN + 1;
 
     // 마지막 장소
     public Village1Group LastVillage1Group = Village1Group.Main;
@@ -238,6 +239,20 @@ public class GameManager
     }
 
     public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;
+    public int CurrentHPPotionDataId
+    {
+        get => _gameData.CurrentHPPotionDataId <= 0 ? POTION_ID_MIN + 1 : _gameData.CurrentHPPotionDataId;
+        set
+        {
+            int next = value <= 0 ? POTION_ID_MIN + 1 : value;
+            if (_gameData.CurrentHPPotionDataId == next)
+                return;
+
+            _gameData.CurrentHPPotionDataId = next;
+            SaveGame();
+            OnHPPotionChanged?.Invoke(next);
+        }
+    }
 
     public Village1Group LastVillage1Group
     {
@@ -262,6 +277,7 @@ public class GameManager
     public event Action<int> OnItemAdded;         // dataId
     public event Action<int> OnItemChanged;       // dataId (추가/제거 모두)
     public Action      OnInventoryNewChanged; // IsNew 상태 변경
+    public event Action<int> OnHPPotionChanged;   // current potion dataId
 
     // ────────────────────────────────────────
     //  Init
@@ -271,10 +287,14 @@ public class GameManager
         _path = Application.persistentDataPath + "/SaveData.json";
 
         if (LoadGame())
+        {
+            EnsurePotionState();
             return;
+        }
 
         // 할때마다 처음상태로 하고싶으면 1로 바꿔야하는 것.
         PlayerPrefs.SetInt("ISFIRST", 0);
+        EnsurePotionState();
         SaveGame();
     }
 
@@ -385,6 +405,83 @@ public class GameManager
         return existing?.Count ?? 0;
     }
 
+    public int GetPlayerMaxHp()
+    {
+        if (Player != null && Player.MaxHp > 0f)
+            return Mathf.RoundToInt(Player.MaxHp);
+
+        Data.PlayerStatusData status = null;
+        if (Managers.Data.PlayerStatusDic.TryGetValue(Level, out var levelStatus))
+            status = levelStatus;
+        else
+        {
+            foreach (var entry in Managers.Data.PlayerStatusDic.Values)
+            {
+                status = entry;
+                break;
+            }
+        }
+
+        return status?.StartHP ?? 1000;
+    }
+
+    public int GetNextHPPotionDataId(int currentDataId)
+    {
+        int nextId = -1;
+
+        foreach (var dataId in Managers.Data.HPPotionDic.Keys)
+        {
+            if (dataId <= currentDataId)
+                continue;
+
+            if (nextId == -1 || dataId < nextId)
+                nextId = dataId;
+        }
+
+        return nextId;
+    }
+
+    public bool CanCraftHPPotion(int currentDataId)
+    {
+        int nextDataId = GetNextHPPotionDataId(currentDataId);
+        if (nextDataId < 0 || !Managers.Data.HPPotionDic.TryGetValue(nextDataId, out var next))
+            return false;
+
+        for (int i = 0; i < next.NeededItemIDs.Count; i++)
+        {
+            int itemId = next.NeededItemIDs[i];
+            int required = i < next.NeededItemAmounts.Count ? next.NeededItemAmounts[i] : 0;
+            if (!HasItem(itemId, required))
+                return false;
+        }
+
+        return true;
+    }
+
+    public bool TryCraftHPPotion(int currentDataId, out int craftedDataId)
+    {
+        craftedDataId = currentDataId;
+
+        int nextDataId = GetNextHPPotionDataId(currentDataId);
+        if (nextDataId < 0 || !Managers.Data.HPPotionDic.TryGetValue(nextDataId, out var next))
+            return false;
+
+        if (!CanCraftHPPotion(currentDataId))
+            return false;
+
+        for (int i = 0; i < next.NeededItemIDs.Count; i++)
+        {
+            int itemId = next.NeededItemIDs[i];
+            int required = i < next.NeededItemAmounts.Count ? next.NeededItemAmounts[i] : 0;
+            if (required > 0)
+                RemoveItem(itemId, required);
+        }
+
+        CurrentHPPotionDataId = nextDataId;
+        craftedDataId = nextDataId;
+        return true;
+    }
+
     // ────────────────────────────────────────
     //  세이브 / 로드
     // ────────────────────────────────────────
@@ -414,6 +511,8 @@ public class GameManager
         if (data != null)
             _gameData = data;
 
+        EnsurePotionState();
+
         return true;
     }
 
@@ -421,5 +520,11 @@ public class GameManager
     {
         // 1이면 켜야하는 것.
         ActivationManager[(int)ActivationKey.Village1GuildVFX] = 1;
+    }
+
+    void EnsurePotionState()
+    {
+        if (_gameData.CurrentHPPotionDataId <= 0)
+            _gameData.CurrentHPPotionDataId = POTION_ID_MIN + 1;
     }
 }

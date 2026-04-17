@@ -613,7 +613,7 @@ public class UI_GameScene : UI_Scene
 
     void OnClickPotion()
     {
-        // TODO: UI_PotionPopup 열기
+        Managers.UI.ShowPopupUI<UI_PotionPopup>().SetInfo();
     }
 
     void OnClickEquipment()

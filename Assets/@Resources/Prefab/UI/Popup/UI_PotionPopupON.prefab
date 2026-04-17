@@ -532,6 +532,7 @@ GameObject:
   - component: {fileID: 3852402463550455799}
   - component: {fileID: 4591013202779605867}
   - component: {fileID: 63986494430345356}
+  - component: {fileID: 7310000000000000004}
   m_Layer: 5
   m_Name: UI_PotionPopupON
   m_TagString: Untagged
@@ -2043,7 +2044,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5887965275084730025}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3960}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5064,3 +5065,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &7310000000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670609222857079177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31776a1f7ab90514eb9bfa085065cf4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
