@@ -50,6 +50,16 @@ public class UI_CustomOrderPopup : UI_Popup
     const float FRAME_FROM_Y = -120f;
     const float ALCH_SLIDE_OFFSET_X = -150f;
 
+    // slide 35 확장
+    static readonly Color FRAME_SELECTED_COLOR = new Color32(0xF5, 0xDD, 0x6C, 0xFF);
+    static readonly Color FRAME_DEFAULT_COLOR = Color.white;
+    const float BTN_Y_ORIGIN = 17f;
+    const float BTN_Y_EXPANDED = -40f;
+    static readonly Color LOCK_BG_COLOR   = new Color(0f, 0f, 0f, 180f / 255f);
+    static readonly Color LOCK_ICON_COLOR = new Color(1f, 1f, 1f,  80f / 255f);
+
+    int _currentGroup = -1; // 0 = Potion, 1 = Skill, -1 = none
+
     void Awake() => Init();
 
     public override bool Init()
@@ -103,6 +113,11 @@ public class UI_CustomOrderPopup : UI_Popup
         // 슬라이드 35 확장 그룹은 기본 상태에서 숨김 (물약/기술 버튼 클릭 시 슬라이드 35에서 표시)
         GetObject((int)GameObjects.Btm_PotionBtnGroup).SetActive(false);
         GetObject((int)GameObjects.Btm_SkillBtnGroup).SetActive(false);
+
+        // 버튼 / 프레임 색 / 잠금 상태 초기화
+        ResetBottomButtons();
+        InitLockStates();
+        _currentGroup = -1;
 
         var frameRT = GetObject((int)GameObjects.CustomOrderPopupFrame).GetComponent<RectTransform>();
         var alchRT = GetImage((int)Images.Alch_Img_mask_1).rectTransform;
@@ -172,15 +187,133 @@ public class UI_CustomOrderPopup : UI_Popup
         seq.OnComplete(() => Managers.UI.ClosePopupUI());
     }
 
-    void OnClickPotion()
+    void OnClickPotion() => ExpandGroup(0);
+    void OnClickSkill()  => ExpandGroup(1);
+
+    /// <summary>
+    /// 슬라이드 35: Potion/Skill 버튼 클릭 시 리스트 확장.
+    /// - 선택 버튼 Frame 색 F5DD6C (다른 버튼은 흰색)
+    /// - 두 버튼 모두 y=-40으로 이동 (Move OutBack 0.5s)
+    /// - 대응 그룹 표시 + 각 아이템 Scale(from 1.8, OutBack 0.4s) 등장
+    /// </summary>
+    void ExpandGroup(int groupIndex)
     {
-        // TODO: 슬라이드 35 — 물약 리스트 확장
-        Debug.Log("[CustomOrder] Potion clicked (slide 35 expansion TODO)");
+        // 재클릭이면 무시 (같은 그룹 이미 표시 중)
+        if (_currentGroup == groupIndex) return;
+
+        var potionBtnRT = GetButton((int)Buttons.CustomOrderPotionBtn).GetComponent<RectTransform>();
+        var skillBtnRT  = GetButton((int)Buttons.CustomOrderSkillBtn).GetComponent<RectTransform>();
+        var potionImg   = GetButton((int)Buttons.CustomOrderPotionBtn).GetComponent<Image>();
+        var skillImg    = GetButton((int)Buttons.CustomOrderSkillBtn).GetComponent<Image>();
+
+        // Frame 색: 선택 버튼만 F5DD6C
+        potionImg.color = (groupIndex == 0) ? FRAME_SELECTED_COLOR : FRAME_DEFAULT_COLOR;
+        skillImg.color  = (groupIndex == 1) ? FRAME_SELECTED_COLOR : FRAME_DEFAULT_COLOR;
+
+        // 두 버튼 모두 y=-40으로 Move OutBack 0.5s
+        potionBtnRT.DOKill();
+        skillBtnRT.DOKill();
+        potionBtnRT.DOAnchorPosY(BTN_Y_EXPANDED, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
+        skillBtnRT.DOAnchorPosY(BTN_Y_EXPANDED, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
+
+        // 그룹 전환
+        var potionGrp = GetObject((int)GameObjects.Btm_PotionBtnGroup);
+        var skillGrp  = GetObject((int)GameObjects.Btm_SkillBtnGroup);
+        potionGrp.SetActive(groupIndex == 0);
+        skillGrp.SetActive(groupIndex == 1);
+
+        // 각 아이템 스케일 인 anim
+        var activeGroup = (groupIndex == 0) ? potionGrp : skillGrp;
+        PlayItemsScaleIn(activeGroup);
+
+        _currentGroup = groupIndex;
     }
 
-    void OnClickSkill()
+    void PlayItemsScaleIn(GameObject groupGO)
     {
-        // TODO: 슬라이드 35 — 기술 리스트 확장
-        Debug.Log("[CustomOrder] Skill clicked (slide 35 expansion TODO)");
+        // 직계 자식만 순회 (각 아이템 아이콘 루트)
+        foreach (Transform child in groupGO.transform)
+        {
+            var rt = child as RectTransform;
+            if (rt == null) continue;
+            rt.DOKill();
+            rt.localScale = Vector3.one * 1.8f;
+            rt.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+        }
+    }
+
+    void ResetBottomButtons()
+    {
+        var potionBtn = GetButton((int)Buttons.CustomOrderPotionBtn);
+        var skillBtn  = GetButton((int)Buttons.CustomOrderSkillBtn);
+
+        potionBtn.GetComponent<RectTransform>().DOKill();
+        skillBtn.GetComponent<RectTransform>().DOKill();
+        potionBtn.GetComponent<RectTransform>().anchoredPosition = new Vector2(14.5f,  BTN_Y_ORIGIN);
+        skillBtn.GetComponent<RectTransform>().anchoredPosition  = new Vector2(-15.5f, BTN_Y_ORIGIN);
+        potionBtn.GetComponent<Image>().color = FRAME_DEFAULT_COLOR;
+        skillBtn.GetComponent<Image>().color  = FRAME_DEFAULT_COLOR;
+    }
+
+    /// <summary>
+    /// 슬라이드 35 잠금 상태 스펙 적용.
+    /// 회복물약(HP)만 해금, 신속(SPD)/행운(Luck)/물약주입기(AutoPotion) 잠금.
+    /// Sprite None (000000 alpha 180) + Chat_Icon_Lock (FFFFFF alpha 80)
+    /// </summary>
+    void InitLockStates()
+    {
+        // 잠금
+        ApplyLockVisual("CustomOrderSPDPotionIcon", "lockbg_1",           "lockimg_1",           locked: true);
+        ApplyLockVisual("CustomOrderLuckPotionIcon", "lockbg",             "lockimg",             locked: true);
+        ApplyLockVisual("CustomOrder_AutoPotionCooltimeSkill", "lockbg_AutoPotion", "lockimg_AutoPotion", locked: true);
+        // HP는 잠금 해제 (prefab 구조상 lock 자식이 없거나 별도 없음)
+    }
+
+    void ApplyLockVisual(string itemName, string lockBgName, string lockImgName, bool locked)
+    {
+        var item = transform.Find($"FIXED/In_Frame/CustomOrderPopup/CustomOrderPopupFrame/Btm_PotionBtnGroup/{itemName}");
+        if (item == null)
+            item = transform.Find($"FIXED/In_Frame/CustomOrderPopup/CustomOrderPopupFrame/Btm_SkillBtnGroup/{itemName}");
+        if (item == null) return;
+
+        // 잠금 유지: prefab에 autoPlay=true로 걸린 "해금 연출" DOTweenAnimation이
+        // OnEnable에서 lock alpha를 0으로 만들어버리므로 잠긴 아이템은 이 애님을 제거.
+        if (locked)
+        {
+            foreach (var dta in item.GetComponentsInChildren<DG.Tweening.DOTweenAnimation>(true))
+            {
+                if (dta.name == lockBgName || dta.name == lockImgName)
+                    DestroyImmediate(dta);
+            }
+        }
+
+        foreach (var img in item.GetComponentsInChildren<Image>(true))
+        {
+            if (img.name == lockBgName)
+            {
+                img.color = locked ? LOCK_BG_COLOR : new Color(0, 0, 0, 0);
+                // 렌더 순서 최상위로 끌어올려 다른 아이콘/라벨이 잠금 비주얼을 덮지 않도록
+                if (locked) img.transform.SetAsLastSibling();
+            }
+            if (img.name == lockImgName)
+            {
+                img.color = locked ? LOCK_ICON_COLOR : new Color(1, 1, 1, 0);
+                if (locked) img.transform.SetAsLastSibling();
+            }
+        }
+
+        // NEW 뱃지 / 등급·레벨 아이콘은 잠긴 상태에서 숨김 (잠긴 아이템은 Sprite None + Chat_Icon_Lock만 표시)
+        if (locked)
+        {
+            foreach (var tmp in item.GetComponentsInChildren<TMPro.TMP_Text>(true))
+            {
+                if (tmp.name.EndsWith("NewTxt")) tmp.gameObject.SetActive(false);
+            }
+            foreach (Transform child in item)
+            {
+                if (child.name == "MasterIcon" || child.name == "LvlIcon")
+                    child.gameObject.SetActive(false);
+            }
+        }
     }
 }
