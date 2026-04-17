@@ -172,9 +172,9 @@ public abstract class UI_Base : MonoBehaviour
     public void FadeInOut(Image image, Action onComplete = null)
     {
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(image.DOFade(1f, 0.4f).SetUpdate(true));
+        seq.Append(image.DOFade(1f, 0.4f).SetEase(Ease.InQuad).SetUpdate(true));
         seq.AppendInterval(0.15f);
-        seq.Append(image.DOFade(0f, 0.5f).SetUpdate(true));
+        seq.Append(image.DOFade(0f, 0.5f).SetEase(Ease.InQuad).SetUpdate(true));
         seq.OnComplete(() => onComplete?.Invoke());
     }
 
