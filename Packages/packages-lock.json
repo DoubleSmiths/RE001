@@ -341,11 +341,10 @@
       }
     },
     "com.unity.uiextensions": {
-      "version": "https://github.com/Unity-UI-Extensions/com.unity.uiextensions.git",
+      "version": "file:com.unity.uiextensions",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "35b9985bf238cde2bad9c8e107c686ba3194471c"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.visualscripting": {
       "version": "1.9.9",
@@ -356,6 +355,15 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.youngwoocho02.unity-cli-connector": {
+      "version": "https://github.com/youngwoocho02/unity-cli.git?path=unity-connector",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      },
+      "hash": "5886a4da2e16fef05dfd3266b9c135f08fe65a7b"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

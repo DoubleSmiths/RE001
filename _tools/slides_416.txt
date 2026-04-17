@@ -1,0 +1,1643 @@
+
+===== SLIDE 1 =====
+RE001 기획서
+2026.04.15
+
+===== SLIDE 2 =====
+수정사항
+[ 04.14 ]
+1. Sheet 4 – UI Feedback Guide 작성.
+2. Sheet 10 – 최하단 버튼 작성.
+3. Sheet 13 – [  +  ] Icon 기획 추가.
+4. Sheet 19 – New Text 조건 추가.
+5. Sheet 41,42 - 물약창 Popup 완료
+
+===== SLIDE 3 =====
+Font 설정
+INGAME 사용 폰트
+[IMG: Google Shape;61;p2]
+[IMG: Google Shape;62;p2]
+[IMG: Google Shape;63;p2]
+Cafe24
+DOSSaemmul
+PF_Stardust
+사용처
+- Dialogue Texts.
+→ NPC와 대화할 때.
+→ 영/한 동일.
+사용처
+- 언어선택을 영어로 했을 때.
+- Dialogue Texts와 숫자들을 제외한 모든 부분.
+→ Menu명, Item명, Description 등등.
+사용처
+- 언어선택을 한글로 했을 때.
+- Dialogue Texts와 숫자들을 제외한 모든 부분.
+→ Menu명, Item명, Description 등등.
+INGAME의 모든 숫자 TEXT들의 FONT는 지정되며 고정된다.
+언어선택과 무관.
+[IMG: Google Shape;75;p2]
+[IMG: Google Shape;76;p2]
+Outline
+- 모든 TEXT는 특별한 언급이 없을 시 검은색 OUTLINE이 들어가게 된다.
+- 만약 해당 TEXT에 색이 다른 OUTLINE을 사용하게 될 경우 해당 부분의 기획서에 명시가 되어있다.
+[IMG: Google Shape;79;p2]
+예외처리
+- Player Bar에 표기된 Level 정보와 모험가 등급은 언어 선택에 상관없이 고정으로
+DOSSaemmul 폰트를 사용하며, Level 정보는 항상 LV.#으로 표기한다.
+- 환경설정 Popup 의 언어 선택부분도 고정으로 표기.
+[IMG: Google Shape;83;p2]
+[IMG: Google Shape;84;p2]
+
+===== SLIDE 4 =====
+UI Feedback Guide
+유저에게 보여주는 반응/표시 UI (여러 곳에 자주 사용되는 것들만)
+[IMG: 그림 3]
+[IMG: 그림 5]
+[IMG: 그림 7]
+[IMG: 그림 9]
+NEW 버튼
+Anim 정보:
+Dotween
+Move
+Duration: 0.5
+Ease: OutQuad
+Loops: -1
+Loop Type: Restart
+TO: x 1 , y 2 , z 0
+Snapping
+Anim 정보:
+Dotween
+Punch/Rotation
+Duration: 1.5
+Ease: OutQuad
+Loops: -1
+Loop Type: Restart
+TO: x 0 , y 0 , z 15
+Vibrato: 10
+Elasticity: 0
+Font: DOSSaemmul
+Color: FFFF00
+아이템 또는 기능이
+새로 생겼을 때 표시.
+표시 위치는 각 기획서에 서술.
+해당 버튼을 누르거나
+해당 Popup창을 끄면 사라짐.
+예시
+[   !   ] 버튼
+IMG: gui_atlas (exclamation_mark01)
+Color: FFE300, 14FF00
+메인/서브 퀘스트 가이드 UI.
+다음 행선지를 목표로 표시.
+표시 위치는 각 기획서에 서술.
+퀘스트 번호에 맞춰 표기 및 비표기.
+예시
+
+===== SLIDE 5 =====
+상단 재화 BAR
+-   플레이어의 보유 재화량을 보여주는 BAR
+Icon38
+Icon25
+[IMG: Google Shape;95;p3]
+[IMG: Google Shape;96;p3]
+1_basic_button
+[IMG: Google Shape;98;p3]
+1_armor
+[IMG: Google Shape;100;p3]
+[IMG: Google Shape;101;p3]
+인게임 적용 모습
+금화 TEXT
+Font: PF_Stardust (고정)
+Color: FFFFFF
+Outline: FFF600, alpha 80, x0.2 y-0.2
+[IMG: Google Shape;104;p3]
+[IMG: Google Shape;105;p3]
+결정 TEXT
+Font: PF_Stardust (고정)
+Color: 00F3FF
+Outline: FFF600, alpha 80, x0.2 y-0.2
+Amount 변화 시 Lerp로 text갱신
+증가 시 초록색(00FF00 )으로
+감소 시 빨간색(FF0000)으로
+잠깐 빛남
+[IMG: Google Shape;112;p3]
+[IMG: Google Shape;113;p3]
+환경설정 버튼
+클릭 시 환경설정 Popup 호출
+클릭 시 해당 버튼 Anim정보:
+Dotween
+Scale
+Duration: 0.07
+Delay: 0
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+To: 0.75 (Uniform Scale)
+
+===== SLIDE 6 =====
+[IMG: 그림 2]
+Player BAR
+-   플레이어의 각종 정보를 보여주는 Bar
+HP_mana_bar
+인게임 적용 모습
+[IMG: 그림 4]
+[IMG: 그림 6]
+Hp_frame_Empty
+[IMG: 그림 9]
+Hp_red
+[IMG: 그림 12]
+1-EG
+[IMG: 그림 15]
+HP_Portrait_frame
+[IMG: 그림 18]
+Player_01_Port
+추후 직업에 따라
+해당 직업의 Portrait로
+변동될 예정.
+[IMG: 그림 61]
+[IMG: 그림 63]
+HP_BAR Anim (hurt)
+EXP_BAR Anim
+- Bar sprite는 Lerp 처리
+- 피해 시 0.17초에 걸쳐
+빨강(FF0000)으로 변환
+후 다시 0.17초에 걸쳐
+흰색으로 변환
+[IMG: 그림 70]
+HP_BAR Anim (heal)
+- Bar sprite는 Lerp 처리
+- 피해 시 0.17초에 걸쳐
+초록(58FF00)으로 변환
+후 다시 0.17초에 걸쳐
+흰색으로 변환
+- 또한 Scale 역시 위와
+동일하게 증가 후 복귀
+- Bar sprite는 Lerp 처리
+- 피해 시 0.17초에 걸쳐
+초록(58FF00)으로 변환
+후 다시 0.17초에 걸쳐
+흰색으로 변환
+- 또한 Scale 역시 위와
+동일하게 증가 후 복귀
+[IMG: 그림 75]
+모험가 등급
+0부터 시작하며 99까지 있다.
+0일 시 [    ] BLANK로 표기.
+직업
+플레이어의 현재
+직업을 표기.
+레벨
+플레이어의 현재 레벨을 표기.
+1부터 시작하여 999까지 있다.
+[IMG: 그림 121]
+직업 글자 수에 따라 레벨 표기가 밀리는 구조.
+Outline: 62007B ( x 1 , y 1 )
+##.####%
+로 항시 표기.
+현재 HP  /  최대 HP
+
+===== SLIDE 7 =====
+Level UP
+
+===== SLIDE 8 =====
+Popup 시 선행 작업
+기획 의도: 해당 Popup에 플레이어가 더 집중할 수 있도록
+[IMG: Google Shape;124;p4]
+예시화면
+[IMG: Google Shape;126;p4]
+모든 Popup은 해당 스크린 전체 크기의 검은색 layer(BlackBG_Layer)를 지니고 있다.
+Main Screen
+BlackBG_Layer
+Popup_Layer
+BlackBG_Layer
+Sprite: None
+Color: 000000 (alpha 220)
+Anim 정보:
+Dotween
+Fade
+Duration: 0.3
+Delay: 0
+Ease: OutQuad
+Loops: 1
+From: 0
+Manager
+On Enable -> Restart
+On Disable -> Rewind
+BlackBG_Layer를 클릭 시 해당 Popup은 Disable anim 재생 후 꺼진다.
+BlackBG_Layer 생성 후
+0.5초 뒤부터 유저가 클릭 시
+해당 팝업을 닫는다.
+
+===== SLIDE 9 =====
+환경설정 Popup
+[IMG: Google Shape;145;p5]
+기본적인 게임 설정을 할 수 있는 Popup 창
+Open & Close Anim
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y 350, z 0
+[OnDisable]
+Rewind
+Frame_square_256
+[IMG: Google Shape;150;p5]
+Lobby_CharacterInfo_RedGlow
+[IMG: Google Shape;152;p5]
+[IMG: Google Shape;153;p5]
+message_popup_bg_default
+[IMG: Google Shape;155;p5]
+Mythic_Button_ (29)
+Mythic_Button_ (28)
+[IMG: Google Shape;158;p5]
+[IMG: Google Shape;159;p5]
+fx_glow
+Color: 14FF00
+Color: C53F2A
+[IMG: Google Shape;163;p5]
+[IMG: Google Shape;164;p5]
+Button Anim정보:
+[OnClick]
+Dotween
+Scale
+Duration: 0.07
+Delay: 0
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+To: 0.8
+언어 번환 시
+Fx_glow On/Off
+Mysthic Button 클릭 시
+Sprite Change
+
+===== SLIDE 10 =====
+최하단 버튼
+[IMG: 그림 2]
+[IMG: 그림 4]
+예시 화면
+1. 최하단 버튼은 현재 총 6종류가 있다.
+2. 버튼의 순서는 위와 같다.
+3. 게임 첫 시작 시 [상태] 버튼만 해금된 상태이며
+나머지 버튼은 퀘스트 진행도에 따라 순차적으로 해금 된다.
+4. 각 버튼은 클릭 시 연관된 Popup창을 호출한다.
+[IMG: 그림 17]
+최하단 버튼 Anim
+최하단 버튼들은 클릭하여 팝업창 호출 시 위와 같이 버튼이 하이라이트 된다.
+해당 팝업창을 닫게 되면 원 상태로 돌아간다.
+Dotween
+Color
+Duration: 0.3
+Ease: OutQuad
+TO: FFDA01
+Scale
+Duration: 0.3
+Ease: OutQuad
+TO: 1.1
+
+===== SLIDE 11 =====
+상태정보(Status) Popup   #1
+플레이어의 스탯과 각종 능력치를 확인할 수 있는 창
+최하단 버튼 그룹의 [상태] Button 누를 시 호출
+Frame_square_256
+[IMG: Google Shape;249;p8]
+Lobby_CharacterInfo_RedGlow
+[IMG: Google Shape;251;p8]
+[IMG: Google Shape;252;p8]
+message_popup_bg_default
+Elixir
+[IMG: Google Shape;255;p8]
+pick_hero_frame_2
+[IMG: Google Shape;257;p8]
+SwitchSelect_ArrowLeft
+SwitchSelect_ArrowRight
+[IMG: Google Shape;260;p8]
+[IMG: Google Shape;261;p8]
+[IMG: Google Shape;262;p8]
+[IMG: Google Shape;263;p8]
+Mythic_Button_ (24)
+Mythic_Button_ (29)
+shop_frame_glow
+[IMG: Google Shape;267;p8]
+Frame_bg_big
+[IMG: Google Shape;269;p8]
+Glow color:934A00
+Alpha: 200
+Glow color:458000
+Mask 처리
+[IMG: Google Shape;277;p8]
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Rewind
+Open & Close Anim
+DOTween
+Punch/Scale
+Duration: 0.3
+Ease: OutQuad
+TO: x -0.25, y 0.15, z 0
+Vibrato: 10
+Elasticity: 1
+DOTween
+Scale
+Duration: 0.05
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+TO: 0.9
+
+===== SLIDE 12 =====
+상태정보(Status) Popup   #2
+Text 설정
+[IMG: Google Shape;284;p9]
+CharPopupTitleText
+CharPopupStatPointText
+CharPopupElixirText
+StrengthText
+MagicText
+AgilityText
+VitialityText
+CharPopupAttributeDetailText
+
+===== SLIDE 13 =====
+[IMG: Google Shape;284;p9]
+상태정보(Status) Popup   #3
+능력 상세정보 UI
+[능력 상세정보] 버튼 클릭 시
+색 변화
+Frame_bg_big (색: FFD000)로 변환 및
+Mask (색: FFBA00, alpha 160)처리 된
+shop_frame_glow (색: 000000)추가
+상태정보 Popup창 하단에
+추가창 Active
+role_icon_assassin
+[IMG: Google Shape;304;p9]
+Color: F57A6E
+role_icon_gladiator
+Color: 65A9FD
+[IMG: Google Shape;308;p9]
+[IMG: Google Shape;309;p9]
+role_icon_darkmage
+Color: C6FFD7
+Decor_Title_options_long
+[IMG: Google Shape;313;p9]
+Color: FAAFA4
+Color: 9EE0FF
+Color: C6FFD7
+[IMG: Google Shape;317;p9]
+shop_tab_focus
+[IMG: 그림 2]
+[IMG: 그림 4]
+[IMG: 그림 6]
+[IMG: 그림 8]
+[IMG: 그림 10]
+[IMG: 그림 12]
+Text Color: FFFFFF
+Text Outline Color: FF0000 (x 0.1, y -0.1)
+Text Color: 00CDFF
+Text Color: FFFFFF
+Text Outline Color: FFC000 (x 0.2, y -0.2)
+Text Color: F57A6E
+Text Color: 87BBFD
+Text Color: C6FFD7
+[IMG: 그림 5]
+[IMG: 그림 9]
+능력점수 =0 일때
+최하단 버튼
+능력점수 >0 일때
+최하단 버튼
+1_plus
+[IMG: 그림 22]
+
+===== SLIDE 14 =====
+[IMG: Google Shape;284;p9]
+상태정보(Status) Popup   #4
+능력치
+능력 상세정보:
+*모든 전투와 보조에 관련된 능력치들이 표시됨
+*괄호()안에 수치는 초기 설정 수치
+*치명타, 물리저항, 마법저항, 회피율은 100%가 넘어갈 시 표기는 넘은 그대로 하되 적용은 100%까지만 적용.
+*표기 시 소수점이 생기면 괄호()안에 표기된 소수점까지만  반올림하여 표기 및 적용.
+소수점 없을 경우 소수점 표기 X
+1. 물리공격력: 물리타입 공격들의 피해량에 영향 (10)
+2. 마법공격력: 마법타입 공격들의 피해량에 영향 (10)
+3. 치명타: 공격이 치명타로 적중할 확률 (0.00%) 100% 이상 수치가 가능하나 적용은 100%까지만.
+4. 치명타피해: 치명타로 적중 시 표기된 %로 피해량을 곱하여 피해를 줌 (150%) 즉 150%면 1.5배
+5. 명중률: 공격이 적에게 적중할 확률 (80.0%)
+6. 공격속도: 기본공격 1회 Anim의 Speed. (100%)
+7. 최대체력: 신체 내구력. 0이 되면 사망.
+8. 방어력: 모든 타입의 최종 피해량에서 방어력의 수치만큼 최종 피해량을 감소.
+최종 피해량은 음수(-)가 될 수 없음. (0)
+9. 물리저항: 물리 타입의 피해를 받을때 해당% 만큼 피해량을 감소. (0.00%)
+10.마법저항: 마법 타입의 피해를 받을때 해당% 만큼 피해량을 감소. (0.00%)
+11.회피율: 모든 타입의 공격을 해당% 만큼 회피하여 피해를 무시. (0.00%)
+12.회복력: 체력회복에 관련된 모든 효과를 표기된 %로 곱하여 적용. (0.0%)
+13. 성장률: 레벨 경험치 획득 시 표기된 %로 곱하여 적용. (100%)
+14. 획득률: 몬스터 드랍률 표기된 %로 곱하여 적용.(100%)
+해당 속성은 플레이어만 적용.
+그 외 능력치들은 몬스터에게도 동일 적용.
+
+===== SLIDE 15 =====
+상태정보(Status) Popup   #5
+증가율과 증폭률
+[IMG: 그림 1]
+물리공격력, 마법공격력, 최대체력, 방어력
+위 4가지 능력치는 증가율과 증폭률이 존재.
+증가율은 +n%로 표기
+증폭률은 xn으로 표기
+하지만 공식은 단순함.
+기본 * (증가율+1) * 증폭률 = 최종 능력치.
+또한 위 4가지 능력치 박스를 누를 시
+UI가 확장되며 증가율과 증폭률 확인이 가능.
+확장 전 표기 능력치는 최종 능력치임.
+또한 능력치(근력,체력 등등)으로 오르는 수치는 [기본]수치가 오르는 것.
+[IMG: 그림 13]
+Anim 예시
+UI Anim
+DOTween
+UIWidthHeight
+Duriation: 0.3
+Ease: Linear
+TO: x 60, y 46
+다시 누를 시
+DOPlayBackwards
+Text Anim
+Fade
+Duration: 0.4
+Delay: (기본 text 0.1, 증가율 text 0.2, 증폭률 text 0.3)
+Ease: OutQuad
+From: 0
+다시 누를 시
+Text object set active false
+
+===== SLIDE 16 =====
+상태정보(Status) Popup   #6
+능력점수 올리기
+[IMG: 그림 8]
+[IMG: 그림 12]
+[IMG: 그림 18]
+[IMG: 그림 20]
+능력점수가 있을 때
+<,> Btn Click
+할당된 능력과 능력 상세정보 창에
+변동된 부분의 Text 색을 00FF00로 적용.
+능력점수 복귀 시 본래 색으로 변환.
+능력점수 할당되어 있을 때
+V Btn Click
+할당된 능력과 능력 상세정보 창에
+변동된 부분을 적용하고
+본래 색으로 변환.
+Particle: Quest_Done_Effect
+넣으면 좋을 듯?
+능력점수 없을 때
+> Btn Click
+Text Color B70000로
+0.3초간 변환 및
+DOTween
+Shake/Position
+Duration: 0.3
+TO: x 0.8
+Vibrato: 50
+Randomness: 90
+능력점수 할당되어 있을 때
+되돌리기 Btn Click
+해당 능력에 할당되어 있던
+모든 능력점수를 다시 복귀.
+
+===== SLIDE 17 =====
+아이템 종류 및 등급
+[IMG: 그림 10]
+[IMG: 그림 16]
+[IMG: 그림 22]
+[IMG: 그림 28]
+[IMG: 그림 30]
+소지품
+물약을 제외한 모든 재료
+및 사용 아이템들.
+장비
+장비의 종류와 개수는 고정.
+조건적 해금 및 제작필요.
+귀중품
+컨텐츠 관련 아이템들.
+귀중품
+물약 아이템들.
+물약 종류는 고정.
+아이템 등급
+[IMG: 그림 57]
+[IMG: 그림 39]
+[IMG: 그림 41]
+[IMG: 그림 43]
+[IMG: 그림 45]
+[IMG: 그림 47]
+[IMG: 그림 59]
+[IMG: 그림 62]
+사용 방식
+
+===== SLIDE 18 =====
+[IMG: 그림 84]
+아이템 아이콘
+[IMG: 그림 36]
+[IMG: 그림 1]
+[IMG: 그림 2]
+Mask 처리
+아이콘 위치(center)
+해당 아이템 등급색
+[IMG: 그림 9]
+기본
+소지품
+Popup
+해당 아이템 소지 개수.
+하단 가운데 위치.
+Font: PF_Stardust 고정.
+아이템 상세정보
+Popup
+[IMG: 그림 4]
+[IMG: 그림 6]
+기본 Icon +
+불투명 검은색 layer
+Color: FF0000
+Color: 00FF00
+사용/필요 아이템 표기 시
+(부족 / 충족)
+모든 아이템 아이콘은 상호작용이 가능하며, 누를 시 해당 아이템의 상세정보 Popup 창 호출
+
+===== SLIDE 19 =====
+소지품(Inventory)
+[IMG: 그림 3]
+Open & Close Anim
+모든 재료, 사용 아이템(물약 제외)이 보관되는 창
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Rewind
+[IMG: 그림 8]
+BAR_Bag
+[IMG: 그림 11]
+Icon_inventory_bag
+[IMG: 그림 14]
+shop_frame_glow
+[IMG: 그림 17]
+Chat_Icon_Lock
+[IMG: 그림 20]
+gui_atlas(slider_button01)
+[IMG: 그림 23]
+T_gray_button
+[IMG: 그림 26]
+Stencils 32 (65)
+[IMG: 그림 29]
+InventoryTitleText
+소지품 Slot들은 제한이 없으며, ScrollView로 처리한다.
+또한 초기에 사용할 수 있는
+Slot은 총 16칸이며, 나머지 Slot은
+잠금 처리 한다.
+[IMG: 그림 37]
+[IMG: 그림 39]
+[IMG: 그림 41]
+사용가능 Slot (아이템 획득 가능)
+Glow color: FFFFFF (alpha 40)
+상호작용 가능: X
+사용중 Slot (아이템 획득 불가)
+Glow color: 해당 아이템 등급
+상호작용 가능: O
+잠긴 Slot (아이템 획득 불가)
+Glow color: 0F0F0F
+상호작용 가능: X
+자물쇠 color: FFFFFF(alpha 150)
+[IMG: 그림 47]
+획득 순서
+가장 왼쪽 위에서부터
+오른쪽으로 순서대로 획득
+[IMG: 그림 53]
+[정리] 버튼
+정리 버튼 클릭 시 가장 왼쪽 위에서부터
+오른쪽으로 순서대로 재정리
+(NEW 표시는 버그임)
+Button Anim:
+DOTween
+Scale
+Duriation: 0.05
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+TO: 0.9
+[IMG: 그림 61]
+사용중 Slot Anim
+DOTween
+Punch/Scale
+Duriation: 0.3
+Ease: OutQuad
+Loops: 1
+TO: x -0.25, y 0.15, z 1
+Vibrato: 10
+Elasticity: 1
+[IMG: 그림 2]
+New Text 조건
+“새로운“ 종류의 아이템을 획득했을 경우.
+[가방] 버튼 및 소지품Popup의 해당
+소지품 칸에 표기.
+수량이 늘어났을 때는
+포함하지 않는다.
+[IMG: 그림 16]
+
+===== SLIDE 20 =====
+[IMG: 그림 85]
+귀중품
+컨텐츠 관련 아이템이 보관되는 창
+[IMG: 그림 2]
+Open Anim
+[IMG: 그림 13]
+RequisiteTitleText
+Outline: 9F8320 (x 0.1, y 0.1)
+[IMG: 그림 42]
+[IMG: 그림 46]
+Layer1
+Icon_inventory_bag
+Color: FDE500
+Layer2
+Icon_inventory_bag
+Color: FFFFFF
+[IMG: 그림 69]
+[IMG: 그림 71]
+Frame_bg_big_2
+Color: FBFF00
+[IMG: 그림 74]
+Layer1
+Icon_inventory_bag
+Color: FFFFFF
+Layer2
+Icon_inventory_bag
+Color: FF00C0
+귀중품 Item Slot에는
+shop_frame_glow가
+사용되지 않습니다.
+Open Anim:
+Scale
+Duriation: 0.15
+Ease: OutQuad
+FROM: x 0, y 1, z 0
+획득 순서
+가장 왼쪽 위에서부터
+오른쪽으로 순서대로 획득
+
+===== SLIDE 21 =====
+RarityText:
+FoundAtText:
+아이템 상세정보 창
+아이템의 모든 정보들이 나오는 창
+[IMG: 그림 4]
+Open & Close Anim
+[IMG: 그림 10]
+[IMG: 그림 12]
+Frame_square_256_vert
+[IMG: 그림 18]
+Title_frame_m
+[IMG: 그림 21]
+shop_frame_glow
+[IMG: 그림 24]
+Inventory_Slot_IconFrame
+[IMG: 그림 29]
+Decor_Title_options
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Rewind
+[IMG: 그림 33]
+2_options_off
+[IMG: 그림 37]
+Frame_title_dots
+[IMG: 그림 40]
+message_popup_bg_default
+소지품 아이콘과 동일
+해당 아이템 보유 개수
+(0일 시 Text 표기 X)
+[IMG: 그림 103]
+[IMG: 그림 105]
+[IMG: 그림 106]
+Layer1
+Layer2
+Layer3
+Mask 처리
+[IMG: 그림 101]
+Layer4
+ItemNameText
+[IMG: 그림 139]
+ItemDesc
+Outline: BE7F00
+(x 1, y 1)
+(alpha120)
+
+===== SLIDE 22 =====
+QuestFollow   #1
+기획 의도: 플레이어가 목적성을 잊지 않도록 무엇을 해야 할 지 간단한 가이드 역할
+[IMG: Google Shape;175;p6]
+초기 시작 상태
+[IMG: Google Shape;178;p6]
+의뢰 수주 시
+[IMG: Google Shape;181;p6]
+의뢰 진행중
+[IMG: Google Shape;184;p6]
+의뢰  목표 달성 시
+진행 흐름
+Anim정보:
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutCubic
+Loops: 1
+To: x 50, y -2, z 0
+Anim정보:
+Particle
+Quest_Done_Effect
+의뢰 완료 시
+Anim정보:
+DoPlayBackward
+모험가 협회에서 의뢰를 수주 시 active
+모든 임무는 몬스터 드랍 아이템 n개를 모으는 방식
+
+===== SLIDE 23 =====
+QuestFollow   #2
+사용 Asset & 조합
+Mask 처리
+퀘스트아이템이름
+(9999/9999)
+(해당 아이템 보유량 / 요구량)
+아이템 보유량txt는 플레이어가 해당 아이템 습득 시 마다 갱신
+컬러값
+1. 보유량 = 0 : FF0000
+2. 보유량 > 0 &&  보유량 < 요구량 : FEA400
+3. 보유량 >= 요구량 : 00FF00
+
+===== SLIDE 24 =====
+Quest System
+기획 의도: 플레이어의 진행 상태에 따라 특정 UI 기능 해금 및 알림(느낌표)을 통해 행동을 유도하는 진행 시스템.
+퀘스트는 Main Quest와 Sub-Quest로 분류된다.
+게임 첫 시작 시 Main Quest 번호 1로 셋팅.
+자신의 전 퀘스트 번호의 완료조건이 특정 아이템 소지일 경우
+해당 아이템 소지 계수를 지속적으로 확인하여 만약 해당 완료 조건에 못 미칠 경우
+다시 해당 퀘스트 번호로 돌아가게 된다.
+해당 퀘스트 번호에 표기된 Dialogue를 설정.
+느낌표 UI는 퀘스트 번호에 들어있는 UI만 켜지고
+나머지는 다 꺼짐.
+
+===== SLIDE 25 =====
+마을 MID UI   #1
+사용 UI Sprites
+[IMG: 그림 4]
+예시 화면
+[IMG: 그림 8]
+Text Color: FFFFFF
+Text Outline: CFA936(alpha 118) , x 0.8, y 0.8
+현재(즉, 이동된) 장소의 이름
+[IMG: 그림 20]
+Icon_inventory_bag
+[IMG: 그림 23]
+Guild Icon
+[IMG: 그림 26]
+Alchemy_Icon
+Travel Icon
+[IMG: 그림 31]
+Exit_Icon
+[IMG: 그림 34]
+[IMG: 그림 36]
+pick_hero_frame_2
+[IMG: 그림 39]
+guild_npc_idle_profile_5
+[IMG: 그림 42]
+Quest Icon
+gui_atlas
+Exclamation_mark 01
+[IMG: 그림 47]
+
+===== SLIDE 26 =====
+마을 MID UI   #2
+마을 MID UI 종류
+TYPE 1
+TYPE 2
+건물 밖에 있을 시
+건물 안에 있을 시
+[IMG: 그림 15]
+[IMG: 그림 18]
+
+===== SLIDE 27 =====
+마을 MID UI   #3
+Anim 흐름 및 장소 Text Anim & Fade In/Out
+[IMG: 그림 4]
+예시 화면
+게임 시작 시
+STEP.1
+a. 페이드 인 anim
+b. 장소 Text anim
+마을 내 장소 이동 시
+STEP.2
+c. 버튼 ON anim
+STEP.1
+a. 페이드 아웃 anim
+b. 장소 Text anim
+c. 버튼 OFF anim
+STEP.2
+c. 버튼 ON anim
+[IMG: 그림 26]
+Dotween Animation:
+[OnEnable: Restart]
+- 1st anim
+Move
+Duriation: 0.25
+Delay: 0
+Ease: OutQuad
+Loops: 1
+FROM x -150, y 12, z 0
+Wait 0.6 sec
+- 2nd anim
+Move
+Duriation: 0.15
+Delay: 0
+Ease: OutQuad
+Loops: 1
+TO x 150, y 12, z 0
+장소 Text Anim
+[IMG: 그림 29]
+Animation:
+0.4초에 걸쳐 Fade Out (Ease: InQuad)
+0.15초 대기 후
+0.5초에 걸쳐 Fade In (Ease: InQuad)
+상단 화면 페이드 인/아웃
+
+===== SLIDE 28 =====
+마을 MID UI   #4
+TYPE 1 Button Animation
+예시 화면
+모든 버튼 동일
+Dotween Animation:
+[OnEnable: Restart]
+Move
+Duriation: 0.3
+Delay: 0
+Ease: OutBack
+Loops: 1
+FROM x 0, y 0, z 0
+★RULE
+- 1번 버튼 Active → 0.7 wait → 2번 버튼 Active → 0.7 wait …
+- 나가기 버튼 누를 시 DOPlayBackwards
+[IMG: 그림 33]
+[IMG: 그림 28]
+기준점
+[IMG: 그림 36]
+x 0, y 0, z 0
+초기 위치
+1: x -51.5, y 45.5
+2: x 0.5, y 45.5
+3: x 52.5, y 45.5
+4: x -51.5, y -21.5
+5: x 0.5, y -21.5
+6: x 52.5, y -21.5
+
+===== SLIDE 29 =====
+마을 MID UI   #5
+TYPE 2 Button Animation
+예시 화면
+모든 버튼 동일
+Dotween Animation:
+[OnActive]
+Move
+Duriation: 0.3
+Delay: 0
+Ease: OutBack
+Loops: 1
+★RULE
+- 1번 버튼 Active → 0.07 wait → 2번 버튼 Active → 0.07 wait …
+- 나가기 버튼 누를 시 DOPlayBackwards
+[IMG: Google Shape;435;p26]
+기준점
+[IMG: Google Shape;437;p26]
+x 0, y 0, z 0
+초기 위치 및 이동 위치
+1: x -53, y 113 (FROM x -100, y 113)
+2: x 0, y 186 (FROM x 75, y 186)
+3: x 51, y 186 (FROM x 51, y 186)
+4: x 0, y 133 (FROM x 75, y 133)
+5: x 51, y 133 (FROM x 120, y 133)
+6: x 0, y 59 (FROM x 0, y 0)
+[IMG: Google Shape;442;p26]
+[IMG: Google Shape;443;p26]
+1
+2
+4
+5
+3
+6
+
+===== SLIDE 30 =====
+[IMG: 그림 6]
+모험가 협회
+[IMG: 그림 13]
+예시 화면
+[IMG: 그림 7]
+Mask
+Masking 처리
+메인 퀘스트 수락과 완료는 항상 이 [임무] 버튼으로 진행된다.
+단, 메인 퀘스트[1] (게임 시작하자마자) 시에만 [대화] 버튼으로 퀘스트를 진행한다.
+그 외, Dialogue – GuildNormalText 의 TextKey를 랜덤하게 뽑아 대화 진행.
+[IMG: 그림 34]
+Background_Guild
+guild_npc_idle
+[IMG: 그림 42]
+Animator: Town_NPC
+Clip: Receptionist
+[IMG: 그림 45]
+Main_lev_build
+(Main_lev_build_53)
+[IMG: 그림 56]
+JungleTileset
+(JungleTilset_8)
+
+===== SLIDE 31 =====
+대화창   #1
+[IMG: 그림 9]
+[IMG: 그림 12]
+Gradient01
+None(000000)
+[IMG: 그림 32]
+dia_box2
+(111111)
+[IMG: 그림 38]
+Arrow_down
+(A1A1A1)
+지속적으로 페이드 아웃/인
+(alpha 255~100)
+사용 UI
+[IMG: 그림 257]
+[IMG: 그림 259]
+alchemist_face_1
+guild_npc_idle_profile
+캐릭터 Sprite
+대화 상대에 따라 변동
+Animation clip 지정 없으면 항시 Idle clip 재생
+DOTween
+Fade
+Duriation: 0.5
+Ease: OutQuad
+DOTween
+Fade
+Duriation: 0.5
+Ease: OutQuad
+DOTween
+Fade
+Duriation: 0.2
+Ease: OutQuad
+
+===== SLIDE 32 =====
+대화창   #2
+예시 화면
+[IMG: 그림 4]
+Animation
+STEP 1
+Gradient01와 Sprite(None)이 페이드 인 된다.
+STEP 2
+0.5초 뒤 dia_box2 페이드 인.
+STEP 3
+0.2초 뒤 캐릭터 Sprite ON
+및 캐릭터 이름 표시.
+Text Show Start.
+특이사항
+1. Text Show 중 화면 아무곳이나 클릭하게 되면
+Text Show Anim을 중단하고 그 즉시 모든 Text를 보여준다.
+2. 만약 다음 Dialogue Text가 존재한다면 클릭 시 대화창은 꺼지지 않고
+다음 Text를 보여주며, 다음 Dialogue Text가 없는 상태에서 클릭 시
+대화창은 꺼지게 된다.
+STEP 4
+Text Show 가 끝나면 Arrow_down 활성화
+
+===== SLIDE 33 =====
+연금공방
+예시 화면
+[IMG: 그림 3]
+[IMG: 그림 6]
+Background_Alchemy
+[IMG: 그림 10]
+Alchemist_idle_Sheet
+Animator: Town_NPC
+Clip: Alchemist
+[IMG: 그림 13]
+Main_lev_build
+(Main_lev_build_53)
+[IMG: 그림 16]
+JungleTileset
+(JungleTilset_8)
+[IMG: 그림 18]
+alchemist_face_1
+[IMG: 그림 21]
+Potion_Icon2
+CommissionText
+
+===== SLIDE 34 =====
+제작의뢰   #1
+예시 화면
+[IMG: 그림 23]
+[IMG: 그림 5]
+Decor_description_line
+BAR_Basic
+[IMG: 그림 20]
+[IMG: 그림 25]
+Frame_square_768
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Rewind
+[IMG: 그림 35]
+alchemist_face_2
+Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.4
+Ease: OutBack
+From: x 0, y -1, z 0
+[OnDisable]
+PlayBackwards
+[IMG: 그림 55]
+Mask 처리
+CommissionText
+WhichOneText
+Anim: Dialogue text amim 처럼
+
+===== SLIDE 35 =====
+제작의뢰   #2
+예시 화면
+[IMG: 그림 2]
+[IMG: 그림 4]
+[IMG: 그림 6]
+[물약] 또는 [기술] 버튼을 누를 시
+1. 눌러진 (선택된)버튼의 Frame_square_768 색이 F5DD6C로 변한다.
+2. 두 버튼 모두 동일한 Anim 이 재생된다:
+- DOTween Anim
+Move
+Duration: 0.5
+Ease: OutBack
+TO: y -40
+[IMG: 그림 11]
+[물약]버튼을 누를 시 왼쪽부터 회복물약, 신속물약, 행운물약 순으로 배치되며
+[기술]버튼을 누를 시 [물약 주입기] 기술이 배치된다.
+각 물약과 기술의 anim은 다음과 같다:
+DOTween Anim:
+Scale
+Duriation: 0.4
+Ease: OutBack
+From: 1.8
+[IMG: 그림 15]
+물약, 기술 해금
+초기에는 회복물약만 해금되어있는 상태이며,
+신속물약, 행운물약, 그리고 물약주입기 기술은 잠겨있는 상태이다.
+잠겨있는 상태는
+Sprite None(000000, alpha 180) + Chat_Icon_Lock (FFFFFF, alpha 80)으로 사용한다.
+해금은 모험가등급에 따라 해금되며
+해금된 뒤 처음으로 플레이어가 해당 컨텐츠를 접할 시
+위와같이 해금 모션을 재생한다.
+Chat_Icon_Lock Anim:
+Dotween
+Shake/Position
+Duriation: 0.7
+Delay: 0.5
+Ease: OutQuad
+TO: x 1, y 1, z 0
+Vibrato: 48
+Randomness: 59
+Anim 종료 후 플레이어는 해당 버튼과 상호작용이 가능하며
+NEW 표시 또한 생긴다.
+Sprite None + Chat_Icon_Lock Anim:
+Dotween
+Fade
+Duriation: 0.5
+Delay 1.2
+Scale
+Duriation: 0.5
+Delay: 1.2
+Ease: OutBack
+TO: 2
+[IMG: 그림 26]
+제작의뢰가 해금될 때
+하단의 물약 버튼도
+NEW표시와 함께 해금된다.
+
+===== SLIDE 36 =====
+제작의뢰   #3
+[IMG: 그림 1]
+= 해금 안됨. (상호작용 불가)
+= 해금됨. (상호작용 가능)
+물약 LIST 중
+클릭 시 해당 물약 상세정보 Popup
+기술 LIST 중
+클릭 시 해당 기술 상세정보 Popup
+[IMG: 그림 44]
+[IMG: 그림 49]
+물약 상세정보 Popup Anim
+[IMG: 그림 6]
+기술 상세정보 Popup Anim
+기술/물약 상세정보
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Rewind
+[IMG: 그림 9]
+물약 아이콘은 현재 등급에 따라 변함
+[IMG: 그림 14]
+
+===== SLIDE 37 =====
+물약 상세정보 Popup   #1
+[IMG: 그림 46]
+물약 상세정보 Popup
+(기본화면)
+[IMG: 그림 53]
+Icon_inventory_bag
+상단의 물약 아이콘 프레임이
+인것을 제외하고 전체적인 것은
+아이템 상세정보창과 동일하다.
+예시에는 Glow가 빨간색이지만
+해당 Glow는 아이템 상세정보창과
+동일하게 해당 물약의 등급색으로 한다.
+추가 사용 UI:
+[IMG: 그림 60]
+Options_lattice_3
+(A1A1A1)
+[IMG: 그림 255]
+Options_sq_mini
+[IMG: 그림 258]
+T_gray_button_s
+(D6D6D6, alpha 180)
+[IMG: 그림 261]
+Decor_description_line
+Popup Anim정보:
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -130, z 0
+[OnDisable]
+PlayBackwards
+1. 물약은 등급별로 총 3단계가 있다.
+2. 3단계에서 강화할 시 다음 등급의 1단계로 변한다.
+3. 각 등급별로 물약의 이름, 등급, 설명, 아이콘, 능력치가 변한다.
+물약 별 능력치 정보는 ItemData.xlsx 참고.
+[IMG: 그림 40]
+AlchemyText
+ItemName (PotionNameTexts)
+RankText
+StatText
+DescriptionText (Outline: C59600, alpha 128)
+ItemNeededText (ECCC6C)
+NeedMatsText
+(C8C8C8)
+NextInfoText
+(Outline: F5A200, alpha 146)
+Text 정보
+shop_frame_glow
+[IMG: Google Shape;267;p8]
+[IMG: 그림 306]
+Shop_frame_glow (000000)
+재료 부족
+[IMG: 그림 310]
+재료 충족
+Shop_frame_glow (00710F)
+Outline: A2FF00, alpha 128)
+※ 이 2개의 버튼은 제작의뢰를 통해 열었을 때만 나타난다.
+
+===== SLIDE 38 =====
+물약 상세정보 Popup   #2
+[IMG: 그림 4]
+[설명] 버튼 누를 시
+[IMG: 그림 8]
+Button Anim정보:
+Dotween
+Scale
+Duration: 0.07
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+TO: 0.9
+설명 버튼을 누를 시
+[재료부족/제작] 버튼과
+[다음단계 정보] 버튼이 사라지며
+필요 재료 목록부분이
+해당 물약의 부가 설명Text로 변한다.
+이때 [설명] 버튼이 [필요재료] 버튼으로 변하며
+[필요재료] 버튼을 누를 시 원상태로 복귀한다.
+또한 물약 상세정보 Popup 호출 시
+어느 상태에서 Popup창이 꺼졌든
+항상 필요재료 목록 부분이 나오는 상태로 켜진다.
+ItemDesc
+[IMG: 그림 2]
+[IMG: 그림 5]
+해당 물약이 제작되어 있는 상태일 때
+[물약 상세정보창] 호출 시
+해당 물약이 제작되어 있지 않은 상태일 때
+[물약 상세정보창] 호출 시
+ItemDesc (Potion0DescText)
+
+===== SLIDE 39 =====
+물약 상세정보 Popup   #3
+[IMG: 그림 2]
+[다음단계 정보] 버튼 누를 시
+Button Anim정보:
+Dotween
+Scale
+Duration: 0.07
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+TO: 0.9
+[IMG: 그림 6]
+변하는 부분들이 하이라이트 되며 지속적으로 점멸된다.
+1. 물약 명 text
+2. 단계 text
+3. 단계 아이콘
+4. 능력치 (능력치만 ▶ 표기를 추가한다)
+※ 필요 재료 표기는 변하지 않는다.
+능력치 향상은 Color: 00FF00
+능력치 하락은 Color: FF0000
+색으로 표기한다.
+또한 [다음단계 정보] 버튼이
+[뒤로] 버튼으로 변하며 누를 시
+다시 원상태로 복귀한다.
+만약 물약이 3단계일 경우
+다음 등급의 물약 정보를 보여준다:
+1. 물약 아이콘
+2. 등급에 맞는 glow 색
+3. 물약 명 text
+4. 단계 1단계로 표기하되 00FF00 색으로 표기
+5. 능력치
+[IMG: 그림 10]
+Anim
+Dotween
+Scale
+Duration: 0.3
+Ease:OutBack
+From: 3
+BackBtnText
+(Outline: F5A200, alpha 146)
+[IMG: 그림 7]
+
+===== SLIDE 40 =====
+물약 상세정보 Popup   #4
+[IMG: 그림 14]
+[IMG: 그림 7]
+해당 물약이 제작되어 있는 상태일 때
+[제작] 버튼 누를 시 Anim
+*Anim재생 도중 모든 버튼은 비활성화 된다.
+해당 물약이 제작되어 있지 않은 상태일 때
+[제작] 버튼 누를 시
+Dotween Anim정보:
+1. [창 전체]
+Shake/Position
+Duration: 1.1
+Ease: OutQuad
+TO: X1.5, Y0, Z0
+Vibrato: 21
+Randomness: 0
+끝난뒤
+2. [창 전체]
+Punch/Sccale
+Duration: 0.3
+Ease: OutQuad
+TO: X 0.2, Y 0.2, Z 1
+Vibrato: 4
+Elasticity: 1
+[IMG: 그림 28]
+FX_splash_spark_floor
+(물약 상세정보창 정 가운데 부분에)
+[IMG: 그림 31]
+FX_Potion Upgrade
+(물약 아이콘 부분에)
+Dotween Anim 이 끝날 때
+모든 아이템 정보 갱신.
+
+===== SLIDE 41 =====
+물약창 Popup   #1
+[IMG: 그림 6]
+Popup 예시 화면
+[IMG: 그림 9]
+Title_frame_0m
+[IMG: 그림 13]
+Hp_frame_short
+(Color: ADADAD)
+[IMG: 그림 17]
+Frame_bg_big_2
+[IMG: 그림 20]
+Dead_bar
+[IMG: 그림 23]
+General_Container_A
+[IMG: 그림 26]
+1_basic_button_s
+[IMG: 그림 32]
+Chat_Icon_Lock
+[IMG: 그림 35]
+Hp_orange
+(alpha 220)
+[IMG: 그림 38]
+2_options_on
+(Color: E7E7E7)
+Popup Anim정보:
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y 40, z 0
+[IMG: 그림 48]
+HP_Portrait_frame_bg
+[IMG: 그림 51]
+HP_Portrait_frame
+[IMG: 그림 4]
+자동물약 예시 화면
+[IMG: 그림 11]
+loading_rotate_0
+Clip: Loading
+[IMG: 그림 29]
+[IMG: 그림 44]
+자동물약 사용 조건
+(HP Ratio) Slider
+물약상세정보 Popup
+호출
+자동물약 On/Off Btn
+연금공방에서 첫 물약을 획득하게 되면
+하단에 [물약] 버튼이 생기게 된다.
+해당 버튼을 누를 시 물약창 Popup
+위 정보는 저장됨
+자동물약 기억 전
+자동물약 기억 후
+잠겨있음
+[IMG: 그림 55]
+New Text 조건
+1. 물약 제작 시
+2. 자동물약 기억 시
+
+===== SLIDE 42 =====
+1. 물약 사용 시 재사용 대기 시간에 따라 위에서 아래로 줄어드는 Slider 표시
+Silder 의 Fill – color: FFFFFF, alpha 200
+2. 물약 사용 시 즉각 사용된 물약에 해당되는 이펙트 표시
+3. 재사용 대기 시간에는 물약 버튼 interactive X
+4. 재사용 대기 시간이 끝나면 Finish Anim 재생
+물약창 Popup   #2
+[IMG: 그림 58]
+[IMG: 그림 60]
+자동물약 사용 X
+물약 버튼 클릭 시 사용
+자동물약 사용 O
+조건에 맞춰 자동으로 사용
+물론, 클릭 시 사용 가능
+[IMG: 그림 256]
+HP 물약 사용 시 이팩트
+(HP Potion Ef)
+캐릭터 몸 한 가운데 생기도록
+Finish Anim:
+Image: Sprite(None) , color (FFFFFF, alpha 80)
+DOTween
+Fade
+Duration: 0.3
+Ease: InBack
+TO: 0
+[IMG: 그림 261]
+
+===== SLIDE 43 =====
+여정 Popup   #1
+[IMG: 그림 46]
+Popup 예시 화면
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Playbackwards
+[IMG: 그림 60]
+Frame_square_256
+[IMG: 그림 255]
+Title_frame_0L
+장소마다 MAP_IMG 연결 해야 하는데 어떻게 할 건지
+[IMG: 그림 259]
+pick_hero_frame_2
+[IMG: 그림 262]
+Title_frame_m
+[IMG: 그림 265]
+Decor_description_line
+[IMG: 그림 268]
+Frame_bg_big
+[IMG: 그림 271]
+Img_Field
+[IMG: 그림 274]
+(FFFFFF, alpha 80)
+Mat: Path_Image_Shadow
+Img_Town
+[IMG: 그림 278]
+T_gray_button_s
+[IMG: 그림 281]
+Shop_tab
+(color: 959595)
+[IMG: 그림 2]
+TravelText
+PlaceName
+유동적
+(현재 플레이어가
+있는 장소)
+TownText
+ExploreText
+HeadOutText
+BackBtnText
+
+===== SLIDE 44 =====
+여정 Popup   #2
+[IMG: 그림 1]
+여정 Popup의
+모든 Layer를 활성화 했을 때
+1. 여정 Popup은 총 3개의 Layer가 존재한다.
+a. 대분류 Layer
+b. 중분류 Layer
+c. 소분류 Layer
+1. 대분류 Layer
+2. 중분류 Layer
+3. 소분류 Layer
+[IMG: 그림 53]
+기본 여정 Popup
+초기 화면
+[IMG: 그림 55]
+중분류 Layer Size
+소분류 Layer Size
+
+===== SLIDE 45 =====
+[IMG: 그림 61]
+[IMG: 그림 52]
+여정 Popup   #3
+1. 초기 화면 (Popup창 켜졌을 때)
+- 대분류 Layer만 활성
+- 중,소분류 Layer는 비활성
+2. Mask 처리
+- 중,소분류 Layer를 위한 Mask 처리
+3. 중,소분류 Layer 활성 Anim
+DOTween
+Move
+Duration: 0.3
+Ease: OutQuad
+FROM: x 0 , y -150 , z 0
+*[뒤로] 버튼 누를 시 소 → 중분류순으로
+클릭 한번당 하나의 Layer를
+DOPlayBackwards
+4. 모든 Button Animation
+DOTween
+Scale
+Duration: 0.07
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+TO: 0.95
+Layer Animation
+[IMG: 그림 2]
+[IMG: 그림 20]
+[IMG: 그림 27]
+대분류 Layer
+[마을] Button 클릭 시
+중분류 Layer
+(해금된 마을들만 보임)
+Scroll Bar
+Viewport
+소분류 Layer
+[세부장소] Button들
+(해금된 세부장소들만 보임)
+[IMG: 그림 49]
+대분류 Layer
+[탐험] Button 클릭 시
+중분류 Layer
+[장소] Button 클릭 시
+(여기선 산들바람 숲)
+(해금된 장소들만 보임)
+Scroll Bar
+Viewport
+[IMG: 그림 256]
+소분류 Layer 없음
+
+===== SLIDE 46 =====
+PlaceNameBWF1Text
+PlaceNameBWF2Text
+[IMG: 그림 41]
+여정 Popup   #4
+[IMG: 그림 3]
+[IMG: 그림 10]
+[IMG: 그림 13]
+아무 중,소분류 Layer가
+켜져 있을 때
+(Color: FFFFFF)
+(Interactive: O)
+[IMG: 그림 21]
+그 외
+(Button Disabled Color:
+5E5E5E, alpha 200)
+(Interactive: X)
+행선지가 선택되었을 때
+[마을] 중분류 Layer안의 버튼
+[탐험] 소분류 Layer안의 버튼
+(Color: FFA300)
+(Interactive: O)
+클릭 시 해당 장소로 이동
+그 외 또는
+[뒤로] 버튼이 눌렸을 때
+(Button Disabled Color:
+5E5E5E, alpha 200)
+(Interactive: X)
+해당 버튼의 장소가
+현재 플레이어가
+있는 장소일 시
+(Color: 237B00)
+(Interactive: X)
+선택되었을 때
+(Button Disabled Color:
+FFC500)
+(Interactive: O)
+테두리에 Image: UIMask
+Mat: EquipedMat
+활성화
+[IMG: 그림 35]
+[IMG: 그림 43]
+그 외
+(Color: 959595)
+(Interactive: O)
+[IMG: 그림 2]
+[IMG: 그림 6]
+동일 IMAGE
+[IMG: 그림 47]
+[IMG: 그림 48]
+[IMG: 그림 49]
+[IMG: 그림 50]
+TownText
+ExploreText
+PlaceNameTownAsdalText
+CurrentLocationText
+PlaceNameBWF0Text
+
+===== SLIDE 47 =====
+전투 UI 기획서   #1
+[IMG: 그림 5]
+예시 화면
+Decorated_bar
+[IMG: 그림 9]
+Hp_frame_Empty
+[IMG: 그림 12]
+Hp_orange
+[IMG: 그림 15]
+Decor_Title_options2
+Color: FF001F
+Outline: 000000
+x 0.6, y -0.6
+[IMG: 그림 18]
+Skill_bar_noColbs_little
+[IMG: 그림 21]
+Icon_Frame
+[IMG: 그림 28]
+Icon_inventory
+shop_frame_glow
+[IMG: Google Shape;267;p8]
+[IMG: 그림 35]
+T_gray_button
+[IMG: 그림 40]

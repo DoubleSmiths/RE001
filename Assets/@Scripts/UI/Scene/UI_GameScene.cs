@@ -239,13 +239,14 @@ public class UI_GameScene : UI_Scene
         if (fade == null) return;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(fade.DOFade(1f, 0.5f).SetUpdate(true));
+        seq.Append(fade.DOFade(1f, 0.4f).SetEase(Ease.InQuad).SetUpdate(true));
+        seq.AppendInterval(0.15f);
         seq.AppendCallback(() =>
         {
             onBlack?.Invoke();
             SwapAreaBtnGroup(area);
         });
-        seq.Append(fade.DOFade(0f, 0.5f).SetUpdate(true));
+        seq.Append(fade.DOFade(0f, 0.5f).SetEase(Ease.InQuad).SetUpdate(true));
         seq.OnComplete(() => _currentBtnGroup?.PlayEnterAnimation());
     }
 

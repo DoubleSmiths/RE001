@@ -2,7 +2,7 @@
   "entries": [
     {
       "TextKey": "TravelBtnText",
-      "Kor": "대화",
+      "Kor": "여정",
       "Eng": "TRAVEL"
     },
     {
@@ -21,6 +21,11 @@
       "Eng": "REQ. ITEMS"
     },
     {
+      "TextKey": "NeedMatsText",
+      "Kor": "재료부족",
+      "Eng": "NEED MATS"
+    },
+    {
       "TextKey": "DescriptionText",
       "Kor": "설명",
       "Eng": "DESCRIP"
@@ -31,9 +36,19 @@
       "Eng": "NEXT INFO"
     },
     {
+      "TextKey": "BackBtnText",
+      "Kor": "뒤로",
+      "Eng": "BACK"
+    },
+    {
       "TextKey": "CraftText",
       "Kor": "제작",
       "Eng": "CRAFT"
+    },
+    {
+      "TextKey": "RankText",
+      "Kor": "단계",
+      "Eng": "RANK"
     },
     {
       "TextKey": "TestKey",
@@ -271,6 +286,26 @@
       "Eng": "GENERAL"
     },
     {
+      "TextKey": "TownText",
+      "Kor": "마을",
+      "Eng": "TOWN"
+    },
+    {
+      "TextKey": "ExploreText",
+      "Kor": "탐험",
+      "Eng": "EXPLORE"
+    },
+    {
+      "TextKey": "CurrentLocationText",
+      "Kor": "현재 위치",
+      "Eng": "CURRENT LOCATION"
+    },
+    {
+      "TextKey": "HeadOutText",
+      "Kor": "이동",
+      "Eng": "HEAD OUT"
+    },
+    {
       "TextKey": "RarityBasicText",
       "Kor": "<color=white>일반</color>",
       "Eng": "<color=white>[Basic]</color>"
@@ -454,6 +489,11 @@
       "TextKey": "HPPotion2DescText",
       "Kor": "보급형 물약보다 많이 뚱뚱해졌다.\n효과가 사이즈에 비례하는건가. .\n신비하게도 무게는 동일하다고 한다.\n\n맛은 . . . 여전하다.\n(개선이 시급하다.)",
       "Eng": "A lot fatter than the budget potion.\nIs bigger really better?\nSurprisingly, it still weighs the same.\n\nThe taste . . . requires an urgent fix."
+    },
+    {
+      "TextKey": "SPDPotion0DescText",
+      "Kor": "모험가 사이에서는 아주 유명한\n물약으로 짧은 시간동안\n내면의 힘을 끌어내는\n신비한 효과를 가지고 있다.",
+      "Eng": "A potion famous\namong adventurers, it\nhas a mysterious effect that\nbrings out the user's inner strength\nfor a short period time."
     },
     {
       "TextKey": "SPDPotion1DescText",
