@@ -39,6 +39,24 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a51e9d18a380c2041b4bd8b31eeb0466
+    m_Address: Village1_Guild_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf1dfac924034974aba599de0c2635b6
+    m_Address: GuildFloor
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb806659700ad8b46a34ee001d7ece33
+    m_Address: Village1_Main_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 17daaa5f2ba129c438d7f930823c6356, type: 2}
   m_SchemaSet:

@@ -184,12 +184,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
                 GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
-                var bgGO = GameObject.Find("BackgroundImage");
-                if (bgGO != null)
-                    bgGO.GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Village1");
-
-                var npc = GameObject.Find("GuildNPC(Clone)") ?? GameObject.Find("GuildNPC");
-                if (npc != null) Destroy(npc);
+                SwitchBG("Village1_Main_BG");
             });
 
             // t=0.55 : 페이드 인 시작 시점에 장소 텍스트 1회만 재생
@@ -306,16 +301,17 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         {
             case Village1Group.Guild:
                 HideAllGroup();
-                GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Guild");
-                Managers.Resource.Instantiate("GuildNPC").GetComponent<Animator>().Play("Receptionist");
+                SwitchBG("Village1_Guild_BG");
                 ShowGroup(GameObjects.Village1GuildBtnGroup);
                 break;
             case Village1Group.Alchemy:
                 HideAllGroup();
+                SwitchBG("Village1_Main_BG");
                 ShowGroup(GameObjects.Village1AlchemyBtnGroup);
                 break;
             case Village1Group.Monastery:
                 HideAllGroup();
+                SwitchBG("Village1_Main_BG");
                 ShowGroup(GameObjects.Village1MonasteryBtnGroup);
                 break;
             default:
@@ -330,6 +326,35 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetObject((int)GameObjects.Village1GuildBtnGroup).SetActive(group == GameObjects.Village1GuildBtnGroup);
         GetObject((int)GameObjects.Village1AlchemyBtnGroup).SetActive(group == GameObjects.Village1AlchemyBtnGroup);
         GetObject((int)GameObjects.Village1MonasteryBtnGroup).SetActive(group == GameObjects.Village1MonasteryBtnGroup);
+    }
+
+    /// <summary>
+    /// 배경 prefab(Village1_Main_BG / Village1_Guild_BG)을 전체 교체.
+    /// 씬 초기 BackgroundImage와 이전 BG prefab 인스턴스를 제거하고 새 prefab 스폰.
+    /// ResourceManager.Instantiate가 인스턴스 이름에서 "(Clone)"을 제거하므로 찾을 때도 원본 키로 찾아야 함.
+    /// </summary>
+    void SwitchBG(string prefabKey)
+    {
+        // 씬 초기 BackgroundImage(스프라이트 1개짜리) 비활성화 - 더 이상 사용 안 함
+        var legacyBG = GameObject.Find("BackgroundImage");
+        if (legacyBG != null) legacyBG.SetActive(false);
+
+        // 기존 BG prefab 인스턴스 제거 (씬 루트에서 모두 탐색, 중복 스폰도 정리)
+        foreach (var key in new[] { "Village1_Main_BG", "Village1_Guild_BG" })
+        {
+            foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                if (go.name == key || go.name == key + "(Clone)") Destroy(go);
+            }
+        }
+        // 구버전 잔재 정리
+        var oldNpc = GameObject.Find("GuildNPC") ?? GameObject.Find("GuildNPC(Clone)");
+        if (oldNpc != null) Destroy(oldNpc);
+        var oldFloor = GameObject.Find("GuildFloor") ?? GameObject.Find("GuildFloor(Clone)");
+        if (oldFloor != null) Destroy(oldFloor);
+
+        if (string.IsNullOrEmpty(prefabKey)) return;
+        Managers.Resource.Instantiate(prefabKey);
     }
 
     void HideAllGroup()
@@ -361,11 +386,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         seq.AppendCallback(() =>
         {
-            GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Village1");
-
-            // TODO NPC들 제거
-            GameObject guildNPC = GameObject.Find("GuildNPC");
-            if (guildNPC != null) Destroy(guildNPC);
+            SwitchBG("Village1_Main_BG");
         });
 
         seq.AppendInterval(1f);
@@ -451,8 +472,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendCallback(() =>
             {
                 Managers.Game.LastVillage1Group = Village1Group.Guild;
-                GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().sprite = Managers.Resource.Load<Sprite>("Background_Guild");
-                Managers.Resource.Instantiate("GuildNPC").GetComponent<Animator>().Play("Receptionist");
+                SwitchBG("Village1_Guild_BG");
             });
 
         seq.AppendInterval(0.5f);
@@ -490,15 +510,22 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickVillage1GuildTalkButton()
     {
-        string dialogueId = Managers.Quest.GetCurrentDialogueID();
+        // 슬라이드 30: 메인 퀘스트 [1] 시에만 [대화] 버튼으로 퀘스트 진행.
+        // 그 외에는 GuildNormalText에서 한 줄 랜덤 선택하여 잡담 대사 재생.
+        bool isFirstQuest = Managers.Quest.CurrentQuestID == 1;
 
-        // TODO : 대사 ID가 null이거나 빈 문자열이면 NPC 기본 대사 보여주기. 현재는 임시로 "GuildReceptionistDefaultDialogue"로 설정해둠. 데이터 시트에 추가 예정.
-        // TODO : 길드 접수원이 아닌 Dialogue도 추가될 수 있으니, Dialogue ID에 따라 NPC 이름, 초상화도 변경할 수 있도록 수정해야할듯.
+        string groupKey = isFirstQuest
+            ? Managers.Quest.GetCurrentDialogueID()   // "GuildQuest1Text"
+            : "GuildNormalText";
+
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
-            groupKey: dialogueId,
+            groupKey: groupKey,
             speakerName: "접수원 아가씨",
             portrait: null,
-            onFinished: () => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX));
+            onFinished: isFirstQuest
+                ? (System.Action)(() => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX))
+                : null,
+            randomSingleLine: !isFirstQuest);
     }
 
     void RefreshNotify()

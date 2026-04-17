@@ -69,8 +69,9 @@ public class UI_DialoguePopup : UI_Popup
     /// speakerName : 대화창 이름 표시
     /// portrait : 초상화 (없으면 null)
     /// onFinished : 마지막 대사 후 클릭 시 콜백
+    /// randomSingleLine : true면 그룹 내 한 줄만 랜덤 선택 (슬라이드 30: GuildNormalText 용)
     /// </summary>
-    public void SetInfo(string groupKey, string speakerName, Sprite portrait = null, Action onFinished = null)
+    public void SetInfo(string groupKey, string speakerName, Sprite portrait = null, Action onFinished = null, bool randomSingleLine = false)
     {
         if (!Managers.Data.DialogueScriptDic.TryGetValue(groupKey, out var group))
         {
@@ -78,7 +79,15 @@ public class UI_DialoguePopup : UI_Popup
             return;
         }
 
-        _lines = group.Lines;
+        if (randomSingleLine && group.Lines != null && group.Lines.Count > 0)
+        {
+            var picked = group.Lines[UnityEngine.Random.Range(0, group.Lines.Count)];
+            _lines = new List<DialogueScriptLine> { picked };
+        }
+        else
+        {
+            _lines = group.Lines;
+        }
         _lineIndex = 0;
         _onFinished = onFinished;
 
