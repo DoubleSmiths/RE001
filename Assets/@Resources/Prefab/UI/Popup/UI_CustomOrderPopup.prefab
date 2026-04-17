@@ -7995,6 +7995,7 @@ GameObject:
   - component: {fileID: 2400849692252232997}
   - component: {fileID: 8738263099960930919}
   - component: {fileID: 6246259612899997187}
+  - component: {fileID: 7310000000000000001}
   m_Layer: 5
   m_Name: UI_CustomOrderPopup
   m_TagString: Untagged
@@ -12091,3 +12092,15 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &7310000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5014536279429416152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de2735ab0741a654d9adf5d437c94ce2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

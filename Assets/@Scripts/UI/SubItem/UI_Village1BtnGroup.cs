@@ -274,6 +274,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             OnClickMain();
         });
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
+        GetButton((int)Buttons.CustomOrderButton).gameObject.BindEvent(OnClickCustomOrder);
         GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
@@ -612,6 +613,12 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         //TODO : 던전 진입 팝업 띄우기.
         Managers.UI.ShowPopupUI<UI_MapSelectPopup>().SetInfo();
+    }
+
+    void OnClickCustomOrder()
+    {
+        // 슬라이드 34: 제작의뢰 팝업
+        Managers.UI.ShowPopupUI<UI_CustomOrderPopup>().SetInfo();
     }
 
     void OnClickVillage1GuildTalkButton()
