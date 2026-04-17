@@ -481,45 +481,19 @@ public class UI_PotionDetailPopup : UI_Popup
         });
     }
 
-    /// <summary>S40: 제작 시 FX 스폰 — 중앙 splash + 물약 아이콘 upgrade sparkle.</summary>
+    /// <summary>
+    /// S40: 제작 시 FX 스폰 — 중앙 splash + 물약 아이콘 upgrade sparkle.
+    /// Coffee.UIExtensions.UIParticle 패키지로 ParticleSystem prefab을 UI Canvas 위에 렌더.
+    /// </summary>
     void SpawnCraftFX()
     {
-        // 팝업 중앙과 아이콘의 월드 좌표. Canvas(Screen Space - Camera)의 plane distance를 벗어나면
-        // UI 뒤로 묻히므로 카메라 방향으로 z를 살짝 당겨준다.
-        SpawnFXAt("FX_splash_spark_floor", _myFrameRT.position);
-        SpawnFXAt("FX_splash_spark_air",   _potionImg.rectTransform.position);
-    }
+        // 팝업 프레임 중앙: FX_splash_spark_floor
+        UIFx.PlayParticle(_myFrameRT, Vector2.zero, "FX_splash_spark_floor");
 
-    void SpawnFXAt(string key, Vector3 worldPos, float lifetime = 2f)
-    {
-        var go = Managers.Resource.Instantiate(key);
-        if (go == null) return;
-
-        // UI canvas에 parent시키되 world position 유지. z를 카메라 쪽으로 당겨 UI 앞에 그리도록.
-        go.transform.SetParent(_frame, worldPositionStays: true);
-        go.transform.position = worldPos + new Vector3(0f, 0f, -1f); // UI 앞쪽
-
-        // 자체 Canvas + overrideSorting으로 팝업 Canvas(sortingOrder=12)보다 위에 렌더.
-        var canvas = go.AddComponent<UnityEngine.Canvas>();
-        canvas.overrideSorting = true;
-        canvas.sortingOrder = 9999;
-
-        // Particle renderer sortingOrder도 같이 상향.
-        foreach (var psr in go.GetComponentsInChildren<UnityEngine.ParticleSystemRenderer>(true))
-        {
-            psr.sortingOrder = 9999;
-        }
-
-        // 명시적 Play + 즉시 Emit (prefab의 rateOverTime/burst 설정 미흡 방어).
-        foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true))
-        {
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            ps.Clear(true);
-            ps.Play(true);
-            ps.Emit(30);
-        }
-
-        Destroy(go, lifetime);
+        // 물약 아이콘 위치: FX_splash_spark_air
+        Vector3 iconWorld = _potionImg.rectTransform.position;
+        Vector3 iconLocal = _myFrameRT.InverseTransformPoint(iconWorld);
+        UIFx.PlayParticle(_myFrameRT, new Vector2(iconLocal.x, iconLocal.y), "FX_splash_spark_air");
     }
 
     void PunchBtnScale(Transform btn)

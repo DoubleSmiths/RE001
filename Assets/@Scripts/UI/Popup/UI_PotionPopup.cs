@@ -288,8 +288,23 @@ public class UI_PotionPopup : UI_Popup
 
     void SpawnUseFXForSlot(Slot s)
     {
-        // "HP Potion Ef" 프리팹 존재하면 Character 위치에 스폰 (후속 작업에서 실제 경로 확인 필요)
-        // 현재는 스텁 — FX 없음
+        if (s == null || s.button == null) return;
+
+        // S42: 물약 사용 시 즉각 사용된 물약에 해당되는 이펙트 표시.
+        // 기획서 원본은 HP Potion Ef를 "캐릭터 몸 한 가운데"에 스폰하지만,
+        // PlayerController HP 연동이 아직 없어서 우선 물약 슬롯 중앙에 UI-native FX 재생.
+        var slotRT = s.button.GetComponent<RectTransform>();
+        if (slotRT == null) return;
+
+        // Box Group을 parent로 (Slot 내부에 parent하면 cooldown bar 등과 겹쳐서 레이어 꼬임)
+        var parent = _boxGroupRT;
+        Vector3 slotWorld = slotRT.position;
+        Vector3 slotLocal = parent.InverseTransformPoint(slotWorld);
+        Vector2 localPos = new Vector2(slotLocal.x, slotLocal.y);
+
+        // 타입별 FX: HP는 Heal(녹색 플러스), Speed는 Sparkle(반짝이)
+        var fx = (s.name == "HP") ? UIFx.FxType.Heal : UIFx.FxType.Sparkle;
+        UIFx.PlayBurst(parent, localPos, fx);
     }
 
     void Update()

@@ -33,14 +33,32 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 57f18038d24546c4e975817b34830c73
+    m_Address: TravelAreaConditionData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6b89cc1eaeffcd74192a7fe921715118
     m_Address: CreatureData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f4ccf8acca346e4db87155f6ca512c7
+    m_Address: TravelAreaNotifyData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9b3763385e8ddfd4e83fab7082ddf90c
     m_Address: HPPotion
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a575259a41c5eb448b0a39bf63b89eb4
+    m_Address: TravelAreaData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

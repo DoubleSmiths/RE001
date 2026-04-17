@@ -251,6 +251,11 @@
       "Eng": "BOOST"
     },
     {
+      "TextKey": "DmgBoostText",
+      "Kor": "피해증폭",
+      "Eng": "F.DMG"
+    },
+    {
       "TextKey": "CharPopupTitleText",
       "Kor": "상태정보",
       "Eng": "CHARACTER"
@@ -534,6 +539,76 @@
       "TextKey": "PlaceNameBWF3Text",
       "Kor": "산들바람 숲(중심부)",
       "Eng": "BREEZEWOOD HEART"
+    },
+    {
+      "TextKey": "ComboText",
+      "Kor": "공세 단계:",
+      "Eng": "Combo:"
+    },
+    {
+      "TextKey": "ComboLv0Text",
+      "Kor": "무딘",
+      "Eng": "Dull"
+    },
+    {
+      "TextKey": "ComboLv1Text",
+      "Kor": "숙련된",
+      "Eng": "Skillful"
+    },
+    {
+      "TextKey": "ComboLv2Text",
+      "Kor": "지배적인",
+      "Eng": "Dominating"
+    },
+    {
+      "TextKey": "ComboLv3Text",
+      "Kor": "멈출 수 없는",
+      "Eng": "Unstoppable"
+    },
+    {
+      "TextKey": "ComboLv4Text",
+      "Kor": "압도적인",
+      "Eng": "Devastating"
+    },
+    {
+      "TextKey": "ComboLv5Text",
+      "Kor": "물아일체",
+      "Eng": "One with All"
+    },
+    {
+      "TextKey": "ComboLv6Text",
+      "Kor": "극의",
+      "Eng": "GODLIKE"
+    },
+    {
+      "TextKey": "BattleLogText",
+      "Kor": "전투 기록",
+      "Eng": "Battle Log"
+    },
+    {
+      "TextKey": "BattleTimeText",
+      "Kor": "전투 시간",
+      "Eng": "Battle Time"
+    },
+    {
+      "TextKey": "DmgDealtText",
+      "Kor": "총 피해량",
+      "Eng": "DMG Dealt"
+    },
+    {
+      "TextKey": "DmgTakenText",
+      "Kor": "받은 피해량",
+      "Eng": "DMG Taken"
+    },
+    {
+      "TextKey": "HPRestoredText",
+      "Kor": "회복량",
+      "Eng": "HP Restored"
+    },
+    {
+      "TextKey": "RecallText",
+      "Kor": "귀환",
+      "Eng": "RETURN"
     },
     {
       "TextKey": "TravelUnlockText",

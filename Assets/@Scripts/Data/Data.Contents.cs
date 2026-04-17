@@ -249,6 +249,108 @@ namespace Data
     }
     #endregion
 
+    #region TravelAreaData
+    [Serializable]
+    public class TravelAreaData
+    {
+        public int DataId;
+        public string Name;
+        public string Description;
+        public string SpriteName;
+        public string SceneName;
+        public int RecommendPower;
+        public List<int> PreviewMonsterIds = new List<int>();
+        public List<int> PreviewDropItemIds = new List<int>();
+        public int Order;
+        public string DefaultBtnId;
+        public string EntryBtnId;
+        public string UnlockSummary;
+        public string Category;
+        public int Depth;
+        public int ParentId;
+        public int RootId;
+        public string NodeType;
+        public int IsSelectable;
+        public int IsEnterable;
+        public string PanelType;
+        public string Note;
+    }
+
+    [Serializable]
+    public class TravelAreaDataLoader : ILoader<int, TravelAreaData>
+    {
+        public List<TravelAreaData> areas = new List<TravelAreaData>();
+        public Dictionary<int, TravelAreaData> MakeDict()
+        {
+            var dict = new Dictionary<int, TravelAreaData>();
+            foreach (var item in areas)
+                dict.Add(item.DataId, item);
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class TravelAreaConditionData
+    {
+        public int DataId;
+        public int Order;
+        public string ConditionType;
+        public string Target;
+        public int Value;
+        public string FailMessage;
+        public string Scope;
+        public string Note;
+    }
+
+    [Serializable]
+    public class TravelAreaConditionLoader : ILoader<int, List<TravelAreaConditionData>>
+    {
+        public List<TravelAreaConditionData> conditions = new List<TravelAreaConditionData>();
+        public Dictionary<int, List<TravelAreaConditionData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<TravelAreaConditionData>>();
+            foreach (var item in conditions)
+            {
+                if (!dict.ContainsKey(item.DataId))
+                    dict[item.DataId] = new List<TravelAreaConditionData>();
+                dict[item.DataId].Add(item);
+            }
+            foreach (var list in dict.Values)
+                list.Sort((a, b) => a.Order.CompareTo(b.Order));
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class TravelAreaNotifyData
+    {
+        public int DataId;
+        public int Order;
+        public string BtnId;
+        public string NotifyType;
+        public string Note;
+    }
+
+    [Serializable]
+    public class TravelAreaNotifyLoader : ILoader<int, List<TravelAreaNotifyData>>
+    {
+        public List<TravelAreaNotifyData> notifies = new List<TravelAreaNotifyData>();
+        public Dictionary<int, List<TravelAreaNotifyData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<TravelAreaNotifyData>>();
+            foreach (var item in notifies)
+            {
+                if (!dict.ContainsKey(item.DataId))
+                    dict[item.DataId] = new List<TravelAreaNotifyData>();
+                dict[item.DataId].Add(item);
+            }
+            foreach (var list in dict.Values)
+                list.Sort((a, b) => a.Order.CompareTo(b.Order));
+            return dict;
+        }
+    }
+    #endregion
+
     #region MinMonData
     [Serializable]
     public class MinMonData

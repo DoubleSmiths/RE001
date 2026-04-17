@@ -1,0 +1,46 @@
+﻿{
+  "notifies": [
+    {
+      "DataId": 2100,
+      "Order": 1,
+      "BtnId": "BTN_MAP_BREEZING_WIND_FOREST",
+      "NotifyType": "GROUP",
+      "Note": "group notify"
+    },
+    {
+      "DataId": 2110,
+      "Order": 1,
+      "BtnId": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE",
+      "NotifyType": "ENTRY",
+      "Note": "entry notify"
+    },
+    {
+      "DataId": 2200,
+      "Order": 1,
+      "BtnId": "BTN_MAP_WHISPERING_CAVE",
+      "NotifyType": "GROUP",
+      "Note": "group notify"
+    },
+    {
+      "DataId": 2210,
+      "Order": 1,
+      "BtnId": "BTN_STAGE_WHISPERING_CAVE_ENTRANCE",
+      "NotifyType": "ENTRY",
+      "Note": "entry notify"
+    },
+    {
+      "DataId": 2300,
+      "Order": 1,
+      "BtnId": "BTN_MAP_RUINED_SANCTUM",
+      "NotifyType": "GROUP",
+      "Note": "group notify"
+    },
+    {
+      "DataId": 2310,
+      "Order": 1,
+      "BtnId": "BTN_STAGE_RUINED_SANCTUM_ENTRANCE",
+      "NotifyType": "ENTRY",
+      "Note": "entry notify"
+    }
+  ]
+}

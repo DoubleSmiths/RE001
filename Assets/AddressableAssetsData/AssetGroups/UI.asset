@@ -33,6 +33,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d6e57c3a380a6e48964fda016624388
+    m_Address: UI_PotionPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 43951f1649e02104fb766363a8a10ff2
     m_Address: UI_GameScene
     m_ReadOnly: 0
@@ -81,6 +87,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0721fb65aaddc94b9ad4c800ad45f10
+    m_Address: UI_PotionDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce935eb8a4c100140acd862a97bca16e
     m_Address: UI_InventoryPopup
     m_ReadOnly: 0
@@ -99,26 +111,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ff91dc296933e494eb772e229137bd96
-    m_Address: UI_CustomOrderPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c0721fb65aaddc94b9ad4c800ad45f10
-    m_Address: UI_PotionDetailPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ee9364dda7844574e990e48211048f4e
     m_Address: UI_SkillDetailPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3d6e57c3a380a6e48964fda016624388
-    m_Address: UI_PotionPopup
+  - m_GUID: ff91dc296933e494eb772e229137bd96
+    m_Address: UI_CustomOrderPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
