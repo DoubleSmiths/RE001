@@ -43,38 +43,122 @@ public class DialogueAnimator : MonoBehaviour
     }
 
     // ────────────────────────────────────────
-    //  Box
+    //  Dialogue Open Sequence (slide 31/32)
     // ────────────────────────────────────────
 
-    public void OpenBox(RectTransform box, Action onComplete = null)
+    /// <summary>
+    /// 슬라이드 32 STEP 1~3 시퀀스 재생.
+    /// STEP 1: Gradient01 + Sprite(None) 페이드 인 (0.5s, OutQuad)
+    /// STEP 2: 0.5s 대기 후 dia_box2 페이드 인 (0.5s, OutQuad)
+    /// STEP 3: 0.2s 대기 후 캐릭터 Sprite ON + 이름 + Text Show Start 콜백
+    /// </summary>
+    public void PlayOpenSequence(
+        Image gradient,
+        Image panel,
+        Image box,
+        GameObject portrait,
+        GameObject nameText,
+        Action onTextShowStart)
     {
+        // 초기 상태 (알파 0, portrait/name 비활성)
+        SetImageAlpha(gradient, 0f);
+        SetImageAlpha(panel, 0f);
+        SetImageAlpha(box, 0f);
+        gradient.gameObject.SetActive(true);
+        panel.gameObject.SetActive(true);
         box.gameObject.SetActive(true);
+        if (portrait != null) portrait.SetActive(false);
+        if (nameText != null) nameText.SetActive(false);
 
-        Vector2 origin = box.anchoredPosition;
-        box.anchoredPosition = origin + new Vector2(0f, -_boxSlideOffset);
-
-        CanvasGroup cg = GetOrAddCanvasGroup(box.gameObject);
-        cg.alpha = 0f;
+        float panelTargetAlpha = 220f / 255f;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(box.DOAnchorPos(origin, _boxOpenDuration).SetEase(Ease.OutCubic));
-        seq.Join(cg.DOFade(1f, _boxOpenDuration * 0.8f));
-        seq.OnComplete(() => onComplete?.Invoke());
+
+        // STEP 1
+        seq.Append(gradient.DOFade(1f, 0.5f).SetEase(Ease.OutQuad));
+        seq.Join(panel.DOFade(panelTargetAlpha, 0.5f).SetEase(Ease.OutQuad));
+
+        // STEP 2: 0.5초 뒤 dia_box2 페이드 인
+        seq.Append(box.DOFade(1f, 0.5f).SetEase(Ease.OutQuad));
+
+        // STEP 3: 0.2초 뒤 캐릭터/이름 ON + Text Show Start
+        seq.AppendInterval(0.2f);
+        seq.AppendCallback(() =>
+        {
+            if (portrait != null) portrait.SetActive(true);
+            if (nameText != null) nameText.SetActive(true);
+            onTextShowStart?.Invoke();
+        });
     }
 
-    public void CloseBox(RectTransform box, Action onComplete = null)
-    {
-        Vector2 target = box.anchoredPosition + new Vector2(0f, -_boxSlideOffset);
-        CanvasGroup cg = GetOrAddCanvasGroup(box.gameObject);
+    Coroutine _arrowLoopCoroutine;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(box.DOAnchorPos(target, _boxCloseDuration).SetEase(Ease.InCubic));
-        seq.Join(cg.DOFade(0f, _boxCloseDuration));
-        seq.OnComplete(() =>
+    /// <summary>
+    /// Arrow_down 지속 페이드 루프 (alpha 1 ↔ 100/255, 0.2s, OutQuad, 무한 반복)
+    /// </summary>
+    public void PlayArrowLoop(Image arrow)
+    {
+        if (arrow == null)
         {
-            box.gameObject.SetActive(false);
-            onComplete?.Invoke();
-        });
+            Debug.LogWarning("[DialogueAnimator] PlayArrowLoop: arrow is null");
+            return;
+        }
+
+        StopArrowLoop(arrow);
+
+        arrow.gameObject.SetActive(true);
+        SetImageAlpha(arrow, 1f);
+
+        Debug.Log($"[DialogueAnimator] PlayArrowLoop start (active: {arrow.gameObject.activeInHierarchy}, color: {arrow.color})");
+
+        _arrowLoopCoroutine = StartCoroutine(CoArrowLoop(arrow));
+    }
+
+    public void StopArrowLoop(Image arrow)
+    {
+        if (_arrowLoopCoroutine != null)
+        {
+            StopCoroutine(_arrowLoopCoroutine);
+            _arrowLoopCoroutine = null;
+        }
+        if (arrow != null)
+            arrow.DOKill();
+    }
+
+    IEnumerator CoArrowLoop(Image arrow)
+    {
+        const float duration = 0.2f;
+        const float minAlpha = 100f / 255f;
+        const float maxAlpha = 1f;
+
+        while (arrow != null)
+        {
+            yield return FadeArrowAlpha(arrow, maxAlpha, minAlpha, duration);
+            yield return FadeArrowAlpha(arrow, minAlpha, maxAlpha, duration);
+        }
+    }
+
+    IEnumerator FadeArrowAlpha(Image arrow, float from, float to, float duration)
+    {
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float p = Mathf.Clamp01(t / duration);
+            // OutQuad easing
+            p = 1f - (1f - p) * (1f - p);
+            SetImageAlpha(arrow, Mathf.Lerp(from, to, p));
+            yield return null;
+        }
+        SetImageAlpha(arrow, to);
+    }
+
+    static void SetImageAlpha(Image img, float a)
+    {
+        if (img == null) return;
+        Color c = img.color;
+        c.a = a;
+        img.color = c;
     }
 
     // ────────────────────────────────────────
