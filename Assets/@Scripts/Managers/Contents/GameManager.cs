@@ -102,6 +102,7 @@ public class GameData
     public int          CurrentQuestID = 1;
     public List<string> UnlockedBtnIds = new List<string>();
     public int          CurrentHPPotionDataId = POTION_ID_MIN + 1;
+    public int          CurrentTravelAreaId = 0;
 
     // 마지막 장소
     public Village1Group LastVillage1Group = Village1Group.Main;
@@ -251,6 +252,19 @@ public class GameManager
             _gameData.CurrentHPPotionDataId = next;
             SaveGame();
             OnHPPotionChanged?.Invoke(next);
+        }
+    }
+
+    public int CurrentTravelAreaId
+    {
+        get => _gameData.CurrentTravelAreaId;
+        set
+        {
+            if (_gameData.CurrentTravelAreaId == value)
+                return;
+
+            _gameData.CurrentTravelAreaId = value;
+            SaveGame();
         }
     }
 

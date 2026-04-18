@@ -118,6 +118,7 @@ public class UI_GameScene : UI_Scene
 
     UI_AreaBtnGroup _currentBtnGroup;
     int _followActiveQuestId = -1;
+    bool _isAreaTransitioning;
 
     private void Awake() { Init(); }
 
@@ -233,10 +234,53 @@ public class UI_GameScene : UI_Scene
     /// <summary>
     /// FadeOut → onBlack(배경 교체) → BtnGroup 교체 → FadeIn → PlayEnterAnimation 순으로 구역 전환.
     /// </summary>
-    public void EnterAreaWithFade(AreaType area, System.Action onBlack = null)
+    public bool CanEnterAreaTransition(AreaType area)
     {
+        if (_isAreaTransitioning)
+        {
+            Debug.LogWarning($"[UI_GameScene] Area transition blocked: already transitioning to another area. requested={area}");
+            return false;
+        }
+
+        if (GetImage((int)Images.ForFadeImage) == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] Area transition blocked: fade image missing. requested={area}");
+            return false;
+        }
+
+        if (GetObject((int)GameObjects.AreaBtnGroupSlot) == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] Area transition blocked: AreaBtnGroupSlot missing. requested={area}");
+            return false;
+        }
+
+        string prefabName = $"UI_{area}BtnGroup";
+        GameObject prefab = Managers.Resource.Load<GameObject>(prefabName);
+        if (prefab == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] Area transition blocked: prefab missing. prefab={prefabName}");
+            return false;
+        }
+
+        if (prefab.GetComponent<UI_AreaBtnGroup>() == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] Area transition blocked: UI_AreaBtnGroup missing on prefab. prefab={prefabName}");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool EnterAreaWithFade(AreaType area, System.Action onBlack = null)
+    {
+        if (CanEnterAreaTransition(area) == false)
+            return false;
+
         Image fade = GetImage((int)Images.ForFadeImage);
-        if (fade == null) return;
+        if (fade == null)
+            return false;
+
+        _isAreaTransitioning = true;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
         seq.Append(fade.DOFade(1f, 0.4f).SetEase(Ease.InQuad).SetUpdate(true));
@@ -244,23 +288,54 @@ public class UI_GameScene : UI_Scene
         seq.AppendCallback(() =>
         {
             onBlack?.Invoke();
-            SwapAreaBtnGroup(area);
+            if (SwapAreaBtnGroup(area) == false)
+                Debug.LogWarning($"[UI_GameScene] SwapAreaBtnGroup failed during transition. area={area}");
         });
         seq.Append(fade.DOFade(0f, 0.5f).SetEase(Ease.InQuad).SetUpdate(true));
-        seq.OnComplete(() => _currentBtnGroup?.PlayEnterAnimation());
+        seq.OnComplete(() =>
+        {
+            _isAreaTransitioning = false;
+            _currentBtnGroup?.PlayEnterAnimation();
+        });
+        seq.OnKill(() => _isAreaTransitioning = false);
+        return true;
     }
 
-    void SwapAreaBtnGroup(AreaType area)
+    bool SwapAreaBtnGroup(AreaType area)
     {
         if (_currentBtnGroup != null)
             Managers.Resource.Destroy(_currentBtnGroup.gameObject);
 
-        Transform slot = GetObject((int)GameObjects.AreaBtnGroupSlot).transform;
+        GameObject slotObject = GetObject((int)GameObjects.AreaBtnGroupSlot);
+        if (slotObject == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] SwapAreaBtnGroup failed: AreaBtnGroupSlot missing. area={area}");
+            _currentBtnGroup = null;
+            return false;
+        }
+
+        Transform slot = slotObject.transform;
         string prefabName = $"UI_{area}BtnGroup";
 
         GameObject go = Managers.Resource.Instantiate(prefabName, slot);
+        if (go == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] SwapAreaBtnGroup failed: instantiate returned null. prefab={prefabName}");
+            _currentBtnGroup = null;
+            return false;
+        }
+
         _currentBtnGroup = go.GetComponent<UI_AreaBtnGroup>();
+        if (_currentBtnGroup == null)
+        {
+            Debug.LogWarning($"[UI_GameScene] SwapAreaBtnGroup failed: UI_AreaBtnGroup missing. prefab={prefabName}");
+            Managers.Resource.Destroy(go);
+            return false;
+        }
+
         _currentBtnGroup.Setup(this);
+        Debug.Log($"[UI_GameScene] SwapAreaBtnGroup success. area={area}, prefab={prefabName}");
+        return true;
     }
 
     // ────────────────────────────────────────

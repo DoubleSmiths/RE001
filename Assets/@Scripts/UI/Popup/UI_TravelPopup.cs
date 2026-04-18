@@ -120,6 +120,8 @@ public class UI_TravelPopup : UI_Popup
     int _selectedGroupId;
     int _selectedDetailId;
     TravelDepth _depth = TravelDepth.Root;
+    bool _isEntering;
+    string _selectionFeedbackMessage = string.Empty;
 
     private void Awake()
     {
@@ -183,6 +185,9 @@ public class UI_TravelPopup : UI_Popup
 
     public void SetInfo()
     {
+        _isEntering = false;
+        _selectionFeedbackMessage = string.Empty;
+
         _allNodes = Managers.Data.TravelAreaDic.Values
             .OrderBy(node => node.Depth)
             .ThenBy(node => node.Order)
@@ -195,10 +200,7 @@ public class UI_TravelPopup : UI_Popup
             .ThenBy(node => node.DataId)
             .ToList();
 
-        _selectedRootId = GetPreferredRootId();
-        _selectedGroupId = 0;
-        _selectedDetailId = 0;
-        _depth = TravelDepth.Root;
+        RestoreSelection();
 
         BuildMiddleButtons();
         BuildDetailButtons();
@@ -288,7 +290,7 @@ public class UI_TravelPopup : UI_Popup
 
             _detailButtonViews[node.DataId] = view;
             int capturedId = node.DataId;
-            view.Button.gameObject.BindEvent(() => OnClickDetailNode(capturedId));
+            RebindClickEvent(view.Button?.gameObject, () => OnClickDetailNode(capturedId));
             buttonRoot.SetActive(true);
         }
 
@@ -341,7 +343,7 @@ public class UI_TravelPopup : UI_Popup
             TravelNodeButtonView view = CreateButtonView(buttonRoot, node.DataId, textName, notifyNames);
             targetViews[node.DataId] = view;
             int capturedId = node.DataId;
-            view.Button.gameObject.BindEvent(() => clickHandler(capturedId));
+            RebindClickEvent(view.Button?.gameObject, () => clickHandler(capturedId));
             buttonRoot.SetActive(true);
         }
     }
@@ -369,6 +371,7 @@ public class UI_TravelPopup : UI_Popup
 
     void RefreshAll()
     {
+        NormalizeSelectionState();
         RefreshVisiblePanels();
         RefreshRootCategoryButtons();
         RefreshMiddleButtons();
@@ -429,7 +432,7 @@ public class UI_TravelPopup : UI_Popup
                 view.Notify.SetActive(HasNotifyInSubtree(node.DataId));
 
             if (view.Button != null)
-                view.Button.interactable = unlocked && IsSelectableNode(node);
+                view.Button.interactable = IsSelectableNode(node);
 
             view.Root.transform.localScale = selected ? new Vector3(1.04f, 1.04f, 1f) : Vector3.one;
         }
@@ -442,8 +445,9 @@ public class UI_TravelPopup : UI_Popup
             if (_detailButtonViews.TryGetValue(node.DataId, out TravelNodeButtonView view) == false)
                 continue;
 
-            bool unlocked = IsNodeUnlocked(node.DataId, out _);
+            bool unlocked = TryGetSelectionBlockReason(node, out _) == false;
             bool selected = node.DataId == _selectedDetailId;
+            bool canEnter = CanEnterNode(node, out _);
 
             if (view.Text != null)
             {
@@ -456,10 +460,10 @@ public class UI_TravelPopup : UI_Popup
                 view.Frame.color = selected ? Color.white : new Color(1f, 1f, 1f, unlocked ? 0.9f : 0.45f);
 
             if (view.Notify != null)
-                view.Notify.SetActive(HasEntryNotify(node));
+                view.Notify.SetActive(canEnter && HasEntryNotify(node));
 
             if (view.Button != null)
-                view.Button.interactable = unlocked && IsSelectableNode(node);
+                view.Button.interactable = IsSelectableNode(node);
 
             view.Root.transform.localScale = selected ? new Vector3(1.04f, 1.04f, 1f) : Vector3.one;
         }
@@ -476,28 +480,32 @@ public class UI_TravelPopup : UI_Popup
             return;
 
         bool unlocked = IsNodeUnlocked(displayNode.DataId, out string failMessage);
-        bool canEnter = detail != null && unlocked && IsEnterableNode(detail);
+        string enterFailMessage = string.Empty;
+        bool canEnter = detail != null && CanEnterNode(detail, out enterFailMessage);
+        string displayInfoOverride = _selectionFeedbackMessage;
 
         SetRawText(Texts.MapSelectPopupMapNameText, ResolveText(displayNode.Name));
         SetRawText(Texts.BWFTypeTitleText, ResolveText(group?.Name ?? detail?.Name ?? root?.Name));
 
         if (_depth == TravelDepth.Detail)
         {
-            string info = unlocked
+            string info = canEnter
                 ? ResolveNodeSummary(detail ?? group, group?.Description ?? displayNode.Description)
-                : string.IsNullOrEmpty(failMessage) ? ResolveNodeSummary(detail ?? group, displayNode.Description) : failMessage;
+                : string.IsNullOrEmpty(enterFailMessage) ? ResolveNodeSummary(detail ?? group, displayNode.Description) : enterFailMessage;
 
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, info);
+            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? info : displayInfoOverride);
             SetRawText(Texts.MapSelectBWF_EntryBtnText, canEnter ? ResolveText("HeadOutText") : ResolveText("NextInfoText"));
         }
         else if (_depth == TravelDepth.Category)
         {
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, ResolveNodeSummary(group ?? root, root?.Description));
+            string categoryInfo = ResolveCategoryInfo(root, group);
+            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? categoryInfo : displayInfoOverride);
             SetRawText(Texts.MapSelectBWF_EntryBtnText, ResolveText("NextInfoText"));
         }
         else
         {
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, ResolveNodeSummary(root, "CurrentLocationText"));
+            string rootInfo = ResolveNodeSummary(root, "CurrentLocationText");
+            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? rootInfo : displayInfoOverride);
         }
 
         Image mapImage = GetImage((int)Images.MapSelectPopupMapImage);
@@ -514,7 +522,7 @@ public class UI_TravelPopup : UI_Popup
         if (entryButton != null)
             entryButton.interactable = canEnter;
 
-        GetObject((int)GameObjects.MapSelectBWF_EntryVFX)?.SetActive(detail != null && HasEntryNotify(detail));
+        GetObject((int)GameObjects.MapSelectBWF_EntryVFX)?.SetActive(detail != null && canEnter && HasEntryNotify(detail));
 
         Button goButton = GetButton((int)Buttons.ButtonMapSelectGO);
         if (goButton != null)
@@ -535,6 +543,7 @@ public class UI_TravelPopup : UI_Popup
         if (root == null)
             return;
 
+        _selectionFeedbackMessage = string.Empty;
         _selectedRootId = root.DataId;
         _selectedGroupId = GetFirstUnlockedGroup(root.DataId)?.DataId ?? 0;
         _selectedDetailId = 0;
@@ -551,9 +560,18 @@ public class UI_TravelPopup : UI_Popup
         if (TryGetNode(dataId, out TravelAreaData node) == false)
             return;
 
-        if (IsNodeUnlocked(node.DataId, out _) == false || IsSelectableNode(node) == false)
+        if (IsSelectableNode(node) == false)
             return;
 
+        if (TryGetSelectionBlockReason(node, out string failMessage))
+        {
+            Debug.LogWarning($"[UI_TravelPopup] Group selection blocked: node={dataId}, reason={failMessage}");
+            _selectionFeedbackMessage = failMessage;
+            RefreshAll();
+            return;
+        }
+
+        _selectionFeedbackMessage = string.Empty;
         _selectedRootId = node.RootId != 0 ? node.RootId : _selectedRootId;
         _selectedGroupId = node.DataId;
         _selectedDetailId = 0;
@@ -571,9 +589,18 @@ public class UI_TravelPopup : UI_Popup
         if (TryGetNode(dataId, out TravelAreaData node) == false)
             return;
 
-        if (IsNodeUnlocked(node.DataId, out _) == false || IsSelectableNode(node) == false)
+        if (IsSelectableNode(node) == false)
             return;
 
+        if (TryGetSelectionBlockReason(node, out string failMessage))
+        {
+            Debug.LogWarning($"[UI_TravelPopup] Detail selection blocked: node={dataId}, reason={failMessage}");
+            _selectionFeedbackMessage = failMessage;
+            RefreshAll();
+            return;
+        }
+
+        _selectionFeedbackMessage = string.Empty;
         _selectedDetailId = node.DataId;
 
         if (string.IsNullOrEmpty(node.DefaultBtnId) == false)
@@ -584,24 +611,74 @@ public class UI_TravelPopup : UI_Popup
 
     void OnClickEnterSelectedDetail()
     {
-        if (TryGetNode(_selectedDetailId, out TravelAreaData detail) == false)
+        if (_isEntering)
+        {
+            Debug.LogWarning("[UI_TravelPopup] Enter blocked: transition already in progress.");
             return;
+        }
 
-        if (IsNodeUnlocked(detail.DataId, out _) == false || IsEnterableNode(detail) == false)
+        if (TryGetValidatedSelectedDetail(out TravelAreaData detail, out string failMessage) == false)
+        {
+            if (string.IsNullOrEmpty(failMessage) == false)
+            {
+                Debug.LogWarning($"[UI_TravelPopup] Enter blocked: {failMessage}");
+                _selectionFeedbackMessage = failMessage;
+                RefreshAll();
+                Managers.UI.ShowToast(failMessage);
+            }
             return;
+        }
+
+        UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
+        if (gameScene == null)
+        {
+            Debug.LogWarning("[UI_TravelPopup] Enter blocked: UI_GameScene is not active.");
+            return;
+        }
+
+        if (TryResolveAreaType(detail, out AreaType areaType) == false)
+        {
+            string message = ResolveText("TravelAreaSceneMissingText");
+            Debug.LogWarning($"[UI_TravelPopup] Enter blocked: invalid SceneName for travel node {detail.DataId}.");
+            _selectionFeedbackMessage = message;
+            RefreshAll();
+            Managers.UI.ShowToast(message);
+            return;
+        }
+
+        if (gameScene.CanEnterAreaTransition(areaType) == false)
+        {
+            string message = ResolveText("TravelAreaSceneMissingText");
+            Debug.LogWarning($"[UI_TravelPopup] Enter blocked: area transition validation failed for {areaType}.");
+            _selectionFeedbackMessage = message;
+            RefreshAll();
+            Managers.UI.ShowToast(message);
+            return;
+        }
+
+        _isEntering = true;
+        _selectionFeedbackMessage = string.Empty;
 
         if (string.IsNullOrEmpty(detail.EntryBtnId) == false)
             Managers.Quest.CheckButtonClick(detail.EntryBtnId);
 
-        Managers.Quest.CheckButtonClick(BTN_JOURNEY);
-        Managers.UI.CloseAllPopupUI();
+        if (gameScene.EnterAreaWithFade(areaType) == false)
+        {
+            _isEntering = false;
+            Debug.LogWarning($"[UI_TravelPopup] Enter blocked: EnterAreaWithFade rejected for {areaType}.");
+            return;
+        }
 
-        UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
-        gameScene?.EnterAreaWithFade(AreaType.Battle);
+        Managers.Game.CurrentTravelAreaId = detail.DataId;
+        Managers.Quest.CheckButtonClick(BTN_JOURNEY);
+        Debug.Log($"[UI_TravelPopup] Enter accepted: node={detail.DataId}, area={areaType}");
+        Managers.UI.CloseAllPopupUI();
     }
 
     void OnClickBack()
     {
+        _selectionFeedbackMessage = string.Empty;
+
         if (_depth == TravelDepth.Detail)
         {
             _depth = TravelDepth.Category;
@@ -656,11 +733,36 @@ public class UI_TravelPopup : UI_Popup
             .Where(node => node.Depth == 2 && node.ParentId == rootId)
             .OrderBy(node => node.Order)
             .ThenBy(node => node.DataId)
-            .FirstOrDefault(node => IsNodeUnlocked(node.DataId, out _));
+            .FirstOrDefault(node => TryGetSelectionBlockReason(node, out _) == false);
+    }
+
+    void RestoreSelection()
+    {
+        _selectedRootId = GetPreferredRootId();
+        _selectedGroupId = 0;
+        _selectedDetailId = 0;
+        _depth = TravelDepth.Root;
+
+        int savedAreaId = Managers.Game.CurrentTravelAreaId;
+        if (savedAreaId <= 0 || TryGetNode(savedAreaId, out TravelAreaData savedNode) == false)
+            return;
+
+        if (TryApplySavedSelection(savedNode) == false)
+            Debug.LogWarning($"[UI_TravelPopup] RestoreSelection corrected invalid saved area: {savedAreaId}");
     }
 
     int GetPreferredRootId()
     {
+        int savedAreaId = Managers.Game.CurrentTravelAreaId;
+        if (savedAreaId > 0 && TryGetNode(savedAreaId, out TravelAreaData savedNode))
+        {
+            if (savedNode.Depth == 1)
+                return savedNode.DataId;
+
+            if (savedNode.RootId != 0)
+                return savedNode.RootId;
+        }
+
         TravelAreaData explore = GetRootNode("EXPLORE");
         if (explore != null)
             return explore.DataId;
@@ -726,6 +828,62 @@ public class UI_TravelPopup : UI_Popup
         return true;
     }
 
+    bool TryGetSelectionBlockReason(TravelAreaData node, out string failMessage)
+    {
+        failMessage = string.Empty;
+
+        if (node == null)
+            return true;
+
+        if (node.Depth == 3 && TryGetParentGroup(node, out TravelAreaData parentGroup))
+        {
+            if (IsNodeUnlocked(parentGroup.DataId, out failMessage) == false)
+                return true;
+        }
+
+        if (IsNodeUnlocked(node.DataId, out failMessage) == false)
+            return true;
+
+        return false;
+    }
+
+    bool TryGetParentGroup(TravelAreaData node, out TravelAreaData parentGroup)
+    {
+        parentGroup = null;
+        if (node == null || node.Depth != 3)
+            return false;
+
+        return TryGetNode(node.ParentId, out parentGroup) && parentGroup != null && parentGroup.Depth == 2;
+    }
+
+    bool CanEnterNode(TravelAreaData node, out string failMessage)
+    {
+        failMessage = string.Empty;
+
+        if (node == null)
+        {
+            failMessage = "[Travel] Detail node is null.";
+            return false;
+        }
+
+        if (IsSelectableNode(node) == false || IsEnterableNode(node) == false)
+        {
+            failMessage = "[Travel] Selected detail node is not enterable.";
+            return false;
+        }
+
+        if (TryGetSelectionBlockReason(node, out failMessage))
+            return false;
+
+        if (TryResolveAreaType(node, out _) == false)
+        {
+            failMessage = ResolveText("TravelAreaSceneMissingText");
+            return false;
+        }
+
+        return true;
+    }
+
     bool EvaluateCondition(TravelAreaConditionData condition)
     {
         if (condition == null)
@@ -768,6 +926,66 @@ public class UI_TravelPopup : UI_Popup
         return false;
     }
 
+    bool TryApplySavedSelection(TravelAreaData savedNode)
+    {
+        if (savedNode == null)
+            return false;
+
+        if (savedNode.Depth == 1)
+        {
+            _selectedRootId = savedNode.DataId;
+            return true;
+        }
+
+        if (TryGetNode(savedNode.RootId, out TravelAreaData rootNode) == false || rootNode.Depth != 1)
+            return false;
+
+        _selectedRootId = rootNode.DataId;
+
+        if (savedNode.Depth == 2)
+        {
+            if (IsSelectableNode(savedNode) == false || TryGetSelectionBlockReason(savedNode, out _) == true)
+                return false;
+
+            _selectedGroupId = savedNode.DataId;
+            _depth = TravelDepth.Category;
+            return true;
+        }
+
+        if (savedNode.Depth != 3)
+            return false;
+
+        if (TryGetNode(savedNode.ParentId, out TravelAreaData groupNode) == false || groupNode.Depth != 2)
+            return false;
+
+        if (groupNode.ParentId != rootNode.DataId || IsSelectableNode(groupNode) == false)
+            return false;
+
+        _selectedGroupId = groupNode.DataId;
+        _depth = TravelDepth.Category;
+
+        if (CanEnterNode(savedNode, out _) == false)
+            return true;
+
+        _selectedDetailId = savedNode.DataId;
+        _depth = TravelDepth.Detail;
+        return true;
+    }
+
+    bool TryGetValidatedSelectedDetail(out TravelAreaData detail, out string failMessage)
+    {
+        failMessage = string.Empty;
+        detail = null;
+
+        if (TryGetNode(_selectedDetailId, out detail) == false)
+        {
+            failMessage = "[Travel] Selected detail node is invalid.";
+            return false;
+        }
+
+        return CanEnterNode(detail, out failMessage);
+    }
+
     bool HasNotifyForNode(int dataId)
     {
         List<QuestNotifyData> currentNotifyList = Managers.Quest.GetCurrentNotifyList();
@@ -798,23 +1016,81 @@ public class UI_TravelPopup : UI_Popup
         return Managers.Quest.GetCurrentNotifyList().Exists(n => n.BtnID == node.EntryBtnId);
     }
 
+    void NormalizeSelectionState()
+    {
+        bool changed = false;
+
+        if (_selectedRootId != 0 && TryGetNode(_selectedRootId, out TravelAreaData rootNode) == false)
+        {
+            _selectedRootId = GetPreferredRootId();
+            _selectedGroupId = 0;
+            _selectedDetailId = 0;
+            _depth = TravelDepth.Root;
+            changed = true;
+        }
+
+        if (_selectedGroupId != 0)
+        {
+            bool isValidGroup =
+                TryGetNode(_selectedGroupId, out TravelAreaData selectedGroup) &&
+                selectedGroup.Depth == 2 &&
+                selectedGroup.ParentId == _selectedRootId &&
+                IsSelectableNode(selectedGroup) &&
+                TryGetSelectionBlockReason(selectedGroup, out _) == false;
+
+            if (isValidGroup == false)
+            {
+                _selectedGroupId = 0;
+                _selectedDetailId = 0;
+                _depth = TravelDepth.Root;
+                changed = true;
+            }
+        }
+
+        if (_selectedDetailId != 0)
+        {
+            bool isValidDetail =
+                TryGetNode(_selectedDetailId, out TravelAreaData selectedDetail) &&
+                selectedDetail.Depth == 3 &&
+                selectedDetail.ParentId == _selectedGroupId &&
+                TryGetSelectionBlockReason(selectedDetail, out _) == false;
+
+            if (isValidDetail == false)
+            {
+                _selectedDetailId = 0;
+                _depth = _selectedGroupId != 0 ? TravelDepth.Category : TravelDepth.Root;
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            _selectionFeedbackMessage = string.Empty;
+            Debug.LogWarning($"[UI_TravelPopup] NormalizeSelectionState adjusted selection. root={_selectedRootId}, group={_selectedGroupId}, detail={_selectedDetailId}, depth={_depth}");
+        }
+    }
+
     void OnQuestChanged(int _)
     {
+        _selectionFeedbackMessage = string.Empty;
         RefreshAll();
     }
 
     void OnButtonUnlocked(string _)
     {
+        _selectionFeedbackMessage = string.Empty;
         RefreshAll();
     }
 
     void OnInventoryChanged(int _)
     {
+        _selectionFeedbackMessage = string.Empty;
         RefreshAll();
     }
 
     void OnLanguageChanged()
     {
+        _selectionFeedbackMessage = string.Empty;
         RefreshStaticTexts();
         RefreshAll();
     }
@@ -845,6 +1121,46 @@ public class UI_TravelPopup : UI_Popup
             return ResolveText(node.Description);
 
         return ResolveText(fallbackKeyOrText);
+    }
+
+    string ResolveCategoryInfo(TravelAreaData root, TravelAreaData group)
+    {
+        if (group != null && IsNodeUnlocked(group.DataId, out string failMessage) == false && string.IsNullOrEmpty(failMessage) == false)
+            return failMessage;
+
+        return ResolveNodeSummary(group ?? root, root?.Description);
+    }
+
+    bool TryResolveAreaType(TravelAreaData node, out AreaType areaType)
+    {
+        areaType = default;
+        if (node == null)
+        {
+            Debug.LogWarning("[UI_TravelPopup] TryResolveAreaType failed: node is null.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(node.SceneName))
+        {
+            Debug.LogWarning($"[UI_TravelPopup] TryResolveAreaType failed: SceneName is empty. node={node.DataId}, category={node.Category}");
+            return false;
+        }
+
+        if (Enum.TryParse(node.SceneName, true, out areaType))
+            return true;
+
+        Debug.LogWarning($"[UI_TravelPopup] TryResolveAreaType failed: invalid SceneName '{node.SceneName}'. node={node.DataId}, category={node.Category}");
+        return false;
+    }
+
+    void RebindClickEvent(GameObject target, Action action)
+    {
+        if (target == null)
+            return;
+
+        UI_EventHandler evt = Util.GetOrAddComponent<UI_EventHandler>(target);
+        evt.OnClickHandler = null;
+        evt.OnClickHandler += action;
     }
 
     void SetText(Texts textId, string key)
