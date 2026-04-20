@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6370071403692599149}
   - component: {fileID: 4169990922787500822}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_Slider_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -896,7 +896,7 @@ GameObject:
   - component: {fileID: 3864269729412796861}
   - component: {fileID: 7815432984535326462}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: Img_Fill_Area_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1048,7 +1048,7 @@ GameObject:
   - component: {fileID: 3083026232442466298}
   - component: {fileID: 3633430483170814014}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_Title_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1562,7 +1562,7 @@ GameObject:
   - component: {fileID: 1526220299171623983}
   - component: {fileID: 7985401178540707212}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: Img_Fill_Area_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1723,7 +1723,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8706447743889918611}
   m_Layer: 5
-  m_Name: Fill Area
+  m_Name: Panel_Slider_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1759,7 +1759,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1300672832843853320}
   m_Layer: 5
-  m_Name: Fill Area
+  m_Name: Panel_Speed_Potion_Cooldown_Ba_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1797,7 +1797,7 @@ GameObject:
   - component: {fileID: 766237194610036172}
   - component: {fileID: 8842800295866583826}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_AutoBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1994,7 +1994,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2194154184095812328}
   m_Layer: 5
-  m_Name: Fill Area
+  m_Name: Panel_HP_Potion_Cooldown_Bar_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2069,7 +2069,7 @@ GameObject:
   - component: {fileID: 6340730749317322222}
   - component: {fileID: 1224043201901583925}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: Img_Fill_Area_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2805,7 +2805,7 @@ GameObject:
   - component: {fileID: 692532175257693238}
   - component: {fileID: 1190753894231414562}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_Button_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3124,7 +3124,7 @@ GameObject:
   - component: {fileID: 2204025712783001861}
   - component: {fileID: 7230134169354173731}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_AutoBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3686,7 +3686,7 @@ GameObject:
   - component: {fileID: 5927100234007660836}
   - component: {fileID: 1413716133724847348}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_AutoPotion_Guage_Lock_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4926,7 +4926,7 @@ GameObject:
   - component: {fileID: 7049718307444469594}
   - component: {fileID: 5648675185011645491}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_Button_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

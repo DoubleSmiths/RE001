@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4054339942646942337}
   - component: {fileID: 2515985054101076339}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -564,7 +564,7 @@ GameObject:
   - component: {fileID: 3843255785241922053}
   - component: {fileID: 5798229344137023778}
   m_Layer: 5
-  m_Name: GlowDot_01_End
+  m_Name: VFX_MinionInfoPopupASUpgrade_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5358,7 +5358,7 @@ GameObject:
   - component: {fileID: 1118647433921749642}
   - component: {fileID: 4813148824502536573}
   m_Layer: 5
-  m_Name: Dust_01
+  m_Name: VFX_Star_GlowDot_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10116,7 +10116,7 @@ GameObject:
   - component: {fileID: 1833266138207917917}
   - component: {fileID: 8058751447257218610}
   m_Layer: 5
-  m_Name: GlowDot_02_End
+  m_Name: VFX_MinionInfoPopupDmgUpgrad_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15152,7 +15152,7 @@ GameObject:
   - component: {fileID: 2665473649905826645}
   - component: {fileID: 3418145218209154751}
   m_Layer: 5
-  m_Name: Ring_01
+  m_Name: VFX_SYNC_GlowDot_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20135,7 +20135,7 @@ GameObject:
   - component: {fileID: 664888488364845196}
   - component: {fileID: 1472439163126136271}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20210,7 +20210,7 @@ GameObject:
   - component: {fileID: 5365441703449114700}
   - component: {fileID: 3437259663226823039}
   m_Layer: 5
-  m_Name: GlowDot_02_End_Light
+  m_Name: VFX_GlowDot_02_End_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25168,7 +25168,7 @@ GameObject:
   - component: {fileID: 2254728389824891990}
   - component: {fileID: 1926938991960166979}
   m_Layer: 5
-  m_Name: Dust_01
+  m_Name: VFX_SYNC_GlowDot_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29926,7 +29926,7 @@ GameObject:
   - component: {fileID: 7024037849618163055}
   - component: {fileID: 4023433732733449796}
   m_Layer: 5
-  m_Name: GlowDot_02_Start
+  m_Name: VFX_MinionInfoPopupASUpgrade_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34631,7 +34631,7 @@ GameObject:
   - component: {fileID: 8044536761292805019}
   - component: {fileID: 6271419064454148904}
   m_Layer: 5
-  m_Name: GlowDot_01_Start
+  m_Name: VFX_MinionInfoPopupASUpgrade_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39425,7 +39425,7 @@ GameObject:
   - component: {fileID: 853357370110013929}
   - component: {fileID: 3918995036790876576}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39792,7 +39792,7 @@ GameObject:
   - component: {fileID: 2916089898536774342}
   - component: {fileID: 2182035785481928829}
   m_Layer: 5
-  m_Name: _
+  m_Name: Mask_MinionCantSummonBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39922,7 +39922,7 @@ GameObject:
   - component: {fileID: 188334715253127257}
   - component: {fileID: 1563703182482885527}
   m_Layer: 5
-  m_Name: _
+  m_Name: Txt_MinionSummonBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40372,7 +40372,7 @@ GameObject:
   - component: {fileID: 5067738649629695720}
   - component: {fileID: 687366252427643255}
   m_Layer: 5
-  m_Name: GlowDot_02_Start
+  m_Name: VFX_MinionInfoPopupDmgUpgrad_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45461,7 +45461,7 @@ GameObject:
   - component: {fileID: 6597995965796878465}
   - component: {fileID: 7165816492935191127}
   m_Layer: 5
-  m_Name: GlowDot_01_End
+  m_Name: VFX_MinionInfoPopupDmgUpgrad_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50255,7 +50255,7 @@ GameObject:
   - component: {fileID: 1843748891834604001}
   - component: {fileID: 4303496540585245628}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Panel_MinionInfoPopup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55634,7 +55634,7 @@ GameObject:
   - component: {fileID: 5856156281002956142}
   - component: {fileID: 7603948860780220617}
   m_Layer: 5
-  m_Name: GlowDot_02_End
+  m_Name: VFX_MinionInfoPopupASUpgrade_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60682,7 +60682,7 @@ GameObject:
   - component: {fileID: 7548457622287447613}
   - component: {fileID: 6509785979302715448}
   m_Layer: 5
-  m_Name: _
+  m_Name: Mask_MinionSummonedBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65661,7 +65661,7 @@ GameObject:
   - component: {fileID: 7409496406377835965}
   - component: {fileID: 5213844703630986667}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_MinionInfoPopupNameFrame_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65739,7 +65739,7 @@ GameObject:
   - component: {fileID: 523682190689297684}
   - component: {fileID: 7569997174799883570}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_Xbutton_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66529,7 +66529,7 @@ GameObject:
   - component: {fileID: 5092100774849096167}
   - component: {fileID: 1786197032894049155}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_MinionUsingSkill_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66809,7 +66809,7 @@ GameObject:
   - component: {fileID: 6541127258142293771}
   - component: {fileID: 2177129465109223275}
   m_Layer: 5
-  m_Name: GlowDot_02_Start
+  m_Name: VFX_MinionInfoPopupCritUpgra_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71680,7 +71680,7 @@ GameObject:
   - component: {fileID: 3215322640034654121}
   - component: {fileID: 8786659573908518162}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71939,7 +71939,7 @@ GameObject:
   - component: {fileID: 6808137668792835814}
   - component: {fileID: 8177963035649498211}
   m_Layer: 5
-  m_Name: GlowDot_01_End
+  m_Name: VFX_MinionInfoPopupCritUpgra_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76934,7 +76934,7 @@ GameObject:
   - component: {fileID: 488028099795295744}
   - component: {fileID: 6440681113604945688}
   m_Layer: 5
-  m_Name: _
+  m_Name: Mask_MinionSummonBtn_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77901,7 +77901,7 @@ GameObject:
   - component: {fileID: 1079225237377036120}
   - component: {fileID: 2661381398235248968}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_MinionSummonedBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78637,7 +78637,7 @@ GameObject:
   - component: {fileID: 1255370281639466676}
   - component: {fileID: 1898456235560977516}
   m_Layer: 5
-  m_Name: _
+  m_Name: Txt_MinionSummonedBtn_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84368,7 +84368,7 @@ GameObject:
   - component: {fileID: 786616693003452098}
   - component: {fileID: 423353054929424027}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89523,7 +89523,7 @@ GameObject:
   - component: {fileID: 2760759042024278365}
   - component: {fileID: 2491022115368928727}
   m_Layer: 5
-  m_Name: GlowDot_02_End
+  m_Name: VFX_MinionInfoPopupCritUpgra_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94237,7 +94237,7 @@ GameObject:
   - component: {fileID: 231151304620027208}
   - component: {fileID: 400412071913130062}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_MinionSummonBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94312,7 +94312,7 @@ GameObject:
   - component: {fileID: 5459823962099560604}
   - component: {fileID: 6858804218074218699}
   m_Layer: 5
-  m_Name: GlowDot_02_End_Light
+  m_Name: VFX_GlowDot_02_End_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99025,7 +99025,7 @@ GameObject:
   - component: {fileID: 2108151740726649698}
   - component: {fileID: 1263409020970142186}
   m_Layer: 5
-  m_Name: GlowDot_01_Start
+  m_Name: VFX_MinionInfoPopupDmgUpgrad_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104783,7 +104783,7 @@ GameObject:
   - component: {fileID: 911648814029011816}
   - component: {fileID: 5514120725291841131}
   m_Layer: 5
-  m_Name: GlowDot_02_End_Light
+  m_Name: VFX_GlowDot_02_End_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109496,7 +109496,7 @@ GameObject:
   - component: {fileID: 2710236941761806156}
   - component: {fileID: 8520563181910193907}
   m_Layer: 5
-  m_Name: GlowDot_01_Start
+  m_Name: VFX_MinionInfoPopupCritUpgra_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -114667,7 +114667,7 @@ GameObject:
   - component: {fileID: 1283542554826402945}
   - component: {fileID: 8965374269907141421}
   m_Layer: 5
-  m_Name: Ring_01
+  m_Name: VFX_Star_GlowDot_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -119463,7 +119463,7 @@ GameObject:
   - component: {fileID: 6532993497706407294}
   - component: {fileID: 8188747091969230413}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_MinionNotUseSkill_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120121,7 +120121,7 @@ GameObject:
   - component: {fileID: 6043667485833114845}
   - component: {fileID: 8372881452093191065}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120273,7 +120273,7 @@ GameObject:
   - component: {fileID: 7327286093967938550}
   - component: {fileID: 2343803815247293288}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_BlockImg_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120829,7 +120829,7 @@ GameObject:
   - component: {fileID: 2613096209818626791}
   - component: {fileID: 8541629969813711716}
   m_Layer: 5
-  m_Name: _
+  m_Name: Txt_MinionCantSummonBtn_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125961,7 +125961,7 @@ GameObject:
   - component: {fileID: 3655818326981743207}
   - component: {fileID: 1610124506829226146}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_MinionCantSummonBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

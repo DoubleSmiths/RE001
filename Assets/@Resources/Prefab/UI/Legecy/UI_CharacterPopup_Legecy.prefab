@@ -364,7 +364,7 @@ GameObject:
   - component: {fileID: 561483626689498717}
   - component: {fileID: 7841678489893363054}
   m_Layer: 5
-  m_Name: InfoEVATxt
+  m_Name: Txt_DEXDetailInfoGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -515,7 +515,7 @@ GameObject:
   - component: {fileID: 1731846662133093957}
   - component: {fileID: 4311341034873509068}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Img_VITInPointBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 5515601857917973627}
   - component: {fileID: 9212979113394269288}
   m_Layer: 5
-  m_Name: STRDetailGroup
+  m_Name: Img_Layout_3_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -668,7 +668,7 @@ GameObject:
   - component: {fileID: 367715473331080388}
   - component: {fileID: 5968779618063834054}
   m_Layer: 5
-  m_Name: STRDetailInfoMainTxt
+  m_Name: Txt_STRDetailInfoGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: 3279837902954229323}
   - component: {fileID: 5611632542219335478}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ASDetailGroup_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -894,7 +894,7 @@ GameObject:
   - component: {fileID: 2277706765227264803}
   - component: {fileID: 1416553993379147234}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_VITDetailTitleGroup_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -969,7 +969,7 @@ GameObject:
   - component: {fileID: 1369498898753395131}
   - component: {fileID: 838576597656368049}
   m_Layer: 5
-  m_Name: GameObject_1
+  m_Name: Img_MAGInPointBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1046,7 +1046,7 @@ GameObject:
   - component: {fileID: 6993689997686751053}
   - component: {fileID: 3474909423378146689}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_PointsandElixirBar_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1210,7 +1210,7 @@ GameObject:
   - component: {fileID: 5795957643840119226}
   - component: {fileID: 2150522909266834639}
   m_Layer: 5
-  m_Name: InfoCRITTxt
+  m_Name: Txt_STRDetailInfoGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1790,7 +1790,7 @@ GameObject:
   - component: {fileID: 7987882879492081097}
   - component: {fileID: 83631159176779383}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Img_VITDePointBtn_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2215,7 +2215,7 @@ GameObject:
   - component: {fileID: 814928650417023613}
   - component: {fileID: 2229776338108630807}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_CharacterPopupTitle_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2291,7 +2291,7 @@ GameObject:
   - component: {fileID: 4945218820089317819}
   - component: {fileID: 7845637561656743158}
   m_Layer: 5
-  m_Name: InfoEVATxt
+  m_Name: Txt_DEXDetailInfoGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3405,7 +3405,7 @@ GameObject:
   - component: {fileID: 8334592542761506805}
   - component: {fileID: 8375170936416822630}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_DEXDetailTitleGroup_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3480,7 +3480,7 @@ GameObject:
   - component: {fileID: 7676878278885406853}
   - component: {fileID: 1108911512306808861}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_DEXDetailTitleGroup_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3553,7 +3553,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8312918116733503261}
   m_Layer: 5
-  m_Name: DEXDetailInfoGroup
+  m_Name: Panel_DEXDetailGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3595,7 +3595,7 @@ GameObject:
   - component: {fileID: 3208323676637549357}
   - component: {fileID: 5279964947889477062}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_HPDetailGroup_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3823,7 +3823,7 @@ GameObject:
   - component: {fileID: 6680125137644574091}
   - component: {fileID: 3293834745745357798}
   m_Layer: 5
-  m_Name: InfoACCTxt
+  m_Name: Txt_STRDetailInfoGroup_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4206,7 +4206,7 @@ GameObject:
   - component: {fileID: 5535451580324595852}
   - component: {fileID: 3085066008059844186}
   m_Layer: 5
-  m_Name: Layout
+  m_Name: Panel_CharacterPopup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5485,7 +5485,7 @@ GameObject:
   - component: {fileID: 6337240877880378028}
   - component: {fileID: 1866531747955282422}
   m_Layer: 5
-  m_Name: InfoCTRTxt
+  m_Name: Txt_DEXDetailInfoGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7692,7 +7692,7 @@ GameObject:
   - component: {fileID: 2461070298378532838}
   - component: {fileID: 7040946686755092994}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_SubTitle_ATK_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8089,7 +8089,7 @@ GameObject:
   - component: {fileID: 2068011544427474959}
   - component: {fileID: 7846298773506885267}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_DEXDetailTitleGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8464,7 +8464,7 @@ GameObject:
   - component: {fileID: 4059495285491783230}
   - component: {fileID: 67604984150887062}
   m_Layer: 5
-  m_Name: STRDetailInfoMainTxt
+  m_Name: Txt_STRDetailInfoGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8767,7 +8767,7 @@ GameObject:
   - component: {fileID: 8893881326743125889}
   - component: {fileID: 1324356945156722544}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Img_STRInPointBtn_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8843,7 +8843,7 @@ GameObject:
   - component: {fileID: 1916445950579246436}
   - component: {fileID: 361303028036417491}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Mask_StatResetBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8933,7 +8933,7 @@ GameObject:
   - component: {fileID: 2055859748317928613}
   - component: {fileID: 4697312967803581947}
   m_Layer: 5
-  m_Name: STRDetailInfoMainTxt_1
+  m_Name: Txt_STRDetailInfoGroup_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9163,7 +9163,7 @@ GameObject:
   - component: {fileID: 7548541510503756004}
   - component: {fileID: 5969332997521266387}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_SubTitle_ATK_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9251,7 +9251,7 @@ GameObject:
   - component: {fileID: 7791390888148353549}
   - component: {fileID: 1204075700947385804}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_SubTitle_DEF_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9851,7 +9851,7 @@ GameObject:
   - component: {fileID: 8508232313472777932}
   - component: {fileID: 1418196078457166402}
   m_Layer: 5
-  m_Name: InfoCRITTxt
+  m_Name: Txt_STRDetailInfoGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10003,7 +10003,7 @@ GameObject:
   - component: {fileID: 5974037088336125448}
   - component: {fileID: 8409873780469907396}
   m_Layer: 5
-  m_Name: STRDetailInfoMainTxt
+  m_Name: Txt_STRDetailGroup_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10230,7 +10230,7 @@ GameObject:
   - component: {fileID: 4871911209193802278}
   - component: {fileID: 1589140165270054391}
   m_Layer: 5
-  m_Name: InfoDMGTxt
+  m_Name: Txt_STRDetailInfoGroup_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10737,7 +10737,7 @@ GameObject:
   - component: {fileID: 9048266458637917156}
   - component: {fileID: 4732177580259252263}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_DROP_RATEDetailGroup_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10813,7 +10813,7 @@ GameObject:
   - component: {fileID: 3972477585835467129}
   - component: {fileID: 2499746500281254067}
   m_Layer: 5
-  m_Name: InfoACCTxt
+  m_Name: Txt_STRDetailInfoGroup_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11744,7 +11744,7 @@ GameObject:
   - component: {fileID: 8500255492477416592}
   - component: {fileID: 8024356310607972605}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_DEFDetailGroup_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11820,7 +11820,7 @@ GameObject:
   - component: {fileID: 1596225419044220972}
   - component: {fileID: 6034017872402350436}
   m_Layer: 5
-  m_Name: VITDetailInfoMainTxt_1
+  m_Name: Txt_VITDetailInfoGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11973,7 +11973,7 @@ GameObject:
   m_Component:
   - component: {fileID: 180602527484254090}
   m_Layer: 5
-  m_Name: CharacterPopupTitle
+  m_Name: Panel_StatDetailFrame_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12014,7 +12014,7 @@ GameObject:
   - component: {fileID: 6160721080946183794}
   - component: {fileID: 7334461025751404286}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: Txt_VITStatGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13144,7 +13144,7 @@ GameObject:
   - component: {fileID: 214514623027027337}
   - component: {fileID: 8272867983614299824}
   m_Layer: 5
-  m_Name: DEXDetailInfoMainTxt
+  m_Name: Txt_DEXDetailInfoGroup_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13296,7 +13296,7 @@ GameObject:
   - component: {fileID: 2773810617047560870}
   - component: {fileID: 7800650550801375468}
   m_Layer: 5
-  m_Name: InfoRecovTxt
+  m_Name: Txt_VITDetailInfoGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13448,7 +13448,7 @@ GameObject:
   - component: {fileID: 180705959643959689}
   - component: {fileID: 22904385478389874}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_SubTitle_UTIL_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13533,7 +13533,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1434880742104345049}
   m_Layer: 5
-  m_Name: STRDetailTitleGroup
+  m_Name: Panel_STRDetailGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13573,7 +13573,7 @@ GameObject:
   - component: {fileID: 7621475008589196247}
   - component: {fileID: 1098183869067294381}
   m_Layer: 5
-  m_Name: VITDetailGroup
+  m_Name: Img_Layout_3_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13687,7 +13687,7 @@ GameObject:
   - component: {fileID: 6100703805076618545}
   - component: {fileID: 2087059120736106050}
   m_Layer: 5
-  m_Name: GameObject_1
+  m_Name: Img_DEXInPointBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13763,7 +13763,7 @@ GameObject:
   - component: {fileID: 2780405546205441173}
   - component: {fileID: 6659436030972628812}
   m_Layer: 5
-  m_Name: InfoRecovTxt
+  m_Name: Txt_VITDetailInfoGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13915,7 +13915,7 @@ GameObject:
   - component: {fileID: 7239587761651935097}
   - component: {fileID: 5487512033313315691}
   m_Layer: 5
-  m_Name: InfoHPTxt
+  m_Name: Txt_VITDetailInfoGroup_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14067,7 +14067,7 @@ GameObject:
   - component: {fileID: 4795530794114131300}
   - component: {fileID: 2011002939894915000}
   m_Layer: 5
-  m_Name: InfoACCTxt
+  m_Name: Txt_STRDetailInfoGroup_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14687,7 +14687,7 @@ GameObject:
   - component: {fileID: 9175001709987169720}
   - component: {fileID: 918300888453327727}
   m_Layer: 5
-  m_Name: DEXDetailInfoMainTxt_1
+  m_Name: Txt_DEXDetailInfoGroup_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15195,7 +15195,7 @@ GameObject:
   - component: {fileID: 2215282637642131476}
   - component: {fileID: 8940859243325754104}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_CDMGDetailGroup_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15308,7 +15308,7 @@ GameObject:
   - component: {fileID: 5934508670827726449}
   - component: {fileID: 8970246165782094108}
   m_Layer: 5
-  m_Name: DEXDetailTitleTxt
+  m_Name: Txt_DEXDetailTitleGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15457,7 +15457,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6431419361768113378}
   m_Layer: 5
-  m_Name: DEXDetailInfoGroup
+  m_Name: Panel_DEXDetailGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15500,7 +15500,7 @@ GameObject:
   - component: {fileID: 3152658153433293305}
   - component: {fileID: 2067771104692303813}
   m_Layer: 5
-  m_Name: InfoASTxt
+  m_Name: Txt_DEXDetailInfoGroup_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15651,7 +15651,7 @@ GameObject:
   - component: {fileID: 7644440361872365535}
   - component: {fileID: 369222920359141596}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_EVADetailGroup_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15727,7 +15727,7 @@ GameObject:
   - component: {fileID: 6595063532514290879}
   - component: {fileID: 2197291953434780001}
   m_Layer: 5
-  m_Name: VITDetailTitleTxt
+  m_Name: Txt_VITDetailTitleGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16410,7 +16410,7 @@ GameObject:
   - component: {fileID: 8594669578725364655}
   - component: {fileID: 2699373233516445964}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_PointsandElixirBar_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16498,7 +16498,7 @@ GameObject:
   - component: {fileID: 6292877792117069201}
   - component: {fileID: 1491391026836014514}
   m_Layer: 5
-  m_Name: InfoEVATxt
+  m_Name: Txt_DEXDetailInfoGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16649,7 +16649,7 @@ GameObject:
   - component: {fileID: 4629870601730587324}
   - component: {fileID: 4290909570360734261}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_VITDetailTitleGroup_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16990,7 +16990,7 @@ GameObject:
   - component: {fileID: 1581513516579314162}
   - component: {fileID: 2169273716423067651}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Img_STRDePointBtn_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17104,7 +17104,7 @@ GameObject:
   - component: {fileID: 5601158548618295629}
   - component: {fileID: 2740048639125739859}
   m_Layer: 5
-  m_Name: DEXDetailTitleTxt
+  m_Name: Txt_DEXDetailTitleGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17255,7 +17255,7 @@ GameObject:
   - component: {fileID: 3634400147728821396}
   - component: {fileID: 9143315058332414968}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_STRDetailTitleGroup_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17330,7 +17330,7 @@ GameObject:
   - component: {fileID: 9037091598118626749}
   - component: {fileID: 7261669088096452598}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_M_RESDetailGroup_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17405,7 +17405,7 @@ GameObject:
   - component: {fileID: 5961627959062274685}
   - component: {fileID: 8473529102257986354}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Img_MAGDePointBtn_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17480,7 +17480,7 @@ GameObject:
   - component: {fileID: 794820897753132222}
   - component: {fileID: 2953930704621668888}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_VITDetailTitleGroup_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17720,7 +17720,7 @@ GameObject:
   - component: {fileID: 1251567589226767388}
   - component: {fileID: 9178502770203001103}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_P_RESDetailGroup_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17796,7 +17796,7 @@ GameObject:
   - component: {fileID: 3830888803144828158}
   - component: {fileID: 9157835837439176858}
   m_Layer: 5
-  m_Name: DEXDetailInfoMainTxt
+  m_Name: Txt_DEXDetailInfoGroup_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18398,7 +18398,7 @@ GameObject:
   - component: {fileID: 5462552792498643189}
   - component: {fileID: 3665504128112766635}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_STRDetailTitleGroup_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18778,7 +18778,7 @@ GameObject:
   - component: {fileID: 1977634183487089111}
   - component: {fileID: 7882317800041584742}
   m_Layer: 5
-  m_Name: InfoASTxt
+  m_Name: Txt_DEXDetailInfoGroup_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19385,7 +19385,7 @@ GameObject:
   - component: {fileID: 121914902534492141}
   - component: {fileID: 5821251656845002713}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_CCDetailGroup_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19460,7 +19460,7 @@ GameObject:
   - component: {fileID: 8753686576331653296}
   - component: {fileID: 2399615761937670713}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_CharacterPopupTitle_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20810,7 +20810,7 @@ GameObject:
   - component: {fileID: 632698093773133708}
   - component: {fileID: 1447078746064301140}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_RECOVDetailGroup_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20886,7 +20886,7 @@ GameObject:
   - component: {fileID: 7785113424878546566}
   - component: {fileID: 7799968937204799682}
   m_Layer: 5
-  m_Name: GameObject_1
+  m_Name: Mask_StatConfirmBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20976,7 +20976,7 @@ GameObject:
   - component: {fileID: 7324118927890580484}
   - component: {fileID: 4896496675629539670}
   m_Layer: 5
-  m_Name: InfoASTxt
+  m_Name: Txt_DEXDetailInfoGroup_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21344,7 +21344,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6062685328683209387}
   m_Layer: 5
-  m_Name: STRDetailInfoGroup
+  m_Name: Panel_STRDetailGroup_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21385,7 +21385,7 @@ GameObject:
   - component: {fileID: 7352024044435165530}
   - component: {fileID: 5640301787601842681}
   m_Layer: 5
-  m_Name: InfoDMGTxt
+  m_Name: Txt_STRDetailGroup_1_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21537,7 +21537,7 @@ GameObject:
   - component: {fileID: 4228992684103217809}
   - component: {fileID: 3443740749414973719}
   m_Layer: 5
-  m_Name: InfoCRITTxt
+  m_Name: Txt_STRDetailInfoGroup_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21689,7 +21689,7 @@ GameObject:
   - component: {fileID: 3766609314783590857}
   - component: {fileID: 2327930189319659237}
   m_Layer: 5
-  m_Name: DEXDetailInfoMainTxt_1
+  m_Name: Txt_DEXDetailInfoGroup_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22274,7 +22274,7 @@ GameObject:
   - component: {fileID: 4488900141820803332}
   - component: {fileID: 6038307188786022220}
   m_Layer: 5
-  m_Name: STRDetailTitleTxt
+  m_Name: Txt_STRDetailTitleGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22426,7 +22426,7 @@ GameObject:
   - component: {fileID: 595630092251329290}
   - component: {fileID: 6457910711505968353}
   m_Layer: 5
-  m_Name: InfoCTRTxt
+  m_Name: Txt_DEXDetailInfoGroup_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22579,7 +22579,7 @@ GameObject:
   - component: {fileID: 8907990603822917109}
   - component: {fileID: 7422725069388843348}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_PointsandElixirBar_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23562,7 +23562,7 @@ GameObject:
   - component: {fileID: 5510537587185077911}
   - component: {fileID: 8098031076849012666}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_CharacterPopupTitle_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24107,7 +24107,7 @@ GameObject:
   - component: {fileID: 95924982568810318}
   - component: {fileID: 8739396347430649365}
   m_Layer: 5
-  m_Name: STRDetailInfoMainTxt_1
+  m_Name: Txt_STRDetailInfoGroup_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24340,7 +24340,7 @@ GameObject:
   - component: {fileID: 4824825958064520496}
   - component: {fileID: 7853348705632805516}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ACCDetailGroup_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24415,7 +24415,7 @@ GameObject:
   - component: {fileID: 8171678739384639963}
   - component: {fileID: 7441620940889823636}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_DEXDetailTitleGroup_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24572,7 +24572,7 @@ GameObject:
   - component: {fileID: 2304256101368288453}
   - component: {fileID: 5851836230765960373}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: Txt_STRStatGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25042,7 +25042,7 @@ GameObject:
   - component: {fileID: 1691362728034695394}
   - component: {fileID: 1571705049693824715}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_CharacterPopupTitle_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26049,7 +26049,7 @@ GameObject:
   - component: {fileID: 6115493331229205735}
   - component: {fileID: 5845734541978554553}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_SubTitle_UTIL_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26134,7 +26134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5284918529961717650}
   m_Layer: 5
-  m_Name: DEXDetailTitleGroup
+  m_Name: Panel_DEXDetailGroup_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26174,7 +26174,7 @@ GameObject:
   - component: {fileID: 6884113473468235711}
   - component: {fileID: 499929265998330803}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_STRDetailTitleGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26477,7 +26477,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6626477486607967212}
   m_Layer: 5
-  m_Name: DEXDetailTitleGroup
+  m_Name: Panel_DEXDetailGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26518,7 +26518,7 @@ GameObject:
   - component: {fileID: 5659229711698448038}
   - component: {fileID: 6608336643964635563}
   m_Layer: 5
-  m_Name: DEXDetailInfoMainTxt
+  m_Name: Txt_DEXDetailInfoGroup_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26982,7 +26982,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2314942488975945178}
   m_Layer: 5
-  m_Name: VITDetailTitleGroup
+  m_Name: Panel_VITDetailGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27023,7 +27023,7 @@ GameObject:
   - component: {fileID: 6883690926846115230}
   - component: {fileID: 7761163356323037329}
   m_Layer: 5
-  m_Name: InfoDMGTxt
+  m_Name: Txt_STRDetailInfoGroup_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27326,7 +27326,7 @@ GameObject:
   - component: {fileID: 7757214322575967469}
   - component: {fileID: 8690638995009659998}
   m_Layer: 5
-  m_Name: STRDetailGroup
+  m_Name: Img_Layout_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27691,7 +27691,7 @@ GameObject:
   - component: {fileID: 5333096589343565630}
   - component: {fileID: 2351485902430759580}
   m_Layer: 5
-  m_Name: VITDetailInfoMainTxt_1
+  m_Name: Txt_VITDetailInfoGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27883,7 +27883,7 @@ GameObject:
   - component: {fileID: 7409307185223966660}
   - component: {fileID: 4053996179310103101}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_DEXDetailTitleGroup_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27959,7 +27959,7 @@ GameObject:
   - component: {fileID: 2166807148650061245}
   - component: {fileID: 7215125114447500990}
   m_Layer: 5
-  m_Name: STRDetailTitleTxt
+  m_Name: Txt_STRDetailTitleGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28189,7 +28189,7 @@ GameObject:
   - component: {fileID: 2283795785429582526}
   - component: {fileID: 4556639383942694801}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: Txt_DEXStatGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28432,7 +28432,7 @@ GameObject:
   - component: {fileID: 7466143205933361681}
   - component: {fileID: 7603337122269613463}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Img_DEXDePointBtn_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28579,7 +28579,7 @@ GameObject:
   - component: {fileID: 454584241896176742}
   - component: {fileID: 262081292826657163}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_EXP_RATEDetailGroup_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28655,7 +28655,7 @@ GameObject:
   - component: {fileID: 4131028190589855446}
   - component: {fileID: 2598182271990752312}
   m_Layer: 5
-  m_Name: InfoDEFTxt
+  m_Name: Txt_VITDetailInfoGroup_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28884,7 +28884,7 @@ GameObject:
   - component: {fileID: 7116565360944586891}
   - component: {fileID: 5355446402585662497}
   m_Layer: 5
-  m_Name: DEXDetailTitleTxt
+  m_Name: Txt_DEXDetailTitleGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29036,7 +29036,7 @@ GameObject:
   - component: {fileID: 1010937917476476468}
   - component: {fileID: 2234632716288210116}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_SubTitle_DEF_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29124,7 +29124,7 @@ GameObject:
   - component: {fileID: 1529431258902313760}
   - component: {fileID: 9151841619730673056}
   m_Layer: 5
-  m_Name: InfoDEFTxt
+  m_Name: Txt_VITDetailInfoGroup_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29475,7 +29475,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3488647275061654064}
   m_Layer: 5
-  m_Name: STRDetailInfoGroup
+  m_Name: Panel_STRDetailGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29583,7 +29583,7 @@ GameObject:
   - component: {fileID: 8221294016259351961}
   - component: {fileID: 6182667920540206719}
   m_Layer: 5
-  m_Name: DEXDetailInfoMainTxt_1
+  m_Name: Txt_DEXDetailInfoGroup_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29736,7 +29736,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4765603755072560241}
   m_Layer: 5
-  m_Name: STRDetailInfoGroup
+  m_Name: Panel_STRDetailGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29779,7 +29779,7 @@ GameObject:
   - component: {fileID: 6698836872787224107}
   - component: {fileID: 8108995456112644081}
   m_Layer: 5
-  m_Name: InfoCTRTxt
+  m_Name: Txt_DEXDetailInfoGroup_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30083,7 +30083,7 @@ GameObject:
   - component: {fileID: 2416539565598416346}
   - component: {fileID: 4674507828338930699}
   m_Layer: 5
-  m_Name: VITDetailTitleTxt
+  m_Name: Txt_VITDetailTitleGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30421,7 +30421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 944712186021933405}
   m_Layer: 5
-  m_Name: STRDetailTitleGroup
+  m_Name: Panel_STRDetailGroup_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30759,7 +30759,7 @@ GameObject:
   - component: {fileID: 8103914059348868670}
   - component: {fileID: 2789251002960025680}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_MATKDetailGroup_21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30984,7 +30984,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8501959434239250262}
   m_Layer: 5
-  m_Name: CharacterPopupTitle
+  m_Name: Panel_StatDetailFrame_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31024,7 +31024,7 @@ GameObject:
   - component: {fileID: 3514919300295463924}
   - component: {fileID: 5968173842487181140}
   m_Layer: 5
-  m_Name: VITDetailInfoMainTxt
+  m_Name: Txt_VITDetailInfoGroup_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31535,7 +31535,7 @@ GameObject:
   - component: {fileID: 7863809214458663580}
   - component: {fileID: 3163138259193072646}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_Xbutton_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31810,7 +31810,7 @@ GameObject:
   - component: {fileID: 2683171095540027725}
   - component: {fileID: 8369062907920560609}
   m_Layer: 5
-  m_Name: InfoHPTxt
+  m_Name: Txt_VITDetailInfoGroup_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32348,7 +32348,7 @@ GameObject:
   - component: {fileID: 785835838907852380}
   - component: {fileID: 5722193609319793041}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_STRDetailGroup_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33242,7 +33242,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6479236655554533311}
   m_Layer: 5
-  m_Name: VITDetailTitleGroup
+  m_Name: Panel_VITDetailGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33600,7 +33600,7 @@ GameObject:
   - component: {fileID: 2118219655469190912}
   - component: {fileID: 2185790422545840156}
   m_Layer: 5
-  m_Name: StatNameTxt
+  m_Name: Txt_MAGStatGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33765,7 +33765,7 @@ GameObject:
   - component: {fileID: 3296945095443720934}
   - component: {fileID: 1752937123176687192}
   m_Layer: 5
-  m_Name: _
+  m_Name: Obj_Right_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34076,7 +34076,7 @@ GameObject:
   - component: {fileID: 1930075037838310490}
   - component: {fileID: 4086490869954392602}
   m_Layer: 5
-  m_Name: STRDetailInfoMainTxt_1
+  m_Name: Txt_STRDetailInfoGroup_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34508,7 +34508,7 @@ GameObject:
   - component: {fileID: 3710923059627567741}
   - component: {fileID: 1895765882685912981}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_DEXDetailTitleGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34581,7 +34581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1412934278875398300}
   m_Layer: 5
-  m_Name: VITDetailInfoGroup
+  m_Name: Panel_VITDetailGroup_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35164,7 +35164,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1703453518548268952}
   m_Layer: 5
-  m_Name: VITDetailInfoGroup
+  m_Name: Panel_VITDetailGroup_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35374,7 +35374,7 @@ GameObject:
   - component: {fileID: 8027312479337392638}
   - component: {fileID: 2398884885456442744}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_VITDetailTitleGroup_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35448,7 +35448,7 @@ GameObject:
   - component: {fileID: 1241820550785600948}
   - component: {fileID: 5099689067741444254}
   m_Layer: 5
-  m_Name: Layout
+  m_Name: Panel_CharacterPopupTitle_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35512,7 +35512,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6805609384440547536}
   m_Layer: 5
-  m_Name: DEXDetailInfoGroup
+  m_Name: Panel_DEXDetailGroup_1_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35712,7 +35712,7 @@ GameObject:
   - component: {fileID: 8204685401415735127}
   - component: {fileID: 4467045102757141993}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_StatDetailBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35876,7 +35876,7 @@ GameObject:
   m_Component:
   - component: {fileID: 100432604921840992}
   m_Layer: 5
-  m_Name: CharacterPopupTitle
+  m_Name: Panel_CharacterPopupFrame_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36069,7 +36069,7 @@ GameObject:
   - component: {fileID: 8782288009862180753}
   - component: {fileID: 304812431575407612}
   m_Layer: 5
-  m_Name: VITDetailInfoMainTxt
+  m_Name: Txt_VITDetailInfoGroup_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36296,7 +36296,7 @@ GameObject:
   - component: {fileID: 6572940387595756633}
   - component: {fileID: 5813725243789202168}
   m_Layer: 5
-  m_Name: VITDetailGroup
+  m_Name: Img_Layout_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36373,7 +36373,7 @@ GameObject:
   - component: {fileID: 7159416863748856419}
   - component: {fileID: 2672825190122831213}
   m_Layer: 5
-  m_Name: DEXDetailGroup
+  m_Name: Img_Layout_3_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36824,7 +36824,7 @@ GameObject:
   - component: {fileID: 6529769090666707552}
   - component: {fileID: 5015692847779439952}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_PATKDetailGroup_22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36975,7 +36975,7 @@ GameObject:
   - component: {fileID: 654234800158805220}
   - component: {fileID: 1004013402284520719}
   m_Layer: 5
-  m_Name: Layout
+  m_Name: Panel_CharacterPopupTitle_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37040,7 +37040,7 @@ GameObject:
   - component: {fileID: 120625049832024706}
   - component: {fileID: 1268126234903988256}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_STRDetailTitleGroup_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37487,7 +37487,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5405694996364406525}
   m_Layer: 5
-  m_Name: DEXDetailTitleGroup
+  m_Name: Panel_DEXDetailGroup_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37527,7 +37527,7 @@ GameObject:
   - component: {fileID: 3420842864190146790}
   - component: {fileID: 2789028028752520428}
   m_Layer: 5
-  m_Name: DEXDetailGroup
+  m_Name: Img_Layout_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
