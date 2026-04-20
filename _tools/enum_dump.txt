@@ -1,0 +1,697 @@
+
+=== Popup\UI_CharacterPopup.cs ===
+  enum Images: 27 members
+    CharacterPopupFrame
+    ContentsStats
+    STRStatGroup
+    VITStatGroup
+    DEXStatGroup
+    MAGStatGroup
+    StatResetBtnGrow
+    Mask
+    StatDetailBtnGrow
+    StatConfirmBtnGrow
+    StatDetailFrame
+    CCDetailGroup
+    ACCDetailGroup
+    P_RESDetailGroup
+    EVADetailGroup
+    EXP_RATEDetailGroup
+    CDMGDetailGroup
+    ASDetailGroup
+    M_RESDetailGroup
+    RECOVDetailGroup
+    DROP_RATEDetailGroup
+    Xbutton
+    StatDetailBtnMask
+    PATKUnderArrowImage
+    MATKUnderArrowImage
+    HPUnderArrowImage
+    DEFUnderArrowImage
+  enum Texts: 80 members
+    title
+    STRAmountTxt
+    STRInvPoint
+    VITAmountTxt
+    VITInvPoint
+    DEXAmountTxt
+    DEXInvPoint
+    MAGAmountTxt
+    MAGInvPoint
+    SubTitle_ATKText
+    PATKBaseStatString
+    PATKBaseStatNum
+    PATKIncreaseStatString
+    PATKIncreaseStatNum
+    PATKBoostStatString
+    PATKBoostStatNum
+    PATKEqualTxt
+    PATKStatString
+    PATKStatNum
+    PATKUnderArrowText
+    CCStatString
+    CCStatNum
+    ACCStatString
+    ACCStatNum
+    SubTitle_DEFText
+    HPBaseStatString
+    HPBaseStatNum
+    HPIncreaseStatString
+    HPIncreaseStatNum
+    HPBoostStatString
+    HPBoostStatNum
+    HPEqualTxt
+    HPStatString
+    HPStatNum
+    HPUnderArrowText
+    P_RESStatString
+    P_RESStatNum
+    EVAStatString
+    EVAStatNum
+    SubTitle_UTILText
+    EXP_RATEStatString
+    EXP_RATEStatNum
+    MATKBaseStatString
+    MATKBaseStatNum
+    MATKIncreaseStatString
+    MATKIncreaseStatNum
+    MATKBoostStatString
+    MATKBoostStatNum
+    MATKEqualTxt
+    MATKStatString
+    MATKStatNum
+    MATKUnderArrowText
+    CDMGStatString
+    CDMGStatNum
+    ASStatString
+    ASStatNum
+    DEFBaseStatString
+    DEFBaseStatNum
+    DEFIncreaseStatString
+    DEFIncreaseStatNum
+    DEFBoostStatString
+    DEFBoostStatNum
+    DEFEqualTxt
+    DEFStatString
+    DEFStatNum
+    DEFUnderArrowText
+    M_RESStatString
+    M_RESStatNum
+    RECOVStatString
+    RECOVStatNum
+    DROP_RATEStatString
+    DROP_RATEStatNum
+    PointsText
+    PointsStatPointsTxt
+    ElixirText
+    ElixirPointsTxt
+    STRStatNameTxt
+    VITStatNameTxt
+    DEXStatNameTxt
+    MAGStatNameTxt
+  enum Buttons: 16 members
+    CharacterPopupBackground
+    STRDePointBtn
+    STRInPointBtn
+    VITDePointBtn
+    VITInPointBtn
+    DEXDePointBtn
+    DEXInPointBtn
+    MAGDePointBtn
+    MAGInPointBtn
+    StatResetBtn
+    StatDetailBtn
+    StatConfirmBtn
+    PATKDetailGroup
+    HPDetailGroup
+    MATKDetailGroup
+    DEFDetailGroup
+  enum GameObjects: 46 members
+    FIXED
+    In_Frame
+    CharacterPopup
+    Contents
+    PointsandElixirBar
+    TopLayout
+    BtmLayout
+    Left
+    SubTitle_ATK
+    PATKSubTexts
+    PATKBase
+    PATKIncrease
+    PATKBoost
+    PATKMainTexts
+    CCMainTexts
+    ACCMainTexts
+    __3
+    SubTitle_DEF
+    HPSubTexts
+    HPBase
+    HPIncrease
+    HPBoost
+    HPMainTexts
+    P_RESMainTexts
+    EVAMainTexts
+    __4
+    SubTitle_UTIL
+    EXP_RATEMainTexts
+    Right
+    __1
+    MATKSubTexts
+    MATKBase
+    MATKIncrease
+    MATKBoost
+    MATKMainTexts
+    CDMGMainTexts
+    ASMainTexts
+    DEFSubTexts
+    DEFBase
+    DEFIncrease
+    DEFBoost
+    DEFMainTexts
+    M_RESMainTexts
+    RECOVMainTexts
+    __2
+    DROP_RATEMainTexts
+
+=== Popup\UI_DialoguePopup.cs ===
+  enum Images: 4 members
+    Panel
+    CharacterImage
+    TextBoxDialogueFrame
+    DialogueNextImage
+  enum Texts: 2 members
+    DialogueText
+    DialogueName
+  enum Buttons: 0 members
+  enum GameObjects: 2 members
+    FIXED
+    In_Frame
+
+=== Popup\UI_InventoryPopup.cs ===
+  enum Images: 8 members
+    InventoryPopupFrame
+    ScrollView
+    Viewport
+    ScrollbarVertical
+    Handle
+    Image_1
+    ImportantThingsBox
+    Xbutton
+  enum Texts: 4 members
+    title
+    InvSlotNewTxt
+    ImportantBagNewTxt
+    ImportantBagBtnText
+  enum Buttons: 4 members
+    InventoryPopupBackground
+    UI_InvSlot
+    InventorySortBtn
+    ImportantBagBtn
+  enum GameObjects: 8 members
+    FIXED
+    In_Frame
+    InventoryPopup
+    InventoryPopupTitle
+    InventoryList
+    Content
+    SlidingArea
+    ImportantThingsList
+
+=== Popup\UI_ItemPopup.cs ===
+  enum Images: 17 members
+    _0
+    _2
+    Image_4
+    Image_5
+    ItemPopupFrame
+    ItemImg
+    dot
+    dot_1
+    __1
+    ScrollNotHaveBtn
+    SOMNotHaveBtn
+    MORNotHaveBtn
+    DuriShowPanel
+    Flash_USETHIS
+    Xbutton
+    ItemPopupImgGroupGlow
+    ItemPopupTitleGlow
+  enum Texts: 10 members
+    AmountText
+    ItemPopupItemName
+    raretext
+    ItemPopupItemDesc_Rare
+    wherefoundtext
+    ItemPopupItemDesc_Found
+    ItemPopupItemDesc
+    Text_Legacy
+    Text_Legacy_1
+    GameObject
+  enum Buttons: 5 members
+    ItemPopupBackground
+    _1
+    ScrollUseBtn
+    SOMUseBtn
+    MORUseBtn
+  enum GameObjects: 13 members
+    FIXED
+    In_Frame
+    ItemPopup
+    ItemPopupBackground_SOMGroup
+    ItemPopupMain
+    shineeffect
+    ItemPopupImgGroup
+    ItemPopupTitle
+    ButtonGroup
+    ScrollBtnGroup
+    SOMBtnGroup
+    MORBtnGroup
+    ItemPopupFlash
+
+=== Popup\UI_MapSelectPopup.cs ===
+  enum Images: 25 members
+    Xbutton
+    MapSelectPopupFrame
+    MapSelectPopupTitleBar
+    MapSelectPopupMapImage
+    MapSelectPopupMapImageFrame
+    MapSelectPopupMapNameFrame
+    Decor_description_line_Image
+    MapSelectPopupBtmFrame
+    PlaceType
+    PlaceTypeTownImage
+    AdventureImage
+    TownType
+    TownImage
+    EFrame
+    FieldType
+    FieldTypeAdventureImage
+    BWFType
+    BWFTypeFrame
+    BWFTypeTitle
+    TitleTextFrame
+    MapSelectBWF_EntryBtnFrame
+    MapSelectBWF_EntryBtnImage
+    MapSelectBWFBtnFrame
+    MapSelectBWFBtnImage
+    BtmGroup
+  enum Texts: 15 members
+    XbuttonText
+    MapSelectPopupTitleText
+    MapSelectPopupMapNameText
+    PlaceTypeTownText
+    AdventrueText
+    TownTypeTownText
+    MapSelectAsdalBtnText
+    MapSelectPopup_CurrentLocationTxt
+    FieldTypeAdventureText
+    ButtonBWFTypeText
+    BWFTypeTitleText
+    MapSelectBWF_EntryBtnText
+    MapSelectBWFBtnText
+    ButtonMapSelectBackText
+    ButtonMapSelectGOText
+  enum Buttons: 11 members
+    MapSelectBackground
+    Buttonto_TownType
+    Buttonto_FieldType
+    ButtonMapSelectBack_TOP_1
+    MapSelectAsdalBtn
+    ButtonMapSelectBack_TOP
+    ButtonBWFType
+    MapSelectBWF_EntryBtn
+    MapSelectBWFBtn
+    ButtonMapSelectBack
+    ButtonMapSelectGO
+  enum GameObjects: 12 members
+    FIXED
+    In_Frame
+    MapSelectPopup
+    to_TownButtonQuestVFX
+    to_FieldQuestVFX
+    TownTypeContent
+    AsdalButtonQuestVFX
+    MapSelectPopupActiveEf
+    Content
+    ButtontoBWFVFX
+    BWFTypeContent
+    MapSelectBWF_EntryVFX
+
+=== Popup\UI_SettingPopup.cs ===
+  enum Images: 3 members
+    SettingPopupFrame
+    __1
+    Xbutton
+  enum Texts: 6 members
+    SettingPopupBGMText
+    SettingPopupSFXText
+    SettingPopupEffectsTitle
+    SettingPopupPopupText
+    SettingPopupShakeText
+    GameObject
+  enum Buttons: 12 members
+    SettingPopupBackground
+    KorBtn
+    EngBtn
+    SettingPopupBGMONBtn
+    SettingPopupBGMOFFBtn
+    SettingPopupSFXONBtn
+    SettingPopupSFXOFFBtn
+    SettingPopupPopupONBtn
+    SettingPopupPopupOFFBtn
+    SettingPopupShakeONBtn
+    SettingPopupShakeOFFBtn
+    Image
+  enum GameObjects: 6 members
+    FIXED
+    In_Frame
+    SettingPopup
+    SettingPopupLanguage
+    SettingPopupSound
+    SettingPopupEffects
+
+=== Popup\UI_UnlockButtonPopup.cs ===
+  enum Images: 7 members
+    BlockImg
+    Content
+    Image4
+    Image5
+    TravelUnlockTutoIcon
+    Icon
+    TextBoxDialogueNextBtnImg
+  enum Texts: 2 members
+    IconNameText
+    TextTMP
+  enum Buttons: 1 members
+    TravelUnlockTutoCloseBtn
+  enum GameObjects: 4 members
+    FIXED
+    In_Frame
+    icon
+    shineeffect
+
+=== Scene\UI_BattleScene.cs ===
+  enum Images: 3 members
+    PlayerHPBarGuage
+    PlayerEXPBarGuage
+    BossHPBarGuage
+  enum Texts: 6 members
+    MainGoldText
+    MainCrystalText
+    PlayerHPBarText
+    MonsterKillCountText
+    AreaNameText
+    BossHPBarText
+  enum Buttons: 2 members
+    PauseBtn
+    ReturnHubBtn
+  enum GameObjects: 2 members
+    BossHPBar
+    PlayerBar
+
+=== Scene\UI_GameScene.cs ===
+  enum Images: 28 members
+    CurrencyBar
+    MainGoldImg
+    MainCrystalImg
+    ButtomDisplayer
+    ButtonDisplayerBackground
+    Frame
+    Frame2
+    CharacterButtonIcon
+    CharacterBtnNewIcon
+    InventoryButtonIcon
+    PotionButtonIcon
+    EquipmentButtonIcon
+    SkillButtonIcon
+    BestiaryButtonIcon
+    BestiaryBtnNewIcon
+    BestiaryBtnFollowingBox
+    PlayerHPBarGroup
+    PlayerHPBarFrame
+    PlayerHPBarGuage
+    PlayerEXPBarGroup
+    PlayerEXPBarFrame
+    PlayerEXPBarGuage
+    PlayerPortraitFrame
+    PortraitMask
+    PortraitImg
+    Main_QuestFollow
+    Main_QuestFollowColor
+    ForFadeImage
+  enum Texts: 22 members
+    MainGoldText
+    MainCrystalText
+    CharacterButtonText
+    InventoryButtonText
+    InventoryButtonNewTxt
+    PotionButtonText
+    PotionButtonNewTxt
+    EquipmentButtonText
+    EquipmentButtonNewTxt
+    SkillButtonText
+    SkillButtonNewTxt
+    BestiaryButtonText
+    BestiaryBtnFollowingNumTxt
+    BestiaryBtnNewTxt
+    RankTxt
+    PlayerHPBarText
+    PlayerEXPTextFlat
+    PlayerEXPTextPercent
+    PlayerRankText
+    PlayerLevelText
+    Quest_NeedItemNameTxt
+    Quest_NeedItemAmountTxt
+  enum Buttons: 14 members
+    OptionBtn
+    GuildButton
+    GuildButton1
+    GuildButton2
+    GuildButton3
+    GuildButton4
+    TravelButtonOnBattle
+    CharacterButton
+    InventoryButton
+    PotionButton
+    EquipmentButton
+    SkillButton
+    BestiaryButton
+    ExitButton
+  enum GameObjects: 24 members
+    FIXED
+    InFrame
+    MainGoldShow
+    MainCrystalShow
+    AreaBtnGroupSlot
+    OnBattleBtns
+    OnBattleMainBtnGroup
+    TravelButtonOnBattleQuestVFX
+    BTMButtonGroup
+    BTMButtonUnlockHelper
+    Layout
+    Dust_01
+    Ring_01
+    ExitQuestVFX
+    PlayerBar
+    PlayerHPBarGuageBox
+    PlayerEXPBarGuageBox
+    PlayerPortraitGroup
+    QuestFollow
+    TxtGroup
+    Quest_Done_Effect
+    GlowDot_Lens_01
+    GlowDot_Lens_02
+    GlowDot_02
+
+=== Scene\UI_TtitleScene.cs ===
+  enum Images: 2 members
+    Panel
+    LoadingIcon
+  enum Buttons: 1 members
+    StartButton
+  enum Texts: 1 members
+    StartText
+  enum GameObjects: 1 members
+    Slider
+
+=== SubItem\UI_BattleBtnGroup.cs ===
+  enum Images: 4 members
+    GuildButtonIcon
+    AlchemyButtonIcon
+    MonasteryButtonIcon
+    TravelButtonIcon
+  enum Texts: 8 members
+    Village1NameText
+    GuildButtonText
+    AlchemyButtonText
+    AlchemyButtonNewTxt
+    MonasteryButtonText
+    MonasteryButtonNewTxt
+    TravelButtonText
+    TravelButtonNewTxt
+  enum Buttons: 6 members
+    TempButton1
+    TempButton2
+    TempButton3
+    TempButton4
+    TempButton5
+    TravelButton
+  enum GameObjects: 5 members
+    Village1MainBtnGroup
+    Village1GuildVFX
+    Village1AlchemyVFX_Sub1
+    MonasteryVFX_Sub1
+    TravelButtonQuestVFX
+
+=== SubItem\UI_ImportantSlot.cs ===
+  enum Images: 3 members
+    GameObject
+    Frame
+    Img
+  enum Texts: 2 members
+    AmountTxt
+    ImportantSlotNewTxt
+  enum Buttons: 1 members
+    UI_ImportantSlot
+  enum GameObjects: 0 members
+
+=== SubItem\UI_InvSlot.cs ===
+  enum Images: 5 members
+    GameObject
+    Frame
+    Glow
+    Img
+    BlockImg
+  enum Texts: 2 members
+    AmountTxt
+    InvSlotNewTxt
+  enum Buttons: 0 members
+  enum GameObjects: 0 members
+
+=== SubItem\UI_MonsterHPBar.cs ===
+  enum Images: 3 members
+    Frame
+    MonsterHPBar
+    MonsterHPBarGuage
+  enum Texts: 1 members
+    MonsterNameDisplay
+  enum Buttons: 0 members
+  enum GameObjects: 0 members
+
+=== SubItem\UI_Village1BtnGroup.cs ===
+  enum Images: 29 members
+    GuildButtonIcon
+    AlchemyButtonIcon
+    MonasteryButtonIcon
+    TravelButtonIcon
+    Village1GuildTalkButtonImage
+    Village1GuildTalkButtonIcon
+    Village1GuildQuestButtonIcon
+    Village1GuildNothingButton1Icon
+    Village1GuildNothingButton2Icon
+    Village1GuildNothingButton3Icon
+    Village1GuildExitButtonIcon
+    Village1AlchemyTalkButtonImage
+    Village1AlchemyTalkButtonIcon
+    Village1AlchemyTalkButtonImage2
+    Village1AlchemyTalkButtonIcon2
+    CustomOrderButtonIcon
+    Village1AlchemyNothingButton1Icon
+    Village1AlchemyNothingButton2Icon
+    Village1AlchemyNothingButton3Icon
+    Village1AlchemyExitButtonIcon
+    Village1MonasteryTalkButtonImage
+    Village1MonasteryTalkButtonIcon
+    Village1MonasteryTalkButtonImage2
+    Village1MonasteryTalkButtonIcon2
+    MonasteryClassButtonIcon
+    Village1MonasteryNothingButton1Icon
+    Village1MonasteryNothingButton2Icon
+    Village1MonasteryNothingButton3Icon
+    Village1MonasteryExitButtonIcon
+  enum Texts: 31 members
+    Village1NameText
+    GuildButtonText
+    AlchemyButtonText
+    AlchemyButtonNewTxt
+    MonasteryButtonText
+    MonasteryButtonNewTxt
+    TravelButtonText
+    TravelButtonNewTxt
+    Village1GuildNameText
+    Village1GuildTalkButtonText
+    Village1GuildQuestButtonText
+    Village1GuildNothingButton1Text
+    Village1GuildNothingButton2Text
+    Village1GuildNothingButton3Text
+    Village1GuildExitButtonText
+    Village1AlchemyNameText
+    Village1AlchemyTalkButtonText
+    CustomOrderButtonText
+    AlchemyCustomOrderButtonNewTxt
+    Village1AlchemyNothingButton1Text
+    Village1AlchemyNothingButton2Text
+    Village1AlchemyNothingButton3Text
+    Village1AlchemyExitButtonText
+    Village1MonasteryNameText
+    Village1MonasteryTalkButtonText
+    MonasteryClassButtonText
+    MonasteryCustomOrderButtonNewTxt
+    Village1MonasteryNothingButton1Text
+    Village1MonasteryNothingButton2Text
+    Village1MonasteryNothingButton3Text
+    Village1MonasteryExitButtonText
+  enum Buttons: 24 members
+    GuildButton
+    AlchemyButton
+    MonasteryButton
+    TempButton1
+    TempButton2
+    TravelButton
+    Village1GuildTalkButton
+    Village1GuildQuestButton
+    Village1GuildNothingButton1
+    Village1GuildNothingButton2
+    Village1GuildNothingButton3
+    Village1GuildExitButton
+    Village1AlchemyTalkButton
+    CustomOrderButton
+    Village1AlchemyNothingButton1
+    Village1AlchemyNothingButton2
+    Village1AlchemyNothingButton3
+    Village1AlchemyExitButton
+    Village1MonasteryTalkButton
+    MonasteryClassButton
+    Village1MonasteryNothingButton1
+    Village1MonasteryNothingButton2
+    Village1MonasteryNothingButton3
+    Village1MonasteryExitButton
+  enum GameObjects: 19 members
+    Village1MainBtnGroup
+    Village1GuildVFX
+    Village1AlchemyVFX_Sub1
+    MonasteryVFX_Sub1
+    Village1TravelQuestVFX
+    Village1GuildBtnGroup
+    Village1GuildTalkVFX
+    Village1GuildQuestVFX
+    GuildExitQuestVFX
+    Village1AlchemyBtnGroup
+    Village1AlchemyTalkVFX
+    Village1AlchemyTalkVFX_Sub1
+    Village1AlchemyQuestVFX
+    AlchemyExitQuestVFX
+    Village1MonasteryBtnGroup
+    Village1MonasteryTalkVFX
+    Village1MonasteryTalkVFX_Sub1
+    Village1MonasteryQuestVFX
+    MonasteryExitQuestVFX
+
+=== Toast\UI_Toast.cs ===
+  enum Images: 3 members
+    StageTitle
+    StageTitle_1
+    StageTitle_2
+  enum Texts: 1 members
+    StageTitle_Txt

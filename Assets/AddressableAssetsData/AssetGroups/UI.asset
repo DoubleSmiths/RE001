@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: fbfc6295f69858f4fb9ea7ab09ba20d9
   m_SerializeEntries:
+  - m_GUID: 0298348b722928146887a48f7c066e3c
+    m_Address: UI_EquipDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0722af496a822494eae21d8335d36510
     m_Address: UI_MonsterHPBar
     m_ReadOnly: 0
@@ -27,14 +33,50 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20ab263b94af3e04996c938bc1c3aee5
+    m_Address: UI_PlayerRelatedTextPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3ab1d54d96dc3054989991d9afc560fb
     m_Address: UI_BattleBtnGroup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d6e57c3a380a6e48964fda016624388
+    m_Address: UI_PotionPopupON
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4061a3f3a9ebadc4caf631ea2cd2dd3f
+    m_Address: UI_PathPopup1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 43951f1649e02104fb766363a8a10ff2
     m_Address: UI_GameScene
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e6a9b51dffe7534b94d29e36e8ded3a
+    m_Address: UI_PathPopup3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 512f38ddd0017b74186706caec15ae81
+    m_Address: UI_WarningPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 551412df0957389409523364bf0be262
+    m_Address: UI_Popup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -47,6 +89,30 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 60bf294a38f7ca742a375f3a69ee7b4c
     m_Address: UI_MapSelectPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 67845089d2b8152409d6f768730fa160
+    m_Address: UI_BufferDisplayPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 722283148e1d1fc4a8b1462466b0712e
+    m_Address: UI_SkillBookPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 870dfd7ba369c454e9557391a5ee2904
+    m_Address: UI_EnhanceProgressPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9395ce982f7e590478b1bc8aab3fd5cd
+    m_Address: UI_EquipmentPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -69,14 +135,62 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a05c5d738a2678742aa7af47c286f5e1
+    m_Address: UI_CraftAnimPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7c37953d793659409cd1df65f369a36
     m_Address: UI_SettingPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac331b71cebe1da48ba2d1af24e931f9
+    m_Address: UI_MinionInfoPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: acc34d69f92a07442ad2e16035e6371b
     m_Address: UI_UnlockButtonPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1894f9450a57da4882daa6533fbf597
+    m_Address: UI_ForgePopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3d21dbd06abb044bad77e47445cd578
+    m_Address: UI_EnhacePopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b736ea5104a3b4d4abbaf68d8d918ba2
+    m_Address: UI_MOROverUsePopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0721fb65aaddc94b9ad4c800ad45f10
+    m_Address: UI_PotionDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c08300963db52fa4ebb734a6b798871b
+    m_Address: UI_MonsterDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7440356e6529534995200307a33700f
+    m_Address: UI_PathPopup0
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -93,8 +207,50 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6e175fd425ae55488bc9bd3cba9a6dc
+    m_Address: UI_StatgeTitlePopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc358afffd21c3544889a8e903920e6f
+    m_Address: UI_TamePopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dd59cf4502b7ebe45a54108010a97ac8
+    m_Address: UI_BestiaryPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e1568b8eba83bc346abc22cb829aa1a2
     m_Address: UI_ImportantSlot
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e65c9d3a85dfdea4fa1431af30670185
+    m_Address: UI_PathPopup2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e903c32adf4b04e41bc3541f4887690e
+    m_Address: UI_ClassPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee9364dda7844574e990e48211048f4e
+    m_Address: UI_SkillDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff91dc296933e494eb772e229137bd96
+    m_Address: UI_CustomOrderPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

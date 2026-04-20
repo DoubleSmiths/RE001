@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3989113966348885085}
   - component: {fileID: 4863069979004705746}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 7281855651917566350}
   - component: {fileID: 8872378586849357740}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -408,7 +408,7 @@ GameObject:
   - component: {fileID: 1476753275826644471}
   - component: {fileID: 1787651754765390460}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -574,7 +574,7 @@ GameObject:
   - component: {fileID: 9010219738025916327}
   - component: {fileID: 2794023706801988050}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_6_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -650,7 +650,7 @@ GameObject:
   - component: {fileID: 6602667992359047395}
   - component: {fileID: 189153227935224609}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -727,7 +727,7 @@ GameObject:
   - component: {fileID: 1124206507990932327}
   - component: {fileID: 5906962091292713429}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -893,7 +893,7 @@ GameObject:
   - component: {fileID: 8797963452816539646}
   - component: {fileID: 867999777104864590}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_3_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -971,7 +971,7 @@ GameObject:
   - component: {fileID: 4080006027159610726}
   - component: {fileID: 1700679545727192271}
   m_Layer: 5
-  m_Name: SkillBookNewTxt_6
+  m_Name: Txt_SkillBookSkill_6_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1246,7 +1246,7 @@ GameObject:
   - component: {fileID: 6179818226968218440}
   - component: {fileID: 2901186277999006140}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_5_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1365,7 +1365,7 @@ GameObject:
   - component: {fileID: 3892137782512516183}
   - component: {fileID: 4128933282828431760}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1438,7 +1438,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7982430363061446257}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1476,7 +1476,7 @@ GameObject:
   - component: {fileID: 950148372196306407}
   - component: {fileID: 7299225626209465891}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_6_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1555,7 +1555,7 @@ GameObject:
   - component: {fileID: 4030536181120436614}
   - component: {fileID: 4012436159452515563}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1721,7 +1721,7 @@ GameObject:
   - component: {fileID: 1760765315424722692}
   - component: {fileID: 4305871030765456238}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1947,7 +1947,7 @@ GameObject:
   - component: {fileID: 5624990613162945916}
   - component: {fileID: 6078600810438456661}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookAttackSkill_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2530,7 +2530,7 @@ GameObject:
   - component: {fileID: 7180329365913112511}
   - component: {fileID: 243905457804829137}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2620,7 +2620,7 @@ GameObject:
   - component: {fileID: 7076921919616948105}
   - component: {fileID: 7163614929902131494}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_5_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2697,7 +2697,7 @@ GameObject:
   - component: {fileID: 7173337142437646555}
   - component: {fileID: 7259235574295057372}
   m_Layer: 5
-  m_Name: pointBox
+  m_Name: Img_text_3_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2772,7 +2772,7 @@ GameObject:
   - component: {fileID: 6045600390813723527}
   - component: {fileID: 880413601202401703}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_5_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2850,7 +2850,7 @@ GameObject:
   - component: {fileID: 8241972730336721635}
   - component: {fileID: 8210468747799664741}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_1_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2969,7 +2969,7 @@ GameObject:
   - component: {fileID: 3455196158842895993}
   - component: {fileID: 3370147958510767658}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_0_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3045,7 +3045,7 @@ GameObject:
   - component: {fileID: 7802832071029712394}
   - component: {fileID: 3635335206041450525}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_2_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3122,7 +3122,7 @@ GameObject:
   - component: {fileID: 952338624870746288}
   - component: {fileID: 383593160971610696}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_6_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3241,7 +3241,7 @@ GameObject:
   - component: {fileID: 738230776866617963}
   - component: {fileID: 8203847048269875123}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3318,7 +3318,7 @@ GameObject:
   - component: {fileID: 7310283356295043827}
   - component: {fileID: 3941575778920065446}
   m_Layer: 5
-  m_Name: text_3
+  m_Name: Txt_SkillPopup_ShowNotOnMemo_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3484,7 +3484,7 @@ GameObject:
   - component: {fileID: 6986222575373117637}
   - component: {fileID: 663444981561122732}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_2_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3561,7 +3561,7 @@ GameObject:
   - component: {fileID: 6752704801851542676}
   - component: {fileID: 7647262491878753258}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3636,7 +3636,7 @@ GameObject:
   - component: {fileID: 1423344208974289044}
   - component: {fileID: 2901661624942496019}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookAttackSkill_0_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4050,7 +4050,7 @@ GameObject:
   - component: {fileID: 7603163281430663177}
   - component: {fileID: 1534515691136982426}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookAttackSkill_0_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4436,7 +4436,7 @@ GameObject:
   - component: {fileID: 8907295913579256993}
   - component: {fileID: 1705607846429883659}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_6_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4513,7 +4513,7 @@ GameObject:
   - component: {fileID: 1550901922291907738}
   - component: {fileID: 7851203512776547983}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4775,7 +4775,7 @@ GameObject:
   - component: {fileID: 950350025307977609}
   - component: {fileID: 3844865524011504595}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4851,7 +4851,7 @@ GameObject:
   - component: {fileID: 2366734589354738756}
   - component: {fileID: 3056470529791645237}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5044,7 +5044,7 @@ GameObject:
   - component: {fileID: 4293040589935583775}
   - component: {fileID: 381214735890759134}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5134,7 +5134,7 @@ GameObject:
   - component: {fileID: 2693358156236866972}
   - component: {fileID: 9142710393294828558}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_0_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5209,7 +5209,7 @@ GameObject:
   - component: {fileID: 2748907231948642462}
   - component: {fileID: 1990634009998329144}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookAttackSkill_0_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5287,7 +5287,7 @@ GameObject:
   - component: {fileID: 9223088551050322861}
   - component: {fileID: 7110653278878751712}
   m_Layer: 5
-  m_Name: text_3
+  m_Name: Txt_SkillPopup_ShowLocked_Bt_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5728,7 +5728,7 @@ GameObject:
   - component: {fileID: 4511968455686319647}
   - component: {fileID: 7776152925455631624}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookDefenseSkill_0_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5804,7 +5804,7 @@ GameObject:
   - component: {fileID: 544096547582835430}
   - component: {fileID: 685543989840941061}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_0_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5881,7 +5881,7 @@ GameObject:
   - component: {fileID: 6944891616722128043}
   - component: {fileID: 3668153337643718905}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookAttackSkill_1_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5959,7 +5959,7 @@ GameObject:
   - component: {fileID: 4177862900028644581}
   - component: {fileID: 984073654326802882}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6416,7 +6416,7 @@ GameObject:
   - component: {fileID: 788451280323156287}
   - component: {fileID: 7874242287635832524}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookDefenseSkill_0_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6535,7 +6535,7 @@ GameObject:
   - component: {fileID: 8319686435538759860}
   - component: {fileID: 5360644550235138084}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_2_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6612,7 +6612,7 @@ GameObject:
   - component: {fileID: 1966028437218568289}
   - component: {fileID: 1094100183945811713}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookAttackSkill_0_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6838,7 +6838,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6871882288246178752}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6876,7 +6876,7 @@ GameObject:
   - component: {fileID: 2802797975643183416}
   - component: {fileID: 1522736669307897452}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_4_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7104,7 +7104,7 @@ GameObject:
   - component: {fileID: 1380627623204549584}
   - component: {fileID: 8079245859919806451}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7418,7 +7418,7 @@ GameObject:
   - component: {fileID: 5030659057672963815}
   - component: {fileID: 6910446370549128980}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7495,7 +7495,7 @@ GameObject:
   - component: {fileID: 1761434512552713810}
   - component: {fileID: 5278644898171244181}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7658,7 +7658,7 @@ GameObject:
   - component: {fileID: 5612850960252858509}
   - component: {fileID: 4599220759258184833}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7735,7 +7735,7 @@ GameObject:
   - component: {fileID: 7779187057111184136}
   - component: {fileID: 8100166213954136844}
   m_Layer: 5
-  m_Name: text_3
+  m_Name: Txt_SkillPopup_ShowTalent_Bt_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7899,7 +7899,7 @@ GameObject:
   - component: {fileID: 8812479073040780732}
   - component: {fileID: 6729983025356720982}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookAttackSkill_0_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7977,7 +7977,7 @@ GameObject:
   - component: {fileID: 1071152194914355311}
   - component: {fileID: 3071731848126677598}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8068,7 +8068,7 @@ GameObject:
   - component: {fileID: 1281511000873441394}
   - component: {fileID: 7459721245132853013}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8160,7 +8160,7 @@ GameObject:
   - component: {fileID: 7124290062874263873}
   - component: {fileID: 3684010605169662679}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8323,7 +8323,7 @@ GameObject:
   - component: {fileID: 2731985357107803635}
   - component: {fileID: 4507059785778668676}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8738,7 +8738,7 @@ GameObject:
   - component: {fileID: 2828229315360064815}
   - component: {fileID: 8211821544037183102}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8829,7 +8829,7 @@ GameObject:
   - component: {fileID: 9027857051547415699}
   - component: {fileID: 6789911930322650789}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_4_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9074,7 +9074,7 @@ GameObject:
   - component: {fileID: 4818491866276917283}
   - component: {fileID: 2540835272805867338}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_6_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9150,7 +9150,7 @@ GameObject:
   - component: {fileID: 727756140926795131}
   - component: {fileID: 5786730563756726178}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9225,7 +9225,7 @@ GameObject:
   - component: {fileID: 774074890813118627}
   - component: {fileID: 3079170908464042782}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9303,7 +9303,7 @@ GameObject:
   - component: {fileID: 5148333681531539173}
   - component: {fileID: 3009703752445033176}
   m_Layer: 5
-  m_Name: SkillBookNewTxt_6
+  m_Name: Txt_SkillBookAttackSkill_1_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9837,7 +9837,7 @@ GameObject:
   - component: {fileID: 3280029050150371429}
   - component: {fileID: 7832923856223408398}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10039,7 +10039,7 @@ GameObject:
   - component: {fileID: 6601392169266856933}
   - component: {fileID: 8474649210739159969}
   m_Layer: 5
-  m_Name: pointBox
+  m_Name: Img_text_3_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10114,7 +10114,7 @@ GameObject:
   - component: {fileID: 5858583571448951164}
   - component: {fileID: 8515997051069308894}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookAttackSkill_1_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10191,7 +10191,7 @@ GameObject:
   - component: {fileID: 763247097077733612}
   - component: {fileID: 4526980035959512589}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_1_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10515,7 +10515,7 @@ GameObject:
   - component: {fileID: 3415261065816482833}
   - component: {fileID: 1518673949497435649}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10959,7 +10959,7 @@ GameObject:
   - component: {fileID: 1215926019955803724}
   - component: {fileID: 6264009982272948126}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookAttackSkill_1_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11078,7 +11078,7 @@ GameObject:
   - component: {fileID: 6586407201612327408}
   - component: {fileID: 8533095890484831697}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_4_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11154,7 +11154,7 @@ GameObject:
   - component: {fileID: 3473458223951578343}
   - component: {fileID: 9074133526560468161}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11733,7 +11733,7 @@ GameObject:
   - component: {fileID: 8403140573761293923}
   - component: {fileID: 2514765273424744447}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_1_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11809,7 +11809,7 @@ GameObject:
   - component: {fileID: 4462734591979385322}
   - component: {fileID: 8882033994829298388}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookAttackSkill_1_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11882,7 +11882,7 @@ GameObject:
   m_Component:
   - component: {fileID: 390950165085548636}
   m_Layer: 5
-  m_Name: ===================
+  m_Name: Obj_Content_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11919,7 +11919,7 @@ GameObject:
   - component: {fileID: 6471574761263047907}
   - component: {fileID: 1559749006657696903}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_5_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12031,7 +12031,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3207281054229787111}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12070,7 +12070,7 @@ GameObject:
   - component: {fileID: 479859953617442417}
   - component: {fileID: 2857050342975531494}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_0_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12189,7 +12189,7 @@ GameObject:
   - component: {fileID: 3069238507774752260}
   - component: {fileID: 6533864180952010490}
   m_Layer: 5
-  m_Name: pointBox
+  m_Name: Img_text_3_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12264,7 +12264,7 @@ GameObject:
   - component: {fileID: 5292278815973439823}
   - component: {fileID: 5063952069518866597}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12341,7 +12341,7 @@ GameObject:
   - component: {fileID: 8480549341318160323}
   - component: {fileID: 1347824302947987163}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12504,7 +12504,7 @@ GameObject:
   - component: {fileID: 4442921405237969911}
   - component: {fileID: 2638431815086514270}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12581,7 +12581,7 @@ GameObject:
   - component: {fileID: 3688508487437439384}
   - component: {fileID: 1040758452391111172}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12746,7 +12746,7 @@ GameObject:
   - component: {fileID: 6700254143707633709}
   - component: {fileID: 3584182245167864896}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12912,7 +12912,7 @@ GameObject:
   - component: {fileID: 1665595865592672888}
   - component: {fileID: 122154949121789100}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_6_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12988,7 +12988,7 @@ GameObject:
   - component: {fileID: 2552432054364457119}
   - component: {fileID: 6594361814112626685}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13078,7 +13078,7 @@ GameObject:
   - component: {fileID: 5796439737466064856}
   - component: {fileID: 3975386761151740901}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_3_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13397,7 +13397,7 @@ GameObject:
   - component: {fileID: 936220362314951596}
   - component: {fileID: 156078640675012221}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13623,7 +13623,7 @@ GameObject:
   - component: {fileID: 3611517500082618379}
   - component: {fileID: 1323234773568510342}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13734,7 +13734,7 @@ GameObject:
   - component: {fileID: 4420393489466825264}
   - component: {fileID: 8577617475197902728}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookDefenseSkill_0_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13811,7 +13811,7 @@ GameObject:
   - component: {fileID: 4804763135767826045}
   - component: {fileID: 6175435703965976}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13901,7 +13901,7 @@ GameObject:
   - component: {fileID: 7430900443264988300}
   - component: {fileID: 2608391205354016896}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_3_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14065,7 +14065,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1017518788523077820}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14103,7 +14103,7 @@ GameObject:
   - component: {fileID: 7306797884209576915}
   - component: {fileID: 6953212113968276160}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_4_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14180,7 +14180,7 @@ GameObject:
   - component: {fileID: 8299060582831765518}
   - component: {fileID: 8820047311260045101}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14421,7 +14421,7 @@ GameObject:
   - component: {fileID: 8664825978206723668}
   - component: {fileID: 6617374554859260170}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14711,7 +14711,7 @@ GameObject:
   - component: {fileID: 687021196590783126}
   - component: {fileID: 6778614372072376064}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookSkill_2_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14787,7 +14787,7 @@ GameObject:
   - component: {fileID: 3371186437018861558}
   - component: {fileID: 2986695805337059597}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_3_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14864,7 +14864,7 @@ GameObject:
   - component: {fileID: 1528515417117856773}
   - component: {fileID: 607964526809058606}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14939,7 +14939,7 @@ GameObject:
   - component: {fileID: 848635870829546870}
   - component: {fileID: 7363178835279970201}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15014,7 +15014,7 @@ GameObject:
   - component: {fileID: 2433292124635702905}
   - component: {fileID: 2256005451953106492}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15090,7 +15090,7 @@ GameObject:
   - component: {fileID: 7962306684528833902}
   - component: {fileID: 6024963020517620980}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15178,7 +15178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6403543388245949277}
   m_Layer: 5
-  m_Name: ===================
+  m_Name: Obj_Content_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15213,7 +15213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6202401059543438441}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15252,7 +15252,7 @@ GameObject:
   - component: {fileID: 2816956229652946646}
   - component: {fileID: 2369646311857918042}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookAttackSkill_0_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15373,7 +15373,7 @@ GameObject:
   - component: {fileID: 6539996106686515949}
   - component: {fileID: 4422410728366139}
   m_Layer: 5
-  m_Name: text_3
+  m_Name: Txt_SkillPopup_ShowAll_Btn_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15539,7 +15539,7 @@ GameObject:
   - component: {fileID: 1125514524398407618}
   - component: {fileID: 3193563741285626424}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15702,7 +15702,7 @@ GameObject:
   - component: {fileID: 1361513914517536921}
   - component: {fileID: 2553544315722684072}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_4_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15780,7 +15780,7 @@ GameObject:
   - component: {fileID: 2610436514621385663}
   - component: {fileID: 2832735139880293469}
   m_Layer: 5
-  m_Name: lockimg
+  m_Name: Img_LockedIcon_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15870,7 +15870,7 @@ GameObject:
   - component: {fileID: 247331017774557359}
   - component: {fileID: 6618056607536829747}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15945,7 +15945,7 @@ GameObject:
   - component: {fileID: 1548477730268444761}
   - component: {fileID: 2878174772687743623}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookDefenseSkill_0_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16020,7 +16020,7 @@ GameObject:
   - component: {fileID: 8574865775540328845}
   - component: {fileID: 9138504242964822365}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16096,7 +16096,7 @@ GameObject:
   - component: {fileID: 2188073039364620837}
   - component: {fileID: 406368816510513496}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_2_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16215,7 +16215,7 @@ GameObject:
   - component: {fileID: 6644213616999541748}
   - component: {fileID: 2284914140479712952}
   m_Layer: 5
-  m_Name: pointBox
+  m_Name: Img_text_3_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16415,7 +16415,7 @@ GameObject:
   - component: {fileID: 3723678610341467055}
   - component: {fileID: 1868495362441504573}
   m_Layer: 5
-  m_Name: text_3
+  m_Name: Txt_SkillPopup_ShowOnMemory__05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16581,7 +16581,7 @@ GameObject:
   - component: {fileID: 44490307029549832}
   - component: {fileID: 106236051248199916}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookDefenseSkill_0_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16658,7 +16658,7 @@ GameObject:
   - component: {fileID: 5932163066222634686}
   - component: {fileID: 856398810637985084}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16733,7 +16733,7 @@ GameObject:
   - component: {fileID: 2469105029534499490}
   - component: {fileID: 6467333951595061690}
   m_Layer: 5
-  m_Name: frame
+  m_Name: Img_LvlIcon_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16806,7 +16806,7 @@ GameObject:
   m_Component:
   - component: {fileID: 834727586230735857}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16842,7 +16842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1094757198894633198}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16880,7 +16880,7 @@ GameObject:
   - component: {fileID: 1700324271051544253}
   - component: {fileID: 75846996243657509}
   m_Layer: 5
-  m_Name: LockedIcon
+  m_Name: Img_SkillBookAttackSkill_1_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16956,7 +16956,7 @@ GameObject:
   - component: {fileID: 1828334448054054128}
   - component: {fileID: 4572623004283397314}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17311,7 +17311,7 @@ GameObject:
   - component: {fileID: 2939334650837415136}
   - component: {fileID: 834743014473578643}
   m_Layer: 5
-  m_Name: SkillBookNewTxt_6
+  m_Name: Txt_SkillBookAttackSkill_0_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17621,7 +17621,7 @@ GameObject:
   - component: {fileID: 8153936319923487356}
   - component: {fileID: 9089438295594260644}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookDefenseSkill_0_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17700,7 +17700,7 @@ GameObject:
   - component: {fileID: 4742822604226835194}
   - component: {fileID: 3423180530340878349}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18326,7 +18326,7 @@ GameObject:
   - component: {fileID: 2340540591308696111}
   - component: {fileID: 5355932373318519776}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_LvlIcon_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18492,7 +18492,7 @@ GameObject:
   - component: {fileID: 1401139420493363658}
   - component: {fileID: 8658703673076954464}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_1_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18566,7 +18566,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3691114770026585544}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18802,7 +18802,7 @@ GameObject:
   - component: {fileID: 5849395642859456864}
   - component: {fileID: 5211621989716075113}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_2_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18877,7 +18877,7 @@ GameObject:
   - component: {fileID: 8122347568637098685}
   - component: {fileID: 2862662896026078979}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19229,7 +19229,7 @@ GameObject:
   - component: {fileID: 4223072841347241009}
   - component: {fileID: 6768755279525767456}
   m_Layer: 5
-  m_Name: pointBox
+  m_Name: Img_text_3_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19306,7 +19306,7 @@ GameObject:
   - component: {fileID: 5422528725982570195}
   - component: {fileID: 299336960583955194}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19469,7 +19469,7 @@ GameObject:
   - component: {fileID: 3549030958403156269}
   - component: {fileID: 8948552355507316951}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Img_SkillBookSkill_5_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19542,7 +19542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3563251239658959204}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19581,7 +19581,7 @@ GameObject:
   - component: {fileID: 5669799902029673994}
   - component: {fileID: 1975009484423525769}
   m_Layer: 5
-  m_Name: WIcon
+  m_Name: Btn_SkillBookSkill_3_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19975,7 +19975,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4460202425059506220}
   m_Layer: 5
-  m_Name: SkillDetailActiveEf_1
+  m_Name: Panel_Frame_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20015,7 +20015,7 @@ GameObject:
   - component: {fileID: 4397903295515786013}
   - component: {fileID: 5262083403811486729}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20178,7 +20178,7 @@ GameObject:
   - component: {fileID: 6913006064715659364}
   - component: {fileID: 5385354649174397586}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_4_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20293,7 +20293,7 @@ GameObject:
   - component: {fileID: 1427215104070997277}
   - component: {fileID: 9091995046267407103}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_0_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20369,7 +20369,7 @@ GameObject:
   - component: {fileID: 3328835373544491104}
   - component: {fileID: 6818269686617011012}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20447,7 +20447,7 @@ GameObject:
   - component: {fileID: 8874752377653992246}
   - component: {fileID: 2037640071282201810}
   m_Layer: 5
-  m_Name: SkillBookNewTxt_6
+  m_Name: Txt_SkillBookDefenseSkill_0_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20723,7 +20723,7 @@ GameObject:
   - component: {fileID: 1452724775569647642}
   - component: {fileID: 2045714231865429891}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Txt_MemorizedIcon_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20886,7 +20886,7 @@ GameObject:
   - component: {fileID: 8690763903025515868}
   - component: {fileID: 9025730448421869055}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_SkillBookSkill_5_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21034,7 +21034,7 @@ GameObject:
   - component: {fileID: 5584218411457849124}
   - component: {fileID: 6945124267852586073}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_1_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21111,7 +21111,7 @@ GameObject:
   - component: {fileID: 1375055317307944717}
   - component: {fileID: 229211483873829388}
   m_Layer: 5
-  m_Name: MemorizedIcon
+  m_Name: Img_SkillBookSkill_3_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21188,7 +21188,7 @@ GameObject:
   - component: {fileID: 7015144617740997757}
   - component: {fileID: 4750005185242594842}
   m_Layer: 5
-  m_Name: LvlIcon
+  m_Name: Img_SkillBookSkill_0_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21604,7 +21604,7 @@ GameObject:
   - component: {fileID: 1309056949661073632}
   - component: {fileID: 6962070998257647513}
   m_Layer: 5
-  m_Name: Icon_2
+  m_Name: Img_MemorizedIcon_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21829,7 +21829,7 @@ GameObject:
   - component: {fileID: 2577199568106605093}
   - component: {fileID: 5654650272117144}
   m_Layer: 5
-  m_Name: EFrame
+  m_Name: Img_SkillDetailActiveEf_1_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
