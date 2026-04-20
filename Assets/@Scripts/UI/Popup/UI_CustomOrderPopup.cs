@@ -12,32 +12,81 @@ public class UI_CustomOrderPopup : UI_Popup
 
     enum Images
     {
-        CustomOrderPopupBackground,
+        Img_CustomOrderPopupFrame_01,
+        Alch_Img_mask,
         Alch_Img_mask_1,
+        Img_Alch_Img_mask_01,
+        GlowMask_2,
+        Img_GlowMask_2_02,
+        CustomOrderHPPotionImg,
+        Mask_CustomOrderSPDPotionFram_01,
+        Img_GlowMask_3_03,
+        CustomOrderSPDPotionImg,
+        lockbg_1,
+        lockimg_1,
+        Mask_CustomOrderLuckPotionFra_02,
+        Img_GlowMask_3_04,
+        CustomOrderLuckPotionImg,
+        lockbg,
+        lockimg,
+        Img_CustomOrder_AutoPotionCo_02,
+        Background,
+        lockbg_AutoPotion,
+        lockimg_AutoPotion,
+        MasterIcon,
+        Img_MasterIcon_02,
+        LvlIcon,
+        Img_LvlIcon_01,
+        Img_CustomOrderPotionBtn_01,
+        GameObject_2,
         Xbutton,
     }
 
     enum Texts
     {
         CustomOrderPopupTitle,
+        engtext,
+        kortext,
+        kortext_1,
+        CustomOrderSPDPotionNewTxt,
+        AutoPotionNewTxt,
+        Txt_MasterIcon_02,
+        Txt_LvlIcon_01,
+        Txt_CustomOrderPotionBtn_02,
+        CustomOrderPotionNewTxt,
+        Txt_CustomOrderSkillBtn_02,
+        CustomOrderSkillNewTxt,
+        Txt_Xbutton_01,
     }
 
     enum Buttons
     {
+        CustomOrderPopupBackground,
+        CustomOrderHPPotionFrame,
+        CustomOrderSPDPotionFrame,
+        CustomOrderLuckPotionFrame,
+        WIcon,
         CustomOrderPotionBtn,
         CustomOrderSkillBtn,
     }
 
     enum GameObjects
     {
+        FIXED,
+        In_Frame,
         CustomOrderPopup,
         CustomOrderPopupFrame,
         TalkText,
         Btm_PotionBtnGroup,
+        CustomOrderHPPotionIcon,
+        CustomOrderSPDPotionIcon,
+        CustomOrderLuckPotionIcon,
         Btm_SkillBtnGroup,
+        CustomOrder_AutoPotionCooltimeSkill,
     }
 
     #endregion
+
 
     DialogueAnimator _typing;
     TMP_Text _talkText;
@@ -100,7 +149,7 @@ public class UI_CustomOrderPopup : UI_Popup
             if (dta != null) DestroyImmediate(dta);
         }
 
-        GetImage((int)Images.CustomOrderPopupBackground).gameObject.BindEvent(OnClickClose);
+        GetButton((int)Buttons.CustomOrderPopupBackground).gameObject.BindEvent(OnClickClose);
         GetImage((int)Images.Xbutton).gameObject.BindEvent(OnClickClose);
         GetButton((int)Buttons.CustomOrderPotionBtn).gameObject.BindEvent(OnClickPotion);
         GetButton((int)Buttons.CustomOrderSkillBtn).gameObject.BindEvent(OnClickSkill);
@@ -148,7 +197,7 @@ public class UI_CustomOrderPopup : UI_Popup
         }
 
         // BlackBG fade (slide 8: Duration 0.3, OutQuad, target alpha 220/255)
-        var bg = GetImage((int)Images.CustomOrderPopupBackground);
+        var bg = GetButton((int)Buttons.CustomOrderPopupBackground).GetComponent<Image>();
         if (bg != null)
         {
             bg.DOKill();
@@ -262,52 +311,20 @@ public class UI_CustomOrderPopup : UI_Popup
     /// </summary>
     void InitLockStates()
     {
-        // 잠금
-        ApplyLockVisual("CustomOrderSPDPotionIcon",              "lockbg_1",           "lockimg_1",           locked: true);
-        ApplyLockVisual("CustomOrderLuckPotionIcon",             "lockbg",             "lockimg",             locked: true);
-        ApplyLockVisual("CustomOrder_AutoPotionCooltimeSkill",   "lockbg_AutoPotion",  "lockimg_AutoPotion",  locked: true);
+        ApplyLockVisual(GetObject((int)GameObjects.CustomOrderSPDPotionIcon).transform,
+                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: true);
+        ApplyLockVisual(GetObject((int)GameObjects.CustomOrderLuckPotionIcon).transform,
+                        GetImage((int)Images.lockbg),   GetImage((int)Images.lockimg),   locked: true);
+        ApplyLockVisual(GetObject((int)GameObjects.CustomOrder_AutoPotionCooltimeSkill).transform,
+                        GetImage((int)Images.lockbg_AutoPotion), GetImage((int)Images.lockimg_AutoPotion), locked: true);
 
         // 슬라이드 36: 해금 아이템 클릭 → 상세 팝업
-        BindItemClick("CustomOrderHPPotionIcon",             () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId), unlocked: true);
-        BindItemClick("CustomOrderSPDPotionIcon",            () => OpenPotionDetail(-1),  unlocked: false);
-        BindItemClick("CustomOrderLuckPotionIcon",           () => OpenPotionDetail(-1),  unlocked: false);
-        BindItemClick("CustomOrder_AutoPotionCooltimeSkill", () => OpenSkillDetail(0),    unlocked: false);
-
-        // ----- 그룹 트리 덤프 (디버그 전용) -----
-#if UNITY_EDITOR
-        var potionGrp = GetObject((int)GameObjects.Btm_PotionBtnGroup);
-        Debug.Log($"[CustomOrder] Btm_PotionBtnGroup null? {potionGrp == null}");
-        if (potionGrp != null) LogChildren(potionGrp.transform, 0);
-#endif
-    }
-
-#if UNITY_EDITOR
-    void LogChildren(Transform t, int depth)
-    {
-        string indent = new string('-', depth * 2);
-        Debug.Log($"[CustomOrder]{indent} {t.name} (active={t.gameObject.activeSelf})");
-        foreach (Transform child in t) LogChildren(child, depth + 1);
-    }
-#endif
-
-    void BindItemClick(string itemName, Action onClick, bool unlocked)
-    {
-        if (!unlocked) return;
-
-        var item = FindItemInGroups(itemName);
-        if (item == null)
-        {
-            Debug.LogWarning($"[CustomOrderPopup] BindItemClick: '{itemName}' NOT FOUND");
-            return;
-        }
-
-        Debug.Log($"[CustomOrderPopup] BindItemClick: '{itemName}' found → BindEvent 등록");
-        item.gameObject.BindEvent(onClick);
+        GetObject((int)GameObjects.CustomOrderHPPotionIcon).BindEvent(
+            () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId));
     }
 
     void OpenPotionDetail(int dataId)
     {
-        Debug.Log($"[CustomOrderPopup] OpenPotionDetail dataId={dataId}");
         Managers.UI.ShowPopupUI<UI_PotionDetailPopup>().SetInfo(dataId, fromCustomOrder: true);
     }
 
@@ -316,60 +333,33 @@ public class UI_CustomOrderPopup : UI_Popup
         Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(skillId);
     }
 
-    // 이미 바인딩된 그룹 오브젝트에서 itemName 자식을 재귀 탐색
-    Transform FindItemInGroups(string itemName)
+    void ApplyLockVisual(Transform item, Image lockBg, Image lockImg, bool locked)
     {
-        var potionGrp = GetObject((int)GameObjects.Btm_PotionBtnGroup);
-        var skillGrp  = GetObject((int)GameObjects.Btm_SkillBtnGroup);
-
-        Transform found = potionGrp != null ? FindDeep(potionGrp.transform, itemName) : null;
-        if (found == null && skillGrp != null) found = FindDeep(skillGrp.transform, itemName);
-        return found;
-    }
-
-    Transform FindDeep(Transform parent, string name)
-    {
-        if (parent.name == name) return parent;
-        foreach (Transform child in parent)
-        {
-            var result = FindDeep(child, name);
-            if (result != null) return result;
-        }
-        return null;
-    }
-
-    void ApplyLockVisual(string itemName, string lockBgName, string lockImgName, bool locked)
-    {
-        var item = FindItemInGroups(itemName);
         if (item == null) return;
 
-        // 잠금 유지: prefab에 autoPlay=true로 걸린 "해금 연출" DOTweenAnimation이
+        // prefab에 autoPlay=true로 걸린 "해금 연출" DOTweenAnimation이
         // OnEnable에서 lock alpha를 0으로 만들어버리므로 잠긴 아이템은 이 애님을 제거.
         if (locked)
         {
             foreach (var dta in item.GetComponentsInChildren<DG.Tweening.DOTweenAnimation>(true))
             {
-                if (dta.name == lockBgName || dta.name == lockImgName)
-                    DestroyImmediate(dta);
+                if      (lockBg  != null && dta.name == lockBg.name)  DestroyImmediate(dta);
+                else if (lockImg != null && dta.name == lockImg.name) DestroyImmediate(dta);
             }
         }
 
-        foreach (var img in item.GetComponentsInChildren<Image>(true))
+        if (lockBg != null)
         {
-            if (img.name == lockBgName)
-            {
-                img.color = locked ? LOCK_BG_COLOR : new Color(0, 0, 0, 0);
-                // 렌더 순서 최상위로 끌어올려 다른 아이콘/라벨이 잠금 비주얼을 덮지 않도록
-                if (locked) img.transform.SetAsLastSibling();
-            }
-            if (img.name == lockImgName)
-            {
-                img.color = locked ? LOCK_ICON_COLOR : new Color(1, 1, 1, 0);
-                if (locked) img.transform.SetAsLastSibling();
-            }
+            lockBg.color = locked ? LOCK_BG_COLOR : new Color(0, 0, 0, 0);
+            if (locked) lockBg.transform.SetAsLastSibling();
+        }
+        if (lockImg != null)
+        {
+            lockImg.color = locked ? LOCK_ICON_COLOR : new Color(1, 1, 1, 0);
+            if (locked) lockImg.transform.SetAsLastSibling();
         }
 
-        // NEW 뱃지 / 등급·레벨 아이콘은 잠긴 상태에서 숨김 (잠긴 아이템은 Sprite None + Chat_Icon_Lock만 표시)
+        // NEW 뱃지 / 등급·레벨 아이콘은 잠긴 상태에서 숨김
         if (locked)
         {
             foreach (var tmp in item.GetComponentsInChildren<TMPro.TMP_Text>(true))
@@ -378,7 +368,9 @@ public class UI_CustomOrderPopup : UI_Popup
             }
             foreach (Transform child in item)
             {
-                if (child.name == "MasterIcon" || child.name == "LvlIcon")
+                var n = child.name;
+                if (n == "MasterIcon" || n.StartsWith("Img_MasterIcon") ||
+                    n == "LvlIcon"    || n.StartsWith("Img_LvlIcon"))
                     child.gameObject.SetActive(false);
             }
         }

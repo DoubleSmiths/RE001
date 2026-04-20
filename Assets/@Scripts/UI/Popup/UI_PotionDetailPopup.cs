@@ -14,6 +14,148 @@ using Sequence = DG.Tweening.Sequence;
 /// </summary>
 public class UI_PotionDetailPopup : UI_Popup
 {
+    #region Enum
+
+    enum Images
+    {
+        Img_PotionDetailPopupshineef_01,
+        Image_5,
+        FrameImg,
+        WhereToFindTxtFrame_1,
+        GlowMask_1,
+        Img_GlowMask_1_07,
+        PotionDetailPopupPotionImg,
+        Img_PotionDetailPopupTitle_01,
+        Mask,
+        Img_Mask_03,
+        Glow,
+        Img_Mask_04,
+        Guage,
+        Img_Guage_02,
+        Img_Guage_04,
+        Img_Guage_01,
+        background,
+        Img_Guage_NextLvl_02,
+        Img_Guage_NextLvl_01,
+        Img_Guage_NextLvl_03,
+        Img_Guage_NextLvl_04,
+        Img_SwitchPanelBtn_01,
+        __1,
+        CantCraftBtn,
+        Img_CantCraftBtn_05,
+        Mask_CantCraftBtn_10,
+        Img_Item_02,
+        Img_Item_04,
+        Img_CraftBtn_04,
+        Mask_CraftBtn_02,
+        Img_Item_01,
+        Img_Item_06,
+        Img_NextLvlBtn_02,
+        Mask_NextLvlBtn_04,
+        Img_Item_08,
+        Img_Item_05,
+        Img_BackBtn_03,
+        Mask_BackBtn_03,
+        Img_Item_07,
+        Img_Item_03,
+        Img_ReqItemBox1_1_08,
+        Mask_ReqItemBox1_1_05,
+        Img_GlowMask_14,
+        Img_ReqItemBox1_1_04,
+        Img_ReqItemBox1_1_06,
+        Img_ReqItemBox1_2_04,
+        Mask_ReqItemBox1_2_02,
+        Img_GlowMask_11,
+        Img_ReqItemBox1_2_03,
+        Img_ReqItemBox1_2_05,
+        Img_ReqItemBox1_3_03,
+        Mask_ReqItemBox1_3_01,
+        Img_GlowMask_13,
+        Img_ReqItemBox1_3_05,
+        Img_ReqItemBox1_3_02,
+        Img_ReqItemBox1_4_05,
+        Mask_ReqItemBox1_4_03,
+        Img_GlowMask_12,
+        Img_ReqItemBox1_4_02,
+        Img_ReqItemBox1_4_01,
+        Img_ReqItemBox1_5_02,
+        Mask_ReqItemBox1_5_04,
+        Img_GlowMask_15,
+        Img_ReqItemBox1_5_06,
+        Img_ReqItemBox1_5_03,
+        Xbutton,
+    }
+
+    enum Texts
+    {
+        WhereToFindTxt,
+        PotionDetailPopupPotionName,
+        RankText,
+        NextLevel_RankText,
+        FlatHealAmountTxt_NextLvl,
+        FlatHealAmountTxt,
+        P_HealAmountTxt_NextLvl,
+        P_HealAmountTxt,
+        TotalHealAmountTxt_NextLvl,
+        TotalHealAmountTxt,
+        SPDAmountTxt_NextLvl,
+        SPDAmountTxt,
+        DURIAmountTxt_NextLvl,
+        DURIAmountTxt,
+        PotionCooltimeTxt_NextLvl,
+        PotionCooltimeTxt,
+        SPDPotionUnlockTxtKOR,
+        SPDPotionUnlockTxtENG,
+        DescText,
+        Txt_SwitchPanelBtn_01,
+        Txt_ReqItemGroup_02,
+        MaxLvlTxt,
+        Txt_CantCraftBtn_08,
+        Txt_CraftBtn_06,
+        Txt_NextLvlBtn_05,
+        Txt_BackBtn_09,
+        Txt_ReqItemBox1_1_05,
+        Txt_ReqItemBox1_2_03,
+        Txt_ReqItemBox1_3_01,
+        Txt_ReqItemBox1_4_04,
+        Txt_ReqItemBox1_5_02,
+        Txt_Xbutton_01,
+    }
+
+    enum Buttons
+    {
+        PotionDetailPopupBackground,
+        Btn_FrameImg_01,
+        SwitchPanelBtn,
+        CraftBtn,
+        NextLvlBtn,
+        BackBtn,
+        ReqItemBox1_1,
+        ReqItemBox1_2,
+        ReqItemBox1_3,
+        ReqItemBox1_4,
+        ReqItemBox1_5,
+    }
+
+    enum GameObjects
+    {
+        FIXED,
+        In_Frame,
+        PotionDetailPopup,
+        SpeedPotionNewBtnHelper,
+        PotionDetailPopupFrame,
+        PotionDetailPopupshineeffect,
+        PotionDetailPopupTitle,
+        Guage_NextLvl,
+        HPPotion_Texts,
+        SPDPotion_Texts,
+        SPDPotionUnlockTxtGroup,
+        ReqItemGroup,
+        ReqItemList,
+    }
+
+    #endregion
+
     // 슬라이드 37 스펙: From y = -130
     const float FRAME_FROM_Y = -130f;
 
@@ -44,6 +186,7 @@ public class UI_PotionDetailPopup : UI_Popup
     GameObject _nextLvlBtn;
     GameObject _backBtn;
     RectTransform[] _reqItemBoxes;   // ReqItemBox1_1 ~ 5
+    Image[]         _reqItemIcons;   // 각 박스의 아이템 아이콘 Image (캐시)
 
     Vector2 _frameOrigin;
 
@@ -61,73 +204,93 @@ public class UI_PotionDetailPopup : UI_Popup
     {
         if (base.Init() == false) return false;
 
-        // 하위 구조에 dot(.)을 포함한 이름이 있어 enum 바인딩 대신 transform.Find 사용
-        _frame   = transform.Find("FIXED/In_Frame/PotionDetailPopup/PotionDetailPopupFrame");
+        BindImage(typeof(Images));
+        BindText(typeof(Texts));
+        BindButton(typeof(Buttons));
+        BindObject(typeof(GameObjects));
+
+        // 프레임 / 배경
+        _frame     = GetObject((int)GameObjects.PotionDetailPopupFrame).transform;
         _myFrameRT = _frame.GetComponent<RectTransform>();
-        _bg      = transform.Find("FIXED/In_Frame/PotionDetailPopup/PotionDetailPopupBackground").GetComponent<Image>();
-        _potionImg = _frame.Find("FrameImg/Img/PotionDetailPopupPotionImg").GetComponent<Image>();
-        _nameText  = _frame.Find("FrameImg/PotionDetailPopupTitle/Mask/PotionDetailPopupPotionName").GetComponent<TMP_Text>();
-        _rankText     = _frame.Find("FrameImg/Guage/RankText").GetComponent<TMP_Text>();
-        _nextRankText = _frame.Find("FrameImg/Guage_NextLvl/NextLevel_RankText").GetComponent<TMP_Text>();
+        _bg        = GetButton((int)Buttons.PotionDetailPopupBackground).GetComponent<Image>();
 
-        var hpG = _frame.Find("FrameImg/HPPotion_Texts");
-        _hpTextsGroup = hpG.gameObject;
-        _flatHeal   = hpG.Find("FlatHealAmountTxt").GetComponent<TMP_Text>();
-        _flatHealN  = hpG.Find("FlatHealAmountTxt_NextLvl").GetComponent<TMP_Text>();
-        _pHeal      = hpG.Find("P.HealAmountTxt").GetComponent<TMP_Text>();
-        _pHealN     = hpG.Find("P.HealAmountTxt_NextLvl").GetComponent<TMP_Text>();
-        _totalHeal  = hpG.Find("TotalHealAmountTxt").GetComponent<TMP_Text>();
-        _totalHealN = hpG.Find("TotalHealAmountTxt_NextLvl").GetComponent<TMP_Text>();
+        // 물약 이미지 & 헤더
+        _potionImg    = GetImage((int)Images.PotionDetailPopupPotionImg);
+        _nameText     = GetText((int)Texts.PotionDetailPopupPotionName);
+        _rankText     = GetText((int)Texts.RankText);
+        _nextRankText = GetText((int)Texts.NextLevel_RankText);
 
-        _spdTextsGroup = _frame.Find("FrameImg/SPDPotion_Texts").gameObject;
-        _cooldown  = _frame.Find("FrameImg/PotionCooltimeTxt").GetComponent<TMP_Text>();
-        _cooldownN = _frame.Find("FrameImg/PotionCooltimeTxt_NextLvl").GetComponent<TMP_Text>();
-        _descText  = _frame.Find("FrameImg/DescText").GetComponent<TMP_Text>();
+        // HP 수치 텍스트 (원래 P.HealAmountTxt → prefab에서 P_HealAmountTxt로 저장)
+        _hpTextsGroup = GetObject((int)GameObjects.HPPotion_Texts);
+        _flatHeal     = GetText((int)Texts.FlatHealAmountTxt);
+        _flatHealN    = GetText((int)Texts.FlatHealAmountTxt_NextLvl);
+        _pHeal        = GetText((int)Texts.P_HealAmountTxt);
+        _pHealN       = GetText((int)Texts.P_HealAmountTxt_NextLvl);
+        _totalHeal    = GetText((int)Texts.TotalHealAmountTxt);
+        _totalHealN   = GetText((int)Texts.TotalHealAmountTxt_NextLvl);
 
-        _switchPanelBtn = _frame.Find("FrameImg/SwitchPanelBtn")?.gameObject;
-        _switchBtnLabel = _switchPanelBtn != null ? FindFirstTMPInChildren(_switchPanelBtn.transform) : null;
+        // SPD / 쿨다운 / 설명
+        _spdTextsGroup = GetObject((int)GameObjects.SPDPotion_Texts);
+        _cooldown      = GetText((int)Texts.PotionCooltimeTxt);
+        _cooldownN     = GetText((int)Texts.PotionCooltimeTxt_NextLvl);
+        _descText      = GetText((int)Texts.DescText);
 
-        var reqGrpTf = _frame.Find("FrameImg/ReqItemGroup");
-        _reqItemGroup = reqGrpTf?.gameObject;
-        _reqItemList  = reqGrpTf?.Find("ReqItemList")?.gameObject;
-        _reqItemTitle = reqGrpTf?.Find("GameObject")?.gameObject;
-        _reqDecorLine = reqGrpTf?.Find("__1")?.gameObject
-                     ?? reqGrpTf?.Find("_")?.gameObject;   // 프리팹 이름이 "_"인 경우 대응
-        var titleTmp = _reqItemTitle?.GetComponentInChildren<TMP_Text>(true);
+        // 패널 전환 버튼
+        _switchPanelBtn = GetButton((int)Buttons.SwitchPanelBtn)?.gameObject;
+        _switchBtnLabel = GetText((int)Texts.Txt_SwitchPanelBtn_01);
+
+        // 재료 그룹 (GameObject였던 Txt_ReqItemGroup_02는 타이틀 텍스트)
+        _reqItemGroup  = GetObject((int)GameObjects.ReqItemGroup);
+        _reqItemList   = GetObject((int)GameObjects.ReqItemList);
+        _reqItemTitle  = GetText((int)Texts.Txt_ReqItemGroup_02)?.gameObject;
+        var titleTmp   = GetText((int)Texts.Txt_ReqItemGroup_02);
         if (titleTmp != null) titleTmp.text = "필요 재료";
-        _maxLvlTxt    = reqGrpTf?.Find("MaxLvlTxt")?.GetComponent<TMP_Text>();
-        _cantCraftBtn = reqGrpTf?.Find("CantCraftBtn")?.gameObject;
-        _craftBtn     = reqGrpTf?.Find("CraftBtn")?.gameObject;
-        _nextLvlBtn   = reqGrpTf?.Find("NextLvlBtn")?.gameObject;
-        _backBtn      = reqGrpTf?.Find("BackBtn")?.gameObject;
-        _nextLvlBtnLabel = _nextLvlBtn != null ? FindFirstTMPInChildren(_nextLvlBtn.transform) : null;
+        _reqDecorLine  = GetImage((int)Images.__1)?.gameObject;
+        _maxLvlTxt     = GetText((int)Texts.MaxLvlTxt);
+        _cantCraftBtn  = GetImage((int)Images.CantCraftBtn)?.gameObject;
+        _craftBtn      = GetButton((int)Buttons.CraftBtn)?.gameObject;
+        _nextLvlBtn    = GetButton((int)Buttons.NextLvlBtn)?.gameObject;
+        _backBtn       = GetButton((int)Buttons.BackBtn)?.gameObject;
+        _nextLvlBtnLabel = GetText((int)Texts.Txt_NextLvlBtn_05);
 
-        // ReqItemBox1_1 ~ ReqItemBox1_5
-        var list = new List<RectTransform>();
+        // ReqItemBox1_1 ~ 5 및 아이콘 캐시
+        var list     = new List<RectTransform>();
+        var iconList = new List<Image>();
         for (int i = 1; i <= 5; i++)
         {
             var box = _reqItemList != null ? _reqItemList.transform.Find($"ReqItemBox1_{i}") : null;
-            if (box != null) list.Add(box.GetComponent<RectTransform>());
+            if (box == null) continue;
+            var rt = box.GetComponent<RectTransform>();
+            list.Add(rt);
+            iconList.Add(FindIconImg(rt));
         }
         _reqItemBoxes = list.ToArray();
+        _reqItemIcons = iconList.ToArray();
 
         // 이벤트 바인딩
         _switchPanelBtn?.BindEvent(() => { if (!_craftBusy) OnClickSwitchPanel(); });
         _nextLvlBtn?.BindEvent(()     => { if (!_craftBusy) OnClickNextLvl(); });
         _backBtn?.BindEvent(()        => { if (!_craftBusy) OnClickBack(); });
         _craftBtn?.BindEvent(()       => { if (!_craftBusy) OnClickCraft(); });
-        _bg.gameObject.BindEvent(()   => { if (!_craftBusy) OnClickClose(); });
-        // X 버튼이 있으면 바인딩
-        var xBtn = transform.Find("FIXED/In_Frame/PotionDetailPopup/Xbutton");
-        if (xBtn != null) xBtn.gameObject.BindEvent(() => { if (!_craftBusy) OnClickClose(); });
+        _bg?.gameObject.BindEvent(()  => { if (!_craftBusy) OnClickClose(); });
+        GetImage((int)Images.Xbutton)?.gameObject.BindEvent(() => { if (!_craftBusy) OnClickClose(); });
 
         return true;
     }
 
-    TMP_Text FindFirstTMPInChildren(Transform t)
+    // 박스 직접 자식 Image 중 아이콘을 반환.
+    // Mask 컴포넌트 있는 것(GlowMask), white 스프라이트(BlockImg), Icon_inventory 스프라이트(Frame) 제외.
+    Image FindIconImg(RectTransform box)
     {
-        foreach (var tmp in t.GetComponentsInChildren<TMP_Text>(true))
-            return tmp;
+        foreach (Transform child in box)
+        {
+            var img = child.GetComponent<Image>();
+            if (img == null) continue;
+            if (child.GetComponent<Mask>() != null) continue;
+            var spName = img.sprite != null ? img.sprite.name : null;
+            if (spName == "white" || spName == "Icon_inventory") continue;
+            return img;
+        }
         return null;
     }
 
@@ -262,21 +425,23 @@ public class UI_PotionDetailPopup : UI_Popup
             int have = Managers.Game.GetItemCount(itemId);
 
             // Amount: 보유/필요. 부족하면 빨강.
-            var amount = box.Find("AmountTxt")?.GetComponent<TMP_Text>();
+            var amount = box.GetComponentInChildren<TMP_Text>(true);
             if (amount != null)
             {
                 amount.text = $"{have}/{required}";
                 amount.color = have >= required ? Color.white : new Color32(0xFF, 0x55, 0x55, 0xFF);
             }
 
-            // 아이콘: ItemDic에 해당 DataId 있으면 SpriteName 기반 로드. 없으면 prefab default 유지.
-            var img = box.Find("Img")?.GetComponent<Image>();
-            if (img != null && img.gameObject.activeSelf == false)
-                img.gameObject.SetActive(true);
-            if (img != null && TryGetItemData(itemId, out var itemData))
+            // 아이콘: Init()에서 캐시한 아이콘 Image 사용.
+            var img = i < _reqItemIcons.Length ? _reqItemIcons[i] : null;
+            if (img != null)
             {
-                var sp = Managers.Resource.Load<Sprite>(itemData.SpriteName);
-                if (sp != null) img.sprite = sp;
+                if (!img.gameObject.activeSelf) img.gameObject.SetActive(true);
+                if (TryGetItemData(itemId, out var itemData))
+                {
+                    var sp = Managers.Resource.Load<Sprite>(itemData.SpriteName);
+                    if (sp != null) img.sprite = sp;
+                }
             }
         }
     }
