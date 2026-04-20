@@ -264,6 +264,16 @@ public class GameManager
                 return;
 
             _gameData.CurrentTravelAreaId = value;
+
+            // EXPLORE(배틀) 지역은 persist 하지 않음 — 게임 종료 후 재시작 시 마지막 마을로 복귀
+            if (Managers.Data != null &&
+                Managers.Data.TravelAreaDic != null &&
+                Managers.Data.TravelAreaDic.TryGetValue(value, out var node) &&
+                string.Equals(node.Category, "EXPLORE", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
             SaveGame();
         }
     }
