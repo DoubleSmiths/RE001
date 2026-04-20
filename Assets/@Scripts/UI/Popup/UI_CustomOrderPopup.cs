@@ -319,7 +319,8 @@ public class UI_CustomOrderPopup : UI_Popup
                         GetImage((int)Images.lockbg_AutoPotion), GetImage((int)Images.lockimg_AutoPotion), locked: true);
 
         // 슬라이드 36: 해금 아이템 클릭 → 상세 팝업
-        GetObject((int)GameObjects.CustomOrderHPPotionIcon).BindEvent(
+        // CustomOrderHPPotionIcon 컨테이너엔 Graphic이 없어 raycast 불가 → Frame Button으로 바인딩
+        GetButton((int)Buttons.CustomOrderHPPotionFrame).gameObject.BindEvent(
             () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId));
     }
 
