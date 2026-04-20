@@ -228,5 +228,19 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         }
 
         Managers.Resource.Instantiate("CH1BG"); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
+
+        // 바닥은 마을 바닥(Village1_Main_Ground)을 재사용 — Village1_Main_BG prefab 스폰 후 배경 이미지만 비활성
+        var villageBG = Managers.Resource.Instantiate("Village1_Main_BG");
+        if (villageBG != null)
+        {
+            foreach (var t in villageBG.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name == "Village1_Main_BG_Img")
+                {
+                    t.gameObject.SetActive(false);
+                    break;
+                }
+            }
+        }
     }
 }
