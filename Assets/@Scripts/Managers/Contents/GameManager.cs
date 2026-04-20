@@ -107,7 +107,9 @@ public class GameData
     // 마지막 장소
     public Village1Group LastVillage1Group = Village1Group.Main;
 
-
+    // 최하단 탭(상태/가방/물약/장비/기술/도감) 해금 비트마스크. 슬라이드 10.
+    // 기본값 1 = [상태]만 해금. 나머지 퀘스트 진행에 따라 해금.
+    public int UnlockedBtmButtons = 1;
 }
 
 // ──────────────────────────────────────────────
@@ -282,6 +284,19 @@ public class GameManager
     {
         get => _gameData.LastVillage1Group;
         set { _gameData.LastVillage1Group = value; SaveGame(); }
+    }
+
+    public bool IsBtmButtonUnlocked(Define.TabType tab)
+    {
+        return (_gameData.UnlockedBtmButtons & (1 << (int)tab)) != 0;
+    }
+
+    public void UnlockBtmButton(Define.TabType tab)
+    {
+        int mask = 1 << (int)tab;
+        if ((_gameData.UnlockedBtmButtons & mask) != 0) return;
+        _gameData.UnlockedBtmButtons |= mask;
+        SaveGame();
     }
 
     public void AddUnlockedBtn(string btnId)

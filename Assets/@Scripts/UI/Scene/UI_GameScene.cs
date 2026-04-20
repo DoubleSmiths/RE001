@@ -187,9 +187,13 @@ public class UI_GameScene : UI_Scene
         Managers.Quest.OnBtnUnlocked += OnBtnUnlocked;
         RefreshQuestFollow(Managers.Quest.CurrentQuestID);
 
+        // 슬라이드 10: 최하단 탭 버튼 하이라이트 되돌림을 위한 Popup 닫힘 구독
+        Managers.UI.OnPopupClosed += OnBtmPopupClosed;
+
         SetInfo();
         RefreshTabLocks();
         RefreshBTMButtonGroup();
+        RefreshBtmButtonsLockState();
 
         // TODO : 플레이어의 현재 구역에 따라 EnterArea 호출
         EnterArea(AreaType.Village1);
@@ -214,6 +218,9 @@ public class UI_GameScene : UI_Scene
             Managers.Quest.OnFollowUIChanged -= RefreshQuestFollow;
             Managers.Quest.OnBtnUnlocked -= OnBtnUnlocked;
         }
+
+        if (Managers.UI != null)
+            Managers.UI.OnPopupClosed -= OnBtmPopupClosed;
     }
 
     public void FadeInOut()
@@ -520,12 +527,7 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     void RefreshTabLocks()
     {
-        var unlocked = Managers.Game.UnlockedBtnIds;
-        SetTabInteractable(Buttons.InventoryButton, unlocked.Contains(UNLOCK_INVENTORY_BUTTON));
-        SetTabInteractable(Buttons.PotionButton, false);
-        SetTabInteractable(Buttons.EquipmentButton, false);
-        SetTabInteractable(Buttons.SkillButton, false);
-        SetTabInteractable(Buttons.BestiaryButton, false);
+        // RefreshBtmButtonsLockState에서 해금 상태 기반으로 활성/비활성 처리하므로 별도 작업 불필요
     }
 
     void OnFollowItemChanged(int dataId)
@@ -583,6 +585,8 @@ public class UI_GameScene : UI_Scene
         {
             GetButton((int)Buttons.InventoryButton).gameObject.SetActive(true);
             GetButton((int)Buttons.InventoryButton).interactable = true;
+            Managers.Game.UnlockBtmButton(TabType.Bag);
+            RefreshBtmButtonsLockState();
             ShowNewBadge(TabType.Bag);
         }
     }
@@ -675,36 +679,164 @@ public class UI_GameScene : UI_Scene
         Managers.UI.ShowPopupUI<UI_SettingPopup>();
     }
 
+    // ────────────────────────────────────────
+    //  최하단 탭 버튼 (슬라이드 10)
+    //  - 클릭 시 해당 Popup 열기 + 하이라이트(#FFDA01 Color + 1.1 Scale, 0.3s OutQuad)
+    //  - 잠긴 버튼은 무반응
+    //  - Popup 닫힘 시 하이라이트 되돌림
+    // ────────────────────────────────────────
+    static readonly Color BTM_HL_COLOR = new Color32(0xFF, 0xDA, 0x01, 0xFF);
+    const float BTM_HL_SCALE = 1.1f;
+    const float BTM_HL_DURATION = 0.3f;
+
+    Color[] _btmBtnOriginalColor;
+    System.Type _btmActivePopupType;
+    int _btmActiveIdx = -1;
+
     void OnClickCharacter()
     {
-        // TODO: UI_CharacterPopup 열기
-        Managers.UI.ShowPopupUI<UI_CharacterPopup>();
+        HandleBtmClick(TabType.Status, Buttons.CharacterButton, typeof(UI_CharacterPopup),
+            () => Managers.UI.ShowPopupUI<UI_CharacterPopup>());
     }
 
     void OnClickInventory()
     {
-        Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo();
+        HandleBtmClick(TabType.Bag, Buttons.InventoryButton, typeof(UI_InventoryPopup),
+            () => Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo());
     }
 
     void OnClickPotion()
     {
-        Managers.UI.ShowPopupUI<UI_PotionPopup>().SetInfo();
+        HandleBtmClick(TabType.Potion, Buttons.PotionButton, typeof(UI_PotionPopup),
+            () => Managers.UI.ShowPopupUI<UI_PotionPopup>().SetInfo());
     }
 
     void OnClickEquipment()
     {
-        // TODO: UI_EquipmentPopup 열기
-        //Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo();
+        HandleBtmClick(TabType.Equipment, Buttons.EquipmentButton, null,
+            () => Managers.UI.ShowToast("장비 팝업은 준비 중입니다."));
     }
 
     void OnClickSkill()
     {
-        // TODO: UI_SkillPopup 열기
+        HandleBtmClick(TabType.Skill, Buttons.SkillButton, null,
+            () => Managers.UI.ShowToast("기술 팝업은 준비 중입니다."));
     }
 
     void OnClickBestiary()
     {
-        // TODO: UI_BestiaryPopup 열기
+        HandleBtmClick(TabType.Bestiary, Buttons.BestiaryButton, null,
+            () => Managers.UI.ShowToast("도감 팝업은 준비 중입니다."));
+    }
+
+    void HandleBtmClick(TabType tab, Buttons btnId, System.Type popupType, System.Action showAction)
+    {
+        if (Managers.Game.IsBtmButtonUnlocked(tab) == false)
+            return; // 잠긴 탭은 무반응
+
+        int idx = (int)btnId;
+        if (popupType != null)
+        {
+            PlayBtmHighlight(btnId);
+            _btmActivePopupType = popupType;
+            _btmActiveIdx = idx;
+        }
+        showAction?.Invoke();
+    }
+
+    // 각 Btm 버튼의 아이콘 Image (Button.colors가 안 덮어쓰는 별도 Image)
+    Image GetBtmIcon(Buttons btnId)
+    {
+        switch (btnId)
+        {
+            case Buttons.CharacterButton: return GetImage((int)Images.CharacterButtonIcon);
+            case Buttons.InventoryButton: return GetImage((int)Images.InventoryButtonIcon);
+            case Buttons.PotionButton:    return GetImage((int)Images.PotionButtonIcon);
+            case Buttons.EquipmentButton: return GetImage((int)Images.EquipmentButtonIcon);
+            case Buttons.SkillButton:     return GetImage((int)Images.SkillButtonIcon);
+            case Buttons.BestiaryButton:  return GetImage((int)Images.BestiaryButtonIcon);
+        }
+        return null;
+    }
+
+    void PlayBtmHighlight(Buttons btnId)
+    {
+        Button btn = GetButton((int)btnId);
+        if (btn == null) return;
+        Transform tr = btn.transform;
+        Image icon = GetBtmIcon(btnId);
+        CacheBtmOriginalColor(btnId, icon);
+
+        tr.DOKill();
+        tr.DOScale(BTM_HL_SCALE, BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
+        if (icon != null)
+        {
+            icon.DOKill();
+            icon.DOColor(BTM_HL_COLOR, BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+    }
+
+    void RestoreBtmHighlight(Buttons btnId)
+    {
+        Button btn = GetButton((int)btnId);
+        if (btn == null) return;
+        Transform tr = btn.transform;
+        Image icon = GetBtmIcon(btnId);
+
+        tr.DOKill();
+        tr.DOScale(1f, BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
+        if (icon != null && _btmBtnOriginalColor != null)
+        {
+            int idx = (int)btnId;
+            if (idx >= 0 && idx < _btmBtnOriginalColor.Length && _btmBtnOriginalColor[idx].a > 0f)
+            {
+                icon.DOKill();
+                icon.DOColor(_btmBtnOriginalColor[idx], BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
+            }
+        }
+    }
+
+    void CacheBtmOriginalColor(Buttons btnId, Image img)
+    {
+        if (img == null) return;
+        int count = System.Enum.GetValues(typeof(Buttons)).Length;
+        if (_btmBtnOriginalColor == null || _btmBtnOriginalColor.Length < count)
+            _btmBtnOriginalColor = new Color[count];
+        int idx = (int)btnId;
+        if (idx >= _btmBtnOriginalColor.Length) return;
+        // 아이콘은 투명하지 않은 색상을 원본으로 캐시 (이미 하이라이트 진행 중인 상태 저장 방지)
+        if (_btmBtnOriginalColor[idx].a <= 0f)
+            _btmBtnOriginalColor[idx] = img.color;
+    }
+
+    void OnBtmPopupClosed(System.Type closedType)
+    {
+        if (_btmActivePopupType == null || closedType != _btmActivePopupType)
+            return;
+        if (_btmActiveIdx < 0)
+            return;
+        RestoreBtmHighlight((Buttons)_btmActiveIdx);
+        _btmActivePopupType = null;
+        _btmActiveIdx = -1;
+    }
+
+    void RefreshBtmButtonsLockState()
+    {
+        ApplyBtmLock(Buttons.CharacterButton, TabType.Status);
+        ApplyBtmLock(Buttons.InventoryButton, TabType.Bag);
+        ApplyBtmLock(Buttons.PotionButton, TabType.Potion);
+        ApplyBtmLock(Buttons.EquipmentButton, TabType.Equipment);
+        ApplyBtmLock(Buttons.SkillButton, TabType.Skill);
+        ApplyBtmLock(Buttons.BestiaryButton, TabType.Bestiary);
+    }
+
+    void ApplyBtmLock(Buttons btnId, TabType tab)
+    {
+        Button btn = GetButton((int)btnId);
+        if (btn == null) return;
+        bool unlocked = Managers.Game.IsBtmButtonUnlocked(tab);
+        // 잠긴 버튼은 완전히 숨김 (NEW 뱃지 등 포함된 루트 오브젝트 전체)
+        btn.gameObject.SetActive(unlocked);
     }
 
 #if UNITY_EDITOR

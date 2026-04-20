@@ -137,16 +137,20 @@ public class UIManager
         ClosePopupUI();
     }
 
+    public event System.Action<System.Type> OnPopupClosed;
+
     public void ClosePopupUI()
     {
         if (_popupStack.Count == 0)
             return;
 
         UI_Popup popup = _popupStack.Pop();
+        System.Type closedType = popup.GetType();
         Managers.Resource.Destroy(popup.gameObject);
         popup = null;
         _order--;
         RefreshTimeScale();
+        OnPopupClosed?.Invoke(closedType);
     }
 
     public void CloseAllPopupUI()
