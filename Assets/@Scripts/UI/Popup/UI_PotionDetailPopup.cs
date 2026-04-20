@@ -275,6 +275,23 @@ public class UI_PotionDetailPopup : UI_Popup
         _bg?.gameObject.BindEvent(()  => { if (!_craftBusy) OnClickClose(); });
         GetImage((int)Images.Xbutton)?.gameObject.BindEvent(() => { if (!_craftBusy) OnClickClose(); });
 
+        // SetInfo 전에 보이면 안 되는 오브젝트 초기 숨김
+        _descText?.gameObject.SetActive(false);
+        _maxLvlTxt?.gameObject.SetActive(false);
+        _cantCraftBtn?.SetActive(false);
+        _craftBtn?.SetActive(false);
+        _nextLvlBtn?.SetActive(false);
+        _backBtn?.SetActive(false);
+        _spdTextsGroup?.SetActive(false);
+        GetObject((int)GameObjects.Guage_NextLvl)?.SetActive(false);
+        GetObject((int)GameObjects.SpeedPotionNewBtnHelper)?.SetActive(false);
+        GetObject((int)GameObjects.SPDPotionUnlockTxtGroup)?.SetActive(false);
+        // NextLvl 비교 텍스트는 다음 단계 미리보기 진입 시에만 표시
+        _flatHealN?.gameObject.SetActive(false);
+        _pHealN?.gameObject.SetActive(false);
+        _totalHealN?.gameObject.SetActive(false);
+        _cooldownN?.gameObject.SetActive(false);
+
         return true;
     }
 
@@ -309,7 +326,8 @@ public class UI_PotionDetailPopup : UI_Popup
         _previewNext = false;
         _craftBusy = false;
 
-        _frameOrigin = _myFrameRT.anchoredPosition;
+        // 프리팹에 -130 이 저장돼 있어도 실제 휴식 위치는 (0,0)
+        _frameOrigin = Vector2.zero;
 
         // 팝업 진입: From y=-130, OutBack 0.5s
         _myFrameRT.DOKill();
