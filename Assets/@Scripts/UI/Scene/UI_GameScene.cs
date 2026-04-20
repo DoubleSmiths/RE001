@@ -211,6 +211,7 @@ public class UI_GameScene : UI_Scene
             Managers.Game.OnLanguageChanged -= RefreshTexts;
             Managers.Game.OnInventoryNewChanged -= RefreshBTMButtonGroup;
             Managers.Game.OnItemChanged -= OnFollowItemChanged;
+            Managers.Game.OnStatusPointChanged -= RefreshCharacterNewIcon;
         }
 
         if (Managers.Quest != null)
@@ -508,6 +509,11 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.PlayerLevelText).text = $"Lv.{newLevel}";
     }
 
+    void RefreshCharacterNewIcon()
+    {
+        GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(Managers.Game.StatusPoint > 0);
+    }
+
     // ────────────────────────────────────────
     //  도감 – 동행 중인 미니몬 수
     // ────────────────────────────────────────
@@ -633,7 +639,7 @@ public class UI_GameScene : UI_Scene
         switch (tab)
         {
             case TabType.Status:
-                GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(true);
+                RefreshCharacterNewIcon();
                 break;
             case TabType.Bag:
                 GetText((int)Texts.InventoryButtonNewTxt).gameObject.SetActive(true);
@@ -663,6 +669,8 @@ public class UI_GameScene : UI_Scene
         player.OnExpChanged += (cur, req) => UpdateEXP(cur, req);
         player.OnLevelUp += (lv) => OnLevelUp(lv);
         UpdateHP(player.Hp, player.MaxHp);
+        Managers.Game.OnStatusPointChanged += RefreshCharacterNewIcon;
+        RefreshCharacterNewIcon();
     }
 
     // ────────────────────────────────────────

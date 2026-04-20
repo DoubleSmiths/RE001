@@ -137,7 +137,7 @@ public class GameManager
     public int StatusPoint
     {
         get => _gameData.StatusPoint;
-        set { _gameData.StatusPoint = value; SaveGame(); }
+        set { _gameData.StatusPoint = value; OnStatusPointChanged?.Invoke(); SaveGame(); }
     }
 
     public int Elixir
@@ -311,6 +311,7 @@ public class GameManager
     // ── 이벤트 ──
     public event Action OnLanguageChanged;
     public event Action OnResourceChanged;
+    public event Action OnStatusPointChanged;
     public event Action EquipInfoChanged;
     public event Action<Equipment> OnEquipmentForged;
     public event Action<int> OnItemAdded;         // dataId
