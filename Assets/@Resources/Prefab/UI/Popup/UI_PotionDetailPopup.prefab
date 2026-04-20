@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 2173772293084417019}
   - component: {fileID: 1282708364209245686}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_Mask_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -518,7 +518,7 @@ GameObject:
   - component: {fileID: 347865431350874443}
   - component: {fileID: 9029257784502423941}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Img_GlowMask_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -594,7 +594,7 @@ GameObject:
   - component: {fileID: 6299495340430865303}
   - component: {fileID: 8541391059554989238}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Mask_CraftBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 4588303165096305029}
   - component: {fileID: 4995488474706947192}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_NextLvlBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -796,7 +796,7 @@ GameObject:
   - component: {fileID: 585102701524777866}
   - component: {fileID: 7885919592069575355}
   m_Layer: 5
-  m_Name: GlowMask
+  m_Name: Mask_ReqItemBox1_3_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -886,7 +886,7 @@ GameObject:
   - component: {fileID: 5022591330270449569}
   - component: {fileID: 1660997404777146646}
   m_Layer: 5
-  m_Name: GlowMask
+  m_Name: Mask_ReqItemBox1_2_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1271,7 +1271,7 @@ GameObject:
   - component: {fileID: 49159743209410658}
   - component: {fileID: 1875731022860275357}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_Xbutton_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2062,7 +2062,7 @@ GameObject:
   - component: {fileID: 9028891833097568498}
   - component: {fileID: 8881090339191384196}
   m_Layer: 5
-  m_Name: Img
+  m_Name: Img_ReqItemBox1_4_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2139,7 +2139,7 @@ GameObject:
   - component: {fileID: 6909935520936862421}
   - component: {fileID: 8839528438287604138}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_Guage_NextLvl_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2337,7 +2337,7 @@ GameObject:
   - component: {fileID: 6823663782719451813}
   - component: {fileID: 1359705199467504508}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Img_GlowMask_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2412,7 +2412,7 @@ GameObject:
   - component: {fileID: 5188968837637251736}
   - component: {fileID: 3735460333029541774}
   m_Layer: 5
-  m_Name: BlockImg
+  m_Name: Img_ReqItemBox1_4_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2487,7 +2487,7 @@ GameObject:
   - component: {fileID: 8825719380823930923}
   - component: {fileID: 7168010394784892179}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Img_GlowMask_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2601,7 +2601,7 @@ GameObject:
   - component: {fileID: 1984320622018138186}
   - component: {fileID: 1252988250898965900}
   m_Layer: 5
-  m_Name: AmountTxt
+  m_Name: Txt_ReqItemBox1_3_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2769,7 +2769,7 @@ GameObject:
   - component: {fileID: 8982759408633932282}
   - component: {fileID: 652812135997877848}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Guage_NextLvl_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2969,7 +2969,7 @@ GameObject:
   - component: {fileID: 1576248618632184138}
   - component: {fileID: 7425586657439803174}
   m_Layer: 5
-  m_Name: AmountTxt
+  m_Name: Txt_ReqItemBox1_5_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3173,7 +3173,7 @@ GameObject:
   - component: {fileID: 118266982358388140}
   - component: {fileID: 1768017806636452354}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Mask_BackBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3556,7 +3556,7 @@ GameObject:
   - component: {fileID: 5783639783498723056}
   - component: {fileID: 7311277854016281260}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4340,7 +4340,7 @@ GameObject:
   - component: {fileID: 5422610807124912780}
   - component: {fileID: 2861075204732733583}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_Mask_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4415,7 +4415,7 @@ GameObject:
   - component: {fileID: 5685950930155542478}
   - component: {fileID: 9095328084242529328}
   m_Layer: 5
-  m_Name: BlockImg
+  m_Name: Img_ReqItemBox1_3_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4830,7 +4830,7 @@ GameObject:
   - component: {fileID: 1722013966459801244}
   - component: {fileID: 5706115538801461224}
   m_Layer: 5
-  m_Name: GlowMask
+  m_Name: Mask_ReqItemBox1_4_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5500,7 +5500,7 @@ GameObject:
   - component: {fileID: 4938040779095341013}
   - component: {fileID: 7617811286571772714}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ReqItemBox1_5_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6160,7 +6160,7 @@ GameObject:
   - component: {fileID: 3127470492117689845}
   - component: {fileID: 6097722323833077283}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6412,7 +6412,7 @@ GameObject:
   - component: {fileID: 1413095564226948100}
   - component: {fileID: 2629293428878601217}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_BackBtn_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6873,7 +6873,7 @@ GameObject:
   - component: {fileID: 2482016650464684229}
   - component: {fileID: 2669277430956978461}
   m_Layer: 5
-  m_Name: Img
+  m_Name: Img_ReqItemBox1_2_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6950,7 +6950,7 @@ GameObject:
   - component: {fileID: 6483656595467426182}
   - component: {fileID: 8489476099656380734}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Txt_ReqItemGroup_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7116,7 +7116,7 @@ GameObject:
   - component: {fileID: 2340355291033776243}
   - component: {fileID: 5790457754156278812}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_CraftBtn_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7192,7 +7192,7 @@ GameObject:
   - component: {fileID: 723030899635780529}
   - component: {fileID: 5017879085126162040}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Mask_NextLvlBtn_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7282,7 +7282,7 @@ GameObject:
   - component: {fileID: 1342357564860312779}
   - component: {fileID: 6026348953787543673}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7606,7 +7606,7 @@ GameObject:
   - component: {fileID: 3644791326659162362}
   - component: {fileID: 5272761618437323483}
   m_Layer: 5
-  m_Name: Image_4
+  m_Name: Img_PotionDetailPopupshineef_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8039,7 +8039,7 @@ GameObject:
   - component: {fileID: 7277946660276042025}
   - component: {fileID: 3825247748555967679}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ReqItemBox1_3_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8287,7 +8287,7 @@ GameObject:
   - component: {fileID: 7692746173107618467}
   - component: {fileID: 7056818628587672103}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Txt_NextLvlBtn_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8527,7 +8527,7 @@ GameObject:
   - component: {fileID: 8112352416200477584}
   - component: {fileID: 4142567927236378198}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8770,7 +8770,7 @@ GameObject:
   - component: {fileID: 7088847705892509936}
   - component: {fileID: 2915612378959567745}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_PotionDetailPopupTitle_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8847,7 +8847,7 @@ GameObject:
   - component: {fileID: 176562561980369220}
   - component: {fileID: 9100541529010027775}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Guage_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9457,7 +9457,7 @@ GameObject:
   - component: {fileID: 5476448673544474771}
   - component: {fileID: 4355898857910608666}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ReqItemBox1_2_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9547,7 +9547,7 @@ GameObject:
   - component: {fileID: 8781763737304153031}
   - component: {fileID: 4747672457409900041}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9622,7 +9622,7 @@ GameObject:
   - component: {fileID: 7976899307523860791}
   - component: {fileID: 7148337420125659082}
   m_Layer: 5
-  m_Name: Img
+  m_Name: Img_ReqItemBox1_1_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9697,7 +9697,7 @@ GameObject:
   - component: {fileID: 5151651921916809641}
   - component: {fileID: 5549900048665642641}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9944,7 +9944,7 @@ GameObject:
   - component: {fileID: 6956955628344378369}
   - component: {fileID: 1922666132291894238}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Txt_CraftBtn_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10110,7 +10110,7 @@ GameObject:
   - component: {fileID: 163009305060398328}
   - component: {fileID: 4228353794124612140}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_SwitchPanelBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10478,7 +10478,7 @@ GameObject:
   - component: {fileID: 3279065980485409765}
   - component: {fileID: 8314403375445648952}
   m_Layer: 5
-  m_Name: Img
+  m_Name: Img_ReqItemBox1_3_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10655,7 +10655,7 @@ GameObject:
   - component: {fileID: 7779827097118888224}
   - component: {fileID: 1664064813262848456}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Img_GlowMask_1_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10900,7 +10900,7 @@ GameObject:
   - component: {fileID: 1853075071284880722}
   - component: {fileID: 827711521550678075}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Txt_CantCraftBtn_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11068,7 +11068,7 @@ GameObject:
   - component: {fileID: 8049668561514270034}
   - component: {fileID: 1312924835910678445}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Img_Guage_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11304,7 +11304,7 @@ GameObject:
   - component: {fileID: 15443300310845522}
   - component: {fileID: 8115560619116058236}
   m_Layer: 5
-  m_Name: Image_3
+  m_Name: Img_Guage_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11713,7 +11713,7 @@ GameObject:
   - component: {fileID: 6444815532969163149}
   - component: {fileID: 2607505594515209460}
   m_Layer: 5
-  m_Name: AmountTxt
+  m_Name: Txt_ReqItemBox1_2_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11880,7 +11880,7 @@ GameObject:
   - component: {fileID: 7113777088125265480}
   - component: {fileID: 6446647859492374101}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ReqItemBox1_4_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12338,7 +12338,7 @@ GameObject:
   - component: {fileID: 9120565410746173997}
   - component: {fileID: 9109622675167278937}
   m_Layer: 5
-  m_Name: Image_4
+  m_Name: Img_Guage_NextLvl_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12505,7 +12505,7 @@ GameObject:
   - component: {fileID: 2610265639049311140}
   - component: {fileID: 3963573573943886181}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Txt_SwitchPanelBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12671,7 +12671,7 @@ GameObject:
   - component: {fileID: 3811350042447407114}
   - component: {fileID: 5747637089025856809}
   m_Layer: 5
-  m_Name: BtmImg_1
+  m_Name: Img_CantCraftBtn_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12948,7 +12948,7 @@ GameObject:
   - component: {fileID: 762853928684551902}
   - component: {fileID: 3761660087171464936}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Txt_BackBtn_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13359,7 +13359,7 @@ GameObject:
   - component: {fileID: 2038428041070585066}
   - component: {fileID: 3298530062761040192}
   m_Layer: 5
-  m_Name: Image_1
+  m_Name: Img_Item_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13434,7 +13434,7 @@ GameObject:
   - component: {fileID: 4605593874839228497}
   - component: {fileID: 3519929944744589926}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Img_GlowMask_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13509,7 +13509,7 @@ GameObject:
   - component: {fileID: 560533721172168853}
   - component: {fileID: 4093809333725501512}
   m_Layer: 5
-  m_Name: BlockImg
+  m_Name: Img_ReqItemBox1_5_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13584,7 +13584,7 @@ GameObject:
   - component: {fileID: 441827361814967965}
   - component: {fileID: 4870560679393645955}
   m_Layer: 5
-  m_Name: BlockImg
+  m_Name: Img_ReqItemBox1_1_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13659,7 +13659,7 @@ GameObject:
   - component: {fileID: 3827608849937346863}
   - component: {fileID: 1254200018353900635}
   m_Layer: 5
-  m_Name: Image_2
+  m_Name: Img_Item_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13734,7 +13734,7 @@ GameObject:
   - component: {fileID: 1995029251119304554}
   - component: {fileID: 7511436418191470767}
   m_Layer: 5
-  m_Name: Img
+  m_Name: Img_ReqItemBox1_5_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13810,7 +13810,7 @@ GameObject:
   - component: {fileID: 7935159215192930807}
   - component: {fileID: 1268033304651903314}
   m_Layer: 5
-  m_Name: GlowMask
+  m_Name: Mask_ReqItemBox1_5_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13899,7 +13899,7 @@ GameObject:
   - component: {fileID: 6561174729994947676}
   - component: {fileID: 2247587981320557820}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Img_GlowMask_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13975,7 +13975,7 @@ GameObject:
   - component: {fileID: 6082144645120858187}
   - component: {fileID: 3635528595676008317}
   m_Layer: 5
-  m_Name: Img
+  m_Name: Btn_FrameImg_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14330,7 +14330,7 @@ GameObject:
   - component: {fileID: 7889543127870362543}
   - component: {fileID: 8701866693063367822}
   m_Layer: 5
-  m_Name: AmountTxt
+  m_Name: Txt_ReqItemBox1_4_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14773,7 +14773,7 @@ GameObject:
   - component: {fileID: 5507255940133149664}
   - component: {fileID: 2729951413944991437}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Img_ReqItemBox1_1_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14865,7 +14865,7 @@ GameObject:
   - component: {fileID: 6369127041445200480}
   - component: {fileID: 5764991111372847932}
   m_Layer: 5
-  m_Name: Image_3
+  m_Name: Img_Guage_NextLvl_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15063,7 +15063,7 @@ GameObject:
   - component: {fileID: 6047213419909976037}
   - component: {fileID: 9105320013515746005}
   m_Layer: 5
-  m_Name: BlockImg
+  m_Name: Img_ReqItemBox1_2_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15139,7 +15139,7 @@ GameObject:
   - component: {fileID: 3236970414670869785}
   - component: {fileID: 1411933669930080990}
   m_Layer: 5
-  m_Name: GlowMask
+  m_Name: Mask_ReqItemBox1_1_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15230,7 +15230,7 @@ GameObject:
   - component: {fileID: 1255219401049889730}
   - component: {fileID: 845118214660989203}
   m_Layer: 5
-  m_Name: AmountTxt
+  m_Name: Txt_ReqItemBox1_1_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15397,7 +15397,7 @@ GameObject:
   - component: {fileID: 6120607743727948755}
   - component: {fileID: 8762870217822679117}
   m_Layer: 5
-  m_Name: '_'
+  m_Name: Mask_CantCraftBtn_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

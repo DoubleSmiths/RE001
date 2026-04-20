@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8341777093214851172}
   - component: {fileID: 3875514288518872013}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_SettingPopupSound_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -660,7 +660,7 @@ GameObject:
   - component: {fileID: 6829144178632637480}
   - component: {fileID: 9024598581520764714}
   m_Layer: 5
-  m_Name: SettingPopupSoundTitle
+  m_Name: Txt_SettingPopupSound_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -828,7 +828,7 @@ GameObject:
   - component: {fileID: 9090567701486763809}
   - component: {fileID: 8942485801540181101}
   m_Layer: 5
-  m_Name: SettingPopupSoundTitle
+  m_Name: Txt_SettingPopupLanguage_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1260,7 +1260,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4221144564958928930}
   m_Layer: 5
-  m_Name: SettingPopupTitle
+  m_Name: Panel_SettingPopupFrame_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1530,7 +1530,7 @@ GameObject:
   - component: {fileID: 5049781276642575720}
   - component: {fileID: 148476349814982487}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_SettingPopupLanguage_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1644,7 +1644,7 @@ GameObject:
   - component: {fileID: 8138856852674772939}
   - component: {fileID: 7969482589658096804}
   m_Layer: 5
-  m_Name: Text_Legacy
+  m_Name: Txt_EngBtn_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2807,7 +2807,7 @@ GameObject:
   - component: {fileID: 8042665884014052878}
   - component: {fileID: 8905812677052646924}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_SettingPopupTitle_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3860,7 +3860,7 @@ GameObject:
   - component: {fileID: 7928075925175776292}
   - component: {fileID: 7050497534114948504}
   m_Layer: 5
-  m_Name: SettingPopupTitle
+  m_Name: Txt_SettingPopupTitle_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4255,7 +4255,7 @@ GameObject:
   - component: {fileID: 5857750965029693183}
   - component: {fileID: 1543729106360468171}
   m_Layer: 5
-  m_Name: _
+  m_Name: Img_SettingPopupEffects_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5097,7 +5097,7 @@ GameObject:
   - component: {fileID: 3133760182422560376}
   - component: {fileID: 9071909108747906111}
   m_Layer: 5
-  m_Name: Text_Legacy
+  m_Name: Txt_KorBtn_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
