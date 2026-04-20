@@ -1061,17 +1061,11 @@ public class UI_TravelPopup : UI_Popup
 
     void RestoreSelection()
     {
+        // 팝업은 항상 Root depth (대분류만 보이는 초기 화면)로 시작. 슬라이드 45 스펙.
         _selectedRootId = GetPreferredRootId();
         _selectedGroupId = 0;
         _selectedDetailId = 0;
         _depth = TravelDepth.Root;
-
-        int savedAreaId = Managers.Game.CurrentTravelAreaId;
-        if (savedAreaId <= 0 || TryGetNode(savedAreaId, out TravelAreaData savedNode) == false)
-            return;
-
-        if (TryApplySavedSelection(savedNode) == false)
-            Debug.LogWarning($"[UI_TravelPopup] RestoreSelection corrected invalid saved area: {savedAreaId}");
     }
 
     int GetPreferredRootId()
