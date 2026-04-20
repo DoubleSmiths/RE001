@@ -64,7 +64,7 @@ public class UI_PotionPopup : UI_Popup
     bool _autoMemorized;
     float _hpRatio = 0.5f;
 
-    const float BOX_FROM_Y_OFFSET = 40f;
+    float _boxOffScreenY;  // 열릴 때 시작 / 닫힐 때 종료 y (화면 완전 밖)
 
     // Prefab의 anchoredPosition(0, -85)은 In_Frame 바닥 아래(오프스크린)라 보이지 않음.
     // 기획서 GIF 기준 화면 하단에 떠있는 모양 — In_Frame bottom에서 위로 120 정도.
@@ -218,10 +218,12 @@ public class UI_PotionPopup : UI_Popup
         RefreshAutoUI();
         if (_autoBtnNewTxt != null) _autoBtnNewTxt.SetActive(false);
 
-        // 진입 애님: From (0, origin.y+40) → origin(BOX_ORIGIN). OutBack 0.5s.
+        // 진입 애님: 화면 완전 밖(아래) → BOX_ORIGIN. OutBack 0.5s.
         _boxOrigin = BOX_ORIGIN;
+        var canvasRT = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+        _boxOffScreenY = _boxOrigin.y - canvasRT.rect.height - _boxGroupRT.rect.height;
         _boxGroupRT.DOKill();
-        _boxGroupRT.anchoredPosition = _boxOrigin + new Vector2(0f, BOX_FROM_Y_OFFSET);
+        _boxGroupRT.anchoredPosition = new Vector2(0f, _boxOffScreenY);
         _boxGroupRT.DOAnchorPos(_boxOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
 
         // BlackBG 페이드
@@ -237,7 +239,7 @@ public class UI_PotionPopup : UI_Popup
     {
         _boxGroupRT.DOKill();
         var seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(_boxGroupRT.DOAnchorPos(_boxOrigin + new Vector2(0f, BOX_FROM_Y_OFFSET), 0.25f).SetEase(Ease.InBack));
+        seq.Append(_boxGroupRT.DOAnchorPos(new Vector2(0f, _boxOffScreenY), 0.25f).SetEase(Ease.InBack));
         seq.OnComplete(() => Managers.UI.ClosePopupUI());
     }
 
