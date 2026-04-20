@@ -1483,16 +1483,17 @@ public class UI_TravelPopup : UI_Popup
     {
         areaType = default;
         if (node == null)
-        {
-            Debug.LogWarning("[UI_TravelPopup] TryResolveAreaType failed: node is null.");
             return false;
+
+        // EXPLORE 카테고리 소분류(던전/필드)는 Battle 씬으로 진입
+        if (string.Equals(node.Category, "EXPLORE", StringComparison.OrdinalIgnoreCase))
+        {
+            areaType = AreaType.Battle;
+            return true;
         }
 
         if (string.IsNullOrWhiteSpace(node.SceneName))
-        {
-            Debug.LogWarning($"[UI_TravelPopup] TryResolveAreaType failed: SceneName is empty. node={node.DataId}, category={node.Category}");
             return false;
-        }
 
         if (Enum.TryParse(node.SceneName, true, out areaType))
             return true;

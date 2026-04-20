@@ -196,8 +196,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         EndBattle();
 
-        GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
-        Destroy(GameObject.Find("CH1BG")); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
+        // Battle BG 제거
+        var ch1 = GameObject.Find("CH1BG") ?? GameObject.Find("CH1BG(Clone)");
+        if (ch1 != null)
+            Destroy(ch1);
 
         UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
         // TODO : Village1이 아니라 마지막 마을로 해야 됨. 아직은 데이터 없음.
@@ -206,7 +208,25 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     void ChangeMap()
     {
-        GameObject.Find("BackgroundImage").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+        // Village1→Battle 전환 시 SwitchBG가 legacy BackgroundImage를 이미 비활성화했을 수 있음
+        var legacyBG = GameObject.Find("BackgroundImage");
+        if (legacyBG != null)
+        {
+            var sr = legacyBG.GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.color = new Color(1, 1, 1, 0);
+        }
+
+        // Village1 BG prefab 인스턴스 정리 (마을 배경이 Battle 배경 뒤로 비치는 것 방지)
+        foreach (var key in new[] { "Village1_Main_BG", "Village1_Guild_BG", "Village1_Alchemy_BG" })
+        {
+            foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                if (go.name == key || go.name == key + "(Clone)")
+                    Destroy(go);
+            }
+        }
+
         Managers.Resource.Instantiate("CH1BG"); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
     }
 }
