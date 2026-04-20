@@ -142,7 +142,8 @@ public class UI_TravelPopup : UI_Popup
     static readonly Color COLOR_DESTINATION   = new Color32(0xFF, 0xA3, 0x00, 0xFF); // FFA300
     static readonly Color COLOR_CURRENT       = new Color32(0x23, 0x7B, 0x00, 0xFF); // 237B00
     static readonly Color COLOR_GROUP_SELECT  = new Color32(0xFF, 0xC5, 0x00, 0xFF); // FFC500
-    static readonly Color COLOR_ROOT_IDLE     = new Color32(0x95, 0x95, 0x95, 0xFF); // 959595
+    static readonly Color COLOR_ROOT_IDLE     = new Color32(0xFF, 0xFF, 0xFF, 0xFF); // FFFFFF (대분류 버튼 본체)
+    static readonly Color COLOR_ROOT_ICON     = new Color32(0xFF, 0xFF, 0xFF, 80);    // FFFFFF alpha 80 (대분류 아이콘)
 
     private void Awake()
     {
@@ -522,7 +523,7 @@ public class UI_TravelPopup : UI_Popup
         Color target = selected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
         ApplyButtonTint(btn, frame, target);
         if (iconImage != null)
-            iconImage.color = selected ? Color.white : COLOR_ROOT_IDLE;
+            iconImage.color = COLOR_ROOT_ICON;  // FFFFFF alpha 80 (상태 무관)
 
         btn.transform.localScale = Vector3.one;
     }
