@@ -263,33 +263,51 @@ public class UI_CustomOrderPopup : UI_Popup
     void InitLockStates()
     {
         // 잠금
-        ApplyLockVisual("CustomOrderSPDPotionIcon", "lockbg_1",           "lockimg_1",           locked: true);
-        ApplyLockVisual("CustomOrderLuckPotionIcon", "lockbg",             "lockimg",             locked: true);
-        ApplyLockVisual("CustomOrder_AutoPotionCooltimeSkill", "lockbg_AutoPotion", "lockimg_AutoPotion", locked: true);
-        // HP는 잠금 해제 (prefab 구조상 lock 자식이 없거나 별도 없음)
+        ApplyLockVisual("CustomOrderSPDPotionIcon",              "lockbg_1",           "lockimg_1",           locked: true);
+        ApplyLockVisual("CustomOrderLuckPotionIcon",             "lockbg",             "lockimg",             locked: true);
+        ApplyLockVisual("CustomOrder_AutoPotionCooltimeSkill",   "lockbg_AutoPotion",  "lockimg_AutoPotion",  locked: true);
 
-        // 슬라이드 36: 해금된 아이템만 클릭 → 상세 팝업 호출. 잠긴 아이템은 상호작용 불가.
-        // HPPotionDic 기준: 30001=HP Grade0 Step1, 30004=HP Grade1 Step1 (데이터 파일 참조)
-        BindItemClick("CustomOrderHPPotionIcon",              () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId), unlocked: true);
-        BindItemClick("CustomOrderSPDPotionIcon",             () => OpenPotionDetail(-1),      unlocked: false);
-        BindItemClick("CustomOrderLuckPotionIcon",            () => OpenPotionDetail(-1),      unlocked: false);
-        BindItemClick("CustomOrder_AutoPotionCooltimeSkill", () => OpenSkillDetail(0),         unlocked: false);
+        // 슬라이드 36: 해금 아이템 클릭 → 상세 팝업
+        BindItemClick("CustomOrderHPPotionIcon",             () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId), unlocked: true);
+        BindItemClick("CustomOrderSPDPotionIcon",            () => OpenPotionDetail(-1),  unlocked: false);
+        BindItemClick("CustomOrderLuckPotionIcon",           () => OpenPotionDetail(-1),  unlocked: false);
+        BindItemClick("CustomOrder_AutoPotionCooltimeSkill", () => OpenSkillDetail(0),    unlocked: false);
+
+        // ----- 그룹 트리 덤프 (디버그 전용) -----
+#if UNITY_EDITOR
+        var potionGrp = GetObject((int)GameObjects.Btm_PotionBtnGroup);
+        Debug.Log($"[CustomOrder] Btm_PotionBtnGroup null? {potionGrp == null}");
+        if (potionGrp != null) LogChildren(potionGrp.transform, 0);
+#endif
     }
+
+#if UNITY_EDITOR
+    void LogChildren(Transform t, int depth)
+    {
+        string indent = new string('-', depth * 2);
+        Debug.Log($"[CustomOrder]{indent} {t.name} (active={t.gameObject.activeSelf})");
+        foreach (Transform child in t) LogChildren(child, depth + 1);
+    }
+#endif
 
     void BindItemClick(string itemName, Action onClick, bool unlocked)
     {
-        if (!unlocked) return; // 잠긴 아이템은 바인딩하지 않음 (상호작용 불가)
+        if (!unlocked) return;
 
-        var item = transform.Find($"FIXED/In_Frame/CustomOrderPopup/CustomOrderPopupFrame/Btm_PotionBtnGroup/{itemName}");
+        var item = FindItemInGroups(itemName);
         if (item == null)
-            item = transform.Find($"FIXED/In_Frame/CustomOrderPopup/CustomOrderPopupFrame/Btm_SkillBtnGroup/{itemName}");
-        if (item == null) return;
+        {
+            Debug.LogWarning($"[CustomOrderPopup] BindItemClick: '{itemName}' NOT FOUND");
+            return;
+        }
 
+        Debug.Log($"[CustomOrderPopup] BindItemClick: '{itemName}' found → BindEvent 등록");
         item.gameObject.BindEvent(onClick);
     }
 
     void OpenPotionDetail(int dataId)
     {
+        Debug.Log($"[CustomOrderPopup] OpenPotionDetail dataId={dataId}");
         Managers.UI.ShowPopupUI<UI_PotionDetailPopup>().SetInfo(dataId, fromCustomOrder: true);
     }
 
@@ -298,11 +316,31 @@ public class UI_CustomOrderPopup : UI_Popup
         Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(skillId);
     }
 
+    // 이미 바인딩된 그룹 오브젝트에서 itemName 자식을 재귀 탐색
+    Transform FindItemInGroups(string itemName)
+    {
+        var potionGrp = GetObject((int)GameObjects.Btm_PotionBtnGroup);
+        var skillGrp  = GetObject((int)GameObjects.Btm_SkillBtnGroup);
+
+        Transform found = potionGrp != null ? FindDeep(potionGrp.transform, itemName) : null;
+        if (found == null && skillGrp != null) found = FindDeep(skillGrp.transform, itemName);
+        return found;
+    }
+
+    Transform FindDeep(Transform parent, string name)
+    {
+        if (parent.name == name) return parent;
+        foreach (Transform child in parent)
+        {
+            var result = FindDeep(child, name);
+            if (result != null) return result;
+        }
+        return null;
+    }
+
     void ApplyLockVisual(string itemName, string lockBgName, string lockImgName, bool locked)
     {
-        var item = transform.Find($"FIXED/In_Frame/CustomOrderPopup/CustomOrderPopupFrame/Btm_PotionBtnGroup/{itemName}");
-        if (item == null)
-            item = transform.Find($"FIXED/In_Frame/CustomOrderPopup/CustomOrderPopupFrame/Btm_SkillBtnGroup/{itemName}");
+        var item = FindItemInGroups(itemName);
         if (item == null) return;
 
         // 잠금 유지: prefab에 autoPlay=true로 걸린 "해금 연출" DOTweenAnimation이

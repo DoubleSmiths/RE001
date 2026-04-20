@@ -84,37 +84,39 @@ public class UI_PotionDetailPopup : UI_Popup
         _cooldownN = _frame.Find("FrameImg/PotionCooltimeTxt_NextLvl").GetComponent<TMP_Text>();
         _descText  = _frame.Find("FrameImg/DescText").GetComponent<TMP_Text>();
 
-        _switchPanelBtn = _frame.Find("FrameImg/SwitchPanelBtn").gameObject;
-        _switchBtnLabel = FindFirstTMPInChildren(_switchPanelBtn.transform);
+        _switchPanelBtn = _frame.Find("FrameImg/SwitchPanelBtn")?.gameObject;
+        _switchBtnLabel = _switchPanelBtn != null ? FindFirstTMPInChildren(_switchPanelBtn.transform) : null;
 
-        _reqItemGroup = _frame.Find("FrameImg/ReqItemGroup").gameObject;
-        _reqItemList  = _reqItemGroup.transform.Find("ReqItemList").gameObject;
-        _reqItemTitle = _reqItemGroup.transform.Find("GameObject").gameObject; // "REQ. ITEMS" title
-        _reqDecorLine = _reqItemGroup.transform.Find("__1").gameObject;        // Decor_description_line
-        var titleTmp = _reqItemTitle.GetComponentInChildren<TMP_Text>(true);
+        var reqGrpTf = _frame.Find("FrameImg/ReqItemGroup");
+        _reqItemGroup = reqGrpTf?.gameObject;
+        _reqItemList  = reqGrpTf?.Find("ReqItemList")?.gameObject;
+        _reqItemTitle = reqGrpTf?.Find("GameObject")?.gameObject;
+        _reqDecorLine = reqGrpTf?.Find("__1")?.gameObject
+                     ?? reqGrpTf?.Find("_")?.gameObject;   // 프리팹 이름이 "_"인 경우 대응
+        var titleTmp = _reqItemTitle?.GetComponentInChildren<TMP_Text>(true);
         if (titleTmp != null) titleTmp.text = "필요 재료";
-        _maxLvlTxt    = _reqItemGroup.transform.Find("MaxLvlTxt").GetComponent<TMP_Text>();
-        _cantCraftBtn = _reqItemGroup.transform.Find("CantCraftBtn").gameObject;
-        _craftBtn     = _reqItemGroup.transform.Find("CraftBtn").gameObject;
-        _nextLvlBtn   = _reqItemGroup.transform.Find("NextLvlBtn").gameObject;
-        _backBtn      = _reqItemGroup.transform.Find("BackBtn").gameObject;
-        _nextLvlBtnLabel = FindFirstTMPInChildren(_nextLvlBtn.transform);
+        _maxLvlTxt    = reqGrpTf?.Find("MaxLvlTxt")?.GetComponent<TMP_Text>();
+        _cantCraftBtn = reqGrpTf?.Find("CantCraftBtn")?.gameObject;
+        _craftBtn     = reqGrpTf?.Find("CraftBtn")?.gameObject;
+        _nextLvlBtn   = reqGrpTf?.Find("NextLvlBtn")?.gameObject;
+        _backBtn      = reqGrpTf?.Find("BackBtn")?.gameObject;
+        _nextLvlBtnLabel = _nextLvlBtn != null ? FindFirstTMPInChildren(_nextLvlBtn.transform) : null;
 
         // ReqItemBox1_1 ~ ReqItemBox1_5
         var list = new List<RectTransform>();
         for (int i = 1; i <= 5; i++)
         {
-            var box = _reqItemList.transform.Find($"ReqItemBox1_{i}");
+            var box = _reqItemList != null ? _reqItemList.transform.Find($"ReqItemBox1_{i}") : null;
             if (box != null) list.Add(box.GetComponent<RectTransform>());
         }
         _reqItemBoxes = list.ToArray();
 
         // 이벤트 바인딩
-        _switchPanelBtn.BindEvent(() => { if (!_craftBusy) OnClickSwitchPanel(); });
-        _nextLvlBtn.BindEvent(()     => { if (!_craftBusy) OnClickNextLvl(); });
-        _backBtn.BindEvent(()        => { if (!_craftBusy) OnClickBack(); });
-        _craftBtn.BindEvent(()       => { if (!_craftBusy) OnClickCraft(); });
-        _bg.gameObject.BindEvent(()  => { if (!_craftBusy) OnClickClose(); });
+        _switchPanelBtn?.BindEvent(() => { if (!_craftBusy) OnClickSwitchPanel(); });
+        _nextLvlBtn?.BindEvent(()     => { if (!_craftBusy) OnClickNextLvl(); });
+        _backBtn?.BindEvent(()        => { if (!_craftBusy) OnClickBack(); });
+        _craftBtn?.BindEvent(()       => { if (!_craftBusy) OnClickCraft(); });
+        _bg.gameObject.BindEvent(()   => { if (!_craftBusy) OnClickClose(); });
         // X 버튼이 있으면 바인딩
         var xBtn = transform.Find("FIXED/In_Frame/PotionDetailPopup/Xbutton");
         if (xBtn != null) xBtn.gameObject.BindEvent(() => { if (!_craftBusy) OnClickClose(); });
@@ -220,21 +222,21 @@ public class UI_PotionDetailPopup : UI_Popup
 
         // 이 물약이 HP 계열의 마지막 단계면 MAX LEVEL
         bool isMaxLevel = nextData == null;
-        _maxLvlTxt.gameObject.SetActive(isMaxLevel);
+        _maxLvlTxt?.gameObject.SetActive(isMaxLevel);
 
         // 제작의뢰에서 열었을 때만 [재료부족/제작]/[다음단계 정보] 표시
         bool showCraftUI = _fromCustomOrder && !isMaxLevel;
-        _cantCraftBtn.SetActive(false); // 재료 체크 후 결정
-        _craftBtn.SetActive(false);
-        _nextLvlBtn.SetActive(false);
-        _backBtn.SetActive(false);
+        _cantCraftBtn?.SetActive(false); // 재료 체크 후 결정
+        _craftBtn?.SetActive(false);
+        _nextLvlBtn?.SetActive(false);
+        _backBtn?.SetActive(false);
 
         if (showCraftUI)
         {
             bool canCraft = HasEnoughMaterials(nextData);
-            _craftBtn.SetActive(canCraft);
-            _cantCraftBtn.SetActive(!canCraft);
-            _nextLvlBtn.SetActive(true);
+            _craftBtn?.SetActive(canCraft);
+            _cantCraftBtn?.SetActive(!canCraft);
+            _nextLvlBtn?.SetActive(true);
         }
     }
 
@@ -312,22 +314,22 @@ public class UI_PotionDetailPopup : UI_Popup
     {
         if (_showDesc)
         {
-            _reqItemList.SetActive(false);
-            _reqItemTitle.SetActive(false);
+            _reqItemList?.SetActive(false);
+            _reqItemTitle?.SetActive(false);
             if (_reqDecorLine != null) _reqDecorLine.SetActive(false);
-            _cantCraftBtn.SetActive(false);
-            _craftBtn.SetActive(false);
-            _nextLvlBtn.SetActive(false);
-            _backBtn.SetActive(false);
-            _maxLvlTxt.gameObject.SetActive(false);
+            _cantCraftBtn?.SetActive(false);
+            _craftBtn?.SetActive(false);
+            _nextLvlBtn?.SetActive(false);
+            _backBtn?.SetActive(false);
+            _maxLvlTxt?.gameObject.SetActive(false);
             _descText.gameObject.SetActive(true);
             if (_switchBtnLabel != null) _switchBtnLabel.text = "필요재료";
         }
         else
         {
             _descText.gameObject.SetActive(false);
-            _reqItemList.SetActive(true);
-            _reqItemTitle.SetActive(true);
+            _reqItemList?.SetActive(true);
+            _reqItemTitle?.SetActive(true);
             if (_reqDecorLine != null) _reqDecorLine.SetActive(true);
             if (_switchBtnLabel != null) _switchBtnLabel.text = "설명";
 
@@ -343,18 +345,18 @@ public class UI_PotionDetailPopup : UI_Popup
                 if (_previewNext)
                 {
                     // S39 preview 상태: 제작/재료부족 숨김, 다음단계 → [뒤로]로 바뀜
-                    _craftBtn.SetActive(false);
-                    _cantCraftBtn.SetActive(false);
-                    _nextLvlBtn.SetActive(false);
-                    _backBtn.SetActive(showCraftUI);
+                    _craftBtn?.SetActive(false);
+                    _cantCraftBtn?.SetActive(false);
+                    _nextLvlBtn?.SetActive(false);
+                    _backBtn?.SetActive(showCraftUI);
                 }
                 else if (showCraftUI)
                 {
                     bool canCraft = HasEnoughMaterials(next);
-                    _craftBtn.SetActive(canCraft);
-                    _cantCraftBtn.SetActive(!canCraft);
-                    _nextLvlBtn.SetActive(true);
-                    _backBtn.SetActive(false);
+                    _craftBtn?.SetActive(canCraft);
+                    _cantCraftBtn?.SetActive(!canCraft);
+                    _nextLvlBtn?.SetActive(true);
+                    _backBtn?.SetActive(false);
                 }
             }
         }

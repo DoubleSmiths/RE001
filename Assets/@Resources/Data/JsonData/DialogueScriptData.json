@@ -21,6 +21,36 @@
       ]
     },
     {
+      "GroupKey": "GuildNormalText",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "오늘도 좋은 모험이 되시길 바랍니다.",
+          "Eng": "I hope you have a great adventure today."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "무엇이든 필요하신 게 있으면 말씀해 주세요.",
+          "Eng": "Let me know if there is anything I can help you with."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "협회는 항상 모험가 여러분을 응원합니다.",
+          "Eng": "The Guild is always rooting for its adventurers."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "…별다른 용건이 없으시다면 저는 이만.",
+          "Eng": "If there's nothing else, I'll return to my work."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "요즘 산들바람 숲 쪽이 좀 소란스럽다고 하더군요.\n조심해서 다녀오세요.",
+          "Eng": "I heard things have been a bit noisy\naround Breezing Wind Forest lately.\nDo be careful."
+        }
+      ]
+    },
+    {
       "GroupKey": "GuildQuest1Text",
       "Lines": [
         {

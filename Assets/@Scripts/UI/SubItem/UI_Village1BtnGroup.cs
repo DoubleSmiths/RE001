@@ -322,7 +322,6 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         ShowGroup(GameObjects.Village1MainBtnGroup);
 
-        // TODO : 해금된 아이콘과 텍스트는 SetActive(true)로 해야됨.
         //GetImage((int)Images.GuildButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.MonasteryButtonIcon).gameObject.SetActive(false);
@@ -334,6 +333,12 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonText).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(false);
+
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_ALCHEMY_BUTTON))
+        {
+            GetImage((int)Images.AlchemyButtonIcon).gameObject.SetActive(true);
+            GetText((int)Texts.AlchemyButtonText).gameObject.SetActive(true);
+        }
 
         //GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(true);
         GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(IntToBool(Managers.Game.ActivationManager[(int)ActivationKey.Village1GuildVFX]));

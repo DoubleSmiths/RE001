@@ -359,6 +359,9 @@ public class Define
 
     // UI_Village1BtnGroup 이동 버튼
     public const string UNLOCK_TRAVEL_BUTTON    = "UNLOCK_TRAVEL_BUTTON";
+
+    // UI_Village1BtnGroup 연금공방 버튼
+    public const string UNLOCK_ALCHEMY_BUTTON   = "UNLOCK_ALCHEMY_BUTTON";
     #endregion
 
     // Mythic_Button

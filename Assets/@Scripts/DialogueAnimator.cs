@@ -75,11 +75,11 @@ public class DialogueAnimator : MonoBehaviour
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
         // STEP 1
-        seq.Append(gradient.DOFade(1f, 0.5f).SetEase(Ease.OutQuad));
-        seq.Join(panel.DOFade(panelTargetAlpha, 0.5f).SetEase(Ease.OutQuad));
+        seq.Append(gradient.DOFade(1f, 0.5f).SetEase(Ease.OutQuad).SetUpdate(true));
+        seq.Join(panel.DOFade(panelTargetAlpha, 0.5f).SetEase(Ease.OutQuad).SetUpdate(true));
 
         // STEP 2: 0.5초 뒤 dia_box2 페이드 인
-        seq.Append(box.DOFade(1f, 0.5f).SetEase(Ease.OutQuad));
+        seq.Append(box.DOFade(1f, 0.5f).SetEase(Ease.OutQuad).SetUpdate(true));
 
         // STEP 3: 0.2초 뒤 캐릭터/이름 ON + Text Show Start
         seq.AppendInterval(0.2f);

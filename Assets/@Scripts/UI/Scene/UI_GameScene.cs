@@ -858,6 +858,8 @@ public class UI_GameScene : UI_Scene
         if (Input.GetKeyDown(KeyCode.Alpha6)) TestHPHeal();
         if (Input.GetKeyDown(KeyCode.Alpha7)) TestEXPGain();
 
+        if (Input.GetKeyDown(KeyCode.U)) TestUnlockAll();
+
         if (Input.GetKeyDown(KeyCode.T))
         {
             Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.TestKey);
@@ -912,6 +914,24 @@ public class UI_GameScene : UI_Scene
         }
 
 #endif
+    }
+
+    [ContextMenu("Test/Unlock All")]
+    public void TestUnlockAll()
+    {
+        // 하단 탭 버튼 전체 해금
+        foreach (TabType tab in System.Enum.GetValues(typeof(TabType)))
+            Managers.Game.UnlockBtmButton(tab);
+
+        // 마을 이동/연금공방 버튼 해금
+        Managers.Game.AddUnlockedBtn(UNLOCK_TRAVEL_BUTTON);
+        Managers.Game.AddUnlockedBtn(UNLOCK_ALCHEMY_BUTTON);
+
+        // 하단 탭 UI 즉시 갱신
+        RefreshBtmButtonsLockState();
+
+        // Village1 버튼 그룹 재생성 (연금공방 버튼 반영)
+        EnterArea(AreaType.Village1);
     }
 
     [ContextMenu("Test/Jump to Quest 1")]
