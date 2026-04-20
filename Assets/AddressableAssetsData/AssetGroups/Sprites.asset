@@ -21,6 +21,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a67159ad9a2cea4e9a3f6696ff59291
+    m_Address: BreezingWindForest_Entry_Img
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0b0e5f56167efbf4f8962df951496266
     m_Address: Background_Monastery.sprite
     m_ReadOnly: 0
@@ -28,7 +33,7 @@ MonoBehaviour:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 20563f006e588ab4584edce03619b6af
-    m_Address: Background_Village1.sprite
+    m_Address: Background_Village1
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -51,6 +56,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47845ef6322010545857d17287c6c049
+    m_Address: BreezingWindForest_Img
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d3bf63ac21ca4a43a4fdc3553973224
     m_Address: Background_Alchemy.sprite
     m_ReadOnly: 0
@@ -65,6 +75,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6615514a79e21ee4d99cb76322700ea3
     m_Address: Pass1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c32ce2290b46904bbca60ade5df78ac
+    m_Address: Chat_Icon_Lock.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -99,6 +115,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ceee17c92b15e4442b8a6167c50dd95a
+    m_Address: Img_Town
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e29648a7f4fdace46bb0cbc3d50c912c
     m_Address: alchemist_normal.sprite
     m_ReadOnly: 0
@@ -113,12 +134,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f850636e8a0812343b6ca6537b042ff0
     m_Address: Mythic_Button_Check.sprite
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8c32ce2290b46904bbca60ade5df78ac
-    m_Address: Chat_Icon_Lock.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

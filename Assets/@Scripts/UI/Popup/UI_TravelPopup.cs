@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -120,8 +121,28 @@ public class UI_TravelPopup : UI_Popup
     int _selectedGroupId;
     int _selectedDetailId;
     TravelDepth _depth = TravelDepth.Root;
+    TravelDepth _prevDepth = TravelDepth.Root;
+    int _prevSelectedRootId;
+    int _prevSelectedGroupId;
     bool _isEntering;
     string _selectionFeedbackMessage = string.Empty;
+
+    RectTransform _townPanelRT;
+    RectTransform _fieldPanelRT;
+    RectTransform _bwfPanelRT;
+    Vector2 _townPanelOrigin;
+    Vector2 _fieldPanelOrigin;
+    Vector2 _bwfPanelOrigin;
+
+    static readonly Vector2 LAYER_FROM_OFFSET = new Vector2(0f, -150f);
+    const float LAYER_ANIM_DURATION = 0.3f;
+
+    static readonly Color COLOR_DEFAULT       = new Color32(0xFF, 0xFF, 0xFF, 0xFF); // FFFFFF
+    static readonly Color COLOR_DISABLED      = new Color32(0x5E, 0x5E, 0x5E, 200);   // 5E5E5E alpha 200
+    static readonly Color COLOR_DESTINATION   = new Color32(0xFF, 0xA3, 0x00, 0xFF); // FFA300
+    static readonly Color COLOR_CURRENT       = new Color32(0x23, 0x7B, 0x00, 0xFF); // 237B00
+    static readonly Color COLOR_GROUP_SELECT  = new Color32(0xFF, 0xC5, 0x00, 0xFF); // FFC500
+    static readonly Color COLOR_ROOT_IDLE     = new Color32(0x95, 0x95, 0x95, 0xFF); // 959595
 
     private void Awake()
     {
@@ -140,14 +161,29 @@ public class UI_TravelPopup : UI_Popup
 
         ApplySharedFonts();
 
-        GetButton((int)Buttons.MapSelectBackground)?.gameObject.BindEvent(ClosePopupUI);
-        GetButton((int)Buttons.ButtonMapSelectBack_TOP_1)?.gameObject.BindEvent(OnClickBack);
-        GetButton((int)Buttons.ButtonMapSelectBack_TOP)?.gameObject.BindEvent(OnClickBack);
-        GetButton((int)Buttons.Buttonto_TownType)?.gameObject.BindEvent(() => OnClickRootCategory("TOWN"));
-        GetButton((int)Buttons.Buttonto_FieldType)?.gameObject.BindEvent(() => OnClickRootCategory("EXPLORE"));
-        GetButton((int)Buttons.MapSelectBWF_EntryBtn)?.gameObject.BindEvent(OnClickEnterSelectedDetail);
-        GetButton((int)Buttons.ButtonMapSelectGO)?.gameObject.BindEvent(OnClickEnterSelectedDetail);
-        GetButton((int)Buttons.ButtonMapSelectBack)?.gameObject.BindEvent(OnClickBack);
+        GameObject popupGo = GetObject((int)GameObjects.MapSelectPopup);
+        if (popupGo != null)
+            _frameRT = popupGo.GetComponent<RectTransform>();
+        _openFromY = -120f;
+        _closeToY = -120f;
+
+        CachePanel(Images.TownType, out _townPanelRT, out _townPanelOrigin);
+        CachePanel(Images.FieldType, out _fieldPanelRT, out _fieldPanelOrigin);
+        CachePanel(Images.BWFType, out _bwfPanelRT, out _bwfPanelOrigin);
+
+        // 탐험 소분류에서 TitleTextFrame("FIELD") 불필요 — 영구 비활성
+        Image titleFrame = GetImage((int)Images.TitleTextFrame);
+        if (titleFrame != null)
+            titleFrame.gameObject.SetActive(false);
+
+        BindClickWithAnim(Buttons.MapSelectBackground, ClosePopupUI);
+        BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP_1, OnClickBack);
+        BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP, OnClickBack);
+        BindClickWithAnim(Buttons.Buttonto_TownType, () => OnClickRootCategory("TOWN"));
+        BindClickWithAnim(Buttons.Buttonto_FieldType, () => OnClickRootCategory("EXPLORE"));
+        BindClickWithAnim(Buttons.MapSelectBWF_EntryBtn, OnClickEnterSelectedDetail);
+        BindClickWithAnim(Buttons.ButtonMapSelectGO, OnClickEnterSelectedDetail);
+        BindClickWithAnim(Buttons.ButtonMapSelectBack, OnClickBack);
 
         if (Managers.Quest != null)
         {
@@ -205,11 +241,14 @@ public class UI_TravelPopup : UI_Popup
         BuildMiddleButtons();
         BuildDetailButtons();
         RefreshStaticTexts();
+
+        _prevDepth = TravelDepth.Root;
+        _prevSelectedRootId = 0;
+        _prevSelectedGroupId = 0;
+
         RefreshAll();
 
-        GameObject popupRoot = GetObject((int)GameObjects.MapSelectPopup);
-        if (popupRoot != null)
-            PopupOpenAnimation(popupRoot);
+        OpenAnimation();
     }
 
     void ApplySharedFonts()
@@ -377,6 +416,49 @@ public class UI_TravelPopup : UI_Popup
         RefreshMiddleButtons();
         RefreshDetailButtons();
         RefreshSelectionPanel();
+
+        _prevDepth = _depth;
+        _prevSelectedRootId = _selectedRootId;
+        _prevSelectedGroupId = _selectedGroupId;
+    }
+
+    void BindClickWithAnim(Buttons btnId, Action action)
+    {
+        Button btn = GetButton((int)btnId);
+        if (btn == null)
+            return;
+        btn.gameObject.BindEvent(() =>
+        {
+            PlayButtonYoyo(btn.transform);
+            action?.Invoke();
+        });
+    }
+
+    static void ApplyButtonTint(Button btn, Image frame, Color color)
+    {
+        if (frame != null)
+            frame.color = color;
+        if (btn == null)
+            return;
+        var colors = btn.colors;
+        colors.normalColor = color;
+        colors.highlightedColor = color;
+        colors.selectedColor = color;
+        colors.pressedColor = color * 0.9f;
+        colors.disabledColor = COLOR_DISABLED;
+        btn.colors = colors;
+    }
+
+    void PlayButtonYoyo(Transform tr)
+    {
+        if (tr == null)
+            return;
+        tr.DOKill();
+        tr.localScale = Vector3.one;
+        tr.DOScale(0.95f, 0.07f)
+          .SetEase(Ease.OutQuad)
+          .SetLoops(2, LoopType.Yoyo)
+          .SetUpdate(true);
     }
 
     void RefreshStaticTexts()
@@ -401,6 +483,15 @@ public class UI_TravelPopup : UI_Popup
         GetObject((int)GameObjects.to_FieldQuestVFX)?.SetActive(exploreRoot != null && HasNotifyInSubtree(exploreRoot.DataId));
         GetObject((int)GameObjects.AsdalButtonQuestVFX)?.SetActive(false);
 
+        Button townBtn = GetButton((int)Buttons.Buttonto_TownType);
+        Button exploreBtn = GetButton((int)Buttons.Buttonto_FieldType);
+
+        bool townSelected = townRoot != null && _selectedRootId == townRoot.DataId && _depth != TravelDepth.Root;
+        bool exploreSelected = exploreRoot != null && _selectedRootId == exploreRoot.DataId && _depth != TravelDepth.Root;
+
+        ApplyRootCategoryState(townBtn, GetImage((int)Images.PlaceTypeTownImage), townSelected, _depth != TravelDepth.Root && townSelected == false);
+        ApplyRootCategoryState(exploreBtn, GetImage((int)Images.AdventureImage), exploreSelected, _depth != TravelDepth.Root && exploreSelected == false);
+
         if (_depth == TravelDepth.Root)
         {
             TravelAreaData selectedRoot = TryGetNode(_selectedRootId, out TravelAreaData root) ? root : exploreRoot ?? townRoot;
@@ -408,64 +499,150 @@ public class UI_TravelPopup : UI_Popup
         }
     }
 
+    void ApplyRootCategoryState(Button btn, Image iconImage, bool selected, bool hidden)
+    {
+        if (btn == null)
+            return;
+
+        if (hidden)
+        {
+            btn.gameObject.SetActive(false);
+            return;
+        }
+
+        btn.gameObject.SetActive(true);
+        btn.interactable = true;
+
+        Image frame = btn.GetComponent<Image>();
+        Color target = selected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
+        ApplyButtonTint(btn, frame, target);
+        if (iconImage != null)
+            iconImage.color = selected ? Color.white : COLOR_ROOT_IDLE;
+
+        btn.transform.localScale = Vector3.one;
+    }
+
     void RefreshMiddleButtons()
     {
+        bool townRootSelected = IsTownRoot(_selectedRootId);
+        int currentAreaId = GetEffectiveCurrentAreaId();
+
         foreach (TravelAreaData node in _allNodes.Where(node => node.Depth == 2))
         {
             if (_middleButtonViews.TryGetValue(node.DataId, out TravelNodeButtonView view) == false)
                 continue;
 
             bool unlocked = IsNodeUnlocked(node.DataId, out _);
-            bool selected = node.DataId == _selectedGroupId;
+            bool layerOpen = _depth >= TravelDepth.Category && node.RootId == _selectedRootId;
+            bool isCurrent = node.DataId == currentAreaId;
+            bool isSelected = node.DataId == _selectedGroupId && _depth == TravelDepth.Detail;
 
             if (view.Text != null)
             {
                 view.Text.text = ResolveText(node.Name);
-                view.Text.color = unlocked ? Color.white : new Color(1f, 1f, 1f, 0.55f);
-                view.Text.fontStyle = selected ? FontStyles.Bold : FontStyles.Normal;
+                view.Text.fontStyle = isSelected ? FontStyles.Bold : FontStyles.Normal;
             }
 
-            if (view.Frame != null)
-                view.Frame.color = selected ? Color.white : new Color(1f, 1f, 1f, unlocked ? 0.9f : 0.45f);
+            Color frameColor;
+            bool interactable;
+            if (layerOpen == false || unlocked == false)
+            {
+                frameColor = COLOR_DISABLED;
+                interactable = false;
+            }
+            else if (isCurrent)
+            {
+                frameColor = COLOR_CURRENT;
+                interactable = false;
+            }
+            else if (isSelected)
+            {
+                frameColor = COLOR_GROUP_SELECT;
+                interactable = true;
+            }
+            else if (townRootSelected)
+            {
+                // Town middle button: clicking it selects destination (FFA300 when chosen → but 마을 type middle becomes destination on click)
+                frameColor = COLOR_DEFAULT;
+                interactable = IsSelectableNode(node);
+            }
+            else
+            {
+                frameColor = COLOR_DEFAULT;
+                interactable = IsSelectableNode(node);
+            }
+
+            ApplyButtonTint(view.Button, view.Frame, frameColor);
+
+            if (view.Text != null)
+                view.Text.color = interactable ? Color.white : new Color(1f, 1f, 1f, 0.6f);
 
             if (view.Notify != null)
                 view.Notify.SetActive(HasNotifyInSubtree(node.DataId));
 
             if (view.Button != null)
-                view.Button.interactable = IsSelectableNode(node);
+                view.Button.interactable = interactable;
 
-            view.Root.transform.localScale = selected ? new Vector3(1.04f, 1.04f, 1f) : Vector3.one;
+            view.Root.transform.localScale = Vector3.one;
         }
     }
 
     void RefreshDetailButtons()
     {
+        int currentAreaId = GetEffectiveCurrentAreaId();
+
         foreach (TravelAreaData node in GetDetailNodes(_selectedGroupId))
         {
             if (_detailButtonViews.TryGetValue(node.DataId, out TravelNodeButtonView view) == false)
                 continue;
 
             bool unlocked = TryGetSelectionBlockReason(node, out _) == false;
-            bool selected = node.DataId == _selectedDetailId;
+            bool layerOpen = _depth == TravelDepth.Detail;
+            bool isCurrent = node.DataId == currentAreaId;
+            bool isSelected = node.DataId == _selectedDetailId;
             bool canEnter = CanEnterNode(node, out _);
 
             if (view.Text != null)
             {
                 view.Text.text = ResolveText(node.Name);
-                view.Text.color = unlocked ? Color.white : new Color(1f, 1f, 1f, 0.55f);
-                view.Text.fontStyle = selected ? FontStyles.Bold : FontStyles.Normal;
+                view.Text.fontStyle = isSelected ? FontStyles.Bold : FontStyles.Normal;
             }
 
-            if (view.Frame != null)
-                view.Frame.color = selected ? Color.white : new Color(1f, 1f, 1f, unlocked ? 0.9f : 0.45f);
+            Color frameColor;
+            bool interactable;
+            if (layerOpen == false || unlocked == false)
+            {
+                frameColor = COLOR_DISABLED;
+                interactable = false;
+            }
+            else if (isCurrent)
+            {
+                frameColor = COLOR_CURRENT;
+                interactable = false;
+            }
+            else if (isSelected)
+            {
+                frameColor = COLOR_DESTINATION;
+                interactable = true;
+            }
+            else
+            {
+                frameColor = COLOR_DEFAULT;
+                interactable = IsSelectableNode(node);
+            }
+
+            ApplyButtonTint(view.Button, view.Frame, frameColor);
+
+            if (view.Text != null)
+                view.Text.color = interactable ? Color.white : new Color(1f, 1f, 1f, 0.6f);
 
             if (view.Notify != null)
                 view.Notify.SetActive(canEnter && HasEntryNotify(node));
 
             if (view.Button != null)
-                view.Button.interactable = IsSelectableNode(node);
+                view.Button.interactable = interactable;
 
-            view.Root.transform.localScale = selected ? new Vector3(1.04f, 1.04f, 1f) : Vector3.one;
+            view.Root.transform.localScale = Vector3.one;
         }
     }
 
@@ -475,7 +652,10 @@ public class UI_TravelPopup : UI_Popup
         TravelAreaData group = TryGetNode(_selectedGroupId, out TravelAreaData groupNode) ? groupNode : null;
         TravelAreaData detail = TryGetNode(_selectedDetailId, out TravelAreaData detailNode) ? detailNode : null;
 
-        TravelAreaData displayNode = detail ?? group ?? root;
+        // MAP_IMG / PlaceName 은 항상 "현재 플레이어 위치" 기준 (스펙 슬라이드 43: 유동적)
+        // 단, 상세 선택 상태에선 선택된 목적지를 preview (스크린샷 4 참고)
+        TravelAreaData currentLocation = ResolveCurrentLocationNode();
+        TravelAreaData displayNode = detail ?? currentLocation ?? group ?? root;
         if (displayNode == null)
             return;
 
@@ -498,7 +678,13 @@ public class UI_TravelPopup : UI_Popup
         }
         else if (_depth == TravelDepth.Category)
         {
-            string categoryInfo = ResolveCategoryInfo(root, group);
+            int currentAreaId = GetEffectiveCurrentAreaId();
+            string categoryInfo;
+            if (group != null && group.DataId == currentAreaId)
+                categoryInfo = ResolveText("CurrentLocationText");
+            else
+                categoryInfo = ResolveCategoryInfo(root, group);
+
             SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? categoryInfo : displayInfoOverride);
             SetRawText(Texts.MapSelectBWF_EntryBtnText, ResolveText("NextInfoText"));
         }
@@ -509,13 +695,23 @@ public class UI_TravelPopup : UI_Popup
         }
 
         Image mapImage = GetImage((int)Images.MapSelectPopupMapImage);
-        if (mapImage != null)
+        if (mapImage != null && string.IsNullOrEmpty(displayNode.SpriteName) == false)
         {
-            Sprite sprite = null;
-            if (string.IsNullOrEmpty(displayNode.SpriteName) == false)
-                sprite = Managers.Resource.Load<Sprite>(displayNode.SpriteName);
-            if (sprite != null)
-                mapImage.sprite = sprite;
+            Sprite cached = Managers.Resource.Load<Sprite>(displayNode.SpriteName);
+            if (cached != null)
+            {
+                mapImage.sprite = cached;
+            }
+            else
+            {
+                string key = displayNode.SpriteName;
+                Image target = mapImage;
+                Managers.Resource.LoadAsync<Sprite>(key, (s) =>
+                {
+                    if (s != null && target != null)
+                        target.sprite = s;
+                });
+            }
         }
 
         Button entryButton = GetButton((int)Buttons.MapSelectBWF_EntryBtn);
@@ -526,15 +722,134 @@ public class UI_TravelPopup : UI_Popup
 
         Button goButton = GetButton((int)Buttons.ButtonMapSelectGO);
         if (goButton != null)
-            goButton.gameObject.SetActive(false);
+        {
+            goButton.gameObject.SetActive(true);
+            // 이동 버튼: 행선지 선택되고 해당 위치가 현재 위치가 아닐 때만 활성화 (FFA300)
+            int currentAreaId = GetEffectiveCurrentAreaId();
+            bool goEnabled = canEnter && detail != null && detail.DataId != currentAreaId;
+            goButton.interactable = goEnabled;
+            Image goFrame = goButton.GetComponent<Image>();
+            Color goColor = goEnabled ? COLOR_DESTINATION : COLOR_DISABLED;
+            if (goFrame != null)
+                goFrame.color = goColor;
+            // Button.colors 도 함께 변경 — 그렇지 않으면 Unity Selectable이 normalColor로 Image.color를 덮어씀
+            var colors = goButton.colors;
+            colors.normalColor = goColor;
+            colors.highlightedColor = goColor;
+            colors.selectedColor = goColor;
+            colors.pressedColor = goColor * 0.9f;
+            colors.disabledColor = COLOR_DISABLED;
+            goButton.colors = colors;
+        }
     }
 
     void RefreshVisiblePanels()
     {
         SetPanelActive("PlaceType", true);
-        SetPanelActive("TownType", _depth >= TravelDepth.Category && IsTownRoot(_selectedRootId));
-        SetPanelActive("FieldType", _depth >= TravelDepth.Category && IsExploreRoot(_selectedRootId));
-        SetPanelActive("BWFType", _depth == TravelDepth.Detail);
+
+        bool townVisible = _depth >= TravelDepth.Category && IsTownRoot(_selectedRootId);
+        bool fieldVisible = _depth >= TravelDepth.Category && IsExploreRoot(_selectedRootId);
+        bool bwfVisible = _depth == TravelDepth.Detail;
+
+        bool townWasVisible = _prevDepth >= TravelDepth.Category && IsTownRootId(_prevSelectedRootId);
+        bool fieldWasVisible = _prevDepth >= TravelDepth.Category && IsExploreRootId(_prevSelectedRootId);
+        bool bwfWasVisible = _prevDepth == TravelDepth.Detail;
+
+        AnimatePanel(_townPanelRT, _townPanelOrigin, townVisible, townWasVisible);
+        AnimatePanel(_fieldPanelRT, _fieldPanelOrigin, fieldVisible, fieldWasVisible);
+        AnimatePanel(_bwfPanelRT, _bwfPanelOrigin, bwfVisible, bwfWasVisible);
+    }
+
+    bool IsTownRootId(int dataId)
+    {
+        return dataId != 0 && IsTownRoot(dataId);
+    }
+
+    bool IsExploreRootId(int dataId)
+    {
+        return dataId != 0 && IsExploreRoot(dataId);
+    }
+
+    void AnimatePanel(RectTransform rt, Vector2 origin, bool shouldBeVisible, bool wasVisible)
+    {
+        if (rt == null)
+            return;
+
+        if (shouldBeVisible && wasVisible == false)
+        {
+            rt.DOKill();
+            rt.gameObject.SetActive(true);
+            rt.anchoredPosition = origin + LAYER_FROM_OFFSET;
+            rt.DOAnchorPos(origin, LAYER_ANIM_DURATION)
+              .SetEase(Ease.OutQuad)
+              .SetUpdate(true);
+        }
+        else if (shouldBeVisible == false && wasVisible)
+        {
+            // 뒤로: 소 → 중 순으로 DOPlayBackwards 효과 (아래로 밀려나며 사라짐)
+            rt.DOKill();
+            Vector2 exitPos = origin + LAYER_FROM_OFFSET;
+            RectTransform target = rt;
+            target.DOAnchorPos(exitPos, LAYER_ANIM_DURATION)
+                  .SetEase(Ease.InQuad)
+                  .SetUpdate(true)
+                  .OnComplete(() =>
+                  {
+                      if (target != null)
+                      {
+                          target.gameObject.SetActive(false);
+                          target.anchoredPosition = origin;
+                      }
+                  });
+        }
+        else if (shouldBeVisible && wasVisible)
+        {
+            // 이미 열려있음: 위치만 고정
+            rt.gameObject.SetActive(true);
+            if (DOTween.IsTweening(rt) == false)
+                rt.anchoredPosition = origin;
+        }
+        else
+        {
+            rt.gameObject.SetActive(false);
+        }
+    }
+
+    void CachePanel(Images imageId, out RectTransform rt, out Vector2 origin)
+    {
+        rt = null;
+        origin = Vector2.zero;
+        Image img = GetImage((int)imageId);
+        if (img == null)
+            return;
+        rt = img.rectTransform;
+        origin = rt.anchoredPosition;
+    }
+
+    int GetEffectiveCurrentAreaId()
+    {
+        int raw = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        if (raw != 0)
+            return raw;
+        TravelAreaData fallback = ResolveCurrentLocationNode();
+        return fallback?.DataId ?? 0;
+    }
+
+    TravelAreaData ResolveCurrentLocationNode()
+    {
+        int currentId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        if (currentId != 0 && TryGetNode(currentId, out TravelAreaData node))
+            return node;
+
+        // 기본 시작 위치: TOWN 루트 하위의 첫 depth==2 노드 (아스달 마을)
+        TravelAreaData townRoot = GetRootNode("TOWN");
+        if (townRoot == null)
+            return null;
+        return _allNodes
+            .Where(n => n.Depth == 2 && n.ParentId == townRoot.DataId)
+            .OrderBy(n => n.Order)
+            .ThenBy(n => n.DataId)
+            .FirstOrDefault();
     }
 
     void OnClickRootCategory(string category)
@@ -558,6 +873,10 @@ public class UI_TravelPopup : UI_Popup
     void OnClickGroupNode(int dataId)
     {
         if (TryGetNode(dataId, out TravelAreaData node) == false)
+            return;
+
+        // 현재 플레이어가 있는 장소는 Interactive=X (슬라이드 46 스펙)
+        if (dataId == GetEffectiveCurrentAreaId())
             return;
 
         if (IsSelectableNode(node) == false)
@@ -587,6 +906,10 @@ public class UI_TravelPopup : UI_Popup
     void OnClickDetailNode(int dataId)
     {
         if (TryGetNode(dataId, out TravelAreaData node) == false)
+            return;
+
+        // 현재 플레이어가 있는 장소는 Interactive=X (슬라이드 46 스펙)
+        if (dataId == GetEffectiveCurrentAreaId())
             return;
 
         if (IsSelectableNode(node) == false)
@@ -762,6 +1085,10 @@ public class UI_TravelPopup : UI_Popup
             if (savedNode.RootId != 0)
                 return savedNode.RootId;
         }
+
+        TravelAreaData town = GetRootNode("TOWN");
+        if (town != null)
+            return town.DataId;
 
         TravelAreaData explore = GetRootNode("EXPLORE");
         if (explore != null)
@@ -1160,7 +1487,15 @@ public class UI_TravelPopup : UI_Popup
 
         UI_EventHandler evt = Util.GetOrAddComponent<UI_EventHandler>(target);
         evt.OnClickHandler = null;
-        evt.OnClickHandler += action;
+        Transform tr = target.transform;
+        Button btn = target.GetComponent<Button>();
+        evt.OnClickHandler += () =>
+        {
+            if (btn != null && btn.interactable == false)
+                return;
+            PlayButtonYoyo(tr);
+            action?.Invoke();
+        };
     }
 
     void SetText(Texts textId, string key)

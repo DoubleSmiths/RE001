@@ -609,9 +609,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickTravel()
     {
-        HideAllGroup();
-
-        //TODO : 던전 진입 팝업 띄우기.
+        // 여정 팝업은 자체 Background 버튼이 배경 클릭을 차단하므로 Village1 버튼 그룹을 숨기면 안 됨
+        // (팝업 닫힐 때 복원 로직이 없어 버튼이 계속 사라져 보이는 버그 방지)
         Managers.UI.ShowPopupUI<UI_MapSelectPopup>().SetInfo();
     }
 
