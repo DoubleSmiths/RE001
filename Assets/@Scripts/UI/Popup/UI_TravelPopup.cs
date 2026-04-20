@@ -525,7 +525,6 @@ public class UI_TravelPopup : UI_Popup
     void RefreshMiddleButtons()
     {
         bool townRootSelected = IsTownRoot(_selectedRootId);
-        int currentAreaId = GetEffectiveCurrentAreaId();
 
         foreach (TravelAreaData node in _allNodes.Where(node => node.Depth == 2))
         {
@@ -534,8 +533,11 @@ public class UI_TravelPopup : UI_Popup
 
             bool unlocked = IsNodeUnlocked(node.DataId, out _);
             bool layerOpen = _depth >= TravelDepth.Category && node.RootId == _selectedRootId;
-            bool isCurrent = node.DataId == currentAreaId;
-            bool isSelected = node.DataId == _selectedGroupId && _depth == TravelDepth.Detail;
+            bool isCurrent = IsCurrentPlaceOrAncestor(node.DataId);
+            // TOWN은 depth=Category에서 선택 상태, EXPLORE는 depth=Detail에서 선택 상태
+            bool isTownGroup = string.Equals(node.Category, "TOWN", StringComparison.OrdinalIgnoreCase);
+            bool isSelected = node.DataId == _selectedGroupId && (
+                isTownGroup ? _depth == TravelDepth.Category : _depth == TravelDepth.Detail);
 
             if (view.Text != null)
             {
@@ -557,14 +559,9 @@ public class UI_TravelPopup : UI_Popup
             }
             else if (isSelected)
             {
-                frameColor = COLOR_GROUP_SELECT;
+                // TOWN 중분류 선택 = 행선지(FFA300), EXPLORE 중분류 선택 = 그룹 select(FFC500)
+                frameColor = isTownGroup ? COLOR_DESTINATION : COLOR_GROUP_SELECT;
                 interactable = true;
-            }
-            else if (townRootSelected)
-            {
-                // Town middle button: clicking it selects destination (FFA300 when chosen → but 마을 type middle becomes destination on click)
-                frameColor = COLOR_DEFAULT;
-                interactable = IsSelectableNode(node);
             }
             else
             {
@@ -589,8 +586,6 @@ public class UI_TravelPopup : UI_Popup
 
     void RefreshDetailButtons()
     {
-        int currentAreaId = GetEffectiveCurrentAreaId();
-
         foreach (TravelAreaData node in GetDetailNodes(_selectedGroupId))
         {
             if (_detailButtonViews.TryGetValue(node.DataId, out TravelNodeButtonView view) == false)
@@ -598,7 +593,7 @@ public class UI_TravelPopup : UI_Popup
 
             bool unlocked = TryGetSelectionBlockReason(node, out _) == false;
             bool layerOpen = _depth == TravelDepth.Detail;
-            bool isCurrent = node.DataId == currentAreaId;
+            bool isCurrent = IsCurrentPlaceOrAncestor(node.DataId);
             bool isSelected = node.DataId == _selectedDetailId;
             bool canEnter = CanEnterNode(node, out _);
 
@@ -678,9 +673,11 @@ public class UI_TravelPopup : UI_Popup
         }
         else if (_depth == TravelDepth.Category)
         {
-            int currentAreaId = GetEffectiveCurrentAreaId();
             string categoryInfo;
-            if (group != null && group.DataId == currentAreaId)
+            // TOWN 카테고리에서 중분류 버튼이 현재 위치(조상 포함)면 "현재 위치" 라벨 표시
+            if (group != null && IsCurrentPlaceOrAncestor(group.DataId))
+                categoryInfo = ResolveText("CurrentLocationText");
+            else if (group == null && IsTownRoot(_selectedRootId))
                 categoryInfo = ResolveText("CurrentLocationText");
             else
                 categoryInfo = ResolveCategoryInfo(root, group);
@@ -724,9 +721,8 @@ public class UI_TravelPopup : UI_Popup
         if (goButton != null)
         {
             goButton.gameObject.SetActive(true);
-            // 이동 버튼: 행선지 선택되고 해당 위치가 현재 위치가 아닐 때만 활성화 (FFA300)
-            int currentAreaId = GetEffectiveCurrentAreaId();
-            bool goEnabled = canEnter && detail != null && detail.DataId != currentAreaId;
+            // 이동 버튼: 행선지 선택되고 해당 위치가 현재 위치(조상 포함)가 아닐 때만 활성화 (FFA300)
+            bool goEnabled = canEnter && detail != null && IsCurrentPlaceOrAncestor(detail.DataId) == false;
             goButton.interactable = goEnabled;
             Image goFrame = goButton.GetComponent<Image>();
             Color goColor = goEnabled ? COLOR_DESTINATION : COLOR_DISABLED;
@@ -749,7 +745,8 @@ public class UI_TravelPopup : UI_Popup
 
         bool townVisible = _depth >= TravelDepth.Category && IsTownRoot(_selectedRootId);
         bool fieldVisible = _depth >= TravelDepth.Category && IsExploreRoot(_selectedRootId);
-        bool bwfVisible = _depth == TravelDepth.Detail;
+        // 소분류 Layer는 EXPLORE에서만 (TOWN은 중분류까지)
+        bool bwfVisible = _depth == TravelDepth.Detail && IsExploreRoot(_selectedRootId);
 
         bool townWasVisible = _prevDepth >= TravelDepth.Category && IsTownRootId(_prevSelectedRootId);
         bool fieldWasVisible = _prevDepth >= TravelDepth.Category && IsExploreRootId(_prevSelectedRootId);
@@ -826,6 +823,19 @@ public class UI_TravelPopup : UI_Popup
         origin = rt.anchoredPosition;
     }
 
+    bool IsCurrentPlaceOrAncestor(int nodeId)
+    {
+        if (nodeId == 0) return false;
+        int current = GetEffectiveCurrentAreaId();
+        while (current != 0)
+        {
+            if (current == nodeId) return true;
+            if (TryGetNode(current, out TravelAreaData cur) == false) return false;
+            current = cur.ParentId;
+        }
+        return false;
+    }
+
     int GetEffectiveCurrentAreaId()
     {
         int raw = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
@@ -860,7 +870,7 @@ public class UI_TravelPopup : UI_Popup
 
         _selectionFeedbackMessage = string.Empty;
         _selectedRootId = root.DataId;
-        _selectedGroupId = GetFirstUnlockedGroup(root.DataId)?.DataId ?? 0;
+        _selectedGroupId = 0;   // 사용자가 명시적으로 클릭 전까진 선택 없음 (FFA300 오탐 방지)
         _selectedDetailId = 0;
         _depth = TravelDepth.Category;
 
@@ -876,7 +886,7 @@ public class UI_TravelPopup : UI_Popup
             return;
 
         // 현재 플레이어가 있는 장소는 Interactive=X (슬라이드 46 스펙)
-        if (dataId == GetEffectiveCurrentAreaId())
+        if (IsCurrentPlaceOrAncestor(dataId))
             return;
 
         if (IsSelectableNode(node) == false)
@@ -893,8 +903,20 @@ public class UI_TravelPopup : UI_Popup
         _selectionFeedbackMessage = string.Empty;
         _selectedRootId = node.RootId != 0 ? node.RootId : _selectedRootId;
         _selectedGroupId = node.DataId;
-        _selectedDetailId = 0;
-        _depth = TravelDepth.Detail;
+
+        // 슬라이드 45: [마을]은 소분류 Layer 없음 — 중분류 버튼 자체가 행선지.
+        // [탐험]은 중분류 클릭 시 소분류 Layer가 열림.
+        if (IsTownRoot(_selectedRootId))
+        {
+            TravelAreaData firstDetail = GetDetailNodes(node.DataId).FirstOrDefault();
+            _selectedDetailId = firstDetail?.DataId ?? 0;
+            _depth = TravelDepth.Category;  // 소분류 Layer 열지 않음
+        }
+        else
+        {
+            _selectedDetailId = 0;
+            _depth = TravelDepth.Detail;
+        }
 
         if (string.IsNullOrEmpty(node.DefaultBtnId) == false)
             Managers.Quest.CheckButtonClick(node.DefaultBtnId);
@@ -909,7 +931,7 @@ public class UI_TravelPopup : UI_Popup
             return;
 
         // 현재 플레이어가 있는 장소는 Interactive=X (슬라이드 46 스펙)
-        if (dataId == GetEffectiveCurrentAreaId())
+        if (IsCurrentPlaceOrAncestor(dataId))
             return;
 
         if (IsSelectableNode(node) == false)
