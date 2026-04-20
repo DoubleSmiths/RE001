@@ -723,25 +723,32 @@ public class UI_TravelPopup : UI_Popup
 
         GetObject((int)GameObjects.MapSelectBWF_EntryVFX)?.SetActive(detail != null && canEnter && HasEntryNotify(detail));
 
+        // 이동 버튼: 행선지 선택되었을 때만 FFA300 + Interactive O, 그 외 5E5E5E α200 + X
+        // 행선지 조건: TOWN은 중분류 선택(_depth=Category + 그룹 선택), EXPLORE는 소분류 선택(_depth=Detail + 소분류 선택)
         Button goButton = GetButton((int)Buttons.ButtonMapSelectGO);
         if (goButton != null)
         {
             goButton.gameObject.SetActive(true);
-            // 이동 버튼: 행선지 선택되고 해당 위치가 현재 위치(조상 포함)가 아닐 때만 활성화 (FFA300)
-            bool goEnabled = canEnter && detail != null && IsCurrentPlaceOrAncestor(detail.DataId) == false;
+            bool destinationSelected = false;
+            if (IsTownRoot(_selectedRootId) && _depth == TravelDepth.Category
+                && _selectedGroupId != 0 && IsCurrentPlaceOrAncestor(_selectedGroupId) == false)
+                destinationSelected = true;
+            else if (IsExploreRoot(_selectedRootId) && _depth == TravelDepth.Detail
+                && _selectedDetailId != 0 && IsCurrentPlaceOrAncestor(_selectedDetailId) == false)
+                destinationSelected = true;
+
+            bool goEnabled = destinationSelected && canEnter && detail != null;
             goButton.interactable = goEnabled;
-            Image goFrame = goButton.GetComponent<Image>();
-            Color goColor = goEnabled ? COLOR_DESTINATION : COLOR_DISABLED;
-            if (goFrame != null)
-                goFrame.color = goColor;
-            // Button.colors 도 함께 변경 — 그렇지 않으면 Unity Selectable이 normalColor로 Image.color를 덮어씀
-            var colors = goButton.colors;
-            colors.normalColor = goColor;
-            colors.highlightedColor = goColor;
-            colors.selectedColor = goColor;
-            colors.pressedColor = goColor * 0.9f;
-            colors.disabledColor = COLOR_DISABLED;
-            goButton.colors = colors;
+            ApplyButtonTint(goButton, goButton.GetComponent<Image>(), goEnabled ? COLOR_DESTINATION : COLOR_DISABLED);
+        }
+
+        // 뒤로 버튼: 중/소분류 Layer 열려있으면 FFFFFF + Interactive O, Root 상태면 5E5E5E α200 + X
+        Button backButton = GetButton((int)Buttons.ButtonMapSelectBack);
+        if (backButton != null)
+        {
+            bool backEnabled = _depth != TravelDepth.Root;
+            backButton.interactable = backEnabled;
+            ApplyButtonTint(backButton, backButton.GetComponent<Image>(), backEnabled ? COLOR_DEFAULT : COLOR_DISABLED);
         }
     }
 
