@@ -793,8 +793,7 @@ public class UI_TravelPopup : UI_Popup
 
         GetObject((int)GameObjects.MapSelectBWF_EntryVFX)?.SetActive(detail != null && canEnter && HasEntryNotify(detail));
 
-        // 이동 버튼: 행선지 선택되었을 때만 FFA300 + Interactive O, 그 외 5E5E5E α200 + X
-        // 행선지 조건: TOWN은 중분류 선택(_depth=Category + 그룹 선택), EXPLORE는 소분류 선택(_depth=Detail + 소분류 선택)
+        // 이동 버튼: interactable만 토글. 색상은 prefab에 이미 설정된 Button.colors (normal/disabled) 그대로 사용.
         Button goButton = GetButton((int)Buttons.ButtonMapSelectGO);
         if (goButton != null)
         {
@@ -809,7 +808,6 @@ public class UI_TravelPopup : UI_Popup
 
             bool goEnabled = destinationSelected && canEnter && detail != null;
             goButton.interactable = goEnabled;
-            ApplyButtonTint(goButton, goButton.GetComponent<Image>(), goEnabled ? COLOR_DESTINATION : COLOR_DISABLED);
         }
 
         // 뒤로 버튼: 중/소분류 Layer 열려있으면 FFFFFF + Interactive O, Root 상태면 5E5E5E α200 + X
