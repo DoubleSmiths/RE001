@@ -176,6 +176,11 @@ public class UI_TravelPopup : UI_Popup
         if (titleFrame != null)
             titleFrame.gameObject.SetActive(false);
 
+        // "다음단계 정보" 버튼(MapSelectBWF_EntryBtn) 불필요 — 하단 [이동] 버튼과 기능 중복
+        Button entryBtn = GetButton((int)Buttons.MapSelectBWF_EntryBtn);
+        if (entryBtn != null)
+            entryBtn.gameObject.SetActive(false);
+
         BindClickWithAnim(Buttons.MapSelectBackground, ClosePopupUI);
         BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP_1, OnClickBack);
         BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP, OnClickBack);
