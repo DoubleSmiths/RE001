@@ -145,6 +145,25 @@ public class UI_TravelPopup : UI_Popup
     static readonly Color COLOR_ROOT_IDLE     = new Color32(0xFF, 0xFF, 0xFF, 0xFF); // FFFFFF (대분류 버튼 본체)
     static readonly Color COLOR_ROOT_ICON     = new Color32(0xFF, 0xFF, 0xFF, 80);    // FFFFFF alpha 80 (대분류 아이콘)
 
+    Material _equipedMatCached;
+    Sprite _borderSpriteCached;
+    const string BORDER_OVERLAY_NAME = "BorderOverlay_EquipedMat";
+
+    Sprite GetBorderSprite()
+    {
+        if (_borderSpriteCached != null)
+            return _borderSpriteCached;
+        foreach (var s in Resources.FindObjectsOfTypeAll<Sprite>())
+        {
+            if (s.name == "UISprite")
+            {
+                _borderSpriteCached = s;
+                return s;
+            }
+        }
+        return null;
+    }
+
     private void Awake()
     {
         Init();
@@ -181,6 +200,9 @@ public class UI_TravelPopup : UI_Popup
         Button entryBtn = GetButton((int)Buttons.MapSelectBWF_EntryBtn);
         if (entryBtn != null)
             entryBtn.gameObject.SetActive(false);
+
+        // 선택된 버튼 테두리용 EquipedMat 사전 로드
+        Managers.Resource.LoadAsync<Material>("EquipedMat", (m) => _equipedMatCached = m);
 
         BindClickWithAnim(Buttons.MapSelectBackground, ClosePopupUI);
         BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP_1, OnClickBack);
@@ -440,6 +462,47 @@ public class UI_TravelPopup : UI_Popup
         });
     }
 
+    void EnsureSelectedBorder(Button btn, bool selected)
+    {
+        if (btn == null)
+            return;
+
+        Transform existing = btn.transform.Find(BORDER_OVERLAY_NAME);
+        if (existing == null && selected == false)
+            return;   // 만들 필요 없음
+
+        if (existing == null)
+        {
+            // 런타임에 테두리용 Image 자식 생성
+            GameObject go = new GameObject(BORDER_OVERLAY_NAME, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            RectTransform rt = go.GetComponent<RectTransform>();
+            rt.SetParent(btn.transform, false);
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            rt.SetAsLastSibling();
+
+            Image img = go.GetComponent<Image>();
+            img.sprite = GetBorderSprite();
+            img.type = Image.Type.Sliced;
+            img.raycastTarget = false;
+            img.color = Color.white;
+            existing = rt;
+        }
+
+        Image overlay = existing.GetComponent<Image>();
+        if (overlay != null)
+        {
+            if (overlay.sprite == null)
+                overlay.sprite = GetBorderSprite();
+            if (_equipedMatCached != null && overlay.material != _equipedMatCached)
+                overlay.material = _equipedMatCached;
+        }
+
+        existing.gameObject.SetActive(selected);
+    }
+
     static void ApplyButtonTint(Button btn, Image frame, Color color)
     {
         if (frame != null)
@@ -525,6 +588,9 @@ public class UI_TravelPopup : UI_Popup
         if (iconImage != null)
             iconImage.color = COLOR_ROOT_ICON;  // FFFFFF alpha 80 (상태 무관)
 
+        // 선택 상태일 때 테두리 (UIMask + EquipedMat) 활성
+        EnsureSelectedBorder(btn, selected);
+
         btn.transform.localScale = Vector3.one;
     }
 
@@ -585,6 +651,10 @@ public class UI_TravelPopup : UI_Popup
 
             if (view.Button != null)
                 view.Button.interactable = interactable;
+
+            // EXPLORE 중분류가 "소분류 Layer 열림" 상태일 때 테두리 활성 (FFC500)
+            bool showBorder = isSelected && frameColor == COLOR_GROUP_SELECT;
+            EnsureSelectedBorder(view.Button, showBorder);
 
             view.Root.transform.localScale = Vector3.one;
         }
