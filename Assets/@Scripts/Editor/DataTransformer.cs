@@ -225,10 +225,13 @@ public class DataTransformer : EditorWindow
     {
         var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_QUEST));
 
-        var questLoader     = new QuestDataLoader();
-        var conditionLoader = new QuestConditionLoader();
-        var notifyLoader    = new QuestNotifyLoader();
-        var unlockLoader    = new QuestUnlockLoader();
+        var questLoader       = new QuestDataLoader();
+        var conditionLoader   = new QuestConditionLoader();
+        var notifyLoader      = new QuestNotifyLoader();
+        var unlockLoader      = new QuestUnlockLoader();
+        var subMainLoader     = new SubQuestDataLoader();
+        var subNotifyLoader   = new SubQuestNotifyLoader();
+        var subUnlockLoader   = new SubQuestUnlockLoader();
 
         foreach (var (sheetName, rows) in sheets)
         {
@@ -295,6 +298,40 @@ public class DataTransformer : EditorWindow
                         unlockLoader.unlocks.Add(d);
                         break;
                     }
+                    case "SubQuest_Main":
+                    {
+                        int i = 0;
+                        var d = new SubQuestData();
+                        d.SubQuestID   = ConvertValue<int>(row[i++]);
+                        d.SubQuestName = i < row.Count ? row[i++] : "";
+                        d.CompleteType = ConvertValue<SubQuestCompleteType>(row[i++]);
+                        d.CompleteParam = NormalizeNone(i < row.Count ? row[i++] : "");
+                        d.DialogueID    = NormalizeNone(i < row.Count ? row[i++] : "");
+                        subMainLoader.subQuests.Add(d);
+                        break;
+                    }
+                    case "SubQuest_Notify":
+                    {
+                        int i = 0;
+                        var d = new SubQuestNotifyData();
+                        d.SubQuestID = ConvertValue<int>(row[i++]);
+                        d.TargetID   = i < row.Count ? row[i++] : "";
+                        d.ShowTiming = ConvertValue<SubQuestShowTiming>(i < row.Count ? row[i++] : "ON_START");
+                        subNotifyLoader.notifies.Add(d);
+                        break;
+                    }
+                    case "SubQuest_Unlock_Table":
+                    {
+                        int i = 0;
+                        var d = new SubQuestUnlockData();
+                        d.SubQuestID  = ConvertValue<int>(row[i++]);
+                        d.QuestType   = i < row.Count ? row[i++] : "";
+                        d.UnlockType  = ConvertValue<QuestUnlockType>(row[i++]);
+                        d.TargetID    = i < row.Count ? row[i++] : "";
+                        d.UnlockValue = i < row.Count ? row[i++] : "";
+                        subUnlockLoader.unlocks.Add(d);
+                        break;
+                    }
                 }
             }
         }
@@ -302,7 +339,14 @@ public class DataTransformer : EditorWindow
         WriteJson("QuestConditionData", conditionLoader);
         WriteJson("QuestNotifyData",    notifyLoader);
         WriteJson("QuestUnlockData",    unlockLoader);
+        WriteJson("SubQuestMainData",   subMainLoader);
+        WriteJson("SubQuestNotifyData", subNotifyLoader);
+        WriteJson("SubQuestUnlockData", subUnlockLoader);
     }
+
+    /// <summary>시트의 "NONE" 값은 빈 문자열로 정규화 (IsNullOrEmpty 체크 통합).</summary>
+    static string NormalizeNone(string s)
+        => (s ?? "").Trim().Equals("NONE", System.StringComparison.OrdinalIgnoreCase) ? "" : s;
 
     static void GS_ParseCreatureData()
     {
@@ -667,10 +711,13 @@ public class DataTransformer : EditorWindow
         string path = $"{Application.dataPath}{EXCEL_PATH}/QuestData.xlsx";
         var sheets = ReadAllXlsxSheets(path);
 
-        var questLoader     = new QuestDataLoader();
-        var conditionLoader = new QuestConditionLoader();
-        var notifyLoader    = new QuestNotifyLoader();
-        var unlockLoader    = new QuestUnlockLoader();
+        var questLoader       = new QuestDataLoader();
+        var conditionLoader   = new QuestConditionLoader();
+        var notifyLoader      = new QuestNotifyLoader();
+        var unlockLoader      = new QuestUnlockLoader();
+        var subMainLoader     = new SubQuestDataLoader();
+        var subNotifyLoader   = new SubQuestNotifyLoader();
+        var subUnlockLoader   = new SubQuestUnlockLoader();
 
         foreach (var (sheetName, rows) in sheets)
         {
@@ -739,6 +786,40 @@ public class DataTransformer : EditorWindow
                         unlockLoader.unlocks.Add(d);
                         break;
                     }
+                    case "SubQuest_Main":
+                    {
+                        int i = 0;
+                        var d = new SubQuestData();
+                        d.SubQuestID    = ConvertValue<int>(row[i++]);
+                        d.SubQuestName  = i < row.Count ? row[i++] : "";
+                        d.CompleteType  = ConvertValue<SubQuestCompleteType>(row[i++]);
+                        d.CompleteParam = NormalizeNone(i < row.Count ? row[i++] : "");
+                        d.DialogueID    = NormalizeNone(i < row.Count ? row[i++] : "");
+                        subMainLoader.subQuests.Add(d);
+                        break;
+                    }
+                    case "SubQuest_Notify":
+                    {
+                        int i = 0;
+                        var d = new SubQuestNotifyData();
+                        d.SubQuestID = ConvertValue<int>(row[i++]);
+                        d.TargetID   = i < row.Count ? row[i++] : "";
+                        d.ShowTiming = ConvertValue<SubQuestShowTiming>(i < row.Count ? row[i++] : "ON_START");
+                        subNotifyLoader.notifies.Add(d);
+                        break;
+                    }
+                    case "SubQuest_Unlock_Table":
+                    {
+                        int i = 0;
+                        var d = new SubQuestUnlockData();
+                        d.SubQuestID  = ConvertValue<int>(row[i++]);
+                        d.QuestType   = i < row.Count ? row[i++] : "";
+                        d.UnlockType  = ConvertValue<QuestUnlockType>(row[i++]);
+                        d.TargetID    = i < row.Count ? row[i++] : "";
+                        d.UnlockValue = i < row.Count ? row[i++] : "";
+                        subUnlockLoader.unlocks.Add(d);
+                        break;
+                    }
                 }
             }
         }
@@ -747,6 +828,9 @@ public class DataTransformer : EditorWindow
         WriteJson("QuestConditionData", conditionLoader);
         WriteJson("QuestNotifyData",    notifyLoader);
         WriteJson("QuestUnlockData",    unlockLoader);
+        WriteJson("SubQuestMainData",   subMainLoader);
+        WriteJson("SubQuestNotifyData", subNotifyLoader);
+        WriteJson("SubQuestUnlockData", subUnlockLoader);
     }
 
     static void ParseTravelData()

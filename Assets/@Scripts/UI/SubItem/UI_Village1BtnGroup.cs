@@ -279,6 +279,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         });
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
         GetButton((int)Buttons.Village1GuildQuestButton).gameObject.BindEvent(OnClickVillage1GuildQuestButton);
+        GetButton((int)Buttons.Village1AlchemyTalkButton).gameObject.BindEvent(OnClickVillage1AlchemyTalkButton);
         GetButton((int)Buttons.CustomOrderButton).gameObject.BindEvent(OnClickCustomOrder);
         GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
 
@@ -645,7 +646,11 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickCustomOrder()
     {
-        // 슬라이드 34: 제작의뢰 팝업
+        // 슬라이드 34: 제작의뢰 팝업.
+        // SubQuest 2 완료 시 BTN_COMMISION이 UnlockedBtnIds에 추가됨 → 그 전엔 차단.
+        if (Managers.Game.UnlockedBtnIds.Contains(BTN_COMMISION) == false)
+            return;
+
         Managers.UI.ShowPopupUI<UI_CustomOrderPopup>().SetInfo();
     }
 
@@ -667,6 +672,29 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 ? (System.Action)(() => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX))
                 : null,
             randomSingleLine: !isFirstQuest);
+    }
+
+    void OnClickVillage1AlchemyTalkButton()
+    {
+        // 서브퀘스트 1(연금공방 첫 방문) 활성 상태면 전용 대사 + 종료 시 BTN_ALCHEMY_TALK 트리거.
+        // 그 외에는 AlchemyNormalText에서 한 줄 랜덤.
+        bool isSubQuestActive = Managers.SubQuest != null && Managers.SubQuest.IsActive;
+        string subDlg = isSubQuestActive ? Managers.SubQuest.GetCurrentDialogueID() : null;
+
+        // 서브퀘스트 전용 대사가 데이터시트에 등록돼 있으면 사용, 아니면 Normal로 폴백
+        string groupKey = (!string.IsNullOrEmpty(subDlg)
+                           && Managers.Data.DialogueScriptDic.ContainsKey(subDlg))
+            ? subDlg
+            : "AlchemyNormalText";
+
+        bool useFullDialogue = groupKey != "AlchemyNormalText";
+
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: groupKey,
+            speakerName: "연금공방 아가씨",
+            portrait: null,
+            onFinished: () => Managers.Quest.CheckButtonClick(BTN_ALCHEMY_TALK),
+            randomSingleLine: !useFullDialogue);
     }
 
     void OnClickVillage1GuildQuestButton()
@@ -706,9 +734,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
         // TODO Define으로 만들어서 오타 확률 줄이자.
-        bool village1GuildNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_VFX);
+        bool village1GuildNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_VFX || n.BtnID == "BTN_GUILD");
         bool alchemyButtonNewNotify = list.Exists(n => n.BtnID == ALCHEMY_BUTTON_NEW_TXT);
-        bool village1AlchemyVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_VFX_SUB1);
+        bool village1AlchemyVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_VFX_SUB1 || n.BtnID == BTN_ALCHEMY);
         bool monasteryButtonNewNotify = list.Exists(n => n.BtnID == MONASTERY_BUTTON_NEW_TXT);
         bool monasteryVfxNotify = list.Exists(n => n.BtnID == MONASTERY_VFX_SUB1);
         bool TravelButtonNewNotify = list.Exists(n => n.BtnID == TRAVEL_BUTTON_NEW_TXT);
@@ -730,7 +758,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
         bool village1GGuildTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_TALK_VFX);
-        bool village1GuildQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_QUEST_VFX);
+        bool village1GuildQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_QUEST_VFX || n.BtnID == BTN_GUILD_QUEST);
         bool guildExitQuestVfxNotify = list.Exists(n => n.BtnID == GUILD_EXIT_QUEST_VFX);
 
         #region Village1GuildBtnGroup
@@ -743,7 +771,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void RefreshVillage1AlchemyBtnGroupNotiry()
     {
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
-        bool village1AlchemyTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX);
+        bool village1AlchemyTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX || n.BtnID == BTN_ALCHEMY_TALK);
         bool village1AlchemyTalkVfxSub1Notify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX_SUB1);
         bool village1AlchemyCustomOrderButtonNewTxtNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT);
         bool village1AlchemyQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_QUEST_VFX);

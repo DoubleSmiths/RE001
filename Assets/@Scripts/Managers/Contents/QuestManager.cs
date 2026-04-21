@@ -26,6 +26,10 @@ public class QuestManager
         Managers.Game.OnItemAdded   += CheckItemAcquire;
         Managers.Game.OnItemChanged += OnInventoryChanged;
 
+        // 서브퀘스트 전이 시 Notify UI 같이 갱신 (FollowUI는 서브퀘스트와 무관)
+        if (Managers.SubQuest != null)
+            Managers.SubQuest.OnNotifyChanged += RaiseNotifyChanged;
+
         OnNotifyChanged?.Invoke();
         OnFollowUIChanged?.Invoke(CurrentQuestID);
     }
@@ -34,7 +38,15 @@ public class QuestManager
     {
         Managers.Game.OnItemAdded   -= CheckItemAcquire;
         Managers.Game.OnItemChanged -= OnInventoryChanged;
+
+        if (Managers.SubQuest != null)
+            Managers.SubQuest.OnNotifyChanged -= RaiseNotifyChanged;
     }
+
+    void RaiseNotifyChanged() => OnNotifyChanged?.Invoke();
+
+    /// <summary>SubQuestManager가 UI_BUTTON 해금 시 동일한 해금 이벤트 재사용.</summary>
+    public void RaiseBtnUnlocked(string btnId) => OnBtnUnlocked?.Invoke(btnId);
 
     // ── 외부 진입점 ───────────────────────────────────────────────────────
 
@@ -57,6 +69,9 @@ public class QuestManager
     /// <summary>버튼 클릭 시 호출</summary>
     public void CheckButtonClick(string btnId)
     {
+        // 서브퀘스트에도 같은 버튼 이벤트 전달 (메인퀘스트 완료/진행과 독립적으로 평가)
+        Managers.SubQuest?.CheckButtonClick(btnId);
+
         if (!TryGetCurrentQuest(out var quest)) return;
 
         if (quest.CompleteType == QuestCompleteType.BTN_CLICK
@@ -78,12 +93,30 @@ public class QuestManager
 
     // ── 현재 퀘스트 정보 조회 ─────────────────────────────────────────────
 
-    /// <summary>현재 퀘스트의 느낌표 버튼 목록 반환 (Order 정렬)</summary>
+    /// <summary>현재 퀘스트의 느낌표 버튼 목록 반환 (Order 정렬).
+    /// 서브퀘스트가 활성 상태면 서브퀘스트 Notify도 합쳐서 반환 (같은 UI 조회 경로 재사용).</summary>
     public List<QuestNotifyData> GetCurrentNotifyList()
     {
+        List<QuestNotifyData> result;
         if (Managers.Data.QuestNotifyDic.TryGetValue(CurrentQuestID, out var list))
-            return list;
-        return new List<QuestNotifyData>();
+            result = new List<QuestNotifyData>(list);
+        else
+            result = new List<QuestNotifyData>();
+
+        if (Managers.SubQuest != null && Managers.SubQuest.IsActive)
+        {
+            foreach (var sn in Managers.SubQuest.GetCurrentNotifyList())
+            {
+                result.Add(new QuestNotifyData
+                {
+                    QuestID = CurrentQuestID,
+                    Order   = int.MaxValue,  // 메인 뒤에 오도록
+                    BtnID   = sn.TargetID,
+                });
+            }
+        }
+
+        return result;
     }
 
     /// <summary>현재 퀘스트의 Follow UI 데이터 반환. null = 표시 안 함</summary>
@@ -94,9 +127,15 @@ public class QuestManager
         return quest;
     }
 
-    /// <summary>현재 퀘스트의 Dialogue ID 반환. null = NPC 기본 대사 사용</summary>
+    /// <summary>현재 퀘스트의 Dialogue ID 반환. 서브퀘스트 활성 시 서브퀘스트 Dialogue 우선.
+    /// null = NPC 기본 대사 사용</summary>
     public string GetCurrentDialogueID()
     {
+        if (Managers.SubQuest != null && Managers.SubQuest.IsActive)
+        {
+            var subDlg = Managers.SubQuest.GetCurrentDialogueID();
+            if (!string.IsNullOrEmpty(subDlg)) return subDlg;
+        }
         if (!TryGetCurrentQuest(out var quest)) return null;
         return string.IsNullOrEmpty(quest.DialogueID) ? null : quest.DialogueID;
     }
@@ -192,7 +231,7 @@ public class QuestManager
                     break;
 
                 case QuestUnlockType.SUBQUEST_START:
-                    // TODO: SubQuest 시스템 연동
+                    Managers.SubQuest?.StartSubQuestFromTarget(unlock.TargetID);
                     break;
 
                 case QuestUnlockType.ITEM_REWARD:

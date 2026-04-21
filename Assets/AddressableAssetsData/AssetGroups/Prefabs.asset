@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68cfd9cd08a1f6447a030d706fe3d349
+    m_Address: Village1_Alchemy_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7e70db0f739fc74408876ab9c05d647f
     m_Address: GuildNPC
     m_ReadOnly: 0
@@ -51,14 +57,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fb806659700ad8b46a34ee001d7ece33
-    m_Address: Village1_Main_BG
+  - m_GUID: f2da72def27fe81429cbf4441c4aac72
+    m_Address: EquipedMat
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 68cfd9cd08a1f6447a030d706fe3d349
-    m_Address: Village1_Alchemy_BG
+  - m_GUID: fb806659700ad8b46a34ee001d7ece33
+    m_Address: Village1_Main_BG
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

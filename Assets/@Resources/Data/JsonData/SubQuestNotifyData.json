@@ -1,0 +1,14 @@
+{
+  "notifies": [
+    {
+      "SubQuestID": 1,
+      "TargetID": "BTN_ALCHEMY",
+      "ShowTiming": 0
+    },
+    {
+      "SubQuestID": 1,
+      "TargetID": "BTN_ALCHEMY_TALK",
+      "ShowTiming": 0
+    }
+  ]
+}

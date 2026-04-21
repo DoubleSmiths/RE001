@@ -71,6 +71,7 @@ public class UI_TtitleScene : UI_Scene
                 Managers.Font.Init();
                 Managers.Sound.Init();
                 Managers.Quest.Init();
+                Managers.SubQuest.Init();
                 StartAnimation();
             }
         });

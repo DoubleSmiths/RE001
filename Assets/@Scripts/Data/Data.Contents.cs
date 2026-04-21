@@ -680,5 +680,81 @@ namespace Data
         }
     }
 
+    // ─── SubQuest ─────────────────────────────────────────────────────────
+    [Serializable]
+    public class SubQuestData
+    {
+        public int                  SubQuestID;
+        public string               SubQuestName;
+        public SubQuestCompleteType CompleteType;
+        public string               CompleteParam;  // ex. "HPPotion_Rank:1"
+        public string               DialogueID;     // empty = NPC 기본 대사
+    }
+
+    [Serializable]
+    public class SubQuestDataLoader : ILoader<int, SubQuestData>
+    {
+        public List<SubQuestData> subQuests = new List<SubQuestData>();
+        public Dictionary<int, SubQuestData> MakeDict()
+        {
+            var dict = new Dictionary<int, SubQuestData>();
+            foreach (var q in subQuests)
+                dict[q.SubQuestID] = q;
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class SubQuestNotifyData
+    {
+        public int                 SubQuestID;
+        public string              TargetID;
+        public SubQuestShowTiming  ShowTiming;
+    }
+
+    [Serializable]
+    public class SubQuestNotifyLoader : ILoader<int, List<SubQuestNotifyData>>
+    {
+        public List<SubQuestNotifyData> notifies = new List<SubQuestNotifyData>();
+        public Dictionary<int, List<SubQuestNotifyData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<SubQuestNotifyData>>();
+            foreach (var n in notifies)
+            {
+                if (!dict.ContainsKey(n.SubQuestID))
+                    dict[n.SubQuestID] = new List<SubQuestNotifyData>();
+                dict[n.SubQuestID].Add(n);
+            }
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class SubQuestUnlockData
+    {
+        public int             SubQuestID;
+        public string          QuestType;      // "SUB" 등 확장용 메타데이터
+        public QuestUnlockType UnlockType;
+        public string          TargetID;
+        public string          UnlockValue;    // "TRUE" 등 확장용 메타데이터
+    }
+
+    [Serializable]
+    public class SubQuestUnlockLoader : ILoader<int, List<SubQuestUnlockData>>
+    {
+        public List<SubQuestUnlockData> unlocks = new List<SubQuestUnlockData>();
+        public Dictionary<int, List<SubQuestUnlockData>> MakeDict()
+        {
+            var dict = new Dictionary<int, List<SubQuestUnlockData>>();
+            foreach (var u in unlocks)
+            {
+                if (!dict.ContainsKey(u.SubQuestID))
+                    dict[u.SubQuestID] = new List<SubQuestUnlockData>();
+                dict[u.SubQuestID].Add(u);
+            }
+            return dict;
+        }
+    }
+
     #endregion
 }

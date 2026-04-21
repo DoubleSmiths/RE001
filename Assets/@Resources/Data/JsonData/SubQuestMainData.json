@@ -1,0 +1,18 @@
+{
+  "subQuests": [
+    {
+      "SubQuestID": 1,
+      "SubQuestName": "연금공방 첫 방문",
+      "CompleteType": 2,
+      "CompleteParam": "BTN_ALCHEMY_TALK",
+      "DialogueID": "AlchemyQuest1Text"
+    },
+    {
+      "SubQuestID": 2,
+      "SubQuestName": "서브퀘스트 완료",
+      "CompleteType": 0,
+      "CompleteParam": "",
+      "DialogueID": ""
+    }
+  ]
+}

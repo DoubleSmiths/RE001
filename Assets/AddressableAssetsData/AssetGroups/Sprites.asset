@@ -22,9 +22,10 @@ MonoBehaviour:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0a67159ad9a2cea4e9a3f6696ff59291
-    m_Address: BreezingWindForest_Entry_Img
+    m_Address: BreezingWindForest_Entry_Img.sprite
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0b0e5f56167efbf4f8962df951496266
     m_Address: Background_Monastery.sprite
@@ -33,7 +34,7 @@ MonoBehaviour:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 20563f006e588ab4584edce03619b6af
-    m_Address: Background_Village1
+    m_Address: Background_Village1.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -44,8 +45,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2398c208565a1f14dbc05041bd1f51e9
+    m_Address: Pass5.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2888125d56f129041a3e1b8c3a88a935
     m_Address: receptionist_normal.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3846d495734072c4a9129c771c17aeb7
+    m_Address: Pass6.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -56,10 +69,17 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 47845ef6322010545857d17287c6c049
-    m_Address: BreezingWindForest_Img
+  - m_GUID: 3b9c4c5e2279d724b9269ddbb789ca52
+    m_Address: Pass4.sprite
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47845ef6322010545857d17287c6c049
+    m_Address: BreezingWindForest_Img.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d3bf63ac21ca4a43a4fdc3553973224
     m_Address: Background_Alchemy.sprite
@@ -91,6 +111,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a40eecbe7c3a94646a2f1533fe2a6737
+    m_Address: Pass2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a9733d9ae41b81e41bf6a2880ae4fbc7
     m_Address: Monastery_Icon.sprite
     m_ReadOnly: 0
@@ -109,6 +135,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c28e828329e1a734d90d61415320d8ff
+    m_Address: Pass7.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c594672b4d23cd9469897120ab2b3684
     m_Address: Background_Guild.sprite
     m_ReadOnly: 0
@@ -116,9 +148,10 @@ MonoBehaviour:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ceee17c92b15e4442b8a6167c50dd95a
-    m_Address: Img_Town
+    m_Address: Img_Town.sprite
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e29648a7f4fdace46bb0cbc3d50c912c
     m_Address: alchemist_normal.sprite

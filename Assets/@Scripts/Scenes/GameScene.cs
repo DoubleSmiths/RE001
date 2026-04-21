@@ -24,6 +24,7 @@ public class GameScene : BaseScene
                 Managers.Font.Init();
                 Managers.Sound.Init();
                 Managers.Quest.Init();
+                Managers.SubQuest.Init();
                 Init();
                 _game = Managers.Game;
                 _player = FindAnyObjectByType<PlayerController>();

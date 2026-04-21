@@ -33,6 +33,9 @@ public class DataManager
     public Dictionary<int, List<QuestConditionData>> QuestConditionDic { get; private set; } = new Dictionary<int, List<QuestConditionData>>();
     public Dictionary<int, List<QuestNotifyData>>    QuestNotifyDic    { get; private set; } = new Dictionary<int, List<QuestNotifyData>>();
     public Dictionary<int, List<QuestUnlockData>>    QuestUnlockDic    { get; private set; } = new Dictionary<int, List<QuestUnlockData>>();
+    public Dictionary<int, SubQuestData>                SubQuestDic         { get; private set; } = new Dictionary<int, SubQuestData>();
+    public Dictionary<int, List<SubQuestNotifyData>>    SubQuestNotifyDic   { get; private set; } = new Dictionary<int, List<SubQuestNotifyData>>();
+    public Dictionary<int, List<SubQuestUnlockData>>    SubQuestUnlockDic   { get; private set; } = new Dictionary<int, List<SubQuestUnlockData>>();
 
     public void Init()
     {
@@ -59,6 +62,9 @@ public class DataManager
         QuestConditionDic = LoadJson<QuestConditionLoader, int, List<QuestConditionData>> ("QuestConditionData").MakeDict();
         QuestNotifyDic    = LoadJson<QuestNotifyLoader,    int, List<QuestNotifyData>>    ("QuestNotifyData").MakeDict();
         QuestUnlockDic    = LoadJson<QuestUnlockLoader,    int, List<QuestUnlockData>>    ("QuestUnlockData").MakeDict();
+        SubQuestDic       = LoadJson<SubQuestDataLoader,   int, SubQuestData>             ("SubQuestMainData").MakeDict();
+        SubQuestNotifyDic = LoadJson<SubQuestNotifyLoader, int, List<SubQuestNotifyData>> ("SubQuestNotifyData").MakeDict();
+        SubQuestUnlockDic = LoadJson<SubQuestUnlockLoader, int, List<SubQuestUnlockData>> ("SubQuestUnlockData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

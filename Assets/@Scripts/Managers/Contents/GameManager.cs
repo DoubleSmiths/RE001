@@ -100,6 +100,7 @@ public class GameData
 
     // 퀘스트
     public int          CurrentQuestID = 1;
+    public int          CurrentSubQuestID = 0;  // 0 = 활성 서브퀘스트 없음
     public List<string> UnlockedBtnIds = new List<string>();
     public int          CurrentHPPotionDataId = POTION_ID_MIN + 1;
     public int          CurrentSpeedPotionDataId = SPEED_POTION_ID_MIN + 1;
@@ -236,10 +237,16 @@ public class GameManager
     public int CurrentQuestID
     {
         get => _gameData.CurrentQuestID;
-        set { 
-            _gameData.CurrentQuestID = value; 
+        set {
+            _gameData.CurrentQuestID = value;
             Debug.Log($"CurrentQuestID set to {value}");
         }
+    }
+
+    public int CurrentSubQuestID
+    {
+        get => _gameData.CurrentSubQuestID;
+        set { _gameData.CurrentSubQuestID = value; }
     }
 
     public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;

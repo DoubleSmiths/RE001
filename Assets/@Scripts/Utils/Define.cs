@@ -173,6 +173,18 @@ public class Define
         ITEM_REMOVE,    // 퀘스트 완료 시 아이템 회수
     }
 
+    public enum SubQuestCompleteType
+    {
+        NONE,           // 종료 상태 (더 이상 완료 조건 없음)
+        LEVEL_COUNT,    // 지정 대상의 레벨/랭크 달성
+        BTN_CLICK,      // 지정 버튼 클릭 (CompleteParam = BtnID)
+    }
+
+    public enum SubQuestShowTiming
+    {
+        ON_START,       // 서브퀘스트 시작 시부터 표시
+    }
+
     public enum QuestConditionType
     {
         BTN_CLICK,
@@ -349,6 +361,11 @@ public class Define
     public const string VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT = "VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT";
     public const string VILLAGE1_ALCHEMY_QUEST_VFX = "VILLAGE1_ALCHEMY_QUEST_VFX";
     public const string ALCHEMY_EXIT_QUEST_VFX = "ALCHEMY_EXIT_QUEST_VFX";
+
+    // SubQuest notify / unlock — SubQuest_Notify.TargetID / SubQuest_Unlock_Table.TargetID 와 대응
+    public const string BTN_ALCHEMY       = "BTN_ALCHEMY";        // Village1 연금공방 버튼 유도
+    public const string BTN_ALCHEMY_TALK  = "BTN_ALCHEMY_TALK";   // 연금공방 NPC 대화 버튼 유도
+    public const string BTN_COMMISION     = "BTN_COMMISION";      // 제작의뢰 버튼 해금 (시트 표기 유지)
 
     // Village1 Monastery Btn Group
     public const string VILLAGE1_MONASTERY_TALK_VFX = "VILLAGE1_MONASTERY_TALK_VFX";

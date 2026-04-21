@@ -6,16 +6,18 @@ public class Managers : MonoBehaviour
     static Managers Instance { get { Init(); return s_instance; } }
 
     #region Contents
-    GameManager  _game   = new GameManager();
-    ObjectManager _object = new ObjectManager();
-    MinMonManager _minMon = new MinMonManager();
-    QuestManager  _quest  = new QuestManager();
+    GameManager     _game     = new GameManager();
+    ObjectManager   _object   = new ObjectManager();
+    MinMonManager   _minMon   = new MinMonManager();
+    QuestManager    _quest    = new QuestManager();
+    SubQuestManager _subQuest = new SubQuestManager();
     //TimeManager   _time;
 
-    public static GameManager   Game   { get { return Instance?._game; } }
-    public static ObjectManager Object { get { return Instance?._object; } }
-    public static MinMonManager MinMon { get { return Instance?._minMon; } }
-    public static QuestManager  Quest  { get { return Instance?._quest; } }
+    public static GameManager     Game     { get { return Instance?._game; } }
+    public static ObjectManager   Object   { get { return Instance?._object; } }
+    public static MinMonManager   MinMon   { get { return Instance?._minMon; } }
+    public static QuestManager    Quest    { get { return Instance?._quest; } }
+    public static SubQuestManager SubQuest { get { return Instance?._subQuest; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 

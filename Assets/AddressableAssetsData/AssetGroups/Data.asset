@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Data
   m_GUID: f71fea23cdd56ae4a8eaca389697d4ff
   m_SerializeEntries:
+  - m_GUID: 0bdcd2313281a924aa677119014a4c45
+    m_Address: SubQuestUnlockData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0e3f9a20d045e5249978a74c960333a8
     m_Address: Equipment
     m_ReadOnly: 0
@@ -93,6 +99,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dbdd0cb61fac1dd4081d681f436a79b2
+    m_Address: SubQuestNotifyData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e39a1612ac08d6f42884a4b8cbaba0d5
     m_Address: QuestNotifyData
     m_ReadOnly: 0
@@ -107,6 +119,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eac39a9ae29364446bbaae3d42f8f39e
     m_Address: SpeedPotion
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f7cf845debb097f44bf1f7b6d57259be
+    m_Address: SubQuestMainData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
