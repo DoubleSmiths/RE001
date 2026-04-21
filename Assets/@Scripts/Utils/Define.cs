@@ -336,6 +336,7 @@ public class Define
     public const string VILLAGE1_GUILD_TALK_VFX = "VILLAGE1_GUILD_TALK_VFX";
     public const string VILLAGE1_GUILD_QUEST_VFX = "VILLAGE1_GUILD_QUEST_VFX";
     public const string GUILD_EXIT_QUEST_VFX = "GUILD_EXIT_QUEST_VFX";
+    public const string BTN_GUILD_QUEST = "BTN_GUILD_QUEST";   // 길드 [퀘스트] 버튼 클릭 액션 키 (QuestData.CompleteTarget 매칭)
 
     // Village1 Alchemy Btn Group
     public const string VILLAGE1_ALCHEMY_TALK_VFX = "VILLAGE1_ALCHEMY_TALK_VFX";

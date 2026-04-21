@@ -278,6 +278,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             OnClickMain();
         });
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
+        GetButton((int)Buttons.Village1GuildQuestButton).gameObject.BindEvent(OnClickVillage1GuildQuestButton);
         GetButton((int)Buttons.CustomOrderButton).gameObject.BindEvent(OnClickCustomOrder);
         GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
 
@@ -494,6 +495,15 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
                         .SetInfo("Travel_Icon", LocalizeKey.ItemTempPermitNameText, LocalizeKey.TravelUnlockText)); // TODO : 정상적인 텍스트로 변경.
                 break;
+
+            case UNLOCK_ALCHEMY_BUTTON:
+                UnlockButtonAnim(
+                    GetButton((int)Buttons.AlchemyButton).gameObject,
+                    GetImage((int)Images.AlchemyButtonIcon),
+                    GetText((int)Texts.AlchemyButtonText),
+                    onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
+                        .SetInfo("Alchemy_Icon", LocalizeKey.AlchemyText, LocalizeKey.AlchemyUnlockText));
+                break;
         }
     }
 
@@ -657,6 +667,26 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 ? (System.Action)(() => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX))
                 : null,
             randomSingleLine: !isFirstQuest);
+    }
+
+    void OnClickVillage1GuildQuestButton()
+    {
+        // 메인 퀘스트 [4] (1급 모험가 완료 보고) 진행 시: 퀘스트 전용 대사 + 종료 시 퀘스트 진행 트리거.
+        // 그 외 상태에서는 잡담 대사(GuildNormalText) 한 줄 랜덤 표시.
+        bool isReportQuest = Managers.Quest.CurrentQuestID == 4;
+
+        string groupKey = isReportQuest
+            ? Managers.Quest.GetCurrentDialogueID()   // QuestData.DialogueID = "GuildQuest2Text"
+            : "GuildNormalText";
+
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: groupKey,
+            speakerName: "접수원 아가씨",
+            portrait: null,
+            onFinished: isReportQuest
+                ? (System.Action)(() => Managers.Quest.CheckButtonClick(BTN_GUILD_QUEST))
+                : null,
+            randomSingleLine: !isReportQuest);
     }
 
     void RefreshNotify()
