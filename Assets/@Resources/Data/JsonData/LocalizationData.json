@@ -236,6 +236,11 @@
       "Eng": "COOLDOWN"
     },
     {
+      "TextKey": "BaseStatText",
+      "Kor": "기본",
+      "Eng": "BASE"
+    },
+    {
       "TextKey": "SPDBonusText",
       "Kor": "공격 가속률",
       "Eng": "SPD BONUS"
@@ -249,11 +254,6 @@
       "TextKey": "SecondsUnitText",
       "Kor": "초",
       "Eng": "s"
-    },
-    {
-      "TextKey": "BaseStatText",
-      "Kor": "기본",
-      "Eng": "BASE"
     },
     {
       "TextKey": "IncreseStatText",
@@ -607,7 +607,7 @@
     },
     {
       "TextKey": "DmgDealtText",
-      "Kor": "총 피해량",
+      "Kor": "가한 피해량",
       "Eng": "DMG Dealt"
     },
     {
@@ -621,9 +621,14 @@
       "Eng": "HP Restored"
     },
     {
-      "TextKey": "RecallText",
+      "TextKey": "ReturnText",
       "Kor": "귀환",
       "Eng": "RETURN"
+    },
+    {
+      "TextKey": "ReturnConfirmText",
+      "Kor": "확실해?",
+      "Eng": "SURE?"
     },
     {
       "TextKey": "TravelUnlockText",

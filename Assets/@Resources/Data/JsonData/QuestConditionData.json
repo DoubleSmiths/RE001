@@ -13,6 +13,20 @@
       "ConditionType": 0,
       "Target": "VILLAGE1_GUILD_TALK_VFX",
       "Count": 0
+    },
+    {
+      "QuestID": 4,
+      "Order": 1,
+      "ConditionType": 0,
+      "Target": "BTN_GUILD_QUEST",
+      "Count": 0
+    },
+    {
+      "QuestID": 4,
+      "Order": 2,
+      "ConditionType": 1,
+      "Target": "9002",
+      "Count": 0
     }
   ]
 }
