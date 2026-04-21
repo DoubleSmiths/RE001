@@ -102,6 +102,7 @@ public class GameData
     public int          CurrentQuestID = 1;
     public List<string> UnlockedBtnIds = new List<string>();
     public int          CurrentHPPotionDataId = POTION_ID_MIN + 1;
+    public int          CurrentSpeedPotionDataId = SPEED_POTION_ID_MIN + 1;
     public int          CurrentTravelAreaId = 0;
 
     // 마지막 장소
@@ -257,6 +258,21 @@ public class GameManager
         }
     }
 
+    public int CurrentSpeedPotionDataId
+    {
+        get => _gameData.CurrentSpeedPotionDataId <= 0 ? SPEED_POTION_ID_MIN + 1 : _gameData.CurrentSpeedPotionDataId;
+        set
+        {
+            int next = value <= 0 ? SPEED_POTION_ID_MIN + 1 : value;
+            if (_gameData.CurrentSpeedPotionDataId == next)
+                return;
+
+            _gameData.CurrentSpeedPotionDataId = next;
+            SaveGame();
+            OnSpeedPotionChanged?.Invoke(next);
+        }
+    }
+
     // 런타임 전용 현재 위치(EXPLORE 포함). 0이면 persist된 마지막 마을을 사용.
     int _runtimeCurrentTravelAreaId;
 
@@ -326,6 +342,7 @@ public class GameManager
     public event Action<int> OnItemChanged;       // dataId (추가/제거 모두)
     public Action      OnInventoryNewChanged; // IsNew 상태 변경
     public event Action<int> OnHPPotionChanged;   // current potion dataId
+    public event Action<int> OnSpeedPotionChanged;// current SPD potion dataId
 
     // ────────────────────────────────────────
     //  Init
@@ -530,6 +547,63 @@ public class GameManager
         return true;
     }
 
+    public int GetNextSpeedPotionDataId(int currentDataId)
+    {
+        int nextId = -1;
+
+        foreach (var dataId in Managers.Data.SpeedPotionDic.Keys)
+        {
+            if (dataId <= currentDataId)
+                continue;
+
+            if (nextId == -1 || dataId < nextId)
+                nextId = dataId;
+        }
+
+        return nextId;
+    }
+
+    public bool CanCraftSpeedPotion(int currentDataId)
+    {
+        int nextDataId = GetNextSpeedPotionDataId(currentDataId);
+        if (nextDataId < 0 || !Managers.Data.SpeedPotionDic.TryGetValue(nextDataId, out var next))
+            return false;
+
+        for (int i = 0; i < next.NeededItemIDs.Count; i++)
+        {
+            int itemId = next.NeededItemIDs[i];
+            int required = i < next.NeededItemAmounts.Count ? next.NeededItemAmounts[i] : 0;
+            if (!HasItem(itemId, required))
+                return false;
+        }
+
+        return true;
+    }
+
+    public bool TryCraftSpeedPotion(int currentDataId, out int craftedDataId)
+    {
+        craftedDataId = currentDataId;
+
+        int nextDataId = GetNextSpeedPotionDataId(currentDataId);
+        if (nextDataId < 0 || !Managers.Data.SpeedPotionDic.TryGetValue(nextDataId, out var next))
+            return false;
+
+        if (!CanCraftSpeedPotion(currentDataId))
+            return false;
+
+        for (int i = 0; i < next.NeededItemIDs.Count; i++)
+        {
+            int itemId = next.NeededItemIDs[i];
+            int required = i < next.NeededItemAmounts.Count ? next.NeededItemAmounts[i] : 0;
+            if (required > 0)
+                RemoveItem(itemId, required);
+        }
+
+        CurrentSpeedPotionDataId = nextDataId;
+        craftedDataId = nextDataId;
+        return true;
+    }
+
     // ────────────────────────────────────────
     //  세이브 / 로드
     // ────────────────────────────────────────
@@ -574,5 +648,7 @@ public class GameManager
     {
         if (_gameData.CurrentHPPotionDataId <= 0)
             _gameData.CurrentHPPotionDataId = POTION_ID_MIN + 1;
+        if (_gameData.CurrentSpeedPotionDataId <= 0)
+            _gameData.CurrentSpeedPotionDataId = SPEED_POTION_ID_MIN + 1;
     }
 }

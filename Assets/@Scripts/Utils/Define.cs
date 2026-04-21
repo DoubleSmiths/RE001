@@ -192,6 +192,7 @@ public class Define
         public const string DescriptionText = "DescriptionText";
         public const string NextInfoText = "NextInfoText";
         public const string CraftText = "CraftText";
+        public const string RankText = "RankText";
         public const string TestKey = "TestKey";
 
         // ── ButtomButtons ──
@@ -235,6 +236,9 @@ public class Define
         public const string MaxHPRecovText = "MaxHPRecovText";
         public const string TotalRecovText = "TotalRecovText";
         public const string PotionCDText = "PotionCDText";
+        public const string SPDBonusText = "SPDBonusText";
+        public const string DurationText = "DurationText";
+        public const string SecondsUnitText = "SecondsUnitText";
         public const string BaseStatText = "BaseStatText";
         public const string IncreseStatText = "IncreseStatText";
         public const string BoostStatText = "BoostStatText";

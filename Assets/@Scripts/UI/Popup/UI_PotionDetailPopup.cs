@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Data;
+using static Define;
 using Sequence = DG.Tweening.Sequence;
 
 /// <summary>
@@ -14,6 +15,31 @@ using Sequence = DG.Tweening.Sequence;
 /// </summary>
 public class UI_PotionDetailPopup : UI_Popup
 {
+    public enum PotionKind { HP, Speed }
+
+    /// <summary>HP/SPD 양쪽 데이터를 공통 뷰로 정규화. 표시 분기용.</summary>
+    class PotionView
+    {
+        public PotionKind Kind;
+        public int DataId;
+        public string Name;
+        public EquipGrade Grade;
+        public string Description;
+        public string SpriteName;
+        public int Step;
+        public int Cooldown;
+        public List<int> NeededItemIDs;
+        public List<int> NeededItemAmounts;
+
+        // HP 전용
+        public int FlatRecov;
+        public int MaxHPRecov;
+
+        // SPD 전용
+        public float AtkSpeedBonus;
+        public int Duration;
+    }
+
     #region Enum
 
     enum Images
@@ -170,6 +196,8 @@ public class UI_PotionDetailPopup : UI_Popup
     TMP_Text _pHeal, _pHealN;
     TMP_Text _totalHeal, _totalHealN;
     TMP_Text _cooldown, _cooldownN;
+    TMP_Text _spdAmount, _spdAmountN;
+    TMP_Text _duration, _durationN;
     TMP_Text _descText;
     TMP_Text _maxLvlTxt;
     TMP_Text _switchBtnLabel;
@@ -190,8 +218,9 @@ public class UI_PotionDetailPopup : UI_Popup
 
     Vector2 _frameOrigin;
 
-    // 현재 표시 중인 물약 DataId (HPPotionDic 기준). -1 = 미설정.
+    // 현재 표시 중인 물약 DataId (HPPotionDic/SpeedPotionDic 기준). -1 = 미설정.
     int _currentDataId = -1;
+    PotionKind _kind = PotionKind.HP;
     bool _showDesc = false;       // S38: true면 설명 표시, false면 재료 표시
     bool _previewNext = false;    // S39: 다음 단계 미리보기 모드
     bool _craftBusy = false;      // S40: 제작 애님 중에는 모든 버튼 비활성
@@ -231,6 +260,10 @@ public class UI_PotionDetailPopup : UI_Popup
 
         // SPD / 쿨다운 / 설명
         _spdTextsGroup = GetObject((int)GameObjects.SPDPotion_Texts);
+        _spdAmount     = GetText((int)Texts.SPDAmountTxt);
+        _spdAmountN    = GetText((int)Texts.SPDAmountTxt_NextLvl);
+        _duration      = GetText((int)Texts.DURIAmountTxt);
+        _durationN     = GetText((int)Texts.DURIAmountTxt_NextLvl);
         _cooldown      = GetText((int)Texts.PotionCooltimeTxt);
         _cooldownN     = GetText((int)Texts.PotionCooltimeTxt_NextLvl);
         _descText      = GetText((int)Texts.DescText);
@@ -244,7 +277,7 @@ public class UI_PotionDetailPopup : UI_Popup
         _reqItemList   = GetObject((int)GameObjects.ReqItemList);
         _reqItemTitle  = GetText((int)Texts.Txt_ReqItemGroup_02)?.gameObject;
         var titleTmp   = GetText((int)Texts.Txt_ReqItemGroup_02);
-        if (titleTmp != null) titleTmp.text = "필요 재료";
+        if (titleTmp != null) titleTmp.text = Localize(LocalizeKey.ItemNeededText);
         _reqDecorLine  = GetImage((int)Images.__1)?.gameObject;
         _maxLvlTxt     = GetText((int)Texts.MaxLvlTxt);
         _cantCraftBtn  = GetImage((int)Images.CantCraftBtn)?.gameObject;
@@ -291,6 +324,8 @@ public class UI_PotionDetailPopup : UI_Popup
         _pHealN?.gameObject.SetActive(false);
         _totalHealN?.gameObject.SetActive(false);
         _cooldownN?.gameObject.SetActive(false);
+        _spdAmountN?.gameObject.SetActive(false);
+        _durationN?.gameObject.SetActive(false);
 
         return true;
     }
@@ -314,11 +349,14 @@ public class UI_PotionDetailPopup : UI_Popup
     public int PotionId => _currentDataId;
 
     /// <summary>
-    /// dataId: HPPotionDic의 DataId. (-1이면 기본 30001)
+    /// dataId: HPPotionDic 또는 SpeedPotionDic의 DataId.
+    /// 범위로 종류 자동 판정 (40000+ = SPD, 그 외 = HP).
+    /// -1이면 플레이어의 현재 HP 물약 단계 사용.
     /// </summary>
     public void SetInfo(int dataId = -1, bool fromCustomOrder = true)
     {
-        _currentDataId  = ResolvePotionDataId(dataId);
+        _kind           = InferKind(dataId);
+        _currentDataId  = ResolvePotionDataId(dataId, _kind);
         _fromCustomOrder = fromCustomOrder;
 
         // 팝업을 새로 열 때는 항상 재료 목록 / 현재 단계 상태로 시작 (S38 스펙)
@@ -346,7 +384,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
     void RefreshAll()
     {
-        var data = GetData(_currentDataId);
+        var data = GetView(_currentDataId);
         if (data == null) return;
 
         StopBlink();
@@ -357,10 +395,44 @@ public class UI_PotionDetailPopup : UI_Popup
     // ────────────────────────────────────────
     //  S37: Data binding
     // ────────────────────────────────────────
-    HPPotionData GetData(int dataId)
+    PotionView GetView(int dataId)
     {
-        if (Managers.Data.HPPotionDic.TryGetValue(dataId, out var d)) return d;
+        if (IsSpeedPotionId(dataId))
+        {
+            if (!Managers.Data.SpeedPotionDic.TryGetValue(dataId, out var s)) return null;
+            return new PotionView
+            {
+                Kind = PotionKind.Speed,
+                DataId = s.DataId, Name = s.Name, Grade = s.Grade,
+                Description = s.Description, SpriteName = s.SpriteName,
+                Step = s.Step, Cooldown = s.Cooldown,
+                NeededItemIDs = s.NeededItemIDs, NeededItemAmounts = s.NeededItemAmounts,
+                AtkSpeedBonus = s.AtkSpeedBonus, Duration = s.Duration,
+            };
+        }
+        if (Managers.Data.HPPotionDic.TryGetValue(dataId, out var h))
+        {
+            return new PotionView
+            {
+                Kind = PotionKind.HP,
+                DataId = h.DataId, Name = h.Name, Grade = h.Grade,
+                Description = h.Description, SpriteName = h.SpriteName,
+                Step = h.Step, Cooldown = h.Cooldown,
+                NeededItemIDs = h.NeededItemIDs, NeededItemAmounts = h.NeededItemAmounts,
+                FlatRecov = h.FlatRecov, MaxHPRecov = h.MaxHPRecov,
+            };
+        }
         return null;
+    }
+
+    static bool IsSpeedPotionId(int dataId)
+    {
+        return dataId >= SPEED_POTION_ID_MIN && dataId < SPEED_POTION_ID_MIN + 10000;
+    }
+
+    static PotionKind InferKind(int dataId)
+    {
+        return IsSpeedPotionId(dataId) ? PotionKind.Speed : PotionKind.HP;
     }
 
     string Localize(string key)
@@ -370,38 +442,33 @@ public class UI_PotionDetailPopup : UI_Popup
         return Managers.Game.Language == Define.Language.Korean ? entry.Kor : entry.Eng;
     }
 
-    void ApplyData(HPPotionData data)
+    void ApplyData(PotionView data)
     {
-        // HP 계열만 노출 (SPD 텍스트 그룹 숨김)
-        _hpTextsGroup.SetActive(true);
-        _spdTextsGroup.SetActive(false);
+        // 종류에 맞춰 텍스트 그룹 전환
+        bool isHP = data.Kind == PotionKind.HP;
+        _hpTextsGroup.SetActive(isHP);
+        _spdTextsGroup.SetActive(!isHP);
 
         _nameText.text = Localize(data.Name);
-        _rankText.text = $"{data.Step}단계";
+        _rankText.text = $"{data.Step}{Localize(LocalizeKey.RankText)}";
         _rankText.color = Color.white;
 
-        int maxHp = Managers.Game.GetPlayerMaxHp();
-        int pHealAmount = data.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * data.MaxHPRecov / 100f);
-        int totalHeal   = data.FlatRecov + pHealAmount;
-
-        _flatHeal.text  = $"기본 회복량: {data.FlatRecov}";
-        _pHeal.text     = $"최대 체력 회복량: {data.MaxHPRecov}% ({pHealAmount})";
-        _totalHeal.text = $"총 회복량: {totalHeal}";
-        _cooldown.text  = $"재생산시간: {data.Cooldown}초";
+        if (isHP)
+            ApplyHPStats(data, preview: false);
+        else
+            ApplySpeedStats(data, preview: false);
 
         _descText.text = Localize(data.Description);
 
-        // 아이콘: data.SpriteName (spriteloader는 후속)
-        // ex. "HP_Potion1" 키가 로드돼있으면 교체
         var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
         if (sp != null) _potionImg.sprite = sp;
 
-        var nextData = GetNextData(_currentDataId);
+        var nextData = GetNextView(_currentDataId);
 
         // 필요 재료는 다음 단계 업그레이드 기준으로 표시
         UpdateReqItems(nextData);
 
-        // 이 물약이 HP 계열의 마지막 단계면 MAX LEVEL
+        // 이 물약이 마지막 단계면 MAX LEVEL
         bool isMaxLevel = nextData == null;
         _maxLvlTxt?.gameObject.SetActive(isMaxLevel);
 
@@ -421,7 +488,30 @@ public class UI_PotionDetailPopup : UI_Popup
         }
     }
 
-    void UpdateReqItems(HPPotionData data)
+    void ApplyHPStats(PotionView data, bool preview)
+    {
+        int maxHp = Managers.Game.GetPlayerMaxHp();
+        int pHealAmount = data.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * data.MaxHPRecov / 100f);
+        int totalHeal   = data.FlatRecov + pHealAmount;
+        string sec = Localize(LocalizeKey.SecondsUnitText);
+
+        _flatHeal.text  = $"{Localize(LocalizeKey.FlatRecovText)}: {data.FlatRecov}";
+        _pHeal.text     = $"{Localize(LocalizeKey.MaxHPRecovText)}: {data.MaxHPRecov}% ({pHealAmount})";
+        _totalHeal.text = $"{Localize(LocalizeKey.TotalRecovText)}: {totalHeal}";
+        _cooldown.text  = $"{Localize(LocalizeKey.PotionCDText)}: {data.Cooldown}{sec}";
+    }
+
+    void ApplySpeedStats(PotionView data, bool preview)
+    {
+        int bonusPct = Mathf.RoundToInt(data.AtkSpeedBonus * 100f);
+        string sec = Localize(LocalizeKey.SecondsUnitText);
+
+        _spdAmount.text = $"{Localize(LocalizeKey.SPDBonusText)}: +{bonusPct}%";
+        _duration.text  = $"{Localize(LocalizeKey.DurationText)}: {data.Duration}{sec}";
+        _cooldown.text  = $"{Localize(LocalizeKey.PotionCDText)}: {data.Cooldown}{sec}";
+    }
+
+    void UpdateReqItems(PotionView data)
     {
         if (data == null)
         {
@@ -465,7 +555,7 @@ public class UI_PotionDetailPopup : UI_Popup
     }
 
     /// <summary>모든 필요 재료를 충족하는지 체크.</summary>
-    bool HasEnoughMaterials(HPPotionData data)
+    bool HasEnoughMaterials(PotionView data)
     {
         if (data == null || data.NeededItemIDs == null) return true;
         for (int i = 0; i < data.NeededItemIDs.Count; i++)
@@ -506,7 +596,7 @@ public class UI_PotionDetailPopup : UI_Popup
             _backBtn?.SetActive(false);
             _maxLvlTxt?.gameObject.SetActive(false);
             _descText.gameObject.SetActive(true);
-            if (_switchBtnLabel != null) _switchBtnLabel.text = "필요재료";
+            if (_switchBtnLabel != null) _switchBtnLabel.text = Localize(LocalizeKey.ItemNeededText);
         }
         else
         {
@@ -514,13 +604,13 @@ public class UI_PotionDetailPopup : UI_Popup
             _reqItemList?.SetActive(true);
             _reqItemTitle?.SetActive(true);
             if (_reqDecorLine != null) _reqDecorLine.SetActive(true);
-            if (_switchBtnLabel != null) _switchBtnLabel.text = "설명";
+            if (_switchBtnLabel != null) _switchBtnLabel.text = Localize(LocalizeKey.DescriptionText);
 
             // 재료/버튼 상태는 ApplyData가 결정하므로 여기서 다시 재계산
-            var data = GetData(_currentDataId);
+            var data = GetView(_currentDataId);
             if (data != null)
             {
-                var next = GetNextData(_currentDataId);
+                var next = GetNextView(_currentDataId);
                 bool isMaxLevel = next == null;
                 _maxLvlTxt.gameObject.SetActive(isMaxLevel);
 
@@ -551,7 +641,7 @@ public class UI_PotionDetailPopup : UI_Popup
     void OnClickNextLvl()
     {
         PunchBtnScale(_nextLvlBtn.transform);
-        var next = GetNextData(_currentDataId);
+        var next = GetNextView(_currentDataId);
         if (next == null) return;
 
         _previewNext = true;
@@ -566,15 +656,14 @@ public class UI_PotionDetailPopup : UI_Popup
         RefreshAll(); // 원래 데이터로 복귀
     }
 
-    void ApplyPreview(HPPotionData next)
+    void ApplyPreview(PotionView next)
     {
-        var curr = GetData(_currentDataId);
+        var curr = GetView(_currentDataId);
         if (curr == null) return;
 
         // 이름/단계/아이콘은 다음 값으로 교체. 단, 변경부 하이라이트 및 점멸 적용.
         _nameText.text = Localize(next.Name);
-        _rankText.text = $"{next.Step}단계";
-        // 등급 변경(3단계 → 다음 등급 1단계)이면 단계 색을 00FF00으로
+        _rankText.text = $"{next.Step}{Localize(LocalizeKey.RankText)}";
         _rankText.color = next.Grade != curr.Grade
             ? new Color32(0x00, 0xFF, 0x00, 0xFF)
             : Color.white;
@@ -582,37 +671,56 @@ public class UI_PotionDetailPopup : UI_Popup
         var sp = Managers.Resource.Load<Sprite>(next.SpriteName);
         if (sp != null) _potionImg.sprite = sp;
 
-        // 능력치: ▶ 표기 + 변화 색상
-        int maxHp = Managers.Game.GetPlayerMaxHp();
-        int pCur  = curr.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * curr.MaxHPRecov / 100f);
-        int pNext = next.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * next.MaxHPRecov / 100f);
-        int totalCur  = curr.FlatRecov + pCur;
-        int totalNext = next.FlatRecov + pNext;
+        string sec = Localize(LocalizeKey.SecondsUnitText);
 
-        _flatHeal.text  = FmtStat("기본 회복량",       curr.FlatRecov,   next.FlatRecov);
-        _pHeal.text     = FmtStat("최대 체력 회복량", pCur,             pNext);
-        _totalHeal.text = FmtStat("총 회복량",         totalCur,         totalNext);
-        // 재생산시간은 값이 작을수록 좋으므로 색상 방향 반전
-        _cooldown.text  = FmtStat("재생산시간",        curr.Cooldown,    next.Cooldown,   suffix: "초", lowerIsBetter: true);
+        if (curr.Kind == PotionKind.HP)
+        {
+            int maxHp = Managers.Game.GetPlayerMaxHp();
+            int pCur  = curr.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * curr.MaxHPRecov / 100f);
+            int pNext = next.MaxHPRecov == 0 ? 0 : Mathf.RoundToInt(maxHp * next.MaxHPRecov / 100f);
+            int totalCur  = curr.FlatRecov + pCur;
+            int totalNext = next.FlatRecov + pNext;
+
+            _flatHeal.text  = FmtStat(Localize(LocalizeKey.FlatRecovText),  curr.FlatRecov,   next.FlatRecov);
+            _pHeal.text     = FmtStat(Localize(LocalizeKey.MaxHPRecovText), pCur,             pNext);
+            _totalHeal.text = FmtStat(Localize(LocalizeKey.TotalRecovText), totalCur,         totalNext);
+        }
+        else
+        {
+            int spdCur  = Mathf.RoundToInt(curr.AtkSpeedBonus * 100f);
+            int spdNext = Mathf.RoundToInt(next.AtkSpeedBonus * 100f);
+            _spdAmount.text = FmtStat(Localize(LocalizeKey.SPDBonusText), spdCur,        spdNext,        suffix: "%", prefix: "+");
+            _duration.text  = FmtStat(Localize(LocalizeKey.DurationText), curr.Duration, next.Duration, suffix: sec);
+        }
+        // 재생산시간은 값이 작을수록 좋으므로 색상 방향 반전 (공통)
+        _cooldown.text  = FmtStat(Localize(LocalizeKey.PotionCDText), curr.Cooldown,    next.Cooldown,   suffix: sec, lowerIsBetter: true);
 
         StartBlink();
     }
 
-    string FmtStat(string label, int cur, int next, string suffix = "", bool lowerIsBetter = false)
+    string FmtStat(string label, int cur, int next, string suffix = "", bool lowerIsBetter = false, string prefix = "")
     {
         bool improved = lowerIsBetter ? (next < cur) : (next > cur);
         bool worsened = lowerIsBetter ? (next > cur) : (next < cur);
         string colorHex = improved ? "00FF00" : (worsened ? "FF0000" : "FFFFFF");
-        return $"{label}: {cur}{suffix} <color=#{colorHex}>▶ {next}{suffix}</color>";
+        return $"{label}: {prefix}{cur}{suffix} <color=#{colorHex}>▶ {prefix}{next}{suffix}</color>";
     }
 
     Sequence _blinkSeq;
+
+    Graphic[] BlinkTargets()
+    {
+        if (_kind == PotionKind.Speed)
+            return new Graphic[] { _nameText, _rankText, _spdAmount, _duration, _cooldown };
+        return new Graphic[] { _nameText, _rankText, _flatHeal, _pHeal, _totalHeal, _cooldown };
+    }
+
     void StartBlink()
     {
         StopBlink();
         _blinkSeq = DOTween.Sequence().SetUpdate(true).SetLoops(-1);
         // 이름/단계/능력치 라벨 알파 점멸 (OutSine 0.5s in / 0.5s out)
-        Graphic[] targets = { _nameText, _rankText, _flatHeal, _pHeal, _totalHeal, _cooldown };
+        var targets = BlinkTargets();
         foreach (var t in targets)
         {
             if (t == null) continue;
@@ -630,7 +738,7 @@ public class UI_PotionDetailPopup : UI_Popup
     {
         if (_blinkSeq != null && _blinkSeq.IsActive()) _blinkSeq.Kill();
         _blinkSeq = null;
-        Graphic[] targets = { _nameText, _rankText, _flatHeal, _pHeal, _totalHeal, _cooldown };
+        var targets = BlinkTargets();
         foreach (var t in targets)
         {
             if (t == null) continue;
@@ -645,9 +753,13 @@ public class UI_PotionDetailPopup : UI_Popup
     void OnClickCraft()
     {
         PunchBtnScale(_craftBtn.transform);
-        var next = GetNextData(_currentDataId);
+        var next = GetNextView(_currentDataId);
         if (next == null) return; // 최대 레벨은 제작 불가
-        if (!Managers.Game.CanCraftHPPotion(_currentDataId)) return;
+
+        bool canCraft = _kind == PotionKind.Speed
+            ? Managers.Game.CanCraftSpeedPotion(_currentDataId)
+            : Managers.Game.CanCraftHPPotion(_currentDataId);
+        if (!canCraft) return;
 
         _craftBusy = true;
 
@@ -657,7 +769,14 @@ public class UI_PotionDetailPopup : UI_Popup
         seq.Append(_myFrameRT.DOPunchScale(new Vector3(0.2f, 0.2f, 1f), 0.3f, vibrato: 4, elasticity: 1f).SetEase(Ease.OutQuad));
         seq.OnComplete(() =>
         {
-            if (Managers.Game.TryCraftHPPotion(_currentDataId, out var craftedDataId))
+            bool ok;
+            int craftedDataId;
+            if (_kind == PotionKind.Speed)
+                ok = Managers.Game.TryCraftSpeedPotion(_currentDataId, out craftedDataId);
+            else
+                ok = Managers.Game.TryCraftHPPotion(_currentDataId, out craftedDataId);
+
+            if (ok)
                 _currentDataId = craftedDataId;
 
             _previewNext = false;
@@ -688,8 +807,20 @@ public class UI_PotionDetailPopup : UI_Popup
         btn.DOScale(0.9f, 0.07f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo).SetUpdate(true);
     }
 
-    int ResolvePotionDataId(int requestedDataId)
+    int ResolvePotionDataId(int requestedDataId, PotionKind kind)
     {
+        if (kind == PotionKind.Speed)
+        {
+            if (requestedDataId > 0 && Managers.Data.SpeedPotionDic.ContainsKey(requestedDataId))
+                return requestedDataId;
+
+            int cur = Managers.Game.CurrentSpeedPotionDataId;
+            if (Managers.Data.SpeedPotionDic.ContainsKey(cur))
+                return cur;
+
+            return SPEED_POTION_ID_MIN + 1;
+        }
+
         if (requestedDataId > 0 && Managers.Data.HPPotionDic.ContainsKey(requestedDataId))
             return requestedDataId;
 
@@ -697,13 +828,15 @@ public class UI_PotionDetailPopup : UI_Popup
         if (Managers.Data.HPPotionDic.ContainsKey(currentDataId))
             return currentDataId;
 
-        return 30001;
+        return POTION_ID_MIN + 1;
     }
 
-    HPPotionData GetNextData(int currentDataId)
+    PotionView GetNextView(int currentDataId)
     {
-        int nextDataId = Managers.Game.GetNextHPPotionDataId(currentDataId);
-        return nextDataId > 0 ? GetData(nextDataId) : null;
+        int nextDataId = _kind == PotionKind.Speed
+            ? Managers.Game.GetNextSpeedPotionDataId(currentDataId)
+            : Managers.Game.GetNextHPPotionDataId(currentDataId);
+        return nextDataId > 0 ? GetView(nextDataId) : null;
     }
 
     bool TryGetItemData(int itemId, out ItemData itemData)

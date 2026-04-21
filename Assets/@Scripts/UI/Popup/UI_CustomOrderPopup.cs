@@ -306,13 +306,13 @@ public class UI_CustomOrderPopup : UI_Popup
 
     /// <summary>
     /// 슬라이드 35 잠금 상태 스펙 적용.
-    /// 회복물약(HP)만 해금, 신속(SPD)/행운(Luck)/물약주입기(AutoPotion) 잠금.
+    /// 회복물약(HP)/신속(SPD) 해금, 행운(Luck)/물약주입기(AutoPotion) 잠금.
     /// Sprite None (000000 alpha 180) + Chat_Icon_Lock (FFFFFF alpha 80)
     /// </summary>
     void InitLockStates()
     {
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrderSPDPotionIcon).transform,
-                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: true);
+                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: false);
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrderLuckPotionIcon).transform,
                         GetImage((int)Images.lockbg),   GetImage((int)Images.lockimg),   locked: true);
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrder_AutoPotionCooltimeSkill).transform,
@@ -322,6 +322,8 @@ public class UI_CustomOrderPopup : UI_Popup
         // CustomOrderHPPotionIcon 컨테이너엔 Graphic이 없어 raycast 불가 → Frame Button으로 바인딩
         GetButton((int)Buttons.CustomOrderHPPotionFrame).gameObject.BindEvent(
             () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId));
+        GetButton((int)Buttons.CustomOrderSPDPotionFrame).gameObject.BindEvent(
+            () => OpenPotionDetail(Managers.Game.CurrentSpeedPotionDataId));
     }
 
     void OpenPotionDetail(int dataId)
