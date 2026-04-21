@@ -105,6 +105,7 @@ public class UI_UnlockButtonPopup : UI_Popup
         {
             int index = i;
             DOTween.To(() => _charAlphas[index], a => _charAlphas[index] = a, 1f, fadeDuration)
+                   .SetTarget(tmp)        // SkipTypewriter에서 한꺼번에 Kill 가능하도록 target 지정
                    .SetUpdate(true);
 
             yield return new WaitForSecondsRealtime(charInterval);
@@ -136,6 +137,39 @@ public class UI_UnlockButtonPopup : UI_Popup
 
     public void OnClickContent()
     {
+        // DialoguePopup 패턴: 타이핑 진행 중에는 모든 글자 즉시 표시(스킵), 완료 상태에서만 팝업 닫기.
+        if (_isAnimating)
+        {
+            SkipTypewriter();
+            return;
+        }
+
         ClosePopupUI();
+    }
+
+    /// <summary>타이핑 코루틴/트윈을 멈추고 모든 글자 알파를 1로 즉시 적용한다.</summary>
+    void SkipTypewriter()
+    {
+        if (_typewriterCoroutine != null)
+        {
+            StopCoroutine(_typewriterCoroutine);
+            _typewriterCoroutine = null;
+        }
+
+        // 진행 중인 글자별 DOTween.To 트윈 종료 (_charAlphas 참조 트윈들)
+        DOTween.Kill(_animTMP);
+
+        if (_animTMP != null && _charAlphas != null)
+        {
+            for (int i = 0; i < _charAlphas.Length; i++)
+            {
+                _charAlphas[i] = 1f;
+                SetCharAlpha(_animTMP, i, 1f);
+            }
+            _animTMP.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+        }
+
+        _isAnimating = false;
+        _charAlphas = null;
     }
 }

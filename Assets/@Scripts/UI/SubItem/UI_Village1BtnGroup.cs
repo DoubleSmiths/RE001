@@ -207,6 +207,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
             seq.AppendInterval(0.07f);
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
+
+            seq.AppendCallback(TryPlayPendingUnlock);
         });
         GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() =>
         {
@@ -266,6 +268,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
             seq.AppendInterval(0.07f);
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
+
+            seq.AppendCallback(TryPlayPendingUnlock);
         });
         GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(() =>
         {
@@ -314,6 +318,19 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnBtnUnlocked(string btnId)
     {
         _pendingUnlockBtnId = btnId;
+
+        // 메인 그룹이 이미 화면에 떠있으면(=해금 대상 버튼이 보임) 즉시 연출 시작.
+        // Guild/Alchemy/Monastery 하위 그룹에 들어가 있는 상태면 그룹 종료 시점에 재생되도록 대기.
+        if (GetObject((int)GameObjects.Village1MainBtnGroup).activeSelf)
+            TryPlayPendingUnlock();
+    }
+
+    void TryPlayPendingUnlock()
+    {
+        if (string.IsNullOrEmpty(_pendingUnlockBtnId)) return;
+        string unlockId = _pendingUnlockBtnId;
+        _pendingUnlockBtnId = null;
+        DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId));
     }
 
     void SetInfo()
@@ -462,15 +479,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendInterval(0.07f);
         seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
 
-
-        seq.AppendCallback(() =>
-        {
-            if (string.IsNullOrEmpty(_pendingUnlockBtnId)) return;
-            string unlockId = _pendingUnlockBtnId;
-            _pendingUnlockBtnId = null;
-
-            DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId));
-        });
+        seq.AppendCallback(TryPlayPendingUnlock);
     }
 
     void TryPlayUnlockAnim(string btnId)
@@ -614,6 +623,11 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickTravel()
     {
+        // 여정은 UNLOCK_TRAVEL_BUTTON 해금 후에만 동작.
+        // (BindEvent는 Button.interactable을 무시하므로 코드 가드 필요)
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_TRAVEL_BUTTON) == false)
+            return;
+
         // 여정 팝업은 자체 Background 버튼이 배경 클릭을 차단하므로 Village1 버튼 그룹을 숨기면 안 됨
         // (팝업 닫힐 때 복원 로직이 없어 버튼이 계속 사라져 보이는 버그 방지)
         Managers.UI.ShowPopupUI<UI_TravelPopup>().SetInfo();

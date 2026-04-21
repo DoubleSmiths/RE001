@@ -34,6 +34,15 @@ public abstract class UI_AreaBtnGroup : UI_Base
         // 파티클 효과 추가
         Destroy(Managers.Resource.Instantiate("Star_01_Anim_13_a", go.transform), 3.0f);
 
+        // 연출 도중 모든 UI 입력을 봉쇄.
+        // (1) EventSystem 자체를 비활성화 → Button.onClick / BindEvent / 드래그 등 UGUI 이벤트 전부 차단
+        // (2) 전체화면 투명 블로커도 함께 깔아 시각적/구조적 의도를 명확히 함
+        var es = UnityEngine.EventSystems.EventSystem.current;
+        bool prevEsEnabled = es != null && es.enabled;
+        if (es != null) es.enabled = false;
+
+        GameObject blocker = CreateInputBlocker();
+
         Sequence seq = DOTween.Sequence();
 
         seq.Join(go.transform.DOShakePosition(2f, new Vector3(0.7f, 0.7f, 1f), 27, 40.1f, false, false).SetEase(Ease.OutQuad));
@@ -44,9 +53,41 @@ public abstract class UI_AreaBtnGroup : UI_Base
 
         seq.OnComplete(() =>
         {
+            if (blocker != null) Destroy(blocker);
+            if (es != null) es.enabled = prevEsEnabled;
             go.GetComponent<Button>().interactable = true;
             onComplete?.Invoke();
         });
+    }
+
+    /// <summary>전체화면을 덮는 투명 GraphicRaycaster를 만들어 화면 전체 입력을 일시 차단.
+    /// EventSystem 비활성화와 함께 사용. 두 줄 방어선.</summary>
+    static GameObject CreateInputBlocker()
+    {
+        // Canvas는 별도 GameObject에 두어 SSO 자동 사이즈를 신뢰성 있게 받도록 한다.
+        var canvasGo = new GameObject("UnlockInputBlocker",
+            typeof(Canvas), typeof(GraphicRaycaster));
+        canvasGo.transform.SetParent(Managers.UI.Root.transform, false);
+
+        var canvas = canvasGo.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = 9999;     // 어떤 팝업/씬 UI보다도 위
+
+        // 자식으로 Image를 깔아 Canvas RectTransform(=화면 전체)에 stretch
+        var imgGo = new GameObject("Block", typeof(RectTransform), typeof(Image));
+        imgGo.transform.SetParent(canvasGo.transform, false);
+
+        var rt = (RectTransform)imgGo.transform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        var img = imgGo.GetComponent<Image>();
+        img.color = new Color(0f, 0f, 0f, 0f);  // 완전 투명
+        img.raycastTarget = true;               // 클릭만 흡수
+        return canvasGo;
     }
 
     public void PlaceNameAnim(RectTransform rt)
