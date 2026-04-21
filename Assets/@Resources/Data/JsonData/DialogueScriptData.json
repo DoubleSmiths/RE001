@@ -5,23 +5,43 @@
       "Lines": [
         {
           "TextKey": 1,
-          "Kor": "재료는 구해 오신건가요?",
+          "Kor": "연금공방입니다!11",
           "Eng": "You got the materials?"
         },
         {
           "TextKey": 2,
-          "Kor": "많이 한가하신가 보군요.",
+          "Kor": "연금공방입니다!1122",
           "Eng": "Seems like\nyou’ve got nothing better to do."
         },
         {
           "TextKey": 3,
-          "Kor": "용건이 없으시다면 저는 이만.",
+          "Kor": "연금공방입니다!1133",
           "Eng": "If that's all, I have work to do."
         },
         {
           "TextKey": 4,
-          "Kor": "요즘 산들바람 숲 쪽이 좀 소란스럽다고 하더군요.\\\\n조심해서 다녀오세요.",
+          "Kor": "연금공방입니다!1144",
           "Eng": "I heard things have been a bit noisy\\\\naround Breezing Wind Forest lately.\\\\nDo be careful."
+        }
+      ]
+    },
+    {
+      "GroupKey": "AlchemyQuest1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "어서오세요 연금공방입니다.",
+          "Eng": "Welcome to the Adventurer's Guild."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "물약 만들어줌!",
+          "Eng": "Our policy requires newcomers\nto verify their status as an adventurer."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "기대하라구!\n히히",
+          "Eng": "Your [<#00B9FF>Adventurer's Certificate</color>, please?"
         }
       ]
     },

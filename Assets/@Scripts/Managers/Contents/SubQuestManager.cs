@@ -50,8 +50,13 @@ public class SubQuestManager
     public void StartSubQuest(int subQuestId)
     {
         if (subQuestId <= 0) return;
-        if (!Managers.Data.SubQuestDic.ContainsKey(subQuestId)) return;
+        if (!Managers.Data.SubQuestDic.ContainsKey(subQuestId))
+        {
+            UnityEngine.Debug.LogWarning($"[SubQuest] StartSubQuest({subQuestId}) — SubQuestDic에 ID 없음");
+            return;
+        }
 
+        UnityEngine.Debug.Log($"[SubQuest] Start #{subQuestId}");
         SetCurrentSubQuest(subQuestId);
         ProcessUnlocks(subQuestId);
         // NOTE: 여기서 TryAutoComplete()를 호출하지 않음.
@@ -86,6 +91,7 @@ public class SubQuestManager
         if (q.CompleteType != SubQuestCompleteType.BTN_CLICK) return;
         if (q.CompleteParam != btnId) return;
 
+        UnityEngine.Debug.Log($"[SubQuest] CompleteByClick: #{CurrentSubQuestID} on '{btnId}'");
         CompleteSubQuest(CurrentSubQuestID);
     }
 

@@ -83,11 +83,15 @@ public class UI_DialoguePopup : UI_Popup
     /// <summary>
     /// groupKey : DialogueScriptDic의 키 (예: "GuildQuest1Text")
     /// speakerName : 대화창 이름 표시
-    /// portrait : 초상화 (없으면 null)
+    /// portrait : 초상화 스프라이트 오버라이드 (null이면 애니메이터에 맡김)
     /// onFinished : 마지막 대사 후 클릭 시 콜백
     /// randomSingleLine : true면 그룹 내 한 줄만 랜덤 선택 (슬라이드 30: GuildNormalText 용)
+    /// portraitAnimState : CharacterImage Animator 상태 이름.
+    ///   Dialogue.controller에 등록된 값 중 하나:
+    ///     "recep_normal" / "recep_sigh" — 길드 접수원
+    ///     "alch_normal"  / "alch_happy" — 연금공방 아가씨
     /// </summary>
-    public void SetInfo(string groupKey, string speakerName, Sprite portrait = null, Action onFinished = null, bool randomSingleLine = false)
+    public void SetInfo(string groupKey, string speakerName, Sprite portrait = null, Action onFinished = null, bool randomSingleLine = false, string portraitAnimState = "recep_normal")
     {
         if (!Managers.Data.DialogueScriptDic.TryGetValue(groupKey, out var group))
         {
@@ -135,7 +139,8 @@ public class UI_DialoguePopup : UI_Popup
             {
                 // STEP 3: 캐릭터 애니메이터 재생 + Text Show
                 var animator = portraitImage.GetComponent<Animator>();
-                if (animator != null) animator.Play("recep_normal");
+                if (animator != null && !string.IsNullOrEmpty(portraitAnimState))
+                    animator.Play(portraitAnimState, 0, 0f);
                 ShowLine(_lineIndex);
             });
     }

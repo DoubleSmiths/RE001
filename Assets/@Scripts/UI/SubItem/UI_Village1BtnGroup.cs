@@ -689,12 +689,18 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         bool useFullDialogue = groupKey != "AlchemyNormalText";
 
+        // 서브퀘스트 라인(퀘스트 관련)은 "alch_happy", 일상 대사는 "alch_normal"
+        string animState = isSubQuestActive ? "alch_happy" : "alch_normal";
+
+        Debug.Log($"[AlchemyTalk] SubQuestActive={isSubQuestActive} SubQuestID={Managers.SubQuest?.CurrentSubQuestID} subDlg={subDlg} → groupKey={groupKey}");
+
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
             speakerName: "연금공방 아가씨",
             portrait: null,
             onFinished: () => Managers.Quest.CheckButtonClick(BTN_ALCHEMY_TALK),
-            randomSingleLine: !useFullDialogue);
+            randomSingleLine: !useFullDialogue,
+            portraitAnimState: animState);
     }
 
     void OnClickVillage1GuildQuestButton()
@@ -771,8 +777,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void RefreshVillage1AlchemyBtnGroupNotiry()
     {
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
-        bool village1AlchemyTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX || n.BtnID == BTN_ALCHEMY_TALK);
-        bool village1AlchemyTalkVfxSub1Notify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX_SUB1);
+        // 서브퀘스트 notify는 _Sub1 VFX로 (메인퀘스트 notify는 plain VFX)
+        bool village1AlchemyTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX);
+        bool village1AlchemyTalkVfxSub1Notify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX_SUB1 || n.BtnID == BTN_ALCHEMY_TALK);
         bool village1AlchemyCustomOrderButtonNewTxtNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT);
         bool village1AlchemyQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_QUEST_VFX);
         bool alchemyExitQuestVfxNotify = list.Exists(n => n.BtnID == ALCHEMY_EXIT_QUEST_VFX);
