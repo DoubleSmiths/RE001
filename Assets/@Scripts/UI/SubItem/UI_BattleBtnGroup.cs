@@ -1,3 +1,4 @@
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using static Define;
@@ -204,6 +205,23 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
         // TODO : Village1이 아니라 마지막 마을로 해야 됨. 아직은 데이터 없음.
         gameScene?.EnterAreaWithFade(AreaType.Village1);
+
+        // EXPLORE에서 마을로 복귀했음을 GameManager에 반영.
+        // Village1의 TravelArea(TOWN, IsEnterable) 노드를 찾아 last place로 기록한다.
+        UpdateLastTravelAreaToVillage1();
+    }
+
+    void UpdateLastTravelAreaToVillage1()
+    {
+        if (Managers.Data?.TravelAreaDic == null) return;
+
+        var village = Managers.Data.TravelAreaDic.Values
+            .FirstOrDefault(n => n.SceneName == "Village1"
+                                 && n.IsEnterable == 1
+                                 && string.Equals(n.Category, "TOWN",
+                                     System.StringComparison.OrdinalIgnoreCase));
+        if (village != null)
+            Managers.Game.CurrentTravelAreaId = village.DataId;
     }
 
     void ChangeMap()

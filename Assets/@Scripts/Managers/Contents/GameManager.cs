@@ -257,17 +257,21 @@ public class GameManager
         }
     }
 
+    // 런타임 전용 현재 위치(EXPLORE 포함). 0이면 persist된 마지막 마을을 사용.
+    int _runtimeCurrentTravelAreaId;
+
     public int CurrentTravelAreaId
     {
-        get => _gameData.CurrentTravelAreaId;
+        get => _runtimeCurrentTravelAreaId != 0
+            ? _runtimeCurrentTravelAreaId
+            : _gameData.CurrentTravelAreaId;
         set
         {
-            if (_gameData.CurrentTravelAreaId == value)
-                return;
+            _runtimeCurrentTravelAreaId = value;
 
-            _gameData.CurrentTravelAreaId = value;
-
-            // EXPLORE(배틀) 지역은 persist 하지 않음 — 게임 종료 후 재시작 시 마지막 마을로 복귀
+            // EXPLORE(배틀) 지역은 persist 하지 않음 — 게임 종료 후 재시작 시 마지막 마을로 복귀.
+            // 다른 곳의 SaveGame() 호출이 EXPLORE 진입 중에 발생해도 _gameData에는 마지막 TOWN이
+            // 그대로 남도록 _gameData.CurrentTravelAreaId 자체를 EXPLORE 값으로 덮어쓰지 않는다.
             if (Managers.Data != null &&
                 Managers.Data.TravelAreaDic != null &&
                 Managers.Data.TravelAreaDic.TryGetValue(value, out var node) &&
@@ -276,6 +280,10 @@ public class GameManager
                 return;
             }
 
+            if (_gameData.CurrentTravelAreaId == value)
+                return;
+
+            _gameData.CurrentTravelAreaId = value;
             SaveGame();
         }
     }
