@@ -14,6 +14,72 @@ using Sequence = DG.Tweening.Sequence;
 /// </summary>
 public class UI_PotionPopup : UI_Popup
 {
+    #region Enum
+
+    enum Images
+    {
+        PotionBoxGroup,
+        Title,
+        HPPotionSlotFrame,
+        HPPotionSlotBackground,
+        HPPotionSlotPotionImg,
+        Img_Fill_Area_03,
+        HPPotionCooldownFinishAnim,
+        SpeedPotionSlotFrame,
+        SpeedPotionSlotBackground,
+        SpeedPotionSlotPotionImg,
+        Img_Fill_Area_02,
+        SpeedPotionCooldownFinishAnim,
+        Img_AutoBtn_01,
+        Image_1,
+        AutoBtnToggleImg,
+        Background,
+        Img_Fill_Area_01,
+        Handle,
+        AutoPotionGuageLock,
+        Img_AutoPotion_Guage_Lock_02,
+    }
+
+    enum Texts
+    {
+        Txt_Title_02,
+        HPPotionLeftTxt,
+        Txt_Button_02,
+        SpeedPotionLeftTxt,
+        Txt_Button_1_01,
+        Txt_AutoBtn_03,
+        Txt_Slider_01,
+        AutoBtnNewTxt,
+    }
+
+    enum Buttons
+    {
+        PotionPopupBackground,
+        HPPotionSlot,
+        Button,
+        SpeedPotionSlot,
+        Button_1,
+        AutoBtn,
+    }
+
+    enum GameObjects
+    {
+        FIXED,
+        In_Frame,
+        PotionPopupON,
+        PotionLayout,
+        HPPotionCooldownBar,
+        Panel_HP_Potion_Cooldown_Bar_03,
+        SpeedPotionCooldownBar,
+        Panel_Speed_Potion_Cooldown_Ba_02,
+        Slider,
+        Panel_Slider_01,
+        HandleSlideArea,
+    }
+
+    #endregion
+
+
     // ────────────────────────────────────────
     //  Slot 데이터
     // ────────────────────────────────────────
@@ -68,7 +134,7 @@ public class UI_PotionPopup : UI_Popup
 
     // Prefab의 anchoredPosition(0, -85)은 In_Frame 바닥 아래(오프스크린)라 보이지 않음.
     // 기획서 GIF 기준 화면 하단에 떠있는 모양 — In_Frame bottom에서 위로 120 정도.
-    static readonly Vector2 BOX_ORIGIN = new Vector2(0f, 120f);
+    static readonly Vector2 BOX_ORIGIN = new Vector2(0f, 45f);
 
     const string PREF_AUTO_ON   = "PotionPopup.AutoOn";
     const string PREF_HP_RATIO  = "PotionPopup.HpRatio";
@@ -80,75 +146,74 @@ public class UI_PotionPopup : UI_Popup
     {
         if (base.Init() == false) return false;
 
-        _popupRoot = transform.Find("FIXED/In_Frame/PotionPopupON");
-        _bg        = _popupRoot.Find("Potion Popup Background").GetComponent<Image>();
-        _boxGroupRT= _popupRoot.Find("Potion Box Group").GetComponent<RectTransform>();
+        #region Bind
+        BindImage(typeof(Images));
+        BindText(typeof(Texts));
+        BindButton(typeof(Buttons));
+        BindObject(typeof(GameObjects));
+        #endregion
 
-        var titleGO = _boxGroupRT.Find("Title/Text");
-        if (titleGO != null) _titleText = titleGO.GetComponent<TMP_Text>();
+        _popupRoot  = GetObject((int)GameObjects.PotionPopupON).transform;
+        _bg         = GetButton((int)Buttons.PotionPopupBackground).GetComponent<Image>();
+        _boxGroupRT = GetImage((int)Images.PotionBoxGroup).GetComponent<RectTransform>();
+        _titleText  = GetText((int)Texts.Txt_Title_02);
 
-        // 슬롯 바인딩
-        _hpSlot  = BindSlot("HP Potion Slot",   "HP",    namePrefix: "HP");
-        _spdSlot = BindSlot("Speed Potion Slot","Speed", namePrefix: "Speed");
+        _frameRT = _boxGroupRT;
+
+        // 슬롯 바인딩 (HP / Speed)
+        _hpSlot  = BindHpSlot();
+        _spdSlot = BindSpeedSlot();
         _slots.Add(_hpSlot);
         _slots.Add(_spdSlot);
 
         // AutoBtn
-        var autoTf = _boxGroupRT.Find("AutoBtn");
-        if (autoTf != null)
-        {
-            _autoBtn = autoTf.GetComponent<Button>();
-            var toggleImg = autoTf.Find("AutoBtnToggleImg");
-            if (toggleImg != null) _autoToggleAnimator = toggleImg.GetComponent<Animator>();
-        }
-        var autoNewTf = _boxGroupRT.Find("Auto Btn New Txt");
-        if (autoNewTf != null) _autoBtnNewTxt = autoNewTf.gameObject;
+        _autoBtn            = GetButton((int)Buttons.AutoBtn);
+        _autoToggleAnimator = GetImage((int)Images.AutoBtnToggleImg).GetComponent<Animator>();
+        _autoBtnNewTxt      = GetText((int)Texts.AutoBtnNewTxt).gameObject;
 
         // HP Ratio Slider
-        var sliderTf = _boxGroupRT.Find("Slider");
-        if (sliderTf != null)
-        {
-            _hpRatioSlider = sliderTf.GetComponent<Slider>();
-            var txt = sliderTf.Find("Text");
-            if (txt != null) _hpRatioText = txt.GetComponent<TMP_Text>();
-            var lockTf = sliderTf.Find("AutoPotion Guage Lock");
-            if (lockTf != null) _autoGuageLock = lockTf.gameObject;
-        }
+        _hpRatioSlider = GetObject((int)GameObjects.Slider).GetComponent<Slider>();
+        _hpRatioText   = GetText((int)Texts.Txt_Slider_01);
+        _autoGuageLock = GetImage((int)Images.AutoPotionGuageLock).gameObject;
 
         // 이벤트 바인딩
-        if (_bg != null) _bg.gameObject.BindEvent(OnClickClose);
-        if (_autoBtn != null) _autoBtn.onClick.AddListener(OnClickAutoToggle);
+        _bg.gameObject.BindEvent(OnClickClose);
+        _autoBtn.onClick.AddListener(OnClickAutoToggle);
         foreach (var s in _slots)
             if (s != null && s.button != null)
                 s.button.onClick.AddListener(() => OnClickSlot(s));
 
-        if (_hpRatioSlider != null)
-            _hpRatioSlider.onValueChanged.AddListener(OnHpRatioChanged);
+        _hpRatioSlider.onValueChanged.AddListener(OnHpRatioChanged);
 
         return true;
     }
 
-    Slot BindSlot(string slotName, string logicalName, string namePrefix)
+    Slot BindHpSlot()
     {
-        var tf = _boxGroupRT.Find($"Potion Layout/{slotName}");
-        if (tf == null) return null;
-        var s = new Slot { name = logicalName };
-        s.button      = tf.GetComponent<Button>();
-        var img       = tf.Find($"{namePrefix} Potion Slot PotionImg");
-        if (img != null) s.potionImg = img.GetComponent<Image>();
-        var bar       = tf.Find($"{namePrefix} Potion Cooldown Bar");
-        if (bar != null) s.cooldownBar = bar.GetComponent<Slider>();
-        var fin       = tf.Find($"{namePrefix} Potion Cooldown Finish Anim");
-        if (fin != null)
-        {
-            s.finishAnim = fin.gameObject;
-            s.finishAnimImg = fin.GetComponent<Image>();
-        }
-        var left      = tf.Find($"{namePrefix} Potion Left Txt");
-        if (left != null) s.leftTxt = left.GetComponent<TMP_Text>();
+        var s = new Slot { name = "HP" };
+        s.button        = GetButton((int)Buttons.HPPotionSlot);
+        s.potionImg     = GetImage((int)Images.HPPotionSlotPotionImg);
+        s.cooldownBar   = GetObject((int)GameObjects.HPPotionCooldownBar).GetComponent<Slider>();
+        s.finishAnimImg = GetImage((int)Images.HPPotionCooldownFinishAnim);
+        s.finishAnim    = s.finishAnimImg.gameObject;
+        s.leftTxt       = GetText((int)Texts.HPPotionLeftTxt);
 
         // 잠금 오버레이 + 패드락 아이콘 runtime 생성 (prefab에 미포함)
-        CreateLockOverlay(tf, s);
+        CreateLockOverlay(s.button.transform, s);
+        return s;
+    }
+
+    Slot BindSpeedSlot()
+    {
+        var s = new Slot { name = "Speed" };
+        s.button        = GetButton((int)Buttons.SpeedPotionSlot);
+        s.potionImg     = GetImage((int)Images.SpeedPotionSlotPotionImg);
+        s.cooldownBar   = GetObject((int)GameObjects.SpeedPotionCooldownBar).GetComponent<Slider>();
+        s.finishAnimImg = GetImage((int)Images.SpeedPotionCooldownFinishAnim);
+        s.finishAnim    = s.finishAnimImg.gameObject;
+        s.leftTxt       = GetText((int)Texts.SpeedPotionLeftTxt);
+
+        CreateLockOverlay(s.button.transform, s);
         return s;
     }
 

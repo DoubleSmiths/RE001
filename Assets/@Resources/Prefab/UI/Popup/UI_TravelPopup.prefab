@@ -3957,7 +3957,7 @@ GameObject:
   - component: {fileID: 5463980410800659439}
   - component: {fileID: 3861784889445371159}
   m_Layer: 5
-  m_Name: UI_MapSelectPopup
+  m_Name: UI_TravelPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4055,9 +4055,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2926753165854463765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 911a9f5f45f407541bc161b27f01b1f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UI_MapSelectPopup
+  m_Script: {fileID: 11500000, guid: eae19e68f8cdbb147bdde7216b1f056e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UI_TravelPopup
 --- !u!1 &2956574392642584597
 GameObject:
   m_ObjectHideFlags: 0
