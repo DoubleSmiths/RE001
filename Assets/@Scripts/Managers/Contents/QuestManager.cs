@@ -202,6 +202,15 @@ public class QuestManager
                         Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(itemId);
                     }
                     break;
+
+                case QuestUnlockType.ITEM_REMOVE:
+                    if (int.TryParse(unlock.TargetID, out int removeId))
+                    {
+                        int have = Managers.Game.GetItemCount(removeId);
+                        if (have > 0)
+                            Managers.Game.RemoveItem(removeId, have);
+                    }
+                    break;
             }
         }
     }
