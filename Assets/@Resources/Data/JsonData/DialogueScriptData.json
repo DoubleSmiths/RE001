@@ -5,23 +5,23 @@
       "Lines": [
         {
           "TextKey": 1,
-          "Kor": "연금공방입니다!11",
-          "Eng": "You got the materials?"
+          "Kor": "어머~ 또 오셨네요?\n오늘은 뭘 만들어드릴까요?♡",
+          "Eng": "Oh my~ You’re back again?\nWhat shall I make for you today?♡"
         },
         {
           "TextKey": 2,
-          "Kor": "연금공방입니다!1122",
-          "Eng": "Seems like\nyou’ve got nothing better to do."
+          "Kor": "후훗, 물약 필요하신 거죠?\n얼굴에 다 써있는데요~♡",
+          "Eng": "Heehee, you need a potion, don’t you?\nIt’s written all over your face~♡"
         },
         {
           "TextKey": 3,
-          "Kor": "연금공방입니다!1133",
-          "Eng": "If that's all, I have work to do."
+          "Kor": "어머~ 설마 저 보러 오신 건 아니죠?\n기대해버릴 뻔했잖아요♡",
+          "Eng": "Oh my~ You didn’t come just to see me, did you?\nI almost got my hopes up♡"
         },
         {
           "TextKey": 4,
-          "Kor": "연금공방입니다!1144",
-          "Eng": "I heard things have been a bit noisy\\\\naround Breezing Wind Forest lately.\\\\nDo be careful."
+          "Kor": "오늘도 열심히네요~\n제가 도와드릴까요?♡",
+          "Eng": "Working hard again today~\nNeed my help?♡"
         }
       ]
     },
@@ -30,18 +30,48 @@
       "Lines": [
         {
           "TextKey": 1,
-          "Kor": "어서오세요 연금공방입니다.",
-          "Eng": "Welcome to the Adventurer's Guild."
+          "Kor": "어서오세요~ 연금공방이에요♡",
+          "Eng": "Welcome~\nThis is the Alchemy Workshop♡"
         },
         {
           "TextKey": 2,
-          "Kor": "물약 만들어줌!",
-          "Eng": "Our policy requires newcomers\nto verify their status as an adventurer."
+          "Kor": "어머나~ 새로운 모험가님이시네요?\n연금공방에 오신 걸 환영해요~",
+          "Eng": "Oh my~\nYou must be a new adventurer, right?\nWelcome to the Alchemy Workshop~"
         },
         {
           "TextKey": 3,
-          "Kor": "기대하라구!\n히히",
-          "Eng": "Your [<#00B9FF>Adventurer's Certificate</color>, please?"
+          "Kor": "증명서만 주시면~\n제가 얼른 물약 만들어드릴게요♡",
+          "Eng": "Just hand me your certificate~\nI’ll whip up a potion for you in no time♡"
+        },
+        {
+          "TextKey": 4,
+          "Kor": "<color=#00B9FF>[<color=#6F6F6F>1</color>]급 모험가 증명서</color> 확인 완료~!\n잠깐만 기다려주세요~ 후훗",
+          "Eng": "<color=#00B9FF>[Grade <color=#6F6F6F>1</color>] Adventurer Certificate</color> verified~!\nPlease wait just a moment~ heehee"
+        },
+        {
+          "TextKey": 5,
+          "Kor": "아, 제작하는 동안 살짝 설명해드릴게요~\n이 약병은 자가 생성 약병이라서요,\n기초재료만 있으면 내용물이 계속 만들어지는\n아주~ 신기한 병이랍니다♡",
+          "Eng": "While I work, a quick tip~\nThis bottle refills itself with base materials.\nPretty amazing, right?♡"
+        },
+        {
+          "TextKey": 6,
+          "Kor": "<#DE0000>회복물약병</color>과 기초재료는\n<#00B9FF>[<#6F6F6F>1</color>]급 모험가</color>님께 한 번 무료로 드려요~\n대신 새로운 병을 만들거나 재료를 바꾸려면\n직접 재료를 구해오셔야 해요~ 알겠죠?",
+          "Eng": "Free once for <color=#00B9FF>[Grade <color=#6F6F6F>1</color>] Adventurers</color>~\nAfter that, you’ll need to bring your own materials~ okay?♡"
+        },
+        {
+          "TextKey": 7,
+          "Kor": "어머, 지금 들고 계신 [<#2DFF00><b></b>젤리 퐁</color>]이면~\n<#FFFF00>신속물약병</color>도 만들 수 있겠는데요?\n나중에 <#2DFF00>제작의뢰</color> 맡겨주시면\n제가~ 금방 만들어드릴게요♡",
+          "Eng": "Oh my~ With that [<#2DFF00><b></b>Pong's Jelly</color>],\nyou can make a <#FFFF00>Haste Potion</color> too, you know?\nIf you place a crafting request later,\nI’ll make it for you in a flash♡"
+        },
+        {
+          "TextKey": 8,
+          "Kor": "자~ 그럼 지금은 체력회복부터!\n\n…(뚝딱뚝딱)…",
+          "Eng": "Alright~ Let’s start with a recovery potion!\n\n…(clink clink)…"
+        },
+        {
+          "TextKey": 9,
+          "Kor": "짠~ 기다리셨죠?\n첫 <#DE0000>회복물약병</color>이에요♡\n소중히 다뤄주시고~\n틈틈이 챙겨 드시는 거, 잊지 마세요? 후훗",
+          "Eng": "Ta-da~ Thanks for waiting!\nHere’s your very first <#DE0000>Recovery Potion</color>♡\nTake good care of it~\nMake sure to sip it~ okay? heehee"
         }
       ]
     },
