@@ -285,6 +285,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
         Managers.Quest.OnBtnUnlocked   += OnBtnUnlocked;
+        // 서브퀘스트 전이 시 조용히 해금되는 버튼(예: CustomOrderButton) 시각 상태 갱신
+        if (Managers.SubQuest != null)
+            Managers.SubQuest.OnSubQuestChanged += OnSubQuestChanged;
         RefreshNotify();
 
         SetInfo();
@@ -295,6 +298,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             GetImage((int)Images.TravelButtonIcon).gameObject.SetActive(true);
             GetText((int)Texts.TravelButtonText).gameObject.SetActive(true);
         }
+        RefreshCustomOrderButton();
 
         return true;
     }
@@ -306,6 +310,28 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
             Managers.Quest.OnBtnUnlocked   -= OnBtnUnlocked;
         }
+        if (Managers.SubQuest != null)
+            Managers.SubQuest.OnSubQuestChanged -= OnSubQuestChanged;
+    }
+
+    void OnSubQuestChanged(int _)
+    {
+        // 서브퀘스트 전이로 조용히 해금되는 버튼 상태를 즉시 반영
+        RefreshCustomOrderButton();
+    }
+
+    /// <summary>
+    /// CustomOrder(제작의뢰) 버튼은 SubQuest 2 진입 시 조용히 해금됨.
+    /// 해금 전엔 아이콘/텍스트 비활성화(빈 프레임만 보임), 해금 후에는 표시.
+    /// 별도 UnlockButtonAnim 없이 즉시 토글 (user 요청: "해금 애니메이션과 해금 팝업 없음").
+    /// </summary>
+    void RefreshCustomOrderButton()
+    {
+        bool unlocked = Managers.Game.UnlockedBtnIds.Contains(BTN_COMMISION);
+        var icon = GetImage((int)Images.CustomOrderButtonIcon);
+        var text = GetText((int)Texts.CustomOrderButtonText);
+        if (icon != null) icon.gameObject.SetActive(unlocked);
+        if (text != null) text.gameObject.SetActive(unlocked);
     }
 
     void TextOutlines()
@@ -319,12 +345,29 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnBtnUnlocked(string btnId)
     {
+        // CustomOrder 버튼은 silent 해금 — 애니 없이 즉시 아이콘/텍스트만 노출
+        if (btnId == BTN_COMMISION)
+        {
+            RefreshCustomOrderButton();
+            return;
+        }
+
+        // UnlockButtonAnim 대상 ID만 pending 으로 저장.
+        // (서브퀘스트가 발행하는 UNLOCK_POTION_BUTTON 등은 여기서 무시 — UI_GameScene이 처리)
+        if (!IsUnlockAnimTarget(btnId))
+            return;
+
         _pendingUnlockBtnId = btnId;
 
         // 메인 그룹이 이미 화면에 떠있으면(=해금 대상 버튼이 보임) 즉시 연출 시작.
         // Guild/Alchemy/Monastery 하위 그룹에 들어가 있는 상태면 그룹 종료 시점에 재생되도록 대기.
         if (GetObject((int)GameObjects.Village1MainBtnGroup).activeSelf)
             TryPlayPendingUnlock();
+    }
+
+    static bool IsUnlockAnimTarget(string btnId)
+    {
+        return btnId == UNLOCK_TRAVEL_BUTTON || btnId == UNLOCK_ALCHEMY_BUTTON;
     }
 
     void TryPlayPendingUnlock()

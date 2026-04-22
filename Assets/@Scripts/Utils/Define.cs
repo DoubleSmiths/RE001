@@ -379,6 +379,7 @@ public class Define
     // QuestUnlockData.TargetID (UnlockType = UI_BUTTON) 과 1:1 대응
     // UI_GameScene 하단 탭 버튼
     public const string UNLOCK_INVENTORY_BUTTON = "UNLOCK_INVENTORY_BUTTON";
+    public const string UNLOCK_POTION_BUTTON    = "UNLOCK_POTION_BUTTON";
 
     // UI_Village1BtnGroup 이동 버튼
     public const string UNLOCK_TRAVEL_BUTTON    = "UNLOCK_TRAVEL_BUTTON";

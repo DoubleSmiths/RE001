@@ -159,19 +159,30 @@ public class SubQuestManager
             return;
         }
 
-        SetCurrentSubQuest(nextId);
-        ProcessUnlocks(nextId);  // 새 상태 Unlock 처리
+        // 상태 전이 → Unlock 먼저 적용 → 이벤트는 마지막.
+        // (이벤트 리스너가 RefreshCustomOrderButton 같은 UI 갱신을 할 때
+        //  UnlockedBtnIds에 BTN_COMMISION이 이미 반영돼 있도록 순서 보장)
+        UpdateSubQuestIdOnly(nextId);
+        ProcessUnlocks(nextId);
+        OnSubQuestChanged?.Invoke(nextId);
+        OnNotifyChanged?.Invoke();
+
         TryAutoComplete();       // 연쇄 전이 (NONE 상태까지)
     }
 
     void SetCurrentSubQuest(int subQuestId)
     {
+        UpdateSubQuestIdOnly(subQuestId);
+        OnSubQuestChanged?.Invoke(subQuestId);
+        OnNotifyChanged?.Invoke();
+    }
+
+    /// <summary>상태 + 세이브만 갱신, 이벤트는 호출자가 타이밍 제어.</summary>
+    void UpdateSubQuestIdOnly(int subQuestId)
+    {
         CurrentSubQuestID = subQuestId;
         Managers.Game.CurrentSubQuestID = subQuestId;
         Managers.Game.SaveGame();
-
-        OnSubQuestChanged?.Invoke(subQuestId);
-        OnNotifyChanged?.Invoke();
     }
 
     void ProcessUnlocks(int subQuestId)
@@ -184,11 +195,14 @@ public class SubQuestManager
             switch (u.UnlockType)
             {
                 case QuestUnlockType.UI_BUTTON:
-                    // 서브퀘스트는 "조용한" 해금 — 언락 애니메이션 트리거 안 함.
-                    // (메인퀘스트의 UnlockButtonAnim은 _pendingUnlockBtnId 하나만 저장하므로
-                    //  서브퀘스트가 OnBtnUnlocked을 발행하면 메인 해금 애님이 덮어써짐.)
                     if (!Managers.Game.UnlockedBtnIds.Contains(u.TargetID))
+                    {
                         Managers.Game.AddUnlockedBtn(u.TargetID);
+                        // 이벤트는 메인퀘스트와 동일하게 발행. UI 리스너가 애니메이션/팝업을
+                        // 재생할지 여부는 각 리스너에서 btnId를 보고 결정 (서브퀘스트 해금은
+                        // 보통 silent UX — UnlockButtonAnim 트리거하지 않음).
+                        Managers.Quest.RaiseBtnUnlocked(u.TargetID);
+                    }
                     break;
 
                 case QuestUnlockType.ITEM_REWARD:

@@ -595,6 +595,15 @@ public class UI_GameScene : UI_Scene
             RefreshBtmButtonsLockState();
             ShowNewBadge(TabType.Bag);
         }
+        else if (btnId == UNLOCK_POTION_BUTTON)
+        {
+            // 서브퀘스트 완료로 silent 해금 — 해금 애니메이션/팝업 없이 하단 Potion 탭 활성화
+            GetButton((int)Buttons.PotionButton).gameObject.SetActive(true);
+            GetButton((int)Buttons.PotionButton).interactable = true;
+            Managers.Game.UnlockBtmButton(TabType.Potion);
+            RefreshBtmButtonsLockState();
+            ShowNewBadge(TabType.Potion);
+        }
     }
 
     void SetTabInteractable(Buttons btn, bool interactable)
