@@ -757,16 +757,24 @@ namespace Data
     }
 
     // ─── Combo (슬라이드 48) ───────────────────────────────────────────────
+    // VS(COMBOSYSTEM GameObject) 변수 구조와 1:1 대응:
+    //   ComboName KOR/ENG → Localization(NameKey)
+    //   Combo REQ        → HitsRequired (이 rank에 도달하기 위한 최소 누적 타격 수)
+    //   Combo Time       → MaxTimer (이 rank 게이지 최대)
+    //   Combo Time Inc   → HitGain  (타격당 타이머 추가)
+    //   ASBoost          → AtkSpeedBuff (%)
+    //   DMGBoost         → DmgBoostBuff (%)
     [Serializable]
     public class ComboStageData
     {
         public int    Level;           // 0 ~ 6
         public string NameKey;         // "ComboLv0Text" 등 Localization 키
+        public int    HitsRequired;    // 누적 타격 수가 이 값 이상이면 이 Rank에 도달
         public float  MaxTimer;        // 이 단계에서의 게이지 최대값(초)
         public float  HitGain;         // 타격당 추가되는 시간(초)
-        public int    HitsToPromote;   // 현 단계에서 이 만큼 타격 누적 시 상위 단계 승격
         public float  AtkSpeedBuff;    // 공격속도 증가 %
         public float  DmgBoostBuff;    // 피해증폭률 %
+        public string ColorHex;        // Rank별 텍스트/게이지 색 (#RRGGBB or #RRGGBBAA)
     }
 
     [Serializable]

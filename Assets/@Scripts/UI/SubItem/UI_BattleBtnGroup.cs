@@ -65,6 +65,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     enum GameObjects
     {
         TravelButtonQuestVFX,
+        ASBoostEffect,     // VS ASBoostEffect — 공격속도 버프 시 노출
+        DMGBoostEffect,    // VS DMGBoostEffect — 피해증폭 버프 시 노출
     }
 
     #endregion
@@ -138,7 +140,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             _comboGuage.fillAmount = 0f;
         }
 
-        // Lv0~Lv6 Text는 현 단계만 보이도록 캐시
+        // Lv0~Lv6 Text는 현 Rank만 보이도록 캐시
         _comboLvNodes.Clear();
         _comboLvNodes.Add(GetText((int)Texts.ComboLv0Text)?.gameObject);
         _comboLvNodes.Add(GetText((int)Texts.ComboLv1Text)?.gameObject);
@@ -148,12 +150,23 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _comboLvNodes.Add(GetText((int)Texts.ComboLv5Text)?.gameObject);
         _comboLvNodes.Add(GetText((int)Texts.ComboLv6Text)?.gameObject);
 
+        // 초기 상태: 모든 Rank Text / Boost Effect 숨김
+        foreach (var go in _comboLvNodes)
+            if (go != null) go.SetActive(false);
+        GetObject((int)GameObjects.ASBoostEffect)?.SetActive(false);
+        GetObject((int)GameObjects.DMGBoostEffect)?.SetActive(false);
+
         if (Managers.Combo != null)
         {
-            Managers.Combo.OnLevelChanged += OnComboLevelChanged;
-            Managers.Combo.OnTimerChanged += OnComboTimerChanged;
-            OnComboLevelChanged(Managers.Combo.CurrentLevel);
+            Managers.Combo.OnRankChanged        += OnComboRankChanged;
+            Managers.Combo.OnTimerChanged       += OnComboTimerChanged;
+            Managers.Combo.OnComboBreak         += OnComboBreak;
+            Managers.Combo.OnComboChanged       += OnComboValueChanged;
+            Managers.Combo.OnNowValuesChanged   += OnComboNowValuesChanged;
+            Managers.Combo.OnFirstBuffActivated += OnComboFirstBuffActivated;
+            OnComboRankChanged(Managers.Combo.NowRank);
             OnComboTimerChanged(Managers.Combo.NormalizedTimer);
+            OnComboNowValuesChanged(Managers.Combo.NowCombo, Managers.Combo.NowDmg);
         }
     }
 
@@ -161,25 +174,97 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         if (Managers.Combo != null)
         {
-            Managers.Combo.OnLevelChanged -= OnComboLevelChanged;
-            Managers.Combo.OnTimerChanged -= OnComboTimerChanged;
+            Managers.Combo.OnRankChanged        -= OnComboRankChanged;
+            Managers.Combo.OnTimerChanged       -= OnComboTimerChanged;
+            Managers.Combo.OnComboBreak         -= OnComboBreak;
+            Managers.Combo.OnComboChanged       -= OnComboValueChanged;
+            Managers.Combo.OnNowValuesChanged   -= OnComboNowValuesChanged;
+            Managers.Combo.OnFirstBuffActivated -= OnComboFirstBuffActivated;
         }
     }
 
-    void OnComboLevelChanged(int level)
+    void OnComboRankChanged(int rank)
     {
-        // 현 단계 ComboLv#Text만 활성, 나머지 비활성
+        // 현 Rank Text만 활성, 나머지 비활성
         for (int i = 0; i < _comboLvNodes.Count; i++)
         {
             if (_comboLvNodes[i] != null)
-                _comboLvNodes[i].SetActive(i == level);
+                _comboLvNodes[i].SetActive(i == rank);
         }
+
+        // VS ASBoostEffect / DMGBoostEffect 토글 — 현재 stage의 버프가 활성이면 노출
+        var stage = Managers.Combo?.GetCurrentStage();
+        bool asActive  = stage != null && stage.AtkSpeedBuff > 0f;
+        bool dmgActive = stage != null && stage.DmgBoostBuff > 0f;
+        GetObject((int)GameObjects.ASBoostEffect)?.SetActive(asActive);
+        GetObject((int)GameObjects.DMGBoostEffect)?.SetActive(dmgActive);
+
+        // Rank별 Color — ComboText, 현 Rank Text, ComboGuage fill에 일괄 적용
+        Color rankColor = Managers.Combo?.GetCurrentRankColor() ?? Color.white;
+        ApplyRankColor(rankColor, rank);
+    }
+
+    void ApplyRankColor(Color color, int rank)
+    {
+        // ComboText (공세 단계:) 색상도 Rank에 맞춰 바뀜
+        var comboTitle = GetText((int)Texts.ComboText);
+        if (comboTitle != null) comboTitle.color = color;
+
+        // 현 Rank의 Lv#Text 색상
+        if (rank >= 0 && rank < _comboLvNodes.Count && _comboLvNodes[rank] != null)
+        {
+            var tmp = _comboLvNodes[rank].GetComponent<TMP_Text>();
+            if (tmp != null) tmp.color = color;
+        }
+
+        // ComboGuage fill 색상
+        if (_comboGuage != null) _comboGuage.color = color;
     }
 
     void OnComboTimerChanged(float normalized)
     {
         if (_comboGuage != null)
             _comboGuage.fillAmount = normalized;
+    }
+
+    void OnComboValueChanged(int combo)
+    {
+        // 원본 int combo 값은 직접 표시하지 않음 (Smooth 보간된 NowCombo 사용)
+    }
+
+    void OnComboNowValuesChanged(float nowCombo, float nowDmg)
+    {
+        // BattleLogText 등에 Smooth 보간 표시 — 현재 prefab 구조상 직접 반영 대상이 제한적.
+        // 총 피해량(DmgDealtText 별도 label)을 이 값으로 갱신하는 지점.
+        // TODO: 슬라이드 50에서 DmgDealtText / 전투시간 등 별도 로직으로 확장 예정.
+        // 지금은 진단 로그 수준만 유지. (필요 시 여기서 TMP_Text에 nowCombo/nowDmg 표시)
+    }
+
+    void OnComboFirstBuffActivated(ComboManager.BuffKind buff)
+    {
+        // 슬라이드 48 스펙: 처음 특정 긍정 효과 받을 시 Quest_Done_Effect 파티클 생성
+        var fx = Managers.Resource.Load<GameObject>("Quest_Done_Effect");
+        if (fx == null) return;
+
+        GameObject target = buff == ComboManager.BuffKind.AttackSpeed
+            ? GetObject((int)GameObjects.ASBoostEffect)
+            : GetObject((int)GameObjects.DMGBoostEffect);
+        Transform parent = target != null ? target.transform : transform;
+
+        var go = GameObject.Instantiate(fx, parent);
+        go.transform.localPosition = Vector3.zero;
+        GameObject.Destroy(go, 3f);
+    }
+
+    void OnComboBreak()
+    {
+        // VS 'combobreak' — 모든 Rank Text / Boost Effect 즉시 숨김
+        foreach (var go in _comboLvNodes)
+            if (go != null) go.SetActive(false);
+        GetObject((int)GameObjects.ASBoostEffect)?.SetActive(false);
+        GetObject((int)GameObjects.DMGBoostEffect)?.SetActive(false);
+        if (_comboGuage != null)
+            _comboGuage.fillAmount = 0f;
     }
 
     // ────────────────────────────────────────

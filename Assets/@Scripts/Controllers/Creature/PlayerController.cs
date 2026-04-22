@@ -7,7 +7,7 @@ public class PlayerController : CreatureController
     public event System.Action<float, float> OnHpChanged;   // current, max
     public event System.Action<float, float> OnExpChanged;  // current, required
     public event System.Action<int>          OnLevelUp;
-    public event System.Action               OnHitLanded;   // 타격 성공 시 (miss 제외) — 슬라이드 48
+    public event System.Action<float>        OnHitLanded;   // 타격 성공 시 데미지값 전달 (miss 제외) — 슬라이드 48
 
     float _expRequired = 100f;
     bool _inBattle;
@@ -83,8 +83,8 @@ public class PlayerController : CreatureController
         float finalAtk = FinalPhysicalAtk * (isCrit ? CritDamage / 100f : 1f) * dmgBoostMul;
         nearest.OnDamaged(finalAtk);
 
-        // 타격(명중) 성공 → 콤보 누적
-        OnHitLanded?.Invoke();
+        // 타격(명중) 성공 → 콤보 누적 + 데미지 전달
+        OnHitLanded?.Invoke(finalAtk);
 
         StartCoroutine(CoResetStateAfterAttack());
     }
