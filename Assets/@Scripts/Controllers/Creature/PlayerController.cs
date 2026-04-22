@@ -7,6 +7,7 @@ public class PlayerController : CreatureController
     public event System.Action<float, float> OnHpChanged;   // current, max
     public event System.Action<float, float> OnExpChanged;  // current, required
     public event System.Action<int>          OnLevelUp;
+    public event System.Action               OnHitLanded;   // 타격 성공 시 (miss 제외) — 슬라이드 48
 
     float _expRequired = 100f;
     bool _inBattle;
@@ -59,7 +60,9 @@ public class PlayerController : CreatureController
     void AutoAttack()
     {
         if (State == Define.State.Attack) return;
-        if (Time.time < _lastAtkTime + AtkCooldown) return;
+        // 콤보 공격속도 버프 적용: AtkSpeedBuff(%) 만큼 쿨타임 단축
+        float effectiveCooldown = AtkCooldown / (1f + ComboAtkSpeedBonus() / 100f);
+        if (Time.time < _lastAtkTime + effectiveCooldown) return;
 
         MonsterController nearest = FindNearestMonster();
         if (nearest == null) return;
@@ -74,12 +77,20 @@ public class PlayerController : CreatureController
 
         State = Define.State.Attack;
 
-        // 치명타 판정
+        // 치명타 + 콤보 피해증폭 적용
         bool isCrit = UnityEngine.Random.value < Mathf.Min(CritRate, 100f) / 100f;
-        float finalAtk = FinalPhysicalAtk * (isCrit ? CritDamage / 100f : 1f);
+        float dmgBoostMul = 1f + ComboDmgBoostBonus() / 100f;
+        float finalAtk = FinalPhysicalAtk * (isCrit ? CritDamage / 100f : 1f) * dmgBoostMul;
         nearest.OnDamaged(finalAtk);
+
+        // 타격(명중) 성공 → 콤보 누적
+        OnHitLanded?.Invoke();
+
         StartCoroutine(CoResetStateAfterAttack());
     }
+
+    float ComboAtkSpeedBonus() => Managers.Combo?.AtkSpeedBonus ?? 0f;
+    float ComboDmgBoostBonus() => Managers.Combo?.DmgBoostBonus ?? 0f;
 
     MonsterController FindNearestMonster()
     {

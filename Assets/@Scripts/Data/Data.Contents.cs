@@ -756,5 +756,31 @@ namespace Data
         }
     }
 
+    // ─── Combo (슬라이드 48) ───────────────────────────────────────────────
+    [Serializable]
+    public class ComboStageData
+    {
+        public int    Level;           // 0 ~ 6
+        public string NameKey;         // "ComboLv0Text" 등 Localization 키
+        public float  MaxTimer;        // 이 단계에서의 게이지 최대값(초)
+        public float  HitGain;         // 타격당 추가되는 시간(초)
+        public int    HitsToPromote;   // 현 단계에서 이 만큼 타격 누적 시 상위 단계 승격
+        public float  AtkSpeedBuff;    // 공격속도 증가 %
+        public float  DmgBoostBuff;    // 피해증폭률 %
+    }
+
+    [Serializable]
+    public class ComboStageDataLoader : ILoader<int, ComboStageData>
+    {
+        public List<ComboStageData> stages = new List<ComboStageData>();
+        public Dictionary<int, ComboStageData> MakeDict()
+        {
+            var dict = new Dictionary<int, ComboStageData>();
+            foreach (var s in stages)
+                dict[s.Level] = s;
+            return dict;
+        }
+    }
+
     #endregion
 }

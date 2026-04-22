@@ -11,6 +11,7 @@ public class Managers : MonoBehaviour
     MinMonManager   _minMon   = new MinMonManager();
     QuestManager    _quest    = new QuestManager();
     SubQuestManager _subQuest = new SubQuestManager();
+    ComboManager    _combo    = new ComboManager();
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -18,8 +19,15 @@ public class Managers : MonoBehaviour
     public static MinMonManager   MinMon   { get { return Instance?._minMon; } }
     public static QuestManager    Quest    { get { return Instance?._quest; } }
     public static SubQuestManager SubQuest { get { return Instance?._subQuest; } }
+    public static ComboManager    Combo    { get { return Instance?._combo; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
+
+    void Update()
+    {
+        // 콤보 타이머 감소 — Time.timeScale 영향 받음 (슬로우 모션 중엔 느려짐)
+        _combo?.Tick(Time.deltaTime);
+    }
 
     #region Core
     DataManager     _data     = new DataManager();

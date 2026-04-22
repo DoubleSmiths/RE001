@@ -29,6 +29,8 @@ public class GameScene : BaseScene
                 _game = Managers.Game;
                 _player = FindAnyObjectByType<PlayerController>();
                 Managers.Game.Player = _player;
+                Managers.Combo.Init();              // 콤보 매니저 초기화
+                Managers.Combo.AttachPlayer(_player); // Player.OnHitLanded 구독
                 if (_player != null)
                     _ui.BindPlayer(_player);
                 //StartAnimation();

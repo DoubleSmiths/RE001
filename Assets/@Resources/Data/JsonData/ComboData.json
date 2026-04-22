@@ -1,0 +1,11 @@
+{
+  "stages": [
+    { "Level": 0, "NameKey": "ComboLv0Text", "MaxTimer": 3.0, "HitGain": 0.8, "HitsToPromote": 3, "AtkSpeedBuff": 0,  "DmgBoostBuff": 0  },
+    { "Level": 1, "NameKey": "ComboLv1Text", "MaxTimer": 3.5, "HitGain": 0.7, "HitsToPromote": 5, "AtkSpeedBuff": 5,  "DmgBoostBuff": 5  },
+    { "Level": 2, "NameKey": "ComboLv2Text", "MaxTimer": 4.0, "HitGain": 0.6, "HitsToPromote": 7, "AtkSpeedBuff": 10, "DmgBoostBuff": 10 },
+    { "Level": 3, "NameKey": "ComboLv3Text", "MaxTimer": 4.5, "HitGain": 0.5, "HitsToPromote": 10, "AtkSpeedBuff": 15, "DmgBoostBuff": 15 },
+    { "Level": 4, "NameKey": "ComboLv4Text", "MaxTimer": 5.0, "HitGain": 0.45, "HitsToPromote": 13, "AtkSpeedBuff": 20, "DmgBoostBuff": 20 },
+    { "Level": 5, "NameKey": "ComboLv5Text", "MaxTimer": 5.5, "HitGain": 0.4, "HitsToPromote": 15, "AtkSpeedBuff": 25, "DmgBoostBuff": 25 },
+    { "Level": 6, "NameKey": "ComboLv6Text", "MaxTimer": 6.0, "HitGain": 0.35, "HitsToPromote": 0, "AtkSpeedBuff": 30, "DmgBoostBuff": 30 }
+  ]
+}

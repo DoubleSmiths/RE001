@@ -1,30 +1,55 @@
+using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static Define;
 
+/// <summary>
+/// 전투 UI (슬라이드 47~). 기존 Village1 레이아웃 잔재를 정리하고
+/// 슬라이드 47 스펙의 Texts/리소스 배치를 기준으로 재구성.
+///
+/// 슬라이드 47 범위:
+///   - Texts enum 정의 (콤보 8종 + 전투 스탯 7종 + 버튼 2종)
+///   - 전 Text에 RiaSans-Bold 폰트 일괄 적용 (FontType.Battle)
+///   - 콤보 Text: 색 #FF001F, Outline #000000 (0.6, -0.6)
+///   - Localization 자동 적용
+/// </summary>
 public class UI_BattleBtnGroup : UI_AreaBtnGroup
 {
     #region Enum
 
     enum Images
     {
-        GuildButtonIcon,
-        AlchemyButtonIcon,
-        MonasteryButtonIcon,
-        TravelButtonIcon,
+        ComboGuage,             // 콤보 게이지 fill 이미지 (Image.Type=Filled, Horizontal)
+        TravelButtonQuestVFX_Img, // prefab에 TravelButtonQuestVFX GameObject로 존재
     }
 
     enum Texts
     {
-        Village1NameText,
-        GuildButtonText,
-        AlchemyButtonText,
-        AlchemyButtonNewTxt,
-        MonasteryButtonText,
-        MonasteryButtonNewTxt,
-        TravelButtonText,
-        TravelButtonNewTxt,
+        // 슬라이드 48 콤보 시스템 Text (슬라이드 47에서 필드 정의)
+        ComboText,
+        ComboLv0Text,
+        ComboLv1Text,
+        ComboLv2Text,
+        ComboLv3Text,
+        ComboLv4Text,
+        ComboLv5Text,
+        ComboLv6Text,
+
+        // 전투 기록 / 스탯 표기
+        BattleLogText,
+        DmgBoostText,
+        AttackSpeedText,
+        BattleTimeText,
+        DmgDealtText,
+        DmgTakenText,
+        HPRestoredText,
+
+        // 화면 하단 버튼
+        TravelBtnText,
+        ReturnText,
     }
 
     enum Buttons
@@ -39,44 +64,50 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     enum GameObjects
     {
-        Village1MainBtnGroup,
-        Village1GuildVFX,
-        Village1AlchemyVFX_Sub1,
-        MonasteryVFX_Sub1,
         TravelButtonQuestVFX,
     }
 
     #endregion
 
+    // 콤보 Text 스타일 — 슬라이드 47 스펙
+    static readonly Color COMBO_COLOR    = new Color32(0xFF, 0x00, 0x1F, 0xFF); // #FF001F
+    static readonly Color COMBO_OUTLINE  = new Color32(0x00, 0x00, 0x00, 0xFF); // #000000
+    const float COMBO_OUTLINE_X =  0.6f;
+    const float COMBO_OUTLINE_Y = -0.6f;
+
     Coroutine _battleCoroutine;
 
-    private void Awake()
-    {
-        Init();
-    }
+    void Awake() => Init();
 
     public override bool Init()
     {
         if (!base.Init()) return false;
 
+        BindImage(typeof(Images));
+        BindText(typeof(Texts));
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
-        GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
+        ApplyBattleTexts();
+        BindComboUI();
 
-        Managers.Quest.OnNotifyChanged += RefreshNotify;
+        GetButton((int)Buttons.TravelButton)?.gameObject.BindEvent(OnClickTravel);
+
+        if (Managers.Quest != null)
+            Managers.Quest.OnNotifyChanged += RefreshNotify;
         RefreshNotify();
 
-        //Set();
         ChangeMap();
-        Managers.Game.Player.State = State.Moving;
-        Managers.Game.Player.StartBattle(); // _inBattle = true (PlayEnterAnimation 미호출 환경 대비)
+        if (Managers.Game.Player != null)
+        {
+            Managers.Game.Player.State = State.Moving;
+            Managers.Game.Player.StartBattle();
+        }
 
         for (int i = 0; i < 6; i++)
         {
-            //if (i == (int)Buttons.TravelButton) continue;
-            var tempBtn = GetButton(i).gameObject;
-            tempBtn.SetActive(false);
+            var tempBtn = GetButton(i)?.gameObject;
+            if (tempBtn != null) tempBtn.SetActive(false);
         }
 
         return true;
@@ -87,48 +118,119 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         EndBattle();
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
+        UnbindComboUI();
     }
 
-    public void Set()
+    // ────────────────────────────────────────
+    //  슬라이드 48: 콤보 UI 바인딩
+    // ────────────────────────────────────────
+
+    Image _comboGuage;
+    readonly List<GameObject> _comboLvNodes = new List<GameObject>();
+
+    void BindComboUI()
     {
-        Sequence seq = DOTween.Sequence();
-        seq.AppendInterval(1.0f);
-        seq.AppendCallback(() =>
+        _comboGuage = GetImage((int)Images.ComboGuage);
+        if (_comboGuage != null)
         {
-            ChangeMap();
-            Managers.Game.Player.State = State.Moving;
-        });
+            _comboGuage.type = Image.Type.Filled;
+            _comboGuage.fillMethod = Image.FillMethod.Horizontal;
+            _comboGuage.fillAmount = 0f;
+        }
+
+        // Lv0~Lv6 Text는 현 단계만 보이도록 캐시
+        _comboLvNodes.Clear();
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv0Text)?.gameObject);
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv1Text)?.gameObject);
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv2Text)?.gameObject);
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv3Text)?.gameObject);
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv4Text)?.gameObject);
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv5Text)?.gameObject);
+        _comboLvNodes.Add(GetText((int)Texts.ComboLv6Text)?.gameObject);
+
+        if (Managers.Combo != null)
+        {
+            Managers.Combo.OnLevelChanged += OnComboLevelChanged;
+            Managers.Combo.OnTimerChanged += OnComboTimerChanged;
+            OnComboLevelChanged(Managers.Combo.CurrentLevel);
+            OnComboTimerChanged(Managers.Combo.NormalizedTimer);
+        }
     }
+
+    void UnbindComboUI()
+    {
+        if (Managers.Combo != null)
+        {
+            Managers.Combo.OnLevelChanged -= OnComboLevelChanged;
+            Managers.Combo.OnTimerChanged -= OnComboTimerChanged;
+        }
+    }
+
+    void OnComboLevelChanged(int level)
+    {
+        // 현 단계 ComboLv#Text만 활성, 나머지 비활성
+        for (int i = 0; i < _comboLvNodes.Count; i++)
+        {
+            if (_comboLvNodes[i] != null)
+                _comboLvNodes[i].SetActive(i == level);
+        }
+    }
+
+    void OnComboTimerChanged(float normalized)
+    {
+        if (_comboGuage != null)
+            _comboGuage.fillAmount = normalized;
+    }
+
+    // ────────────────────────────────────────
+    //  슬라이드 47: Text 필드 일괄 스타일링
+    // ────────────────────────────────────────
+
+    /// <summary>모든 전투 Text에 RiaSans-Bold 폰트 적용 + Localization 값 채우기.
+    /// 콤보 Text는 #FF001F 색 + 검은 Outline 추가 적용.</summary>
+    void ApplyBattleTexts()
+    {
+        // 기본 localization 매핑 (TextKey 문자열이 enum 이름과 동일하므로 직접 재사용)
+        for (int i = 0; i < System.Enum.GetValues(typeof(Texts)).Length; i++)
+        {
+            var tmp = GetText(i);
+            if (tmp == null) continue;
+
+            // 폰트: 전투 UI 전용 RiaSans-Bold
+            ApplyFont(tmp, FontType.Battle);
+
+            // Localization 본문
+            string key = System.Enum.GetName(typeof(Texts), i);
+            tmp.text = Util.Localize(key);
+        }
+
+        // 콤보 계열(8종): 색상 + Outline 스타일
+        for (int i = (int)Texts.ComboText; i <= (int)Texts.ComboLv6Text; i++)
+        {
+            var tmp = GetText(i);
+            if (tmp == null) continue;
+            tmp.color = COMBO_COLOR;
+            Util.SetTMPUnderlay(tmp, COMBO_OUTLINE, COMBO_OUTLINE_X, COMBO_OUTLINE_Y);
+        }
+    }
+
+    // ────────────────────────────────────────
+    //  배틀 루프 / Travel 복귀
+    // ────────────────────────────────────────
 
     public override void PlayEnterAnimation()
     {
-        // TODO : DOTweenAnimation이랑 같이 쓰는게 맞는지 모르겠음. DOTweenAnimation은 애니메이션이 끝나면 자동으로 꺼지는게 아니라서, 애니메이션이 끝난 후에 버튼을 활성화하는 방식으로 해야할듯.
-        // TODO : DOTweenAnimation가 있는 자식들을 다 가져오기
-
-        //var btn = GetButton((int)Buttons.TravelButton).gameObject;
-        //btn.SetActive(false);
-
-        // Toast Test
-        Managers.UI.ShowToast("산들바람 숲(잎구)");
+        Managers.UI.ShowToast("산들바람 숲(입구)");
 
         Sequence seq = DOTween.Sequence();
-
-        // TODO : 버튼들이 퍼지는 애니메이션 추가, 아래가 그거긴함. 버튼에 이미지가 없던데 뭐가 들어가는 지 모름.
         for (int i = 0; i < 6; i++)
         {
-            //if (i == (int)Buttons.TravelButton) continue;
-            var tempBtn = GetButton(i).gameObject;
-
+            var tempBtn = GetButton(i)?.gameObject;
+            if (tempBtn == null) continue;
             seq.AppendCallback(() => tempBtn.SetActive(true));
             seq.AppendInterval(0.1f);
             seq.AppendCallback(() => tempBtn.GetComponent<DOTweenAnimation>()?.DORestart());
         }
-        //seq.AppendInterval(0.2f);
-        //seq.AppendCallback(() => btn.SetActive(true));
-        //seq.AppendCallback(() => btn.GetComponent<DOTweenAnimation>()?.DORestart());
-        // TODO : 던전 이름 나오는 애니메이션 추가
-
-        // 캐릭터 애니메이션은 여기서 달리기로 바꿔야하나?
 
         StartBattle();
     }
@@ -144,13 +246,12 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     System.Collections.IEnumerator CoBattleLoop()
     {
-        PlayerController player = Managers.Game.Player;
         Transform monsterRoot = Managers.Object.MonsterTransform;
         Vector3 spawnPos = new Vector3(5, 2, 0);
 
         while (true)
         {
-            MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos); // TODO : 일단 2001로 고정인데, 나중에 데이터로 관리해야할듯
+            MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos); // TODO : 몬스터 테이블 연동
             if (mc != null)
             {
                 mc.OnEngaged += () =>
@@ -173,13 +274,14 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             _battleCoroutine = null;
         }
 
-        // 남아있는 몬스터 전부 제거
-        Transform monsterRoot = Managers.Object.MonsterTransform;
-        for (int i = monsterRoot.childCount - 1; i >= 0; i--)
-            Managers.Resource.Destroy(monsterRoot.GetChild(i).gameObject);
+        Transform monsterRoot = Managers.Object?.MonsterTransform;
+        if (monsterRoot != null)
+        {
+            for (int i = monsterRoot.childCount - 1; i >= 0; i--)
+                Managers.Resource.Destroy(monsterRoot.GetChild(i).gameObject);
+        }
 
-        // 남아있는 몬스터 HP바 전부 제거
-        if (Managers.UI.SceneUI != null)
+        if (Managers.UI?.SceneUI != null)
         {
             foreach (var bar in Managers.UI.SceneUI.GetComponentsInChildren<UI_MonsterHPBar>(true))
                 Managers.Resource.Destroy(bar.gameObject);
@@ -197,17 +299,12 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         EndBattle();
 
-        // Battle BG 제거
         var ch1 = GameObject.Find("CH1BG") ?? GameObject.Find("CH1BG(Clone)");
-        if (ch1 != null)
-            Destroy(ch1);
+        if (ch1 != null) Destroy(ch1);
 
         UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
-        // TODO : Village1이 아니라 마지막 마을로 해야 됨. 아직은 데이터 없음.
         gameScene?.EnterAreaWithFade(AreaType.Village1);
 
-        // EXPLORE에서 마을로 복귀했음을 GameManager에 반영.
-        // Village1의 TravelArea(TOWN, IsEnterable) 노드를 찾아 last place로 기록한다.
         UpdateLastTravelAreaToVillage1();
     }
 
@@ -231,11 +328,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (legacyBG != null)
         {
             var sr = legacyBG.GetComponent<SpriteRenderer>();
-            if (sr != null)
-                sr.color = new Color(1, 1, 1, 0);
+            if (sr != null) sr.color = new Color(1, 1, 1, 0);
         }
 
-        // Village1 BG prefab 인스턴스 정리 (마을 배경이 Battle 배경 뒤로 비치는 것 방지)
         foreach (var key in new[] { "Village1_Main_BG", "Village1_Guild_BG", "Village1_Alchemy_BG" })
         {
             foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
@@ -245,9 +340,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             }
         }
 
-        Managers.Resource.Instantiate("CH1BG"); // TODO : 맵마다 배경이 다르니까 데이터로 관리해야할듯
+        Managers.Resource.Instantiate("CH1BG");
 
-        // 바닥은 마을 바닥(Village1_Main_Ground)을 재사용 — Village1_Main_BG prefab 스폰 후 배경 이미지만 비활성
         var villageBG = Managers.Resource.Instantiate("Village1_Main_BG");
         if (villageBG != null)
         {

@@ -36,6 +36,7 @@ public class DataManager
     public Dictionary<int, SubQuestData>                SubQuestDic         { get; private set; } = new Dictionary<int, SubQuestData>();
     public Dictionary<int, List<SubQuestNotifyData>>    SubQuestNotifyDic   { get; private set; } = new Dictionary<int, List<SubQuestNotifyData>>();
     public Dictionary<int, List<SubQuestUnlockData>>    SubQuestUnlockDic   { get; private set; } = new Dictionary<int, List<SubQuestUnlockData>>();
+    public Dictionary<int, ComboStageData>              ComboStageDic       { get; private set; } = new Dictionary<int, ComboStageData>();
 
     public void Init()
     {
@@ -65,11 +66,17 @@ public class DataManager
         SubQuestDic       = LoadJson<SubQuestDataLoader,   int, SubQuestData>             ("SubQuestMainData").MakeDict();
         SubQuestNotifyDic = LoadJson<SubQuestNotifyLoader, int, List<SubQuestNotifyData>> ("SubQuestNotifyData").MakeDict();
         SubQuestUnlockDic = LoadJson<SubQuestUnlockLoader, int, List<SubQuestUnlockData>> ("SubQuestUnlockData").MakeDict();
+        ComboStageDic     = LoadJson<ComboStageDataLoader, int, ComboStageData>          ("ComboData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
     {
         TextAsset textAsset = Managers.Resource.Load<TextAsset>($"{path}");
+        if (textAsset == null)
+        {
+            UnityEngine.Debug.LogError($"[DataManager] JSON load 실패: '{path}' — Addressable PreLoad 그룹에 등록돼있는지 확인 필요");
+            return System.Activator.CreateInstance<Loader>();
+        }
         return JsonConvert.DeserializeObject<Loader>(textAsset.text);
     }
 }

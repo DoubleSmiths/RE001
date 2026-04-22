@@ -27,8 +27,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3ab1d54d96dc3054989991d9afc560fb
+  - m_GUID: 3621ea03760b9914d8e2893f83dc2281
     m_Address: UI_BattleBtnGroup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ab1d54d96dc3054989991d9afc560fb
+    m_Address: UI_BattleBtnGroup_Legecy
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

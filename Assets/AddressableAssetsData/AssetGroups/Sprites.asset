@@ -249,12 +249,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5a5eea5fb4f08f74dbd082b0915986a8
-    m_Address: Icon_Sword_2.sprite
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 607735be4ad423944beaab6b9255758e
     m_Address: alchemist_big_smile.sprite
     m_ReadOnly: 0
@@ -635,6 +629,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e29648a7f4fdace46bb0cbc3d50c912c
     m_Address: alchemist_normal.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e51f15387ef5e04448430c3f08fae7c9
+    m_Address: ComboGuage.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

@@ -115,6 +115,7 @@ public class Define
     {
         UI,        // 언어에 따라 폰트 변경 (KR: DOSSaemmul / EN: PF_Stardust)
         Dialogue,  // 항상 고정 (Cafe24 Klassic)
+        Battle,    // 전투 UI 고정 (RiaSans-Bold) — 슬라이드 47
     }
 
     public enum Sound
