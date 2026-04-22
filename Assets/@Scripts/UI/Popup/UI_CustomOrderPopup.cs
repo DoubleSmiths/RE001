@@ -166,6 +166,7 @@ public class UI_CustomOrderPopup : UI_Popup
         // 버튼 / 프레임 색 / 잠금 상태 초기화
         ResetBottomButtons();
         InitLockStates();
+        RefreshPotionIcons();
         _currentGroup = -1;
 
         var frameRT = GetObject((int)GameObjects.CustomOrderPopupFrame).GetComponent<RectTransform>();
@@ -329,6 +330,48 @@ public class UI_CustomOrderPopup : UI_Popup
     void OpenPotionDetail(int dataId)
     {
         Managers.UI.ShowPopupUI<UI_PotionDetailPopup>().SetInfo(dataId, fromCustomOrder: true);
+    }
+
+    /// <summary>
+    /// HP/SPD 물약 아이콘(Sprite)과 등급 Glow 색을 현재 물약 데이터 기준으로 갱신.
+    /// (해금되지 않은 SPD/Luck은 이후 ApplyLockVisual에서 잠금 오버레이가 덮음)
+    /// </summary>
+    void RefreshPotionIcons()
+    {
+        RefreshHPPotionIcon();
+        RefreshSpeedPotionIcon();
+    }
+
+    void RefreshHPPotionIcon()
+    {
+        int dataId = Managers.Game.CurrentHPPotionDataId;
+        if (!Managers.Data.HPPotionDic.TryGetValue(dataId, out var data)) return;
+
+        var img = GetImage((int)Images.CustomOrderHPPotionImg);
+        if (img != null)
+        {
+            var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
+            if (sp != null) img.sprite = sp;
+        }
+
+        var glow = GetImage((int)Images.Img_GlowMask_2_02);
+        if (glow != null) glow.color = Util.GetGradeColor(data.Grade);
+    }
+
+    void RefreshSpeedPotionIcon()
+    {
+        int dataId = Managers.Game.CurrentSpeedPotionDataId;
+        if (!Managers.Data.SpeedPotionDic.TryGetValue(dataId, out var data)) return;
+
+        var img = GetImage((int)Images.CustomOrderSPDPotionImg);
+        if (img != null)
+        {
+            var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
+            if (sp != null) img.sprite = sp;
+        }
+
+        var glow = GetImage((int)Images.Img_GlowMask_3_03);
+        if (glow != null) glow.color = Util.GetGradeColor(data.Grade);
     }
 
     void OpenSkillDetail(int skillId)

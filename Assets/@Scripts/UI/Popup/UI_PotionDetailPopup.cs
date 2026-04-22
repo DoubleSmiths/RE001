@@ -498,6 +498,9 @@ public class UI_PotionDetailPopup : UI_Popup
         var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
         if (sp != null) _potionImg.sprite = sp;
 
+        // 등급 색상 반영 (Glow, 물약 이미지 옆 Rank 프레임 등)
+        ApplyGradeColor(data.Grade);
+
         var nextData = GetNextView(_currentDataId);
 
         // 필요 재료는 다음 단계 업그레이드 기준으로 표시
@@ -521,6 +524,14 @@ public class UI_PotionDetailPopup : UI_Popup
             _cantCraftBtn?.SetActive(!canCraft);
             _nextLvlBtn?.SetActive(true);
         }
+    }
+
+    /// <summary>등급 Glow 색상 적용. Img_GlowMask_1_07 등 현재 등급을 표현하는 이미지에 grade별 색상 세팅.</summary>
+    void ApplyGradeColor(EquipGrade grade)
+    {
+        Color c = Util.GetGradeColor(grade);
+        var glow = GetImage((int)Images.Img_GlowMask_1_07);
+        if (glow != null) glow.color = c;
     }
 
     /// <summary>Gauge 세그먼트 표시.
@@ -767,6 +778,9 @@ public class UI_PotionDetailPopup : UI_Popup
             _potionImgRT.localScale = Vector3.one * 3f;
             _potionImgRT.DOScale(1f, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
         }
+
+        // 등급 변경이면 Glow 색도 다음 등급 색으로 갱신
+        ApplyGradeColor(next.Grade);
 
         string sec = Localize(LocalizeKey.SecondsUnitText);
 

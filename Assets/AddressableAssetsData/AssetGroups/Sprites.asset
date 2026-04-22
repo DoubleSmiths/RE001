@@ -15,8 +15,32 @@ MonoBehaviour:
   m_GroupName: Sprites
   m_GUID: 31f3d87ba38907e46ac5702fde4203d2
   m_SerializeEntries:
+  - m_GUID: 0028c9e198b99d6408dd3f159f7571b9
+    m_Address: Sword 02.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 004c31dcdf7b52a4081492f1e180403a
     m_Address: alchemist_smile.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 037e904297eb4b44f82cfbacf2122467
+    m_Address: Sword 32 (5).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0427fcec52d193041a0877cb826e843e
+    m_Address: Sword03.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0943612c897f31a42a59c5d56596860c
+    m_Address: Item_x2_Chance Icon.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -33,8 +57,62 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0b729767cc596fd4d8613173c53197e6
+    m_Address: PlayerSkill_Smash.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 139cc5140c729c7438dc7ffeea398c18
+    m_Address: Speed_Potion1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 13a717151cd2fd146847dbf3c3f69244
+    m_Address: Scroll_1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 17985cb8cfcb3594397b08ecdba2eac8
+    m_Address: Torso 32 (17).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c431fe84bd3649429b2f4e5837129dd
+    m_Address: home_menu_lock.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e43b327f358f60429461b5fb43603eb
+    m_Address: Torso 32 (27).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e9f409f8f36ef740925b825cdd1909d
+    m_Address: Icon_Equip_LackDuri1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 20563f006e588ab4584edce03619b6af
     m_Address: Background_Village1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2190680176063be4ea2de6a5fff77192
+    m_Address: Luck_Potion1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21c7d1baefa95044683da45b9734acec
+    m_Address: Scroll_4.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -51,8 +129,38 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25837f86c1fe7f64ba0f6aa3f514518d
+    m_Address: Icon_Master_Handler03.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2888125d56f129041a3e1b8c3a88a935
     m_Address: receptionist_normal.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a10ae084d0c05e4b89f4407ee766cdb
+    m_Address: Icon_HelpBtn.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2eca646427232a84d98d94fd7208b49d
+    m_Address: Equipment_Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32595f7867305dd49b330824c92db866
+    m_Address: Speed_Potion4.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 367f612504ed4fc4fb60fd90f38d5c1f
+    m_Address: Icon_Inven.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -69,8 +177,38 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 399e92d6529c7e3438cfb873f40c6ad1
+    m_Address: Vambrace 32 (52).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3b9c4c5e2279d724b9269ddbb789ca52
     m_Address: Pass4.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c0ef423ab89507408a5ed0f37aa77ee
+    m_Address: Pong's Adaptability Skill Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41f373b283b12a7489b5d009907b8f86
+    m_Address: MOR.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 447b4375e87610b4bb6d20bb40eee3b4
+    m_Address: arrow_side.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44ff7532c13513b40a987683cd69928d
+    m_Address: Alchemy_Icon.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -87,8 +225,62 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f21551a62fbef3438ed98c236d5ff01
+    m_Address: Slime(Antenna)_Drop.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54686f7e565c16d4fb1a3a941dc1a47a
+    m_Address: class02.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5485d68b36874d94daa91e7b69f71620
+    m_Address: Icon_Master_Handler04.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55e0f2fb96f5d9045b71cff5cd3f3015
+    m_Address: class05.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a5eea5fb4f08f74dbd082b0915986a8
+    m_Address: Icon_Sword_2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 607735be4ad423944beaab6b9255758e
     m_Address: alchemist_big_smile.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61553ccfa2e0dab4c802674cf8239ec0
+    m_Address: 1-EG.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 629920b89106909429e609f8584dc001
+    m_Address: Accessories 32 (1).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 636a2e60d5ea7604aa39185a986cb788
+    m_Address: Helmet 32 (27).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 638f63af0c095764988578bedfc93cbf
+    m_Address: Tame_Icon.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -99,8 +291,86 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 676423a36b3d2824787b1e2587e67959
+    m_Address: Attact_Chance Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ee914caaf52e2d43a9a28d4e57d72a0
+    m_Address: Speed_Potion5.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f335b7383d860c49a10278a38dc8f97
+    m_Address: SlimeSkill_Drop.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7595fefac8eb961438aaf52ddaa9a5f2
+    m_Address: HP_Potion6.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 790dae4a78f61f0428c7b942b2ef714e
+    m_Address: Potion_Icon2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8051a586c5e05a54dba0e05f163ed9eb
+    m_Address: PlayerSkill_BeginnersLuck.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82003e0b05d8c9542af6453e68fda41e
+    m_Address: Overwhelming Charisma Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 822da7a6d45ec1b4db0ad1d241186676
+    m_Address: Slime(Green)_CardDrop.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8274824d6e7ba3244863dd42d9764865
+    m_Address: SOM3.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8436282c4f15f2d4698e6757e0360155
+    m_Address: Skill_Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 844e86b34df4bf247b07ada6b1a6f52c
+    m_Address: Guild Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 890bc2ecfccb15c4fa2d144017a4a962
+    m_Address: Luck_Potion2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c32ce2290b46904bbca60ade5df78ac
     m_Address: Chat_Icon_Lock.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 915b5239492fd774ba25d66388bd2fe4
+    m_Address: Stencils 32 (65).sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -111,14 +381,158 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94eb610cc2078ca49a0ed6848b7cb803
+    m_Address: SpeedPotionBuffIcon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94f553c2b11995b4bb8bc38ed3869a67
+    m_Address: class00.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9502f6314912c0b46b09b14e4beb4730
+    m_Address: PlayerSkill_BeginnersLuck2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9621807c1d4755848ae224d794369df6
+    m_Address: PlayerSkill_WaterWhip.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 986a3c4cbecbf2c47b39c5139d157d9d
+    m_Address: 2-Empty.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9977a4450b1d80640b9d9e12518c0223
+    m_Address: Cloak 32 (16).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 998e18ecc16535d42aa63e58955bdbbb
+    m_Address: DropRate_Up Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d1838c8234f5904c812269018cd77c9
+    m_Address: AutoPotion Cooltime Skill Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e3cec3675431f24b9b5f4f775b3856f
+    m_Address: Luck_Potion3.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ea55fa36efd884448433b28195cf118
+    m_Address: HP_Potion3.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a40eecbe7c3a94646a2f1533fe2a6737
     m_Address: Pass2.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7c8133d08d7ab34b92b397be83a9da4
+    m_Address: Memory Expansion Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7e2977aeba057c40bcab1371fc950c2
+    m_Address: Exit_Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a9733d9ae41b81e41bf6a2880ae4fbc7
     m_Address: Monastery_Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: abc0f597fec83004f80c8b9ecce2dbb9
+    m_Address: chareacter_stat_info_icon_2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: abc2acb63e78f0e4d9255dea39470bb6
+    m_Address: HP_Potion1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad85f062270c47540b6d546c40f1cbb8
+    m_Address: class01.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aed1f0b0ef89bc7458b1c6bac415e3db
+    m_Address: SOM2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b235c9b0019cc0d46b4394e5cf7734a0
+    m_Address: Icon_Master_Handler05.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b2803cd3651ecea40aa78c72cf29587c
+    m_Address: Scroll_3.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b342a6fc7e2004d4ca470b6193538b68
+    m_Address: Scroll_2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b68bcff8b99be2442b2d17c4a60f22e3
+    m_Address: Icon_Master_Handler01.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7ef06e9c4346524f8ef33350551f29f
+    m_Address: HappyMandrake.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb11ea65ef8696b41a63f2917a56d0bd
+    m_Address: Icon_Master_Handler02.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bbf9fc90ebb3f314e89e6be458eda69a
+    m_Address: Speed_Potion2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bdd26adf42f8d314eb4cfaedaeb2269a
+    m_Address: New_Icon.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -141,8 +555,44 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c29fa7404ae22e24a94ae115628ef594
+    m_Address: 1-Empty.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c43bb37a7769f6e4493cd871d1746a25
+    m_Address: HP_Potion7.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c594672b4d23cd9469897120ab2b3684
     m_Address: Background_Guild.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5ea75c6ae7338d43841aae6b01addb2
+    m_Address: Potion_Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8ece092ef3dc0d4fa2f28e21266aab2
+    m_Address: Character Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb12eb2e9a4309d4ab4c64761e4d8833
+    m_Address: class04.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb8a9d1971ac0da47a1d2c93b854c6e3
+    m_Address: SlimeDrop2.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -153,8 +603,56 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1075242376d9214ab205a4b1d457104
+    m_Address: Port.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3e31a15a62538e41b9b70d125e53b58
+    m_Address: Quest Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da2ef78cb76ac474a85f9d4e7322ec01
+    m_Address: arrow_down.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: deaf6ec2795ac274f84700b97de7ceb8
+    m_Address: Beastiary Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df7fd59a7f5049c478141521ab5b5061
+    m_Address: Speed_Potion3.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e29648a7f4fdace46bb0cbc3d50c912c
     m_Address: alchemist_normal.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e74ba4e6be1c6d243a33b063f15111b9
+    m_Address: class03.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e755709affc7ae14aa5a37e0c933bab0
+    m_Address: HP_Potion2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e85cd24645aedb04b927c1a2b5043459
+    m_Address: SOM1.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -165,8 +663,68 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9aa008ee36c1c343bdbf41421530d8d
+    m_Address: Grieves 32 (9).sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9c19c0e7c6fb95469eb21b356fd7217
+    m_Address: helmet_01.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea38aa3035357904fb21bc67e9cfe0ee
+    m_Address: HP_Potion5.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb2bf56a119d380458261d44d692f714
+    m_Address: Lock Icon.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eee1cfa781e7b2b48bc5fd73b3ed229a
+    m_Address: Icon_Equip_LackDuri2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f16d667e7c0941347b73cf3e612d4eaa
+    m_Address: BrokenMOR.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2b9916a02fe4ff4495e0b9309e871bc
+    m_Address: Port_Frame.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f75853ea4eebe634c92a458736143d39
+    m_Address: HP_Potion4.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f850636e8a0812343b6ca6537b042ff0
     m_Address: Mythic_Button_Check.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9c5422f9c6cc6343bdbf3050d04fc60
+    m_Address: Sword01.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd1efdb7e14a60646bd08427c2b550b2
+    m_Address: 1-R.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
