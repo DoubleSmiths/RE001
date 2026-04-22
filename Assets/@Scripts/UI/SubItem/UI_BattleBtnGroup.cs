@@ -16,10 +16,10 @@ using static Define;
 ///   ComboNum                   — NowCombo 숫자 표시
 ///   DMG_NUM                    — NowDmg 숫자 표시
 ///   BAR1                       — Slider (게이지)
-///   ASBoostText / ASBoost      — 공격속도 라벨 / 값
-///   DMGBoostText / DMGBoost    — 피해증폭 라벨 / 값
-///   ASBoostEffect              — 공격속도 버프 활성 시 SetActive
-///   DMGBoostEffect             — 피해증폭 버프 활성 시 SetActive
+///   ASBoostText / ASBoost      — 공격속도 라벨 / 값  (DOTweenAnimation: 최초 활성 / 값 변경)
+///   DMGBoostText / DMGBoost    — 피해증폭 라벨 / 값  (DOTweenAnimation: 최초 활성 / 값 변경)
+///   ASBoostEffect              — 공격속도 최초 활성 파티클 (prefab 내장 ParticleSystem)
+///   DMGBoostEffect             — 피해증폭 최초 활성 파티클 (prefab 내장 ParticleSystem)
 ///   ATTACKBTN                  — (테스트용) 수동 타격 시뮬
 /// </summary>
 public class UI_BattleBtnGroup : UI_AreaBtnGroup
@@ -73,7 +73,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     #endregion
 
     // ── 콤보 Text 스타일 (슬라이드 47) ──
-    static readonly Color32 COMBO_COLOR    = new Color32(0xFF, 0x00, 0x1F, 0xFF); // #FF001F
+    // 초기/IDLE 상태의 ComboText / ComboNum 기본 색 (흰색).
+    static readonly Color COMBO_IDLE_COLOR = Color.white;
     static readonly Color32 COMBO_OUTLINE  = new Color32(0x00, 0x00, 0x00, 0xFF);
     const float COMBO_OUTLINE_X =  0.6f;
     const float COMBO_OUTLINE_Y = -0.6f;
@@ -86,9 +87,17 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     GameObject     _dmgBoostEffect;
 
     // 콤보 연출용 DOTween (prefab에 이미 붙어있는 DOTweenAnimation을 코드로 트리거)
-    DOTweenAnimation _comboNumAnim;     // ComboNum : 타격마다
-    DOTweenAnimation _dmgNumAnim;       // DMG_NUM  : 타격마다
-    DOTweenAnimation _comboTitleAnim;   // ComboTitle: Rank up 시
+    DOTweenAnimation _comboNumAnim;       // ComboNum    : 타격마다
+    DOTweenAnimation _dmgNumAnim;         // DMG_NUM     : 타격마다
+    DOTweenAnimation _comboTitleAnim;     // ComboTitle  : Rank up 시
+    DOTweenAnimation _asBoostTextAnim;    // ASBoostText : AS 버프 최초 활성 시
+    DOTweenAnimation _dmgBoostTextAnim;   // DMGBoostText: DMG 버프 최초 활성 시
+    DOTweenAnimation _asBoostValAnim;     // ASBoost     : AS 값 변경 시
+    DOTweenAnimation _dmgBoostValAnim;    // DMGBoost    : DMG 값 변경 시
+
+    // 버프 값 diff 추적 (rank up 시 "새 값 vs 이전 값"이 달라지면 값 DOTween 실행)
+    float _prevAsBuff;
+    float _prevDmgBuff;
 
     // ── 배틀 루프 ──
     Coroutine _battleCoroutine;
@@ -154,11 +163,11 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 tmp.text = Util.Localize(enumKey);
         }
 
-        // 콤보 라벨 스타일 (슬라이드 47 스펙)
+        // 콤보 라벨 스타일 (슬라이드 47): 초기 색 흰색, 검정 아웃라인 underlay.
         var comboLabel = GetText((int)Texts.ComboText);
         if (comboLabel != null)
         {
-            comboLabel.color = COMBO_COLOR;
+            comboLabel.color = COMBO_IDLE_COLOR;
             Util.SetTMPUnderlay(comboLabel, COMBO_OUTLINE, COMBO_OUTLINE_X, COMBO_OUTLINE_Y);
         }
     }
@@ -205,23 +214,31 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _dmgBoostEffect = GetObject((int)GameObjects.DMGBoostEffect);
 
         // Prefab에 이미 구성된 DOTweenAnimation 참조 캐시
-        var comboNumTmp   = GetText((int)Texts.ComboNum);
-        var dmgNumTmp     = GetText((int)Texts.DMG_NUM);
-        var comboTitleTmp = GetText((int)Texts.ComboTitle);
-        if (comboNumTmp   != null) _comboNumAnim   = comboNumTmp.GetComponent<DOTweenAnimation>();
-        if (dmgNumTmp     != null) _dmgNumAnim     = dmgNumTmp.GetComponent<DOTweenAnimation>();
-        if (comboTitleTmp != null) _comboTitleAnim = comboTitleTmp.GetComponent<DOTweenAnimation>();
+        var comboNumTmp     = GetText((int)Texts.ComboNum);
+        var dmgNumTmp       = GetText((int)Texts.DMG_NUM);
+        var comboTitleTmp   = GetText((int)Texts.ComboTitle);
+        var asBoostTextTmp  = GetText((int)Texts.ASBoostText);
+        var dmgBoostTextTmp = GetText((int)Texts.DMGBoostText);
+        var asBoostValTmp   = GetText((int)Texts.ASBoost);
+        var dmgBoostValTmp  = GetText((int)Texts.DMGBoost);
+        if (comboNumTmp     != null) _comboNumAnim     = comboNumTmp.GetComponent<DOTweenAnimation>();
+        if (dmgNumTmp       != null) _dmgNumAnim       = dmgNumTmp.GetComponent<DOTweenAnimation>();
+        if (comboTitleTmp   != null) _comboTitleAnim   = comboTitleTmp.GetComponent<DOTweenAnimation>();
+        if (asBoostTextTmp  != null) _asBoostTextAnim  = asBoostTextTmp.GetComponent<DOTweenAnimation>();
+        if (dmgBoostTextTmp != null) _dmgBoostTextAnim = dmgBoostTextTmp.GetComponent<DOTweenAnimation>();
+        if (asBoostValTmp   != null) _asBoostValAnim   = asBoostValTmp.GetComponent<DOTweenAnimation>();
+        if (dmgBoostValTmp  != null) _dmgBoostValAnim  = dmgBoostValTmp.GetComponent<DOTweenAnimation>();
 
-        // Rank Color 반영 대상 텍스트
+        // Rank Color 반영 대상 텍스트.
+        //   ComboText  : "공세 단계:" 라벨 — Rank 색 따라 변함
+        //   ComboTitle : 특정 상태 이름  — Rank 색 따라 변함
+        //   ComboNum   : 공세 단계 숫자  — Rank 색 따라 변함
+        //   (DMG_NUM = 고정 #E00000, ASBoost*/DMGBoost* 계열은 고정 색 유지)
         _rankColorTexts = new List<TMP_Text>
         {
+            GetText((int)Texts.ComboText),
             GetText((int)Texts.ComboTitle),
             GetText((int)Texts.ComboNum),
-            GetText((int)Texts.DMG_NUM),
-            GetText((int)Texts.ASBoostText),
-            GetText((int)Texts.ASBoost),
-            GetText((int)Texts.DMGBoostText),
-            GetText((int)Texts.DMGBoost),
         };
 
         // 초기 상태: 버프 이펙트 숨김
@@ -289,10 +306,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (dmgVal != null) dmgVal.text = dmgActive ? $"+{(int)stage.DmgBoostBuff}%" : "";
         if (dmgLbl != null) dmgLbl.text = dmgActive ? Util.Localize("DmgBoostText") : "";
 
-        // 이펙트 GameObject 토글
-        _asBoostEffect?.SetActive(asActive);
-        _dmgBoostEffect?.SetActive(dmgActive);
-
         // Rank Color 일괄 적용
         Color rankColor = Managers.Combo?.GetCurrentRankColor() ?? Color.white;
         foreach (var t in _rankColorTexts)
@@ -301,6 +314,16 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         // Rank up 연출: ComboTitle DOTween
         _comboTitleAnim?.DORestart();
+
+        // 버프 값 변경 감지: 값이 0→양수 또는 양수→다른 양수로 변하면 값 텍스트 DOTween 실행.
+        float newAs  = stage != null ? stage.AtkSpeedBuff : 0f;
+        float newDmg = stage != null ? stage.DmgBoostBuff : 0f;
+        if (newAs > 0f && !Mathf.Approximately(newAs, _prevAsBuff))
+            _asBoostValAnim?.DORestart();
+        if (newDmg > 0f && !Mathf.Approximately(newDmg, _prevDmgBuff))
+            _dmgBoostValAnim?.DORestart();
+        _prevAsBuff  = newAs;
+        _prevDmgBuff = newDmg;
     }
 
     void HandleTimerChanged(float normalized)
@@ -324,8 +347,18 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         var dmgVal   = GetText((int)Texts.DMGBoost);    if (dmgVal   != null) dmgVal.text   = "";
         var dmgLbl   = GetText((int)Texts.DMGBoostText);if (dmgLbl   != null) dmgLbl.text   = "";
         if (_comboBar != null) _comboBar.value = 0f;
-        _asBoostEffect?.SetActive(false);
-        _dmgBoostEffect?.SetActive(false);
+        HideBuffParticle(_asBoostEffect);
+        HideBuffParticle(_dmgBoostEffect);
+
+        // IDLE 복귀 — ComboText / ComboNum 모두 흰색으로 초기화.
+        // DMG_NUM 은 Rank 영향 없이 prefab 고정 색(#E00000) 유지.
+        var comboLabel = GetText((int)Texts.ComboText);
+        if (comboLabel != null) comboLabel.color = COMBO_IDLE_COLOR;
+        var comboNumTmp = GetText((int)Texts.ComboNum);
+        if (comboNumTmp != null) comboNumTmp.color = COMBO_IDLE_COLOR;
+
+        _prevAsBuff  = 0f;
+        _prevDmgBuff = 0f;
     }
 
     // Smooth 보간된 NowCombo / NowDmg → Text 표시. 0 일 때도 "0" 유지.
@@ -340,16 +373,40 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             dmgTmp.text = Mathf.RoundToInt(Mathf.Max(0f, nowDmg)).ToString();
     }
 
-    // 슬라이드 48: 특정 버프 첫 활성화 시 Quest_Done_Effect 파티클
+    // 슬라이드 48: 특정 버프 최초 활성 시 — 라벨 DOTween + 파티클 동시 실행
+    //   AS:  ASBoostText DOTween ∥ ASBoostEffect 파티클
+    //   DMG: DMGBoostText DOTween ∥ DMGBoostEffect 파티클
     void HandleFirstBuff(ComboManager.BuffKind buff)
     {
-        var fx = Managers.Resource.Load<GameObject>("Quest_Done_Effect");
-        if (fx == null) return;
-        GameObject target = buff == ComboManager.BuffKind.AttackSpeed ? _asBoostEffect : _dmgBoostEffect;
-        Transform parent  = target != null ? target.transform : transform;
-        var go = GameObject.Instantiate(fx, parent);
-        go.transform.localPosition = Vector3.zero;
-        GameObject.Destroy(go, 3f);
+        bool isAS = buff == ComboManager.BuffKind.AttackSpeed;
+        DOTweenAnimation textAnim = isAS ? _asBoostTextAnim : _dmgBoostTextAnim;
+        GameObject       effect   = isAS ? _asBoostEffect   : _dmgBoostEffect;
+
+        textAnim?.DORestart();
+        ShowBuffParticle(effect);
+    }
+
+    // prefab 파티클은 playOnAwake=true, LocalScale=(0,0,0) 상태. Scale-Up으로 노출한 뒤 자동 소멸.
+    void ShowBuffParticle(GameObject effect)
+    {
+        if (effect == null) return;
+        effect.SetActive(true);
+        effect.transform.DOKill();
+        effect.transform.localScale = Vector3.zero;
+        effect.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack);
+
+        var ps = effect.GetComponent<ParticleSystem>();
+        if (ps != null) { ps.Clear(true); ps.Play(true); }
+
+        DOVirtual.DelayedCall(1.7f, () => HideBuffParticle(effect));
+    }
+
+    void HideBuffParticle(GameObject effect)
+    {
+        if (effect == null) return;
+        effect.transform.DOKill();
+        effect.transform.localScale = Vector3.zero;
+        effect.SetActive(false);
     }
 
     // ── 에디터 테스트용: ATTACKBTN 클릭 시 타격 시뮬 ──
