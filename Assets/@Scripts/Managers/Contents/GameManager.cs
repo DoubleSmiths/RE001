@@ -117,6 +117,10 @@ public class GameData
     // false = 아직 미공개 (잠긴 상태로 시작 → 팝업 오픈 시 1회 해금 애니)
     // true  = 공개됨 (바로 해금 상태로 표시)
     public bool SpdPotionRevealed = false;
+
+    // UI_PotionPopup(하단 탭) 내 SPD 슬롯 해금 연출이 재생되었는지.
+    // 제작의뢰 해금 후 물약 팝업을 첫 번째로 열 때 1회 연출.
+    public bool SpdPotionPopupAnimPlayed = false;
 }
 
 // ──────────────────────────────────────────────
@@ -260,6 +264,12 @@ public class GameManager
     {
         get => _gameData.SpdPotionRevealed;
         set { _gameData.SpdPotionRevealed = value; SaveGame(); }
+    }
+
+    public bool SpdPotionPopupAnimPlayed
+    {
+        get => _gameData.SpdPotionPopupAnimPlayed;
+        set { _gameData.SpdPotionPopupAnimPlayed = value; SaveGame(); }
     }
     public int CurrentHPPotionDataId
     {

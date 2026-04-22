@@ -269,14 +269,24 @@ public class UI_PotionPopup : UI_Popup
             _hpSlot.cooldown = 0f;
             RefreshSlotVisual(_hpSlot);
         }
+        bool spdAnimNeeded = false;
         if (_spdSlot != null)
         {
-            _spdSlot.unlocked = false;       // 미해금(스텁)
-            _spdSlot.dataId = 40001;
+            // SPD는 연금공방 NPC가 해금한 시점(SpdPotionRevealed=true)부터 사용 가능
+            _spdSlot.unlocked = Managers.Game.SpdPotionRevealed;
+            _spdSlot.dataId = Managers.Game.CurrentSpeedPotionDataId;
             _spdSlot.cooldownMax = 10f;
             _spdSlot.count = 0;
             _spdSlot.cooldown = 0f;
             RefreshSlotVisual(_spdSlot);
+
+            // 최초 1회만 해금 애니 재생 — RefreshSlotVisual이 lockBg/lockIcon을 감췄으므로 다시 노출
+            spdAnimNeeded = _spdSlot.unlocked && !Managers.Game.SpdPotionPopupAnimPlayed;
+            if (spdAnimNeeded)
+            {
+                if (_spdSlot.lockBg  != null) { _spdSlot.lockBg .color = LOCK_BG_COLOR;   _spdSlot.lockBg .gameObject.SetActive(true); }
+                if (_spdSlot.lockIcon!= null) { _spdSlot.lockIcon.color = LOCK_ICON_COLOR; _spdSlot.lockIcon.gameObject.SetActive(true); }
+            }
         }
 
         // 자동물약 UI 갱신
@@ -298,6 +308,46 @@ public class UI_PotionPopup : UI_Popup
             Color c = _bg.color; c.a = 0f; _bg.color = c;
             _bg.DOFade(220f / 255f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
         }
+
+        // SPD 해금 1회 연출 (물약 팝업 첫 진입)
+        if (spdAnimNeeded)
+            PlaySpdSlotRevealAnim();
+    }
+
+    /// <summary>
+    /// SPD 포션 슬롯 해금 1회 연출.
+    /// 팝업 박스 진입(0.5s)이 끝난 뒤 Shake+Scale+LockFade → 완료 시 플래그 저장.
+    /// </summary>
+    void PlaySpdSlotRevealAnim()
+    {
+        if (_spdSlot == null || _spdSlot.button == null) return;
+        var slotTr = _spdSlot.button.transform;
+
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        // 팝업 박스 OutBack 0.5s가 끝날 때까지 대기
+        seq.AppendInterval(0.6f);
+        seq.AppendCallback(() =>
+        {
+            slotTr.DOKill();
+            slotTr.localScale = Vector3.one;
+            slotTr.DOShakePosition(0.7f, new Vector3(3f, 3f, 0f), vibrato: 20, randomness: 60f).SetUpdate(true);
+            slotTr.DOScale(1.15f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+        });
+        seq.AppendInterval(0.3f);
+        seq.AppendCallback(() =>
+        {
+            slotTr.DOScale(1f, 0.2f).SetEase(Ease.InOutBack).SetUpdate(true);
+            if (_spdSlot.lockBg  != null) _spdSlot.lockBg .DOFade(0f, 0.4f).SetUpdate(true);
+            if (_spdSlot.lockIcon!= null) _spdSlot.lockIcon.DOFade(0f, 0.4f).SetUpdate(true);
+        });
+        seq.AppendInterval(0.4f);
+        seq.AppendCallback(() =>
+        {
+            if (_spdSlot.lockBg  != null) _spdSlot.lockBg .gameObject.SetActive(false);
+            if (_spdSlot.lockIcon!= null) _spdSlot.lockIcon.gameObject.SetActive(false);
+            RefreshSlotVisual(_spdSlot);
+            Managers.Game.SpdPotionPopupAnimPlayed = true;
+        });
     }
 
     void OnClickClose()
