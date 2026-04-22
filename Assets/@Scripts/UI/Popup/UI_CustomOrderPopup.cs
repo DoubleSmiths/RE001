@@ -277,6 +277,63 @@ public class UI_CustomOrderPopup : UI_Popup
         PlayItemsScaleIn(activeGroup);
 
         _currentGroup = groupIndex;
+
+        // 물약 그룹이 펼쳐진 순간 SPD 포션이 아직 미공개면 해금 연출 1회 재생
+        if (groupIndex == 0 && !Managers.Game.SpdPotionRevealed)
+            PlaySpdPotionRevealAnim();
+    }
+
+    /// <summary>
+    /// 연금공방 NPC가 SPD 포션을 해금해주는 연출.
+    /// Potion 그룹이 펼쳐진 뒤 살짝 딜레이 → Shake + Scale + lockbg/lockimg fade out → 재생 완료 시 플래그 저장.
+    /// 저장된 이후에는 다시 재생되지 않음.
+    /// </summary>
+    void PlaySpdPotionRevealAnim()
+    {
+        var iconRoot = GetObject((int)GameObjects.CustomOrderSPDPotionIcon)?.transform;
+        var lockBg   = GetImage((int)Images.lockbg_1);
+        var lockImg  = GetImage((int)Images.lockimg_1);
+        if (iconRoot == null) return;
+
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        // 그룹 Scale-in(0.4s) + 살짝 대기
+        seq.AppendInterval(0.6f);
+
+        // Shake + Scale up (강조)
+        seq.AppendCallback(() =>
+        {
+            iconRoot.DOKill();
+            iconRoot.localScale = Vector3.one;
+            iconRoot.DOShakePosition(0.7f, new Vector3(3f, 3f, 0f), vibrato: 20, randomness: 60f).SetUpdate(true);
+            iconRoot.DOScale(1.15f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+        });
+        seq.AppendInterval(0.3f);
+
+        // Scale 원복 + lock 오버레이 fade out
+        seq.AppendCallback(() =>
+        {
+            iconRoot.DOScale(1f, 0.2f).SetEase(Ease.InOutBack).SetUpdate(true);
+            if (lockBg  != null) lockBg .DOFade(0f, 0.4f).SetUpdate(true);
+            if (lockImg != null) lockImg.DOFade(0f, 0.4f).SetUpdate(true);
+        });
+        seq.AppendInterval(0.4f);
+
+        // 플래그 저장 + NEW 뱃지 / 등급 아이콘 표시 (잠금 상태에서 숨겨졌을 가능성)
+        seq.AppendCallback(() =>
+        {
+            Managers.Game.SpdPotionRevealed = true;
+            RefreshSpeedPotionIcon();  // sprite + glow 색 적용
+            if (iconRoot != null)
+            {
+                foreach (Transform child in iconRoot)
+                {
+                    var n = child.name;
+                    if (n == "MasterIcon" || n.StartsWith("Img_MasterIcon") ||
+                        n == "LvlIcon"    || n.StartsWith("Img_LvlIcon"))
+                        child.gameObject.SetActive(true);
+                }
+            }
+        });
     }
 
     void PlayItemsScaleIn(GameObject groupGO)
@@ -307,13 +364,16 @@ public class UI_CustomOrderPopup : UI_Popup
 
     /// <summary>
     /// 슬라이드 35 잠금 상태 스펙 적용.
-    /// 회복물약(HP)/신속(SPD) 해금, 행운(Luck)/물약주입기(AutoPotion) 잠금.
+    /// 회복물약(HP) 해금. 신속(SPD)는 SpdPotionRevealed 저장값에 따라 잠금/해금.
+    /// 행운(Luck)/물약주입기(AutoPotion) 잠금.
     /// Sprite None (000000 alpha 180) + Chat_Icon_Lock (FFFFFF alpha 80)
     /// </summary>
     void InitLockStates()
     {
+        // 첫 제작의뢰 진입 시 연금공방 NPC가 해금 — 저장 플래그 false면 처음엔 잠긴 상태로 표시
+        bool spdAlreadyRevealed = Managers.Game.SpdPotionRevealed;
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrderSPDPotionIcon).transform,
-                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: false);
+                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: !spdAlreadyRevealed);
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrderLuckPotionIcon).transform,
                         GetImage((int)Images.lockbg),   GetImage((int)Images.lockimg),   locked: true);
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrder_AutoPotionCooltimeSkill).transform,
@@ -324,7 +384,12 @@ public class UI_CustomOrderPopup : UI_Popup
         GetButton((int)Buttons.CustomOrderHPPotionFrame).gameObject.BindEvent(
             () => OpenPotionDetail(Managers.Game.CurrentHPPotionDataId));
         GetButton((int)Buttons.CustomOrderSPDPotionFrame).gameObject.BindEvent(
-            () => OpenPotionDetail(Managers.Game.CurrentSpeedPotionDataId));
+            () =>
+            {
+                // SPD가 아직 공개되지 않은 상태에서 클릭 방지 (해금 애니 중에는 상호작용 차단)
+                if (!Managers.Game.SpdPotionRevealed) return;
+                OpenPotionDetail(Managers.Game.CurrentSpeedPotionDataId);
+            });
     }
 
     void OpenPotionDetail(int dataId)
@@ -383,15 +448,13 @@ public class UI_CustomOrderPopup : UI_Popup
     {
         if (item == null) return;
 
-        // prefab에 autoPlay=true로 걸린 "해금 연출" DOTweenAnimation이
-        // OnEnable에서 lock alpha를 0으로 만들어버리므로 잠긴 아이템은 이 애님을 제거.
-        if (locked)
+        // prefab에 autoPlay=true로 걸린 "해금 연출" DOTweenAnimation은
+        // 매 OnEnable마다 재생되어 팝업을 다시 열 때마다 해금 애니가 반복됨.
+        // 잠긴 아이템/해금된 아이템 모두 이 auto-play 애님을 제거해서 최종 상태만 유지.
+        foreach (var dta in item.GetComponentsInChildren<DG.Tweening.DOTweenAnimation>(true))
         {
-            foreach (var dta in item.GetComponentsInChildren<DG.Tweening.DOTweenAnimation>(true))
-            {
-                if      (lockBg  != null && dta.name == lockBg.name)  DestroyImmediate(dta);
-                else if (lockImg != null && dta.name == lockImg.name) DestroyImmediate(dta);
-            }
+            if      (lockBg  != null && dta.name == lockBg.name)  DestroyImmediate(dta);
+            else if (lockImg != null && dta.name == lockImg.name) DestroyImmediate(dta);
         }
 
         if (lockBg != null)

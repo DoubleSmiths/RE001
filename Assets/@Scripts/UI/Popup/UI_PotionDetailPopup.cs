@@ -390,10 +390,14 @@ public class UI_PotionDetailPopup : UI_Popup
         _currentDataId  = ResolvePotionDataId(dataId, _kind);
         _fromCustomOrder = fromCustomOrder;
 
-        // 팝업을 새로 열 때는 항상 재료 목록 / 현재 단계 상태로 시작 (S38 스펙)
-        _showDesc = false;
+        // 팝업을 새로 열 때: 제작의뢰 경로는 재료 목록(S38), 설명 전용 경로는 설명 화면으로 시작
+        _showDesc    = !fromCustomOrder;
         _previewNext = false;
-        _craftBusy = false;
+        _craftBusy   = false;
+
+        // 설명 전용 모드(fromCustomOrder=false)에서는 패널 전환 버튼도 숨김
+        if (_switchPanelBtn != null)
+            _switchPanelBtn.SetActive(fromCustomOrder);
 
         // 프리팹에 -130 이 저장돼 있어도 실제 휴식 위치는 (0,0)
         _frameOrigin = Vector2.zero;

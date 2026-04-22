@@ -112,6 +112,11 @@ public class GameData
     // 최하단 탭(상태/가방/물약/장비/기술/도감) 해금 비트마스크. 슬라이드 10.
     // 기본값 1 = [상태]만 해금. 나머지 퀘스트 진행에 따라 해금.
     public int UnlockedBtmButtons = 1;
+
+    // 제작의뢰 팝업 내 SPD 포션 해금 연출이 이미 재생되었는지.
+    // false = 아직 미공개 (잠긴 상태로 시작 → 팝업 오픈 시 1회 해금 애니)
+    // true  = 공개됨 (바로 해금 상태로 표시)
+    public bool SpdPotionRevealed = false;
 }
 
 // ──────────────────────────────────────────────
@@ -250,6 +255,12 @@ public class GameManager
     }
 
     public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;
+
+    public bool SpdPotionRevealed
+    {
+        get => _gameData.SpdPotionRevealed;
+        set { _gameData.SpdPotionRevealed = value; SaveGame(); }
+    }
     public int CurrentHPPotionDataId
     {
         get => _gameData.CurrentHPPotionDataId <= 0 ? POTION_ID_MIN + 1 : _gameData.CurrentHPPotionDataId;

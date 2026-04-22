@@ -722,6 +722,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // 서브퀘스트 1(연금공방 첫 방문) 활성 상태면 전용 대사 + 종료 시 BTN_ALCHEMY_TALK 트리거.
         // 그 외에는 AlchemyNormalText에서 한 줄 랜덤.
         bool isSubQuestActive = Managers.SubQuest != null && Managers.SubQuest.IsActive;
+        int  subQuestBefore   = Managers.SubQuest != null ? Managers.SubQuest.CurrentSubQuestID : 0;
         string subDlg = isSubQuestActive ? Managers.SubQuest.GetCurrentDialogueID() : null;
 
         // 서브퀘스트 전용 대사가 데이터시트에 등록돼 있으면 사용, 아니면 Normal로 폴백
@@ -741,7 +742,22 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             groupKey: groupKey,
             speakerName: "연금공방 아가씨",
             portrait: null,
-            onFinished: () => Managers.Quest.CheckButtonClick(BTN_ALCHEMY_TALK),
+            onFinished: () =>
+            {
+                Managers.Quest.CheckButtonClick(BTN_ALCHEMY_TALK);
+
+                // SubQuest 1 → 2 전이가 막 일어났다면 HP 포션 "획득 안내" 팝업 표시 (설명 전용)
+                if (subQuestBefore == 1
+                    && Managers.SubQuest != null
+                    && Managers.SubQuest.CurrentSubQuestID != 1)
+                {
+                    DG.Tweening.DOVirtual.DelayedCall(0.05f, () =>
+                    {
+                        Managers.UI.ShowPopupUI<UI_PotionDetailPopup>()
+                            .SetInfo(Managers.Game.CurrentHPPotionDataId, fromCustomOrder: false);
+                    }).SetUpdate(true);
+                }
+            },
             randomSingleLine: !useFullDialogue,
             portraitAnimState: animState);
     }
