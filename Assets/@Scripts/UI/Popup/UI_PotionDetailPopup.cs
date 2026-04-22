@@ -57,14 +57,14 @@ public class UI_PotionDetailPopup : UI_Popup
         Glow,
         Img_Mask_04,
         Guage,
-        Img_Guage_02,
-        Img_Guage_04,
-        Img_Guage_01,
+        Img_Guage_Step1,        // 좌 — Step >= 1 일 때 표시
+        Img_Guage_Step2,        // 중 — Step >= 2 일 때 표시
+        Img_Guage_Step3,        // 우 — Step >= 3 일 때 표시
         background,
-        Img_Guage_NextLvl_02,
-        Img_Guage_NextLvl_01,
-        Img_Guage_NextLvl_03,
-        Img_Guage_NextLvl_04,
+        Img_Guage_NextLvl_BG,   // Guage_NextLvl 전체 배경 (stretch)
+        Img_Guage_NextLvl_Step1,
+        Img_Guage_NextLvl_Step2,
+        Img_Guage_NextLvl_Step3,
         Img_SwitchPanelBtn_01,
         __1,
         CantCraftBtn,
@@ -216,6 +216,16 @@ public class UI_PotionDetailPopup : UI_Popup
     RectTransform[] _reqItemBoxes;   // ReqItemBox1_1 ~ 5
     Image[]         _reqItemIcons;   // 각 박스의 아이템 아이콘 Image (캐시)
 
+    // Gauge 세그먼트 (단계 표시): left-to-right 정렬
+    Image[]       _guageSegments;          // Guage/Img_Guage_02, _04, _01
+    Color[]       _guageSegmentDefaultColor;
+    Image[]       _guageNextLvlSegments;   // Guage_NextLvl/Img_Guage_NextLvl_01~04
+    GameObject    _guageNextLvlGo;
+
+    // S39 등급 변경 Scale 애님 대상 (OutBack 0.3s From 3)
+    RectTransform _potionImgRT;
+    static readonly Color GUAGE_PREVIEW_COLOR = new Color(0f, 1f, 0f, 1f); // #00FF00
+
     Vector2 _frameOrigin;
 
     // 현재 표시 중인 물약 DataId (HPPotionDic/SpeedPotionDic 기준). -1 = 미설정.
@@ -299,6 +309,27 @@ public class UI_PotionDetailPopup : UI_Popup
         }
         _reqItemBoxes = list.ToArray();
         _reqItemIcons = iconList.ToArray();
+
+        // Gauge 세그먼트: 좌→우 순서 (Step1/2/3) — UI 바인드로 직접 획득
+        _guageSegments = new[]
+        {
+            GetImage((int)Images.Img_Guage_Step1),
+            GetImage((int)Images.Img_Guage_Step2),
+            GetImage((int)Images.Img_Guage_Step3),
+        };
+        _guageSegmentDefaultColor = new Color[_guageSegments.Length];
+        for (int i = 0; i < _guageSegments.Length; i++)
+            if (_guageSegments[i] != null) _guageSegmentDefaultColor[i] = _guageSegments[i].color;
+
+        _guageNextLvlGo = GetObject((int)GameObjects.Guage_NextLvl);
+        _guageNextLvlSegments = new[]
+        {
+            GetImage((int)Images.Img_Guage_NextLvl_Step1),
+            GetImage((int)Images.Img_Guage_NextLvl_Step2),
+            GetImage((int)Images.Img_Guage_NextLvl_Step3),
+        };
+
+        _potionImgRT = _potionImg?.rectTransform;
 
         // 이벤트 바인딩
         _switchPanelBtn?.BindEvent(() => { if (!_craftBusy) OnClickSwitchPanel(); });
@@ -453,6 +484,10 @@ public class UI_PotionDetailPopup : UI_Popup
         _rankText.text = $"{data.Step}{Localize(LocalizeKey.RankText)}";
         _rankText.color = Color.white;
 
+        // 현재 단계에 맞춰 Gauge 채우기 (S37 스펙) — 미리보기 아니므로 초록 없음
+        UpdateGauge(filledCount: data.Step, greenFromIndex: data.Step);
+        _guageNextLvlGo?.SetActive(false);
+
         if (isHP)
             ApplyHPStats(data, preview: false);
         else
@@ -485,6 +520,43 @@ public class UI_PotionDetailPopup : UI_Popup
             _craftBtn?.SetActive(canCraft);
             _cantCraftBtn?.SetActive(!canCraft);
             _nextLvlBtn?.SetActive(true);
+        }
+    }
+
+    /// <summary>Gauge 세그먼트 표시.
+    /// filledCount: 채워질 칸 수 (1~3)
+    /// greenFromIndex: 이 index부터 채워지는 칸은 초록색(#00FF00)으로 표시 (S39 미리보기 — 새로 추가되는 단계만).
+    ///   normal 모드에서는 greenFromIndex == filledCount 로 호출하여 초록 없음.</summary>
+    void UpdateGauge(int filledCount, int greenFromIndex)
+    {
+        if (_guageSegments == null) return;
+        filledCount    = Mathf.Clamp(filledCount,    0, _guageSegments.Length);
+        greenFromIndex = Mathf.Clamp(greenFromIndex, 0, _guageSegments.Length);
+
+        for (int i = 0; i < _guageSegments.Length; i++)
+        {
+            var seg = _guageSegments[i];
+            if (seg == null) continue;
+            bool filled = i < filledCount;
+            seg.gameObject.SetActive(filled);
+            if (filled)
+                seg.color = (i >= greenFromIndex) ? GUAGE_PREVIEW_COLOR : _guageSegmentDefaultColor[i];
+        }
+    }
+
+    /// <summary>NextLvl Gauge(초록) — 다음 단계 개수만큼 채운 상태로 표시.</summary>
+    void UpdateGaugeNextLvl(int step)
+    {
+        if (_guageNextLvlGo != null) _guageNextLvlGo.SetActive(true);
+        if (_guageNextLvlSegments == null) return;
+        int filledCount = Mathf.Clamp(step, 0, _guageNextLvlSegments.Length);
+        for (int i = 0; i < _guageNextLvlSegments.Length; i++)
+        {
+            var seg = _guageNextLvlSegments[i];
+            if (seg == null) continue;
+            bool filled = i < filledCount;
+            seg.gameObject.SetActive(filled);
+            if (filled) seg.color = GUAGE_PREVIEW_COLOR;
         }
     }
 
@@ -617,9 +689,11 @@ public class UI_PotionDetailPopup : UI_Popup
                 bool showCraftUI = _fromCustomOrder && !isMaxLevel;
                 if (_previewNext)
                 {
-                    // S39 preview 상태: 제작/재료부족 숨김, 다음단계 → [뒤로]로 바뀜
-                    _craftBtn?.SetActive(false);
-                    _cantCraftBtn?.SetActive(false);
+                    // S39 preview 상태: [재료부족/제작] 버튼은 현재 단계 기준으로 그대로 유지
+                    // (다음단계 정보 → [뒤로]로만 교체)
+                    bool canCraft = HasEnoughMaterials(next);
+                    _craftBtn?.SetActive(showCraftUI && canCraft);
+                    _cantCraftBtn?.SetActive(showCraftUI && !canCraft);
                     _nextLvlBtn?.SetActive(false);
                     _backBtn?.SetActive(showCraftUI);
                 }
@@ -670,6 +744,29 @@ public class UI_PotionDetailPopup : UI_Popup
 
         var sp = Managers.Resource.Load<Sprite>(next.SpriteName);
         if (sp != null) _potionImg.sprite = sp;
+
+        // S39 Gauge:
+        //   같은 등급에서 단계업: 새로 추가되는 칸(curr.Step..next.Step-1)만 초록.
+        //     예) 1단계→2단계 : 2단계 칸만 초록, 1단계 칸은 기본색 유지.
+        //   등급 변경: 현재 Gauge는 그대로 + NextLvl Gauge에 새 등급 단계 표시 (전부 초록).
+        if (next.Grade == curr.Grade)
+        {
+            UpdateGauge(filledCount: next.Step, greenFromIndex: curr.Step);
+            _guageNextLvlGo?.SetActive(false);
+        }
+        else
+        {
+            UpdateGauge(filledCount: curr.Step, greenFromIndex: curr.Step); // 현 단계 유지 + 초록 없음
+            UpdateGaugeNextLvl(next.Step);
+        }
+
+        // S39 Scale Anim: 등급 변경 시 아이콘을 from 3 OutBack 0.3s로 팝업
+        if (next.Grade != curr.Grade && _potionImgRT != null)
+        {
+            _potionImgRT.DOKill();
+            _potionImgRT.localScale = Vector3.one * 3f;
+            _potionImgRT.DOScale(1f, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
+        }
 
         string sec = Localize(LocalizeKey.SecondsUnitText);
 
