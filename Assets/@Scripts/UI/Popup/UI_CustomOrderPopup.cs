@@ -284,45 +284,66 @@ public class UI_CustomOrderPopup : UI_Popup
     }
 
     /// <summary>
-    /// 연금공방 NPC가 SPD 포션을 해금해주는 연출.
-    /// Potion 그룹이 펼쳐진 뒤 살짝 딜레이 → Shake + Scale + lockbg/lockimg fade out → 재생 완료 시 플래그 저장.
-    /// 저장된 이후에는 다시 재생되지 않음.
+    /// 연금공방 NPC가 SPD 포션을 해금해주는 연출. LockIcon에만 적용.
+    /// 타임라인:
+    ///   t=0.0~0.5  대기 (Delay)
+    ///   t=0.5~1.2  Shake/Position (Duration 0.7, Strength (1,1,0), Vibrato 48, Randomness 59, OutQuad)
+    ///   t=1.2~1.7  Scale 1→2 (Duration 0.5, OutBack)
+    ///   t=1.7~2.1  Lock overlay Fade out
     /// </summary>
     void PlaySpdPotionRevealAnim()
     {
         var iconRoot = GetObject((int)GameObjects.CustomOrderSPDPotionIcon)?.transform;
         var lockBg   = GetImage((int)Images.lockbg_1);
         var lockImg  = GetImage((int)Images.lockimg_1);
-        if (iconRoot == null) return;
+        if (lockImg == null) return;
+
+        var lockImgTr = lockImg.rectTransform;
+        Vector2 lockImgAnchorOrigin = lockImgTr.anchoredPosition;
+
+        // 초기 상태 정리
+        lockImgTr.DOKill();
+        lockImgTr.localScale = Vector3.one;
+        lockImgTr.anchoredPosition = lockImgAnchorOrigin;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        // 그룹 Scale-in(0.4s) + 살짝 대기
-        seq.AppendInterval(0.6f);
 
-        // Shake + Scale up (강조)
+        // Delay 0.5s
+        seq.AppendInterval(0.5f);
+
+        // Shake/Position — 단독 재생 (Scale 동시 X)
         seq.AppendCallback(() =>
         {
-            iconRoot.DOKill();
-            iconRoot.localScale = Vector3.one;
-            iconRoot.DOShakePosition(0.7f, new Vector3(3f, 3f, 0f), vibrato: 20, randomness: 60f).SetUpdate(true);
-            iconRoot.DOScale(1.15f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+            lockImgTr
+                .DOShakeAnchorPos(0.7f, new Vector3(1f, 1f, 0f), vibrato: 48, randomness: 59f)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true);
         });
-        seq.AppendInterval(0.3f);
+        seq.AppendInterval(0.7f);
 
-        // Scale 원복 + lock 오버레이 fade out
+        // Scale 1→2 (Shake 종료 직후)
         seq.AppendCallback(() =>
         {
-            iconRoot.DOScale(1f, 0.2f).SetEase(Ease.InOutBack).SetUpdate(true);
-            if (lockBg  != null) lockBg .DOFade(0f, 0.4f).SetUpdate(true);
-            if (lockImg != null) lockImg.DOFade(0f, 0.4f).SetUpdate(true);
+            lockImgTr
+                .DOScale(2f, 0.5f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
+        });
+        seq.AppendInterval(0.5f);
+
+        // Lock overlay Fade out
+        seq.AppendCallback(() =>
+        {
+            if (lockBg != null) lockBg.DOFade(0f, 0.4f).SetUpdate(true);
+            lockImg.DOFade(0f, 0.4f).SetUpdate(true);
         });
         seq.AppendInterval(0.4f);
 
-        // 플래그 저장 + NEW 뱃지 / 등급 아이콘 표시 (잠금 상태에서 숨겨졌을 가능성)
+        // 플래그 저장 + NEW 뱃지 / 등급 아이콘 표시 + 원복
         seq.AppendCallback(() =>
         {
             Managers.Game.SpdPotionRevealed = true;
-            RefreshSpeedPotionIcon();  // sprite + glow 색 적용
+            RefreshSpeedPotionIcon();
             if (iconRoot != null)
             {
                 foreach (Transform child in iconRoot)
@@ -333,6 +354,9 @@ public class UI_CustomOrderPopup : UI_Popup
                         child.gameObject.SetActive(true);
                 }
             }
+            // 다음 세션에서 locked 상태로 재사용될 수 있으므로 원복
+            lockImgTr.anchoredPosition = lockImgAnchorOrigin;
+            lockImgTr.localScale = Vector3.one;
         });
     }
 

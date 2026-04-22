@@ -315,36 +315,64 @@ public class UI_PotionPopup : UI_Popup
     }
 
     /// <summary>
-    /// SPD 포션 슬롯 해금 1회 연출.
-    /// 팝업 박스 진입(0.5s)이 끝난 뒤 Shake+Scale+LockFade → 완료 시 플래그 저장.
+    /// SPD 포션 슬롯 해금 1회 연출 — LockIcon 전용.
+    /// 타임라인:
+    ///   t=0.0~0.5  대기 (Delay)
+    ///   t=0.5~1.2  Shake/Position (Duration 0.7, Strength (1,1,0), Vibrato 48, Randomness 59, OutQuad)
+    ///   t=1.2~1.7  Scale 1→2 (Duration 0.5, OutBack)
+    ///   t=1.7~2.1  Lock overlay Fade out
     /// </summary>
     void PlaySpdSlotRevealAnim()
     {
-        if (_spdSlot == null || _spdSlot.button == null) return;
-        var slotTr = _spdSlot.button.transform;
+        if (_spdSlot == null || _spdSlot.lockIcon == null) return;
+        var lockIconTr = _spdSlot.lockIcon.rectTransform;
+        Vector2 lockOriginPos = lockIconTr.anchoredPosition;
+
+        // 초기 상태 정리
+        lockIconTr.DOKill();
+        lockIconTr.localScale = Vector3.one;
+        lockIconTr.anchoredPosition = lockOriginPos;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        // 팝업 박스 OutBack 0.5s가 끝날 때까지 대기
-        seq.AppendInterval(0.6f);
+
+        // Delay 0.5s
+        seq.AppendInterval(0.5f);
+
+        // Shake/Position — 단독 재생
         seq.AppendCallback(() =>
         {
-            slotTr.DOKill();
-            slotTr.localScale = Vector3.one;
-            slotTr.DOShakePosition(0.7f, new Vector3(3f, 3f, 0f), vibrato: 20, randomness: 60f).SetUpdate(true);
-            slotTr.DOScale(1.15f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+            lockIconTr
+                .DOShakeAnchorPos(0.7f, new Vector3(1f, 1f, 0f), vibrato: 48, randomness: 59f)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true);
         });
-        seq.AppendInterval(0.3f);
+        seq.AppendInterval(0.7f);
+
+        // Scale 1→2
         seq.AppendCallback(() =>
         {
-            slotTr.DOScale(1f, 0.2f).SetEase(Ease.InOutBack).SetUpdate(true);
-            if (_spdSlot.lockBg  != null) _spdSlot.lockBg .DOFade(0f, 0.4f).SetUpdate(true);
-            if (_spdSlot.lockIcon!= null) _spdSlot.lockIcon.DOFade(0f, 0.4f).SetUpdate(true);
+            lockIconTr
+                .DOScale(2f, 0.5f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
+        });
+        seq.AppendInterval(0.5f);
+
+        // Lock overlay Fade out
+        seq.AppendCallback(() =>
+        {
+            if (_spdSlot.lockBg != null) _spdSlot.lockBg.DOFade(0f, 0.4f).SetUpdate(true);
+            _spdSlot.lockIcon.DOFade(0f, 0.4f).SetUpdate(true);
         });
         seq.AppendInterval(0.4f);
+
         seq.AppendCallback(() =>
         {
-            if (_spdSlot.lockBg  != null) _spdSlot.lockBg .gameObject.SetActive(false);
-            if (_spdSlot.lockIcon!= null) _spdSlot.lockIcon.gameObject.SetActive(false);
+            if (_spdSlot.lockBg != null) _spdSlot.lockBg.gameObject.SetActive(false);
+            _spdSlot.lockIcon.gameObject.SetActive(false);
+            // 다음 번 잠금 상태 재사용을 위한 원복
+            lockIconTr.anchoredPosition = lockOriginPos;
+            lockIconTr.localScale = Vector3.one;
             RefreshSlotVisual(_spdSlot);
             Managers.Game.SpdPotionPopupAnimPlayed = true;
         });
