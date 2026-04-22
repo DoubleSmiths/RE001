@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -6,6 +7,142 @@ using UnityEngine.UI;
 
 public class RemoveScriptMachine
 {
+    // =======================================================================
+    // 선택한 프리팹에서 ScriptMachine / Variables / StateMachine 제거
+    // Project 창에서 프리팹을 하나 이상 선택하고 메뉴를 실행하면 됩니다.
+    // 프리팹 내부의 모든 자식 오브젝트까지 검사합니다.
+    // =======================================================================
+    [MenuItem("Tools/Remove ScriptMachines And Variables (Selected Prefabs)")]
+    static void RemoveFromSelectedPrefabs()
+    {
+        Object[] selected = Selection.objects;
+
+        if (selected == null || selected.Length == 0)
+        {
+            Debug.LogWarning("선택된 프리팹이 없습니다. Project 창에서 프리팹을 선택해 주세요.");
+            return;
+        }
+
+        // 실제로 처리 가능한 프리팹 에셋만 수집
+        List<GameObject> prefabAssets = new List<GameObject>();
+        foreach (var obj in selected)
+        {
+            GameObject go = obj as GameObject;
+            if (go == null)
+                continue;
+
+            string path = AssetDatabase.GetAssetPath(go);
+            if (string.IsNullOrEmpty(path))
+                continue;
+
+            // 프리팹 에셋인지 확인
+            PrefabAssetType assetType = PrefabUtility.GetPrefabAssetType(go);
+            if (assetType == PrefabAssetType.NotAPrefab ||
+                assetType == PrefabAssetType.MissingAsset)
+            {
+                continue;
+            }
+
+            prefabAssets.Add(go);
+        }
+
+        if (prefabAssets.Count == 0)
+        {
+            Debug.LogWarning("선택된 오브젝트 중 프리팹 에셋이 없습니다.");
+            return;
+        }
+
+        int totalScriptMachines = 0;
+        int totalVariables = 0;
+        int totalStateMachines = 0;
+        int processedPrefabs = 0;
+
+        try
+        {
+            AssetDatabase.StartAssetEditing();
+
+            for (int i = 0; i < prefabAssets.Count; i++)
+            {
+                GameObject prefabAsset = prefabAssets[i];
+                string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+
+                EditorUtility.DisplayProgressBar(
+                    "Remove ScriptMachines And Variables",
+                    $"Processing: {prefabAsset.name}",
+                    (float)i / prefabAssets.Count);
+
+                // 프리팹 내용을 임시로 로드해서 편집
+                GameObject prefabRoot = PrefabUtility.LoadPrefabContents(prefabPath);
+
+                if (prefabRoot == null)
+                {
+                    Debug.LogWarning($"[Skip] 프리팹 로드 실패: {prefabPath}");
+                    continue;
+                }
+
+                int smCount = 0;
+                int varCount = 0;
+                int stateCount = 0;
+
+                // ScriptMachine 제거 (자식 포함)
+                ScriptMachine[] machines = prefabRoot.GetComponentsInChildren<ScriptMachine>(true);
+                foreach (var m in machines)
+                {
+                    if (m == null)
+                        continue;
+                    Object.DestroyImmediate(m, true);
+                    smCount++;
+                }
+
+                // Variables 제거 (자식 포함)
+                Variables[] vars = prefabRoot.GetComponentsInChildren<Variables>(true);
+                foreach (var v in vars)
+                {
+                    if (v == null)
+                        continue;
+                    Object.DestroyImmediate(v, true);
+                    varCount++;
+                }
+
+                // StateMachine 제거 (자식 포함)
+                StateMachine[] sms = prefabRoot.GetComponentsInChildren<StateMachine>(true);
+                foreach (var sm in sms)
+                {
+                    if (sm == null)
+                        continue;
+                    Object.DestroyImmediate(sm, true);
+                    stateCount++;
+                }
+
+                // 변경사항 저장
+                PrefabUtility.SaveAsPrefabAsset(prefabRoot, prefabPath);
+                PrefabUtility.UnloadPrefabContents(prefabRoot);
+
+                totalScriptMachines += smCount;
+                totalVariables += varCount;
+                totalStateMachines += stateCount;
+                processedPrefabs++;
+
+                Debug.Log(
+                    $"[{prefabAsset.name}] ScriptMachine: {smCount}, " +
+                    $"Variables: {varCount}, StateMachine: {stateCount} 제거");
+            }
+        }
+        finally
+        {
+            AssetDatabase.StopAssetEditing();
+            EditorUtility.ClearProgressBar();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        Debug.Log(
+            $"완료: 프리팹 {processedPrefabs}개 처리 / " +
+            $"ScriptMachine {totalScriptMachines}개, " +
+            $"Variables {totalVariables}개, " +
+            $"StateMachine {totalStateMachines}개 제거.");
+    }
+
     [MenuItem("Tools/Remove All ScriptMachines And Variables")]
     static void RemoveAll()
     {

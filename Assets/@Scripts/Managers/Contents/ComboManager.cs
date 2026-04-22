@@ -146,22 +146,27 @@ public class ComboManager
     //  Hit 처리 (Player.OnHitLanded(damage) 위임)
     // ────────────────────────────────────────
 
+    /// <summary>테스트/에디터용: 실제 플레이어 없이 수동 타격 시뮬레이션.</summary>
+    public void SimulateHit(float damage) => HandleHit(damage);
+
     void HandleHit(float damage)
     {
+        bool wasIdle = (Combo == 0);      // IDLE → ACTIVE 진입 감지
         Combo++;
         Dmg += Mathf.Max(0f, damage);
-
         OnComboChanged?.Invoke(Combo);
 
+        // (1) Rank 확정 먼저: 첫 타격이면 Level 0 상태 강제 진입 (ComboTitle/색상 초기 반영)
+        int newRank = CalcRankFromCombo(Combo);
+        if (wasIdle || newRank != NowRank)
+            ChangeRank(newRank);
+
+        // (2) 확정된 Rank의 stage 기준으로 타이머 가산 (HitGain 적용, MaxTimer clamp)
         var stage = GetCurrentStage();
         if (stage != null)
             CurrentTimer = Mathf.Min(CurrentTimer + stage.HitGain, stage.MaxTimer);
 
-        int newRank = CalcRankFromCombo(Combo);
-        if (newRank != NowRank)
-            ChangeRank(newRank);
-        else
-            FireTimerChanged();
+        FireTimerChanged();
     }
 
     int CalcRankFromCombo(int combo)

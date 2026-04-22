@@ -7,14 +7,20 @@ using UnityEngine.UI;
 using static Define;
 
 /// <summary>
-/// 전투 UI (슬라이드 47~). 기존 Village1 레이아웃 잔재를 정리하고
-/// 슬라이드 47 스펙의 Texts/리소스 배치를 기준으로 재구성.
+/// 전투 UI (슬라이드 47~52). VS COMBOSYSTEM StateMachine의 C# 포팅.
 ///
-/// 슬라이드 47 범위:
-///   - Texts enum 정의 (콤보 8종 + 전투 스탯 7종 + 버튼 2종)
-///   - 전 Text에 RiaSans-Bold 폰트 일괄 적용 (FontType.Battle)
-///   - 콤보 Text: 색 #FF001F, Outline #000000 (0.6, -0.6)
-///   - Localization 자동 적용
+/// 실제 prefab GameObject:
+///   COMBOSYSTEM                — 루트 컨테이너 (VS 제거됨)
+///   ComboText                  — 라벨 "공세 단계:"
+///   ComboTitle                 — Rank 이름 ("무딘"/"숙련된"/...)
+///   ComboNum                   — NowCombo 숫자 표시
+///   DMG_NUM                    — NowDmg 숫자 표시
+///   BAR1                       — Slider (게이지)
+///   ASBoostText / ASBoost      — 공격속도 라벨 / 값
+///   DMGBoostText / DMGBoost    — 피해증폭 라벨 / 값
+///   ASBoostEffect              — 공격속도 버프 활성 시 SetActive
+///   DMGBoostEffect             — 피해증폭 버프 활성 시 SetActive
+///   ATTACKBTN                  — (테스트용) 수동 타격 시뮬
 /// </summary>
 public class UI_BattleBtnGroup : UI_AreaBtnGroup
 {
@@ -22,61 +28,69 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     enum Images
     {
-        ComboGuage,             // 콤보 게이지 fill 이미지 (Image.Type=Filled, Horizontal)
-        TravelButtonQuestVFX_Img, // prefab에 TravelButtonQuestVFX GameObject로 존재
+        // 추후 필요 시 Image 타겟 추가
     }
 
     enum Texts
     {
-        // 슬라이드 48 콤보 시스템 Text (슬라이드 47에서 필드 정의)
-        ComboText,
-        ComboLv0Text,
-        ComboLv1Text,
-        ComboLv2Text,
-        ComboLv3Text,
-        ComboLv4Text,
-        ComboLv5Text,
-        ComboLv6Text,
+        // 콤보 영역
+        ComboText,     // "공세 단계:" 라벨
+        ComboTitle,    // Rank 이름 (ComboLv#Text Localize로 동적 갱신)
+        ComboNum,      // NowCombo 숫자
+        DMG_NUM,       // NowDmg 숫자
 
-        // 전투 기록 / 스탯 표기
+        // 버프 영역
+        ASBoostText,   // "공격속도" 라벨
+        ASBoost,       // "+15%" 값
+        DMGBoostText,  // "피해증폭" 라벨
+        DMGBoost,      // "+10%" 값
+
+        // 전투 기록 (슬라이드 50 — 현재는 enum만 자리잡음, 값 갱신은 후속 작업)
         BattleLogText,
-        DmgBoostText,
-        AttackSpeedText,
         BattleTimeText,
         DmgDealtText,
         DmgTakenText,
         HPRestoredText,
 
-        // 화면 하단 버튼
+        // 버튼 텍스트 (슬라이드 51/52)
         TravelBtnText,
         ReturnText,
     }
 
     enum Buttons
     {
-        TempButton1,
-        TempButton2,
-        TempButton3,
-        TempButton4,
-        TempButton5,
-        TravelButton,
+        ATTACKBTN,   // 테스트용 수동 타격. 실제 전투는 PlayerController.AutoAttack 자동.
     }
 
     enum GameObjects
     {
-        TravelButtonQuestVFX,
-        ASBoostEffect,     // VS ASBoostEffect — 공격속도 버프 시 노출
-        DMGBoostEffect,    // VS DMGBoostEffect — 피해증폭 버프 시 노출
+        COMBOSYSTEM,
+        BAR1,             // Slider
+        ASBoostEffect,
+        DMGBoostEffect,
     }
 
     #endregion
 
-    // 콤보 Text 스타일 — 슬라이드 47 스펙
-    static readonly Color COMBO_COLOR    = new Color32(0xFF, 0x00, 0x1F, 0xFF); // #FF001F
-    static readonly Color COMBO_OUTLINE  = new Color32(0x00, 0x00, 0x00, 0xFF); // #000000
+    // ── 콤보 Text 스타일 (슬라이드 47) ──
+    static readonly Color32 COMBO_COLOR    = new Color32(0xFF, 0x00, 0x1F, 0xFF); // #FF001F
+    static readonly Color32 COMBO_OUTLINE  = new Color32(0x00, 0x00, 0x00, 0xFF);
     const float COMBO_OUTLINE_X =  0.6f;
     const float COMBO_OUTLINE_Y = -0.6f;
 
+    // ── Combo UI 캐시 ──
+    Slider         _comboBar;
+    Image          _comboBarFill;
+    List<TMP_Text> _rankColorTexts;
+    GameObject     _asBoostEffect;
+    GameObject     _dmgBoostEffect;
+
+    // 콤보 연출용 DOTween (prefab에 이미 붙어있는 DOTweenAnimation을 코드로 트리거)
+    DOTweenAnimation _comboNumAnim;     // ComboNum : 타격마다
+    DOTweenAnimation _dmgNumAnim;       // DMG_NUM  : 타격마다
+    DOTweenAnimation _comboTitleAnim;   // ComboTitle: Rank up 시
+
+    // ── 배틀 루프 ──
     Coroutine _battleCoroutine;
 
     void Awake() => Init();
@@ -93,7 +107,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         ApplyBattleTexts();
         BindComboUI();
 
-        GetButton((int)Buttons.TravelButton)?.gameObject.BindEvent(OnClickTravel);
+        // 테스트 수동 타격: ATTACKBTN 클릭 시 OnHitLanded 시뮬 (에디터 편의용)
+        GetButton((int)Buttons.ATTACKBTN)?.gameObject.BindEvent(OnClickAttackBtnForTesting);
 
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged += RefreshNotify;
@@ -106,12 +121,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             Managers.Game.Player.StartBattle();
         }
 
-        for (int i = 0; i < 6; i++)
-        {
-            var tempBtn = GetButton(i)?.gameObject;
-            if (tempBtn != null) tempBtn.SetActive(false);
-        }
-
         return true;
     }
 
@@ -121,52 +130,121 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
         UnbindComboUI();
+        base.OnDestroy();
     }
 
     // ────────────────────────────────────────
-    //  슬라이드 48: 콤보 UI 바인딩
+    //  슬라이드 47 + 48: Text 초기화 + 스타일
     // ────────────────────────────────────────
 
-    Image _comboGuage;
-    readonly List<GameObject> _comboLvNodes = new List<GameObject>();
+    void ApplyBattleTexts()
+    {
+        // 모든 전투 Text에 RiaSans-Bold + (정적 Localize)
+        for (int i = 0; i < System.Enum.GetValues(typeof(Texts)).Length; i++)
+        {
+            var tmp = GetText(i);
+            if (tmp == null) continue;
+            ApplyFont(tmp, FontType.Battle);
+
+            string enumKey = System.Enum.GetName(typeof(Texts), i);
+            // 동적 갱신 대상은 빈 문자열로 시작, 아닌 것은 Localize
+            if (IsDynamicText((Texts)i))
+                tmp.text = "";
+            else
+                tmp.text = Util.Localize(enumKey);
+        }
+
+        // 콤보 라벨 스타일 (슬라이드 47 스펙)
+        var comboLabel = GetText((int)Texts.ComboText);
+        if (comboLabel != null)
+        {
+            comboLabel.color = COMBO_COLOR;
+            Util.SetTMPUnderlay(comboLabel, COMBO_OUTLINE, COMBO_OUTLINE_X, COMBO_OUTLINE_Y);
+        }
+    }
+
+    static bool IsDynamicText(Texts t)
+    {
+        switch (t)
+        {
+            case Texts.ComboTitle:
+            case Texts.ComboNum:
+            case Texts.DMG_NUM:
+            case Texts.ASBoost:
+            case Texts.DMGBoost:
+            case Texts.ASBoostText:   // Rank에 따라 표시/비표시
+            case Texts.DMGBoostText:  // 동일
+            case Texts.BattleTimeText:
+            case Texts.DmgDealtText:
+            case Texts.DmgTakenText:
+            case Texts.HPRestoredText:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    // ────────────────────────────────────────
+    //  슬라이드 48: 콤보 UI 바인딩 + 이벤트 연결
+    // ────────────────────────────────────────
 
     void BindComboUI()
     {
-        _comboGuage = GetImage((int)Images.ComboGuage);
-        if (_comboGuage != null)
+        // BAR1 (Slider) 해석
+        var barGO = GetObject((int)GameObjects.BAR1);
+        if (barGO != null)
         {
-            _comboGuage.type = Image.Type.Filled;
-            _comboGuage.fillMethod = Image.FillMethod.Horizontal;
-            _comboGuage.fillAmount = 0f;
+            _comboBar     = barGO.GetComponent<Slider>();
+            _comboBarFill = _comboBar != null && _comboBar.fillRect != null
+                ? _comboBar.fillRect.GetComponent<Image>()
+                : null;
+            if (_comboBar != null) _comboBar.value = 0f;
         }
 
-        // Lv0~Lv6 Text는 현 Rank만 보이도록 캐시
-        _comboLvNodes.Clear();
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv0Text)?.gameObject);
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv1Text)?.gameObject);
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv2Text)?.gameObject);
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv3Text)?.gameObject);
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv4Text)?.gameObject);
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv5Text)?.gameObject);
-        _comboLvNodes.Add(GetText((int)Texts.ComboLv6Text)?.gameObject);
+        _asBoostEffect  = GetObject((int)GameObjects.ASBoostEffect);
+        _dmgBoostEffect = GetObject((int)GameObjects.DMGBoostEffect);
 
-        // 초기 상태: 모든 Rank Text / Boost Effect 숨김
-        foreach (var go in _comboLvNodes)
-            if (go != null) go.SetActive(false);
-        GetObject((int)GameObjects.ASBoostEffect)?.SetActive(false);
-        GetObject((int)GameObjects.DMGBoostEffect)?.SetActive(false);
+        // Prefab에 이미 구성된 DOTweenAnimation 참조 캐시
+        var comboNumTmp   = GetText((int)Texts.ComboNum);
+        var dmgNumTmp     = GetText((int)Texts.DMG_NUM);
+        var comboTitleTmp = GetText((int)Texts.ComboTitle);
+        if (comboNumTmp   != null) _comboNumAnim   = comboNumTmp.GetComponent<DOTweenAnimation>();
+        if (dmgNumTmp     != null) _dmgNumAnim     = dmgNumTmp.GetComponent<DOTweenAnimation>();
+        if (comboTitleTmp != null) _comboTitleAnim = comboTitleTmp.GetComponent<DOTweenAnimation>();
+
+        // Rank Color 반영 대상 텍스트
+        _rankColorTexts = new List<TMP_Text>
+        {
+            GetText((int)Texts.ComboTitle),
+            GetText((int)Texts.ComboNum),
+            GetText((int)Texts.DMG_NUM),
+            GetText((int)Texts.ASBoostText),
+            GetText((int)Texts.ASBoost),
+            GetText((int)Texts.DMGBoostText),
+            GetText((int)Texts.DMGBoost),
+        };
+
+        // 초기 상태: 버프 이펙트 숨김
+        _asBoostEffect?.SetActive(false);
+        _dmgBoostEffect?.SetActive(false);
 
         if (Managers.Combo != null)
         {
-            Managers.Combo.OnRankChanged        += OnComboRankChanged;
-            Managers.Combo.OnTimerChanged       += OnComboTimerChanged;
-            Managers.Combo.OnComboBreak         += OnComboBreak;
-            Managers.Combo.OnComboChanged       += OnComboValueChanged;
-            Managers.Combo.OnNowValuesChanged   += OnComboNowValuesChanged;
-            Managers.Combo.OnFirstBuffActivated += OnComboFirstBuffActivated;
-            OnComboRankChanged(Managers.Combo.NowRank);
-            OnComboTimerChanged(Managers.Combo.NormalizedTimer);
-            OnComboNowValuesChanged(Managers.Combo.NowCombo, Managers.Combo.NowDmg);
+            Managers.Combo.OnRankChanged        += HandleRankChanged;
+            Managers.Combo.OnTimerChanged       += HandleTimerChanged;
+            Managers.Combo.OnComboBreak         += HandleComboBreak;
+            Managers.Combo.OnComboChanged       += HandleComboChanged;
+            Managers.Combo.OnNowValuesChanged   += HandleNowValues;
+            Managers.Combo.OnFirstBuffActivated += HandleFirstBuff;
+
+            // 초기 바인딩 시: IDLE(combo=0)이면 HandleComboBreak로 정리, 진행 중이면 현재 Rank 반영.
+            if (Managers.Combo.Combo > 0)
+                HandleRankChanged(Managers.Combo.NowRank);
+            else
+                HandleComboBreak();
+
+            HandleTimerChanged(Managers.Combo.NormalizedTimer);
+            HandleNowValues(Managers.Combo.NowCombo, Managers.Combo.NowDmg);
         }
     }
 
@@ -174,149 +252,135 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         if (Managers.Combo != null)
         {
-            Managers.Combo.OnRankChanged        -= OnComboRankChanged;
-            Managers.Combo.OnTimerChanged       -= OnComboTimerChanged;
-            Managers.Combo.OnComboBreak         -= OnComboBreak;
-            Managers.Combo.OnComboChanged       -= OnComboValueChanged;
-            Managers.Combo.OnNowValuesChanged   -= OnComboNowValuesChanged;
-            Managers.Combo.OnFirstBuffActivated -= OnComboFirstBuffActivated;
+            Managers.Combo.OnRankChanged        -= HandleRankChanged;
+            Managers.Combo.OnTimerChanged       -= HandleTimerChanged;
+            Managers.Combo.OnComboBreak         -= HandleComboBreak;
+            Managers.Combo.OnComboChanged       -= HandleComboChanged;
+            Managers.Combo.OnNowValuesChanged   -= HandleNowValues;
+            Managers.Combo.OnFirstBuffActivated -= HandleFirstBuff;
         }
     }
 
-    void OnComboRankChanged(int rank)
+    // ── Rank 변경 ──
+    //   - ComboTitle: Localize("ComboLv{rank}Text")
+    //   - ASBoost/DMGBoost: 값 갱신 + 라벨 ON/OFF
+    //   - 이펙트 GameObject SetActive
+    //   - Rank Color 전체 적용
+    void HandleRankChanged(int rank)
     {
-        // 현 Rank Text만 활성, 나머지 비활성
-        for (int i = 0; i < _comboLvNodes.Count; i++)
-        {
-            if (_comboLvNodes[i] != null)
-                _comboLvNodes[i].SetActive(i == rank);
-        }
-
-        // VS ASBoostEffect / DMGBoostEffect 토글 — 현재 stage의 버프가 활성이면 노출
         var stage = Managers.Combo?.GetCurrentStage();
-        bool asActive  = stage != null && stage.AtkSpeedBuff > 0f;
+
+        // ComboTitle: Rank Name
+        var titleTmp = GetText((int)Texts.ComboTitle);
+        if (titleTmp != null)
+            titleTmp.text = stage != null ? Util.Localize(stage.NameKey) : "";
+
+        // ASBoost / ASBoostText
+        var asVal = GetText((int)Texts.ASBoost);
+        var asLbl = GetText((int)Texts.ASBoostText);
+        bool asActive = stage != null && stage.AtkSpeedBuff > 0f;
+        if (asVal != null) asVal.text = asActive ? $"+{(int)stage.AtkSpeedBuff}%" : "";
+        if (asLbl != null) asLbl.text = asActive ? Util.Localize("AttackSpeedText") : "";
+
+        // DMGBoost / DMGBoostText
+        var dmgVal = GetText((int)Texts.DMGBoost);
+        var dmgLbl = GetText((int)Texts.DMGBoostText);
         bool dmgActive = stage != null && stage.DmgBoostBuff > 0f;
-        GetObject((int)GameObjects.ASBoostEffect)?.SetActive(asActive);
-        GetObject((int)GameObjects.DMGBoostEffect)?.SetActive(dmgActive);
+        if (dmgVal != null) dmgVal.text = dmgActive ? $"+{(int)stage.DmgBoostBuff}%" : "";
+        if (dmgLbl != null) dmgLbl.text = dmgActive ? Util.Localize("DmgBoostText") : "";
 
-        // Rank별 Color — ComboText, 현 Rank Text, ComboGuage fill에 일괄 적용
+        // 이펙트 GameObject 토글
+        _asBoostEffect?.SetActive(asActive);
+        _dmgBoostEffect?.SetActive(dmgActive);
+
+        // Rank Color 일괄 적용
         Color rankColor = Managers.Combo?.GetCurrentRankColor() ?? Color.white;
-        ApplyRankColor(rankColor, rank);
+        foreach (var t in _rankColorTexts)
+            if (t != null) t.color = rankColor;
+        if (_comboBarFill != null) _comboBarFill.color = rankColor;
+
+        // Rank up 연출: ComboTitle DOTween
+        _comboTitleAnim?.DORestart();
     }
 
-    void ApplyRankColor(Color color, int rank)
+    void HandleTimerChanged(float normalized)
     {
-        // ComboText (공세 단계:) 색상도 Rank에 맞춰 바뀜
-        var comboTitle = GetText((int)Texts.ComboText);
-        if (comboTitle != null) comboTitle.color = color;
-
-        // 현 Rank의 Lv#Text 색상
-        if (rank >= 0 && rank < _comboLvNodes.Count && _comboLvNodes[rank] != null)
-        {
-            var tmp = _comboLvNodes[rank].GetComponent<TMP_Text>();
-            if (tmp != null) tmp.color = color;
-        }
-
-        // ComboGuage fill 색상
-        if (_comboGuage != null) _comboGuage.color = color;
+        if (_comboBar != null) _comboBar.value = normalized;
     }
 
-    void OnComboTimerChanged(float normalized)
+    // 타격 발생(= 콤보 수 변경) 시: ComboNum/DMG_NUM DOTween 트리거
+    void HandleComboChanged(int combo)
     {
-        if (_comboGuage != null)
-            _comboGuage.fillAmount = normalized;
+        _comboNumAnim?.DORestart();
+        _dmgNumAnim?.DORestart();
     }
 
-    void OnComboValueChanged(int combo)
+    // 콤보 종료/초기화 시: Rank 관련 표시만 비움. ComboNum/DMG_NUM은 "0" 표시 유지.
+    void HandleComboBreak()
     {
-        // 원본 int combo 값은 직접 표시하지 않음 (Smooth 보간된 NowCombo 사용)
+        var titleTmp = GetText((int)Texts.ComboTitle); if (titleTmp != null) titleTmp.text = "";
+        var asVal    = GetText((int)Texts.ASBoost);     if (asVal    != null) asVal.text    = "";
+        var asLbl    = GetText((int)Texts.ASBoostText); if (asLbl    != null) asLbl.text    = "";
+        var dmgVal   = GetText((int)Texts.DMGBoost);    if (dmgVal   != null) dmgVal.text   = "";
+        var dmgLbl   = GetText((int)Texts.DMGBoostText);if (dmgLbl   != null) dmgLbl.text   = "";
+        if (_comboBar != null) _comboBar.value = 0f;
+        _asBoostEffect?.SetActive(false);
+        _dmgBoostEffect?.SetActive(false);
     }
 
-    void OnComboNowValuesChanged(float nowCombo, float nowDmg)
+    // Smooth 보간된 NowCombo / NowDmg → Text 표시. 0 일 때도 "0" 유지.
+    void HandleNowValues(float nowCombo, float nowDmg)
     {
-        // BattleLogText 등에 Smooth 보간 표시 — 현재 prefab 구조상 직접 반영 대상이 제한적.
-        // 총 피해량(DmgDealtText 별도 label)을 이 값으로 갱신하는 지점.
-        // TODO: 슬라이드 50에서 DmgDealtText / 전투시간 등 별도 로직으로 확장 예정.
-        // 지금은 진단 로그 수준만 유지. (필요 시 여기서 TMP_Text에 nowCombo/nowDmg 표시)
+        var comboTmp = GetText((int)Texts.ComboNum);
+        if (comboTmp != null)
+            comboTmp.text = Mathf.RoundToInt(Mathf.Max(0f, nowCombo)).ToString();
+
+        var dmgTmp = GetText((int)Texts.DMG_NUM);
+        if (dmgTmp != null)
+            dmgTmp.text = Mathf.RoundToInt(Mathf.Max(0f, nowDmg)).ToString();
     }
 
-    void OnComboFirstBuffActivated(ComboManager.BuffKind buff)
+    // 슬라이드 48: 특정 버프 첫 활성화 시 Quest_Done_Effect 파티클
+    void HandleFirstBuff(ComboManager.BuffKind buff)
     {
-        // 슬라이드 48 스펙: 처음 특정 긍정 효과 받을 시 Quest_Done_Effect 파티클 생성
         var fx = Managers.Resource.Load<GameObject>("Quest_Done_Effect");
         if (fx == null) return;
-
-        GameObject target = buff == ComboManager.BuffKind.AttackSpeed
-            ? GetObject((int)GameObjects.ASBoostEffect)
-            : GetObject((int)GameObjects.DMGBoostEffect);
-        Transform parent = target != null ? target.transform : transform;
-
+        GameObject target = buff == ComboManager.BuffKind.AttackSpeed ? _asBoostEffect : _dmgBoostEffect;
+        Transform parent  = target != null ? target.transform : transform;
         var go = GameObject.Instantiate(fx, parent);
         go.transform.localPosition = Vector3.zero;
         GameObject.Destroy(go, 3f);
     }
 
-    void OnComboBreak()
+    // ── 에디터 테스트용: ATTACKBTN 클릭 시 타격 시뮬 ──
+    //   - 플레이어/몬스터 없이도 콤보 흐름(누적→Rank 전이→버프→타이머→리셋)을 검증 가능.
+    //   - 한 번의 클릭 = 한 번의 타격(hit) + 임의 데미지 1회.
+    void OnClickAttackBtnForTesting()
     {
-        // VS 'combobreak' — 모든 Rank Text / Boost Effect 즉시 숨김
-        foreach (var go in _comboLvNodes)
-            if (go != null) go.SetActive(false);
-        GetObject((int)GameObjects.ASBoostEffect)?.SetActive(false);
-        GetObject((int)GameObjects.DMGBoostEffect)?.SetActive(false);
-        if (_comboGuage != null)
-            _comboGuage.fillAmount = 0f;
+        if (Managers.Combo == null)
+        {
+            Debug.LogWarning("[UI_BattleBtnGroup] ATTACKBTN: Managers.Combo is null");
+            return;
+        }
+        Managers.Combo.SimulateHit(100f);
     }
 
     // ────────────────────────────────────────
-    //  슬라이드 47: Text 필드 일괄 스타일링
+    //  Quest Notify (기존 유지)
     // ────────────────────────────────────────
 
-    /// <summary>모든 전투 Text에 RiaSans-Bold 폰트 적용 + Localization 값 채우기.
-    /// 콤보 Text는 #FF001F 색 + 검은 Outline 추가 적용.</summary>
-    void ApplyBattleTexts()
+    void RefreshNotify()
     {
-        // 기본 localization 매핑 (TextKey 문자열이 enum 이름과 동일하므로 직접 재사용)
-        for (int i = 0; i < System.Enum.GetValues(typeof(Texts)).Length; i++)
-        {
-            var tmp = GetText(i);
-            if (tmp == null) continue;
-
-            // 폰트: 전투 UI 전용 RiaSans-Bold
-            ApplyFont(tmp, FontType.Battle);
-
-            // Localization 본문
-            string key = System.Enum.GetName(typeof(Texts), i);
-            tmp.text = Util.Localize(key);
-        }
-
-        // 콤보 계열(8종): 색상 + Outline 스타일
-        for (int i = (int)Texts.ComboText; i <= (int)Texts.ComboLv6Text; i++)
-        {
-            var tmp = GetText(i);
-            if (tmp == null) continue;
-            tmp.color = COMBO_COLOR;
-            Util.SetTMPUnderlay(tmp, COMBO_OUTLINE, COMBO_OUTLINE_X, COMBO_OUTLINE_Y);
-        }
+        // 현 prefab에 TravelButtonQuestVFX가 없는 상태. 존재 여부 확인 후 없으면 skip.
     }
 
     // ────────────────────────────────────────
-    //  배틀 루프 / Travel 복귀
+    //  Battle 루프 (기존 유지)
     // ────────────────────────────────────────
 
     public override void PlayEnterAnimation()
     {
         Managers.UI.ShowToast("산들바람 숲(입구)");
-
-        Sequence seq = DOTween.Sequence();
-        for (int i = 0; i < 6; i++)
-        {
-            var tempBtn = GetButton(i)?.gameObject;
-            if (tempBtn == null) continue;
-            seq.AppendCallback(() => tempBtn.SetActive(true));
-            seq.AppendInterval(0.1f);
-            seq.AppendCallback(() => tempBtn.GetComponent<DOTweenAnimation>()?.DORestart());
-        }
-
         StartBattle();
     }
 
@@ -324,7 +388,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         PlayerController player = Managers.Game.Player;
         if (player == null) return;
-
         player.StartBattle();
         _battleCoroutine = StartCoroutine(CoBattleLoop());
     }
@@ -336,7 +399,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         while (true)
         {
-            MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos); // TODO : 몬스터 테이블 연동
+            MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos);
             if (mc != null)
             {
                 mc.OnEngaged += () =>
@@ -373,42 +436,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         }
     }
 
-    void RefreshNotify()
-    {
-        var list = Managers.Quest.GetCurrentNotifyList();
-        bool travelNotify = list.Exists(n => n.BtnID == VILLAGE1_TRAVEL_QUEST_VFX);
-        GetObject((int)GameObjects.TravelButtonQuestVFX)?.SetActive(travelNotify);
-    }
-
-    void OnClickTravel()
-    {
-        EndBattle();
-
-        var ch1 = GameObject.Find("CH1BG") ?? GameObject.Find("CH1BG(Clone)");
-        if (ch1 != null) Destroy(ch1);
-
-        UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
-        gameScene?.EnterAreaWithFade(AreaType.Village1);
-
-        UpdateLastTravelAreaToVillage1();
-    }
-
-    void UpdateLastTravelAreaToVillage1()
-    {
-        if (Managers.Data?.TravelAreaDic == null) return;
-
-        var village = Managers.Data.TravelAreaDic.Values
-            .FirstOrDefault(n => n.SceneName == "Village1"
-                                 && n.IsEnterable == 1
-                                 && string.Equals(n.Category, "TOWN",
-                                     System.StringComparison.OrdinalIgnoreCase));
-        if (village != null)
-            Managers.Game.CurrentTravelAreaId = village.DataId;
-    }
-
     void ChangeMap()
     {
-        // Village1→Battle 전환 시 SwitchBG가 legacy BackgroundImage를 이미 비활성화했을 수 있음
         var legacyBG = GameObject.Find("BackgroundImage");
         if (legacyBG != null)
         {
