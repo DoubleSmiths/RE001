@@ -122,6 +122,144 @@ public class TextToTMPConverter
         return converted;
     }
 
+    // ─── TMP → Legacy Text ───────────────────────────────────────────────
+
+    [MenuItem("Tools/Convert TMP to Text in UI_GameScene")]
+    static void RevertActiveOnly()
+    {
+        Revert("UI_GameScene");
+    }
+
+    [MenuItem("Tools/Convert Selected TMP to Text")]
+    static void RevertSelected()
+    {
+        GameObject selected = Selection.activeGameObject;
+        if (selected == null)
+        {
+            Debug.LogError("[TextToTMPConverter] 변환할 오브젝트를 선택하세요.");
+            return;
+        }
+
+        string assetPath = AssetDatabase.GetAssetPath(selected);
+
+        if (!string.IsNullOrEmpty(assetPath))
+        {
+            GameObject contents = PrefabUtility.LoadPrefabContents(assetPath);
+            int count = RevertTMPs(contents);
+            PrefabUtility.SaveAsPrefabAsset(contents, assetPath);
+            PrefabUtility.UnloadPrefabContents(contents);
+            AssetDatabase.Refresh();
+            Debug.Log($"[TextToTMPConverter] '{selected.name}' TMP → Text 교체 완료: {count}개");
+        }
+        else
+        {
+            int count = RevertTMPs(selected);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log($"[TextToTMPConverter] '{selected.name}' TMP → Text 교체 완료: {count}개");
+        }
+    }
+
+    [MenuItem("Tools/Convert Selected TMP to Text", true)]
+    static bool RevertSelectedValidate() => Selection.activeGameObject != null;
+
+    static void Revert(string rootName)
+    {
+        GameObject root = GameObject.Find(rootName);
+        if (root == null)
+        {
+            Debug.LogError($"[TextToTMPConverter] '{rootName}' 을(를) 씬에서 찾을 수 없습니다.");
+            return;
+        }
+        int converted = RevertTMPs(root);
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        Debug.Log($"[TextToTMPConverter] '{rootName}' 하위 TextMeshProUGUI → Text 교체 완료: {converted}개");
+    }
+
+    static int RevertTMPs(GameObject root)
+    {
+        TextMeshProUGUI[] tmps = root.GetComponentsInChildren<TextMeshProUGUI>(true);
+
+        if (tmps.Length == 0)
+        {
+            Debug.Log($"[TextToTMPConverter] '{root.name}' 하위에 TextMeshProUGUI 컴포넌트가 없습니다.");
+            return 0;
+        }
+
+        int converted = 0;
+
+        foreach (TextMeshProUGUI tmp in tmps)
+        {
+            GameObject go = tmp.gameObject;
+
+            string content                = tmp.text;
+            float  fontSize               = tmp.fontSize;
+            Color  color                  = tmp.color;
+            bool   raycast                = tmp.raycastTarget;
+            TextAlignmentOptions alignment = tmp.alignment;
+            FontStyles fontStyle          = tmp.fontStyle;
+            bool   richText               = tmp.richText;
+            float  lineSpacing            = tmp.lineSpacing;
+            bool   autoSizing             = tmp.enableAutoSizing;
+            float  fontSizeMin            = tmp.fontSizeMin;
+            float  fontSizeMax            = tmp.fontSizeMax;
+
+            Undo.DestroyObjectImmediate(tmp);
+
+            Text text = Undo.AddComponent<Text>(go);
+
+            text.text              = content;
+            text.fontSize          = Mathf.RoundToInt(fontSize);
+            text.color             = color;
+            text.raycastTarget     = raycast;
+            text.alignment         = RevertAlignment(alignment);
+            text.fontStyle         = RevertFontStyle(fontStyle);
+            text.supportRichText   = richText;
+            text.lineSpacing       = lineSpacing;
+
+            if (autoSizing)
+            {
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize    = Mathf.RoundToInt(fontSizeMin);
+                text.resizeTextMaxSize    = Mathf.RoundToInt(fontSizeMax);
+            }
+
+            EditorUtility.SetDirty(go);
+            converted++;
+        }
+
+        return converted;
+    }
+
+    static TextAnchor RevertAlignment(TextAlignmentOptions alignment)
+    {
+        switch (alignment)
+        {
+            case TextAlignmentOptions.TopLeft:     return TextAnchor.UpperLeft;
+            case TextAlignmentOptions.Top:         return TextAnchor.UpperCenter;
+            case TextAlignmentOptions.TopRight:    return TextAnchor.UpperRight;
+            case TextAlignmentOptions.Left:        return TextAnchor.MiddleLeft;
+            case TextAlignmentOptions.Center:      return TextAnchor.MiddleCenter;
+            case TextAlignmentOptions.Right:       return TextAnchor.MiddleRight;
+            case TextAlignmentOptions.BottomLeft:  return TextAnchor.LowerLeft;
+            case TextAlignmentOptions.Bottom:      return TextAnchor.LowerCenter;
+            case TextAlignmentOptions.BottomRight: return TextAnchor.LowerRight;
+            default:                               return TextAnchor.MiddleCenter;
+        }
+    }
+
+    static FontStyle RevertFontStyle(FontStyles style)
+    {
+        if ((style & FontStyles.Bold) != 0 && (style & FontStyles.Italic) != 0)
+            return FontStyle.BoldAndItalic;
+        if ((style & FontStyles.Bold) != 0)
+            return FontStyle.Bold;
+        if ((style & FontStyles.Italic) != 0)
+            return FontStyle.Italic;
+        return FontStyle.Normal;
+    }
+
+    // ─── Text → TMP (기존) ───────────────────────────────────────────────
+
     static TextAlignmentOptions ConvertAlignment(TextAnchor anchor)
     {
         switch (anchor)
