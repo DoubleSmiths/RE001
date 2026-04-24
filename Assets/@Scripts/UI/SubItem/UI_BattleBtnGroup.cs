@@ -45,12 +45,18 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         DMGBoostText,  // "피해증폭" 라벨
         DMGBoost,      // "+10%" 값
 
-        // 전투 기록 (슬라이드 50 — 현재는 enum만 자리잡음, 값 갱신은 후속 작업)
-        BattleLogText,
-        BattleTimeText,
-        DmgDealtText,
-        DmgTakenText,
-        HPRestoredText,
+        // 전투 기록 라벨 (슬라이드 50) — 정적 로컬라이즈.
+        BattleLogText,     // "전투 기록"
+        BattleTimeText,    // "전투 시간"
+        DmgDealtText,      // "가한 피해량"
+        DmgTakenText,      // "받은 피해량"
+        HPRestoredText,    // "회복량"
+
+        // 전투 기록 값 (동적) — 현재 조우한 몬스터 기준.
+        BattleTimeNum,     // mm:ss.ss
+        DmgDealtNum,       // Smooth 보간 합산
+        DmgTakenNum,
+        HPRestoredNum,
 
         // 버튼 텍스트 (슬라이드 51/52)
         TravelBtnText,
@@ -99,6 +105,18 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     float _prevAsBuff;
     float _prevDmgBuff;
 
+    // ── 전투 기록 (슬라이드 50) ──
+    const float LOG_SMOOTH_RATE = 12f;  // dt 기반 smooth 수렴 속도 (ComboManager Tick과 동일)
+    MonsterController _logMonster;      // 현재 조우한 몬스터
+    float _logTime;                     // mm:ss.ss
+    float _logDealtTarget, _logDealtDisplay;
+    float _logTakenTarget, _logTakenDisplay;
+    float _logHealTarget,  _logHealDisplay;
+    bool  _logFrozen = true;            // 시작 전 / 전투 종료 후
+    bool  _logTimerRunning;
+    float _logPrevPlayerHp = -1f;
+    bool  _logPlayerHooked;
+
     // ── 배틀 루프 ──
     Coroutine _battleCoroutine;
 
@@ -130,6 +148,11 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             Managers.Game.Player.StartBattle();
         }
 
+        // 전투 기록: Player 이벤트 구독 + 최초 IDLE 상태로 UI 세팅.
+        HookPlayerLogEvents();
+        ResetBattleLog(freezeAfter: true);
+        RefreshLogTexts();
+
         return true;
     }
 
@@ -139,6 +162,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
         UnbindComboUI();
+        UnhookPlayerLogEvents();
         base.OnDestroy();
     }
 
@@ -183,10 +207,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             case Texts.DMGBoost:
             case Texts.ASBoostText:   // Rank에 따라 표시/비표시
             case Texts.DMGBoostText:  // 동일
-            case Texts.BattleTimeText:
-            case Texts.DmgDealtText:
-            case Texts.DmgTakenText:
-            case Texts.HPRestoredText:
+            case Texts.BattleTimeNum: // 전투 기록 값은 실시간 갱신
+            case Texts.DmgDealtNum:
+            case Texts.DmgTakenNum:
+            case Texts.HPRestoredNum:
                 return true;
             default:
                 return false;
@@ -409,6 +433,119 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         effect.SetActive(false);
     }
 
+    // ────────────────────────────────────────
+    //  슬라이드 50: 전투 기록
+    //    - 조우 시 전체 리셋 + 타이머 시작 (mm:ss.ss)
+    //    - 몬스터 사망 / 플레이어 사망 시 freeze (수치 고정)
+    //    - 장소 이동 시 UI 재생성 → 자동 리셋
+    //    - 2/3/4 (가한/받은/회복량) 은 Smooth 보간 표시
+    // ────────────────────────────────────────
+
+    void HookPlayerLogEvents()
+    {
+        if (_logPlayerHooked) return;
+        var p = Managers.Game?.Player;
+        if (p == null) return;
+        p.OnHitLanded += HandlePlayerHitLanded;
+        p.OnHpChanged += HandlePlayerHpChanged;
+        _logPlayerHooked = true;
+    }
+
+    void UnhookPlayerLogEvents()
+    {
+        if (!_logPlayerHooked) return;
+        var p = Managers.Game?.Player;
+        if (p != null)
+        {
+            p.OnHitLanded -= HandlePlayerHitLanded;
+            p.OnHpChanged -= HandlePlayerHpChanged;
+        }
+        _logPlayerHooked = false;
+    }
+
+    public void StartBattleLog(MonsterController mc)
+    {
+        _logMonster = mc;
+        ResetBattleLog(freezeAfter: false);
+        _logTimerRunning = true;
+        _logPrevPlayerHp = Managers.Game?.Player?.Hp ?? -1f;
+        RefreshLogTexts();
+    }
+
+    void ResetBattleLog(bool freezeAfter)
+    {
+        _logTime          = 0f;
+        _logDealtTarget   = _logDealtDisplay = 0f;
+        _logTakenTarget   = _logTakenDisplay = 0f;
+        _logHealTarget    = _logHealDisplay  = 0f;
+        _logFrozen        = freezeAfter;
+        _logTimerRunning  = !freezeAfter;
+    }
+
+    void HandlePlayerHitLanded(float dmg)
+    {
+        if (_logFrozen) return;
+        _logDealtTarget += Mathf.Max(0f, dmg);
+    }
+
+    void HandlePlayerHpChanged(float cur, float max)
+    {
+        if (_logPrevPlayerHp < 0f) { _logPrevPlayerHp = cur; return; }
+        float delta = cur - _logPrevPlayerHp;
+        if (!_logFrozen)
+        {
+            if (delta < 0f)      _logTakenTarget += -delta;
+            else if (delta > 0f) _logHealTarget  +=  delta;
+        }
+        _logPrevPlayerHp = cur;
+    }
+
+    void Update()
+    {
+        // Managers.Combo.Tick은 Managers.cs에서 돌림 — 여기서는 전투 기록만 처리.
+
+        // (1) 종료 감지 — 몬스터 사망 / 플레이어 사망 → freeze
+        if (!_logFrozen)
+        {
+            if (_logMonster == null || _logMonster.State == State.Dead)
+                _logFrozen = true;
+            else if (Managers.Game?.Player != null && Managers.Game.Player.State == State.Dead)
+                _logFrozen = true;
+        }
+
+        // (2) 타이머 — freeze 아닐 때만 누적 (unscaled: 슬로우 모션에도 정상 진행)
+        if (_logTimerRunning && !_logFrozen)
+            _logTime += Time.unscaledDeltaTime;
+
+        // (3) Smooth 보간 (freeze 상태에서도 수렴하도록 허용)
+        float t = 1f - Mathf.Exp(-LOG_SMOOTH_RATE * Time.deltaTime);
+        _logDealtDisplay = Mathf.Lerp(_logDealtDisplay, _logDealtTarget, t);
+        _logTakenDisplay = Mathf.Lerp(_logTakenDisplay, _logTakenTarget, t);
+        _logHealDisplay  = Mathf.Lerp(_logHealDisplay,  _logHealTarget,  t);
+
+        RefreshLogTexts();
+    }
+
+    void RefreshLogTexts()
+    {
+        var timeTmp = GetText((int)Texts.BattleTimeNum);
+        if (timeTmp != null)
+        {
+            // 센티초 단위 정수로 환산 후 분/초/센티초 분해 — float 포맷 rounding 회피.
+            int centis = Mathf.Max(0, Mathf.FloorToInt(_logTime * 100f));
+            int min    = centis / 6000;
+            int sec    = (centis / 100) % 60;
+            int cs     = centis % 100;
+            timeTmp.text = $"{min:00}:{sec:00}.{cs:00}";
+        }
+        var dealtTmp = GetText((int)Texts.DmgDealtNum);
+        if (dealtTmp != null) dealtTmp.text = Mathf.RoundToInt(Mathf.Max(0f, _logDealtDisplay)).ToString();
+        var takenTmp = GetText((int)Texts.DmgTakenNum);
+        if (takenTmp != null) takenTmp.text = Mathf.RoundToInt(Mathf.Max(0f, _logTakenDisplay)).ToString();
+        var healTmp  = GetText((int)Texts.HPRestoredNum);
+        if (healTmp  != null) healTmp.text  = Mathf.RoundToInt(Mathf.Max(0f, _logHealDisplay)).ToString();
+    }
+
     // ── 에디터 테스트용: ATTACKBTN 클릭 시 타격 시뮬 ──
     //   - 플레이어/몬스터 없이도 콤보 흐름(누적→Rank 전이→버프→타이머→리셋)을 검증 가능.
     //   - 한 번의 클릭 = 한 번의 타격(hit) + 임의 데미지 1회.
@@ -463,6 +600,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 {
                     Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
                 };
+                // 슬라이드 50: 새 몬스터와 조우 → 전투 기록 리셋 + 타이머 시작
+                StartBattleLog(mc);
             }
             yield return new WaitUntil(() => monsterRoot.childCount == 0);
             yield return new WaitForSeconds(1f);
