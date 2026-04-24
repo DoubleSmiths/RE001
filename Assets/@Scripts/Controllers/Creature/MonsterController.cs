@@ -9,6 +9,9 @@ public class MonsterController : CreatureController
     public event System.Action<float, float> OnHpChanged; // current, max
     public event System.Action OnEngaged; // 첫 공격 시점
 
+    // 슬라이드 49: 전투 드롭 통지 (dataId, count) — AddItem 와 별도로 UI 리스트 용.
+    public static event System.Action<int, int> OnItemDropped;
+
     Data.CreatureData _data;
     PlayerController  _target;
     bool _hasEngaged;
@@ -118,7 +121,10 @@ public class MonsterController : CreatureController
 
         // 아이템 드롭
         if (_data != null && _data.DropItemId > 0 && Random.value <= _data.DropChance)
+        {
             Managers.Game.AddItem(_data.DropItemId, _data.DropCount);
+            OnItemDropped?.Invoke(_data.DropItemId, _data.DropCount);
+        }
 
         // 사망 연출 후 풀 반환
         transform.DOScale(Vector3.zero, 0.3f)

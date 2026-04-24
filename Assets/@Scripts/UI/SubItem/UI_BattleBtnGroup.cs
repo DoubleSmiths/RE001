@@ -74,6 +74,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         BAR1,             // Slider
         ASBoostEffect,
         DMGBoostEffect,
+        ITEMS,            // 슬라이드 49: 드롭 아이템 리스트 컨테이너 (HorizontalLayoutGroup)
     }
 
     #endregion
@@ -104,6 +105,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     // 버프 값 diff 추적 (rank up 시 "새 값 vs 이전 값"이 달라지면 값 DOTween 실행)
     float _prevAsBuff;
     float _prevDmgBuff;
+
+    // ── 드롭 아이템 리스트 (슬라이드 49) ──
+    Transform _dropRoot;
+    readonly Dictionary<int, UI_BattleDropItem> _dropSlots = new Dictionary<int, UI_BattleDropItem>();
 
     // ── 전투 기록 (슬라이드 50) ──
     const float LOG_SMOOTH_RATE = 12f;  // dt 기반 smooth 수렴 속도 (ComboManager Tick과 동일)
@@ -153,6 +158,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         ResetBattleLog(freezeAfter: true);
         RefreshLogTexts();
 
+        // 드롭 아이템 리스트: 컨테이너 캐시 + 프리펩 샘플 자식 제거 + 몬스터 드롭 이벤트 구독.
+        BindDropListUI();
+
         return true;
     }
 
@@ -163,6 +171,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
         UnbindComboUI();
         UnhookPlayerLogEvents();
+        UnbindDropListUI();
         base.OnDestroy();
     }
 
@@ -524,6 +533,69 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _logHealDisplay  = Mathf.Lerp(_logHealDisplay,  _logHealTarget,  t);
 
         RefreshLogTexts();
+    }
+
+    // ────────────────────────────────────────
+    //  슬라이드 49: 드롭 아이템 리스트
+    //    - 몬스터 드롭 이벤트(MonsterController.OnItemDropped) 구독
+    //    - 신규: UI_BattleDropItem 인스턴스화 → 등급순 정렬
+    //    - 중복: 기존 슬롯 AddCount (내부 DOTween 재생)
+    //    - 장소 이동(=UI_BattleBtnGroup 재생성) 시 자동 리셋
+    // ────────────────────────────────────────
+
+    void BindDropListUI()
+    {
+        var itemsGO = GetObject((int)GameObjects.ITEMS);
+        _dropRoot = itemsGO != null ? itemsGO.transform : null;
+
+        // 프리펩에 박힌 샘플 자식 제거 (빈 컨테이너로 시작).
+        if (_dropRoot != null)
+        {
+            for (int i = _dropRoot.childCount - 1; i >= 0; i--)
+                Destroy(_dropRoot.GetChild(i).gameObject);
+        }
+        _dropSlots.Clear();
+
+        MonsterController.OnItemDropped += HandleMonsterItemDropped;
+    }
+
+    void UnbindDropListUI()
+    {
+        MonsterController.OnItemDropped -= HandleMonsterItemDropped;
+        _dropSlots.Clear();
+    }
+
+    void HandleMonsterItemDropped(int dataId, int count)
+    {
+        if (_dropRoot == null || count <= 0) return;
+
+        if (_dropSlots.TryGetValue(dataId, out var existing) && existing != null)
+        {
+            existing.AddCount(count);
+        }
+        else
+        {
+            var go = Managers.Resource.Instantiate("UI_BattleDropItem", _dropRoot);
+            if (go == null) return;
+            var slot = go.GetOrAddComponent<UI_BattleDropItem>();
+            slot.SetInfo(dataId, count);
+            _dropSlots[dataId] = slot;
+        }
+
+        SortDropSlotsByGrade();
+    }
+
+    // 등급순 정렬 — 높은 등급(Legendary, Mystic…)이 앞쪽(왼쪽) 에 오도록 SiblingIndex 재배치.
+    void SortDropSlotsByGrade()
+    {
+        if (_dropRoot == null) return;
+        var ordered = _dropSlots.Values
+            .Where(s => s != null)
+            .OrderByDescending(s => (int)s.Grade)
+            .ThenBy(s => s.DataId);
+        int idx = 0;
+        foreach (var s in ordered)
+            s.transform.SetSiblingIndex(idx++);
     }
 
     void RefreshLogTexts()
