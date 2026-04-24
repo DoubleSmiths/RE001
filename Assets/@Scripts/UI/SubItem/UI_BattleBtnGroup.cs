@@ -58,14 +58,17 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         DmgTakenNum,
         HPRestoredNum,
 
-        // 버튼 텍스트 (슬라이드 51/52)
-        TravelBtnText,
-        ReturnText,
+        // 버튼 텍스트 (슬라이드 51/52) — enum 이름 = prefab GameObject 이름.
+        // 로컬라이즈 키는 enum 이름과 다르므로 Init 에서 명시적으로 세팅.
+        TravelButtonText,    // "여정" (loc: TravelBtnText)
+        ReturnButtonText,    // "귀환" / "확실해?" (loc: ReturnText / ReturnConfirmText)
     }
 
     enum Buttons
     {
-        ATTACKBTN,   // 테스트용 수동 타격. 실제 전투는 PlayerController.AutoAttack 자동.
+        ATTACKBTN,      // 테스트용 수동 타격. 실제 전투는 PlayerController.AutoAttack 자동.
+        ReturnButton,   // 슬라이드 51: 귀환 (2단계 확인 후 마을 복귀)
+        TravelButton,   // 슬라이드 52: 여정 팝업 오픈
     }
 
     enum GameObjects
@@ -106,6 +109,11 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     float _prevAsBuff;
     float _prevDmgBuff;
 
+    // ── 귀환 (슬라이드 51) ──
+    const float RETURN_CONFIRM_TIMEOUT = 3f;
+    bool    _returnConfirming;
+    Tween   _returnRevertTween;
+
     // ── 드롭 아이템 리스트 (슬라이드 49) ──
     Transform _dropRoot;
     readonly Dictionary<int, UI_BattleDropItem> _dropSlots = new Dictionary<int, UI_BattleDropItem>();
@@ -142,6 +150,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         // 테스트 수동 타격: ATTACKBTN 클릭 시 OnHitLanded 시뮬 (에디터 편의용)
         GetButton((int)Buttons.ATTACKBTN)?.gameObject.BindEvent(OnClickAttackBtnForTesting);
 
+        // 슬라이드 51/52: 귀환/여정 버튼 바인드 + 초기 텍스트.
+        GetButton((int)Buttons.ReturnButton)?.gameObject.BindEvent(OnClickReturn);
+        GetButton((int)Buttons.TravelButton)?.gameObject.BindEvent(OnClickTravel);
+        RefreshReturnButtonText(false);
+        var travelTmp = GetText((int)Texts.TravelButtonText);
+        if (travelTmp != null) travelTmp.text = Util.Localize("TravelBtnText");
+
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged += RefreshNotify;
         RefreshNotify();
@@ -172,6 +187,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         UnbindComboUI();
         UnhookPlayerLogEvents();
         UnbindDropListUI();
+        _returnRevertTween?.Kill();
+        _returnRevertTween = null;
         base.OnDestroy();
     }
 
@@ -220,6 +237,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             case Texts.DmgDealtNum:
             case Texts.DmgTakenNum:
             case Texts.HPRestoredNum:
+            case Texts.ReturnButtonText:  // 귀환 ↔ 확실해? 동적 스왑
+            case Texts.TravelButtonText:  // enum 이름과 loc 키가 달라 수동 Localize
                 return true;
             default:
                 return false;
@@ -641,6 +660,73 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     }
 
     // ────────────────────────────────────────
+    //  슬라이드 51/52: 귀환 / 여정 버튼
+    //    - 두 버튼 모두 클릭마다 DOTweenAnimation 재생 (prefab 내장)
+    //    - ReturnButton: 첫 클릭 → "확실해?" 3 초 카운트다운, 그 사이 재클릭 시 마을 복귀
+    //    - TravelButton: UI_TravelPopup 오픈
+    // ────────────────────────────────────────
+
+    void OnClickReturn()
+    {
+        PlayButtonAnim(Buttons.ReturnButton);
+
+        if (_returnConfirming)
+        {
+            // 확인 상태에서 재클릭 → 전투 강제 종료 + Fade 마을 복귀
+            _returnRevertTween?.Kill();
+            _returnRevertTween = null;
+            _returnConfirming = false;
+            ExecuteReturnToVillage();
+            return;
+        }
+
+        // 첫 클릭 → 확인 상태 진입 + 3초 타이머 (Time.timeScale 무시: unscaled)
+        _returnConfirming = true;
+        RefreshReturnButtonText(true);
+        _returnRevertTween?.Kill();
+        _returnRevertTween = DOVirtual.DelayedCall(RETURN_CONFIRM_TIMEOUT, RevertReturnConfirm)
+                                     .SetUpdate(true);
+    }
+
+    void RevertReturnConfirm()
+    {
+        _returnConfirming = false;
+        _returnRevertTween = null;
+        RefreshReturnButtonText(false);
+    }
+
+    void RefreshReturnButtonText(bool confirming)
+    {
+        var tmp = GetText((int)Texts.ReturnButtonText);
+        if (tmp == null) return;
+        tmp.text = Util.Localize(confirming ? "ReturnConfirmText" : "ReturnText");
+    }
+
+    void ExecuteReturnToVillage()
+    {
+        // 전투 강제 종료 — 몬스터 제거 + BattleLoop 정지.
+        EndBattle();
+        // 현재는 마을이 Village1 하나. 복귀 후 UI_Village1BtnGroup 이
+        // LastVillage1Group 기반으로 마지막 하위 구역을 자동 복원.
+        var scene = Managers.UI?.SceneUI as UI_GameScene;
+        scene?.EnterAreaWithFade(AreaType.Village1);
+    }
+
+    void OnClickTravel()
+    {
+        PlayButtonAnim(Buttons.TravelButton);
+        Managers.UI.ShowPopupUI<UI_TravelPopup>().SetInfo();
+    }
+
+    void PlayButtonAnim(Buttons btn)
+    {
+        var b = GetButton((int)btn);
+        if (b == null) return;
+        var anim = b.GetComponent<DOTweenAnimation>();
+        anim?.DORestart();
+    }
+
+    // ────────────────────────────────────────
     //  Battle 루프 (기존 유지)
     // ────────────────────────────────────────
 
@@ -701,6 +787,17 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         {
             foreach (var bar in Managers.UI.SceneUI.GetComponentsInChildren<UI_MonsterHPBar>(true))
                 Managers.Resource.Destroy(bar.gameObject);
+        }
+
+        // 전투 배경(CH1BG) + ChangeMap 에서 스폰했던 Village1_Main_BG 찌꺼기 제거.
+        // UI_Village1BtnGroup 이 RestoreLastGroup/OnClickMain 단계에서 적절한 마을 BG 를 새로 스폰함.
+        foreach (var key in new[] { "CH1BG", "Village1_Main_BG", "Village1_Guild_BG", "Village1_Alchemy_BG" })
+        {
+            foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                if (go.name == key || go.name == key + "(Clone)")
+                    Destroy(go);
+            }
         }
     }
 
