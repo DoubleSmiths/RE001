@@ -15,20 +15,26 @@ MonoBehaviour:
   m_GroupName: Fonts
   m_GUID: 7ec9d1848d4b2994a85d600e8621b09f
   m_SerializeEntries:
+  - m_GUID: 3f9c0c8fbf9b9884ab9aac8a5defffaa
+    m_Address: PF_Stardust SDF
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 575bd11266727994586c8364c816cc8c
     m_Address: RiaSans-Bold SDF
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a5adc10b9d766a140a38d8ae73ae75c3
-    m_Address: Cafe24DOSSaemmul SDF
+  - m_GUID: a7a5c54929c789143a872d74a52611a3
+    m_Address: Cafe24 SDF
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f37892e5b4afc83449afb86230e8ffeb
-    m_Address: PFStardust SDF
+  - m_GUID: c49ee00633b167748bc90b11097f23ce
+    m_Address: DOSSaemmul SDF
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

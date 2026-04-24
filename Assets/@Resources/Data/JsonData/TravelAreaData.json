@@ -47,29 +47,6 @@
       "Note": "middle group asdal"
     },
     {
-      "DataId": 1110,
-      "Name": "PlaceNameTownAsdalSouthGateText",
-      "Description": "PlaceNameTownAsdalSouthGateDescText",
-      "SpriteName": "Background_Village1",
-      "SceneName": "Village1",
-      "RecommendPower": 0,
-      "PreviewMonsterIds": [],
-      "PreviewDropItemIds": [],
-      "Order": 1,
-      "DefaultBtnId": "BTN_MAP_ASDAL_SOUTH_GATE",
-      "EntryBtnId": "BTN_ENTER_ASDAL_SOUTH_GATE",
-      "UnlockSummary": "PlaceNameTownAsdalSouthGateDescText",
-      "Category": "TOWN",
-      "Depth": 3,
-      "ParentId": 1100,
-      "RootId": 1000,
-      "NodeType": "DETAIL",
-      "IsSelectable": 1,
-      "IsEnterable": 1,
-      "PanelType": "DETAIL",
-      "Note": "detail entry asdal"
-    },
-    {
       "DataId": 2000,
       "Name": "ExploreText",
       "Description": "TravelExploreCategoryDescText",
@@ -94,7 +71,7 @@
     },
     {
       "DataId": 2100,
-      "Name": "BreezingWindForestNameText",
+      "Name": "PlaceNameBWF0Text",
       "Description": "BreezingWindForestDescText",
       "SpriteName": "BreezingWindForest_Img",
       "SceneName": "",
@@ -121,7 +98,7 @@
     },
     {
       "DataId": 2110,
-      "Name": "BreezingWindForestEntranceText",
+      "Name": "PlaceNameBWF1Text",
       "Description": "BreezingWindForestEntranceDescText",
       "SpriteName": "BreezingWindForest_Entry_Img",
       "SceneName": "Stage_BreezingWindForest_Entrance",
@@ -147,106 +124,25 @@
       "Note": "detail entry"
     },
     {
-      "DataId": 2200,
-      "Name": "WhisperingCaveNameText",
-      "Description": "WhisperingCaveDescText",
-      "SpriteName": "travel_cave_thumb",
-      "SceneName": "",
-      "RecommendPower": 120,
+      "DataId": 2120,
+      "Name": "PlaceNameBWF3Text",
+      "Description": "BreezingWindForestEntranceDescText",
+      "SpriteName": "BreezingWindForest_Entry_Img",
+      "SceneName": "Stage_BreezingWindForest_Entrance",
+      "RecommendPower": 0,
       "PreviewMonsterIds": [
-        1000310004
+        1000110002
       ],
       "PreviewDropItemIds": [
-        1000320001
-      ],
-      "Order": 2,
-      "DefaultBtnId": "BTN_MAP_WHISPERING_CAVE",
-      "EntryBtnId": "",
-      "UnlockSummary": "WhisperingCaveUnlockSummaryText",
-      "Category": "EXPLORE",
-      "Depth": 2,
-      "ParentId": 2000,
-      "RootId": 2000,
-      "NodeType": "GROUP",
-      "IsSelectable": 1,
-      "IsEnterable": 0,
-      "PanelType": "MIDDLE",
-      "Note": "middle group area"
-    },
-    {
-      "DataId": 2210,
-      "Name": "WhisperingCaveEntranceText",
-      "Description": "WhisperingCaveEntranceDescText",
-      "SpriteName": "travel_cave_thumb",
-      "SceneName": "Stage_WhisperingCave_Entrance",
-      "RecommendPower": 120,
-      "PreviewMonsterIds": [
-        1000310004
-      ],
-      "PreviewDropItemIds": [
-        1000320001
+        1000110002
       ],
       "Order": 1,
-      "DefaultBtnId": "BTN_MAP_WHISPERING_CAVE_ENTRANCE",
-      "EntryBtnId": "BTN_STAGE_WHISPERING_CAVE_ENTRANCE",
-      "UnlockSummary": "WhisperingCaveEntranceDescText",
+      "DefaultBtnId": "BTN_MAP_BREEZING_WIND_FOREST_ENTRANCE",
+      "EntryBtnId": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE",
+      "UnlockSummary": "BreezingWindForestEntranceDescText",
       "Category": "EXPLORE",
       "Depth": 3,
-      "ParentId": 2200,
-      "RootId": 2000,
-      "NodeType": "DETAIL",
-      "IsSelectable": 1,
-      "IsEnterable": 1,
-      "PanelType": "DETAIL",
-      "Note": "detail entry"
-    },
-    {
-      "DataId": 2300,
-      "Name": "RuinedSanctumNameText",
-      "Description": "RuinedSanctumDescText",
-      "SpriteName": "travel_sanctum_thumb",
-      "SceneName": "",
-      "RecommendPower": 250,
-      "PreviewMonsterIds": [
-        1000510006
-      ],
-      "PreviewDropItemIds": [
-        2000230001
-      ],
-      "Order": 3,
-      "DefaultBtnId": "BTN_MAP_RUINED_SANCTUM",
-      "EntryBtnId": "",
-      "UnlockSummary": "RuinedSanctumUnlockSummaryText",
-      "Category": "EXPLORE",
-      "Depth": 2,
-      "ParentId": 2000,
-      "RootId": 2000,
-      "NodeType": "GROUP",
-      "IsSelectable": 1,
-      "IsEnterable": 0,
-      "PanelType": "MIDDLE",
-      "Note": "middle group area"
-    },
-    {
-      "DataId": 2310,
-      "Name": "RuinedSanctumEntranceText",
-      "Description": "RuinedSanctumEntranceDescText",
-      "SpriteName": "travel_sanctum_thumb",
-      "SceneName": "Stage_RuinedSanctum_Entrance",
-      "RecommendPower": 250,
-      "PreviewMonsterIds": [
-        1000510006
-      ],
-      "PreviewDropItemIds": [
-        2000230001
-      ],
-      "Order": 1,
-      "DefaultBtnId": "BTN_MAP_RUINED_SANCTUM_ENTRANCE",
-      "EntryBtnId": "BTN_STAGE_RUINED_SANCTUM_ENTRANCE",
-      "UnlockSummary": "RuinedSanctumEntranceDescText",
-      "Category": "EXPLORE",
-      "Depth": 3,
-      "ParentId": 2300,
+      "ParentId": 2100,
       "RootId": 2000,
       "NodeType": "DETAIL",
       "IsSelectable": 1,

@@ -1,8 +1,8 @@
+using Data;
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Data;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -615,6 +615,7 @@ public class UI_TravelPopup : UI_Popup
             {
                 view.Text.text = ResolveText(node.Name);
                 view.Text.fontStyle = isSelected ? FontStyles.Bold : FontStyles.Normal;
+                FitTextToButton(view.Text, view.Root);
             }
 
             Color frameColor;
@@ -677,6 +678,7 @@ public class UI_TravelPopup : UI_Popup
             {
                 view.Text.text = ResolveText(node.Name);
                 view.Text.fontStyle = isSelected ? FontStyles.Bold : FontStyles.Normal;
+                FitTextToButton(view.Text, view.Root);
             }
 
             Color frameColor;
@@ -736,7 +738,13 @@ public class UI_TravelPopup : UI_Popup
         string displayInfoOverride = _selectionFeedbackMessage;
 
         SetRawText(Texts.MapSelectPopupMapNameText, ResolveText(displayNode.Name));
+        FitTextToButton(
+            GetText((int)Texts.MapSelectPopupMapNameText),
+            GetImage((int)Images.MapSelectPopupMapNameFrame)?.gameObject);
         SetRawText(Texts.BWFTypeTitleText, ResolveText(group?.Name ?? detail?.Name ?? root?.Name));
+        FitTextToButton(
+            GetText((int)Texts.BWFTypeTitleText),
+            GetImage((int)Images.BWFTypeTitle)?.gameObject);
 
         if (_depth == TravelDepth.Detail)
         {
@@ -1526,6 +1534,46 @@ public class UI_TravelPopup : UI_Popup
 
         string localized = Localize(keyOrText);
         return localized == keyOrText ? keyOrText : localized;
+    }
+
+    // 허용 폭 = (buttonRoot RT 있으면 버튼 폭, 없으면 텍스트 자신 RT 폭) × FIT_TEXT_WIDTH_RATIO.
+    // 버튼 기준으로 잡으므로 프리펩의 텍스트 RT 가 좁아도 폰트가 과도하게 작아지지 않음.
+    // RT 위치/크기는 프리펩 그대로 유지 — 버튼 내부 좌측 이미지 등 형제 요소를 침범하지 않음.
+    //   - 최초 1회 : fontSizeMax 에 원본 fontSize stash (언어 전환 시 복원 기준)
+    //   - 매 호출 : maxSize 로 리셋 후, preferredWidth 가 허용 폭을 넘으면 비례 축소
+    const float FIT_TEXT_WIDTH_RATIO = 0.9f;   // 기준 폭의 97.5% 를 허용 폭으로 사용
+
+    static void FitTextToButton(TMP_Text text, GameObject buttonRoot = null)
+    {
+        if (text == null) return;
+
+        if (text.fontSizeMax <= 0f)
+            text.fontSizeMax = text.fontSize;
+
+        float maxSize = text.fontSizeMax;
+        text.enableAutoSizing   = false;   // 수동 제어
+        text.enableWordWrapping = false;
+        text.overflowMode       = TextOverflowModes.Truncate;
+        text.fontSize           = maxSize; // 매번 max 로 리셋 (언어 전환 시 복원)
+        text.ForceMeshUpdate();
+
+        // 버튼 RT 폭을 우선 사용, 없으면 텍스트 자신 RT 폭 fallback.
+        float baseWidth = 0f;
+        if (buttonRoot != null && buttonRoot.transform is RectTransform btnRT)
+            baseWidth = btnRT.rect.width;
+        if (baseWidth <= 0f)
+            baseWidth = text.rectTransform.rect.width;
+
+        float allowed = baseWidth * FIT_TEXT_WIDTH_RATIO;
+        if (allowed <= 0f) return;
+
+        float preferred = text.preferredWidth;
+        if (preferred > allowed)
+        {
+            float scaled = maxSize * (allowed / preferred);
+            text.fontSize = Mathf.Max(5f, scaled);
+            text.ForceMeshUpdate();
+        }
     }
 
     string ResolveNodeName(TravelAreaData node, string fallbackKey)
