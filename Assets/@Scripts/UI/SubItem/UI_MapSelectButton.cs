@@ -55,4 +55,8 @@ public class UI_MapSelectButton : UI_Base
     }
 
 
+    public void SetInfo()
+    {
+
+    }
 }

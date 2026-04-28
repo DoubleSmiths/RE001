@@ -52,4 +52,8 @@ public class UI_FieldTypeButton : UI_Base
     }
 
 
+    public void SetInfo()
+    {
+
+    }
 }

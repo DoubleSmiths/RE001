@@ -306,76 +306,6 @@ public class UI_TravelPopup : UI_Popup
         clones.Clear();
     }
 
-    void BuildButtonGroup(
-        Button templateButton,
-        GameObject parentRoot,
-        List<TravelAreaData> nodes,
-        List<GameObject> clones,
-        Dictionary<int, TravelNodeButtonView> targetViews,
-        string textName,
-        string[] notifyNames,
-        Action<int> clickHandler)
-    {
-        foreach (GameObject clone in clones)
-        {
-            if (clone != null)
-                Destroy(clone);
-        }
-        clones.Clear();
-
-        if (templateButton == null || parentRoot == null)
-            return;
-
-        GameObject templateRoot = templateButton.gameObject;
-        templateRoot.SetActive(nodes.Count > 0);
-
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            TravelAreaData node = nodes[i];
-            GameObject buttonRoot;
-
-            if (i == 0)
-            {
-                buttonRoot = templateRoot;
-            }
-            else
-            {
-                buttonRoot = Instantiate(templateRoot, parentRoot.transform);
-                buttonRoot.name = $"{templateRoot.name}_{node.DataId}";
-                buttonRoot.transform.SetParent(parentRoot.transform, false);
-                buttonRoot.transform.localScale = Vector3.one;
-                clones.Add(buttonRoot);
-            }
-
-            TravelNodeButtonView view = CreateButtonView(buttonRoot, node.DataId, textName, notifyNames);
-            targetViews[node.DataId] = view;
-            int capturedId = node.DataId;
-            RebindClickEvent(view.Button?.gameObject, () => clickHandler(capturedId));
-            buttonRoot.SetActive(true);
-        }
-    }
-
-    TravelNodeButtonView CreateButtonView(GameObject root, int dataId, string textName, string[] notifyNames)
-    {
-        GameObject notify = null;
-        foreach (string notifyName in notifyNames)
-        {
-            notify = FindChild(root, notifyName, true);
-            if (notify != null)
-                break;
-        }
-
-        return new TravelNodeButtonView
-        {
-            DataId = dataId,
-            Root = root,
-            Button = root.GetComponent<Button>(),
-            Text = FindChild<TMP_Text>(root, textName, true) ?? root.GetComponentInChildren<TMP_Text>(true),
-            Notify = notify,
-            Frame = root.GetComponent<Image>(),
-        };
-    }
-
     void RefreshAll()
     {
         NormalizeSelectionState();
@@ -952,19 +882,6 @@ public class UI_TravelPopup : UI_Popup
         ClosePopupUI();
     }
 
-    List<TravelAreaData> GetGroupNodesForCategory(string category)
-    {
-        TravelAreaData root = GetRootNode(category);
-        if (root == null)
-            return new List<TravelAreaData>();
-
-        return _allNodes
-            .Where(node => node.Depth == 2 && node.ParentId == root.DataId)
-            .OrderBy(node => node.Order)
-            .ThenBy(node => node.DataId)
-            .ToList();
-    }
-
     List<TravelAreaData> GetDetailNodes(int groupId)
     {
         if (groupId == 0)
@@ -980,15 +897,6 @@ public class UI_TravelPopup : UI_Popup
     TravelAreaData GetRootNode(string category)
     {
         return _rootNodes.FirstOrDefault(node => string.Equals(node.Category, category, StringComparison.OrdinalIgnoreCase));
-    }
-
-    TravelAreaData GetFirstUnlockedGroup(int rootId)
-    {
-        return _allNodes
-            .Where(node => node.Depth == 2 && node.ParentId == rootId)
-            .OrderBy(node => node.Order)
-            .ThenBy(node => node.DataId)
-            .FirstOrDefault(node => TryGetSelectionBlockReason(node, out _) == false);
     }
 
     void RestoreSelection()
@@ -1179,52 +1087,6 @@ public class UI_TravelPopup : UI_Popup
         return false;
     }
 
-    bool TryApplySavedSelection(TravelAreaData savedNode)
-    {
-        if (savedNode == null)
-            return false;
-
-        if (savedNode.Depth == 1)
-        {
-            _selectedRootId = savedNode.DataId;
-            return true;
-        }
-
-        if (TryGetNode(savedNode.RootId, out TravelAreaData rootNode) == false || rootNode.Depth != 1)
-            return false;
-
-        _selectedRootId = rootNode.DataId;
-
-        if (savedNode.Depth == 2)
-        {
-            if (IsSelectableNode(savedNode) == false || TryGetSelectionBlockReason(savedNode, out _) == true)
-                return false;
-
-            _selectedGroupId = savedNode.DataId;
-            _depth = TravelDepth.Category;
-            return true;
-        }
-
-        if (savedNode.Depth != 3)
-            return false;
-
-        if (TryGetNode(savedNode.ParentId, out TravelAreaData groupNode) == false || groupNode.Depth != 2)
-            return false;
-
-        if (groupNode.ParentId != rootNode.DataId || IsSelectableNode(groupNode) == false)
-            return false;
-
-        _selectedGroupId = groupNode.DataId;
-        _depth = TravelDepth.Category;
-
-        if (CanEnterNode(savedNode, out _) == false)
-            return true;
-
-        _selectedDetailId = savedNode.DataId;
-        _depth = TravelDepth.Detail;
-        return true;
-    }
-
     bool TryGetValidatedSelectedDetail(out TravelAreaData detail, out string failMessage)
     {
         failMessage = string.Empty;
@@ -1402,28 +1264,6 @@ public class UI_TravelPopup : UI_Popup
         return node == null ? ResolveText(fallbackKey) : ResolveText(node.Name);
     }
 
-    string ResolveNodeSummary(TravelAreaData node, string fallbackKeyOrText)
-    {
-        if (node == null)
-            return ResolveText(fallbackKeyOrText);
-
-        if (string.IsNullOrEmpty(node.UnlockSummary) == false)
-            return ResolveText(node.UnlockSummary);
-
-        if (string.IsNullOrEmpty(node.Description) == false)
-            return ResolveText(node.Description);
-
-        return ResolveText(fallbackKeyOrText);
-    }
-
-    string ResolveCategoryInfo(TravelAreaData root, TravelAreaData group)
-    {
-        if (group != null && IsNodeUnlocked(group.DataId, out string failMessage) == false && string.IsNullOrEmpty(failMessage) == false)
-            return failMessage;
-
-        return ResolveNodeSummary(group ?? root, root?.Description);
-    }
-
     bool TryResolveAreaType(TravelAreaData node, out AreaType areaType)
     {
         areaType = default;
@@ -1445,24 +1285,6 @@ public class UI_TravelPopup : UI_Popup
 
         Debug.LogWarning($"[UI_TravelPopup] TryResolveAreaType failed: invalid SceneName '{node.SceneName}'. node={node.DataId}, category={node.Category}");
         return false;
-    }
-
-    void RebindClickEvent(GameObject target, Action action)
-    {
-        if (target == null)
-            return;
-
-        UI_EventHandler evt = Util.GetOrAddComponent<UI_EventHandler>(target);
-        evt.OnClickHandler = null;
-        Transform tr = target.transform;
-        Button btn = target.GetComponent<Button>();
-        evt.OnClickHandler += () =>
-        {
-            if (btn != null && btn.interactable == false)
-                return;
-            PlayButtonYoyo(tr);
-            action?.Invoke();
-        };
     }
 
     void SetText(Texts textId, string key)

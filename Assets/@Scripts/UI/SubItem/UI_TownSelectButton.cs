@@ -59,5 +59,8 @@ public class UI_TownSelectButton : UI_Base
         return true;
     }
 
-    
+    public void SetInfo()
+    {
+
+    }
 }
