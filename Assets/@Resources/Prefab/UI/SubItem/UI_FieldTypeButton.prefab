@@ -417,6 +417,7 @@ GameObject:
   - component: {fileID: 51724744356889173}
   - component: {fileID: 1745216191606405921}
   - component: {fileID: 8134100247863911354}
+  - component: {fileID: 3055016140341213000}
   m_Layer: 5
   m_Name: UI_FieldTypeButton
   m_TagString: Untagged
@@ -635,3 +636,15 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &3055016140341213000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9165905449127528442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3047125924748e24c9185405817d2e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_FieldTypeButton

@@ -476,6 +476,7 @@ GameObject:
   - component: {fileID: 5065794615075642767}
   - component: {fileID: 9214930263723870282}
   - component: {fileID: 1587136374353362905}
+  - component: {fileID: 87762144675919485}
   m_Layer: 5
   m_Name: UI_MapSelectButton
   m_TagString: Untagged
@@ -695,6 +696,18 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &87762144675919485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7417953740902958450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15660d7aadb19f4bbd3df658227e204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_MapSelectButton
 --- !u!1 &9194986759166428780
 GameObject:
   m_ObjectHideFlags: 0

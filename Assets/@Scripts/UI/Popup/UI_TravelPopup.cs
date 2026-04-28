@@ -15,9 +15,9 @@ public class UI_TravelPopup : UI_Popup
     // 데이터 연결이 중요하니까 생각해야됨
     // 현재 플레이어가 들어갈수있는 지역인지 아닌지도 필요할듯.
 
-    // UI_TownSelectButton -> 타운(마을) 선택 버튼 (중분류)
-    // UI_FieldTypeButton -> 필드(탐험) 선택 버튼 (중분류)
-    // UI_MapSelectButton -> 목적지 선택 버튼 (소분류)
+    // UI_TownSelectButton -> 타운(마을) 선택 버튼 (중분류) TownTypeContent -> 타운(마을) 선택 버튼 그룹
+    // UI_FieldTypeButton -> 필드(탐험) 선택 버튼 (중분류) FieldTypeContent -> 필드(탐험) 선택 버튼 그룹
+    // UI_MapSelectButton -> 목적지 선택 버튼 (소분류) MapTypeContent -> 목적지 선택 버튼 그룹
 
     enum TravelDepth
     {

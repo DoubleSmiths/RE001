@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 8486077795168202364}
   - component: {fileID: 3988957767661246917}
   - component: {fileID: 7688831593842154601}
+  - component: {fileID: 4530527309850659239}
   m_Layer: 5
   m_Name: UI_TownSelectButton
   m_TagString: Untagged
@@ -510,6 +511,18 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &4530527309850659239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2167791448066765249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d763a74c373ff9c47945352bbf42c88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_TownSelectButton
 --- !u!1 &3242792125824673856
 GameObject:
   m_ObjectHideFlags: 0
