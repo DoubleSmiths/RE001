@@ -131,10 +131,10 @@ public class UI_TravelPopup : UI_Popup
 
     RectTransform _townPanelRT;
     RectTransform _fieldPanelRT;
-    RectTransform _bwfPanelRT;
+    RectTransform _mapsPanelRT;
     Vector2 _townPanelOrigin;
     Vector2 _fieldPanelOrigin;
-    Vector2 _bwfPanelOrigin;
+    Vector2 _mapsPanelOrigin;
 
     static readonly Vector2 LAYER_FROM_OFFSET = new Vector2(0f, -150f);
     const float LAYER_ANIM_DURATION = 0.3f;
@@ -191,27 +191,14 @@ public class UI_TravelPopup : UI_Popup
 
         CachePanel(Images.TownType, out _townPanelRT, out _townPanelOrigin);
         CachePanel(Images.FieldType, out _fieldPanelRT, out _fieldPanelOrigin);
-        CachePanel(Images.BWFType, out _bwfPanelRT, out _bwfPanelOrigin);
-
-        // 탐험 소분류에서 TitleTextFrame("FIELD") 불필요 — 영구 비활성
-        Image titleFrame = GetImage((int)Images.TitleTextFrame);
-        if (titleFrame != null)
-            titleFrame.gameObject.SetActive(false);
-
-        // "다음단계 정보" 버튼(MapSelectBWF_EntryBtn) 불필요 — 하단 [이동] 버튼과 기능 중복
-        Button entryBtn = GetButton((int)Buttons.MapSelectBWF_EntryBtn);
-        if (entryBtn != null)
-            entryBtn.gameObject.SetActive(false);
+        CachePanel(Images.Maps, out _mapsPanelRT, out _mapsPanelOrigin);
 
         // 선택된 버튼 테두리용 EquipedMat 사전 로드
         Managers.Resource.LoadAsync<Material>("EquipedMat", (m) => _equipedMatCached = m);
 
         BindClickWithAnim(Buttons.MapSelectBackground, ClosePopupUI);
-        BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP_1, OnClickBack);
-        BindClickWithAnim(Buttons.ButtonMapSelectBack_TOP, OnClickBack);
         BindClickWithAnim(Buttons.Buttonto_TownType, () => OnClickRootCategory("TOWN"));
         BindClickWithAnim(Buttons.Buttonto_FieldType, () => OnClickRootCategory("EXPLORE"));
-        BindClickWithAnim(Buttons.MapSelectBWF_EntryBtn, OnClickEnterSelectedDetail);
         BindClickWithAnim(Buttons.ButtonMapSelectGO, OnClickEnterSelectedDetail);
         BindClickWithAnim(Buttons.ButtonMapSelectBack, OnClickBack);
 
@@ -293,79 +280,30 @@ public class UI_TravelPopup : UI_Popup
 
     void BuildMiddleButtons()
     {
-        BuildButtonGroup(
-            GetButton((int)Buttons.MapSelectAsdalBtn),
-            GetObject((int)GameObjects.TownTypeContent),
-            GetGroupNodesForCategory("TOWN"),
-            _clonedTownButtons,
-            _middleButtonViews,
-            "MapSelectAsdalBtnText",
-            new[] { "AsdalButtonQuestVFX", "QuestMarker" },
-            OnClickGroupNode);
-
-        BuildButtonGroup(
-            GetButton((int)Buttons.ButtonBWFType),
-            GetObject((int)GameObjects.Content),
-            GetGroupNodesForCategory("EXPLORE"),
-            _clonedExploreButtons,
-            _middleButtonViews,
-            "ButtonBWFTypeText",
-            new[] { "ButtontoBWFVFX", "QuestMarker" },
-            OnClickGroupNode);
+        // TODO: refactor — UI_TownSelectButton 프리펩을 TownTypeContent 자식으로 인스턴스화 (TOWN 중분류).
+        // TODO: refactor — UI_FieldTypeButton 프리펩을 FieldTypeContent 자식으로 인스턴스화 (EXPLORE 중분류).
+        // 인스턴스화 후 _middleButtonViews[node.DataId] 채우고 RebindClickEvent로 OnClickGroupNode 연결.
+        ClearClones(_clonedTownButtons);
+        ClearClones(_clonedExploreButtons);
+        _middleButtonViews.Clear();
     }
 
     void BuildDetailButtons()
     {
+        // TODO: refactor — UI_MapSelectButton 프리펩을 MapTypeContent 자식으로 인스턴스화 (소분류).
+        // 인스턴스화 후 _detailButtonViews[node.DataId] 채우고 RebindClickEvent로 OnClickDetailNode 연결.
+        ClearClones(_clonedDetailButtons);
         _detailButtonViews.Clear();
-        foreach (GameObject clone in _clonedDetailButtons)
+    }
+
+    void ClearClones(List<GameObject> clones)
+    {
+        foreach (GameObject clone in clones)
         {
             if (clone != null)
                 Destroy(clone);
         }
-        _clonedDetailButtons.Clear();
-
-        Button templateButton = GetButton((int)Buttons.MapSelectBWFBtn);
-        GameObject detailRoot = GetObject((int)GameObjects.BWFTypeContent);
-        if (templateButton == null || detailRoot == null)
-            return;
-
-        List<TravelAreaData> detailNodes = GetDetailNodes(_selectedGroupId);
-        GameObject templateRoot = templateButton.gameObject;
-        templateRoot.SetActive(detailNodes.Count > 0);
-
-        for (int i = 0; i < detailNodes.Count; i++)
-        {
-            TravelAreaData node = detailNodes[i];
-            GameObject buttonRoot;
-
-            if (i == 0)
-            {
-                buttonRoot = templateRoot;
-            }
-            else
-            {
-                buttonRoot = Instantiate(templateRoot, detailRoot.transform);
-                buttonRoot.name = $"TravelDetailButton_{node.DataId}";
-                buttonRoot.transform.SetParent(detailRoot.transform, false);
-                buttonRoot.transform.localScale = Vector3.one;
-                _clonedDetailButtons.Add(buttonRoot);
-            }
-
-            TravelNodeButtonView view = CreateButtonView(
-                buttonRoot,
-                node.DataId,
-                "MapSelectBWFBtnText",
-                new[] { "QuestMarker", "MapSelectBWF_EntryVFX" });
-
-            _detailButtonViews[node.DataId] = view;
-            int capturedId = node.DataId;
-            RebindClickEvent(view.Button?.gameObject, () => OnClickDetailNode(capturedId));
-            buttonRoot.SetActive(true);
-        }
-
-        Transform entryButton = GetButton((int)Buttons.MapSelectBWF_EntryBtn)?.transform;
-        if (entryButton != null)
-            entryButton.SetAsLastSibling();
+        clones.Clear();
     }
 
     void BuildButtonGroup(
@@ -547,12 +485,11 @@ public class UI_TravelPopup : UI_Popup
 
         SetRawText(Texts.PlaceTypeTownText, ResolveNodeName(townRoot, "TownText"));
         SetRawText(Texts.AdventrueText, ResolveNodeName(exploreRoot, "ExploreText"));
-        SetRawText(Texts.TownTypeTownText, ResolveNodeName(townRoot, "TownText"));
-        SetRawText(Texts.FieldTypeAdventureText, ResolveNodeName(exploreRoot, "ExploreText"));
+        SetRawText(Texts.TownTypeText, ResolveNodeName(townRoot, "TownText"));
+        SetRawText(Texts.FieldTypeText, ResolveNodeName(exploreRoot, "ExploreText"));
 
         GetObject((int)GameObjects.to_TownButtonQuestVFX)?.SetActive(townRoot != null && HasNotifyInSubtree(townRoot.DataId));
         GetObject((int)GameObjects.to_FieldQuestVFX)?.SetActive(exploreRoot != null && HasNotifyInSubtree(exploreRoot.DataId));
-        GetObject((int)GameObjects.AsdalButtonQuestVFX)?.SetActive(false);
 
         Button townBtn = GetButton((int)Buttons.Buttonto_TownType);
         Button exploreBtn = GetButton((int)Buttons.Buttonto_FieldType);
@@ -562,12 +499,6 @@ public class UI_TravelPopup : UI_Popup
 
         ApplyRootCategoryState(townBtn, GetImage((int)Images.PlaceTypeTownImage), townSelected, _depth != TravelDepth.Root && townSelected == false);
         ApplyRootCategoryState(exploreBtn, GetImage((int)Images.AdventureImage), exploreSelected, _depth != TravelDepth.Root && exploreSelected == false);
-
-        if (_depth == TravelDepth.Root)
-        {
-            TravelAreaData selectedRoot = TryGetNode(_selectedRootId, out TravelAreaData root) ? root : exploreRoot ?? townRoot;
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, ResolveNodeSummary(selectedRoot, "CurrentLocationText"));
-        }
     }
 
     void ApplyRootCategoryState(Button btn, Image iconImage, bool selected, bool hidden)
@@ -734,48 +665,16 @@ public class UI_TravelPopup : UI_Popup
         if (displayNode == null)
             return;
 
-        bool unlocked = IsNodeUnlocked(displayNode.DataId, out string failMessage);
-        string enterFailMessage = string.Empty;
-        bool canEnter = detail != null && CanEnterNode(detail, out enterFailMessage);
-        string displayInfoOverride = _selectionFeedbackMessage;
+        bool canEnter = detail != null && CanEnterNode(detail, out _);
 
         SetRawText(Texts.MapSelectPopupMapNameText, ResolveText(displayNode.Name));
         FitTextToButton(
             GetText((int)Texts.MapSelectPopupMapNameText),
             GetImage((int)Images.MapSelectPopupMapNameFrame)?.gameObject);
-        SetRawText(Texts.BWFTypeTitleText, ResolveText(group?.Name ?? detail?.Name ?? root?.Name));
+        SetRawText(Texts.MapTypeTitleText, ResolveText(group?.Name ?? detail?.Name ?? root?.Name));
         FitTextToButton(
-            GetText((int)Texts.BWFTypeTitleText),
-            GetImage((int)Images.BWFTypeTitle)?.gameObject);
-
-        if (_depth == TravelDepth.Detail)
-        {
-            string info = canEnter
-                ? ResolveNodeSummary(detail ?? group, group?.Description ?? displayNode.Description)
-                : string.IsNullOrEmpty(enterFailMessage) ? ResolveNodeSummary(detail ?? group, displayNode.Description) : enterFailMessage;
-
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? info : displayInfoOverride);
-            SetRawText(Texts.MapSelectBWF_EntryBtnText, canEnter ? ResolveText("HeadOutText") : ResolveText("NextInfoText"));
-        }
-        else if (_depth == TravelDepth.Category)
-        {
-            string categoryInfo;
-            // TOWN 카테고리에서 중분류 버튼이 현재 위치(조상 포함)면 "현재 위치" 라벨 표시
-            if (group != null && IsCurrentPlaceOrAncestor(group.DataId))
-                categoryInfo = ResolveText("CurrentLocationText");
-            else if (group == null && IsTownRoot(_selectedRootId))
-                categoryInfo = ResolveText("CurrentLocationText");
-            else
-                categoryInfo = ResolveCategoryInfo(root, group);
-
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? categoryInfo : displayInfoOverride);
-            SetRawText(Texts.MapSelectBWF_EntryBtnText, ResolveText("NextInfoText"));
-        }
-        else
-        {
-            string rootInfo = ResolveNodeSummary(root, "CurrentLocationText");
-            SetRawText(Texts.MapSelectPopup_CurrentLocationTxt, string.IsNullOrEmpty(displayInfoOverride) ? rootInfo : displayInfoOverride);
-        }
+            GetText((int)Texts.MapTypeTitleText),
+            GetImage((int)Images.MapTypeTitle)?.gameObject);
 
         Image mapImage = GetImage((int)Images.MapSelectPopupMapImage);
         if (mapImage != null && string.IsNullOrEmpty(displayNode.SpriteName) == false)
@@ -796,12 +695,6 @@ public class UI_TravelPopup : UI_Popup
                 });
             }
         }
-
-        Button entryButton = GetButton((int)Buttons.MapSelectBWF_EntryBtn);
-        if (entryButton != null)
-            entryButton.interactable = canEnter;
-
-        GetObject((int)GameObjects.MapSelectBWF_EntryVFX)?.SetActive(detail != null && canEnter && HasEntryNotify(detail));
 
         // 이동 버튼: interactable만 토글. 색상은 prefab에 이미 설정된 Button.colors (normal/disabled) 그대로 사용.
         Button goButton = GetButton((int)Buttons.ButtonMapSelectGO);
@@ -837,15 +730,15 @@ public class UI_TravelPopup : UI_Popup
         bool townVisible = _depth >= TravelDepth.Category && IsTownRoot(_selectedRootId);
         bool fieldVisible = _depth >= TravelDepth.Category && IsExploreRoot(_selectedRootId);
         // 소분류 Layer는 EXPLORE에서만 (TOWN은 중분류까지)
-        bool bwfVisible = _depth == TravelDepth.Detail && IsExploreRoot(_selectedRootId);
+        bool mapsVisible = _depth == TravelDepth.Detail && IsExploreRoot(_selectedRootId);
 
         bool townWasVisible = _prevDepth >= TravelDepth.Category && IsTownRootId(_prevSelectedRootId);
         bool fieldWasVisible = _prevDepth >= TravelDepth.Category && IsExploreRootId(_prevSelectedRootId);
-        bool bwfWasVisible = _prevDepth == TravelDepth.Detail;
+        bool mapsWasVisible = _prevDepth == TravelDepth.Detail;
 
         AnimatePanel(_townPanelRT, _townPanelOrigin, townVisible, townWasVisible);
         AnimatePanel(_fieldPanelRT, _fieldPanelOrigin, fieldVisible, fieldWasVisible);
-        AnimatePanel(_bwfPanelRT, _bwfPanelOrigin, bwfVisible, bwfWasVisible);
+        AnimatePanel(_mapsPanelRT, _mapsPanelOrigin, mapsVisible, mapsWasVisible);
     }
 
     bool IsTownRootId(int dataId)
@@ -967,80 +860,6 @@ public class UI_TravelPopup : UI_Popup
 
         if (string.Equals(category, "EXPLORE", StringComparison.OrdinalIgnoreCase))
             Managers.Quest.CheckButtonClick(BTN_EXPLORE);
-
-        RefreshAll();
-    }
-
-    void OnClickGroupNode(int dataId)
-    {
-        if (TryGetNode(dataId, out TravelAreaData node) == false)
-            return;
-
-        // 현재 플레이어가 있는 장소는 Interactive=X (슬라이드 46 스펙)
-        if (IsCurrentPlaceOrAncestor(dataId))
-            return;
-
-        if (IsSelectableNode(node) == false)
-            return;
-
-        if (TryGetSelectionBlockReason(node, out string failMessage))
-        {
-            Debug.LogWarning($"[UI_TravelPopup] Group selection blocked: node={dataId}, reason={failMessage}");
-            _selectionFeedbackMessage = failMessage;
-            RefreshAll();
-            return;
-        }
-
-        _selectionFeedbackMessage = string.Empty;
-        _selectedRootId = node.RootId != 0 ? node.RootId : _selectedRootId;
-        _selectedGroupId = node.DataId;
-
-        // 슬라이드 45: [마을]은 소분류 Layer 없음 — 중분류 버튼 자체가 행선지.
-        // [탐험]은 중분류 클릭 시 소분류 Layer가 열림.
-        if (IsTownRoot(_selectedRootId))
-        {
-            TravelAreaData firstDetail = GetDetailNodes(node.DataId).FirstOrDefault();
-            _selectedDetailId = firstDetail?.DataId ?? 0;
-            _depth = TravelDepth.Category;  // 소분류 Layer 열지 않음
-        }
-        else
-        {
-            _selectedDetailId = 0;
-            _depth = TravelDepth.Detail;
-        }
-
-        if (string.IsNullOrEmpty(node.DefaultBtnId) == false)
-            Managers.Quest.CheckButtonClick(node.DefaultBtnId);
-
-        BuildDetailButtons();
-        RefreshAll();
-    }
-
-    void OnClickDetailNode(int dataId)
-    {
-        if (TryGetNode(dataId, out TravelAreaData node) == false)
-            return;
-
-        // 현재 플레이어가 있는 장소는 Interactive=X (슬라이드 46 스펙)
-        if (IsCurrentPlaceOrAncestor(dataId))
-            return;
-
-        if (IsSelectableNode(node) == false)
-            return;
-
-        if (TryGetSelectionBlockReason(node, out string failMessage))
-        {
-            Debug.LogWarning($"[UI_TravelPopup] Detail selection blocked: node={dataId}, reason={failMessage}");
-            _selectionFeedbackMessage = failMessage;
-            RefreshAll();
-            return;
-        }
-
-        _selectionFeedbackMessage = string.Empty;
-        _selectedDetailId = node.DataId;
-
-        if (string.IsNullOrEmpty(node.DefaultBtnId) == false)
-            Managers.Quest.CheckButtonClick(node.DefaultBtnId);
 
         RefreshAll();
     }
