@@ -26,6 +26,8 @@ public class UI_TravelPopup : UI_Popup
         Detail,
     }
 
+    #region Enum
+
     enum Images
     {
         Xbutton,
@@ -38,20 +40,24 @@ public class UI_TravelPopup : UI_Popup
         MapSelectPopupBtmFrame,
         PlaceType,
         PlaceTypeTownImage,
+        Img_to_TownButtonQuestVFX_02,
         AdventureImage,
+        Img_to_FieldQuestVFX_01,
         TownType,
-        TownImage,
-        EFrame,
+        TownTypeFrame,
+        TownTypeIcon,
+        TownTypeButtons,
+        Mask_ScrollView_01,
         FieldType,
-        FieldTypeAdventureImage,
-        BWFType,
-        BWFTypeFrame,
-        BWFTypeTitle,
-        TitleTextFrame,
-        MapSelectBWF_EntryBtnFrame,
-        MapSelectBWF_EntryBtnImage,
-        MapSelectBWFBtnFrame,
-        MapSelectBWFBtnImage,
+        FieldTypeFrame,
+        FieldTypeIcon,
+        FieldTypeButtons,
+        Mask_ScrollView_02,
+        Maps,
+        MapsFrame,
+        MapTypeTitle,
+        MapTypeButtons,
+        Mask_ScrollView_03,
         BtmGroup,
     }
 
@@ -62,14 +68,9 @@ public class UI_TravelPopup : UI_Popup
         MapSelectPopupMapNameText,
         PlaceTypeTownText,
         AdventrueText,
-        TownTypeTownText,
-        MapSelectAsdalBtnText,
-        MapSelectPopup_CurrentLocationTxt,
-        FieldTypeAdventureText,
-        ButtonBWFTypeText,
-        BWFTypeTitleText,
-        MapSelectBWF_EntryBtnText,
-        MapSelectBWFBtnText,
+        TownTypeText,
+        FieldTypeText,
+        MapTypeTitleText,
         ButtonMapSelectBackText,
         ButtonMapSelectGOText,
     }
@@ -79,12 +80,6 @@ public class UI_TravelPopup : UI_Popup
         MapSelectBackground,
         Buttonto_TownType,
         Buttonto_FieldType,
-        ButtonMapSelectBack_TOP_1,
-        MapSelectAsdalBtn,
-        ButtonMapSelectBack_TOP,
-        ButtonBWFType,
-        MapSelectBWF_EntryBtn,
-        MapSelectBWFBtn,
         ButtonMapSelectBack,
         ButtonMapSelectGO,
     }
@@ -97,13 +92,12 @@ public class UI_TravelPopup : UI_Popup
         to_TownButtonQuestVFX,
         to_FieldQuestVFX,
         TownTypeContent,
-        AsdalButtonQuestVFX,
-        MapSelectPopupActiveEf,
-        Content,
-        ButtontoBWFVFX,
-        BWFTypeContent,
-        MapSelectBWF_EntryVFX,
+        FieldTypeContent,
+        MapTypeContent,
     }
+
+    #endregion
+
 
     class TravelNodeButtonView
     {
