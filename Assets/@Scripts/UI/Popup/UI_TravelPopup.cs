@@ -11,6 +11,14 @@ using static Util;
 
 public class UI_TravelPopup : UI_Popup
 {
+    // 대 중 소를 프리펩화해서 재구성하자
+    // 데이터 연결이 중요하니까 생각해야됨
+    // 현재 플레이어가 들어갈수있는 지역인지 아닌지도 필요할듯.
+
+    // UI_TownSelectButton -> 타운(마을) 선택 버튼 (중분류)
+    // UI_FieldTypeButton -> 필드(탐험) 선택 버튼 (중분류)
+    // UI_MapSelectButton -> 목적지 선택 버튼 (소분류)
+
     enum TravelDepth
     {
         Root,
