@@ -249,103 +249,56 @@ namespace Data
     }
     #endregion
 
-    #region TravelAreaData
+    #region TravelNodeData
     [Serializable]
-    public class TravelAreaData
+    public class TravelNodeData
     {
-        public int DataId;
-        public string Name;
-        public string Description;
-        public string SpriteName;
-        public string SceneName;
-        public int RecommendPower;
-        public List<int> PreviewMonsterIds = new List<int>();
-        public List<int> PreviewDropItemIds = new List<int>();
-        public int Order;
-        public string DefaultBtnId;
-        public string EntryBtnId;
-        public string UnlockSummary;
-        public string Category;
-        public int Depth;
+        public int Id;
         public int ParentId;
-        public int RootId;
-        public string NodeType;
-        public int IsSelectable;
-        public int IsEnterable;
-        public string PanelType;
-        public string Note;
+        public string Category;     // "TOWN" | "EXPLORE"
+        public string Name;
+        public string Sprite;
+        public string AreaType;     // "Village1" | "Battle" — 행선지만 채움
+        public string ClickBtnId;
+        public string EnterBtnId;   // 행선지만 채움
     }
 
     [Serializable]
-    public class TravelAreaDataLoader : ILoader<int, TravelAreaData>
+    public class TravelNodeDataLoader : ILoader<int, TravelNodeData>
     {
-        public List<TravelAreaData> areas = new List<TravelAreaData>();
-        public Dictionary<int, TravelAreaData> MakeDict()
+        public List<TravelNodeData> nodes = new List<TravelNodeData>();
+        public Dictionary<int, TravelNodeData> MakeDict()
         {
-            var dict = new Dictionary<int, TravelAreaData>();
-            foreach (var item in areas)
-                dict.Add(item.DataId, item);
+            var dict = new Dictionary<int, TravelNodeData>();
+            foreach (var item in nodes)
+                dict.Add(item.Id, item);
             return dict;
         }
     }
 
     [Serializable]
-    public class TravelAreaConditionData
+    public class TravelConditionData
     {
-        public int DataId;
-        public int Order;
-        public string ConditionType;
+        public int NodeId;
+        public string Type;         // "QUEST_CLEAR" | "BTN_UNLOCKED" | "ITEM_REQUIRED" | "LEVEL_REQUIRED"
         public string Target;
         public int Value;
         public string FailMessage;
-        public string Scope;
-        public string Note;
     }
 
     [Serializable]
-    public class TravelAreaConditionLoader : ILoader<int, List<TravelAreaConditionData>>
+    public class TravelConditionDataLoader : ILoader<int, List<TravelConditionData>>
     {
-        public List<TravelAreaConditionData> conditions = new List<TravelAreaConditionData>();
-        public Dictionary<int, List<TravelAreaConditionData>> MakeDict()
+        public List<TravelConditionData> conditions = new List<TravelConditionData>();
+        public Dictionary<int, List<TravelConditionData>> MakeDict()
         {
-            var dict = new Dictionary<int, List<TravelAreaConditionData>>();
+            var dict = new Dictionary<int, List<TravelConditionData>>();
             foreach (var item in conditions)
             {
-                if (!dict.ContainsKey(item.DataId))
-                    dict[item.DataId] = new List<TravelAreaConditionData>();
-                dict[item.DataId].Add(item);
+                if (!dict.ContainsKey(item.NodeId))
+                    dict[item.NodeId] = new List<TravelConditionData>();
+                dict[item.NodeId].Add(item);
             }
-            foreach (var list in dict.Values)
-                list.Sort((a, b) => a.Order.CompareTo(b.Order));
-            return dict;
-        }
-    }
-
-    [Serializable]
-    public class TravelAreaNotifyData
-    {
-        public int DataId;
-        public int Order;
-        public string BtnId;
-        public string NotifyType;
-        public string Note;
-    }
-
-    [Serializable]
-    public class TravelAreaNotifyLoader : ILoader<int, List<TravelAreaNotifyData>>
-    {
-        public List<TravelAreaNotifyData> notifies = new List<TravelAreaNotifyData>();
-        public Dictionary<int, List<TravelAreaNotifyData>> MakeDict()
-        {
-            var dict = new Dictionary<int, List<TravelAreaNotifyData>>();
-            foreach (var item in notifies)
-            {
-                if (!dict.ContainsKey(item.DataId))
-                    dict[item.DataId] = new List<TravelAreaNotifyData>();
-                dict[item.DataId].Add(item);
-            }
-            foreach (var list in dict.Values)
-                list.Sort((a, b) => a.Order.CompareTo(b.Order));
             return dict;
         }
     }

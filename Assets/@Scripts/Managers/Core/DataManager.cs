@@ -19,9 +19,8 @@ public class DataManager
     public Dictionary<int, HPPotionData>      HPPotionDic       { get; private set; } = new Dictionary<int, HPPotionData>();
     public Dictionary<int, SpeedPotionData>   SpeedPotionDic    { get; private set; } = new Dictionary<int, SpeedPotionData>();
     public Dictionary<int, AreaData>          AreaDic           { get; private set; } = new Dictionary<int, AreaData>();
-    public Dictionary<int, TravelAreaData>              TravelAreaDic          { get; private set; } = new Dictionary<int, TravelAreaData>();
-    public Dictionary<int, List<TravelAreaConditionData>> TravelAreaConditionDic { get; private set; } = new Dictionary<int, List<TravelAreaConditionData>>();
-    public Dictionary<int, List<TravelAreaNotifyData>>    TravelAreaNotifyDic    { get; private set; } = new Dictionary<int, List<TravelAreaNotifyData>>();
+    public Dictionary<int, TravelNodeData>                TravelNodeDic       { get; private set; } = new Dictionary<int, TravelNodeData>();
+    public Dictionary<int, List<TravelConditionData>>     TravelConditionDic  { get; private set; } = new Dictionary<int, List<TravelConditionData>>();
     public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
     public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
     public Dictionary<int, CraftRecipeData>   CraftRecipeDic    { get; private set; } = new Dictionary<int, CraftRecipeData>();
@@ -49,9 +48,8 @@ public class DataManager
         HPPotionDic       = LoadJson<HPPotionDataLoader,      int,    HPPotionData>       ("HPPotion").MakeDict();
         SpeedPotionDic    = LoadJson<SpeedPotionDataLoader,   int,    SpeedPotionData>    ("SpeedPotion").MakeDict();
         //AreaDic           = LoadJson<AreaDataLoader,          int,    AreaData>           ("AreaData").MakeDict();
-        TravelAreaDic          = LoadJson<TravelAreaDataLoader,      int, TravelAreaData>              ("TravelAreaData").MakeDict();
-        TravelAreaConditionDic = LoadJson<TravelAreaConditionLoader, int, List<TravelAreaConditionData>>("TravelAreaConditionData").MakeDict();
-        TravelAreaNotifyDic    = LoadJson<TravelAreaNotifyLoader,    int, List<TravelAreaNotifyData>>   ("TravelAreaNotifyData").MakeDict();
+        TravelNodeDic       = LoadJson<TravelNodeDataLoader,      int, TravelNodeData>              ("TravelNodeData").MakeDict();
+        TravelConditionDic  = LoadJson<TravelConditionDataLoader, int, List<TravelConditionData>>   ("TravelConditionData").MakeDict();
         //MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
         //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();

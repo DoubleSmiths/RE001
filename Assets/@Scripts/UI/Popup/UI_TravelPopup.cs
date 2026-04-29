@@ -117,22 +117,24 @@ public class UI_TravelPopup : UI_Popup
 
         ApplySharedFonts();
 
+        GetButton((int)Buttons.MapSelectBackground).gameObject.BindEvent(OnClickBG);
+
         GameObject popupGo = GetObject((int)GameObjects.MapSelectPopup);
         if (popupGo != null)
             _frameRT = popupGo.GetComponent<RectTransform>();
 
-        if (Managers.Quest != null)
-        {
-            Managers.Quest.OnNotifyChanged += RefreshAll;
-            Managers.Quest.OnQuestChanged += OnQuestChanged;
-            Managers.Quest.OnBtnUnlocked += OnButtonUnlocked;
-        }
+        //if (Managers.Quest != null)
+        //{
+        //    Managers.Quest.OnNotifyChanged += RefreshAll;
+        //    Managers.Quest.OnQuestChanged += OnQuestChanged;
+        //    Managers.Quest.OnBtnUnlocked += OnButtonUnlocked;
+        //}
 
-        if (Managers.Game != null)
-        {
-            Managers.Game.OnItemChanged += OnInventoryChanged;
-            Managers.Game.OnLanguageChanged += OnLanguageChanged;
-        }
+        //if (Managers.Game != null)
+        //{
+        //    Managers.Game.OnItemChanged += OnInventoryChanged;
+        //    Managers.Game.OnLanguageChanged += OnLanguageChanged;
+        //}
 
         return true;
     }
@@ -141,18 +143,18 @@ public class UI_TravelPopup : UI_Popup
     {
         base.OnDestroy();
 
-        if (Managers.Quest != null)
-        {
-            Managers.Quest.OnNotifyChanged -= RefreshAll;
-            Managers.Quest.OnQuestChanged -= OnQuestChanged;
-            Managers.Quest.OnBtnUnlocked -= OnButtonUnlocked;
-        }
+        //if (Managers.Quest != null)
+        //{
+        //    Managers.Quest.OnNotifyChanged -= RefreshAll;
+        //    Managers.Quest.OnQuestChanged -= OnQuestChanged;
+        //    Managers.Quest.OnBtnUnlocked -= OnButtonUnlocked;
+        //}
 
-        if (Managers.Game != null)
-        {
-            Managers.Game.OnItemChanged -= OnInventoryChanged;
-            Managers.Game.OnLanguageChanged -= OnLanguageChanged;
-        }
+        //if (Managers.Game != null)
+        //{
+        //    Managers.Game.OnItemChanged -= OnInventoryChanged;
+        //    Managers.Game.OnLanguageChanged -= OnLanguageChanged;
+        //}
     }
 
     public void SetInfo()

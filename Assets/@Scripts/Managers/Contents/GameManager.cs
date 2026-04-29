@@ -317,8 +317,8 @@ public class GameManager
             // 다른 곳의 SaveGame() 호출이 EXPLORE 진입 중에 발생해도 _gameData에는 마지막 TOWN이
             // 그대로 남도록 _gameData.CurrentTravelAreaId 자체를 EXPLORE 값으로 덮어쓰지 않는다.
             if (Managers.Data != null &&
-                Managers.Data.TravelAreaDic != null &&
-                Managers.Data.TravelAreaDic.TryGetValue(value, out var node) &&
+                Managers.Data.TravelNodeDic != null &&
+                Managers.Data.TravelNodeDic.TryGetValue(value, out var node) &&
                 string.Equals(node.Category, "EXPLORE", System.StringComparison.OrdinalIgnoreCase))
             {
                 return;

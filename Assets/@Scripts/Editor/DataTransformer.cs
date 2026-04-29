@@ -483,10 +483,13 @@ public class DataTransformer : EditorWindow
     static void GS_ParseTravelData()
     {
         var sheets = ReadAllXlsxSheets(DownloadGoogleSheet(GSHEET_TRAVEL));
+        ParseTravelSheets(sheets);
+    }
 
-        var areaLoader      = new TravelAreaDataLoader();
-        var conditionLoader = new TravelAreaConditionLoader();
-        var notifyLoader    = new TravelAreaNotifyLoader();
+    static void ParseTravelSheets(List<(string name, List<List<string>> rows)> sheets)
+    {
+        var nodeLoader      = new TravelNodeDataLoader();
+        var conditionLoader = new TravelConditionDataLoader();
 
         foreach (var (sheetName, rows) in sheets)
         {
@@ -499,68 +502,39 @@ public class DataTransformer : EditorWindow
 
                 switch (sheetName)
                 {
-                    case "TravelArea":
+                    case "TravelNode":
                     {
                         int i = 0;
-                        var d = new TravelAreaData();
-                        d.DataId             = ConvertValue<int>(row[i++]);
-                        d.Name               = i < row.Count ? row[i++] : "";
-                        d.Description        = i < row.Count ? row[i++] : "";
-                        d.SpriteName         = i < row.Count ? row[i++] : "";
-                        d.SceneName          = i < row.Count ? row[i++] : "";
-                        d.RecommendPower     = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.PreviewMonsterIds  = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
-                        d.PreviewDropItemIds = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
-                        d.Order              = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.DefaultBtnId       = i < row.Count ? row[i++] : "";
-                        d.EntryBtnId         = i < row.Count ? row[i++] : "";
-                        d.UnlockSummary      = i < row.Count ? row[i++] : "";
-                        d.Category           = i < row.Count ? row[i++] : "";
-                        d.Depth              = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.ParentId           = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.RootId             = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.NodeType           = i < row.Count ? row[i++] : "";
-                        d.IsSelectable       = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.IsEnterable        = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.PanelType          = i < row.Count ? row[i++] : "";
-                        d.Note               = i < row.Count ? row[i++] : "";
-                        areaLoader.areas.Add(d);
+                        var d = new TravelNodeData();
+                        d.Id         = ConvertValue<int>(row[i++]);
+                        d.ParentId   = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.Category   = i < row.Count ? row[i++] : "";
+                        d.Name       = i < row.Count ? row[i++] : "";
+                        d.Sprite     = i < row.Count ? row[i++] : "";
+                        d.AreaType   = i < row.Count ? row[i++] : "";
+                        d.ClickBtnId = i < row.Count ? row[i++] : "";
+                        d.EnterBtnId = i < row.Count ? row[i++] : "";
+                        nodeLoader.nodes.Add(d);
                         break;
                     }
-                    case "TravelAreaCondition":
+                    case "TravelCondition":
                     {
                         int i = 0;
-                        var d = new TravelAreaConditionData();
-                        d.DataId        = ConvertValue<int>(row[i++]);
-                        d.Order         = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.ConditionType = i < row.Count ? row[i++] : "";
-                        d.Target        = i < row.Count ? row[i++] : "";
-                        d.Value         = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.FailMessage   = i < row.Count ? row[i++] : "";
-                        d.Scope         = i < row.Count ? row[i++] : "";
-                        d.Note          = i < row.Count ? row[i++] : "";
+                        var d = new TravelConditionData();
+                        d.NodeId      = ConvertValue<int>(row[i++]);
+                        d.Type        = i < row.Count ? row[i++] : "";
+                        d.Target      = i < row.Count ? row[i++] : "";
+                        d.Value       = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
+                        d.FailMessage = i < row.Count ? row[i++] : "";
                         conditionLoader.conditions.Add(d);
-                        break;
-                    }
-                    case "TravelAreaNotify":
-                    {
-                        int i = 0;
-                        var d = new TravelAreaNotifyData();
-                        d.DataId = ConvertValue<int>(row[i++]);
-                        d.Order  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.BtnId  = i < row.Count ? row[i++] : "";
-                        d.NotifyType = i < row.Count ? row[i++] : "";
-                        d.Note       = i < row.Count ? row[i++] : "";
-                        notifyLoader.notifies.Add(d);
                         break;
                     }
                 }
             }
         }
 
-        WriteJson("TravelAreaData", areaLoader);
-        WriteJson("TravelAreaConditionData", conditionLoader);
-        WriteJson("TravelAreaNotifyData", notifyLoader);
+        WriteJson("TravelNodeData", nodeLoader);
+        WriteJson("TravelConditionData", conditionLoader);
     }
 
     /// <summary>"NONE" 또는 빈 값은 빈 리스트, 쉼표 구분 정수 목록 파싱</summary>
@@ -836,85 +810,7 @@ public class DataTransformer : EditorWindow
     static void ParseTravelData()
     {
         string path = $"{Application.dataPath}{EXCEL_PATH}/TravelData.xlsx";
-        var sheets = ReadAllXlsxSheets(path);
-
-        var areaLoader      = new TravelAreaDataLoader();
-        var conditionLoader = new TravelAreaConditionLoader();
-        var notifyLoader    = new TravelAreaNotifyLoader();
-
-        foreach (var (sheetName, rows) in sheets)
-        {
-            if (sheetName.StartsWith("_")) continue;
-
-            for (int y = 1; y < rows.Count; y++)
-            {
-                var row = rows[y];
-                if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
-
-                switch (sheetName)
-                {
-                    case "TravelArea":
-                    {
-                        int i = 0;
-                        var d = new TravelAreaData();
-                        d.DataId             = ConvertValue<int>(row[i++]);
-                        d.Name               = i < row.Count ? row[i++] : "";
-                        d.Description        = i < row.Count ? row[i++] : "";
-                        d.SpriteName         = i < row.Count ? row[i++] : "";
-                        d.SceneName          = i < row.Count ? row[i++] : "";
-                        d.RecommendPower     = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.PreviewMonsterIds  = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
-                        d.PreviewDropItemIds = i < row.Count ? ParseIntList(row[i++]) : new List<int>();
-                        d.Order              = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.DefaultBtnId       = i < row.Count ? row[i++] : "";
-                        d.EntryBtnId         = i < row.Count ? row[i++] : "";
-                        d.UnlockSummary      = i < row.Count ? row[i++] : "";
-                        d.Category           = i < row.Count ? row[i++] : "";
-                        d.Depth              = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.ParentId           = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.RootId             = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.NodeType           = i < row.Count ? row[i++] : "";
-                        d.IsSelectable       = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.IsEnterable        = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.PanelType          = i < row.Count ? row[i++] : "";
-                        d.Note               = i < row.Count ? row[i++] : "";
-                        areaLoader.areas.Add(d);
-                        break;
-                    }
-                    case "TravelAreaCondition":
-                    {
-                        int i = 0;
-                        var d = new TravelAreaConditionData();
-                        d.DataId        = ConvertValue<int>(row[i++]);
-                        d.Order         = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.ConditionType = i < row.Count ? row[i++] : "";
-                        d.Target        = i < row.Count ? row[i++] : "";
-                        d.Value         = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.FailMessage   = i < row.Count ? row[i++] : "";
-                        d.Scope         = i < row.Count ? row[i++] : "";
-                        d.Note          = i < row.Count ? row[i++] : "";
-                        conditionLoader.conditions.Add(d);
-                        break;
-                    }
-                    case "TravelAreaNotify":
-                    {
-                        int i = 0;
-                        var d = new TravelAreaNotifyData();
-                        d.DataId = ConvertValue<int>(row[i++]);
-                        d.Order  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
-                        d.BtnId  = i < row.Count ? row[i++] : "";
-                        d.NotifyType = i < row.Count ? row[i++] : "";
-                        d.Note       = i < row.Count ? row[i++] : "";
-                        notifyLoader.notifies.Add(d);
-                        break;
-                    }
-                }
-            }
-        }
-
-        WriteJson("TravelAreaData", areaLoader);
-        WriteJson("TravelAreaConditionData", conditionLoader);
-        WriteJson("TravelAreaNotifyData", notifyLoader);
+        ParseTravelSheets(ReadAllXlsxSheets(path));
     }
 
     // -------------------------------------------------------------------

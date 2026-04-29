@@ -1,0 +1,74 @@
+﻿{
+  "nodes": [
+    {
+      "Id": 11000,
+      "ParentId": 0,
+      "Category": "TOWN",
+      "Name": "PlaceNameTownAsdalText",
+      "Sprite": "Background_Village1",
+      "AreaType": "Village1",
+      "ClickBtnId": "BTN_MAP_ASDAL",
+      "EnterBtnId": "BTN_ENTER_ASDAL"
+    },
+    {
+      "Id": 21000,
+      "ParentId": 0,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestNameText",
+      "Sprite": "BreezingWindForest_Img",
+      "AreaType": "",
+      "ClickBtnId": "BTN_MAP_BREEZING_WIND_FOREST",
+      "EnterBtnId": ""
+    },
+    {
+      "Id": 21100,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestEntranceText",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZING_WIND_FOREST_ENTRANCE",
+      "EnterBtnId": "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE"
+    },
+    {
+      "Id": 22000,
+      "ParentId": 0,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveNameText",
+      "Sprite": "WhisperingCave_Img",
+      "AreaType": "",
+      "ClickBtnId": "BTN_MAP_WHISPERING_CAVE",
+      "EnterBtnId": ""
+    },
+    {
+      "Id": 22100,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveEntranceText",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERING_CAVE_ENTRANCE",
+      "EnterBtnId": "BTN_STAGE_WHISPERING_CAVE_ENTRANCE"
+    },
+    {
+      "Id": 23000,
+      "ParentId": 0,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumNameText",
+      "Sprite": "RuinedSanctum_Img",
+      "AreaType": "",
+      "ClickBtnId": "BTN_MAP_RUINED_SANCTUM",
+      "EnterBtnId": ""
+    },
+    {
+      "Id": 23100,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumEntranceText",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINED_SANCTUM_ENTRANCE",
+      "EnterBtnId": "BTN_STAGE_RUINED_SANCTUM_ENTRANCE"
+    }
+  ]
+}
