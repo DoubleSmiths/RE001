@@ -103,6 +103,10 @@ public class UI_TravelPopup : UI_Popup
     static readonly Color COLOR_ROOT_ICON       = new Color32(0xFF, 0xFF, 0xFF, 80);      // FFFFFF alpha 80 (대분류 아이콘)
 
     string _selectedCategory = "";
+    const string TOWN_CATEGORY = "TOWN";
+    const string FIELD_CATEGORY = "FIELD";
+
+    List<TravelNodeData> _allNode = new();
 
     private void Awake()
     {
@@ -122,6 +126,10 @@ public class UI_TravelPopup : UI_Popup
         ApplySharedFonts();
 
         GetButton((int)Buttons.MapSelectBackground).gameObject.BindEvent(OnClickBG);
+        GetButton((int)Buttons.TownCategoryButton).gameObject.BindEvent(OnClickTownCategory);
+        GetButton((int)Buttons.FieldCategoryButton).gameObject.BindEvent(OnClickFieldCategory);
+        GetButton((int)Buttons.ButtonMapSelectGO).gameObject.BindEvent(OnClickGo);
+        GetButton((int)Buttons.ButtonMapSelectBack).gameObject.BindEvent(OnClickBack);
 
         GameObject popupGo = GetObject((int)GameObjects.MapSelectPopup);
         if (popupGo != null)
@@ -163,10 +171,15 @@ public class UI_TravelPopup : UI_Popup
 
     public void SetInfo()
     {
+        _allNode = Managers.Data.TravelNodeDic.Values.OrderBy(n => n.Id).ToList(); // 이 코드 되게 멋있다 기억해놔야지. SQL의 ORDER BY 같은 느낌이네. 데이터가 많아지면 성능 이슈 있을 수 있으니 주의하자.
+        Debug.Log($"[Travel] Loaded {_allNode.Count} nodes.");
+
         _selectedCategory = "";
         GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
+
+        RefreshUI();
         OpenAnimation();
     }
 
@@ -182,9 +195,82 @@ public class UI_TravelPopup : UI_Popup
 
     void RefreshUI()
     {
+        Image townFrame = GetButton((int)Buttons.TownCategoryButton)?.GetComponent<Image>();
+        Image fieldFrame = GetButton((int)Buttons.FieldCategoryButton)?.GetComponent<Image>();
+
+        bool isTownSelected = _selectedCategory == TOWN_CATEGORY;
+        bool isFieldSelected = _selectedCategory == FIELD_CATEGORY;
+
+        if (townFrame != null) townFrame.color = isTownSelected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
+        if (fieldFrame != null) fieldFrame.color = isFieldSelected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
+
+        GetButton((int)Buttons.ButtonMapSelectGO).interactable = CanGo();
+    }
+
+    bool CanGo()
+    {
+        if (_selectedCategory == TOWN_CATEGORY)
+            return !GetImage((int)Images.TownSelectPanel).gameObject.activeSelf;
+        if (_selectedCategory == FIELD_CATEGORY)
+            return !GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
+
+        return false;
+    }
+
+    void OnClickTownCategory()
+    {
+        _selectedCategory = TOWN_CATEGORY; // 일단 하드코딩인데 이거 Define으로 이동할 예정임. 아닌가 굳이 안해도 되긴하는데 흠..
+        Debug.Log("[UI_TravelPopup] Selected: TOWN");
+
+        RefreshUI();
+    }
+
+    void OnClickFieldCategory()
+    {
+        _selectedCategory = FIELD_CATEGORY;
+        Debug.Log("[UI_TravelPopup] Selected: FIELD");
+
+        RefreshUI();
+    }
+
+    void OnClickGo()
+    {
+        if (_selectedCategory == TOWN_CATEGORY)
+            GetImage((int)Images.TownSelectPanel).gameObject.SetActive(true);
+        else if (_selectedCategory == FIELD_CATEGORY)
+            GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(true);
+
+        RefreshUI();
+    }
+
+    void OnClickBack()
+    {
+
+        if (GetImage((int)Images.MapSelectPanel).gameObject.activeSelf)
+        {
+            GetImage((int)Images.MapSelectPanel).gameObject.GetComponent<DOTweenAnimation>().DOPlayBackwards();
+            //GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
+
+            RefreshUI();
+            return;
+        }
+
+        if (GetImage((int)Images.TownSelectPanel).gameObject.activeSelf || GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf)
+        {
+            GetImage((int)Images.TownSelectPanel).gameObject.GetComponent<DOTweenAnimation>().DOPlayBackwards(); //.OnComplete(() => GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false));
+            //GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
+            GetImage((int)Images.FieldSelectPanel).gameObject.GetComponent<DOTweenAnimation>().DOPlayBackwards(); //.OnComplete(() => GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false));
+            //GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
+            _selectedCategory = "";
+
+            RefreshUI();
+            return;
+        }
+
 
     }
 
-    
+    // back 버튼 비활성화 회색 처리
+    // 모든 버튼은 눌렀을 때 애니메이션이 있음.
 
 }

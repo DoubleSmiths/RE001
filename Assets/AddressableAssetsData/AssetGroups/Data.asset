@@ -57,6 +57,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b38410b4bd7a8de48832e482c24140d0
+    m_Address: TravelConditionData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b7322019b4ba4ae48bfd1c320dfc1565
     m_Address: PlayerStatusData
     m_ReadOnly: 0
@@ -95,6 +101,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e39a1612ac08d6f42884a4b8cbaba0d5
     m_Address: QuestNotifyData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e4f3320eb4f940b4e9c6bc3bf85a14ac
+    m_Address: TravelNodeData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
