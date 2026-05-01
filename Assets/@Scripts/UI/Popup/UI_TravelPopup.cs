@@ -19,6 +19,7 @@ public class UI_TravelPopup : UI_Popup
     // UI_FieldTypeButton -> 필드(탐험) 선택 버튼 (중분류) FieldTypeContent -> 필드(탐험) 선택 버튼 그룹
     // UI_MapSelectButton -> 목적지 선택 버튼 (소분류) MapTypeContent -> 목적지 선택 버튼 그룹
 
+    // 모든 버튼은 눌렀을 때 애니메이션이 있음.
     #region Enum
 
     enum Images
@@ -93,20 +94,21 @@ public class UI_TravelPopup : UI_Popup
 
 
 
-    static readonly Color COLOR_DEFAULT         = new Color32(0xFF, 0xFF, 0xFF, 0xFF);    // FFFFFF
-    static readonly Color COLOR_DISABLED        = new Color32(0x5E, 0x5E, 0x5E, 200);     // 5E5E5E alpha 200 그외 또는 [뒤로] 버튼이 눌러졌을 때
-    static readonly Color COLOR_DESTINATION     = new Color32(0xFF, 0xA3, 0x00, 0xFF);    // FFA300 행선지가 선택되었을 때
-    static readonly Color COLOR_CURRENT         = new Color32(0x23, 0x7B, 0x00, 0xFF);    // 237B00 해당 버튼의 장소가 현재 플레이어가 있는 장소일 시
-    static readonly Color COLOR_GROUP_SELECT    = new Color32(0xFF, 0xC5, 0x00, 0xFF);    // FFC500 선택 되었을 때
-    static readonly Color COLOR_BUTTON_DEFAULT  = new Color32(0x95, 0x95, 0x95, 0xFF);    // 959595 클릭 가능 버튼들의 기본 색상
-    static readonly Color COLOR_ROOT_IDLE       = new Color32(0xFF, 0xFF, 0xFF, 0xFF);    // FFFFFF (대분류 버튼 본체)
-    static readonly Color COLOR_ROOT_ICON       = new Color32(0xFF, 0xFF, 0xFF, 80);      // FFFFFF alpha 80 (대분류 아이콘)
+    static readonly Color COLOR_DEFAULT = new Color32(0xFF, 0xFF, 0xFF, 0xFF);          // FFFFFF
+    static readonly Color COLOR_DISABLED = new Color32(0x5E, 0x5E, 0x5E, 200);          // 5E5E5E alpha 200 그외 또는 [뒤로] 버튼이 눌러졌을 때
+    static readonly Color COLOR_DESTINATION = new Color32(0xFF, 0xA3, 0x00, 0xFF);      // FFA300 행선지가 선택되었을 때
+    static readonly Color COLOR_CURRENT = new Color32(0x23, 0x7B, 0x00, 0xFF);          // 237B00 해당 버튼의 장소가 현재 플레이어가 있는 장소일 시
+    static readonly Color COLOR_GROUP_SELECT = new Color32(0xFF, 0xC5, 0x00, 0xFF);     // FFC500 선택 되었을 때
+    static readonly Color COLOR_BUTTON_DEFAULT = new Color32(0x95, 0x95, 0x95, 0xFF);   // 959595 클릭 가능 버튼들의 기본 색상
+    static readonly Color COLOR_ROOT_IDLE = new Color32(0xFF, 0xFF, 0xFF, 0xFF);        // FFFFFF (대분류 버튼 본체)
+    static readonly Color COLOR_ROOT_ICON = new Color32(0xFF, 0xFF, 0xFF, 80);          // FFFFFF alpha 80 (대분류 아이콘)
 
     string _selectedCategory = "";
     const string TOWN_CATEGORY = "TOWN";
     const string FIELD_CATEGORY = "FIELD";
 
     List<TravelNodeData> _allNode = new();
+    List<GameObject> _spawnedTownButtons = new();
 
     private void Awake()
     {
@@ -178,6 +180,8 @@ public class UI_TravelPopup : UI_Popup
         GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
+
+        BuildTownButtons();
 
         RefreshUI();
         OpenAnimation();
@@ -258,7 +262,7 @@ public class UI_TravelPopup : UI_Popup
         if (GetImage((int)Images.MapSelectPanel).gameObject.activeSelf)
         {
             ClosePanelWithAnim(GetImage((int)Images.MapSelectPanel).gameObject);
-            
+
             RefreshUI();
             return;
         }
@@ -273,9 +277,44 @@ public class UI_TravelPopup : UI_Popup
             return;
         }
 
-
     }
 
-    // 모든 버튼은 눌렀을 때 애니메이션이 있음.
+    void BuildTownButtons()
+    {
+        // 기존 인스턴스 정리.
+        foreach (GameObject go in _spawnedTownButtons)
+            Destroy(go);
+
+        _spawnedTownButtons.Clear();
+
+        // 부모없으면 리턴
+        GameObject parent = GetObject((int)GameObjects.TownSelectContent);
+        if (parent == null) return;
+
+        GameObject prefab = Managers.Resource.Load<GameObject>("UI_TownSelectButton");
+        if (prefab == null)
+        {
+            Debug.LogError("[UI_TravelPopup] Failed to load TownSelectButton prefab.");
+            return;
+        }
+
+        // TOWN 행선지 = Category=TOWN, ParentId = 0
+        var townNodes = _allNode.Where(n => n.Category == TOWN_CATEGORY && n.ParentId == 0).ToList();
+
+        foreach (var node in townNodes)
+        {
+            GameObject btn = Managers.Resource.Instantiate("UI_TownSelectButton", parent.transform);
+            btn.name = $"UI_TownSelectButton_{node.Id}";
+
+            // Click Test
+            UI_TownSelectButton townBtn = btn.GetComponent<UI_TownSelectButton>();
+            townBtn.SetInfo(node, Managers.Game.CurrentTravelAreaId == node.Id);
+
+            _spawnedTownButtons.Add(btn);
+        }
+
+        Debug.Log($"[UI_TravelPopup] Spawned {_spawnedTownButtons.Count} town buttons.");
+    }
+
 
 }

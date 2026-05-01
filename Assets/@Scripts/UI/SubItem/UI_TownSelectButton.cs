@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +22,7 @@ public class UI_TownSelectButton : UI_Base
 
     enum Buttons
     {
-        UI_TownSelectButton,
+        //UI_TownSelectButton,
     }
 
     enum GameObjects
@@ -31,6 +32,10 @@ public class UI_TownSelectButton : UI_Base
     }
 
     #endregion
+
+    static readonly Color COLOR_CURRENT = new Color32(0x23, 0x7B, 0x00, 0xFF);          // 237B00 해당 버튼의 장소가 현재 플레이어가 있는 장소일 시
+    static readonly Color COLOR_GROUP_SELECT = new Color32(0xFF, 0xC5, 0x00, 0xFF);     // FFC500 선택 되었을 때
+    static readonly Color COLOR_BUTTON_DEFAULT = new Color32(0x95, 0x95, 0x95, 0xFF);   // 959595 클릭 가능 버튼들의 기본 색상
 
     private void Awake()
     {
@@ -47,6 +52,8 @@ public class UI_TownSelectButton : UI_Base
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
+        gameObject.BindEvent(OnClickTownSelectButton);
+
         // TODO : 버튼 클릭 이벤트 추가
         // TODO : 퀘스트 VFX 활성화/비활성화 로직 추가
         // TODO : 현재 위치 텍스트 업데이트 로직 추가
@@ -59,8 +66,52 @@ public class UI_TownSelectButton : UI_Base
         return true;
     }
 
-    public void SetInfo()
+    public void SetInfo(TravelNodeData node, bool isCurrentLocation)
     {
+        if (node == null)
+        {
+            Debug.LogError("[UI_TownSelectButton] Invalid TravelNodeData.");
+            return;
+        }
 
+        Debug.Log($"[UI_TownSelectButton] Setting info for node: {node.Name}");
+
+        
+        GetText((int)Texts.TownSelectButtonText).text = Util.Localize(node.Name);
+
+        // TODO : 버튼 클릭 이벤트 추가
+        // TODO : 퀘스트 VFX 활성화/비활성화 로직 추가
+        // TODO : 현재 위치 텍스트 업데이트 로직 추가
+
+        SetCurrentLocation(isCurrentLocation);
+        SetSelected(false);
+        SetQuestVFX(false); // 일단 false
     }
+
+    void OnClickTownSelectButton()
+    {
+        gameObject.GetComponent<Image>().color = COLOR_GROUP_SELECT;
+        GetImage((int)Images.EFrame).gameObject.SetActive(true);
+    }
+
+    public void SetSelected(bool selected)
+    {
+        GetImage((int)Images.EFrame).gameObject?.SetActive(selected);
+    }
+
+    public void SetCurrentLocation(bool isCurrent)
+    {
+        if (isCurrent)
+            gameObject.GetComponent<Button>().interactable = false;
+
+        GetText((int)Texts.TownSelectPopupCurrentLocationText).gameObject?.SetActive(isCurrent);
+       gameObject.GetComponent<Image>().color = isCurrent ? COLOR_CURRENT : COLOR_BUTTON_DEFAULT;
+    }
+
+
+    public void SetQuestVFX(bool active)
+    {
+        GetObject((int)GameObjects.TownSelectButtonQuestVFX)?.SetActive(active);
+    }
+
 }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4140717911797901973}
   m_Layer: 5
-  m_Name: FieldTypeButtonQuestVFX
+  m_Name: FieldSelectButtonQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 2019496684308757991}
   - component: {fileID: 261695077938679416}
   m_Layer: 5
-  m_Name: FieldTypeButtonText
+  m_Name: FieldSelectButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 713241462608365977}
   - component: {fileID: 649580732897365960}
   m_Layer: 5
-  m_Name: FieldTypeButtonQuestVFXIcon
+  m_Name: FieldSelectButtonQuestVFXIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -494,7 +494,7 @@ GameObject:
   - component: {fileID: 8134100247863911354}
   - component: {fileID: 3055016140341213000}
   m_Layer: 5
-  m_Name: UI_FieldTypeButton
+  m_Name: UI_FieldSelectButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
