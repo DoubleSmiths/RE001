@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,6 +30,8 @@ public class UI_Popup : UI_Base
     {
         Managers.UI.ClosePopupUI(this);
     }
+
+    public virtual void RefreshUI() { }
 
     public void OpenAnimation()
     {
@@ -68,6 +71,29 @@ public class UI_Popup : UI_Base
                          .SetLoops(2, LoopType.Yoyo)
                          .SetUpdate(true);
         });
+    }
+
+    public void ClosePanelWithAnim(GameObject panel)
+    {
+        if (panel == null || !panel.activeSelf) return;
+
+        DOTweenAnimation anim = panel.GetComponent<DOTweenAnimation>();
+        if (anim == null)
+        {
+            panel.SetActive(false);
+            return;
+        }
+
+        anim.DOPlayBackwards();
+        StartCoroutine(WaitAndDeactivate(panel, anim.duration));
+    }
+
+    IEnumerator WaitAndDeactivate(GameObject go, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (go != null)
+            go.SetActive(false);
+        RefreshUI();
     }
 
 }

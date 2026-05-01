@@ -193,7 +193,7 @@ public class UI_TravelPopup : UI_Popup
         }
     }
 
-    void RefreshUI()
+    public override void RefreshUI()
     {
         Image townFrame = GetButton((int)Buttons.TownCategoryButton)?.GetComponent<Image>();
         Image fieldFrame = GetButton((int)Buttons.FieldCategoryButton)?.GetComponent<Image>();
@@ -205,6 +205,7 @@ public class UI_TravelPopup : UI_Popup
         if (fieldFrame != null) fieldFrame.color = isFieldSelected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
 
         GetButton((int)Buttons.ButtonMapSelectGO).interactable = CanGo();
+        GetButton((int)Buttons.ButtonMapSelectBack).interactable = IsAnyPanelActive();
     }
 
     bool CanGo()
@@ -215,6 +216,13 @@ public class UI_TravelPopup : UI_Popup
             return !GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
 
         return false;
+    }
+
+    bool IsAnyPanelActive()
+    {
+        return GetImage((int)Images.TownSelectPanel).gameObject.activeSelf ||
+               GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf ||
+               GetImage((int)Images.MapSelectPanel).gameObject.activeSelf;
     }
 
     void OnClickTownCategory()
@@ -245,22 +253,20 @@ public class UI_TravelPopup : UI_Popup
 
     void OnClickBack()
     {
+        //GetButton((int)Buttons.ButtonMapSelectBack).interactable = false; // 중복 클릭 방지 위해 바로 비활성화
 
         if (GetImage((int)Images.MapSelectPanel).gameObject.activeSelf)
         {
-            GetImage((int)Images.MapSelectPanel).gameObject.GetComponent<DOTweenAnimation>().DOPlayBackwards();
-            //GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
-
+            ClosePanelWithAnim(GetImage((int)Images.MapSelectPanel).gameObject);
+            
             RefreshUI();
             return;
         }
 
         if (GetImage((int)Images.TownSelectPanel).gameObject.activeSelf || GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf)
         {
-            GetImage((int)Images.TownSelectPanel).gameObject.GetComponent<DOTweenAnimation>().DOPlayBackwards(); //.OnComplete(() => GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false));
-            //GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
-            GetImage((int)Images.FieldSelectPanel).gameObject.GetComponent<DOTweenAnimation>().DOPlayBackwards(); //.OnComplete(() => GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false));
-            //GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
+            ClosePanelWithAnim(GetImage((int)Images.TownSelectPanel).gameObject);
+            ClosePanelWithAnim(GetImage((int)Images.FieldSelectPanel).gameObject);
             _selectedCategory = "";
 
             RefreshUI();
@@ -270,7 +276,6 @@ public class UI_TravelPopup : UI_Popup
 
     }
 
-    // back 버튼 비활성화 회색 처리
     // 모든 버튼은 눌렀을 때 애니메이션이 있음.
 
 }
