@@ -29,28 +29,28 @@ public class UI_TravelPopup : UI_Popup
         MapSelectPopupMapImage,
         MapSelectPopupMapImageFrame,
         MapSelectPopupMapNameFrame,
-        Decor_description_line_Image,
+        DecorDescriptionLineImage,
         MapSelectPopupBtmFrame,
-        PlaceType,
-        PlaceTypeTownImage,
-        Img_to_TownButtonQuestVFX_02,
-        AdventureImage,
-        Img_to_FieldQuestVFX_01,
-        TownType,
-        TownTypeFrame,
-        TownTypeIcon,
-        TownTypeButtons,
-        Mask_ScrollView_01,
-        FieldType,
-        FieldTypeFrame,
-        FieldTypeIcon,
-        FieldTypeButtons,
-        Mask_ScrollView_02,
-        Maps,
-        MapsFrame,
-        MapTypeTitle,
-        MapTypeButtons,
-        Mask_ScrollView_03,
+        PlaceCategoryPanel,
+        TownCategoryButtonImage,
+        TownCategoryButtonQuestVFXIcon,
+        FieldCategoryButtonImage,
+        FieldCategoryButtonQuestVFXIcon,
+        TownSelectPanel,
+        TownSelectPanelFrame,
+        TownSelectPanelIcon,
+        TownSelectButtons,
+        TownSelectMask,
+        FieldSelectPanel,
+        FieldSelectFrame,
+        FieldSelectIcon,
+        FieldSelectButtons,
+        FieldSelectMask,
+        MapSelectPanel,
+        MapSelectFrame,
+        MapSelectTitle,
+        MapSelectButtons,
+        MapSelectMask,
         BtmGroup,
     }
 
@@ -59,11 +59,11 @@ public class UI_TravelPopup : UI_Popup
         XbuttonText,
         MapSelectPopupTitleText,
         MapSelectPopupMapNameText,
-        PlaceTypeTownText,
-        AdventrueText,
-        TownTypeText,
-        FieldTypeText,
-        MapTypeTitleText,
+        TownCategoryButtonText,
+        FieldCategoryButtonText,
+        TownSelectPanelText,
+        FieldSelectText,
+        MapSelectTitleText,
         ButtonMapSelectBackText,
         ButtonMapSelectGOText,
     }
@@ -71,8 +71,8 @@ public class UI_TravelPopup : UI_Popup
     enum Buttons
     {
         MapSelectBackground,
-        Buttonto_TownType,
-        Buttonto_FieldType,
+        TownCategoryButton,
+        FieldCategoryButton,
         ButtonMapSelectBack,
         ButtonMapSelectGO,
     }
@@ -82,14 +82,16 @@ public class UI_TravelPopup : UI_Popup
         FIXED,
         In_Frame,
         MapSelectPopup,
-        to_TownButtonQuestVFX,
-        to_FieldQuestVFX,
-        TownTypeContent,
-        FieldTypeContent,
-        MapTypeContent,
+        TownCategoryButtonQuestVFX,
+        FieldCategoryButtonQuestVFX,
+        TownSelectContent,
+        FieldSelectContent,
+        MapSelectContent,
     }
 
     #endregion
+
+
 
     static readonly Color COLOR_DEFAULT         = new Color32(0xFF, 0xFF, 0xFF, 0xFF);    // FFFFFF
     static readonly Color COLOR_DISABLED        = new Color32(0x5E, 0x5E, 0x5E, 200);     // 5E5E5E alpha 200 그외 또는 [뒤로] 버튼이 눌러졌을 때
@@ -99,6 +101,8 @@ public class UI_TravelPopup : UI_Popup
     static readonly Color COLOR_BUTTON_DEFAULT  = new Color32(0x95, 0x95, 0x95, 0xFF);    // 959595 클릭 가능 버튼들의 기본 색상
     static readonly Color COLOR_ROOT_IDLE       = new Color32(0xFF, 0xFF, 0xFF, 0xFF);    // FFFFFF (대분류 버튼 본체)
     static readonly Color COLOR_ROOT_ICON       = new Color32(0xFF, 0xFF, 0xFF, 80);      // FFFFFF alpha 80 (대분류 아이콘)
+
+    string _selectedCategory = "";
 
     private void Awake()
     {
@@ -159,6 +163,10 @@ public class UI_TravelPopup : UI_Popup
 
     public void SetInfo()
     {
+        _selectedCategory = "";
+        GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
+        GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
+        GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
         OpenAnimation();
     }
 
@@ -172,5 +180,11 @@ public class UI_TravelPopup : UI_Popup
         }
     }
 
+    void RefreshUI()
+    {
+
+    }
+
+    
 
 }
