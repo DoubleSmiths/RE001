@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class UI_FieldTypeButton : UI_Base
@@ -26,6 +27,10 @@ public class UI_FieldTypeButton : UI_Base
     }
 
     #endregion
+
+    int _nodeId;
+    public int NodeId { get => _nodeId; set => _nodeId = value; }
+    public Action<int> OnClickFieldType;
 
     private void Awake()
     {

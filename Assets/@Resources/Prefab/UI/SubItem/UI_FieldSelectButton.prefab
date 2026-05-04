@@ -492,7 +492,7 @@ GameObject:
   - component: {fileID: 51724744356889173}
   - component: {fileID: 1745216191606405921}
   - component: {fileID: 8134100247863911354}
-  - component: {fileID: 3055016140341213000}
+  - component: {fileID: 4091680803294138428}
   m_Layer: 5
   m_Name: UI_FieldSelectButton
   m_TagString: Untagged
@@ -712,7 +712,7 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
---- !u!114 &3055016140341213000
+--- !u!114 &4091680803294138428
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -723,4 +723,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3047125924748e24c9185405817d2e9f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UI_FieldTypeButton
+  m_EditorClassIdentifier: Assembly-CSharp::UI_FieldSelectButton

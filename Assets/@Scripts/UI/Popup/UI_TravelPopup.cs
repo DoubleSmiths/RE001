@@ -105,12 +105,14 @@ public class UI_TravelPopup : UI_Popup
 
     string _selectedCategory = "";
     const string TOWN_CATEGORY = "TOWN";
-    const string FIELD_CATEGORY = "FIELD";
+    const string EXPLORE_CATEGORY = "EXPLORE";
 
     List<TravelNodeData> _allNode = new();
     List<GameObject> _spawnedTownButtons = new();
+    List<GameObject> _spawnedFieldButtons = new();
 
     int _selectedTownId = 0;
+    int _selectedFieldId = 0;
 
     private void Awake()
     {
@@ -180,11 +182,13 @@ public class UI_TravelPopup : UI_Popup
 
         _selectedCategory = "";
         _selectedTownId = 0;
+        _selectedFieldId = 0;
         GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
 
         BuildTownButtons();
+        BuildFieldButtons();
 
         RefreshUI();
         OpenAnimation();
@@ -206,7 +210,7 @@ public class UI_TravelPopup : UI_Popup
         Image fieldFrame = GetButton((int)Buttons.FieldCategoryButton)?.GetComponent<Image>();
 
         bool isTownSelected = _selectedCategory == TOWN_CATEGORY;
-        bool isFieldSelected = _selectedCategory == FIELD_CATEGORY;
+        bool isFieldSelected = _selectedCategory == EXPLORE_CATEGORY;
 
         if (townFrame != null) townFrame.color = isTownSelected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
         if (fieldFrame != null) fieldFrame.color = isFieldSelected ? COLOR_GROUP_SELECT : COLOR_ROOT_IDLE;
@@ -218,6 +222,14 @@ public class UI_TravelPopup : UI_Popup
         {
             go?.GetComponent<UI_TownSelectButton>()?.SetSelected(go?.GetComponent<UI_TownSelectButton>().NodeId == _selectedTownId);
         }
+
+        foreach (GameObject go in _spawnedFieldButtons)
+        {
+            UI_FieldSelectButton btn = go?.GetComponent<UI_FieldSelectButton>();
+            if (btn == null) continue;
+            btn.SetSelected(btn.NodeId == _selectedFieldId);
+        }
+
     }
 
     bool CanGo()
@@ -228,8 +240,12 @@ public class UI_TravelPopup : UI_Popup
             if (!isOpenPanel) return true; // 카테고리 선택만 되어있고 패널이 열려있지 않다면 이동 가능
             return _selectedTownId != 0;
         }
-        if (_selectedCategory == FIELD_CATEGORY)
-            return !GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
+        if (_selectedCategory == EXPLORE_CATEGORY)
+        {
+            bool isOpenPanel = GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
+            if (!isOpenPanel) return true;
+            return _selectedFieldId != 0;
+        }
 
         return false;
     }
@@ -251,7 +267,7 @@ public class UI_TravelPopup : UI_Popup
 
     void OnClickFieldCategory()
     {
-        _selectedCategory = FIELD_CATEGORY;
+        _selectedCategory = EXPLORE_CATEGORY;
         Debug.Log("[UI_TravelPopup] Selected: FIELD");
 
         RefreshUI();
@@ -275,15 +291,22 @@ public class UI_TravelPopup : UI_Popup
                 // 행선지로 이동
             }
         }
-        else if (_selectedCategory == FIELD_CATEGORY)
+        else if (_selectedCategory == EXPLORE_CATEGORY)
         {
-
             GameObject panel = GetImage((int)Images.FieldSelectPanel).gameObject;
             if (!panel.activeSelf)
             {
+                // FieldSelectPanel 열기
                 panel.SetActive(true);
                 RefreshUI();
+                return;
             }
+            if (_selectedFieldId != 0)
+            {
+                // Maps 열기 (다음 단계 — 일단 로그)
+                Debug.Log($"[Travel] (TODO) Open MapSelectPanel for field {_selectedFieldId}");
+            }
+
         }
 
         RefreshUI();
@@ -351,6 +374,7 @@ public class UI_TravelPopup : UI_Popup
             ClosePanelWithAnim(GetImage((int)Images.FieldSelectPanel).gameObject);
             _selectedCategory = "";
             _selectedTownId = 0;
+            _selectedFieldId = 0;
             RefreshUI();
             return;
         }
@@ -396,11 +420,54 @@ public class UI_TravelPopup : UI_Popup
         Debug.Log($"[UI_TravelPopup] Spawned {_spawnedTownButtons.Count} town buttons.");
     }
 
+    void BuildFieldButtons()
+    {
+        foreach (var go in _spawnedFieldButtons)
+            if (go != null) Destroy(go);
+        _spawnedFieldButtons.Clear();
+
+        GameObject parent = GetObject((int)GameObjects.FieldSelectContent);
+        if (parent == null) return;
+
+        GameObject prefab = Managers.Resource.Load<GameObject>("UI_FieldSelectButton");
+        if (prefab == null) return;
+
+        // 현재 위치 노드 찾기 (그룹 자식 매칭용)
+        int currentNodeId = Managers.Game.CurrentTravelAreaId;
+        Managers.Data.TravelNodeDic.TryGetValue(currentNodeId, out var currentNode);
+
+        var fieldNodes = _allNode
+            .Where(n => n.Category == EXPLORE_CATEGORY && n.ParentId == 0)
+            .ToList();
+
+        foreach (var node in fieldNodes)
+        {
+            GameObject btnGo = Instantiate(prefab, parent.transform);
+            btnGo.name = $"UI_FieldSelectButton_{node.Id}";
+
+            UI_FieldSelectButton btn = btnGo.GetComponent<UI_FieldSelectButton>();
+            if (btn != null)
+            {
+                btn.SetInfo(node);
+                btn.OnClickFieldSelect = OnClickFieldNode;
+            }
+            _spawnedFieldButtons.Add(btnGo);
+        }
+    }
+
     void OnClickTownNode(int nodeId)
     {
         _selectedTownId = nodeId;
         Debug.Log($"[Travel] Town selected: {nodeId}");
         RefreshUI();
     }
+
+    void OnClickFieldNode(int nodeId)
+    {
+        _selectedFieldId = nodeId;
+        Debug.Log($"[Travel] Field selected: {nodeId}");
+        RefreshUI();
+    }
+
 
 }
