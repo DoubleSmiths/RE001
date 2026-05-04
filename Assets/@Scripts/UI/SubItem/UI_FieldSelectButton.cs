@@ -20,7 +20,7 @@ public class UI_FieldSelectButton : UI_Base
 
     enum Buttons
     {
-        UI_FieldSelectButton,
+        //UI_FieldSelectButton,
     }
 
     enum GameObjects
@@ -55,7 +55,7 @@ public class UI_FieldSelectButton : UI_Base
         // TODO : 퀘스트 VFX 활성화/비활성화 로직 추가
         // TODO : EFrame 활성화/비활성화 로직 추가 -> 이 버튼이 선택이 된 경우 활성화, 선택이 안된 경우 비활성화
 
-        gameObject.BindEvent();
+        gameObject.BindEvent(OnClickFieldSelectButton);
 
 
         return true;
@@ -73,7 +73,6 @@ public class UI_FieldSelectButton : UI_Base
         _nodeId = node.Id;
         GetText((int)Texts.FieldSelectButtonText).text = Util.Localize(node.Name);
 
-        OnClickFieldSelectButton();
         SetSelected(false);
         SetQuestVFX(false);
     }
@@ -86,11 +85,6 @@ public class UI_FieldSelectButton : UI_Base
     public void SetSelected(bool selected)
     {
         GetImage((int)Images.EFrame)?.gameObject.SetActive(selected);
-    }
-
-    public void SetCurrentLocation(bool isCurrent)
-    {
-        //_isCurrent = isCurrent;
     }
 
     public void SetQuestVFX(bool active)
