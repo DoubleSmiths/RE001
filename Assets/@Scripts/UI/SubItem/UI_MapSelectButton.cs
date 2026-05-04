@@ -32,6 +32,7 @@ public class UI_MapSelectButton : UI_Base
 
     #endregion
 
+    TravelNodeData _node;
     int _nodeId;
     public int NodeId => _nodeId;
     public Action<int> OnClickMapSelect;
@@ -72,12 +73,21 @@ public class UI_MapSelectButton : UI_Base
             return;
         }
 
+        _node = node;
         _nodeId = node.Id;
-        GetText((int)Texts.MapSelectButtonText).text = Util.Localize(node.Name);
+
+        RefreshLanguage();
 
         SetCurrentLocation(isCurrentLocation);
         SetSelected(false);
         SetQuestVFX(false);
+    }
+
+    public void RefreshLanguage()
+    {
+        if (_node == null) return;
+        var label = GetText((int)Texts.MapSelectButtonText);
+        if (label != null) label.text = Util.Localize(_node.Name);
     }
 
     void OnClickMapSelectButton()

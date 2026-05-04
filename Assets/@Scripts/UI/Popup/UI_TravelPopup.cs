@@ -150,11 +150,11 @@ public class UI_TravelPopup : UI_Popup
         //    Managers.Quest.OnBtnUnlocked += OnButtonUnlocked;
         //}
 
-        //if (Managers.Game != null)
-        //{
+        if (Managers.Game != null)
+        {
         //    Managers.Game.OnItemChanged += OnInventoryChanged;
-        //    Managers.Game.OnLanguageChanged += OnLanguageChanged;
-        //}
+            Managers.Game.OnLanguageChanged += OnLanguageChanged;
+        }
 
         return true;
     }
@@ -170,11 +170,11 @@ public class UI_TravelPopup : UI_Popup
         //    Managers.Quest.OnBtnUnlocked -= OnButtonUnlocked;
         //}
 
-        //if (Managers.Game != null)
-        //{
+        if (Managers.Game != null)
+        {
         //    Managers.Game.OnItemChanged -= OnInventoryChanged;
-        //    Managers.Game.OnLanguageChanged -= OnLanguageChanged;
-        //}
+            Managers.Game.OnLanguageChanged -= OnLanguageChanged;
+        }
     }
 
     public void SetInfo()
@@ -193,8 +193,48 @@ public class UI_TravelPopup : UI_Popup
         BuildTownButtons();
         BuildFieldButtons();
 
+        RefreshStaticTexts();
         RefreshUI();
         OpenAnimation();
+    }
+
+    void RefreshStaticTexts()
+    {
+        SetRawText(Texts.XbuttonText, "X");
+        SetText(Texts.MapSelectPopupTitleText, LocalizeKey.TravelBtnText);
+        SetText(Texts.TownCategoryButtonText, "TownText");
+        SetText(Texts.FieldCategoryButtonText, "ExploreText");
+        SetText(Texts.TownSelectPanelText, "TownText");
+        SetText(Texts.FieldSelectText, "ExploreText");
+        SetText(Texts.ButtonMapSelectBackText, "BackBtnText");
+        SetText(Texts.ButtonMapSelectGOText, "HeadOutText");
+    }
+
+    void SetText(Texts textId, string key)
+    {
+        TMP_Text text = GetText((int)textId);
+        if (text != null) text.text = Util.Localize(key);
+    }
+
+    void SetRawText(Texts textId, string value)
+    {
+        TMP_Text text = GetText((int)textId);
+        if (text != null) text.text = value ?? string.Empty;
+    }
+
+    void OnLanguageChanged()
+    {
+        RefreshStaticTexts();
+
+        // 동적 spawn된 버튼들 텍스트 다시 localize
+        foreach (var go in _spawnedTownButtons)
+            go?.GetComponent<UI_TownSelectButton>()?.RefreshLanguage();
+        foreach (var go in _spawnedFieldButtons)
+            go?.GetComponent<UI_FieldSelectButton>()?.RefreshLanguage();
+        foreach (var go in _spawnedMapButtons)
+            go?.GetComponent<UI_MapSelectButton>()?.RefreshLanguage();
+
+        RefreshUI();
     }
 
     void ApplySharedFonts()

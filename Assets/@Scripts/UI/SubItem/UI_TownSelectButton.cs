@@ -38,6 +38,7 @@ public class UI_TownSelectButton : UI_Base
     static readonly Color COLOR_GROUP_SELECT = new Color32(0xFF, 0xC5, 0x00, 0xFF);     // FFC500 선택 되었을 때
     static readonly Color COLOR_BUTTON_DEFAULT = new Color32(0x95, 0x95, 0x95, 0xFF);   // 959595 클릭 가능 버튼들의 기본 색상
 
+    TravelNodeData _node;
     int _nodeId;
     bool _isCurrent = false;
     public int NodeId => _nodeId;
@@ -84,17 +85,26 @@ public class UI_TownSelectButton : UI_Base
 
         Debug.Log($"[UI_TownSelectButton] Setting info for node: {node.Name}");
 
+        _node = node;
         _nodeId = node.Id;
         _isCurrent = isCurrentLocation;
-        GetText((int)Texts.TownSelectButtonText).text = Util.Localize(node.Name);
 
-        // TODO : 버튼 클릭 이벤트 추가
-        // TODO : 퀘스트 VFX 활성화/비활성화 로직 추가
-        // TODO : 현재 위치 텍스트 업데이트 로직 추가
+        RefreshLanguage();
 
         SetCurrentLocation(isCurrentLocation);
         SetSelected(false);
         SetQuestVFX(false); // 일단 false
+    }
+
+    public void RefreshLanguage()
+    {
+        if (_node == null) return;
+        var label = GetText((int)Texts.TownSelectButtonText);
+        if (label != null) label.text = Util.Localize(_node.Name);
+
+        // 현재 위치 라벨도 언어 따라
+        var locLabel = GetText((int)Texts.TownSelectPopupCurrentLocationText);
+        if (locLabel != null) locLabel.text = Util.Localize("CurrentLocationText");
     }
 
     void OnClickTownSelectButton()

@@ -32,6 +32,7 @@ public class UI_FieldSelectButton : UI_Base
 
 
 
+    TravelNodeData _node;
     int _nodeId;
     public int NodeId { get { return _nodeId; } set { _nodeId = value; } }
     public Action<int> OnClickFieldSelect;
@@ -70,11 +71,20 @@ public class UI_FieldSelectButton : UI_Base
             return;
         }
 
+        _node = node;
         _nodeId = node.Id;
-        GetText((int)Texts.FieldSelectButtonText).text = Util.Localize(node.Name);
+
+        RefreshLanguage();
 
         SetSelected(false);
         SetQuestVFX(false);
+    }
+
+    public void RefreshLanguage()
+    {
+        if (_node == null) return;
+        var label = GetText((int)Texts.FieldSelectButtonText);
+        if (label != null) label.text = Util.Localize(_node.Name);
     }
 
     void OnClickFieldSelectButton()
