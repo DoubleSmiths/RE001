@@ -1,4 +1,7 @@
+using Data;
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_MapSelectButton : UI_Base
 {
@@ -29,6 +32,10 @@ public class UI_MapSelectButton : UI_Base
 
     #endregion
 
+    int _nodeId;
+    public int NodeId => _nodeId;
+    public Action<int> OnClickMapSelect;
+    bool _isCurrent;
 
     private void Awake()
     {
@@ -50,13 +57,51 @@ public class UI_MapSelectButton : UI_Base
         // TODO : 버튼 선택이 되어있을 때 버튼 프레임 색상 변경, 선택이 해제되었을 때 버튼 프레임 색상 원래대로
         // TODO : 버튼 선택이 되어있을 때 EFrame 활성화, 선택이 해제되었을 때 EFrame 비활성화
         // TODO : 버튼 클릭 시 맵 선택 UI에서 해당 맵으로 이동
+        gameObject.BindEvent(OnClickMapSelectButton);
 
         return true;
     }
 
 
-    public void SetInfo()
+    public void SetInfo(TravelNodeData node, bool isCurrentLocation)
     {
+        Init();
+        if (node == null)
+        {
+            Debug.LogError("[UI_MapSelectButton] Invalid TravelNodeData.");
+            return;
+        }
 
+        _nodeId = node.Id;
+        GetText((int)Texts.MapSelectButtonText).text = Util.Localize(node.Name);
+
+        SetCurrentLocation(isCurrentLocation);
+        SetSelected(false);
+        SetQuestVFX(false);
     }
+
+    void OnClickMapSelectButton()
+    {
+        if (_isCurrent) return;   // 현재 위치면 클릭 무시
+        OnClickMapSelect?.Invoke(_nodeId);
+    }
+
+    public void SetSelected(bool selected)
+    {
+        GetImage((int)Images.EFrame)?.gameObject.SetActive(selected);
+    }
+
+    public void SetCurrentLocation(bool isCurrent)
+    {
+        _isCurrent = isCurrent;
+        if (isCurrent)
+            gameObject.GetComponent<Button>().interactable = false;
+        //gameObject.GetComponent<Image>().color = isCurrent ? COLOR_CURRENT : COLOR_BUTTON_DEFAULT;
+    }
+
+    public void SetQuestVFX(bool active)
+    {
+        GetObject((int)GameObjects.MapSelectButtonQuestVFX)?.SetActive(active);
+    }
+
 }

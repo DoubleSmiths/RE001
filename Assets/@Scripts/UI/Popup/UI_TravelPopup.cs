@@ -110,9 +110,11 @@ public class UI_TravelPopup : UI_Popup
     List<TravelNodeData> _allNode = new();
     List<GameObject> _spawnedTownButtons = new();
     List<GameObject> _spawnedFieldButtons = new();
+    List<GameObject> _spawnedMapButtons = new();
 
     int _selectedTownId = 0;
     int _selectedFieldId = 0;
+    int _selectedMapId = 0;
 
     private void Awake()
     {
@@ -183,6 +185,7 @@ public class UI_TravelPopup : UI_Popup
         _selectedCategory = "";
         _selectedTownId = 0;
         _selectedFieldId = 0;
+        _selectedMapId = 0;
         GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
@@ -230,6 +233,13 @@ public class UI_TravelPopup : UI_Popup
             btn.SetSelected(btn.NodeId == _selectedFieldId);
         }
 
+        foreach (GameObject go in _spawnedMapButtons)
+        {
+            UI_MapSelectButton btn = go?.GetComponent<UI_MapSelectButton>();
+            if (btn == null) continue;
+            btn.SetSelected(btn.NodeId == _selectedMapId);
+        }
+
     }
 
     bool CanGo()
@@ -243,8 +253,12 @@ public class UI_TravelPopup : UI_Popup
         if (_selectedCategory == EXPLORE_CATEGORY)
         {
             bool isOpenPanel = GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
-            if (!isOpenPanel) return true;
-            return _selectedFieldId != 0;
+            if (!isOpenPanel) return true; // 필드 선택
+
+            bool mapOpen = GetImage((int)Images.MapSelectPanel).gameObject.activeSelf;
+            if (!mapOpen) return _selectedFieldId != 0; // 맵 행선지 선택
+
+            return _selectedMapId != 0;
         }
 
         return false;
@@ -301,11 +315,23 @@ public class UI_TravelPopup : UI_Popup
                 RefreshUI();
                 return;
             }
-            if (_selectedFieldId != 0)
+
+            GameObject mapPanel = GetImage((int)Images.MapSelectPanel).gameObject;
+            if (!mapPanel.activeSelf)
             {
-                // Maps 열기 (다음 단계 — 일단 로그)
-                Debug.Log($"[Travel] (TODO) Open MapSelectPanel for field {_selectedFieldId}");
+                // Phase 2: MapSelectPanel 열기 (그룹 선택돼있을 때만)
+                if (_selectedFieldId == 0) return;
+                mapPanel.SetActive(true);
+                RefreshUI();
+                return;
             }
+
+            // 맵 행선지로 이동
+            if (_selectedMapId != 0)
+            {
+                TravelToNode(_selectedMapId);
+            }
+
 
         }
 
@@ -363,7 +389,7 @@ public class UI_TravelPopup : UI_Popup
         if (GetImage((int)Images.MapSelectPanel).gameObject.activeSelf)
         {
             ClosePanelWithAnim(GetImage((int)Images.MapSelectPanel).gameObject);
-
+            _selectedMapId = 0;
             RefreshUI();
             return;
         }
@@ -375,6 +401,7 @@ public class UI_TravelPopup : UI_Popup
             _selectedCategory = "";
             _selectedTownId = 0;
             _selectedFieldId = 0;
+            _selectedMapId = 0;
             RefreshUI();
             return;
         }
@@ -455,6 +482,51 @@ public class UI_TravelPopup : UI_Popup
         }
     }
 
+    void BuildMapButtons()
+    {
+        foreach (GameObject go in _spawnedMapButtons)
+            if (go != null) Destroy(go);
+        _spawnedMapButtons.Clear();
+
+        if (_selectedFieldId == 0) return;   // 그룹 미선택 시 spawn X
+
+        GameObject parent = GetObject((int)GameObjects.MapSelectContent);
+        if (parent == null) return;
+
+        GameObject prefab = Managers.Resource.Load<GameObject>("UI_MapSelectButton");
+        if (prefab == null)
+        {
+            Debug.LogError("[UI_TravelPopup] Failed to load UI_MapSelectButton prefab.");
+            return;
+        }
+
+        int currentNodeId = Managers.Game.CurrentTravelAreaId;
+
+        var mapNodes = _allNode
+            .Where(n => n.ParentId == _selectedFieldId)
+            .OrderBy(n => n.Id)
+            .ToList();
+
+        foreach (var node in mapNodes)
+        {
+            GameObject btn = Managers.Resource.Instantiate("UI_MapSelectButton", parent.transform);
+            btn.name = $"UI_MapSelectButton_{node.Id}";
+
+            UI_MapSelectButton mapBtn = btn.GetComponent<UI_MapSelectButton>();
+            if (mapBtn != null)
+            {
+                bool isCurrent = (currentNodeId == node.Id);
+                mapBtn.SetInfo(node, isCurrent);
+                mapBtn.OnClickMapSelect = OnClickMapNode;
+            }
+
+            _spawnedMapButtons.Add(btn);
+        }
+
+        Debug.Log($"[Travel] Spawned {_spawnedMapButtons.Count} map buttons for field {_selectedFieldId}.");
+    }
+
+
     void OnClickTownNode(int nodeId)
     {
         _selectedTownId = nodeId;
@@ -465,9 +537,18 @@ public class UI_TravelPopup : UI_Popup
     void OnClickFieldNode(int nodeId)
     {
         _selectedFieldId = nodeId;
+        _selectedMapId = 0;   // ← 그룹 바뀌면 행선지 선택 리셋
         Debug.Log($"[Travel] Field selected: {nodeId}");
+        BuildMapButtons();    // ← 새 그룹의 행선지로 재구성
         RefreshUI();
     }
 
+
+    void OnClickMapNode(int nodeId)
+    {
+        _selectedMapId = nodeId;
+        Debug.Log($"[Travel] Map selected: {nodeId}");
+        RefreshUI();
+    }
 
 }
