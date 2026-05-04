@@ -110,6 +110,8 @@ public class UI_TravelPopup : UI_Popup
     List<TravelNodeData> _allNode = new();
     List<GameObject> _spawnedTownButtons = new();
 
+    int _selectedTownId = 0;
+
     private void Awake()
     {
         Init();
@@ -177,6 +179,7 @@ public class UI_TravelPopup : UI_Popup
         Debug.Log($"[Travel] Loaded {_allNode.Count} nodes.");
 
         _selectedCategory = "";
+        _selectedTownId = 0;
         GetImage((int)Images.TownSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(false);
         GetImage((int)Images.MapSelectPanel).gameObject.SetActive(false);
@@ -210,12 +213,21 @@ public class UI_TravelPopup : UI_Popup
 
         GetButton((int)Buttons.ButtonMapSelectGO).interactable = CanGo();
         GetButton((int)Buttons.ButtonMapSelectBack).interactable = IsAnyPanelActive();
+
+        foreach (GameObject go in _spawnedTownButtons)
+        {
+            go?.GetComponent<UI_TownSelectButton>()?.SetSelected(go?.GetComponent<UI_TownSelectButton>().NodeId == _selectedTownId);
+        }
     }
 
     bool CanGo()
     {
         if (_selectedCategory == TOWN_CATEGORY)
-            return !GetImage((int)Images.TownSelectPanel).gameObject.activeSelf;
+        {
+            bool isOpenPanel = GetImage((int)Images.TownSelectPanel).gameObject.activeSelf;
+            if (!isOpenPanel) return true; // 카테고리 선택만 되어있고 패널이 열려있지 않다면 이동 가능
+            return _selectedTownId != 0;
+        }
         if (_selectedCategory == FIELD_CATEGORY)
             return !GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
 
@@ -248,12 +260,78 @@ public class UI_TravelPopup : UI_Popup
     void OnClickGo()
     {
         if (_selectedCategory == TOWN_CATEGORY)
-            GetImage((int)Images.TownSelectPanel).gameObject.SetActive(true);
+        {
+            GameObject panel = GetImage((int)Images.TownSelectPanel).gameObject;
+            if (!panel.activeSelf)
+            {
+                // 패널이 열려있지 않다면 열기
+                panel.SetActive(true);
+                RefreshUI();
+                return;
+            }
+            if (_selectedTownId != 0)
+            {
+                TravelToNode(_selectedTownId);
+                // 행선지로 이동
+            }
+        }
         else if (_selectedCategory == FIELD_CATEGORY)
-            GetImage((int)Images.FieldSelectPanel).gameObject.SetActive(true);
+        {
+
+            GameObject panel = GetImage((int)Images.FieldSelectPanel).gameObject;
+            if (!panel.activeSelf)
+            {
+                panel.SetActive(true);
+                RefreshUI();
+            }
+        }
 
         RefreshUI();
     }
+
+    void TravelToNode(int nodeId)
+    {
+        if (!Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var node))
+        {
+            Debug.LogWarning($"[Travel] Node {nodeId} not found.");
+            return;
+        }
+
+        if (!System.Enum.TryParse(node.AreaType, true, out AreaType areaType))
+        {
+            Debug.LogWarning($"[Travel] Invalid AreaType '{node.AreaType}' for node {nodeId}.");
+            return;
+        }
+
+        UI_GameScene gameScene = Managers.UI.SceneUI as UI_GameScene;
+        if (gameScene == null)
+        {
+            Debug.LogWarning("[Travel] UI_GameScene is not active.");
+            return;
+        }
+
+        if (!gameScene.CanEnterAreaTransition(areaType))
+        {
+            Debug.LogWarning($"[Travel] Area transition validation failed for {areaType}.");
+            return;
+        }
+
+        // 퀘스트 트리거 (입장 버튼 ID)
+        if (!string.IsNullOrEmpty(node.EnterBtnId))
+            Managers.Quest.CheckButtonClick(node.EnterBtnId);
+
+        // 씬(area) 전환 — UI_GameScene 안의 BtnGroup prefab 교체 + 페이드
+        gameScene.EnterAreaWithFade(areaType);
+
+        // 현재 위치 갱신 (저장됨)
+        Managers.Game.CurrentTravelAreaId = nodeId;
+
+        // 모든 팝업 닫기 (Travel popup도 같이 닫힘)
+        Managers.UI.CloseAllPopupUI();
+
+        Debug.Log($"[Travel] Travel accepted: node={nodeId}, area={areaType}");
+    }
+
 
     void OnClickBack()
     {
@@ -272,7 +350,7 @@ public class UI_TravelPopup : UI_Popup
             ClosePanelWithAnim(GetImage((int)Images.TownSelectPanel).gameObject);
             ClosePanelWithAnim(GetImage((int)Images.FieldSelectPanel).gameObject);
             _selectedCategory = "";
-
+            _selectedTownId = 0;
             RefreshUI();
             return;
         }
@@ -308,7 +386,9 @@ public class UI_TravelPopup : UI_Popup
 
             // Click Test
             UI_TownSelectButton townBtn = btn.GetComponent<UI_TownSelectButton>();
+            Debug.Log($"Current Travel Area ID: {Managers.Game.CurrentTravelAreaId}, Node ID: {node.Id}");
             townBtn.SetInfo(node, Managers.Game.CurrentTravelAreaId == node.Id);
+            townBtn.OnClickTownSelect = OnClickTownNode;
 
             _spawnedTownButtons.Add(btn);
         }
@@ -316,5 +396,11 @@ public class UI_TravelPopup : UI_Popup
         Debug.Log($"[UI_TravelPopup] Spawned {_spawnedTownButtons.Count} town buttons.");
     }
 
+    void OnClickTownNode(int nodeId)
+    {
+        _selectedTownId = nodeId;
+        Debug.Log($"[Travel] Town selected: {nodeId}");
+        RefreshUI();
+    }
 
 }
