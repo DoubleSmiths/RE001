@@ -99,6 +99,7 @@ public class UI_TownSelectButton : UI_Base
 
     void OnClickTownSelectButton()
     {
+        if (_isCurrent) return; // 현재 위치인 경우 클릭 무시
         OnClickTownSelect?.Invoke(_nodeId);
     }
 
@@ -114,7 +115,7 @@ public class UI_TownSelectButton : UI_Base
             gameObject.GetComponent<Button>().interactable = false;
 
         GetText((int)Texts.TownSelectPopupCurrentLocationText)?.gameObject.SetActive(isCurrent);
-       gameObject.GetComponent<Image>().color = isCurrent ? COLOR_CURRENT : COLOR_BUTTON_DEFAULT;
+        //gameObject.GetComponent<Image>().color = isCurrent ? COLOR_CURRENT : COLOR_BUTTON_DEFAULT;
     }
 
 
