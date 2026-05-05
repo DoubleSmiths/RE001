@@ -286,18 +286,10 @@ public class UI_TravelPopup : UI_Popup
     {
         if (_selectedCategory == TOWN_CATEGORY)
         {
-            bool isOpenPanel = GetImage((int)Images.TownSelectPanel).gameObject.activeSelf;
-            if (!isOpenPanel) return true; // 카테고리 선택만 되어있고 패널이 열려있지 않다면 이동 가능
             return _selectedTownId != 0;
         }
         if (_selectedCategory == EXPLORE_CATEGORY)
         {
-            bool isOpenPanel = GetImage((int)Images.FieldSelectPanel).gameObject.activeSelf;
-            if (!isOpenPanel) return true; // 필드 선택
-
-            bool mapOpen = GetImage((int)Images.MapSelectPanel).gameObject.activeSelf;
-            if (!mapOpen) return _selectedFieldId != 0; // 맵 행선지 선택
-
             return _selectedMapId != 0;
         }
 
@@ -316,7 +308,14 @@ public class UI_TravelPopup : UI_Popup
         _selectedCategory = TOWN_CATEGORY; // 일단 하드코딩인데 이거 Define으로 이동할 예정임. 아닌가 굳이 안해도 되긴하는데 흠..
         Debug.Log("[UI_TravelPopup] Selected: TOWN");
 
-        RefreshUI();
+        GameObject panel = GetImage((int)Images.TownSelectPanel).gameObject;
+        if (!panel.activeSelf)
+        {
+            // 패널이 열려있지 않다면 열기
+            panel.SetActive(true);
+            RefreshUI();
+            return;
+        }
     }
 
     void OnClickFieldCategory()
@@ -324,21 +323,20 @@ public class UI_TravelPopup : UI_Popup
         _selectedCategory = EXPLORE_CATEGORY;
         Debug.Log("[UI_TravelPopup] Selected: FIELD");
 
-        RefreshUI();
+        GameObject panel = GetImage((int)Images.FieldSelectPanel).gameObject;
+        if (!panel.activeSelf)
+        {
+            // FieldSelectPanel 열기
+            panel.SetActive(true);
+            RefreshUI();
+            return;
+        }
     }
 
-    void OnClickGo()
+    void OnClickGo() // 행선지 이동 시만 
     {
         if (_selectedCategory == TOWN_CATEGORY)
         {
-            GameObject panel = GetImage((int)Images.TownSelectPanel).gameObject;
-            if (!panel.activeSelf)
-            {
-                // 패널이 열려있지 않다면 열기
-                panel.SetActive(true);
-                RefreshUI();
-                return;
-            }
             if (_selectedTownId != 0)
             {
                 TravelToNode(_selectedTownId);
@@ -347,32 +345,11 @@ public class UI_TravelPopup : UI_Popup
         }
         else if (_selectedCategory == EXPLORE_CATEGORY)
         {
-            GameObject panel = GetImage((int)Images.FieldSelectPanel).gameObject;
-            if (!panel.activeSelf)
-            {
-                // FieldSelectPanel 열기
-                panel.SetActive(true);
-                RefreshUI();
-                return;
-            }
-
-            GameObject mapPanel = GetImage((int)Images.MapSelectPanel).gameObject;
-            if (!mapPanel.activeSelf)
-            {
-                // Phase 2: MapSelectPanel 열기 (그룹 선택돼있을 때만)
-                if (_selectedFieldId == 0) return;
-                mapPanel.SetActive(true);
-                RefreshUI();
-                return;
-            }
-
             // 맵 행선지로 이동
             if (_selectedMapId != 0)
             {
                 TravelToNode(_selectedMapId);
             }
-
-
         }
 
         RefreshUI();
@@ -580,7 +557,15 @@ public class UI_TravelPopup : UI_Popup
         _selectedMapId = 0;   // ← 그룹 바뀌면 행선지 선택 리셋
         Debug.Log($"[Travel] Field selected: {nodeId}");
         BuildMapButtons();    // ← 새 그룹의 행선지로 재구성
-        RefreshUI();
+
+        GameObject mapPanel = GetImage((int)Images.MapSelectPanel).gameObject;
+        if (!mapPanel.activeSelf)
+        {
+            // Phase 2: MapSelectPanel 열기 (그룹 선택돼있을 때만)
+            if (_selectedFieldId == 0) return;
+            mapPanel.SetActive(true);
+            RefreshUI();
+        }
     }
 
 
