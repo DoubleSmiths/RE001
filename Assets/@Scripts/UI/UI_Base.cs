@@ -155,6 +155,11 @@ public abstract class UI_Base : MonoBehaviour
         contentObject.transform.DOScale(1f, 0.1f).SetEase(Ease.InOutBack).SetUpdate(true);
     }
 
+    protected void OnClickButtonAnim(Button btn)
+    {
+        btn.GetComponent<DOTweenAnimation>()?.DORestart();
+    }
+
     public void FadeIn(Image image, Action onComplete = null)
     {
         Sequence seq = DOTween.Sequence().SetUpdate(true);

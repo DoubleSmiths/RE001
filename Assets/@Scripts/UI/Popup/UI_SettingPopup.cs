@@ -78,13 +78,12 @@ public class UI_SettingPopup : UI_Popup
         GetButton((int)Buttons.KorBtn).gameObject.BindEvent(OnClickKorean);
         GetButton((int)Buttons.EngBtn).gameObject.BindEvent(OnClickEnglish);
 
-        // 버튼 클릭 애니메이션 (스펙: Scale 0.8 / 0.07s / OutQuad / Yoyo×2)
-        AddClickAnim(GetButton((int)Buttons.KorBtn));
-        AddClickAnim(GetButton((int)Buttons.EngBtn));
-        AddClickAnim(GetButton((int)Buttons.SettingPopupBGMONBtn));
-        AddClickAnim(GetButton((int)Buttons.SettingPopupSFXONBtn));
-        AddClickAnim(GetButton((int)Buttons.SettingPopupPopupONBtn));
-        AddClickAnim(GetButton((int)Buttons.SettingPopupShakeONBtn));
+        GetButton((int)Buttons.KorBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.KorBtn)));
+        GetButton((int)Buttons.EngBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.EngBtn)));
+        GetButton((int)Buttons.SettingPopupBGMONBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.SettingPopupBGMONBtn)));
+        GetButton((int)Buttons.SettingPopupSFXONBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.SettingPopupSFXONBtn)));
+        GetButton((int)Buttons.SettingPopupPopupONBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.SettingPopupPopupONBtn)));
+        GetButton((int)Buttons.SettingPopupShakeONBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.SettingPopupShakeONBtn)));
 
         GetButton((int)Buttons.SettingPopupBGMONBtn).gameObject.BindEvent(OnClickBGMSoundON);
         GetButton((int)Buttons.SettingPopupSFXONBtn).gameObject.BindEvent(OnClickSFXSoundON);

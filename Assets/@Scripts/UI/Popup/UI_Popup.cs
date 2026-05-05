@@ -59,20 +59,6 @@ public class UI_Popup : UI_Base
                 .OnComplete(() => ClosePopupUI());
     }
 
-    /// <summary>버튼에 클릭 시 Scale 압축 애니메이션 추가 (기획서 공통 스펙: 0.8 / 0.07s / OutQuad / Yoyo×2)</summary>
-    protected void AddClickAnim(Button btn)
-    {
-        btn.onClick.AddListener(() =>
-        {
-            btn.transform.DOKill();
-            btn.transform.localScale = Vector3.one;
-            btn.transform.DOScale(0.8f, 0.07f)
-                         .SetEase(Ease.OutQuad)
-                         .SetLoops(2, LoopType.Yoyo)
-                         .SetUpdate(true);
-        });
-    }
-
     public void ClosePanelWithAnim(GameObject panel)
     {
         if (panel == null || !panel.activeSelf) return;

@@ -60,11 +60,10 @@ public class UI_TownSelectButton : UI_Base
         BindObject(typeof(GameObjects));
 
         gameObject.BindEvent(OnClickTownSelectButton);
+        gameObject.BindEvent(() => OnClickButtonAnim(gameObject.GetComponent<Button>()));
 
         // TODO : 버튼 클릭 이벤트 추가
         // TODO : 퀘스트 VFX 활성화/비활성화 로직 추가
-        // TODO : 현재 위치 텍스트 업데이트 로직 추가
-        // TODO : 타운 선택시만 EFrame 켜기
         // TODO : 한/영 텍스트 업데이트 로직 추가
         // TODO : 타운 선택 팝업 활성화/비활성화 로직 추가
         // TODO : 타운 선택 버튼 아이콘 업데이트 로직 추가

@@ -138,6 +138,10 @@ public class UI_TravelPopup : UI_Popup
         GetButton((int)Buttons.FieldCategoryButton).gameObject.BindEvent(OnClickFieldCategory);
         GetButton((int)Buttons.ButtonMapSelectGO).gameObject.BindEvent(OnClickGo);
         GetButton((int)Buttons.ButtonMapSelectBack).gameObject.BindEvent(OnClickBack);
+        GetButton((int)Buttons.TownCategoryButton).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.TownCategoryButton)));
+        GetButton((int)Buttons.FieldCategoryButton).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.FieldCategoryButton)));
+        GetButton((int)Buttons.ButtonMapSelectGO).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.ButtonMapSelectGO)));
+        GetButton((int)Buttons.ButtonMapSelectBack).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.ButtonMapSelectBack)));
 
         GameObject popupGo = GetObject((int)GameObjects.MapSelectPopup);
         if (popupGo != null)
