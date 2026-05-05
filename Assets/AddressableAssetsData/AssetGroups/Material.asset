@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Material
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Material
+  m_GUID: 201a07350d289844da54719d3bfe7089
+  m_SerializeEntries:
+  - m_GUID: 342ac781a9679af44b1053a1f37c9bbd
+    m_Address: Path_Image_BeastLord_Glow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 501ee4208addcbf4e87c460406662b7d
+    m_Address: Path_Image_Knight
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bdf24a9b7761f3946a7f5911dcd68e95
+    m_Address: Path_Image_BeastLord
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f76cfaec868d7f044b7537e844cfce05
+    m_Address: Path_Image_Knight_Glow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 17daaa5f2ba129c438d7f930823c6356, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 83dda4c064f85ee4ba2c825758be7e25, type: 2}
+    - {fileID: 11400000, guid: eea6718d47c103646bea5385b16fbc81, type: 2}

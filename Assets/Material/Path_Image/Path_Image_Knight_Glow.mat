@@ -366,7 +366,7 @@ Material:
     - _IsText: 0
     - _IsTextMeshPro: 0
     - _MetalContrast: 2
-    - _MetalFade: 1
+    - _MetalFade: 0.5
     - _MetalHighlightContrast: 2
     - _MetalHighlightDensity: 1
     - _MetalMaskToggle: 0
@@ -430,7 +430,7 @@ Material:
     - _ShiftingSaturation: 0.8
     - _ShiftingSpeed: 0.5
     - _ShineContrast: 2
-    - _ShineFade: 0.15
+    - _ShineFade: 0.2
     - _ShineFrequency: 0.5
     - _ShineMaskToggle: 0
     - _ShineRotation: 30
@@ -696,6 +696,7 @@ Material:
     - _WorldTilingOffset: {r: 0, g: 0, b: 0, a: 0}
     - _WorldTilingScale: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &7784394491700573988
 MonoBehaviour:
   m_ObjectHideFlags: 11

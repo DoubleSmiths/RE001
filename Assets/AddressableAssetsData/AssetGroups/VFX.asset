@@ -15,12 +15,6 @@ MonoBehaviour:
   m_GroupName: VFX
   m_GUID: cb7de324111cdd740b3dfabf9e061035
   m_SerializeEntries:
-  - m_GUID: ac4cf49d13e8830488fd20a29a1f195e
-    m_Address: Star_01_Anim_13_a
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 011d0a308ee8f3d488c4df008f4727bf
     m_Address: FX_splash_spark_floor
     m_ReadOnly: 0
@@ -29,6 +23,24 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d556e46e0d8cd34fbb1364c896a69f6
     m_Address: FX_splash_spark_air
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a6045a72f9770eb4da64fb05bd5fd0a6
+    m_Address: Player Level Up Ef
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac4cf49d13e8830488fd20a29a1f195e
+    m_Address: Star_01_Anim_13_a
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d944165c156ab1947af3ca51fae293b7
+    m_Address: Player Rank Up Ef
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
