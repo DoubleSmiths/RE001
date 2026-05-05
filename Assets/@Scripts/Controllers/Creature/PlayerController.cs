@@ -71,20 +71,21 @@ public class PlayerController : CreatureController
         if (dist > AtkRange) return;
 
         _lastAtkTime = Time.time;
-
-        // 명중률 판정 (100% 이상이면 skip) — 미스는 State 변경 없이 쿨타임만 소모
-        if (Accuracy < 100f && UnityEngine.Random.value > Accuracy / 100f) return;
-
         State = Define.State.Attack;
 
-        // 치명타 + 콤보 피해증폭 적용
-        bool isCrit = UnityEngine.Random.value < Mathf.Min(CritRate, 100f) / 100f;
-        float dmgBoostMul = 1f + ComboDmgBoostBonus() / 100f;
-        float finalAtk = FinalPhysicalAtk * (isCrit ? CritDamage / 100f : 1f) * dmgBoostMul;
-        nearest.OnDamaged(finalAtk);
+        // 콤보 피해증폭은 DmgAmp에 일시 가산해서 BattleMath에 전달
+        float prevDmgAmp = DmgAmp;
+        DmgAmp += ComboDmgBoostBonus();
 
-        // 타격(명중) 성공 → 콤보 누적 + 데미지 전달
-        OnHitLanded?.Invoke(finalAtk);
+        BattleMath.DamageResult result = BattleMath.Resolve(this, nearest, AttackType.Physical);
+
+        DmgAmp = prevDmgAmp;
+
+        nearest.TakeHit(result, this);
+
+        // 타격(명중) 성공 시에만 콤보 누적
+        if (result.Hit)
+            OnHitLanded?.Invoke(result.FinalDamage);
 
         StartCoroutine(CoResetStateAfterAttack());
     }
@@ -131,9 +132,9 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     //  HP / EXP
     // ────────────────────────────────────────
-    public override void OnDamaged(float damage, bool isPhysical = true)
+    public override void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
-        base.OnDamaged(damage);
+        base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
 

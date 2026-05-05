@@ -31,6 +31,14 @@ namespace Data
         public int DropItemId;
         public int DropCount;
         public float DropChance; // 0~1
+
+        // ── 슬라이드 53/54 추가 필드 ──
+        public float DmgAmp = 0f;            // 피해증폭 % (식: (1 + DmgAmp/100))
+        public string Rarity = "Common";     // CreatureRarity 문자열 ("Common"/"Rare"/"Boss")
+        public float MonsterAttackDelay = 1.5f; // 몬스터만 사용. Attack Anim 재생 전 대기 시간 (초)
+        public float EncounterRate = 1f;     // 0~1 — 조우 확률
+        public float InterestRate = 0f;      // 0~1 — 관심 확률
+        public int MaxKillCount = 100;       // 도감 해금용 최대 킬 카운트
     }
 
     [Serializable]

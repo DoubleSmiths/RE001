@@ -21,6 +21,19 @@ public class Define
         Projectile,
     }
 
+    public enum CreatureRarity
+    {
+        Common,
+        Rare,
+        Boss,
+    }
+
+    public enum AttackType
+    {
+        Physical,
+        Magic,
+    }
+
     public enum EquipSlotType
     {
         Weapon,

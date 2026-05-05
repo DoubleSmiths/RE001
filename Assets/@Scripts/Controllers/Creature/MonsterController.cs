@@ -36,12 +36,16 @@ public class MonsterController : CreatureController
         CritDamage      = _data.CritDamage;
         Accuracy        = _data.Accuracy;
         AtkSpeed        = _data.AtkSpeed;
+        DmgAmp          = _data.DmgAmp;
         Def             = _data.Def;
         PhysicalResist  = _data.PhysicalResist;
         MagicResist     = _data.MagicResist;
         Evasion         = _data.Evasion;
         RecoveryRate    = _data.RecoveryRate;
         MoveSpeed       = _data.MoveSpeed;
+        MonsterAttackDelay = _data.MonsterAttackDelay;
+        if (System.Enum.TryParse(_data.Rarity, true, out CreatureRarity r))
+            Rarity = r;
     }
 
     void Start()
@@ -76,11 +80,14 @@ public class MonsterController : CreatureController
 
     void TryAttack()
     {
-        if (Time.time < _lastAtkTime + AtkCooldown) return;
+        // 슬라이드 53: 몬스터 공격속도는 Attack Anim 재생 전 대기 시간(MonsterAttackDelay)에 영향
+        if (Time.time < _lastAtkTime + MonsterAttackDelay) return;
         _lastAtkTime = Time.time;
         State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
-        _target.OnDamaged(PhysicalAtk);
+
+        BattleMath.DamageResult result = BattleMath.Resolve(this, _target, AttackType.Physical);
+        _target.TakeHit(result, this);
 
         if (!_hasEngaged)
         {
@@ -101,9 +108,9 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     //  피격 / 사망
     // ────────────────────────────────────────
-    public override void OnDamaged(float damage, bool isPhysical = true)
+    public override void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
-        base.OnDamaged(damage);
+        base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
 

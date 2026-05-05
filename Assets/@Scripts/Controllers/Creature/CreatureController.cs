@@ -19,12 +19,18 @@ public abstract class CreatureController : BaseController
     public float CritDamage     = 150f;  // 치명타피해 %
     public float Accuracy       = 80f;   // 명중률 %
     public float AtkSpeed       = 100f;  // 공격속도 %
+    public float DmgAmp         = 0f;    // 피해증폭 % — 식: FINAL = DMG * (1 + DmgAmp/100)
+
     // ── 방어 ──
     public float Def            = 0f;    // 방어력 [기본]
     public float PhysicalResist = 0f;    // 물리저항 %
     public float MagicResist    = 0f;    // 마법저항 %
     public float Evasion        = 0f;    // 회피율 %
     public float RecoveryRate   = 0f;    // 회복력 % (체력 회복 효과에 곱함)
+
+    // ── 메타 ──
+    public CreatureRarity Rarity        = CreatureRarity.Common;
+    public float          MonsterAttackDelay = 1.5f; // 몬스터 전용. Player는 사용 안 함.
 
     // ── 증가율 / 증폭률 (장비·버프로 누적) ──
     // 최종 = 기본 * (1 + 증가율/100) * 증폭률
@@ -109,26 +115,47 @@ public abstract class CreatureController : BaseController
             _anim.SetTrigger("OnDamaged");
     }
 
-    // isPhysical: true=물리, false=마법
-    public virtual void OnDamaged(float damage, bool isPhysical = true)
+    // 기획서 #1 데미지 식의 결과(BattleMath.DamageResult)를 적용한다.
+    // Miss/HP 감소/사망 처리 + 슬라이드 62/63 Damage Textpopup 호출.
+    // 슬라이드 63: Damage Textpopup은 Player/Minion 공격 시에만. Monster 공격은 popup 호출 X.
+    public virtual void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
-        // 회피율 판정 (치명타/물리저항/마법저항 100% 초과는 표기만, 적용은 100%까지)
-        float appliedEvasion = Mathf.Min(Evasion, 100f);
-        if (UnityEngine.Random.value < appliedEvasion / 100f) return;
+        if (!result.Hit)
+        {
+            // 슬라이드 62 — Miss Textpopup (피격자 위치). Sound는 후속.
+            Managers.Object.ShowMissPopup(transform.position, transform);
+            return;
+        }
 
-        float resist = isPhysical ? Mathf.Min(PhysicalResist, 100f) : Mathf.Min(MagicResist, 100f);
-        float dmg = Mathf.Max(0, damage - damage * (resist / 100f) - FinalDef);
-        Hp -= dmg;
-        Managers.Object.ShowDamageFont(transform.position, dmg, transform, isCritical: false);
+        Hp -= result.FinalDamage;
+        if (Hp < 0) Hp = 0;
+
+        // 슬라이드 63: Monster 공격은 Damage Textpopup 호출 안 함.
+        bool attackerIsMonster = attacker != null && attacker.ObjectType == ObjectType.Monster;
+        if (!attackerIsMonster)
+        {
+            DamageFontMode mode = result.IsCrit ? DamageFontMode.Critical : DamageFontMode.Normal;
+            Managers.Object.ShowDamageFont(transform.position, result.FinalDamage, mode, transform);
+
+            // 치명타 시 공격자 위치에 "Critical!" callout (Player만 해당)
+            if (result.IsCrit && attacker != null && attacker.ObjectType == ObjectType.Player)
+                Managers.Object.ShowCriticalCallout(attacker.transform.position, attacker.transform);
+        }
 
         if (Hp <= 0)
         {
-            Hp = 0;
             OnDead();
             return;
         }
 
         StartCoroutine(CoFlashDamage());
+    }
+
+    // ProjectileController 등 사전 계산된 데미지를 그대로 적용하는 호출용.
+    // 기존 OnDamaged(float) 호환 shim — 명중/회피 dice 없이 바로 final로 처리.
+    public virtual void OnDamaged(float damage, bool isPhysical = true)
+    {
+        TakeHit(BattleMath.FromRawDamage(Mathf.RoundToInt(damage)), null);
     }
 
     protected virtual void OnDead()
