@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using static Define;
 using static Util;
@@ -148,7 +149,7 @@ public abstract class CreatureController : BaseController
             return;
         }
 
-        StartCoroutine(CoFlashDamage());
+        PlayHitFeedback();
     }
 
     // ProjectileController 등 사전 계산된 데미지를 그대로 적용하는 호출용.
@@ -163,14 +164,30 @@ public abstract class CreatureController : BaseController
         State = Define.State.Dead;
         if (_rb != null)
             _rb.linearVelocity = Vector2.zero;
+        if (_onHitCo != null) { StopCoroutine(_onHitCo); _onHitCo = null; }
+        if (_sprite != null)  _sprite.DOKill();
     }
 
-    IEnumerator CoFlashDamage()
+    // ─── 슬라이드 60/64 OnHit 피드백 ───
+    // 기본: Monster 스펙 — 0.3초간 (1, 0.2, 0.2)로 색 변환 → 0.3초 OutQuad로 흰색 복귀.
+    // 서브클래스(Player 등)는 override해서 OnHit Anim 클립 재생 등으로 대체 가능.
+    // 이미 진행 중인 피드백이 있으면 처음부터 재시작 (슬라이드 64: "OnHit 도중 또 피격 시 처음부터").
+    protected Coroutine _onHitCo;
+
+    protected virtual void PlayHitFeedback()
     {
-        if (_sprite == null) yield break;
-        _sprite.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        _sprite.color = Color.white;
+        if (_sprite == null) return;
+        if (_onHitCo != null) StopCoroutine(_onHitCo);
+        _sprite.DOKill();
+        _onHitCo = StartCoroutine(CoColorFlashOnHit());
+    }
+
+    IEnumerator CoColorFlashOnHit()
+    {
+        Color hit = new Color(1f, 0.2f, 0.2f);
+        yield return _sprite.DOColor(hit, 0.3f).WaitForCompletion();
+        yield return _sprite.DOColor(Color.white, 0.3f).SetEase(Ease.OutQuad).WaitForCompletion();
+        _onHitCo = null;
     }
 
     protected void FlipToward(float targetX)

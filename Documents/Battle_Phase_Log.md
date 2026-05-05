@@ -15,7 +15,7 @@
 |---|---|---|---|
 | A | S53/54 데미지 코어 | ✅ 완료 | (uncommitted) |
 | B | S62/63 Damage Textpopup | ✅ 완료 | (uncommitted) |
-| C | S60/64/65 OnHit·Anim | 대기 | |
+| C | S60/64/65 OnHit·Anim | ✅ 완료 | (uncommitted) |
 | D | S55/56/58 Battle 진입 시퀀스 | 대기 | |
 | E | S57/58/59 첫 몬스터 스폰·조우 | 대기 | |
 | F | S59 Monster HP Bar 희귀도 | 대기 | |
@@ -120,5 +120,48 @@
 ---
 
 ## Phase C — OnHit·Anim 정합성 (S60/64/65)
+
+**완료**: 2026-05-05
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/Controllers/Creature/CreatureController.cs` | `using DG.Tweening` 추가. 기존 `CoFlashDamage()`(0.1초 빨강 고정)를 제거하고 가상 메서드 `PlayHitFeedback()` 도입. 기본 구현 = 슬라이드 64 Monster 스펙 (`(1, 0.2, 0.2)` 0.3초 변색 → 0.3초 OutQuad 흰색 복귀). `_onHitCo` 추적 필드 + 진행 중 피드백 자동 재시작. `OnDead`에 cleanup 추가 (DOKill + Coroutine stop) |
+| `Assets/@Scripts/Controllers/Creature/MonsterController.cs` | `PlayHitFeedback` override — `State == Attack`이면 색 변환 skip (슬라이드 64 "Attack 도중 OnHit Anim 변경 X") |
+| `Assets/@Scripts/Controllers/Creature/PlayerController.cs` | `PlayHitFeedback` override — `_anim.CrossFade("OnHit", 0.05f, -1, 0)`로 OnHit 클립을 처음부터 재생. `CoReturnAfterOnHit`이 슬라이드 65의 OnHit 길이 0.35s 후 State를 Idle로 복귀 → AutoAttack이 cooldown 따라 자연 재개 |
+
+### 슬라이드 매핑
+
+| 기획 항목 | 코드 |
+|---|---|
+| Player: Idle/Attack/OnHit 어느 상태든 피격 시 OnHit 처음부터 (S60/64) | `PlayerController.PlayHitFeedback` `CrossFade("OnHit", ..., 0f)` |
+| Monster: Idle 중 피격 → 색 변환 (1,0.2,0.2) 0.3s → 0.3s OutQuad 흰색 (S64) | `CreatureController.CoColorFlashOnHit` |
+| Monster: Attack 중 피격 → OnHit Anim/색 변환 X (S64) | `MonsterController.PlayHitFeedback` early-return on `State.Attack` |
+| OnHit 도중 또 피격 시 처음부터 (S64) | 기존 코루틴 Stop + `_sprite.DOKill()` 후 재시작 |
+| Player Attack 1초 / OnHit 0.35초 (S65) | `CoReturnAfterOnHit` `WaitForSeconds(0.35f)`. Attack 1초는 Animator clip 측에서 |
+
+### Animator 의존성 (검증 시 확인 필요)
+
+- Player Animator에 **"OnHit" 상태**가 있어야 `CrossFade("OnHit", ...)`가 동작.
+- 없으면 콘솔에 warning + 색 변환/anim 없이 무시되고 그래도 게임은 동작 (HP/Damage popup은 정상).
+- Player 기존 Animator는 "Idle"/"Run"/"Attack"만 보유 가능성 높음 → Phase C 검증 시 Player prefab의 Animator Controller 열어서 OnHit 상태 추가/연결 필요.
+- OnHit 클립 길이는 **0.35s 권장** (슬라이드 65). 코드의 0.35s 대기와 일치시킬 것.
+
+### 의도적으로 안 건드린 부분
+
+- `_anim.SetTrigger("OnDamaged")` (CreatureController.UpdateAnimation 안 dead code) — 호출 경로 없음, 정리 후순위
+- `State.OnDamaged` enum 값 — 사용처 없지만 enum 자체는 유지
+- AutoAttack cooldown 처리 — OnHit 인터럽트 후 cooldown은 그대로 (Time.time 기준), 자연 재개
+
+### 롤백 시 주의
+
+- `CoFlashDamage()`는 완전히 제거됨. 다른 곳에서 직접 호출하지 않았으므로 영향 없음.
+- `PlayHitFeedback` override가 없는 신규 CreatureController 서브클래스는 자동으로 기본(Monster 스타일 색 변환)을 받음. 다른 동작이 필요하면 override 필요.
+- 진행 중인 OnHit 코루틴은 OnDead 시 정리됨 — 죽은 직후 색이 빨강에 머무는 버그 없음.
+
+---
+
+## Phase D — Battle 진입 시퀀스 (S55/56/58)
 
 (아직 시작 전)

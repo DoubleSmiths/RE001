@@ -138,6 +138,30 @@ public class PlayerController : CreatureController
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
 
+    // 슬라이드 60/64/65 Player —
+    //  · OnHit Anim을 처음부터 재생 (어느 상태에서 피격되었든)
+    //  · OnHit 클립 길이 0.35s (슬라이드 65 고정)
+    //  · OnHit 끝나면 Idle로 복귀 → AutoAttack이 자연 재개 (cooldown 끝나는 대로 Attack)
+    //  · OnHit 도중 또 피격 시 OnHit 처음부터 재시작 (CrossFade normalizedTime 0)
+    protected override void PlayHitFeedback()
+    {
+        if (State == Define.State.Dead) return;
+        if (_anim == null) return;
+
+        _anim.CrossFade("OnHit", 0.05f, -1, 0f);
+
+        if (_onHitCo != null) StopCoroutine(_onHitCo);
+        _onHitCo = StartCoroutine(CoReturnAfterOnHit());
+    }
+
+    IEnumerator CoReturnAfterOnHit()
+    {
+        yield return new WaitForSeconds(0.35f);
+        _onHitCo = null;
+        if (State == Define.State.Dead) yield break;
+        State = Define.State.Idle;
+    }
+
     public void GainExp(float amount)
     {
         Managers.Game.Exp += amount * (GrowthRate / 100f);

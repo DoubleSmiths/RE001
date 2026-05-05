@@ -114,6 +114,15 @@ public class MonsterController : CreatureController
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
 
+    // 슬라이드 64 — Attack Anim 도중 피격 시 OnHit 처리는 하되 OnHit Anim/색 변환 없음.
+    // (OnHit 처리 = HP 차감 등은 base.TakeHit에서 이미 끝남)
+    protected override void PlayHitFeedback()
+    {
+        if (State == Define.State.Dead) return;
+        if (State == Define.State.Attack) return;
+        base.PlayHitFeedback();
+    }
+
     protected override void OnDead()
     {
         base.OnDead();
