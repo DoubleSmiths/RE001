@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 using static Define;
@@ -198,8 +200,18 @@ public class UI_TravelPopup : UI_Popup
         BuildFieldButtons();
 
         RefreshStaticTexts();
+        RefreshCurrentLocationLabel();
         RefreshUI();
         OpenAnimation();
+    }
+
+    void RefreshCurrentLocationLabel()
+    {
+        int currentId = Managers.Game.CurrentTravelAreaId;
+        if (Managers.Data.TravelNodeDic.TryGetValue(currentId, out var node))
+            SetText(Texts.MapSelectPopupMapNameText, node.Name);
+        else
+            SetRawText(Texts.MapSelectPopupMapNameText, string.Empty);
     }
 
     void RefreshStaticTexts()
@@ -229,6 +241,7 @@ public class UI_TravelPopup : UI_Popup
     void OnLanguageChanged()
     {
         RefreshStaticTexts();
+        RefreshCurrentLocationLabel();
 
         // 동적 spawn된 버튼들 텍스트 다시 localize
         foreach (var go in _spawnedTownButtons)
