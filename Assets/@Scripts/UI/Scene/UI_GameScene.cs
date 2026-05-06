@@ -556,9 +556,42 @@ public class UI_GameScene : UI_Scene
         _prevExp = current;
     }
 
-    public void OnLevelUp(int newLevel)
+    // 슬라이드 68 — Level Up Event
+    //   2-1. Player Level Up Text 팝업 (UI_PlayerLevelUpTextPopup.prefab)
+    //   2-2. Player Level Up Effect (Player Level Up Ef.prefab)
+    //   2-3. HP Now → MaxHp 회복 (PlayerController.RefreshStats에서 이미 처리) + 초록 회복 텍스트
+    //   2-4/2-5. EXP/Level UI 갱신 (OnExpChanged/PlayerLevelText 핸들러가 처리)
+    //   2-6. [상태] Button [+] icon Punch/Scale (Duration 0.3 OutQuad TO 0.2 Vibrato 10 Elasticity 1)
+    public void OnLevelUp(int newLevel, int regenHp)
     {
         GetText((int)Texts.PlayerLevelText).text = $"Lv.{newLevel}";
+
+        PlayerController player = Managers.Game?.Player;
+        if (player != null)
+        {
+            Vector3 pos = player.transform.position;
+
+            // 2-1. Level Up Text 팝업
+            var textPopup = Managers.Resource.Instantiate("UI_PlayerLevelUpTextPopup");
+            if (textPopup != null) textPopup.transform.position = pos;
+
+            // 2-2. Level Up Effect
+            var effect = Managers.Resource.Instantiate("Player Level Up Ef");
+            if (effect != null) effect.transform.position = pos;
+
+            // 2-3. HP 회복 텍스트 (초록). 회복량 0이면 popup 생략.
+            if (regenHp > 0)
+                Managers.Object.ShowHealFont(pos, regenHp, player.transform);
+        }
+
+        // 2-6. [상태] 버튼 [+] icon — active + Punch/Scale
+        GameObject icon = GetImage((int)Images.CharacterBtnNewIcon)?.gameObject;
+        if (icon != null)
+        {
+            icon.SetActive(true);
+            icon.transform.DOKill();   // 진행 중인 punch 있으면 정리 (Restart)
+            icon.transform.DOPunchScale(new Vector3(0.2f, 0.2f, 0f), 0.3f, 10, 1f).SetEase(Ease.OutQuad);
+        }
     }
 
     void RefreshCharacterNewIcon()
@@ -728,7 +761,7 @@ public class UI_GameScene : UI_Scene
     {
         player.OnHpChanged += (cur, max) => UpdateHP(cur, max);
         player.OnExpChanged += (cur, req) => UpdateEXP(cur, req);
-        player.OnLevelUp += (lv) => OnLevelUp(lv);
+        player.OnLevelUp += (lv, regen) => OnLevelUp(lv, regen);
         UpdateHP(player.Hp, player.MaxHp);
         Managers.Game.OnStatusPointChanged += RefreshCharacterNewIcon;
         RefreshCharacterNewIcon();

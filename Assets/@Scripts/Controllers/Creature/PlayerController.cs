@@ -6,7 +6,7 @@ public class PlayerController : CreatureController
 {
     public event System.Action<float, float> OnHpChanged;   // current, max
     public event System.Action<float, float> OnExpChanged;  // current, required
-    public event System.Action<int>          OnLevelUp;
+    public event System.Action<int, int>     OnLevelUp;   // newLevel, regenHp (MaxHp - prevHp)
     public event System.Action<float>        OnHitLanded;   // 타격 성공 시 데미지값 전달 (miss 제외) — 슬라이드 48
 
     float _expRequired = 100f;
@@ -221,8 +221,13 @@ public class PlayerController : CreatureController
         {
             Managers.Game.Exp  -= _expRequired;
             Managers.Game.Level++;
+
+            // 슬라이드 68 #2-3 — Now HP를 Max HP로 회복. RefreshStats 전 prevHp 캡쳐해서 회복량 계산.
+            float prevHp = Hp;
             RefreshStats();
-            OnLevelUp?.Invoke(Managers.Game.Level);
+            int regen = Mathf.Max(0, Mathf.RoundToInt(MaxHp - prevHp));
+
+            OnLevelUp?.Invoke(Managers.Game.Level, regen);
             _expRequired *= 1.2f;   // 단순 성장 곡선 (LevelData 없을 때 fallback)
         }
     }
@@ -302,6 +307,22 @@ public class PlayerController : CreatureController
     //
     // OnHit 등으로 Attack 클립이 인터럽트되면 이 이벤트가 발화되지 않아 자연스럽게
     // 데미지가 들어가지 않음 (슬라이드 60 — 공격이 끊긴 경우).
+    // 디버그 — 레벨/EXP 리셋. 테스트 메뉴에서 호출.
+    public void DebugResetLevel(int targetLevel = 1)
+    {
+        Managers.Game.Level = Mathf.Max(1, targetLevel);
+        Managers.Game.Exp   = 0f;
+        RefreshStats();   // _expRequired/MaxHp/Atk 등 재계산 + Hp=MaxHp
+        OnLevelUp?.Invoke(Managers.Game.Level, 0);
+        OnExpChanged?.Invoke(0f, _expRequired);
+    }
+
+    // 디버그 — 즉시 한 단계 레벨업 트리거.
+    public void DebugForceLevelUp()
+    {
+        GainExp(_expRequired - Managers.Game.Exp + 1f);
+    }
+
     public void AttackTrigger()
     {
         if (_attackTarget == null) return;

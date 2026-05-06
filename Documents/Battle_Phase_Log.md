@@ -22,7 +22,7 @@
 | F | S59 Monster HP Bar 희귀도 | ✅ 완료 | (uncommitted) |
 | G | S66 몬스터 사망 | ✅ 완료 | (uncommitted) |
 | H | S67 플레이어 사망·리스폰 | ✅ 완료 | (uncommitted) |
-| I | S68 Level Up | 대기 | |
+| I | S68 Level Up | ✅ 완료 | (uncommitted) |
 | J | S69 도중 이탈 | 대기 | |
 
 ---
@@ -573,5 +573,70 @@
 ---
 
 ## Phase I — Level Up 연출 (S68)
+
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/Controllers/Creature/PlayerController.cs` | `OnLevelUp` 이벤트 시그니처 `Action<int>` → `Action<int, int>` (newLevel, regenHp). `CheckLevelUp`이 RefreshStats 전 prevHp 캡쳐 → 회복량 계산해서 invoke |
+| `Assets/@Scripts/UI/Scene/UI_GameScene.cs` | `OnLevelUp` 핸들러에 슬라이드 68 #2-1~#2-6 전부 처리: Level Up Text/Ef prefab spawn, heal popup, [상태] 버튼 [+] icon active+Punch. 이벤트 구독 람다 시그니처 갱신 |
+
+### 슬라이드 68 매핑
+
+| 기획 항목 | 코드 |
+|---|---|
+| 1. EXP ≥ required → Level up Event | `PlayerController.CheckLevelUp` 기존 while loop |
+| 2-1. Level Up Text 팝업 | `Managers.Resource.Instantiate("UI_PlayerLevelUpTextPopup")` at Player position |
+| 2-2. Level Up Effect | `Managers.Resource.Instantiate("Player Level Up Ef")` at Player position |
+| 2-3. HP 회복 + 초록 텍스트 | `RefreshStats`가 Hp=MaxHp + `Managers.Object.ShowHealFont(pos, regenHp)` (Phase B의 Heal mode — 4EEE6F→1A9600 그라디언트) |
+| 2-4/2-5. EXP/Level UI | 기존 `OnExpChanged` 핸들러 + `PlayerLevelText` 갱신 |
+| 2-6. [상태] 버튼 [+] icon | `CharacterBtnNewIcon.SetActive(true)` + `DOPunchScale((0.2,0.2,0), 0.3, 10, 1).SetEase(OutQuad)`. 진행 중 punch 있으면 `DOKill`로 정리 후 재시작 (= "Restart") |
+
+### 작동 흐름
+
+```
+1. 몬스터 사망 → MonsterController.OnDead → _target.GainExp(_data.TotalExp)
+2. PlayerController.GainExp → CheckLevelUp
+3. CheckLevelUp while loop:
+   - Exp -= required
+   - Level++
+   - prevHp 캡쳐
+   - RefreshStats — MaxHp/Atk/Def 갱신, Hp=MaxHp 자동 회복
+   - regen = MaxHp - prevHp
+   - OnLevelUp.Invoke(newLevel, regen)
+4. UI_GameScene.OnLevelUp(newLevel, regen):
+   - PlayerLevelText 갱신
+   - Level Up Text 팝업 spawn at player position
+   - Level Up Effect spawn at player position
+   - 회복량 > 0 → ShowHealFont
+   - CharacterBtnNewIcon SetActive(true) + DOPunchScale
+```
+
+### 검증 방법
+
+1. 슬라임 처치하면서 EXP 채워서 Level Up 트리거
+2. 시각 확인:
+   - Player 위치에 "LEVEL UP" 텍스트 prefab 스폰 (prefab 자체 anim 자동 재생)
+   - Player 위치에 Level Up Effect 파티클
+   - Player 위에 초록 회복 popup (HP 회복량 표시)
+   - 하단 [상태] 버튼의 [+] 아이콘이 active되며 펀치 스케일 (0.2,0.2,0) 진동
+
+### 의도적으로 안 건드린 부분
+
+- **Player Level Up Text/Ef prefab의 내부 anim**: prefab 자체의 DOTweenAnimation 또는 ParticleSystem이 알아서 처리. 스폰만 하면 됨. 만약 anim이 동작하지 않으면 prefab inspector에서 autoPlay 확인 필요
+- **회복 텍스트 위치**: Player position 그대로. 슬라이드는 "HP Text 초록색 효과"라 Player HP Bar의 텍스트에 직접 색상 효과를 의미할 수도 있음 → 후속에서 PlayerHPBarText 색 깜빡임 추가 가능
+- **여러 레벨 동시 상승 시**: while loop 내에서 OnLevelUp이 매번 invoke됨 → 텍스트/이펙트 여러 번 spawn. UX상 1번만 표시하고 싶으면 마지막 레벨로 묶을 수 있지만 현재는 단순 누적
+
+### 롤백 시 주의
+
+- `OnLevelUp` 이벤트 시그니처 `Action<int>` → `Action<int, int>` 변경. 다른 subscriber 추가 시 새 시그니처 사용 필요
+- prefab 이름 `UI_PlayerLevelUpTextPopup`, `Player Level Up Ef`는 Addressable address 그대로. 이름 바뀌면 Instantiate 인자 동시에 갱신
+- CharacterBtnNewIcon은 기존엔 StatusPoint > 0일 때 active 됨. 이제 Level Up도 active 트리거 → StatusPoint 시스템과 충돌할 가능성. 기존 RefreshCharacterNewIcon 호출 흐름 유지되므로 다음 RefreshCharacterNewIcon 호출 시 다시 SetActive(StatusPoint > 0)로 재계산. Level Up 직후 시각 효과는 보임. 일정 시간 후 재계산 시 StatusPoint=0이면 사라짐 — 의도된 동작인지 검증 필요
+
+---
+
+## Phase J — 전투 도중 이탈 (S69)
 
 (아직 시작 전)
