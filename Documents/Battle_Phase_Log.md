@@ -17,8 +17,9 @@
 | B | S62/63 Damage Textpopup | ✅ 완료 | (uncommitted) |
 | C | S60/64/65 OnHit·Anim | ✅ 완료 | (uncommitted) |
 | D | S55/56/58 Battle 진입 시퀀스 | ✅ 완료 | (uncommitted) |
-| E | S57/58/59 첫 몬스터 스폰·조우 | 대기 | |
-| F | S59 Monster HP Bar 희귀도 | 대기 | |
+| E1 | S61 공격판정 키프레임 | ✅ 완료 | (uncommitted) |
+| E | S57/58/59 첫 몬스터 스폰·조우 | ✅ 완료 | (uncommitted) |
+| F | S59 Monster HP Bar 희귀도 | ✅ 완료 | (uncommitted) |
 | G | S66 몬스터 사망 | 대기 | |
 | H | S67 플레이어 사망·리스폰 | 대기 | |
 | I | S68 Level Up | 대기 | |
@@ -258,6 +259,197 @@
 
 ---
 
+## Phase E1 — 공격판정 키프레임 (S61)
+
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/Controllers/Creature/PlayerController.cs` | `_attackTarget` 필드 추가 (락온 타겟). `AutoAttack`에서 데미지 계산 전체 제거 → target 락온 + State=Attack만. 빈 메서드였던 `AttackTrigger()`에 BattleMath.Resolve + TakeHit + OnHitLanded 이동 |
+| `Assets/@Scripts/Controllers/Creature/MonsterController.cs` | `AttackTrigger()` 메서드 신설 (구조 일치). `TryAttack`은 키프레임 자산 부재로 inline 호출 fallback 유지 — 자산 보강 시 inline 호출 제거 가능 |
+
+### 슬라이드 61 매핑
+
+| 기획 항목 | 코드 |
+|---|---|
+| 1. 일반/스킬/몬스터공격 모두 공격판정 순간 정의 | `AttackTrigger()` 메서드 + Animation Event 패턴 |
+| 2. 공격판정 순간에 명중/회피 dice | `BattleMath.Resolve` (PlayerController.AttackTrigger / MonsterController.AttackTrigger 내부) |
+| 3. 공격성공 시 공격자가 적을 [타격] | `_attackTarget.TakeHit(result, this)` |
+| 4. 실패 시 빗나감 처리 | `BattleMath.Resolve`의 result.Hit=false → `TakeHit`이 Miss popup 표시 (Phase B) |
+| 5. 투사체는 닿았을 때 공격판정 | `ProjectileController.OnTriggerEnter2D` (변경 없음, 기존 collision-based 유지) |
+
+### Player 공격 타임라인
+
+| 시각 | 이벤트 |
+|---:|---|
+| t=0.0 | AutoAttack — cooldown OK → `_attackTarget = nearest`, State=Attack, CrossFade("Attack") 큐에 들어감 |
+| t≈0.05 | Attack 클립 재생 시작 |
+| t=0.5 | Attack.anim 키프레임 → Animation Event AttackTrigger() 발화 → `BattleMath.Resolve` → 명중/치명/저항/방어 dice → `_attackTarget.TakeHit(result)` → DamageFont/MissPopup/CritCallout 표시 |
+| t=1.0 | `CoResetStateAfterAttack` (Phase C) → State=Idle |
+| t≈1.0 | 다음 AutoAttack cooldown 충족 → 새 락온/Attack |
+
+### OnHit 인터럽트 시 동작 (슬라이드 60 자연스럽게 충족)
+
+- 키프레임(0.5s) 도달 **전** 피격 → CrossFade(OnHit)로 Attack 클립 끊김 → AttackTrigger 발화 안 됨 → 데미지 미적용 (= "공격이 끊겨서 타격 실패")
+- 키프레임 도달 **후** 피격 → 데미지는 이미 적용됨, OnHit 클립으로 시각 전환만 발생
+
+### 엣지 케이스 처리 (`AttackTrigger`)
+
+- `_attackTarget == null` → 무시 (방어적)
+- `_attackTarget.State == Dead` → 락온 후 사망한 경우, 무시
+- `State != Attack` → 락온 후 OnHit/Idle로 갈아탔으면 무시
+- `dist > AtkRange` → 락온 후 몬스터/Player 이동으로 거리 이탈, silent miss (popup 없음)
+
+### 의도적으로 안 건드린 부분
+
+- **Monster Attack anim 키프레임**: 자산 측 작업 필요. 현재 `TryAttack`이 inline으로 `AttackTrigger()` 호출 → 시각 동기화는 안 되지만 데미지 로직은 동일. 자산에 Animation Event 추가 시 inline 호출 제거.
+- **Projectile**: 슬라이드 61 #5 — 충돌 시 판정. 기존 `ProjectileController.OnTriggerEnter2D` 그대로.
+- **Player AtkRange**: 락온 시점 + 키프레임 시점 양쪽에서 체크. 락온 시점 통과 후 키프레임에서 이탈 시 silent miss.
+
+### 롤백 시 주의
+
+- `_attackTarget` 필드는 PlayerController 내부 상태. 외부에서 참조 X.
+- AutoAttack에서 데미지 계산 코드가 사라졌음 → 기존 코드를 유지하려면 AttackTrigger() 호출을 AutoAttack 끝에 추가하면 즉시 적용 모드로 회귀 (anim 동기화 잃음).
+- 직업/스킬 추가 시: 다른 Attack anim도 같은 `AttackTrigger` 함수명 + 적절한 키프레임 시점으로 이벤트 등록 필요.
+
+---
+
 ## Phase E — 첫 몬스터 스폰·조우 (S57/58/59)
 
-(아직 시작 전 — Phase E1 키프레임 작업 후 진입)
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/Controllers/Creature/MonsterController.cs` | `ChaseTarget` 제거 → `ScrollLeft`로 교체 (Ground 동속 -5 좌측 이동, 슬라이드 58). `FixedUpdate`에서 첫 AtkRange 진입 시 `OnEngaged` 발화로 이동 (TryAttack에서 빠짐) — HP Bar가 첫 조우 즉시 호출되도록. `CoResetStateAfterAttack`이 `Moving` → `Idle`로 변경 (Slime Animator는 Run 상태 없음) |
+| `Assets/@Scripts/Controllers/Creature/PlayerController.cs` | `Update`에 `UpdateEngagementVisuals` 추가. AtkRange 안 몬스터 검사 → 있으면 BG.IsScrolling=false + Player Idle (AutoAttack가 Attack로 전환), 없으면 BG.IsScrolling=true + Player Moving(Run). `HasMonsterInAtkRange` / `GetBgScroller` 헬퍼. 캐시된 `_cachedScroller`로 매 프레임 lookup 절약 |
+| `Assets/@Scripts/UI/SubItem/UI_BattleBtnGroup.cs` | `CoBattleLoop` 첫 spawn 6초 대기 + spawn 위치 `Player.x + 12` (슬라이드 58). 사망 후 다음 spawn까지도 6초 |
+
+### 슬라이드 매핑
+
+| 기획 | 코드 |
+|---|---|
+| Player 위치 고정 (S58) | PlayerController.MovePlayer 주석 처리됨, Player Y 그대로 |
+| 몬스터 Ground와 동속 좌측 이동 (S58) | `MonsterController.ScrollLeft` linearVelocity -5 |
+| Player Run 시작 6초 후 첫 spawn (S58) | `CoBattleLoop` 첫 `WaitForSeconds(6f)` |
+| Player +12 X에 spawn (S58) | `spawnPos = Player.x + 12` |
+| 몬스터 조우 시 즉시 전투 진입 (S59) | `MonsterController.FixedUpdate`에서 첫 AtkRange 진입 시 OnEngaged |
+| 몬스터 조우 → BG scroll 정지 + Player Attack (S57) | `PlayerController.UpdateEngagementVisuals` |
+| 몬스터 사망 → Run 복귀 + BG 재개 (S57) | UpdateEngagementVisuals가 매 프레임 자동 토글 |
+| Monster HP Bar 호출 (S59) | `OnEngaged` → CoBattleLoop의 `UI_MonsterHPBar` spawn |
+
+### 전투 진행 타임라인 (Phase D + E + E1 통합)
+
+| 시각 | 이벤트 |
+|---:|---|
+| t=0.0 | Travel popup → EnterAreaWithFade(Battle) → Fade Out 0.5s |
+| t=0.5 | 검은 화면 → CH1BG spawn (scroll=false), Player Idle |
+| t=1.0 | Fade In 50% → ShowToast(지역명) (1초 Move 진입) |
+| t=1.5 | Fade In 완료 |
+| t=2.0 | Toast Move 종료 → BG scroll on, Player Run, CoBattleLoop 시작 (6초 대기 시작) |
+| t=8.0 | 첫 몬스터 spawn at Player.x+12. Slime이 -5 속도로 좌측 이동 시작 |
+| t≈10.5 | Slime이 Player AtkRange(1.5)에 진입 → OnEngaged → HP Bar 호출. Player Idle, BG 정지. AutoAttack 발사 (State=Attack) |
+| t≈10.5 + 0.5 | Attack.anim 0.5s 키프레임 → AttackTrigger() → BattleMath.Resolve → Slime.TakeHit (데미지 popup) |
+| t≈11.5 | Attack 클립 종료 → CoResetStateAfterAttack → State=Idle. UpdateEngagementVisuals: 여전히 engaged → State=Idle. AutoAttack 재발사 |
+| ... | Slime HP가 0 될 때까지 반복 |
+| t=X | Slime 사망 → 풀 반환. UpdateEngagementVisuals: 미engaged → BG scroll 재개, Player Run |
+| t=X+6 | 다음 Slime spawn at Player.x+12 |
+
+### 검증 방법
+
+1. Unity 컴파일 (Console 에러 확인)
+2. 마을 → 여정 → 탐험 진입
+3. 배너 끝나고 Player Run 시작 후 6초 후 슬라임이 화면 오른쪽에서 등장
+4. 슬라임이 좌측으로 이동해서 Player 근처에 도달 → Player 멈추고 검 휘두르기 시작 + BG 스크롤 정지 + 슬라임 위에 HP Bar 표시
+5. 키프레임(검 휘두르는 모션 절반) 시점에 데미지 popup 등장
+6. 슬라임 사망 후 BG 다시 스크롤 + Player Run 복귀
+7. 6초 후 다음 슬라임 등장
+
+### 의도적으로 안 건드린 부분
+
+- **Monster HP Bar 희귀도 (Scale/Color/Material)**: Phase F. 현재는 일반(기본) 형태만.
+- **Monster 사망 시 Die Clip + DOPlayBackwards HP Bar + 드롭 리스트 UI**: Phase G.
+- **여러 몬스터 동시 spawn**: 현재 1마리씩만. 다중 몬스터 시 BG scroll 토글이 가까운 몬스터에만 반응 (가장 가까운 monster의 distance로 판정).
+- **Object Layer (Player 앞)**: 자산에 layer 추가되면 BG prefab 자식 끝에 배치 → BackgroundScroller가 자동 처리 (Phase D의 fallback 인덱싱).
+
+### 검증 중 발견된 이슈 + 픽스 (2026-05-06)
+
+**증상**: Slime이 Player를 뚫고 지나감 (조우는 일어나는데 차단이 안 됨).
+
+**원인**: 초기 Player/Monster prefab에 Collider2D/Rigidbody2D 없었음. 사용자가 추가했으나 **둘 다 Dynamic** Body Type → 서로 밀어내 Player가 좌측으로 슬슬 밀리고 Slime이 결과적으로 통과. 또한 코드 측 engagement는 거리 폴링이라 collider 사이즈와 어긋날 수 있었음.
+
+**픽스**:
+- `MonsterController.cs`: 거리 기반 engagement 제거 → `OnCollisionEnter2D`에서 Player 충돌 시 `_hasEngaged=true` + vel=0 + OnEngaged 발화 (슬라이드 59 의도). `HasEngaged` public getter 추가.
+- `PlayerController.cs`: `HasMonsterInAtkRange`가 거리 → `MonsterController.HasEngaged` flag로 변경. Collider 사이즈 영향 안 받음.
+
+**Inspector 설정 권장 (사용자 측)**:
+- Player Rigidbody2D: Body Type = **Kinematic** (Player 고정)
+- Monster Rigidbody2D: Body Type = **Dynamic + Gravity Scale = 0** (코드 vel 제어)
+- 둘 다 BoxCollider2D **Is Trigger = OFF**
+- Layer Collision Matrix Player ↔ Monster 켜짐 (기본 default)
+
+### 롤백 시 주의
+
+- Monster movement이 ChaseTarget(Player 추격)에서 ScrollLeft(절대 좌측 이동)로 바뀜 → Player가 위치 이동하면 monster가 따라가지 않음 (slide 58 spec: Player 고정 가정).
+- `Update`에 매 프레임 monster 검색 + scroller 캐시 로직 추가됨. 다중 monster (10+) 환경이라면 spatial partition으로 최적화 필요.
+- `_cachedScroller`는 GameObject 파괴 시 자동으로 Unity null로 해석되어 GetBgScroller가 재탐색 → 안전.
+- 배틀 루프의 6초 대기는 Player가 실제로 Run 모션이든 아니든 그냥 6초 카운트. CoBattleLoop은 `StartBattle`(banner 종료 시) 호출 시점부터 카운트 시작.
+
+---
+
+## Phase F — Monster HP Bar 희귀도 (S59)
+
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/UI/SubItem/UI_MonsterHPBar.cs` | `SetInfo`에 `ApplyRarity` + `PlayOpenAnimation` 호출 추가. monster.Name을 `Util.Localize`로 통과 (key든 literal이든 안전). |
+
+### 슬라이드 59 매핑
+
+| 등급 | Scale | Color | Material |
+|---|---:|---|---|
+| Common | 1.0 | FFFFFF (기본) | null (Image 기본) |
+| Rare | 1.15 | FFD400 | `Path_Image_Knight` |
+| Boss | 1.3 | FF4300 | `Path_Image_BeastLord` |
+
+### Open Animation
+
+- Scale 0 → target (Common 1.0 / Rare 1.15 / Boss 1.3)
+- Duration 0.5s, OutBack ease
+- 슬라이드 59 "Move FROM x0 y0 z0"는 빈 위치에서 스폰하는 연출로 해석 → scale-in으로 처리
+
+### Material 로딩
+
+- Addressables 그룹 `Material`에 등록 + `PreLoad` 라벨 → `Managers.Resource.Load<Material>("Path_Image_Knight")` / `"Path_Image_BeastLord"`로 로드
+- 로드 실패 시 (이름 오타 등) Color만 적용하고 material은 기본 유지 (방어적)
+
+### 검증 방법
+
+1. CreatureData JSON에서 Slime의 `Rarity` 필드를 `"Common"`/`"Rare"`/`"Boss"`로 변경하면서 테스트
+2. 일반: 흰색 + 기본 사이즈
+3. 희귀: 노랑 + 살짝 큰 사이즈 + Knight material 효과 (외곽선/광택 등)
+4. 우두머리: 빨강 + 더 큰 사이즈 + BeastLord material 효과
+5. 모든 등급에서 spawn 시 scale-in 연출 (OutBack)
+
+### 의도적으로 안 건드린 부분
+
+- **HP Bar Playbackwards 사망 연출**: Phase G (슬라이드 66 — 몬스터 사망 시 HP Bar DOPlayBackwards)
+- **Material 적용 위치**: 현재 Frame 이미지에만 적용. 슬라이드 spec이 명확치 않아 핵심 frame에만. 다른 부품에 추가로 적용해야 한다면 `ApplyRarity` 확장 필요.
+
+### 롤백 시 주의
+
+- `transform.localScale = Vector3.zero`로 시작하므로, 이전에 다른 코드가 prefab 인스턴스화 직후 scale을 set하던 게 있다면 덮어씀. 이상한 사이즈로 보이면 Open Anim 시점 또는 prefab 기본 scale 충돌 의심.
+- Material 변경은 인스턴스 frame.material에만 영향. 같은 material이 다른 곳에서 공유되어도 영향 없음 (Image.material은 인스턴스 별 setter).
+- monster.Name이 Localization key가 아니라 literal일 경우, `Util.Localize`는 key를 그대로 반환 → 시각적 영향 없음.
+
+---
+
+## Phase G — 몬스터 사망 처리 (S66)
+
+(아직 시작 전)

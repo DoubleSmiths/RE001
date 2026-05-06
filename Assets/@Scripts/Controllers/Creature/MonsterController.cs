@@ -15,6 +15,7 @@ public class MonsterController : CreatureController
     Data.CreatureData _data;
     PlayerController  _target;
     bool _hasEngaged;
+    public bool HasEngaged => _hasEngaged;
 
     public override bool Init()
     {
@@ -54,28 +55,42 @@ public class MonsterController : CreatureController
     }
 
     // ────────────────────────────────────────
-    //  AI
+    //  AI — 슬라이드 58: Player 위치 고정. 몬스터는 Ground와 동속(-5 units/sec)으로 좌측 스크롤.
+    //  슬라이드 59 — Player BoxCollider2D + Rigidbody2D 충돌 시 전투 진입.
     // ────────────────────────────────────────
+    const float GROUND_SCROLL_SPEED = 5f;   // 슬라이드 58 — Ground Layer Speed = 5
+
     void FixedUpdate()
     {
         if (State == Define.State.Dead) return;
         if (_target == null) return;
 
-        float dist = Vector2.Distance(transform.position, _target.transform.position);
-
-        if (dist <= AtkRange)
+        if (_hasEngaged)
             TryAttack();
         else
-            ChaseTarget();
+            ScrollLeft();
     }
 
-    void ChaseTarget()
+    // 슬라이드 59 — Player와 충돌하는 즉시 전투 진입. 거리 폴링이 아니라 콜라이더 충돌 trigger.
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        if (_hasEngaged) return;
+        if (State == Define.State.Dead) return;
+        if (coll.gameObject.GetComponent<PlayerController>() == null) return;
+
+        _hasEngaged = true;
+        _rb.linearVelocity = Vector2.zero;     // 충돌 즉시 정지
+        OnEngaged?.Invoke();                   // HP Bar 호출 등
+    }
+
+    // 슬라이드 58 — 몬스터는 Ground와 같은 속도(-5)로 좌측 이동.
+    // engaged 전까지만 호출됨. 충돌 시 OnCollisionEnter2D가 vel=0으로 정지시킴.
+    void ScrollLeft()
     {
         if (State == Define.State.Attack) return;
-        Vector2 dir = ((Vector2)_target.transform.position - (Vector2)transform.position).normalized;
-        _rb.linearVelocity = new Vector2(dir.x * MoveSpeed, _rb.linearVelocity.y);
-        //FlipToward(_target.transform.position.x);
-        State = Define.State.Idle;
+        _rb.linearVelocity = new Vector2(-GROUND_SCROLL_SPEED, _rb.linearVelocity.y);
+        if (State != Define.State.Idle)
+            State = Define.State.Idle;
     }
 
     void TryAttack()
@@ -86,23 +101,31 @@ public class MonsterController : CreatureController
         State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
 
-        BattleMath.DamageResult result = BattleMath.Resolve(this, _target, AttackType.Physical);
-        _target.TakeHit(result, this);
-
-        if (!_hasEngaged)
-        {
-            _hasEngaged = true;
-            OnEngaged?.Invoke();
-        }
+        // 슬라이드 61 — 데미지 적용은 AttackTrigger() (Animation Event 키프레임 시점).
+        // 몬스터 Attack anim에 키프레임이 아직 없으면 TryAttack이 fallback으로 즉시 호출.
+        // 자산에 키프레임 추가되면 이 inline 호출은 제거.
+        AttackTrigger();
 
         StartCoroutine(CoResetStateAfterAttack(0.4f));
+    }
+
+    // 슬라이드 61 — 공격판정 순간. Animation Event에서 호출되어야 함.
+    // 자산에 이벤트 추가되기 전까지는 TryAttack이 inline으로 호출 (시각 동기화 X).
+    public void AttackTrigger()
+    {
+        if (_target == null) return;
+        if (_target.State == Define.State.Dead) return;
+        if (State != Define.State.Attack) return;
+
+        BattleMath.DamageResult result = BattleMath.Resolve(this, _target, AttackType.Physical);
+        _target.TakeHit(result, this);
     }
 
     IEnumerator CoResetStateAfterAttack(float delay)
     {
         yield return new WaitForSeconds(delay);
         if (State != Define.State.Dead)
-            State = Define.State.Moving;
+            State = Define.State.Idle;   // Slime Animator에 "Run" 없음 — Idle로 복귀
     }
 
     // ────────────────────────────────────────

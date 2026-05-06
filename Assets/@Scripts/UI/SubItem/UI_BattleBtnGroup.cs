@@ -744,13 +744,28 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _battleCoroutine = StartCoroutine(CoBattleLoop());
     }
 
+    // 슬라이드 58 — Player Run anim 시작 직후부터 6초 뒤 첫 몬스터 spawn,
+    //               Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 6초 → 다음 spawn.
+    const float MONSTER_SPAWN_DELAY = 6f;
+    const float MONSTER_SPAWN_OFFSET_X = 12f;
+
     System.Collections.IEnumerator CoBattleLoop()
     {
         Transform monsterRoot = Managers.Object.MonsterTransform;
-        Vector3 spawnPos = new Vector3(5, 2, 0);
+
+        // 첫 몬스터: 6초 대기 (Player Run 시작 시점부터)
+        yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
 
         while (true)
         {
+            PlayerController player = Managers.Game.Player;
+            if (player == null) yield break;
+
+            Vector3 spawnPos = new Vector3(
+                player.transform.position.x + MONSTER_SPAWN_OFFSET_X,
+                player.transform.position.y,
+                0f);
+
             MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos);
             if (mc != null)
             {
@@ -762,7 +777,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 StartBattleLog(mc);
             }
             yield return new WaitUntil(() => monsterRoot.childCount == 0);
-            yield return new WaitForSeconds(1f);
+
+            // 다음 몬스터까지 6초
+            yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
         }
     }
 

@@ -35,7 +35,57 @@ public class PlayerController : CreatureController
     void Update()
     {
         if (State == Define.State.Dead) return;
-        if (_inBattle) AutoAttack();
+        if (!_inBattle) return;
+
+        UpdateEngagementVisuals();
+        AutoAttack();
+    }
+
+    // 슬라이드 57/58 — 몬스터 AtkRange 진입 여부에 따라:
+    //   · 미engaged: BG scroll on, Player Run (Moving)
+    //   · engaged:   BG scroll off, Player Idle (AutoAttack가 Attack로 전환)
+    void UpdateEngagementVisuals()
+    {
+        bool engaged = HasMonsterInAtkRange();
+
+        BackgroundScroller scroller = GetBgScroller();
+        if (scroller != null) scroller.IsScrolling = !engaged;
+
+        // Attack/Dead 중엔 anim state 손대지 않음
+        if (State == Define.State.Attack || State == Define.State.Dead) return;
+
+        Define.State desired = engaged ? Define.State.Idle : Define.State.Moving;
+        if (State != desired) State = desired;
+    }
+
+    // 슬라이드 59 — Monster.OnCollisionEnter2D에서 _hasEngaged=true로 세팅됨.
+    // 거리 폴링 대신 monster의 engaged flag로 판단해 collider 사이즈와 무관.
+    bool HasMonsterInAtkRange()
+    {
+        Transform monsterRoot = Managers.Object?.MonsterTransform;
+        if (monsterRoot == null) return false;
+        for (int i = 0; i < monsterRoot.childCount; i++)
+        {
+            var m = monsterRoot.GetChild(i).GetComponent<MonsterController>();
+            if (m == null || m.State == Define.State.Dead) continue;
+            if (m.HasEngaged) return true;
+        }
+        return false;
+    }
+
+    BackgroundScroller _cachedScroller;
+    BackgroundScroller GetBgScroller()
+    {
+        if (_cachedScroller != null) return _cachedScroller;
+        foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (go.name == "CH1BG" || go.name == "CH1BG(Clone)")
+            {
+                _cachedScroller = go.GetComponent<BackgroundScroller>();
+                return _cachedScroller;
+            }
+        }
+        return null;
     }
 
     void FixedUpdate()
@@ -64,50 +114,42 @@ public class PlayerController : CreatureController
         float effectiveCooldown = AtkCooldown / (1f + ComboAtkSpeedBonus() / 100f);
         if (Time.time < _lastAtkTime + effectiveCooldown) return;
 
-        MonsterController nearest = FindNearestMonster();
-        if (nearest == null) return;
-
-        float dist = Vector2.Distance(transform.position, nearest.transform.position);
-        if (dist > AtkRange) return;
+        // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster를 찾아 공격.
+        // 거리 폴링은 콜라이더 사이즈와 어긋날 수 있어 HasEngaged flag로 통일.
+        MonsterController target = FindEngagedMonster();
+        if (target == null) return;
 
         _lastAtkTime = Time.time;
+        _attackTarget = target;         // 슬라이드 61 — 키프레임 시점에 데미지 적용하기 위해 락온
         State = Define.State.Attack;
 
-        // 콤보 피해증폭은 DmgAmp에 일시 가산해서 BattleMath에 전달
-        float prevDmgAmp = DmgAmp;
-        DmgAmp += ComboDmgBoostBonus();
-
-        BattleMath.DamageResult result = BattleMath.Resolve(this, nearest, AttackType.Physical);
-
-        DmgAmp = prevDmgAmp;
-
-        nearest.TakeHit(result, this);
-
-        // 타격(명중) 성공 시에만 콤보 누적
-        if (result.Hit)
-            OnHitLanded?.Invoke(result.FinalDamage);
+        // 명중/회피 dice + BattleMath.Resolve + TakeHit는 Attack.anim의 키프레임 이벤트
+        // (AttackTrigger, 0.5s)에서 호출됨. OnHit으로 인터럽트되면 키프레임에 도달하지
+        // 못해 자연스럽게 데미지 미적용 (슬라이드 60 — 인터럽트 = 빗나감).
 
         if (_attackResetCo != null) StopCoroutine(_attackResetCo);
         _attackResetCo = StartCoroutine(CoResetStateAfterAttack());
     }
 
     Coroutine _attackResetCo;
+    MonsterController _attackTarget;   // 현재 진행 중인 Attack의 락온 타겟
 
     float ComboAtkSpeedBonus() => Managers.Combo?.AtkSpeedBonus ?? 0f;
     float ComboDmgBoostBonus() => Managers.Combo?.DmgBoostBonus ?? 0f;
 
-    MonsterController FindNearestMonster()
+    // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster 중 첫 번째.
+    // 일반적으로 동시 engage는 1마리 (현재 spawn 로직). 다중 monster 시 가장 가까운 거 우선 등 확장 여지.
+    MonsterController FindEngagedMonster()
     {
-        MonsterController[] monsters = FindObjectsByType<MonsterController>(FindObjectsSortMode.None);
-        MonsterController nearest = null;
-        float minDist = float.MaxValue;
-        foreach (var m in monsters)
+        Transform monsterRoot = Managers.Object?.MonsterTransform;
+        if (monsterRoot == null) return null;
+        for (int i = 0; i < monsterRoot.childCount; i++)
         {
-            if (m.State == Define.State.Dead) continue;
-            float d = Vector2.Distance(transform.position, m.transform.position);
-            if (d < minDist) { minDist = d; nearest = m; }
+            var m = monsterRoot.GetChild(i).GetComponent<MonsterController>();
+            if (m == null || m.State == Define.State.Dead) continue;
+            if (m.HasEngaged) return m;
         }
-        return nearest;
+        return null;
     }
 
     // 슬라이드 65 — Attack Anim 길이 1초 고정 (Player 직업별 예외는 후속).
@@ -212,8 +254,29 @@ public class PlayerController : CreatureController
         // TODO: 게임 오버 연출
     }
 
+    // 슬라이드 61 — Animation Event에서 호출되는 공격판정 순간.
+    // Attack.anim의 0.5s 키프레임에 functionName=AttackTrigger 이벤트 등록되어 있음.
+    // 명중/회피 dice + BattleMath.Resolve + TakeHit를 이 시점에 처리.
+    //
+    // OnHit 등으로 Attack 클립이 인터럽트되면 이 이벤트가 발화되지 않아 자연스럽게
+    // 데미지가 들어가지 않음 (슬라이드 60 — 공격이 끊긴 경우).
     public void AttackTrigger()
     {
+        if (_attackTarget == null) return;
+        if (_attackTarget.State == Define.State.Dead) return;
+        if (State != Define.State.Attack) return;       // OnHit/Idle로 바뀌었으면 무시
+        if (!_attackTarget.HasEngaged) return;          // engagement가 풀렸으면 silent miss
 
+        // 콤보 피해증폭은 DmgAmp에 일시 가산해서 BattleMath에 전달
+        float prevDmgAmp = DmgAmp;
+        DmgAmp += ComboDmgBoostBonus();
+        BattleMath.DamageResult result = BattleMath.Resolve(this, _attackTarget, AttackType.Physical);
+        DmgAmp = prevDmgAmp;
+
+        _attackTarget.TakeHit(result, this);
+
+        // 타격(명중) 성공 시에만 콤보 누적
+        if (result.Hit)
+            OnHitLanded?.Invoke(result.FinalDamage);
     }
 }

@@ -1,4 +1,7 @@
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
+using static Define;
 
 public class UI_MonsterHPBar : UI_Base
 {
@@ -26,6 +29,17 @@ public class UI_MonsterHPBar : UI_Base
 
     #endregion
 
+    // 슬라이드 59 — 희귀도별 Scale / Color / Material
+    static readonly Color COLOR_COMMON = Color.white;
+    static readonly Color COLOR_RARE   = new Color32(0xFF, 0xD4, 0x00, 0xFF);   // FFD400
+    static readonly Color COLOR_BOSS   = new Color32(0xFF, 0x43, 0x00, 0xFF);   // FF4300
+
+    const float SCALE_COMMON = 1.0f;
+    const float SCALE_RARE   = 1.15f;
+    const float SCALE_BOSS   = 1.3f;
+
+    const float OPEN_ANIM_DURATION = 0.5f;
+
     private void Awake() { Init(); }
 
     public override bool Init()
@@ -44,9 +58,11 @@ public class UI_MonsterHPBar : UI_Base
     public void SetInfo(MonsterController monster)
     {
         if (Managers.Data.CreatureDic.TryGetValue(monster.DataId, out var data))
-            GetText((int)Texts.MonsterNameDisplay).text = data.Name;
+            GetText((int)Texts.MonsterNameDisplay).text = Util.Localize(data.Name);
 
+        ApplyRarity(monster.Rarity);
         UpdateHp(monster.Hp, monster.MaxHp);
+        PlayOpenAnimation(monster.Rarity);
 
         monster.OnHpChanged += (cur, max) =>
         {
@@ -56,9 +72,54 @@ public class UI_MonsterHPBar : UI_Base
         };
     }
 
+    void ApplyRarity(CreatureRarity rarity)
+    {
+        Image frame = GetImage((int)Images.Frame);
+        if (frame == null) return;
+
+        // Color
+        switch (rarity)
+        {
+            case CreatureRarity.Rare: frame.color = COLOR_RARE; break;
+            case CreatureRarity.Boss: frame.color = COLOR_BOSS; break;
+            default:                  frame.color = COLOR_COMMON; break;
+        }
+
+        // Material — Path_Image_Knight (희귀) / Path_Image_BeastLord (우두머리)
+        // Common은 기본 UI material 그대로 (null로 두면 Image 기본 material 사용)
+        string matName = rarity switch
+        {
+            CreatureRarity.Rare => "Path_Image_Knight",
+            CreatureRarity.Boss => "Path_Image_BeastLord",
+            _                   => null,
+        };
+        if (matName != null)
+        {
+            Material mat = Managers.Resource.Load<Material>(matName);
+            if (mat != null) frame.material = mat;
+        }
+        else
+        {
+            frame.material = null;   // 기본 UI material로 복귀
+        }
+    }
+
+    void PlayOpenAnimation(CreatureRarity rarity)
+    {
+        float targetScale = rarity switch
+        {
+            CreatureRarity.Rare => SCALE_RARE,
+            CreatureRarity.Boss => SCALE_BOSS,
+            _                   => SCALE_COMMON,
+        };
+
+        // 슬라이드 59 — Move (Duration 0.5 OutBack). 빈 상태에서 표시되는 spawn 연출로 scale 0 → target.
+        transform.localScale = Vector3.zero;
+        transform.DOScale(targetScale, OPEN_ANIM_DURATION).SetEase(Ease.OutBack);
+    }
+
     void UpdateHp(float cur, float max)
     {
         GetImage((int)Images.MonsterHPBarGuage).fillAmount = max > 0 ? cur / max : 0f;
     }
-
 }
