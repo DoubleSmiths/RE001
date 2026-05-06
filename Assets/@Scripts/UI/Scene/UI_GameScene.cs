@@ -571,11 +571,17 @@ public class UI_GameScene : UI_Scene
         {
             Vector3 pos = player.transform.position;
 
-            // 2-1. Level Up Text 팝업
+            // 2-1. Level Up Text 팝업 — RectTransform 기반 UI prefab. Canvas(SceneUI) 하위로 parent + local 좌표 리셋.
             var textPopup = Managers.Resource.Instantiate("UI_PlayerLevelUpTextPopup");
-            if (textPopup != null) textPopup.transform.position = pos;
+            if (textPopup != null)
+            {
+                textPopup.transform.SetParent(transform, worldPositionStays: false);
+                var rt = textPopup.GetComponent<RectTransform>();
+                if (rt != null) rt.anchoredPosition = Vector2.zero;
+                textPopup.transform.localScale = Vector3.one;
+            }
 
-            // 2-2. Level Up Effect
+            // 2-2. Level Up Effect — ParticleSystem 기반 world-space VFX.
             var effect = Managers.Resource.Instantiate("Player Level Up Ef");
             if (effect != null) effect.transform.position = pos;
 
