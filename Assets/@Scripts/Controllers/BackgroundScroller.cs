@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// CH1BG 오브젝트에 부착. 자식 레이어들을 패럴랙스 효과와 함께 무한 루프 스크롤.
-/// 자식 순서: 뒤(layer01) → 앞(layer05), 앞일수록 빠르게 이동.
-/// </summary>
+// 슬라이드 56/58 — Battle Scene Layer Scrolling.
+// CH1BG 같은 BG prefab에 부착. 자식 SpriteRenderer 레이어를 슬라이드 58 절대 속도(units/sec)로 무한 스크롤.
+//
+// 슬라이드 58 — Layer 별 Speed (translate(DeltaTime * Speed, 0, 0)):
+//   Layer1: 1, Layer2: 2, Layer3: 3, Layer4: 4, Layer5: 4, Ground: 5
+//
+// 자식 순서 0 → N: 뒤(layer01) → 앞(layer05) → Ground.
+// _layerSpeeds 배열 길이를 초과하는 자식은 마지막 entry 값으로 fallback.
+// IsScrolling = false 가 기본 (슬라이드 55 — [지역명 UI] In 종료 시점에 외부에서 true로 set).
 public class BackgroundScroller : MonoBehaviour
 {
-    [SerializeField] float _baseScrollSpeed = 2f;
-
-    // 자식 레이어 순서에 맞는 패럴랙스 배율 (layer01~05 순서)
-    // 뒤 레이어일수록 느리게, 앞 레이어일수록 빠르게
-    [SerializeField] float[] _parallaxFactors = { 0.15f, 0.3f, 0.5f, 0.75f, 1.0f };
+    // 슬라이드 58 기본값 — BG1..5 + Ground
+    [SerializeField] float[] _layerSpeeds = { 1f, 2f, 3f, 4f, 4f, 5f };
 
     class LayerData
     {
@@ -23,7 +25,7 @@ public class BackgroundScroller : MonoBehaviour
 
     readonly List<LayerData> _layers = new List<LayerData>();
     float _camLeftEdge;
-    public bool IsScrolling { get; set; } = true;
+    public bool IsScrolling { get; set; } = false;
 
     void Start()
     {
@@ -47,7 +49,7 @@ public class BackgroundScroller : MonoBehaviour
             }
 
             float width = sr.bounds.size.x;
-            float factor = idx < _parallaxFactors.Length ? _parallaxFactors[idx] : 1f;
+            float speed = SpeedForIndex(idx);
 
             // 복사본 생성: A(원본) 바로 오른쪽에 B 배치
             GameObject cloneGo = Instantiate(child.gameObject, transform);
@@ -59,11 +61,18 @@ public class BackgroundScroller : MonoBehaviour
                 A = child,
                 B = cloneGo.transform,
                 Width = width,
-                Speed = _baseScrollSpeed * factor
+                Speed = speed
             });
 
             idx++;
         }
+    }
+
+    float SpeedForIndex(int idx)
+    {
+        if (_layerSpeeds == null || _layerSpeeds.Length == 0) return 0f;
+        if (idx < _layerSpeeds.Length) return _layerSpeeds[idx];
+        return _layerSpeeds[_layerSpeeds.Length - 1];
     }
 
     void Update()
@@ -92,11 +101,10 @@ public class BackgroundScroller : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    [ContextMenu("Reset Scroll Speed")]
+    [ContextMenu("Reset to Slide 58 Defaults")]
     void ResetSpeed()
     {
-        _baseScrollSpeed = 2f;
-        _parallaxFactors = new float[] { 0.15f, 0.3f, 0.5f, 0.75f, 1.0f };
+        _layerSpeeds = new[] { 1f, 2f, 3f, 4f, 4f, 5f };
     }
 #endif
 }

@@ -162,11 +162,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         RefreshNotify();
 
         ChangeMap();
+        // 슬라이드 57 — 진입 직후엔 Player Idle 고정 (배경 스크롤도 정지).
+        // 배너 In Animation 종료 시점에 UI_GameScene.StartBattleSceneScroll가 Moving으로 전환 + BG scroll 시작.
         if (Managers.Game.Player != null)
-        {
-            Managers.Game.Player.State = State.Moving;
-            Managers.Game.Player.StartBattle();
-        }
+            Managers.Game.Player.State = State.Idle;
 
         // 전투 기록: Player 이벤트 구독 + 최초 IDLE 상태로 UI 세팅.
         HookPlayerLogEvents();
@@ -732,7 +731,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     public override void PlayEnterAnimation()
     {
-        Managers.UI.ShowToast("산들바람 숲(입구)");
+        // 슬라이드 55 — 지역명은 UI_AreaNameBanner가 표시 (Toast 사용 중단).
+        // 이 콜백은 EnterAreaWithFade의 banner onInComplete(t=2.0)에서 호출됨.
         StartBattle();
     }
 

@@ -87,8 +87,11 @@ public class PlayerController : CreatureController
         if (result.Hit)
             OnHitLanded?.Invoke(result.FinalDamage);
 
-        StartCoroutine(CoResetStateAfterAttack());
+        if (_attackResetCo != null) StopCoroutine(_attackResetCo);
+        _attackResetCo = StartCoroutine(CoResetStateAfterAttack());
     }
+
+    Coroutine _attackResetCo;
 
     float ComboAtkSpeedBonus() => Managers.Combo?.AtkSpeedBonus ?? 0f;
     float ComboDmgBoostBonus() => Managers.Combo?.DmgBoostBonus ?? 0f;
@@ -107,25 +110,18 @@ public class PlayerController : CreatureController
         return nearest;
     }
 
+    // 슬라이드 65 — Attack Anim 길이 1초 고정 (Player 직업별 예외는 후속).
+    // IsName 폴링 방식은 CrossFade 직후 transition 중에 false를 반환해 1프레임 만에 빠지는 케이스가 있어
+    // 시간 기반 대기로 단순화한다. OnHit 등 다른 이벤트가 State를 바꿨으면 Idle로 되돌리지 않는다.
+    const float ATTACK_CLIP_LENGTH = 1.0f;
+
     IEnumerator CoResetStateAfterAttack()
     {
-        yield return null;
+        yield return new WaitForSeconds(ATTACK_CLIP_LENGTH);
+        _attackResetCo = null;
 
-        // Attack 애니메이션 진입 대기 (타임아웃 1초 → Animator에 Attack 상태 없어도 탈출)
-        float timeout = Time.time + 1f;
-        while (_anim != null && !_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-        {
-            if (Time.time >= timeout) break;
-            yield return null;
-        }
-
-        // Attack 애니메이션 완료 대기
-        while (_anim != null &&
-               _anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") &&
-               _anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
-            yield return null;
-
-        if (State != Define.State.Dead)
+        if (State == Define.State.Dead) yield break;
+        if (State == Define.State.Attack)   // 그 사이 OnHit/Idle 등으로 바뀌었으면 건드리지 않음
             State = Define.State.Idle;
     }
 

@@ -279,6 +279,8 @@ public class UI_GameScene : UI_Scene
         return true;
     }
 
+    // 슬라이드 55 — Battle Scene 진입 시 Fade Out 0.5 / Fade In 1.0.
+    // Fade In 절반(t=1.0)에 [지역명 UI] 표시. 배너 In Animation 종료(t=2.0)에 BG scroll + Player Idle→Run + 배틀 루프 시작.
     public bool EnterAreaWithFade(AreaType area, System.Action onBlack = null)
     {
         if (CanEnterAreaTransition(area) == false)
@@ -291,22 +293,72 @@ public class UI_GameScene : UI_Scene
         _isAreaTransitioning = true;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(fade.DOFade(1f, 0.4f).SetEase(Ease.InQuad).SetUpdate(true));
-        seq.AppendInterval(0.15f);
+
+        // Fade Out 0.5s
+        seq.Append(fade.DOFade(1f, 0.5f).SetEase(Ease.InQuad).SetUpdate(true));
+
+        // 검은 화면에서 영역 교체
         seq.AppendCallback(() =>
         {
             onBlack?.Invoke();
             if (SwapAreaBtnGroup(area) == false)
                 Debug.LogWarning($"[UI_GameScene] SwapAreaBtnGroup failed during transition. area={area}");
         });
-        seq.Append(fade.DOFade(0f, 0.5f).SetEase(Ease.InQuad).SetUpdate(true));
-        seq.OnComplete(() =>
+
+        // Fade In 1.0s
+        seq.Append(fade.DOFade(0f, 1.0f).SetEase(Ease.InQuad).SetUpdate(true));
+
+        if (area == AreaType.Battle)
         {
-            _isAreaTransitioning = false;
-            _currentBtnGroup?.PlayEnterAnimation();
-        });
+            // Battle 진입 — Fade In 50% (절대 t=1.0)에 UI_Toast(지역명 배너) 표시.
+            // Toast prefab의 DOTweenAnimation Move 종료(슬라이드 55: 1초)에서 진입 완료 처리.
+            seq.InsertCallback(1.0f, () => Managers.UI.ShowToast(GetCurrentAreaName()));
+            seq.InsertCallback(2.0f, () =>
+            {
+                StartBattleSceneScroll();
+                _currentBtnGroup?.PlayEnterAnimation();
+            });
+            seq.OnComplete(() => _isAreaTransitioning = false);
+        }
+        else
+        {
+            // 비-Battle (마을 등) — 기존 동작: fade 끝나면 바로 PlayEnterAnimation
+            seq.OnComplete(() =>
+            {
+                _isAreaTransitioning = false;
+                _currentBtnGroup?.PlayEnterAnimation();
+            });
+        }
         seq.OnKill(() => _isAreaTransitioning = false);
         return true;
+    }
+
+    string GetCurrentAreaName()
+    {
+        int id = Managers.Game?.CurrentTravelAreaId ?? 0;
+        if (Managers.Data?.TravelNodeDic != null &&
+            Managers.Data.TravelNodeDic.TryGetValue(id, out var node))
+            return Util.Localize(node.Name);
+        return string.Empty;
+    }
+
+    void StartBattleSceneScroll()
+    {
+        // 슬라이드 55/57/58 — 배경 스크롤 시작 + Player Idle→Run
+        BackgroundScroller scroller = null;
+        foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (go.name == "CH1BG" || go.name == "CH1BG(Clone)")
+            {
+                scroller = go.GetComponent<BackgroundScroller>();
+                if (scroller != null) break;
+            }
+        }
+        if (scroller != null) scroller.IsScrolling = true;
+
+        var player = Managers.Game?.Player;
+        if (player != null && player.State != Define.State.Dead)
+            player.State = Define.State.Moving;
     }
 
     bool SwapAreaBtnGroup(AreaType area)
