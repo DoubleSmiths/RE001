@@ -44,7 +44,29 @@ public class UI_ImportantSlot : UI_Base
         BindObject(typeof(GameObjects));
         #endregion
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: AmountTxt(동적 숫자) / ImportantSlotNewTxt(NEW 라벨)
+    void RefreshTexts()
+    {
+        var amount = GetText((int)Texts.AmountTxt);
+        if (amount != null) ApplyFont(amount, Define.FontType.UI);
+        var newTxt = GetText((int)Texts.ImportantSlotNewTxt);
+        if (newTxt != null)
+        {
+            ApplyFont(newTxt, Define.FontType.UI);
+            newTxt.text = Util.Localize(Define.LocalizeKey.ImportantSlotNewTxt);
+        }
     }
 
     public void SetInfo(InventoryItem inventoryItem = null, ItemData itemData = null)

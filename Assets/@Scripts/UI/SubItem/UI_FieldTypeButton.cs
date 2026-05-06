@@ -51,9 +51,23 @@ public class UI_FieldTypeButton : UI_Base
         // TODO : 퀘스트 VFX 활성화/비활성화 로직 추가
         // TODO : EFrame 활성화/비활성화 로직 추가 -> 이 버튼이 선택이 된 경우 활성화, 선택이 안된 경우 비활성화
 
-
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: FieldTypeButtonText — 동적 (TravelNodeData), 폰트만.
+    void RefreshTexts()
+    {
+        var tmp = GetText((int)Texts.FieldTypeButtonText);
+        if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
     }
 
 

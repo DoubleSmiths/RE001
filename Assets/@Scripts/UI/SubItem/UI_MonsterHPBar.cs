@@ -52,7 +52,23 @@ public class UI_MonsterHPBar : UI_Base
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: MonsterNameDisplay — 동적 (CreatureData.Name SetInfo에서 set), Battle 폰트만.
+    void RefreshTexts()
+    {
+        var name = GetText((int)Texts.MonsterNameDisplay);
+        if (name != null) ApplyFont(name, Define.FontType.Battle);
     }
 
     public void SetInfo(MonsterController monster)

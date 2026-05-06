@@ -69,7 +69,25 @@ public class UI_DialoguePopup : UI_Popup
 
         GetImage((int)Images.Panel).gameObject.BindEvent(OnClickTextBoxDialogueFrame);
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: DialogueText / DialogueName 모두 동적 (대화 데이터로 매번 set) — 폰트만 적용.
+    void RefreshTexts()
+    {
+        var dialogue = GetText((int)Texts.DialogueText);
+        if (dialogue != null) ApplyFont(dialogue, FontType.Dialogue);
+        var name = GetText((int)Texts.DialogueName);
+        if (name != null) ApplyFont(name, FontType.Dialogue);
     }
 
     static void SetAlpha(UnityEngine.UI.Image img, float a)

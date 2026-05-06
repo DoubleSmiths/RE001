@@ -56,8 +56,23 @@ public class UI_FieldSelectButton : UI_Base
         gameObject.BindEvent(OnClickFieldSelectButton);
         gameObject.BindEvent(() => OnClickButtonAnim(gameObject.GetComponent<Button>()));
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: FieldSelectButtonText — TravelNodeData.Name(localize 키)로 SetInfo에서 set, 폰트만 일괄 적용.
+    void RefreshTexts()
+    {
+        var tmp = GetText((int)Texts.FieldSelectButtonText);
+        if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
     }
 
     public void SetInfo(TravelNodeData node)

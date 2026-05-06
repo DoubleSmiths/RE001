@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+using static Define;
 
 public class UI_TtitleScene : UI_Scene
 {
@@ -49,7 +49,26 @@ public class UI_TtitleScene : UI_Scene
         });
         GetButton((int)Buttons.StartButton).gameObject.SetActive(false);
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    void RefreshTexts()
+    {
+        var startTmp = GetText((int)Texts.StartText);
+        if (startTmp != null)
+        {
+            ApplyFont(startTmp, FontType.UI);
+            startTmp.text = Util.Localize(LocalizeKey.StartText);
+        }
     }
 
     private void Awake()

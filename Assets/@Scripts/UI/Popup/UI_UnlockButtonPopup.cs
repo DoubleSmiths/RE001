@@ -64,7 +64,25 @@ public class UI_UnlockButtonPopup : UI_Popup
 
         GetImage((int)Images.Content).gameObject.BindEvent(OnClickContent);
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: IconNameText / TextTMP 모두 동적 (해금 버튼별 set) — 폰트만 적용.
+    void RefreshTexts()
+    {
+        var icon = GetText((int)Texts.IconNameText);
+        if (icon != null) ApplyFont(icon, Define.FontType.UI);
+        var tmp = GetText((int)Texts.TextTMP);
+        if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
     }
 
     // TMP는 매 프레임 메시를 재갱신하므로 LateUpdate에서 알파를 강제 적용

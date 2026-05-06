@@ -53,7 +53,23 @@ public class UI_BattleDropItem : UI_Base
         if (_gradeParticleGO != null)
             _gradeParticle = _gradeParticleGO.GetComponent<ParticleSystem>();
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: UI_BattleDropItemCount — 동적 숫자 (RefreshCount에서 set), Battle 폰트만.
+    void RefreshTexts()
+    {
+        var count = GetText((int)Texts.UI_BattleDropItemCount);
+        if (count != null) ApplyFont(count, Define.FontType.Battle);
     }
 
     // 슬롯 최초 생성 — 아이콘/등급/카운트 세팅 + 초기 DOTween 연출.

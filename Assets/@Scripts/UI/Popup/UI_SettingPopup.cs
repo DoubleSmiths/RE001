@@ -16,6 +16,8 @@ public class UI_SettingPopup : UI_Popup
 
     enum Texts
     {
+        SettingPopupLanguageText,
+        SettingPopupSoundText,
         SettingPopupBGMText,
         SettingPopupSFXText,
         SettingPopupEffectsTitle,
@@ -92,10 +94,41 @@ public class UI_SettingPopup : UI_Popup
 
         RefreshButtons();
         RefreshLanguageButtons();
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 
         OpenAnimation();
 
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts 모든 entry — 폰트 + 한영 localization 일괄 처리.
+    void RefreshTexts()
+    {
+        SetTextLocalized(Texts.SettingPopupLanguageText, LocalizeKey.LanguageText);
+        SetTextLocalized(Texts.SettingPopupSoundText, LocalizeKey.SoundText);
+        SetTextLocalized(Texts.SettingPopupBGMText, LocalizeKey.BGMText);
+        SetTextLocalized(Texts.SettingPopupSFXText, LocalizeKey.SFXText);
+        SetTextLocalized(Texts.SettingPopupEffectsTitle, LocalizeKey.EffectsTitle);
+        SetTextLocalized(Texts.SettingPopupPopupText, LocalizeKey.PopupText);
+        SetTextLocalized(Texts.SettingPopupShakeText, LocalizeKey.ShakeText);
+        // GameObject — enum 잘못 박힌 entry로 보임. 텍스트 용도 아님 → 폰트만 적용.
+        var dummyTmp = GetText((int)Texts.GameObject);
+        if (dummyTmp != null) ApplyFont(dummyTmp, FontType.UI);
+    }
+
+    void SetTextLocalized(Texts texts, string locKey)
+    {
+        var tmp = GetText((int)texts);
+        if (tmp == null) return;
+        ApplyFont(tmp, FontType.UI);
+        tmp.text = Util.Localize(locKey);
     }
 
     // ────────────────────────────────────────

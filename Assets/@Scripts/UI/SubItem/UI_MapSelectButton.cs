@@ -57,7 +57,23 @@ public class UI_MapSelectButton : UI_Base
         gameObject.BindEvent(OnClickMapSelectButton);
         gameObject.BindEvent(() => OnClickButtonAnim(gameObject.GetComponent<Button>()));
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: MapSelectButtonText — 동적 (TravelNodeData.Name), 폰트만.
+    void RefreshTexts()
+    {
+        var tmp = GetText((int)Texts.MapSelectButtonText);
+        if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
     }
 
 

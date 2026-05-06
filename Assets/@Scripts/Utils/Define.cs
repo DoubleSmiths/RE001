@@ -285,6 +285,22 @@ public class Define
         public const string LootText = "LootText";
         public const string SPDPotion0DescText = "SPDPotion0DescText";
 
+        // ── Setting Popup (JSON 키 추가 필요) ──
+        public const string LanguageText = "LanguageText";
+        public const string SoundText = "SoundText";
+        public const string BGMText = "BGMText";
+        public const string SFXText = "SFXText";
+        public const string EffectsTitle = "EffectsTitle";
+        public const string PopupText = "PopupText";
+        public const string ShakeText = "ShakeText";
+
+        // ── Title Scene (JSON 키 추가 필요) ──
+        public const string StartText = "StartText";
+
+        // ── Inventory Slot (JSON 키 추가 필요) ──
+        public const string InvSlotNewTxt = "InvSlotNewTxt";
+        public const string ImportantSlotNewTxt = "ImportantSlotNewTxt";
+
         // ── TownAsdalButtons ──
         public const string GuildText = "GuildText";
         public const string QuestText = "QuestText";

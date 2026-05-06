@@ -56,8 +56,23 @@ public class UI_Toast : UI_Base
         #endregion
 
         Refresh();
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 
         return true;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        base.OnDestroy();
+    }
+
+    // enum Texts: StageTitle_Txt — 동적 (지역명, SetInfo에서 set), 폰트만.
+    void RefreshTexts()
+    {
+        var tmp = GetText((int)Texts.StageTitle_Txt);
+        if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
     }
 
     public void SetInfo(string msg)
