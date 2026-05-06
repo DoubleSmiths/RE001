@@ -572,6 +572,7 @@ public class UI_GameScene : UI_Scene
             Vector3 pos = player.transform.position;
 
             // 2-1. Level Up Text 팝업 — RectTransform 기반 UI prefab. Canvas(SceneUI) 하위로 parent + local 좌표 리셋.
+            // prefab 내부 DOTweenAnimation 최대 anim 시간 ≈ 1.5s. 2s 후 자체 정리.
             var textPopup = Managers.Resource.Instantiate("UI_PlayerLevelUpTextPopup");
             if (textPopup != null)
             {
@@ -579,11 +580,16 @@ public class UI_GameScene : UI_Scene
                 var rt = textPopup.GetComponent<RectTransform>();
                 if (rt != null) rt.anchoredPosition = Vector2.zero;
                 textPopup.transform.localScale = Vector3.one;
+                Destroy(textPopup, 2f);
             }
 
-            // 2-2. Level Up Effect — ParticleSystem 기반 world-space VFX.
+            // 2-2. Level Up Effect — ParticleSystem 기반 world-space VFX. 3s 후 정리.
             var effect = Managers.Resource.Instantiate("Player Level Up Ef");
-            if (effect != null) effect.transform.position = pos;
+            if (effect != null)
+            {
+                effect.transform.position = pos;
+                Destroy(effect, 3f);
+            }
 
             // 2-3. HP 회복 텍스트 (초록). 회복량 0이면 popup 생략.
             if (regenHp > 0)
