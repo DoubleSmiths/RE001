@@ -26,6 +26,9 @@ public class PlayerController : CreatureController
         ObjectType = ObjectType.Player;
         State = Define.State.Idle;
         _originalPos = transform.position;
+        // 슬라이드 62/63 — Monster→Player Miss popup, 추후 heal popup 등이 사용할 머리 위 offset.
+        // Player prefab YAML에 직렬화 안 된 경우를 대비해 명시적으로 set (CreatureController 기본 2.5).
+        DamageFontYOffset = 2.5f;
         RefreshStats();
         return true;
     }

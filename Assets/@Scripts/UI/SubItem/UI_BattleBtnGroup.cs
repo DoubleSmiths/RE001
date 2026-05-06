@@ -820,12 +820,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
             if (mc != null)
             {
+                // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
+                // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
                 mc.OnEngaged += () =>
                 {
                     Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
+                    StartBattleLog(mc);
                 };
-                // 슬라이드 50: 새 몬스터와 조우 → 전투 기록 리셋 + 타이머 시작
-                StartBattleLog(mc);
             }
             yield return new WaitUntil(() => monsterRoot.childCount == 0);
 

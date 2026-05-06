@@ -86,9 +86,9 @@
       "Eng": "SKILL"
     },
     {
-      "TextKey": "BtmBeastiaryBtnText",
+      "TextKey": "BtmMinimonCodexBtnText",
       "Kor": "도감",
-      "Eng": "BEASTI"
+      "Eng": "CODEX"
     },
     {
       "TextKey": "GuildText",
@@ -331,14 +331,84 @@
       "Eng": "HEAD OUT"
     },
     {
-      "TextKey": "BeastiaryText",
-      "Kor": "마물 도감",
-      "Eng": "BEASTIARY"
+      "TextKey": "MinimonCodexText",
+      "Kor": "미니몬 도감",
+      "Eng": "MINIMON CODEX"
     },
     {
       "TextKey": "CompletionText",
       "Kor": "완성도",
       "Eng": "COMPLETION"
+    },
+    {
+      "TextKey": "MinimonEntryText",
+      "Kor": "미니몬 기록",
+      "Eng": "MINIMON ENTRY"
+    },
+    {
+      "TextKey": "LinkText",
+      "Kor": "공명도",
+      "Eng": "LINK"
+    },
+    {
+      "TextKey": "UniqueSkillText",
+      "Kor": "고유기술",
+      "Eng": "UNIQUE SKILL"
+    },
+    {
+      "TextKey": "100LinkRequiredText",
+      "Kor": "공명도 100% 필요",
+      "Eng": "LINK 100% REQUIRED"
+    },
+    {
+      "TextKey": "InfoAndStatsText",
+      "Kor": "기초 정보 & 확률",
+      "Eng": "INFO & STATS"
+    },
+    {
+      "TextKey": "MinimonNameText",
+      "Kor": "이름",
+      "Eng": "NAME"
+    },
+    {
+      "TextKey": "HabitatText",
+      "Kor": "서식지",
+      "Eng": "HABITAT"
+    },
+    {
+      "TextKey": "EXPText",
+      "Kor": "경험치",
+      "Eng": "EXP"
+    },
+    {
+      "TextKey": "EncounterText",
+      "Kor": "등장확률",
+      "Eng": "ENCOUNTER"
+    },
+    {
+      "TextKey": "AttentionRateText",
+      "Kor": "관심확률",
+      "Eng": "ATTENTION"
+    },
+    {
+      "TextKey": "LogText",
+      "Kor": "기록도",
+      "Eng": "LOG"
+    },
+    {
+      "TextKey": "LogCompletionText",
+      "Kor": "이 미니몬의 물품 획득 & 관심 확률",
+      "Eng": "THIS MINIMON'S DROP & ATTRACT"
+    },
+    {
+      "TextKey": "LootText",
+      "Kor": "전리품",
+      "Eng": "LOOT"
+    },
+    {
+      "TextKey": "MyMinimon",
+      "Kor": "나의 미니몬",
+      "Eng": "MY MINIMON"
     },
     {
       "TextKey": "PlaceEverywhereText",

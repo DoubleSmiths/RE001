@@ -22,7 +22,15 @@
       "RewardGold": 5,
       "DropItemId": 10001,
       "DropCount": 1,
-      "DropChance": 1.0
+      "DropChance": 1.0,
+      "DmgAmp": 0.0,
+      "Rarity": "Common",
+      "MonsterAttackDelay": 1.5,
+      "EncounterRate": 1.0,
+      "InterestRate": 0.0,
+      "MaxKillCount": 100,
+      "SpawnY": 2.3,
+      "DamageFontYOffset": 2.5
     },
     {
       "DataId": 2002,
@@ -46,7 +54,15 @@
       "RewardGold": 8,
       "DropItemId": 10002,
       "DropCount": 1,
-      "DropChance": 1.0
+      "DropChance": 1.0,
+      "DmgAmp": 0.0,
+      "Rarity": "Common",
+      "MonsterAttackDelay": 1.5,
+      "EncounterRate": 1.0,
+      "InterestRate": 0.0,
+      "MaxKillCount": 100,
+      "SpawnY": 2.3,
+      "DamageFontYOffset": 2.5
     }
   ]
 }
