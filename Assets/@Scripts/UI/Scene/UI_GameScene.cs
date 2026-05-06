@@ -292,6 +292,26 @@ public class UI_GameScene : UI_Scene
 
         _isAreaTransitioning = true;
 
+        // 마을(Village*) 복귀 시 CurrentTravelAreaId 갱신 (HOME 버튼/사망 등 Travel popup 거치지 않는 경로).
+        // Travel popup의 "현재 위치" 표시가 마지막 전투 행선지로 남아있던 버그 차단.
+        // AreaType enum 이름과 TravelNode.AreaType 문자열을 매칭 — Village2/3 추가되어도 코드 수정 불필요.
+        // Battle은 노드가 여러 개라 자동 매칭 X (TravelPopup.TravelToNode가 정확한 노드 id를 별도로 set함).
+        if (area != AreaType.Battle)
+        {
+            string areaName = area.ToString();
+            if (Managers.Data?.TravelNodeDic != null)
+            {
+                foreach (var node in Managers.Data.TravelNodeDic.Values)
+                {
+                    if (node.AreaType == areaName)
+                    {
+                        Managers.Game.CurrentTravelAreaId = node.Id;
+                        break;
+                    }
+                }
+            }
+        }
+
         // 슬라이드 69 — Battle 씬에서 나갈 때 transit 효과:
         //   monster Idle 고정 + BG scroll OFF + Player Run + 화면 밖 이동.
         //   Fade Out 동안 진행되며, SwapAreaBtnGroup(검은 화면 시점)에서 UI_BattleBtnGroup destroy → EndBattle 정리.

@@ -850,15 +850,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 Managers.Resource.Destroy(bar.gameObject);
         }
 
-        // 전투 배경(CH1BG) + ChangeMap 에서 스폰했던 Village1_Main_BG 찌꺼기 제거.
-        // UI_Village1BtnGroup 이 RestoreLastGroup/OnClickMain 단계에서 적절한 마을 BG 를 새로 스폰함.
-        foreach (var key in new[] { "CH1BG", "Village1_Main_BG", "Village1_Guild_BG", "Village1_Alchemy_BG" })
+        // 전투 배경(CH1BG)만 정리. Village1_*_BG는 UI_Village1BtnGroup.SwitchBG가 자체 cleanup 하므로 건드리지 않음.
+        // (Phase J 이후 EnterAreaWithFade가 Village1BtnGroup을 먼저 spawn한 뒤 BattleBtnGroup OnDestroy가 발화 →
+        //  여기서 Village1_*_BG를 destroy하면 방금 스폰된 마을 BG가 같이 죽는 deferred-destroy 버그 발생함)
+        foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
         {
-            foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
-            {
-                if (go.name == key || go.name == key + "(Clone)")
-                    Destroy(go);
-            }
+            if (go.name == "CH1BG" || go.name == "CH1BG(Clone)")
+                Destroy(go);
         }
     }
 

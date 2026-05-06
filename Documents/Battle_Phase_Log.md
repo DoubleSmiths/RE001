@@ -691,6 +691,22 @@ Player가 죽어서 마을 복귀할 때 (Phase H의 CoRespawnInVillage):
 - **Player off-screen 이동 거리 -10**: 카메라 ortho size에 따라 다를 수 있음. 카메라 left edge 직접 계산하면 더 정확하지만 일단 충분한 여유 (-10) 사용. 이슈 시 calc 변경
 - **Player anim 방향**: 좌측 이동 시 sprite flip 없음. 슬라이드 spec에 spriteFlip 언급 없어 그대로 유지
 
+### 검증 중 발견된 CurrentTravelAreaId 잔여 버그 + 픽스 (2026-05-06)
+
+**증상**: HOME 버튼으로 마을 복귀 후 TravelPopup 재오픈 시 마지막 Battle 행선지가 초록색(현재 위치)로 표시됨.
+
+**원인**: `Managers.Game.CurrentTravelAreaId`가 `TravelPopup.TravelToNode`에서만 set됨. HOME/사망 경로는 TravelPopup을 거치지 않아 갱신이 안 됨.
+
+**픽스**: `EnterAreaWithFade`에서 target area가 Battle이 아닌 경우(=마을), `AreaType` enum 이름과 TravelNode의 `AreaType` 문자열을 매칭해서 `CurrentTravelAreaId`를 갱신. Village2/3 등 추후 마을 추가 시 코드 수정 없이 자동 동작.
+
+### 검증 중 발견된 deferred-destroy 버그 + 픽스 (2026-05-06)
+
+**증상**: HOME 버튼으로 마을 복귀 시 마을 BG가 안 보임 (Village1_Main_BG가 사라짐).
+
+**원인**: Phase J에서 EndBattle 호출 시점이 SwapAreaBtnGroup **이후**로 옮겨졌는데, 기존 EndBattle은 cleanup loop에서 `Village1_*_BG`도 같이 destroy 하고 있었음. Unity `Object.Destroy`는 end-of-frame deferred → SwapAreaBtnGroup이 먼저 Village1BtnGroup 스폰 + SwitchBG로 새 마을 BG 스폰 → BattleBtnGroup OnDestroy가 같은 프레임 끝에 발화 → EndBattle이 방금 스폰된 마을 BG까지 destroy.
+
+**픽스**: `EndBattle`의 cleanup loop에서 `Village1_*_BG` 항목 삭제. `CH1BG`(전투 전용 BG)만 destroy. Village BG cleanup은 이미 `UI_Village1BtnGroup.SwitchBG` 내부에서 처리되므로 중복 + 위험.
+
 ### 롤백 시 주의
 
 - `ExecuteReturnToVillage`에서 즉시 EndBattle 호출 제거됨 → `EnterAreaWithFade`가 정상 호출되어 SwapAreaBtnGroup이 결국 EndBattle 트리거하는 흐름 의존. 만약 EnterAreaWithFade가 실패하면 EndBattle도 안 됨 → 이전엔 EndBattle 먼저 했으니 더 안전했음. 하지만 Phase J 의도(monster 유지)와 충돌해서 변경.
