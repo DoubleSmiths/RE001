@@ -790,8 +790,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     // 슬라이드 58 — Player Run anim 시작 직후부터 6초 뒤 첫 몬스터 spawn,
     //               Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 6초 → 다음 spawn.
+    // Y는 monster prefab 별 sprite pivot에 따라 다르므로 CreatureData.SpawnY로 분리.
     const float MONSTER_SPAWN_DELAY = 6f;
     const float MONSTER_SPAWN_OFFSET_X = 12f;
+    const float MONSTER_SPAWN_Y_FALLBACK = 2.3f;   // CreatureData 조회 실패 시 기본값
 
     System.Collections.IEnumerator CoBattleLoop()
     {
@@ -805,12 +807,17 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             PlayerController player = Managers.Game.Player;
             if (player == null) yield break;
 
+            int dataId = 2001;
+            float spawnY = MONSTER_SPAWN_Y_FALLBACK;
+            if (Managers.Data.CreatureDic.TryGetValue(dataId, out var creatureData))
+                spawnY = creatureData.SpawnY;
+
             Vector3 spawnPos = new Vector3(
                 player.transform.position.x + MONSTER_SPAWN_OFFSET_X,
-                player.transform.position.y,
+                spawnY,
                 0f);
 
-            MonsterController mc = Managers.Object.SpawnMonster(2001, spawnPos);
+            MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
             if (mc != null)
             {
                 mc.OnEngaged += () =>

@@ -39,6 +39,10 @@ namespace Data
         public float EncounterRate = 1f;     // 0~1 — 조우 확률
         public float InterestRate = 0f;      // 0~1 — 관심 확률
         public int MaxKillCount = 100;       // 도감 해금용 최대 킬 카운트
+
+        // 몬스터 spawn 시 ground 높이 (sprite pivot 위치에 따라 prefab별로 다를 수 있음).
+        // Slime 기준 2.3 — 다른 monster 추가 시 이 값으로 발 위치 조정.
+        public float SpawnY = 2.3f;
     }
 
     [Serializable]
