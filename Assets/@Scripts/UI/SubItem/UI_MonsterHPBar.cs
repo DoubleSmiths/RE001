@@ -113,9 +113,12 @@ public class UI_MonsterHPBar : UI_Base
             _                   => SCALE_COMMON,
         };
 
-        // 슬라이드 59 — Move (Duration 0.5 OutBack). 빈 상태에서 표시되는 spawn 연출로 scale 0 → target.
-        transform.localScale = Vector3.zero;
-        transform.DOScale(targetScale, OPEN_ANIM_DURATION).SetEase(Ease.OutBack);
+        // 슬라이드 59 — Move (Duration 0.5 OutBack From x0 y0 z0)는 prefab의 DOTweenAnimation이 처리.
+        // 희귀도 scale은 별개 — DOTweenAnimation이 position을 animate하므로 충돌 없음.
+        transform.localScale = Vector3.one * targetScale;
+
+        var anim = GetComponent<DOTweenAnimation>();
+        if (anim != null) anim.DORestart();
     }
 
     void UpdateHp(float cur, float max)

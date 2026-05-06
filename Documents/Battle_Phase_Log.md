@@ -420,9 +420,10 @@
 
 ### Open Animation
 
-- Scale 0 → target (Common 1.0 / Rare 1.15 / Boss 1.3)
-- Duration 0.5s, OutBack ease
-- 슬라이드 59 "Move FROM x0 y0 z0"는 빈 위치에서 스폰하는 연출로 해석 → scale-in으로 처리
+- prefab의 **기존 DOTweenAnimation** 사용 (`GetComponent<DOTweenAnimation>().DORestart()`)
+  - 슬라이드 59 스펙대로 이미 구성됨: Move 0.5s OutBack From (0,0,0), autoPlay=false
+  - 희귀도 Scale은 별개로 `transform.localScale` 직접 set (DOTweenAnimation은 position 애니만 함)
+- 코드 측 DOScale 시퀀스는 폐기 (메모리: feedback_dotween_animation.md 원칙 준수)
 
 ### Material 로딩
 
