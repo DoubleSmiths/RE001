@@ -488,7 +488,7 @@ public class UI_GameScene : UI_Scene
     void RefreshPlayerBar()
     {
         int lv = Managers.Game.Level;
-        GetText((int)Texts.PlayerLevelText).text = $"Lv.{lv}";
+        GetText((int)Texts.PlayerLevelText).text = $"{Util.Localize(LocalizeKey.PlayerLvPrefix)}{lv}";
         GetText((int)Texts.PlayerRankText).text = Managers.Game.PlayerName;
 
         // TODO: 직업에 따라 PortraitImg 스프라이트 교체
@@ -506,7 +506,9 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.PotionButtonText).text = Localize(LocalizeKey.BtmPotionBtnText);
         GetText((int)Texts.EquipmentButtonText).text = Localize(LocalizeKey.BtmEquipmentBtnText);
         GetText((int)Texts.SkillButtonText).text = Localize(LocalizeKey.BtmSkillBtnText);
-        GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BtmBeastiaryBtnText);
+        GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BtmMinimonCodexBtnText);
+        // PlayerLv prefix 등 동적 텍스트도 언어 변경 시 재갱신
+        RefreshPlayerBar();
     }
 
     public void RefreshBTMButtonGroup()
@@ -590,7 +592,7 @@ public class UI_GameScene : UI_Scene
     //   2-6. [상태] Button [+] icon Punch/Scale (Duration 0.3 OutQuad TO 0.2 Vibrato 10 Elasticity 1)
     public void OnLevelUp(int newLevel, int regenHp)
     {
-        GetText((int)Texts.PlayerLevelText).text = $"Lv.{newLevel}";
+        GetText((int)Texts.PlayerLevelText).text = $"{Util.Localize(LocalizeKey.PlayerLvPrefix)}{newLevel}";
 
         PlayerController player = Managers.Game?.Player;
         if (player != null)

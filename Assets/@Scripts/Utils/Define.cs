@@ -228,7 +228,62 @@ public class Define
         public const string BtmPotionBtnText = "BtmPotionBtnText";
         public const string BtmEquipmentBtnText = "BtmEquipmentBtnText";
         public const string BtmSkillBtnText = "BtmSkillBtnText";
-        public const string BtmBeastiaryBtnText = "BtmBeastiaryBtnText";
+        public const string BtmMinimonCodexBtnText = "BtmMinimonCodexBtnText";
+
+        // ── Battle ──
+        public const string BattleMissText = "BattleMissText";
+        public const string BattleCriticalText = "BattleCriticalText";
+        public const string PlayerLvPrefix = "PlayerLvPrefix";
+        public const string DmgBoostText = "DmgBoostText";
+        public const string ReturnText = "ReturnText";
+        public const string ReturnConfirmText = "ReturnConfirmText";
+        public const string ComboLv0Text = "ComboLv0Text";
+        public const string ComboLv1Text = "ComboLv1Text";
+        public const string ComboLv2Text = "ComboLv2Text";
+        public const string ComboLv3Text = "ComboLv3Text";
+        public const string ComboLv4Text = "ComboLv4Text";
+        public const string ComboLv5Text = "ComboLv5Text";
+        public const string ComboLv6Text = "ComboLv6Text";
+        public const string BattleTimeText = "BattleTimeText";
+        public const string BattleLogText = "BattleLogText";
+        public const string DmgDealtText = "DmgDealtText";
+        public const string DmgTakenText = "DmgTakenText";
+        public const string HPRestoredText = "HPRestoredText";
+
+        // ── Travel ──
+        public const string TownText = "TownText";
+        public const string ExploreText = "ExploreText";
+        public const string BackBtnText = "BackBtnText";
+        public const string HeadOutText = "HeadOutText";
+        public const string CurrentLocationText = "CurrentLocationText";
+        public const string BreezingWindForestNameText = "BreezingWindForestNameText";
+        public const string BreezingWindForestEntranceText = "BreezingWindForestEntranceText";
+
+        // ── Battle (추가) ──
+        public const string ComboText = "ComboText";
+        public const string CompletionText = "CompletionText";
+        public const string CritTextPopupText = "CritTextPopupText";
+        public const string EXPText = "EXPText";
+        public const string LevelText = "LevelText";
+        public const string LogText = "LogText";
+        public const string LogCompletionText = "LogCompletionText";
+        public const string NeedMatsText = "NeedMatsText";
+
+        // ── Bestiary / Minimon ──
+        public const string AttentionRateText = "AttentionRateText";
+        public const string EncounterText = "EncounterText";
+        public const string HabitatText = "HabitatText";
+        public const string InfoAndStatsText = "InfoAndStatsText";
+        public const string MinimonCodexText = "MinimonCodexText";
+        public const string MinimonEntryText = "MinimonEntryText";
+        public const string MinimonNameText = "MinimonNameText";
+        public const string MyMinimon = "MyMinimon";
+        public const string UniqueSkillText = "UniqueSkillText";
+
+        // ── Misc ──
+        public const string LinkText = "LinkText";
+        public const string LootText = "LootText";
+        public const string SPDPotion0DescText = "SPDPotion0DescText";
 
         // ── TownAsdalButtons ──
         public const string GuildText = "GuildText";

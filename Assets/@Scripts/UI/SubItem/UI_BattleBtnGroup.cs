@@ -155,7 +155,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.TravelButton)?.gameObject.BindEvent(OnClickTravel);
         RefreshReturnButtonText(false);
         var travelTmp = GetText((int)Texts.TravelButtonText);
-        if (travelTmp != null) travelTmp.text = Util.Localize("TravelBtnText");
+        if (travelTmp != null) travelTmp.text = Util.Localize(LocalizeKey.TravelBtnText);
 
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged += RefreshNotify;
@@ -348,14 +348,14 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         var asLbl = GetText((int)Texts.ASBoostText);
         bool asActive = stage != null && stage.AtkSpeedBuff > 0f;
         if (asVal != null) asVal.text = asActive ? $"+{(int)stage.AtkSpeedBuff}%" : "";
-        if (asLbl != null) asLbl.text = asActive ? Util.Localize("AttackSpeedText") : "";
+        if (asLbl != null) asLbl.text = asActive ? Util.Localize(LocalizeKey.AttackSpeedText) : "";
 
         // DMGBoost / DMGBoostText
         var dmgVal = GetText((int)Texts.DMGBoost);
         var dmgLbl = GetText((int)Texts.DMGBoostText);
         bool dmgActive = stage != null && stage.DmgBoostBuff > 0f;
         if (dmgVal != null) dmgVal.text = dmgActive ? $"+{(int)stage.DmgBoostBuff}%" : "";
-        if (dmgLbl != null) dmgLbl.text = dmgActive ? Util.Localize("DmgBoostText") : "";
+        if (dmgLbl != null) dmgLbl.text = dmgActive ? Util.Localize(LocalizeKey.DmgBoostText) : "";
 
         // Rank Color 일괄 적용
         Color rankColor = Managers.Combo?.GetCurrentRankColor() ?? Color.white;
@@ -698,7 +698,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         var tmp = GetText((int)Texts.ReturnButtonText);
         if (tmp == null) return;
-        tmp.text = Util.Localize(confirming ? "ReturnConfirmText" : "ReturnText");
+        tmp.text = Util.Localize(confirming ? LocalizeKey.ReturnConfirmText : LocalizeKey.ReturnText);
     }
 
     void ExecuteReturnToVillage()

@@ -218,12 +218,12 @@ public class UI_TravelPopup : UI_Popup
     {
         SetRawText(Texts.XbuttonText, "X");
         SetText(Texts.MapSelectPopupTitleText, LocalizeKey.TravelBtnText);
-        SetText(Texts.TownCategoryButtonText, "TownText");
-        SetText(Texts.FieldCategoryButtonText, "ExploreText");
-        SetText(Texts.TownSelectPanelText, "TownText");
-        SetText(Texts.FieldSelectText, "ExploreText");
-        SetText(Texts.ButtonMapSelectBackText, "BackBtnText");
-        SetText(Texts.ButtonMapSelectGOText, "HeadOutText");
+        SetText(Texts.TownCategoryButtonText, LocalizeKey.TownText);
+        SetText(Texts.FieldCategoryButtonText, LocalizeKey.ExploreText);
+        SetText(Texts.TownSelectPanelText, LocalizeKey.TownText);
+        SetText(Texts.FieldSelectText, LocalizeKey.ExploreText);
+        SetText(Texts.ButtonMapSelectBackText, LocalizeKey.BackBtnText);
+        SetText(Texts.ButtonMapSelectGOText, LocalizeKey.HeadOutText);
     }
 
     void SetText(Texts textId, string key)

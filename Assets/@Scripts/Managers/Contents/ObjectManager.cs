@@ -57,24 +57,21 @@ public class ObjectManager
     }
 
     // 슬라이드 63 — Damage Textpopup. 모드는 DamageFontMode 참조.
-    // text가 null이면 damage를 정수로 표기. Miss는 자동으로 "MISS" 사용.
     public void ShowDamageFont(Vector2 pos, int damage, DamageFontMode mode = DamageFontMode.Normal, Transform parent = null)
     {
-        string display = (mode == DamageFontMode.Miss) ? "MISS" : damage.ToString();
+        string display = (mode == DamageFontMode.Miss) ? Util.Localize(Define.LocalizeKey.BattleMissText) : damage.ToString();
         SpawnDamageFont(pos, display, mode, parent);
     }
 
     public void ShowMissPopup(Vector2 pos, Transform parent = null)
     {
-        SpawnDamageFont(pos, "MISS", DamageFontMode.Miss, parent);
+        SpawnDamageFont(pos, Util.Localize(Define.LocalizeKey.BattleMissText), DamageFontMode.Miss, parent);
     }
 
-    // 슬라이드 62/63 — 치명타 시 공격자 위치에 "Critical!" / "치명타!" callout
+    // 슬라이드 62/63 — 치명타 시 공격자 위치에 callout
     public void ShowCriticalCallout(Vector2 pos, Transform parent = null)
     {
-        Define.Language lang = Managers.Game != null ? Managers.Game.Language : Define.Language.Korean;
-        string text = (lang == Define.Language.Korean) ? "치명타!" : "Critical!";
-        SpawnDamageFont(pos, text, DamageFontMode.CriticalCallout, parent);
+        SpawnDamageFont(pos, Util.Localize(Define.LocalizeKey.BattleCriticalText), DamageFontMode.CriticalCallout, parent);
     }
 
     public void ShowHealFont(Vector2 pos, int amount, Transform parent = null)

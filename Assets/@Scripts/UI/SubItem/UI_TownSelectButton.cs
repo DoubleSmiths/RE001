@@ -103,7 +103,7 @@ public class UI_TownSelectButton : UI_Base
 
         // 현재 위치 라벨도 언어 따라
         var locLabel = GetText((int)Texts.TownSelectPopupCurrentLocationText);
-        if (locLabel != null) locLabel.text = Util.Localize("CurrentLocationText");
+        if (locLabel != null) locLabel.text = Util.Localize(Define.LocalizeKey.CurrentLocationText);
     }
 
     void OnClickTownSelectButton()
