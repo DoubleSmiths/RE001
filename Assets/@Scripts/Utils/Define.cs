@@ -232,7 +232,6 @@ public class Define
 
         // ── Battle ──
         public const string BattleMissText = "BattleMissText";
-        public const string BattleCriticalText = "BattleCriticalText";
         public const string PlayerLvPrefix = "PlayerLvPrefix";
         public const string DmgBoostText = "DmgBoostText";
         public const string ReturnText = "ReturnText";
@@ -282,6 +281,7 @@ public class Define
 
         // ── Misc ──
         public const string LinkText = "LinkText";
+        public const string Link100RequiredText = "Link100RequiredText";
         public const string LootText = "LootText";
         public const string SPDPotion0DescText = "SPDPotion0DescText";
 

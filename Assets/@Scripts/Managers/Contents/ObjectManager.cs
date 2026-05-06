@@ -71,7 +71,7 @@ public class ObjectManager
     // 슬라이드 62/63 — 치명타 시 공격자 위치에 callout
     public void ShowCriticalCallout(Vector2 pos, Transform parent = null)
     {
-        SpawnDamageFont(pos, Util.Localize(Define.LocalizeKey.BattleCriticalText), DamageFontMode.CriticalCallout, parent);
+        SpawnDamageFont(pos, Util.Localize(Define.LocalizeKey.CritTextPopupText), DamageFontMode.CriticalCallout, parent);
     }
 
     public void ShowHealFont(Vector2 pos, int amount, Transform parent = null)
