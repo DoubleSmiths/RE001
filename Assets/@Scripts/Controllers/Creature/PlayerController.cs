@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using static Define;
@@ -16,25 +17,30 @@ public class PlayerController : CreatureController
     public float GrowthRate = 100f;  // 성장률 % (경험치 획득량에 곱함)
     public float DropRate   = 100f;  // 획득률 % (몬스터 드롭률에 곱함)
 
+    Vector3 _originalPos;   // 슬라이드 69 — 도중 이탈로 화면 밖 이동 후 복귀할 원위치
+
     // ── 스탯 (레벨 / 장비 반영) ──
     public override bool Init()
     {
         if (!base.Init()) return false;
         ObjectType = ObjectType.Player;
         State = Define.State.Idle;
+        _originalPos = transform.position;
         RefreshStats();
         return true;
     }
 
     public void StartBattle() { _inBattle = true; }
 
-    // 슬라이드 67/69 — 마을 복귀 시 HP 회복 + Idle (사망/HOME/도중이탈 공통)
+    // 슬라이드 67/69 — 마을 복귀 시 HP 회복 + Idle + 원위치 복귀 (사망/HOME/도중이탈 공통)
     public void StopBattle()
     {
         _inBattle = false;
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
         State = Define.State.Idle;
+        transform.DOKill();   // 진행 중인 DOMove(off-screen) 중단
+        transform.position = _originalPos;
     }
 
     // ────────────────────────────────────────

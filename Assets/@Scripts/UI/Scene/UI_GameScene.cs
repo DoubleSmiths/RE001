@@ -292,6 +292,12 @@ public class UI_GameScene : UI_Scene
 
         _isAreaTransitioning = true;
 
+        // 슬라이드 69 — Battle 씬에서 나갈 때 transit 효과:
+        //   monster Idle 고정 + BG scroll OFF + Player Run + 화면 밖 이동.
+        //   Fade Out 동안 진행되며, SwapAreaBtnGroup(검은 화면 시점)에서 UI_BattleBtnGroup destroy → EndBattle 정리.
+        var battleBtn = _currentBtnGroup as UI_BattleBtnGroup;
+        if (battleBtn != null) battleBtn.BeginExitTransit();
+
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
         // Fade Out 0.5s

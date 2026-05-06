@@ -23,7 +23,7 @@
 | G | S66 몬스터 사망 | ✅ 완료 | (uncommitted) |
 | H | S67 플레이어 사망·리스폰 | ✅ 완료 | (uncommitted) |
 | I | S68 Level Up | ✅ 완료 | (uncommitted) |
-| J | S69 도중 이탈 | 대기 | |
+| J | S69 도중 이탈 | ✅ 완료 | (uncommitted) |
 
 ---
 
@@ -639,4 +639,84 @@
 
 ## Phase J — 전투 도중 이탈 (S69)
 
-(아직 시작 전)
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/Controllers/Creature/PlayerController.cs` | `_originalPos` 필드 추가 (`Init`에서 캡처). `StopBattle`에 `transform.DOKill` + position 원복 추가 |
+| `Assets/@Scripts/UI/SubItem/UI_BattleBtnGroup.cs` | `BeginExitTransit()` 신설 — monster Idle 고정 + BG scroll OFF + Player Run/DOMoveX(-10, 0.5s). `ExecuteReturnToVillage`에서 즉시 EndBattle 호출 제거 (OnDestroy가 처리) |
+| `Assets/@Scripts/UI/Scene/UI_GameScene.cs` | `EnterAreaWithFade` 시작 직후 `_currentBtnGroup as UI_BattleBtnGroup` 검사 → `BeginExitTransit()` 호출 |
+
+### 슬라이드 69 매핑
+
+| 기획 항목 | 코드 |
+|---|---|
+| 1-1. Monster Idle 상태 고정 | `BeginExitTransit`: 모든 살아있는 monster `State = Idle` + `linearVelocity = Vector2.zero` |
+| 1-2. Player Run + 화면 밖 좌측 이동 | `BeginExitTransit`: Player `State = Moving`(Run anim) + `DOMoveX(x-10, 0.5s, InQuad)` |
+| 1-3. Map Scrolling OFF | `BeginExitTransit`: `BackgroundScroller.IsScrolling = false` |
+| 1-4. Fade IN/OUT | `EnterAreaWithFade`의 기존 fade 시퀀스 (Phase D — Out 0.5 / In 1.0) |
+| 1-5. HP Now → Max | `StopBattle` (Phase H에서 추가). UI_BattleBtnGroup.OnDestroy → EndBattle → StopBattle 자연 호출 |
+| 위치 원복 | `StopBattle`의 `transform.position = _originalPos` |
+
+### 도중 이탈 시퀀스 (HOME 버튼 기준)
+
+| 시각 | 이벤트 |
+|---:|---|
+| t=0.0 | HOME 더블클릭 (확인) → `ExecuteReturnToVillage` → `EnterAreaWithFade(Village1)` |
+| t=0.0 | EnterAreaWithFade 시작 — `_currentBtnGroup as UI_BattleBtnGroup` → `BeginExitTransit` |
+| t=0.0 | BeginExitTransit: monster→Idle, BG scroll OFF, Player Run + DOMoveX 시작 (0.5s) |
+| t=0.0 | Fade Out 0.5s 시작 (Player tween과 병렬) |
+| t=0.5 | 검은 화면 도달. `SwapAreaBtnGroup(Village1)` → UI_BattleBtnGroup destroy → `OnDestroy` → `EndBattle` → `Player.StopBattle()` → HP=Max + State=Idle + DOKill + position=originalPos |
+| t=0.5 | `EndBattle`이 monsters/HP bars/CH1BG 정리 → 마을 BG 스폰 → UI_Village1BtnGroup 등장 |
+| t=0.5 | Fade In 1.0s 시작 |
+| t=1.5 | Fade In 완료 → 마을 정상 |
+
+### 시각 효과
+
+- 페이드 아웃 동안 monster는 Idle 모션으로 정지, Player는 좌측으로 달려가며 화면 밖으로 사라짐
+- 검은 화면에서 모든 정리 진행 (사용자에게 안 보임)
+- 페이드 인 시 마을이 등장. Player는 원위치, HP 풀, Idle
+
+### 죽음 케이스 호환성
+
+Player가 죽어서 마을 복귀할 때 (Phase H의 CoRespawnInVillage):
+- Player.OnDead → 1초 대기 → EnterAreaWithFade(Village1)
+- BeginExitTransit 호출됨 — Player.State==Dead라 Player Run/DOMove 부분 skip (가드). Monster Idle + BG scroll OFF만 적용.
+- 결과: Player Die 모션 유지, Monster Idle 멈춤, Fade Out 진행, 마을에서 부활 — Phase H에서 의도한 동작 유지
+
+### 의도적으로 안 건드린 부분
+
+- **Player off-screen 이동 거리 -10**: 카메라 ortho size에 따라 다를 수 있음. 카메라 left edge 직접 계산하면 더 정확하지만 일단 충분한 여유 (-10) 사용. 이슈 시 calc 변경
+- **Player anim 방향**: 좌측 이동 시 sprite flip 없음. 슬라이드 spec에 spriteFlip 언급 없어 그대로 유지
+
+### 롤백 시 주의
+
+- `ExecuteReturnToVillage`에서 즉시 EndBattle 호출 제거됨 → `EnterAreaWithFade`가 정상 호출되어 SwapAreaBtnGroup이 결국 EndBattle 트리거하는 흐름 의존. 만약 EnterAreaWithFade가 실패하면 EndBattle도 안 됨 → 이전엔 EndBattle 먼저 했으니 더 안전했음. 하지만 Phase J 의도(monster 유지)와 충돌해서 변경.
+- Player `_originalPos`는 Init 시점 한 번만 캡처. 만약 게임 진행 중 Player position이 다른 절대값으로 옮겨져야 할 일이 생기면(예: 다른 마을 스폰 위치) `_originalPos`를 갱신하는 setter 추가 필요.
+- `StopBattle`의 `transform.DOKill`은 Player의 모든 transform tween을 죽임. 다른 경로로 Player에 tween을 걸어둔 게 있으면 영향. Phase 이후 Player에 tween 추가 시 주의.
+
+---
+
+## 전체 Phase A~J 요약
+
+| Phase | 슬라이드 | 핵심 변경 |
+|---|---|---|
+| A | 53/54 | `BattleMath.Resolve` 단일 데미지 식 + CreatureData 5개 필드 |
+| B | 62/63 | `DamageFontMode` (Normal/Critical/Miss/Heal/CriticalCallout) gradient + outline + anim |
+| C | 60/64/65 | `PlayHitFeedback` virtual + Player CrossFade("OnHit") + Monster 색 변환. CoResetStateAfterAttack 시간 기반 단순화 |
+| D | 55/56/58 | Fade 0.5/1.0 + ShowToast 지역명 + BG Layer 절대 속도 + StartBattleSceneScroll |
+| E | 57/58/59 | Player.x+12 6초 spawn + Monster 좌측 스크롤 + collision-based engagement (BoxCollider2D + Kinematic Player) |
+| E1 | 61 | AttackTrigger Animation Event 키프레임 시점 데미지 적용 |
+| F | 59 | Monster HP Bar 희귀도 (Common/Rare/Boss) Scale·Color·Material + DOTweenAnimation Open Anim |
+| G | 66 | Die clip 재생 + HP Bar DOPlayBackwards + 0.5s 후 destroy |
+| H | 67 | Player 사망: monster Idle/HP Bar close/1s 대기/Village 복귀/HP·State·position 원복 |
+| I | 68 | Level Up Text/Ef prefab spawn + heal popup + [상태] 버튼 [+] icon Punch |
+| J | 69 | BeginExitTransit (monster Idle + BG OFF + Player Run/화면밖) → SwapAreaBtnGroup의 EndBattle |
+
+### 추가 도구 / 메모리
+
+- `Assets/@Scripts/Editor/BattleTestMenu.cs` — Damage popup 5종 시각 검증 + BattleMath 100회 시뮬 + Reset Lv.1 / Force Level Up
+- `Documents/Battle_Phase_Log.md` (이 문서) — 모든 phase 변경 내역
+- `feedback_check_existing_prefabs_first.md` (메모리) — 기존 prefab 먼저 검색하는 습관 (UI_Toast 사례)

@@ -703,10 +703,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     void ExecuteReturnToVillage()
     {
-        // 전투 강제 종료 — 몬스터 제거 + BattleLoop 정지.
-        EndBattle();
-        // 현재는 마을이 Village1 하나. 복귀 후 UI_Village1BtnGroup 이
-        // LastVillage1Group 기반으로 마지막 하위 구역을 자동 복원.
+        // 슬라이드 69 — 즉시 EndBattle 하지 않음. EnterAreaWithFade가 BeginExitTransit으로
+        // monster Idle 고정 + Player 화면 밖 이동을 Fade Out 동안 진행하고,
+        // 검은 화면에 도달했을 때 SwapAreaBtnGroup → UI_BattleBtnGroup.OnDestroy → EndBattle 자연스럽게 정리.
         var scene = Managers.UI?.SceneUI as UI_GameScene;
         scene?.EnterAreaWithFade(AreaType.Village1);
     }
@@ -734,6 +733,51 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         // 슬라이드 55 — 지역명은 UI_AreaNameBanner가 표시 (Toast 사용 중단).
         // 이 콜백은 EnterAreaWithFade의 banner onInComplete(t=2.0)에서 호출됨.
         StartBattle();
+    }
+
+    // 슬라이드 69 — 전투 도중 장소 이동/귀환 시:
+    //   1-1. Monster Idle 고정 (Attack/Idle 등 어떤 상태든 Idle로)
+    //   1-2. Player Run + 화면 밖 좌측으로 서서히 이동 (Fade Out 동안)
+    //   1-3. Map Scrolling OFF
+    //   1-4. Fade IN/OUT은 EnterAreaWithFade가 처리
+    //   1-5. HP 회복은 StopBattle (UI_BattleBtnGroup OnDestroy → EndBattle)에서 처리
+    // EnterAreaWithFade 시작 직전에 호출 → Fade Out 0.5s 동안 Player가 좌측으로 사라짐.
+    public void BeginExitTransit()
+    {
+        // 1-1. 모든 살아있는 monster Idle 고정 (CoBattleLoop 정지는 OnDestroy → EndBattle에서)
+        Transform monsterRoot = Managers.Object?.MonsterTransform;
+        if (monsterRoot != null)
+        {
+            for (int i = 0; i < monsterRoot.childCount; i++)
+            {
+                var m = monsterRoot.GetChild(i).GetComponent<MonsterController>();
+                if (m == null || m.State == State.Dead) continue;
+                m.State = State.Idle;
+                if (m.GetComponent<Rigidbody2D>() is Rigidbody2D rb)
+                    rb.linearVelocity = Vector2.zero;
+            }
+        }
+
+        // 1-3. Map Scrolling OFF
+        BackgroundScroller scroller = null;
+        foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (go.name == "CH1BG" || go.name == "CH1BG(Clone)")
+            {
+                scroller = go.GetComponent<BackgroundScroller>();
+                if (scroller != null) break;
+            }
+        }
+        if (scroller != null) scroller.IsScrolling = false;
+
+        // 1-2. Player Run + 화면 밖 좌측 이동 (Fade Out 0.5s 와 동기)
+        var player = Managers.Game?.Player;
+        if (player != null && player.State != State.Dead)
+        {
+            player.State = State.Moving;
+            player.transform.DOKill();
+            player.transform.DOMoveX(player.transform.position.x - 10f, 0.5f).SetEase(Ease.InQuad);
+        }
     }
 
     void StartBattle()
