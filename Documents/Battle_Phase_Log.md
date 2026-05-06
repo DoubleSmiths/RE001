@@ -21,7 +21,7 @@
 | E | S57/58/59 첫 몬스터 스폰·조우 | ✅ 완료 | (uncommitted) |
 | F | S59 Monster HP Bar 희귀도 | ✅ 완료 | (uncommitted) |
 | G | S66 몬스터 사망 | ✅ 완료 | (uncommitted) |
-| H | S67 플레이어 사망·리스폰 | 대기 | |
+| H | S67 플레이어 사망·리스폰 | ✅ 완료 | (uncommitted) |
 | I | S68 Level Up | 대기 | |
 | J | S69 도중 이탈 | 대기 | |
 
@@ -511,5 +511,67 @@
 ---
 
 ## Phase H — 플레이어 사망·리스폰 (S67)
+
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/UI/SubItem/UI_MonsterHPBar.cs` | `PlayCloseAnimation` 가시성 private → public (Player 사망 시 외부에서 강제 호출 가능) |
+| `Assets/@Scripts/Controllers/Creature/MonsterController.cs` | `TryAttack` 시작에 `_target.State == Dead` 가드 추가 — Player 사망 후 monster가 시체에 계속 공격하는 버그 차단 |
+| `Assets/@Scripts/Controllers/Creature/PlayerController.cs` | `OnDead` 사망 시퀀스 구현. `StopBattle`에 HP 회복 + State=Idle 추가 (HOME/사망/도중이탈 공통 리스폰 처리) |
+
+### 슬라이드 67 매핑
+
+| 기획 항목 | 코드 |
+|---|---|
+| 1-1. HP 0 이하로 안 내려가게 | `CreatureController.TakeHit`에서 이미 `if (Hp < 0) Hp = 0;` 처리 |
+| 1-2. Monster Idle 고정 | `PlayerController.OnDead`에서 `monsterRoot` 자식들 중 살아있는 것 모두 `State = Idle`. `MonsterController.TryAttack`도 dead target 가드로 추가 공격 차단 |
+| 1-3. Monster HP Bar DOPlayBackwards | `FindObjectsByType<UI_MonsterHPBar>()` → 각자 `PlayCloseAnimation()` |
+| 1-4. Player Die Anim | `base.OnDead()` → State=Dead → CrossFade("Die") (Phase G에서 추가된 setter case) |
+| 1-5. 1초 후 Fade IN/OUT | `CoRespawnInVillage(1f)` → `EnterAreaWithFade(Village1)` (Fade 0.5/1.0 자체 처리) |
+| 1-6. 마을 리스폰 ([HOME] 동등) | EnterAreaWithFade → SwapAreaBtnGroup → UI_BattleBtnGroup.OnDestroy → EndBattle → `Player.StopBattle()` → HP 회복 + Idle |
+
+### 사망 시퀀스 타임라인
+
+| 시각 | 이벤트 |
+|---:|---|
+| t=0 | Player Hp ≤ 0 → `TakeHit` → `OnDead` |
+| t=0 | base.OnDead → State=Dead → Player Die clip 재생 |
+| t=0 | 모든 활성 monster `State = Idle`. 모든 활성 UI_MonsterHPBar `PlayCloseAnimation` (DOPlayBackwards 0.5s) |
+| t=0.5 | HP Bar 사라짐 |
+| t=1.0 | `CoRespawnInVillage` 만료 → `EnterAreaWithFade(Village1)` |
+| t=1.0 | Fade Out 0.5s |
+| t=1.5 | 검은 화면 → SwapAreaBtnGroup: UI_BattleBtnGroup destroy → OnDestroy → EndBattle → Player.StopBattle (HP 회복 + Idle). 마을 BG 스폰. UI_Village1BtnGroup 등장 |
+| t=1.5 | Fade In 1.0s |
+| t=2.5 | Fade 완료 → 마을 정상 동작 |
+
+### 검증 방법
+
+1. 전투 진입 후 일부러 죽을 때까지 Player가 공격 안 받음 (디버그용으로 Player MaxHp 낮춰서 테스트)
+2. Player HP가 0이 되면:
+   - Monster가 즉시 정지 (Idle 모션)
+   - Monster HP Bar가 위에서 아래로 밀려나며 사라짐 (DOPlayBackwards)
+   - Player가 Die 모션 재생
+3. 1초 뒤 화면 검게 페이드
+4. 마을 화면으로 복귀
+5. 마을 진입 후 Player HP 풀 회복 + Idle 상태 (Run 모션 X)
+
+### 의도적으로 안 건드린 부분
+
+- **Game Over UI**: 슬라이드 67엔 명시적으로 없음. HOME 버튼처럼 그냥 마을로 돌아가는 흐름. 별도 "사망" 텍스트나 토스트 추가는 후속.
+- **사망 페널티**: 골드/경험치 손실 등은 슬라이드 67에 없어서 미반영.
+- **Continue 시스템**: 광고 보고 부활 같은 것도 미구현.
+
+### 롤백 시 주의
+
+- `StopBattle`이 항상 HP 회복 + State=Idle. 이전엔 State=Moving이었음. Village1BtnGroup이 Run 애님 기대했다면 영향. 하지만 마을 진입 시 UI_Village1BtnGroup이 자체 enter 애님으로 Player 시각 처리 → 영향 작음.
+- Village 진입 시 Player 항상 HP 풀 회복. HOME 버튼으로 복귀해도 회복됨 — 슬라이드 69도 같은 의도라 문제 없음. 만약 HP 유지하고 싶으면 StopBattle에 사망 분기만 회복으로 분리.
+- `MonsterController.TryAttack`이 dead target 차단 → 만약 미니몬 시스템에서 monster가 다른 monster 공격하는 케이스 추가 시 _target 타입 확장 필요.
+
+---
+
+## Phase I — Level Up 연출 (S68)
 
 (아직 시작 전)

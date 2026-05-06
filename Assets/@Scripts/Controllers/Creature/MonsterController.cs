@@ -95,6 +95,8 @@ public class MonsterController : CreatureController
 
     void TryAttack()
     {
+        // 슬라이드 67 — Player 사망 시 monster는 Idle 고정. Dead target에는 공격 중단.
+        if (_target == null || _target.State == Define.State.Dead) return;
         // 슬라이드 53: 몬스터 공격속도는 Attack Anim 재생 전 대기 시간(MonsterAttackDelay)에 영향
         if (Time.time < _lastAtkTime + MonsterAttackDelay) return;
         _lastAtkTime = Time.time;

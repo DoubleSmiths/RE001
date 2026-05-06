@@ -27,7 +27,15 @@ public class PlayerController : CreatureController
     }
 
     public void StartBattle() { _inBattle = true; }
-    public void StopBattle()  { _inBattle = false; State = Define.State.Moving; }
+
+    // 슬라이드 67/69 — 마을 복귀 시 HP 회복 + Idle (사망/HOME/도중이탈 공통)
+    public void StopBattle()
+    {
+        _inBattle = false;
+        Hp = MaxHp;
+        OnHpChanged?.Invoke(Hp, MaxHp);
+        State = Define.State.Idle;
+    }
 
     // ────────────────────────────────────────
     //  Update
@@ -248,10 +256,44 @@ public class PlayerController : CreatureController
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
 
+    // 슬라이드 67 — 플레이어 사망 시퀀스
+    //   1-1. HP 0으로 clamp (CreatureController.TakeHit에서 이미 처리)
+    //   1-2. Monster Idle 고정
+    //   1-3. Monster HP Bar DOPlayBackwards
+    //   1-4. Player Die Anim (base.OnDead → State=Dead → CrossFade("Die"))
+    //   1-5. 1초 후 Fade IN/OUT
+    //   1-6. 마을 리스폰 ([HOME] 버튼 동등 처리)
     protected override void OnDead()
     {
-        base.OnDead();
-        // TODO: 게임 오버 연출
+        base.OnDead();   // State=Dead → Die clip
+
+        // 1-2. 살아있는 모든 monster Idle 고정
+        Transform monsterRoot = Managers.Object?.MonsterTransform;
+        if (monsterRoot != null)
+        {
+            for (int i = 0; i < monsterRoot.childCount; i++)
+            {
+                var m = monsterRoot.GetChild(i).GetComponent<MonsterController>();
+                if (m == null || m.State == Define.State.Dead) continue;
+                m.State = Define.State.Idle;
+            }
+        }
+
+        // 1-3. 활성 Monster HP Bar 모두 DOPlayBackwards
+        foreach (var bar in FindObjectsByType<UI_MonsterHPBar>(FindObjectsSortMode.None))
+            bar.PlayCloseAnimation();
+
+        // 1-5/1-6. 1초 대기 후 마을 리스폰 (EnterAreaWithFade가 Fade IN/OUT 처리)
+        StartCoroutine(CoRespawnInVillage(1f));
+    }
+
+    IEnumerator CoRespawnInVillage(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        var scene = Managers.UI?.SceneUI as UI_GameScene;
+        scene?.EnterAreaWithFade(Define.AreaType.Village1);
+        // EnterAreaWithFade → SwapAreaBtnGroup → UI_BattleBtnGroup.OnDestroy → EndBattle → StopBattle 순으로
+        // 자연스럽게 정리 + Player HP/State 회복.
     }
 
     // 슬라이드 61 — Animation Event에서 호출되는 공격판정 순간.
