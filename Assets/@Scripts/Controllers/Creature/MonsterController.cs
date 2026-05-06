@@ -45,6 +45,7 @@ public class MonsterController : CreatureController
         RecoveryRate    = _data.RecoveryRate;
         MoveSpeed       = _data.MoveSpeed;
         MonsterAttackDelay = _data.MonsterAttackDelay;
+        DamageFontYOffset  = _data.DamageFontYOffset;
         if (System.Enum.TryParse(_data.Rarity, true, out CreatureRarity r))
             Rarity = r;
     }

@@ -43,6 +43,10 @@ namespace Data
         // 몬스터 spawn 시 ground 높이 (sprite pivot 위치에 따라 prefab별로 다를 수 있음).
         // Slime 기준 2.3 — 다른 monster 추가 시 이 값으로 발 위치 조정.
         public float SpawnY = 2.3f;
+
+        // 데미지 폰트가 transform.position 기준 위쪽으로 띄울 거리 (head 위치).
+        // monster sprite 높이마다 다름. 기본 1.0 — 작은 monster는 0.5, 큰 monster는 2.0 등.
+        public float DamageFontYOffset = 2.5f;
     }
 
     [Serializable]

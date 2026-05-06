@@ -32,6 +32,7 @@ public abstract class CreatureController : BaseController
     // ── 메타 ──
     public CreatureRarity Rarity        = CreatureRarity.Common;
     public float          MonsterAttackDelay = 1.5f; // 몬스터 전용. Player는 사용 안 함.
+    public float          DamageFontYOffset  = 2.5f; // 데미지 폰트 띄울 위쪽 거리 (transform.position 기준)
 
     // ── 증가율 / 증폭률 (장비·버프로 누적) ──
     // 최종 = 기본 * (1 + 증가율/100) * 증폭률
@@ -122,10 +123,13 @@ public abstract class CreatureController : BaseController
     // 슬라이드 63: Damage Textpopup은 Player/Minion 공격 시에만. Monster 공격은 popup 호출 X.
     public virtual void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
+        // 데미지/Miss 폰트는 발 위치(transform.position)가 아니라 머리 위(DamageFontYOffset)에 표시.
+        Vector3 fontPos = transform.position + Vector3.up * DamageFontYOffset;
+
         if (!result.Hit)
         {
             // 슬라이드 62 — Miss Textpopup (피격자 위치). Sound는 후속.
-            Managers.Object.ShowMissPopup(transform.position, transform);
+            Managers.Object.ShowMissPopup(fontPos, transform);
             return;
         }
 
@@ -137,11 +141,14 @@ public abstract class CreatureController : BaseController
         if (!attackerIsMonster)
         {
             DamageFontMode mode = result.IsCrit ? DamageFontMode.Critical : DamageFontMode.Normal;
-            Managers.Object.ShowDamageFont(transform.position, result.FinalDamage, mode, transform);
+            Managers.Object.ShowDamageFont(fontPos, result.FinalDamage, mode, transform);
 
             // 치명타 시 공격자 위치에 "Critical!" callout (Player만 해당)
             if (result.IsCrit && attacker != null && attacker.ObjectType == ObjectType.Player)
-                Managers.Object.ShowCriticalCallout(attacker.transform.position, attacker.transform);
+            {
+                Vector3 attackerFontPos = attacker.transform.position + Vector3.up * attacker.DamageFontYOffset;
+                Managers.Object.ShowCriticalCallout(attackerFontPos, attacker.transform);
+            }
         }
 
         if (Hp <= 0)
