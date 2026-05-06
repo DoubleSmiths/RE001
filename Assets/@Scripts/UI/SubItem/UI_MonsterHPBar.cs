@@ -68,8 +68,24 @@ public class UI_MonsterHPBar : UI_Base
         {
             UpdateHp(cur, max);
             if (cur <= 0)
-                Managers.Resource.Destroy(gameObject);
+                PlayCloseAnimation();
         };
+    }
+
+    // 슬라이드 66 — 몬스터 사망 시 HP Bar는 DOPlayBackwards로 사라짐.
+    // prefab의 DOTweenAnimation(Move OutBack From x0 y0 z0)를 역방향 재생 → 원위치(0,0,0)로 되돌아감.
+    void PlayCloseAnimation()
+    {
+        var anim = GetComponent<DOTweenAnimation>();
+        if (anim != null)
+        {
+            anim.DOPlayBackwards();
+            DG.Tweening.DOVirtual.DelayedCall(anim.duration, () => Managers.Resource.Destroy(gameObject));
+        }
+        else
+        {
+            Managers.Resource.Destroy(gameObject);
+        }
     }
 
     void ApplyRarity(CreatureRarity rarity)

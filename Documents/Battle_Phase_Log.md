@@ -20,7 +20,7 @@
 | E1 | S61 공격판정 키프레임 | ✅ 완료 | (uncommitted) |
 | E | S57/58/59 첫 몬스터 스폰·조우 | ✅ 완료 | (uncommitted) |
 | F | S59 Monster HP Bar 희귀도 | ✅ 완료 | (uncommitted) |
-| G | S66 몬스터 사망 | 대기 | |
+| G | S66 몬스터 사망 | ✅ 완료 | (uncommitted) |
 | H | S67 플레이어 사망·리스폰 | 대기 | |
 | I | S68 Level Up | 대기 | |
 | J | S69 도중 이탈 | 대기 | |
@@ -452,5 +452,64 @@
 ---
 
 ## Phase G — 몬스터 사망 처리 (S66)
+
+**완료**: 2026-05-06
+
+### 변경 파일
+
+| 파일 | 변경 |
+|---|---|
+| `Assets/@Scripts/Controllers/Creature/CreatureController.cs` | State setter `case Dead`: 빈 break → `CrossFade("Die", 0.1f, -1, 0)` (Player/Monster 공통) |
+| `Assets/@Scripts/Controllers/Creature/MonsterController.cs` | `OnDead`의 placeholder `transform.DOScale(Vector3.zero, ...)` 제거 → State=Dead가 Die clip 트리거. `CoDestroyAfterDie(0.5f)` 코루틴으로 풀 반환 (HP Bar Playbackwards와 동기) |
+| `Assets/@Scripts/UI/SubItem/UI_MonsterHPBar.cs` | `cur<=0` 분기 — 즉시 destroy → `PlayCloseAnimation`. prefab의 DOTweenAnimation을 `DOPlayBackwards`로 역재생 + duration 후 destroy |
+
+### 슬라이드 66 매핑
+
+| 기획 항목 | 코드 |
+|---|---|
+| 1. Die Clip 재생 | `State = Dead` → CreatureController setter CrossFade("Die") |
+| 1. Monster HP Bar Playbackwards | `UI_MonsterHPBar.PlayCloseAnimation` → `anim.DOPlayBackwards()` |
+| 1. 대기 상태 진입 | Player.HasMonsterInAtkRange가 Dead 상태 monster를 skip → BG scroll 재개 + Player Run 자동 |
+| 2. 드롭 주사위 + 아이템 리스트 UI | 기존 `MonsterController.OnDead`의 DropItemId 분기 + `OnItemDropped` 이벤트 → `UI_BattleBtnGroup.HandleMonsterItemDropped` (이미 wired) |
+| 3. Exp / 레벨업 체크 | 기존 `_target.GainExp(_data.TotalExp)` |
+| 4. Kill count + 도감 해금 | **(deferred)** — Bestiary 시스템 구축 후 |
+| 5. 관심 체크 + 대기열 | **(deferred)** |
+| 6. Die Sound | **(deferred)** — Sound 자산 미정 |
+
+### 사망 시퀀스 타임라인
+
+| 시각 | 이벤트 |
+|---:|---|
+| t=0 | Player 공격 → Monster.TakeHit → base.TakeHit → Hp<=0 → `OnDead()` |
+| t=0 | base.OnDead → State=Dead → CrossFade("Die"). MonsterController.OnDead → 보상/드롭 → `CoDestroyAfterDie(0.5f)` 시작 |
+| t=0 | Monster.TakeHit override가 base 후 `OnHpChanged.Invoke(Hp=0, MaxHp)` → UI_MonsterHPBar.handler → `PlayCloseAnimation` → DOPlayBackwards |
+| t≈0.17 | Slime Die clip 종료 (자체 길이 0.17s) |
+| t=0.5 | Monster GameObject 풀 반환. HP Bar Destroy. Player.HasMonsterInAtkRange = false (Dead skip) → BG scroll on, Player Run |
+| t=0.5+6 | CoBattleLoop의 `WaitForSeconds(6f)` 만료 → 다음 Slime spawn at Player.x+12 |
+
+### 검증 방법
+
+1. 슬라임 처치 시 슬라임이 Die 클립 재생 (1프레임 깜빡 X 자연스러운 사망 모션)
+2. HP Bar가 prefab의 OutBack Move 역방향으로 위치 (0,0,0)으로 이동하며 사라짐
+3. 사망 직후 BG 스크롤 재개, Player Run 모션 시작
+4. 6초 후 다음 슬라임 등장
+5. 드롭 아이템이 있는 경우 (CreatureData에 DropItemId 설정) 드롭 리스트 UI에 표시
+
+### 의도적으로 안 건드린 부분 (Bestiary phase에서 처리)
+
+- **Kill count 누적**: GameData에 `Dictionary<int, int> MonsterKillCounts` 추가 + 도감 진행도% 계산
+- **해금 요소 체크**: 슬라이드 54의 [진행도%] 골드/별조각/아이템 획득 확률 해금
+- **관심 체크**: 슬라이드 54의 InterestRate dice + 대기열 추가 (도감 페이지 UI 필요)
+- **Die Sound**: 자산 추가 후 `Managers.Sound.Play(...)` 호출
+
+### 롤백 시 주의
+
+- Monster Animator에 "Die" state 없으면 CrossFade("Die") 무시되고 단순히 0.5초 후 Destroy. 기존 placeholder DOScale 시각 효과는 사라짐.
+- Player Animator에도 "Die" state 있어야 Phase H에서 같이 작동. Player_01 controller에 이미 Die 상태 존재 확인됨.
+- HP Bar prefab에 DOTweenAnimation 없는 경우 PlayCloseAnimation은 즉시 destroy로 fallback.
+
+---
+
+## Phase H — 플레이어 사망·리스폰 (S67)
 
 (아직 시작 전)

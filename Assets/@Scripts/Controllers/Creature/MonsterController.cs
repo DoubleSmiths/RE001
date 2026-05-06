@@ -146,6 +146,12 @@ public class MonsterController : CreatureController
         base.PlayHitFeedback();
     }
 
+    // 슬라이드 66 — 몬스터 사망 처리.
+    //   1. Die Clip 재생 (base.OnDead가 State=Dead로 set → CrossFade("Die"))
+    //   2. Monster HP Bar는 UI_MonsterHPBar 측에서 DOPlayBackwards (OnHpChanged의 cur<=0 분기)
+    //   3. 보상(Gold/Exp/드롭) — 슬라이드 66 #2~#3
+    //   4. Kill count 증가 / 관심 체크 / Die Sound — 후속 (도감/사운드 시스템 구축 후)
+    //   5. Die clip 종료 후 풀 반환
     protected override void OnDead()
     {
         base.OnDead();
@@ -165,10 +171,15 @@ public class MonsterController : CreatureController
             OnItemDropped?.Invoke(_data.DropItemId, _data.DropCount);
         }
 
-        // 사망 연출 후 풀 반환
-        transform.DOScale(Vector3.zero, 0.3f)
-            .SetEase(Ease.InBack)
-            .OnComplete(() => Managers.Resource.Destroy(gameObject));
+        // Die clip 종료 후 풀 반환. Slime Die clip은 0.17s지만, HP Bar Playbackwards(0.5s)와
+        // 동기화하기 위해 0.5s 대기.
+        StartCoroutine(CoDestroyAfterDie(0.5f));
+    }
+
+    IEnumerator CoDestroyAfterDie(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Managers.Resource.Destroy(gameObject);
     }
 
     // ────────────────────────────────────────

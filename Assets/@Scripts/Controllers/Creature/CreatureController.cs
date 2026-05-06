@@ -81,6 +81,7 @@ public abstract class CreatureController : BaseController
             switch (_state)
             {
                 case Define.State.Dead:
+                    anim.CrossFade("Die", 0.1f, -1, 0);   // 슬라이드 66/67 — 사망 시 Die clip 재생
                     break;
                 case Define.State.Idle:
                     anim.CrossFade("Idle", 0.1f);
