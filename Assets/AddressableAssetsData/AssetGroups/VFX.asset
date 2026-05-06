@@ -21,8 +21,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e643886070694445b00a9a7dc4c564a
+    m_Address: Basic Crit
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d556e46e0d8cd34fbb1364c896a69f6
     m_Address: FX_splash_spark_air
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c38e5e2e618bc6498963e1e615769d2
+    m_Address: FX_hit_10
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

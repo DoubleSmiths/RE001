@@ -86,4 +86,30 @@ public class ObjectManager
         DamageFont df = go.GetOrAddComponent<DamageFont>();
         df.SetInfo(pos, display, mode, parent);
     }
+
+    // 슬라이드 62 — 타격 성공 시 피격자 위치에 Hit Effect (Player 공격 시만 호출)
+    const float FX_LIFETIME = 2f;
+
+    public void ShowHitEffect(Vector3 pos)
+    {
+        SpawnFxAt("FX_hit_10", pos);
+    }
+
+    // 슬라이드 62 — 치명타 시 피격자 위치에 Crit Effect (Player 공격 시만 호출)
+    public void ShowCritEffect(Vector3 pos)
+    {
+        SpawnFxAt("Basic Crit", pos);
+    }
+
+    void SpawnFxAt(string prefabKey, Vector3 pos)
+    {
+        GameObject go = Managers.Resource.Instantiate(prefabKey);
+        if (go == null)
+        {
+            Debug.LogWarning($"[ObjectManager] FX prefab not found: {prefabKey}. Addressable 등록 + PreLoad 라벨 필요.");
+            return;
+        }
+        go.transform.position = pos;
+        Object.Destroy(go, FX_LIFETIME);
+    }
 }
