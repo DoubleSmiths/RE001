@@ -300,6 +300,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         }
         RefreshCustomOrderButton();
 
+        RefreshTexts();
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+
         return true;
     }
 
@@ -312,6 +315,66 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         }
         if (Managers.SubQuest != null)
             Managers.SubQuest.OnSubQuestChanged -= OnSubQuestChanged;
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+    }
+
+    // enum Texts 모든 entry — 폰트(UI) + 한영 일괄 처리.
+    void RefreshTexts()
+    {
+        // 마을 이름
+        SetTextLocalized(Texts.Village1NameText, LocalizeKey.PlaceNameTownAsdalText);
+
+        // 메인 그룹 버튼 라벨
+        SetTextLocalized(Texts.GuildButtonText, LocalizeKey.GuildText);
+        SetTextLocalized(Texts.AlchemyButtonText, LocalizeKey.AlchemyText);
+        SetTextLocalized(Texts.AlchemyButtonNewTxt, LocalizeKey.AlchemyButtonNewTxt);
+        SetTextLocalized(Texts.MonasteryButtonText, LocalizeKey.MonasteryText);
+        SetTextLocalized(Texts.MonasteryButtonNewTxt, LocalizeKey.MonasteryButtonNewTxt);
+        SetTextLocalized(Texts.TravelButtonText, LocalizeKey.TravelBtnText);
+        SetTextLocalized(Texts.TravelButtonNewTxt, LocalizeKey.TravelButtonNewTxt);
+
+        // 길드 그룹
+        SetTextLocalized(Texts.Village1GuildNameText, LocalizeKey.GuildText);
+        SetTextLocalized(Texts.Village1GuildTalkButtonText, LocalizeKey.TalkBtnText);
+        SetTextLocalized(Texts.Village1GuildQuestButtonText, LocalizeKey.QuestText);
+        JustApplyFont(Texts.Village1GuildNothingButton1Text);
+        JustApplyFont(Texts.Village1GuildNothingButton2Text);
+        JustApplyFont(Texts.Village1GuildNothingButton3Text);
+        SetTextLocalized(Texts.Village1GuildExitButtonText, LocalizeKey.ExitBtnText);
+
+        // 연금공방 그룹
+        SetTextLocalized(Texts.Village1AlchemyNameText, LocalizeKey.AlchemyText);
+        SetTextLocalized(Texts.Village1AlchemyTalkButtonText, LocalizeKey.TalkBtnText);
+        SetTextLocalized(Texts.CustomOrderButtonText, LocalizeKey.CommissionText);
+        SetTextLocalized(Texts.AlchemyCustomOrderButtonNewTxt, LocalizeKey.AlchemyCustomOrderButtonNewTxt);
+        JustApplyFont(Texts.Village1AlchemyNothingButton1Text);
+        JustApplyFont(Texts.Village1AlchemyNothingButton2Text);
+        JustApplyFont(Texts.Village1AlchemyNothingButton3Text);
+        SetTextLocalized(Texts.Village1AlchemyExitButtonText, LocalizeKey.ExitBtnText);
+
+        // 수도원 그룹
+        SetTextLocalized(Texts.Village1MonasteryNameText, LocalizeKey.MonasteryText);
+        SetTextLocalized(Texts.Village1MonasteryTalkButtonText, LocalizeKey.TalkBtnText);
+        SetTextLocalized(Texts.MonasteryClassButtonText, LocalizeKey.AnointmentText);
+        SetTextLocalized(Texts.MonasteryCustomOrderButtonNewTxt, LocalizeKey.MonasteryCustomOrderButtonNewTxt);
+        JustApplyFont(Texts.Village1MonasteryNothingButton1Text);
+        JustApplyFont(Texts.Village1MonasteryNothingButton2Text);
+        JustApplyFont(Texts.Village1MonasteryNothingButton3Text);
+        SetTextLocalized(Texts.Village1MonasteryExitButtonText, LocalizeKey.ExitBtnText);
+    }
+
+    void SetTextLocalized(Texts texts, string locKey)
+    {
+        var tmp = GetText((int)texts);
+        if (tmp == null) return;
+        ApplyFont(tmp, FontType.UI);
+        tmp.text = Util.Localize(locKey);
+    }
+
+    void JustApplyFont(Texts texts)
+    {
+        var tmp = GetText((int)texts);
+        if (tmp != null) ApplyFont(tmp, FontType.UI);
     }
 
     void OnSubQuestChanged(int _)

@@ -117,7 +117,7 @@ public class UI_SettingPopup : UI_Popup
         SetTextLocalized(Texts.SettingPopupSFXText, LocalizeKey.SFXText);
         SetTextLocalized(Texts.SettingPopupEffectsTitle, LocalizeKey.EffectsTitle);
         SetTextLocalized(Texts.SettingPopupPopupText, LocalizeKey.PopupText);
-        SetTextLocalized(Texts.SettingPopupShakeText, LocalizeKey.ShakeText);
+        SetTextLocalized(Texts.SettingPopupShakeText, LocalizeKey.CameraShakeText);
         // GameObject — enum 잘못 박힌 entry로 보임. 텍스트 용도 아님 → 폰트만 적용.
         var dummyTmp = GetText((int)Texts.GameObject);
         if (dummyTmp != null) ApplyFont(dummyTmp, FontType.UI);

@@ -292,7 +292,7 @@ public class Define
         public const string SFXText = "SFXText";
         public const string EffectsTitle = "EffectsTitle";
         public const string PopupText = "PopupText";
-        public const string ShakeText = "ShakeText";
+        public const string CameraShakeText = "CameraShakeText";
 
         // ── Title Scene (JSON 키 추가 필요) ──
         public const string StartText = "StartText";
@@ -300,6 +300,13 @@ public class Define
         // ── Inventory Slot (JSON 키 추가 필요) ──
         public const string InvSlotNewTxt = "InvSlotNewTxt";
         public const string ImportantSlotNewTxt = "ImportantSlotNewTxt";
+
+        // ── Village1 NEW 배지 (JSON 키 추가 필요 — 모두 "NEW" 표시) ──
+        public const string AlchemyButtonNewTxt = "AlchemyButtonNewTxt";
+        public const string MonasteryButtonNewTxt = "MonasteryButtonNewTxt";
+        public const string TravelButtonNewTxt = "TravelButtonNewTxt";
+        public const string AlchemyCustomOrderButtonNewTxt = "AlchemyCustomOrderButtonNewTxt";
+        public const string MonasteryCustomOrderButtonNewTxt = "MonasteryCustomOrderButtonNewTxt";
 
         // ── TownAsdalButtons ──
         public const string GuildText = "GuildText";

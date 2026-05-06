@@ -734,6 +734,41 @@
       "TextKey": "AlchemyUnlockText",
       "Kor": "<noparse></noparse>[<#2DFF00><b>연금공방</b></color>]이 해금되었습니다.\n\n<size=10>이제 탐험 시 물약을 사용하실 수\n있게 되었으며 연금공방을 통해\n물약의 기능들을 해금하거나\n향상하실 수 있게 되었습니다.</size>",
       "Eng": "[<#2DFF00><b>ALCHEMY</b></color>]\nhas been unlocked.\n\n<size=10>Now you can now use potions.\nUnlock or improve their functions\nthrough alchemy.</size>"
+    },
+    {
+      "TextKey": "LanguageText",
+      "Kor": "언어",
+      "Eng": "LANGUAGE"
+    },
+    {
+      "TextKey": "SoundText",
+      "Kor": "사운드",
+      "Eng": "SOUND"
+    },
+    {
+      "TextKey": "BGMText",
+      "Kor": "배경음",
+      "Eng": "BGM"
+    },
+    {
+      "TextKey": "SFXText",
+      "Kor": "효과음",
+      "Eng": "SFX"
+    },
+    {
+      "TextKey": "EffectsTitle",
+      "Kor": "이펙트",
+      "Eng": "EFFECTS"
+    },
+    {
+      "TextKey": "PopupText",
+      "Kor": "팝업 켜기",
+      "Eng": "POPUP TEXT"
+    },
+    {
+      "TextKey": "CameraShakeText",
+      "Kor": "카메라 쉐이크",
+      "Eng": "CAMERA SHAKE"
     }
   ]
 }
