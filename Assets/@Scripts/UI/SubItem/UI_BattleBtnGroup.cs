@@ -788,10 +788,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _battleCoroutine = StartCoroutine(CoBattleLoop());
     }
 
-    // 슬라이드 58 — Player Run anim 시작 직후부터 6초 뒤 첫 몬스터 spawn,
-    //               Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 6초 → 다음 spawn.
+    // 슬라이드 58 — Player Run anim 시작 직후부터 4초 뒤 첫 몬스터 spawn,
+    //               Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 4초 → 다음 spawn.
     // Y는 monster prefab 별 sprite pivot에 따라 다르므로 CreatureData.SpawnY로 분리.
-    const float MONSTER_SPAWN_DELAY = 6f;
+    const float MONSTER_SPAWN_DELAY = 2f;
     const float MONSTER_SPAWN_OFFSET_X = 12f;
     const float MONSTER_SPAWN_Y_FALLBACK = 2.3f;   // CreatureData 조회 실패 시 기본값
 
@@ -799,7 +799,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         Transform monsterRoot = Managers.Object.MonsterTransform;
 
-        // 첫 몬스터: 6초 대기 (Player Run 시작 시점부터)
+        // 첫 몬스터: 4초 대기 (Player Run 시작 시점부터)
         yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
 
         while (true)

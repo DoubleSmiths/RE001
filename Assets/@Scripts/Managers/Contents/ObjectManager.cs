@@ -102,14 +102,14 @@ public class ObjectManager
 
     public void ShowHitEffect(Vector3 pos)
     {
-        SpawnFxAt("FX_hit_10", pos);
+        SpawnFxAt("FX_hit_10", pos); // 나중에는 무기에 따라 달라져야 함.
     }
 
     // 슬라이드 62 — 치명타 시 피격자 위치에 Crit Effect (Player 공격 시만 호출)
     public void ShowCritEffect(Vector3 pos)
     {
         // 기존 프리펩에는 y가 3.44임. 이유는 모르겠는데 0으로 바꿈.
-        SpawnFxAt("Basic Crit", pos);
+        SpawnFxAt("Basic Crit", pos); // 나중에는 무기에 따라 달라져야 함.
     }
 
     void SpawnFxAt(string prefabKey, Vector3 pos)

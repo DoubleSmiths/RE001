@@ -246,14 +246,14 @@ public class ComboManager
         if (_slowMoInFlight) return;
         _slowMoInFlight = true;
 
-        float prevScale = Time.timeScale;
-        Time.timeScale  = 0.3f;
+        //float prevScale = Time.timeScale;
+        //Time.timeScale  = 0.0f;
 
-        DOVirtual.DelayedCall(0.4f, () =>
-        {
-            Time.timeScale = prevScale > 0f ? prevScale : 1f;
-            _slowMoInFlight = false;
-        }).SetUpdate(true);
+        //DOVirtual.DelayedCall(0.4f, () =>
+        //{
+        //    Time.timeScale = prevScale > 0f ? prevScale : 1f;
+        //    _slowMoInFlight = false;
+        //}).SetUpdate(true);
 
         if (_player != null)
         {

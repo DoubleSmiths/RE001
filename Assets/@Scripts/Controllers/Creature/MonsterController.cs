@@ -146,6 +146,7 @@ public class MonsterController : CreatureController
     {
         if (State == Define.State.Dead) return;
         if (State == Define.State.Attack) return;
+        _anim.CrossFade("OnHit", 0.05f, -1, 0f);
         base.PlayHitFeedback();
     }
 
