@@ -81,10 +81,20 @@ public class ObjectManager
 
     void SpawnDamageFont(Vector2 pos, string display, DamageFontMode mode, Transform parent)
     {
-        GameObject go = Managers.Resource.Instantiate("DamageFont", pooling: true);
-        go.transform.SetParent(TextFontTransform, worldPositionStays: false);
-        DamageFont df = go.GetOrAddComponent<DamageFont>();
-        df.SetInfo(pos, display, mode, parent);
+        if (mode == DamageFontMode.Critical)
+        {
+            GameObject go = Managers.Resource.Instantiate("CriticalDamageFont", pooling: true);
+            go.transform.SetParent(TextFontTransform, worldPositionStays: false);
+            DamageFont df = go.GetOrAddComponent<DamageFont>();
+            df.SetInfo(pos, display, mode, parent);
+        }
+        else
+        {
+            GameObject go = Managers.Resource.Instantiate("DamageFont", pooling: true);
+            go.transform.SetParent(TextFontTransform, worldPositionStays: false);
+            DamageFont df = go.GetOrAddComponent<DamageFont>();
+            df.SetInfo(pos, display, mode, parent);
+        }
     }
 
     // 슬라이드 62 — 타격 성공 시 피격자 위치에 Hit Effect (Player 공격 시만 호출)
@@ -98,6 +108,7 @@ public class ObjectManager
     // 슬라이드 62 — 치명타 시 피격자 위치에 Crit Effect (Player 공격 시만 호출)
     public void ShowCritEffect(Vector3 pos)
     {
+        // 기존 프리펩에는 y가 3.44임. 이유는 모르겠는데 0으로 바꿈.
         SpawnFxAt("Basic Crit", pos);
     }
 

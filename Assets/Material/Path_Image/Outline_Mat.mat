@@ -697,6 +697,7 @@ Material:
     - _WorldTilingOffset: {r: 0, g: 0, b: 0, a: 0}
     - _WorldTilingScale: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &7784394491700573988
 MonoBehaviour:
   m_ObjectHideFlags: 11

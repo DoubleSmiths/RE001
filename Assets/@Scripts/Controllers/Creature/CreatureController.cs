@@ -152,7 +152,7 @@ public abstract class CreatureController : BaseController
                 // 치명타 시 추가: Crit Effect (피격자 위치) + "Critical!" callout (공격자 위치)
                 if (result.IsCrit)
                 {
-                    Managers.Object.ShowCritEffect(transform.position);
+                    Managers.Object.ShowCritEffect(attacker.transform.position);
                     Vector3 attackerFontPos = attacker.transform.position + Vector3.up * attacker.DamageFontYOffset;
                     Managers.Object.ShowCriticalCallout(attackerFontPos, attacker.transform);
                 }
