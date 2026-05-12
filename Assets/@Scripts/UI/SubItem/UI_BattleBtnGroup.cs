@@ -30,7 +30,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     {
         // 추후 필요 시 Image 타겟 추가
     }
-
+    
     enum Texts
     {
         // 콤보 영역
@@ -203,6 +203,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             var tmp = GetText(i);
             if (tmp == null) continue;
             ApplyFont(tmp, FontType.Battle);
+            // 0, 1, 4, 6, 8, 9, 10, 11, 12, 17, 18 일단 하드로
+            if (i == 0 || i == 1 || i == 4 || i == 6 || i == 8 || i == 9 || i == 10 || i == 11 || i == 12 || i == 17 || i == 18) ApplyFont(tmp, FontType.UI);
+            //if (tmp.name == "ReturnButtonText") ApplyFont(tmp, FontType.UI);
 
             string enumKey = System.Enum.GetName(typeof(Texts), i);
             // 동적 갱신 대상은 빈 문자열로 시작, 아닌 것은 Localize
