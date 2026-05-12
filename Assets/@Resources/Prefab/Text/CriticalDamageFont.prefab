@@ -33,7 +33,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.12, y: -0.3}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0, y: 1}
 --- !u!212 &5202485352418008587
@@ -62,7 +62,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b0d6ca84bb3cbd842bbbb0b15bfb7184, type: 2}
+  - {fileID: 2100000, guid: dd662b8539a894d418173453bbfb8438, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -159,7 +159,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 56468921659083200, guid: 575bd11266727994586c8364c816cc8c, type: 2}
+  - {fileID: 338240964233662278, guid: f6494ebdb7e314c42b430b2cffdc067d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -205,8 +205,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 99999
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 575bd11266727994586c8364c816cc8c, type: 2}
-  m_sharedMaterial: {fileID: 56468921659083200, guid: 575bd11266727994586c8364c816cc8c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f6494ebdb7e314c42b430b2cffdc067d, type: 2}
+  m_sharedMaterial: {fileID: 338240964233662278, guid: f6494ebdb7e314c42b430b2cffdc067d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -275,7 +275,7 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_renderer: {fileID: 8288913846771077771}
   m_maskType: 0
 --- !u!114 &4724732942691690276

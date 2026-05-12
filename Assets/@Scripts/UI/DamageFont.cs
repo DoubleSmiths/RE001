@@ -102,17 +102,17 @@ public class DamageFont : MonoBehaviour
             _critAdditive = go.AddComponent<SpriteRenderer>();
             // 텍스트 메시 위에 그리도록 sortingOrder 한 단계 위
             int textOrder = GetComponent<MeshRenderer>()?.sortingOrder ?? 350;
-            _critAdditive.sortingOrder = textOrder + 1;
-            _critAdditive.sprite = Managers.Resource.Load<Sprite>("dmg_txt_critical_additive");
+            _critAdditive.sortingOrder = textOrder - 1;
+            //_critAdditive.sprite = Managers.Resource.Load<Sprite>("dmg_txt_critical_additive");
             if (_critAdditive.sprite == null)
                 Debug.LogWarning("[DamageFont] 'dmg_txt_critical_additive' sprite not found in Addressables.");
 
             // 슬라이드 63 — 외곽선 FF9900. CriticalOutlineMat이 SSU Standard shader 기반 outer outline 적용.
-            Material critMat = Managers.Resource.Load<Material>("CriticalOutlineMat");
-            if (critMat != null)
-                _critAdditive.material = critMat;
-            else
-                Debug.LogWarning("[DamageFont] 'CriticalOutlineMat' material not found in Addressables.");
+            //Material critMat = Managers.Resource.Load<Material>("CriticalOutlineMat");
+            //if (critMat != null)
+            //    _critAdditive.material = critMat;
+            //else
+            //    Debug.LogWarning("[DamageFont] 'CriticalOutlineMat' material not found in Addressables.");
         }
 
         _critAdditive.gameObject.SetActive(true);
