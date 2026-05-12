@@ -803,6 +803,7 @@ public class UI_GameScene : UI_Scene
         player.OnExpChanged += (cur, req) => UpdateEXP(cur, req);
         player.OnLevelUp += (lv, regen) => OnLevelUp(lv, regen);
         UpdateHP(player.Hp, player.MaxHp);
+        UpdateEXP(Managers.Game.Exp, player.ExpRequired);   // LoadGame된 현재 EXP로 슬라이더 초기화
         Managers.Game.OnStatusPointChanged += RefreshCharacterNewIcon;
         RefreshCharacterNewIcon();
     }

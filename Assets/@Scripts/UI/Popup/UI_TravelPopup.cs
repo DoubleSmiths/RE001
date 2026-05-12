@@ -287,7 +287,7 @@ public class UI_TravelPopup : UI_Popup
         {
             UI_FieldSelectButton btn = go?.GetComponent<UI_FieldSelectButton>();
             if (btn == null) continue;
-            btn.SetSelected(btn.NodeId == _selectedFieldId);
+            //btn.SetSelected(btn.NodeId == _selectedFieldId);
         }
 
         foreach (GameObject go in _spawnedMapButtons)

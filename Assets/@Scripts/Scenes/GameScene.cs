@@ -32,7 +32,13 @@ public class GameScene : BaseScene
                 Managers.Combo.Init();              // 콤보 매니저 초기화
                 Managers.Combo.AttachPlayer(_player); // Player.OnHitLanded 구독
                 if (_player != null)
+                {
+                    // BaseController.Awake → RefreshStats가 Managers.Data/Game 초기화 전에 1회 호출되어
+                    // 세이브된 Level이나 PlayerStatusData가 반영되지 않은 상태로 남아있음.
+                    // Data.Init + Game.Init(LoadGame) 완료된 지금 다시 호출해 실제 값으로 덮어쓴다.
+                    _player.RefreshStats();
                     _ui.BindPlayer(_player);
+                }
                 //StartAnimation();
             }
         });

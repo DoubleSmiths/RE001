@@ -81,6 +81,8 @@ public class MonsterController : CreatureController
 
         _hasEngaged = true;
         _rb.linearVelocity = Vector2.zero;     // 충돌 즉시 정지
+        // 조우 즉시 공격하지 않고 MonsterAttackDelay만큼 대기 후 첫 공격이 발사되도록.
+        _lastAtkTime = Time.time;
         OnEngaged?.Invoke();                   // HP Bar 호출 등
     }
 
@@ -107,7 +109,7 @@ public class MonsterController : CreatureController
         // 슬라이드 61 — 데미지 적용은 AttackTrigger() (Animation Event 키프레임 시점).
         // 몬스터 Attack anim에 키프레임이 아직 없으면 TryAttack이 fallback으로 즉시 호출.
         // 자산에 키프레임 추가되면 이 inline 호출은 제거.
-        AttackTrigger();
+        //AttackTrigger();
 
         StartCoroutine(CoResetStateAfterAttack(0.4f));
     }

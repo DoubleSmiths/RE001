@@ -102,14 +102,28 @@ public class ObjectManager
 
     public void ShowHitEffect(Vector3 pos)
     {
-        SpawnFxAt("FX_hit_10", pos); // 나중에는 무기에 따라 달라져야 함.
+        // random하게 위치 보정값
+        Vector3 randPos = new Vector3(Random.Range(0, 0.3f), Random.Range(0, 0.3f), 0);
+        SpawnFxAt("FX_hit_04", pos + randPos); // 나중에는 무기에 따라 달라져야 함. 또는 치명타인지 아닌지에 따라 다름. 치명타면 FX_hit_01, 일반은 FX_hit_04
+    }
+
+    public void ShowCriHitEffect(Vector3 pos)
+    {
+        // random하게 위치 보정값
+        Vector3 randPos = new Vector3(Random.Range(0, 0.3f), Random.Range(0, 0.3f), 0);
+        SpawnFxAt("FX_hit_01", pos + randPos);
     }
 
     // 슬라이드 62 — 치명타 시 피격자 위치에 Crit Effect (Player 공격 시만 호출)
     public void ShowCritEffect(Vector3 pos)
     {
         // 기존 프리펩에는 y가 3.44임. 이유는 모르겠는데 0으로 바꿈.
-        SpawnFxAt("Basic Crit", pos); // 나중에는 무기에 따라 달라져야 함.
+        // test vec
+        //Vector3 randPos = new Vector3(Random.Range(0, 0.3f), Random.Range(0, 0.3f), 0);
+        //SpawnFxAt("FX_hit_01", pos + randPos);
+
+        // todo 나중에 사용하는거.
+        //SpawnFxAt("Basic Crit", new Vector3(0, 0, 0)); // 나중에는 무기에 따라 달라져야 함.
     }
 
     void SpawnFxAt(string prefabKey, Vector3 pos)

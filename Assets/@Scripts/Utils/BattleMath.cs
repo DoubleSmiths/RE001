@@ -16,6 +16,12 @@ public static class BattleMath
         public int  FinalDamage;  // FINAL DMG (Miss면 0)
     }
 
+#if UNITY_EDITOR
+    // 테스트 토글 — true면 Player가 공격자인 모든 공격이 무조건 크리티컬로 적용.
+    // BattleTestMenu의 단축키(Ctrl+Shift+C)에서 ON/OFF.
+    public static bool DebugForcePlayerCritical = false;
+#endif
+
     public static DamageResult Resolve(
         CreatureController attacker,
         CreatureController defender,
@@ -33,6 +39,11 @@ public static class BattleMath
         // 2-a. BASE
         float atk = attackType == AttackType.Physical ? attacker.FinalPhysicalAtk : attacker.FinalMagicAtk;
         bool isCrit = Random.value * 100f < Mathf.Min(attacker.CritRate, 100f);
+#if UNITY_EDITOR
+        // 테스트 토글: Player 공격은 항상 크리티컬
+        if (DebugForcePlayerCritical && attacker.ObjectType == ObjectType.Player)
+            isCrit = true;
+#endif
         float baseDmg = atk * skillMul * (isCrit ? attacker.CritDamage / 100f : 1f);
         r.IsCrit = isCrit;
 

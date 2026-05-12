@@ -84,6 +84,27 @@ public static class BattleTestMenu
         Debug.Log($"[BattleTest] Forced Level Up → Lv.{Managers.Game.Level}");
     }
 
+    // ─────────────────────────────────────────────
+    // 디버그 토글 — Player 공격을 모두 크리티컬로 (단축키 Ctrl+Shift+C)
+    // BattleMath.Resolve에서 attacker.ObjectType == Player일 때 강제 isCrit=true.
+    // ─────────────────────────────────────────────
+    const string MENU_FORCE_CRIT = "Test/Battle/Toggle Force Player Critical %#c";
+
+    [MenuItem(MENU_FORCE_CRIT, false, 360)]
+    static void ToggleForcePlayerCritical()
+    {
+        BattleMath.DebugForcePlayerCritical = !BattleMath.DebugForcePlayerCritical;
+        Menu.SetChecked(MENU_FORCE_CRIT, BattleMath.DebugForcePlayerCritical);
+        Debug.Log($"[BattleTest] Force Player Critical = {BattleMath.DebugForcePlayerCritical}");
+    }
+
+    [MenuItem(MENU_FORCE_CRIT, true)]
+    static bool ValidateForcePlayerCritical()
+    {
+        Menu.SetChecked(MENU_FORCE_CRIT, BattleMath.DebugForcePlayerCritical);
+        return true;
+    }
+
     [MenuItem("Test/Battle/Log: BattleMath 100회 시뮬레이션", false, 340)]
     static void SimulateBattleMath()
     {

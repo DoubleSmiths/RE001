@@ -100,7 +100,7 @@ public class DamageFont : MonoBehaviour
             var go = new GameObject("CritAdditive");
             go.transform.SetParent(transform, worldPositionStays: false);
             _critAdditive = go.AddComponent<SpriteRenderer>();
-            // 텍스트 메시 위에 그리도록 sortingOrder 한 단계 위
+            // 텍스트 메시 위에 그리도록 sortingOrder 한 단계 위 
             int textOrder = GetComponent<MeshRenderer>()?.sortingOrder ?? 350;
             _critAdditive.sortingOrder = textOrder - 1;
             //_critAdditive.sprite = Managers.Resource.Load<Sprite>("dmg_txt_critical_additive");

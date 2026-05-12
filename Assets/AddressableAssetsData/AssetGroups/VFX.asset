@@ -33,6 +33,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77ae2f73c52305445a555cf89deec99f
+    m_Address: FX_hit_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7c38e5e2e618bc6498963e1e615769d2
     m_Address: FX_hit_10
     m_ReadOnly: 0
@@ -47,6 +53,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ac4cf49d13e8830488fd20a29a1f195e
     m_Address: Star_01_Anim_13_a
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd50ea9b54da7cf4eb616b91f3287b94
+    m_Address: FX_hit_04
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

@@ -11,6 +11,7 @@ public class PlayerController : CreatureController
     public event System.Action<float>        OnHitLanded;   // 타격 성공 시 데미지값 전달 (miss 제외) — 슬라이드 48
 
     float _expRequired = 100f;
+    public float ExpRequired => _expRequired;   // UI 초기 동기화용 read-only 노출
     bool _inBattle;
 
     // ── 플레이어 전용 스탯 ──
@@ -61,9 +62,24 @@ public class PlayerController : CreatureController
     // 슬라이드 57/58 — 몬스터 AtkRange 진입 여부에 따라:
     //   · 미engaged: BG scroll on, Player Run (Moving)
     //   · engaged:   BG scroll off, Player Idle (AutoAttack가 Attack로 전환)
+    //
+    // 몬스터 사망 직후엔 곧장 이동하지 않고 VICTORY_PAUSE_DURATION만큼 Idle + BG 정지 유지.
+    // engaged → !engaged 전환 순간을 잡아 _victoryPauseUntil을 set하는 방식.
+    const float VICTORY_PAUSE_DURATION = 2f;
+    bool  _wasEngaged;
+    float _victoryPauseUntil = -999f;
+
     void UpdateEngagementVisuals()
     {
-        bool engaged = HasMonsterInAtkRange();
+        bool rawEngaged = HasMonsterInAtkRange();
+
+        // engaged였다가 풀린 순간 = 몬스터가 막 죽거나 사라짐 → 승리 정지 타이머 시작
+        if (_wasEngaged && !rawEngaged)
+            _victoryPauseUntil = Time.time + VICTORY_PAUSE_DURATION;
+        _wasEngaged = rawEngaged;
+
+        bool inVictoryPause = Time.time < _victoryPauseUntil;
+        bool engaged = rawEngaged || inVictoryPause;
 
         BackgroundScroller scroller = GetBgScroller();
         if (scroller != null) scroller.IsScrolling = !engaged;
@@ -108,17 +124,6 @@ public class PlayerController : CreatureController
     void FixedUpdate()
     {
         if (State == Define.State.Dead) return;
-        //MovePlayer();
-    }
-
-    // ────────────────────────────────────────
-    //  이동 (가로 스크롤 – 오른쪽으로만 진행)
-    // ────────────────────────────────────────
-    void MovePlayer()
-    {
-        if (State == Define.State.Attack) return;
-        //_rb.linearVelocity = new Vector2(MoveSpeed, _rb.linearVelocity.y);
-        State = Define.State.Moving;
     }
 
     // ────────────────────────────────────────
@@ -244,6 +249,8 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     //  스탯 갱신
     // ────────────────────────────────────────
+    // PlayerStatusData(Level==DataId)를 우선 참조. 데이터 누락 시에만 fallback 식 사용.
+    // GameManager.GetPlayerMaxHp가 동일 lookup 키(Level)를 쓰므로 정합성 유지.
     public void RefreshStats()
     {
         int lv = Managers.Game.Level;
@@ -260,14 +267,42 @@ public class PlayerController : CreatureController
             _expRequired = 100 * Mathf.Pow(1.2f, lv - 1);
         }
 
-        // 기본 성장식으로 스탯 계산
-        MaxHp       = 100 + (lv - 1) * 20;
-        PhysicalAtk = 10  + (lv - 1) * 2;
-        MagicAtk    = 10  + (lv - 1) * 2;
-        Def         = 0   + (lv - 1) * 1;
+        Data.PlayerStatusData status = null;
+        if (Managers.Data != null && Managers.Data.PlayerStatusDic != null)
+            Managers.Data.PlayerStatusDic.TryGetValue(lv, out status);
+
+        if (status != null)
+        {
+            // 데이터 기반: 슬라이드 18 시작 스탯 풀스펙
+            MaxHp          = status.StartHP;
+            PhysicalAtk    = status.StartStrength;
+            MagicAtk       = status.StartMagic;
+            CritRate       = status.StartCritRate;
+            CritDamage     = status.StartCritDamage;
+            Accuracy       = status.StartAccuracy;
+            AtkSpeed       = status.StartAtkSpeed;
+            PhysicalResist = status.StartPhysicalResist;
+            MagicResist    = status.StartMagicResist;
+            Evasion        = status.StartEvasion;
+            RecoveryRate   = status.StartRecoveryRate;
+            GrowthRate     = status.StartGrowthRate;
+            DropRate       = status.StartDropRate;
+            Def            = 0; // PlayerStatusData에 Def 컬럼이 아직 없음 — 데이터 추가되면 매핑
+        }
+        else
+        {
+            // PlayerStatusDic이 비어있거나 해당 레벨 데이터 누락 시 fallback
+            MaxHp       = 100 + (lv - 1) * 20;
+            PhysicalAtk = 10  + (lv - 1) * 2;
+            MagicAtk    = 10  + (lv - 1) * 2;
+            Def         = 0   + (lv - 1) * 1;
+        }
 
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
+        // _expRequired가 갱신됐으니 EXP 슬라이더도 같은 시점에 신호 발화.
+        // (BindPlayer가 늦게 구독한 경우엔 BindPlayer 안에서 초기 1회를 별도로 호출.)
+        OnExpChanged?.Invoke(Managers.Game.Exp, _expRequired);
     }
 
     // 슬라이드 67 — 플레이어 사망 시퀀스
