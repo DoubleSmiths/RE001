@@ -69,6 +69,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6322a7339b8b4d746b94d30eb5ca0de4
+    m_Address: UI_Bestiary
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 690ae28c3a1f7f94d8ff5701e6612129
     m_Address: UI_BattleDropItem
     m_ReadOnly: 0
@@ -83,6 +89,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 974693ffedc1c264b953f8188d5f36f6
     m_Address: UI_Village1BtnGroup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98ac13541e7dd2249ba39574671471c6
+    m_Address: UI_BestiaryBox
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -161,12 +173,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ff91dc296933e494eb772e229137bd96
     m_Address: UI_CustomOrderPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: dd59cf4502b7ebe45a54108010a97ac8
-    m_Address: UI_BestiaryPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
