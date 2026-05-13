@@ -868,8 +868,8 @@ public class UI_GameScene : UI_Scene
 
     void OnClickBestiary()
     {
-        HandleBtmClick(TabType.Bestiary, Buttons.BestiaryButton, null,
-            () => Managers.UI.ShowToast("도감 팝업은 준비 중입니다."));
+        HandleBtmClick(TabType.Bestiary, Buttons.BestiaryButton, typeof(UI_BestiaryPopup),
+            () => Managers.UI.ShowPopupUI<UI_BestiaryPopup>().SetInfo());
     }
 
     void HandleBtmClick(TabType tab, Buttons btnId, System.Type popupType, System.Action showAction)
@@ -1057,6 +1057,14 @@ public class UI_GameScene : UI_Scene
         }
 
 #endif
+    }
+
+    [ContextMenu("Test/Unlock Bestiary Button")]
+    public void TestUnlockBestiaryButton()
+    {
+        Managers.Game.UnlockBtmButton(TabType.Bestiary);
+        RefreshBtmButtonsLockState();
+        ShowNewBadge(TabType.Bestiary);
     }
 
     [ContextMenu("Test/Unlock All")]
