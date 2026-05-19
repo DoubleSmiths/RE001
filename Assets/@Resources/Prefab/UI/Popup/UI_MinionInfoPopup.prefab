@@ -114490,6 +114490,7 @@ GameObject:
   - component: {fileID: 2961475203261531051}
   - component: {fileID: 558880544547580634}
   - component: {fileID: 786107526889344780}
+  - component: {fileID: 7310000000000000020}
   m_Layer: 5
   m_Name: UI_MinionInfoPopup
   m_TagString: Untagged
@@ -126576,3 +126577,15 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &7310000000000000020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7824880766704104796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9410d169dc8a5b84c921d74f305191dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_MinionInfoPopup
