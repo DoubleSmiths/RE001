@@ -345,6 +345,11 @@ public class UI_BestiaryPopup : UI_Popup
             GetButton(SKILL_ICON_BTN[i]).gameObject.BindEvent(() => OnClickSkill(idx));
         }
 
+        // 슬28~29: [미니몬 잡기!] 버튼 — 포획 가능 창고의 미니몬으로 잡기 팝업 진입
+        GetButton((int)Buttons.MinimonBtn).gameObject.BindEvent(OnClickMinimon);
+        if (Managers.MinMon != null)
+            Managers.MinMon.OnInterestChanged += RefreshMinimonButton;
+
         return true;
     }
 
@@ -381,6 +386,64 @@ public class UI_BestiaryPopup : UI_Popup
 
         RefreshCompletionNumber();
         RefreshSkills();
+        RefreshMinimonButton();
+    }
+
+    // 슬28~29: [미니몬 잡기!] 버튼 상태. 포획 가능 창고(InterestedMinMons) 유무에 따라 변화.
+    //  창고 1마리 이상: 타이틀 "!" + 슬라임 표시 + Emoj_Exclamation + interactable
+    //  창고 비어있음  : 타이틀 "?" + 슬라임 숨김 + Emoj_Question   + non-interactable
+    void RefreshMinimonButton()
+    {
+        int count = Managers.MinMon != null ? Managers.MinMon.InterestedMinMons.Count : 0;
+        bool has = count > 0;
+
+        var title = GetText((int)Texts.MinimonTitleText);
+        if (title != null)
+        {
+            title.text = "미니몬 잡기" + (has ? "!" : "?");
+            ApplyFont(title, Define.FontType.UI);
+        }
+
+        var amount = GetText((int)Texts.MinimonAmountTxt);
+        if (amount != null)
+        {
+            amount.text = $"x{count}";
+            ApplyFont(amount, Define.FontType.UI);
+        }
+
+        // 슬29: 슬라임(Slime_Idle) 표시 여부
+        var slime = GetImage((int)Images.MinimonExistImg);
+        if (slime != null) slime.gameObject.SetActive(has);
+        var noSlime = GetImage((int)Images.MinimonNoExistImg);
+        if (noSlime != null) noSlime.gameObject.SetActive(!has);
+
+        // 슬29: Emoj_Exclamation(창고 있음) / Emoj_Question(없음)
+        PlayMinimonEmoj(has ? "Emoj_Exclamation" : "Emoj_Question");
+
+        // 슬29: Button interactive
+        var btn = GetButton((int)Buttons.MinimonBtn);
+        if (btn != null) btn.interactable = has;
+    }
+
+    void PlayMinimonEmoj(string state)
+    {
+        var emoj = GetImage((int)Images.MinimonEmoj);
+        if (emoj == null) return;
+        emoj.gameObject.SetActive(true);
+        var anim = emoj.GetComponent<Animator>();
+        if (anim != null) { anim.enabled = true; anim.Play(state, 0, 0f); }
+    }
+
+    // 슬28: [미니몬 잡기!] 클릭 → 창고 첫 미니몬으로 잡기 미니게임(UI_TamePopup) 진입
+    void OnClickMinimon()
+    {
+        if (Managers.MinMon == null || Managers.MinMon.InterestedMinMons.Count == 0)
+        {
+            Debug.Log("[Bestiary] 포획 가능 창고 비어있음 — 잡기 불가");
+            return;
+        }
+        int dataId = Managers.MinMon.InterestedMinMons[0];
+        Managers.UI.ShowPopupUI<UI_TamePopup>().SetInfo(dataId);
     }
 
     // 완성도 보라별 밑 숫자 = 보라(3단계) 달성 누적 수
@@ -557,6 +620,8 @@ public class UI_BestiaryPopup : UI_Popup
 
     public override void OnDestroy()
     {
+        if (Managers.MinMon != null)
+            Managers.MinMon.OnInterestChanged -= RefreshMinimonButton;
         //for (int i = 0; i < _skillIdleTweens.Length; i++)
         //{
         //    _skillIdleTweens[i]?.Kill();
