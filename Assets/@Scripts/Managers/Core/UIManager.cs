@@ -170,6 +170,17 @@ public class UIManager
         return popup;
     }
 
+    // [포획 창고 가득] 경고 — 팝업 스택/timeScale 미사용(게임 비정지). 자체 코루틴으로 자동 소멸.
+    public UI_WarningPopup ShowWarningPopup(int dataId)
+    {
+        GameObject go = Managers.Resource.Instantiate(nameof(UI_WarningPopup), pooling: false);
+        if (go == null) return null;
+        var popup = Util.GetOrAddComponent<UI_WarningPopup>(go);
+        go.transform.SetParent(Root.transform);
+        popup.SetInfo(dataId);
+        return popup;
+    }
+
     public UI_Toast ShowToast(string msg)
     {
         string name = typeof(UI_Toast).Name;

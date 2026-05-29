@@ -182,9 +182,9 @@ public class MonsterController : CreatureController
         {
             var interest = Managers.MinMon.RollInterest(DataId);
             if (interest == MinMonManager.InterestResult.Added)
-                Managers.UI.ShowAttractedPopup(DataId, false);          // 슬24: 창고 여유
+                Managers.UI.ShowAttractedPopup(DataId, false);          // 슬24: 창고 여유 → Side UI 알림
             else if (interest == MinMonManager.InterestResult.StorageFull)
-                Managers.UI.ShowAttractedPopup(DataId, true);           // 슬25: 창고 가득
+                Managers.UI.ShowWarningPopup(DataId);                   // 슬23/25: 창고 가득 → 경고 popup
             // TODO 슬24: 몬스터 머리 위 Emoj_Shy (풀 반환 전 타이밍)
         }
 
