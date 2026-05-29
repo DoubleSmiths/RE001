@@ -1,0 +1,1312 @@
+
+===== SLIDE 1 =====
+도감 기획서   #1
+예시 화면
+상단 UI Sprites & Texts
+[IMG: 그림 4]
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+DoPlayBackwards
+[IMG: 그림 27]
+[IMG: 그림 62]
+[IMG: 그림 255]
+[IMG: 그림 256]
+= BeastiaryText
+= CompletionText
+= “+n” LevelText
+“+n” Color: FFFF00
+[IMG: 그림 261]
+= “0” Outline Color: FF00C4
+Alpha: 132
+Distance x 0.2, y -0.2
+Sprite(None)
+Color: 000000
+Alpha: 134
+
+===== SLIDE 2 =====
+도감 기획서   #2
+상단 UI 기능
+[IMG: 그림 2]
+[IMG: 그림 12]
+1. 완성도란에 있는 4개의 아이콘(버튼)들은
+플레이어의 기술들이다.
+2. 각 기술들은 가장 왼쪽부터 오른쪽 순으로:
+1. 종을 초월한 교감
+2. 조련사의 기술
+3. 오다 주웠습니다 주인님!
+4. 기억 확장
+3. 게임 시작 시 가장 오른쪽에 있는 기술인
+“기억 확장”을 제외한 나머지 기술들은 잠금 상태이다.
+4. 도감은 몬스터별로 각 별(star)단계가 존재,
+최고 별단계(보라색 별)를 달성 시 가장 왼쪽 부터
+시작하여 오른쪽 순으로 하나씩 1등급이 오르게 된다.
+가장 오른쪽에 위치한 “기억 확장“ 등급이 오르게 되면
+다시 가장 왼쪽에 위치한 “종을 초월한 교감“ 기술
+차례로 된다.
+예시 화면
+도감을 열어놓은 상태에서
+어떤 몬스터의 별 등급이
+올랐을 때의 예시.
+(이에 대한 자세한 내용은
+#5 에 서술)
+5. 별단계에 대해서는 도감 기획서 다음에 작성할
+[미니몬 기록] 기획서에 서술 예정.
+6. 잠금 상태의 아이콘(버튼)은 Interactive가 불가하다.
+7. 해금된 상태의 아이콘(버튼)은 Interactive가 가능하며
+아이콘 클릭 시 해당 [기술 상세정보창]을 호출한다.
+8. 밑에 “+0 등급”은 마물 도감을 통해 추가적으로 얻은
+추가 등급을 명시하고 있다.
+그래서 [기억 획장] 기술은 처음부터 해금되어 있는
+상태이며, 표기도 +0 등급으로 표기하는 것이다.
+마찬가지로 나머지 다른 3개의 기술을은
+마물 도감으로만 획득이 가능하기 떄문에
+잠금 상태로 적용한다.
+9. 아이콘의 Anim 과 적용방식은 추후 하단 UI
+기능에 기술되어 있음.
+Dotween
+Punch/Rotation
+Duration: 1
+Ease: OutQuad
+Loops: -1
+Loop Type: Restart
+TO: x 0, y 0, z 20
+Vibrato: 2
+Elasticity: 0
+별 단계와 ANIM
+
+===== SLIDE 3 =====
+도감 기획서   #3
+하단 UI Sprites & Texts
+[IMG: 그림 34]
+gui_atlas
+(silder_ 01_background,
+Slider_button01)
+아이템 아이콘과 같은
+MASK 처리 방식
+가장 위 Layer에
+ScrollRect
+[IMG: 그림 280]
+= Creature ID
+[IMG: 그림 289]
+= “|” PlaceName
+각 설정 Text와 색은
+Data화 시킬지 아니면
+각각 손수 설정할지 정해야할 듯..
+우선 산들바람 숲은
+TEXT: PlaceNameBWF0Text
+Outline: 83BC00, alpha 180
+x 0.5, y -0.5
+Décor_Title_options2는
+Outline: 위 동일 alpha만 100
+?
+Font: DOSSaemmul
+
+===== SLIDE 4 =====
+도감 기획서   #4
+하단 UI 기능
+[IMG: 그림 32]
+[IMG: 그림 45]
+1. 각 BOX 별로 한 지역에 출몰하는 몬스터가 나열된다.
+2. 몬스터 ICON은 총 3가지 분류로 나뉜다.
+3. 몬스터 ICON에 해당 몬스터의 별등급이(만약 등급이 1 이상이라면) 표기 된다.
+4. 별등급과 분석률에 대해서는 도감 기획서 다음에 작성할
+[마물 상세정보] 기획서에 서술 예정.
+5. 별등급 표기는 아래와 같이 표기된다.
+6. 또한 해당 몬스터를 소환했다면 아래와 같은 효과가 추가된다.
+[IMG: 그림 8]
+[IMG: 그림 12]
+[IMG: 그림 15]
+기록도
+10% 이상
+Interactive
+O
+기록도
+10% 미만
+Interactive
+O
+기록도
+0%
+Interactive
+X
+Dotween
+Punch/Rotation
+Duration: 1
+Ease: OutQuad
+Loops: 01
+Loop Type: Restart
+TO: x 0 , y 0, z 20
+Vibrato: 2
+Elasticity:
+Active Ef.prefab
+몬스터 ICON을 클릭 시
+해당 몬스터의 정보가 담긴
+[미니몬 기록] 창 호출.
+
+===== SLIDE 5 =====
+도감 기획서   #5
+도감을 열어놓은 상태에서 별 등급이 올랐을 때
+[IMG: 그림 6]
+1. 만약 별등급이 올랐지만, 3단계(보라색 별)로 오르지 않았을 경우:
+- 별 등급이 오른 미니몬 아이콘만 Anim 진행.
+2. 만약 3단계(보라색 별)로 별 등급이 오른 경우:
+- 예시의 모든 Anim을 차례대로 (0.1초의 간격) 진행
+a. 등급이 오른 기술
+b. 등급이 오른 미니몬
+c. [완성도]에 있는 보라색 별
+d. [완성도]에 있는 보라색 별 밑에 숫자
+- 기술 Icon과 미니몬 Icon에는 [ Flash_USETHIS.prefab ] 를 각 각 적용
+- 이때 등급이 오른 기술이 해금되는 기술일 시 (Lv.0 -> Lv.1)
+a. 자물쇠와 검은색 Sprite(None)을 Active.fasle
+b. UI Feedback [ NEW ] 표시
+3. Anim
+DOTween
+Punch/Scale
+Duration: 0.3
+Ease: OutQuad
+TO: x 0.2, y 0.2, z 0
+Vibrato: 10
+Elasticity: 1
+
+===== SLIDE 6 =====
+도감 기획서   #6
+미니몬 동행중일 시
+미니몬이 동행중이 아닐 시
+[IMG: 그림 8]
+[IMG: 그림 12]
+미니몬이 동행 중
+미니몬 동행에 대한 기획은 추후 작성 예정
+미니몬 동행 중일 시 동행하고 있는 미니몬의 도감 ICON이 변한다.
+- 해당 아이콘 frame 에 [ Active Ef.prefab ] 활성
+- 해당 아이콘 frame 색 변경 (FF00CB)
+동행 해제 시 다시 원래 상태로 복귀한다.
+[IMG: 그림 18]
+
+===== SLIDE 7 =====
+[IMG: 그림 17]
+[IMG: 그림 7]
+미니몬 기록   #1
+기본 UI 정보
+예시 화면
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+DoPlayBackwards
+몬스터 IMG
+MASK 구역
+기술 ICON과 동일
+Sprite(None)보다 뒤에 위치
+(추후 기술창 기획서에서 설명)
+보유기술 Text는
+Sprite(None)보다 앞에 위치
+[IMG: 그림 48]
+Hp_frame_Empty
+아이템 ICON과 동일
+(숫자 Text는 다음장에 설명)
+몬스터 IMG는
+Idle Anim 반복
+ScrollView
+
+===== SLIDE 8 =====
+[IMG: 그림 276]
+미니몬 기록   #2
+기본 UI Text 정보
+.
+MinimonEntryText
+“NO.” 고정 , 001은
+CreatureData의 ID에서 앞에 2를 뺀 것
+LinkSkillText
+Outline Color: CA3223 (x0.1, y0.1)
+100LinkRequiredText
+Color: 30FF00
+LinkText+”:”+해당 미니몬의 공명도+”%”
+공명도 100% 미만일 시
+Color: FF820B
+공명도 100% 일 시
+Color: 30FF00
+MAT: Text_ShineGreen
+InfoAndStatsText
+Color: 86FFFA
+○, ◆ 특수문자 고정
+이름 = “○”+MinimonNameText+”: ”+”CreatureData
+서식지 = “○”+HabitatText +”: ”+” CreatureData
+체력 = “◆”+MaxHitPointText +”: ”+” CreatureData
+방어력 = “◆”+DefenseText +”: ”+” CreatureData
+물리저항 = “◆”+PhysicalResistanceText +”: ”+” CreatureData
+마법저항 = “◆”+MagicalResistanceText +”: ”+” CreatureData
+경험치 = “◆”+ EXPText +”: ”+” CreatureData
+분석률 = “◆”+ LogText +”: ”+” CreatureData
+물리공격력 = “◆”+PhysicalAttackText +”: ”+” CreatureData
+마법공격력 = “◆”+MagicalAttackText +”: ”+” CreatureData
+공격속도 = “◆”+AttackSpeedText +”: ”+” CreatureData
+명중률 = “◆”+AccuracyText +”: ”+” CreatureData
+등장확률 = “◆”+EncounterText +”: ”+” CreatureData
+관심확률 = “◆”+AttentionRateText +”: ”+” CreatureData
+LogCompletionText
+Color: FFE300
+Mat: Text_ShineGold
+LootText
+[IMG: 그림 4]
+□드랍 아이템 갯수
+□드랍 아이템 확률
+
+===== SLIDE 9 =====
+[IMG: 그림 40]
+미니몬 기록   #3
+기록도에 따른 UI 변경 정보
+[IMG: 그림 8]
+[IMG: 그림 10]
+기록도: 0%
+※ 기록도란?
+- 플레이어가 몬스터를 잡을때마다 해당 몬스터의 Kill Count (사냥성공횟수)가 1씩 올라간다.
+- 각 몬스터의 등급마다 최대 Kill Count가 정해져 있다. (최대치 도달 시 더 오르지 않는다)
+- 해당 몬스터의 Kill Count의 진행도%가 바로 [기록도] 이며 이 기록도에 따라 해당 몬스터의 정보들이 해금됨.
+- 아래 사진들은 예시이며, 기록도에 따라 해금되는 정보들은 각 몬스터마다 다르다.
+기록도: 60%
+기록도: 100%
+1. [몬스터 IMG]
+- 검은색으로 처리된다.
+- 몬스터 이름/서식지가 해금될때 같이 색이 돌아온다.
+2. [고유기술]
+- 정보가 잠겨있는 상태. (interactive X)
+3. [기초정보 & 확률] + [전리품]
+- 기록도를 제외한 모든 정보가 “???”로 표기된다.
+- 기록도 TEXT 색
+100% > 기록도: EC9907
+100% = 기록도: 00FF00
+Font: DOSSaemmul
+TEXT: ?     고정
+MinimonSkillLockedText
+해당 미니몬을 한 마리 이상 잡았거나
+기록도가 100%일 경우 정보 해금
+TextColor: 6C6C6C
+――― = Sprite(None) , color:FFFFFF
+outline: 000000
+Mat: None
+적용 안되는 중
+1. [몬스터 IMG]
+- 색이 돌아온다.
+2. [고유기술]
+- 정보가 잠겨있는 상태. (interactive X)
+3. [기초정보 & 확률]
+-  기록도에 따른 정보들이 해금된다.
+[IMG: 그림 18]
+ItemIcon과 동일하나
+GlowColor: 0F0F0F
+및 아이템 아이콘을
+“?” TEXT로 교체
+또한 아이템 확률과
+개수 또한 표기 x
+1. [고유기술]
+- 정보만 해금된 상태. (interactive O)
+클릭 시 해당 기술정보 창 팝업.
+2. [기초정보 & 확률]
+-  모든 정보들이 해금된 상태.
+Color: FFFFFF
+Mat: Text_ShineGold
+적용 되는중
+
+===== SLIDE 10 =====
+[IMG: 그림 40]
+[IMG: 그림 35]
+미니몬 기록   #4
+공명도에 따른 UI 변경 정보
+[IMG: 그림 10]
+※ 공명도란?
+- 해당 몬스터를 포획할때마다 [ 25% ] 씩 오른다.     (수치 변할 수 있음)
+- 100% 달성 시 해당 몬스터의 고유기술이 완전 해금되며 기술 Lv.1인 상태로 플레이어의 기술로 습득된다. (영구)
+-  TEXT Color:
+100% > 공명도: EC9907
+100% = 공명도: 00FF00
+공명도: 0%
+공명도: 50%
+공명도: 100%
+포획한 몬스터가 있다면
+공명도가 당연히 0보다 높으니
+고유기술의 정보가 가려진 상태
+공명도 0 이상일 경우
+당연히 포획한 몬스터가 있으니
+고유기술 정보가 나온 상태
+공명도 100일 경우
+기술을 습득한 상태
+[IMG: 그림 14]
+HP_MP_little_frame
+Color: 36FF00
++
+Sprite(None)
+Color: 36FF00
+“부분획득”
+Text: ParticalGetText
++1 “등급”
+Text: LevelText
+Color: 00FF00
+
+===== SLIDE 11 =====
+[IMG: 그림 35]
+[IMG: 그림 33]
+미니몬 기록   #5
+보유 미니몬 능력치에 따른 UI 변경 정보
+-  포획한 몬스터의 [ 공격 , 공격속도 , 치명타 ] 등급이 모두 S 등급이라면 기술 Lv+1 이 된다. (즉, 기술 Lv.2)
+-  이때 공명도가 100% 미만이라면 기술습득이 되지 않은 상태로 있으며 공명도 100%가 되는 즉시 Lv.2인 상태로 습득하게 된다.
+[IMG: 그림 2]
+공명도 100%의 상태에서
+포획한 몬스터의 등급이
+모두 S 등급이 아닌 상태일 시
+공명도 100%의 상태에서
+포획한 몬스터의 등급이
+모두 S 등급 상태일 시
+[IMG: 그림 10]
+HP_MP_little_frame
+Color: FF0000
++
+Sprite(None)
+Color: 000000
+“완벽획득”
+Text: CompleteGetText
++2 “등급”
+Text: LevelText
+Color: FFFFFF
+Mat: Text_ShineGold
+
+===== SLIDE 12 =====
+미니몬 기록   #6
+미니몬 포획 유무에 따른 버튼 변화
+- [ 미니몬 기록 ] 창 하단에 [ 나의 미니몬 ] 이라는 버튼이 있다.
+- 해당 버튼은 해당 몬스터의 포획 유무에 따라 변한다.
+- 해당 버튼 클릭 시 [ 나의 미니몬 ] 창을 호출한다.
+[IMG: 그림 10]
+[IMG: 그림 12]
+[IMG: 그림 13]
+해당 몬스터를
+포획 성공한 적이 없을 시
+해당 몬스터를
+포획 성공 했을 시
+[IMG: 그림 18]
+[IMG: 그림 19]
+T_gray_button_s
+shop_frame_glow
+Color: 000000
+[IMG: Google Shape;267;p8]
+Sprite(None)
+Color: 000000, alpha 150
+TEXT: RequireMinimonText
+Interactive: X
+shop_frame_glow
+Color: 8E5E00
+[IMG: Google Shape;267;p8]
+TEXT: MyMinimonText
+Outline: F5A200, alpha 146, x0.1 y-0.1
+Interactive: O
+[IMG: 그림 37]
+
+===== SLIDE 13 =====
+미니몬 기록   #7
+미니몬 동행 유무에 따른 UI 변화
+- 만약 미니몬을 소환하면 [ 미니몬 기록 ] 안에 있는 [ 나의 미니몬 ] 버튼 하단에 추가적인 UI가 생성된다.
+- 또한 [ 미니몬 기록 ] 창의 Frame에 [ Active Ef.prefab ] 활성
+- 소환 해제 시 둘 다 disable
+[IMG: 그림 9]
+[IMG: 그림 25]
+[IMG: 그림 27]
+T_gray_button_s
+shop_frame_glow
+Color: 00B906, alpha 190
+[IMG: Google Shape;267;p8]
+Sprite(None)
+Color: 000000, alpha 150
+TEXT: FollowingText
+Interactive: X
+DOTween
+Move
+Duration: 0.4
+Ease: OutBack
+From: x 0, y -5, z 0
+
+===== SLIDE 14 =====
+미니몬 기록   #8
+미니몬 도감 [ 별 ] 시스템
+- 미니몬 도감 안에 나오는 모든 별 시스템에 대한 정보이다.
+- 별 단계는 총 4단계로 나뉜다.
+- 별 단계는 0단계 부터 시작하여 특정 조건을 만족할 때마다 한 단계씩 승급한다.
+Dotween
+Punch/Rotation
+Duration: 1
+Ease: OutQuad
+Loops: -1
+Loop Type: Restart
+TO: x 0, y 0, z 20
+Vibrato: 2
+Elasticity: 0
+- 별은 항시 Anim 재생상태.
+※ 별 단계 승급 조건들은 아래와 같다.
+1. 기록도 100% 달성 시.
+2. 공명도 100% 달성 시.
+3. 잡은 미니몬의 능력치 등급이 모두 SS 등급일 시.
+
+===== SLIDE 15 =====
+[IMG: 그림 1]
+나의 미니몬   #1
+기본 정보
+Popup Anim
+1. [ 나의 미니몬 ] 창은 [ 미니몬 기록 ] 창에서 [ 나의 미니몬 ] 버튼을 눌렀을때 호출되는 창이다.
+2. 플레이어가 잡은 미니몬의 정보를 보여주는 창이다.
+3. 플레이어가 잡은 미니몬 중 [ 미니몬 기록 ] 창에 호출된 미니몬을 보여준다.
+4. 잡은 미니몬은 [ 부르기 ] 버튼을 통해 플레이어와 동행하며 전투에 참여시킬 수 있다.
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Playbackwards
+
+===== SLIDE 16 =====
+나의 미니몬   #2
+[IMG: 그림 2]
+기본 UI 정보
+예시 화면
+[IMG: 그림 26]
+[IMG: 그림 28]
+[IMG: 그림 31]
+Staff01
+Outline: 000000, x 1. y 1
+Google Drive – 디자인 리소스 – UI – Icon 폴더
+Sword01
+Outline: 000000, x 1. y 1
+몬스터 IMG
+MASK 구역
+몬스터 IMG는
+Idle Anim 반복
+기술 ICON과 동일
+없을 시 “-” 고정
+(추후 기술창 기획서에서 설명)
+물리 공격력일 경우 Sword01
+마법 공격력일 경우 Staff01
+
+===== SLIDE 17 =====
+나의 미니몬   #3
+[IMG: 그림 2]
+기본 TEXT 정보
+MyMinimonText
+Outline Color: 784806, x 0.5 y 0.5
+“NO.” 고정 , 001은
+CreatureData의 ID에서 앞에 2를 뺀 것
+LinkText+”:”+해당 미니몬의 공명도+”%”
+공명도 100% 미만일 시
+Color: FF820B
+공명도 100% 일 시
+Color: 30FF00
+MAT: Text_ShineGreen
+MinimonAbilityText
+기술 있을 시 기술 아이콘이 해당 위치에 있음
+없을 시 “-”
+Font: DOSSaemmul 고정
+MinimonData → Name
+AttackPowerText, AttackSpeedText, CriticalText
+[IMG: 그림 53]
+(완전 성장까지: 10회) 로 변경.
+FullGrowthInText
+KR Suffix: 회
+EN Suffix:
+Text Color: C8C8C8
+Text Outline Color: B48C08, x 0.1, y0.1
+“10” Color: FF0000
+FollowText
+TEXT: MyMinimonText
+Outline: F5A200, alpha 146, x0.1 y-0.1
+Interactive: O
+MinimonData → ATK, AS, CRIT
+MinimonData Sheet 만들어야 할듯요?
+Text 색에 대해선
+추후 설명
+
+===== SLIDE 18 =====
+0등급 ~ 4등급
+나의 미니몬   #4
+능력치 등급 종류
+[IMG: 그림 5]
+미니몬의 능력치는 총 6 종류의 등급으로 나뉜다.
+능력치 등급이 높을 수록 미니몬의 능력치도 높아진다.
+[IMG: 그림 21]
+[IMG: 그림 22]
+[IMG: 그림 23]
+[IMG: 그림 24]
+[IMG: 그림 34]
+[IMG: 그림 37]
+- 0등급: Icon:
+Text Outline Color: B900FF, x 0.05, y 0.05
+- 1등급: Icon:
+Text Outline Color: 0000FF, x 0.05, y 0.05
+- 2등급: Icon:
+Text Outline Color: 3AE795, x 0.05, y 0.05
+- 3등급: Icon:
+Text Outline Color: FFC824, x 0.05, y 0.05
+- 4등급: Icon:
+Text Outline Color: FF3224, x 0.05, y 0.05
+- 5등급: Icon:
+Text Outline Color: 000000, x 0.7, y 0.7
+Text Material: Text_ShineGold
+[IMG: 그림 263]
+[IMG: 그림 265]
+Layer1 (Frame_bg_big)
+Layer2 (ON) (UIMask)
+Color: FFF300
+Material: Text_ShineGold
+[IMG: 그림 279]
+Layer1 (Frame_bg_big)
+Layer2 (OFF) (UIMask)
+Color: FFF300
+Material: Text_ShineGold
+5등급
+
+===== SLIDE 19 =====
+나의 미니몬   #5
+[ 부르기 ] 버튼
+[IMG: 그림 7]
+예시 화면
+[IMG: 그림 2]
+[IMG: 그림 6]
+해당 미니몬과
+함께 다니지 않을 때
+해당 미니몬과
+함께 다닐 때
+[ 나의 미니몬 ] 창에서 [ 부르기 ] 버튼을 통해 해당 미니몬과 동행할 수 있게 된다.
+- 이 [ 부르기 ] 버튼은 해당 미니몬과 동행할때와 동행하고 있지 않을 때의 버튼이 다르다.
+[ 부르기 ] 버튼을 누를 시 해당 미니몬과 동행하게 된다.
+- 이때 이미 다른 미니몬과 동행하던 상태이면 동행중이던 미니몬과 자동으로 헤어지고 해당 미니몬과 동행하게 된다.
+- [ 부르기 ] 버튼은 [ 동행중 ] 버튼으로 변한다.
+- 또한 [ 나의 미니몬 ] 창에 [ Flash_USETHIS ] 효과가 들어가며, [ 미니몬 기록 ] 창과 [ 미니몬 도감 ] 의 UI 도 함께 갱신된다.
+- [ 나의 미니몬 ] 창이 현재 동행하고 있는 미니몬일 시 [ 나의 미니몬 ] 창에 [ Active Ef ] 효과가 들어간다.
+- 동행하는 미니몬의 위치는 미니몬마다 다르다.
+- 동행하는 미니몬은 플레이어를 따라 Idle, Run Anim 을 같이 재생한다.
+- 동행하는 미니몬은 전투 시 자신의 공격속도 (공격대기시간)에 따라 자동으로 공격한다. (Attack Anim)
+- 동행 미니몬이 공격 시 명중률만 플레이어의 명중률을 따른다.
+- 동행 미니몬의 DMG TEXT 는 플레이어와 동일하다.
+- 동행 미니몬의 공격 또한 [ 타격 ] 으로 친다. ( 공세 단계 및 게이지에 영향 )
+- [ 미니몬 사용 기술 ] 은 해당 미니몬과 동행했을때 미니몬이 자동으로 사용하는 기술이다.
+- ※ 추후 기술을 통해 동행하는 미니몬 수가 늘어날 수 있음. (아마도..)
+
+===== SLIDE 20 =====
+나의 미니몬   #5
+보유하고 있지 않은 미니몬을 처음 잡았을 시
+미니몬 잡기 첫 성공 시 예시 화면과 같이 [ 나의 미니몬 ] 창이 호출된다.
+1. 미니몬 이름 옆 UI_Feedback [ NEW ] 호출.
+2. [ 나의 미니몬 ] 창 뒤에 [ GlowRays ] 호출.
+( 이 [ GlowRays ] 는 미니몬을 잡았을 때 호출되는 [ 나의 미니몬 ] 창에 항상 같이 등장한다. ) (즉, [ 미니몬 기록 ] 창을 통해 호출된 [나의 미니몬 ] 창에는 등장 X )
+3. 공명도 수치 오른 만큼 lerp 처리.
+(예시 화면에서 초록색에서 주황색으로 변하는데, 이는 버그임. 0%~99%까지는 주황색.
+< 99 에서 100% 달성 시 주황색에서 초록색으로 서서히 변하게끔)
+4. 미니몬의 능력치 등급은 랜덤으로 결정된다.
+등급 확률:
+[IMG: 그림 11]
+예시 화면
+0등급: 40%
+1등급: 30%
+2등급: 15%
+3등급: 8%
+4등급: 5%
+5등급: 2%
+
+===== SLIDE 21 =====
+나의 미니몬   #6
+이미 보유하고 있던 미니몬을 또 잡았을 시 (능력치 향상될때)
+이미 보유하고 있던 미니몬을 또 잡았을 시
+1. 능력치 등급 주사위를 굴린다.
+a. 만약 능력치 등급이 같거나 낮게 나왔으면 변경되지 않는다. (다음 슬라이드)
+b. 만약 높게 나왔으면 예시 화면과 같이 Anim 과 함께 정보가 갱신된다.
+[IMG: 그림 2]
+예시 화면
+완료 후
+c. Anim 은 1 초 뒤부터 [ 공격력 ] → [ 공격속도 ] → [ 치명타 ] 순으로 진행된다.
+d. 능력치의 “숫자 TEXT”와 등급 ICON은 해당 능력치의 Scale Anim 과 함께 변경된다.
+e. 만약 예시 화면의 [ 공격력 ] 처럼 오른 능력치가 없을 시 바로 다음 능력치 (여기선 [ 공격속도 ]) 의 Anim 재생 여부를 확인한다.
+f. 모든 Anim 재생 후 0.5 초 뒤 FullGrowthInText 가 1.5 초에 걸쳐 FadeIn 된다.
+g. 위 모든 Anim 재생이 끝난 뒤 플레이어는 화면과 상호작용을 할 수 있다. (background 클릭 시 Popup 닫기)
+
+===== SLIDE 22 =====
+나의 미니몬   #6
+[IMG: 그림 8]
+이미 보유하고 있던 미니몬을 또 잡았을 시 (능력치 향상 없을때)
+예시 화면
+이미 보유하고 있던 미니몬을 또 잡았을 시
+1. 능력치 등급 주사위를 굴려 모든 등급이 같거나 낮게 나왔으면 예시 화면과 같이 Anim 이 재생된다.
+a. [ 나의 미니몬 ] 창 호출과 동시에 공명도 Lerp 시작.
+b. 호출 1.5초 뒤 MinimonGrowthFailText 를 1.5 초에 걸쳐 FadeIn
+c. MinimonGrowthFailText FadeIn 시작 0.5 후 FullGrowthInText 를 1.5 초에 걸쳐 FadeIn
+d. 위 모든 Anim 재생이 끝난 뒤 플레이어는 화면과 상호작용을 할 수 있다. (background 클릭 시 Popup 닫기)
+
+===== SLIDE 23 =====
+미니몬 관심   #1
+미니몬 관심 기본 정보
+[IMG: 그림 4]
+예시 화면
+(미니몬이 관심을 보였을 때)
+- 미니몬 사냥에 성공 시 해당 미니몬의 관심 확률에 따라 알림 popup 과 함께 플레이어에게 관심을 보일 수 있다.
+- 관심을 보인 미니몬은 [ 포획 가능 미니몬 창고 ] 에 추가되게 된다.
+- [ 포획 가능 미니몬 창고 ] 는 총 2 개의 [ 저장칸(Slot) ]이 있으며 순서대로 저장된다.
+- 위 [ 포획 가능 미니몬 창고 ] 의 저장칸 수는 기술에 따라 늘어날 수 있다.
+- 미니몬이 관심을 보였는데 [ 포획 가능 미니몬 창고 ] 가 꽉 찼을 경우, 해당 미니몬은 경고 popup 과 함께 미니몬 창고에 저장되지 않는다.
+- 추후 [ 포획 미니게임 ] 을 통해 [ 포획 가능 미니몬 창고 ] 에 저장된 미니몬들을 포획해 볼 수 있다.
+
+===== SLIDE 24 =====
+[IMG: 그림 17]
+[IMG: 그림 11]
+미니몬 관심   #2
+미니몬 관심 Side UI – 여분의 [저장칸] 이 있는 경우
+[IMG: 그림 4]
+예시 화면
+(미니몬이 관심을 보였을 때)
+title_btn_start
+[IMG: 그림 9]
+Layer1 Color: 0000FF
+Sprite(None)
+Color: FFFFFF, alpha 255
+Mask
+[IMG: 그림 16]
+[IMG: 그림 19]
+shop_frame_glow_left
+위 아래 사이즈가 딱
+title_btn_start
+의 경계선 보다 조금 적게
+[IMG: 그림 33]
+합침
+DOTween
+Move
+Duration: 0.5
+Ease: OutExpo
+FROM: x 150, y 45
+[IMG: 그림 41]
+Layer2 Color: 0000FF
+[IMG: 그림 44]
+Layer3 Color: E735C9 , alpha 184
+[IMG: 그림 10]
+Layer4 Color: B70000
+[IMG: 그림 47]
+[IMG: 그림 48]
+[IMG: 그림 50]
+[IMG: 그림 49]
+Anim
+3초 후
+DoPlayBackwards
+Google Drive: Attacted Popup.prefab 참고
+Text: CreatureData.Name+MinimonInterestSuccessText
+이때 동시에 몬스터의 머리 위에 Emoj_Shy를 재생한다.
+(5 page 참고)
+[IMG: 그림 12]
+[IMG: 그림 6]
+
+===== SLIDE 25 =====
+[IMG: 그림 48]
+[IMG: 그림 50]
+[IMG: 그림 12]
+[IMG: 그림 7]
+[IMG: 그림 11]
+미니몬 관심   #3
+미니몬 관심 Side UI – 여분의 [저장칸] 이 없는 경우
+예시 화면
+(미니몬이 관심을 보였을 때)
+Layer1 Color: B70000
+[IMG: 그림 41]
+Layer2 Color: B70000
+[IMG: 그림 10]
+Layer3 Color: B70000
+[IMG: 그림 47]
+Text: CreatureData.Name+MinimonInterestFullText
+
+===== SLIDE 26 =====
+미니몬 관심   #4
+미니몬 관심 Buttom UI – 여분의 [저장칸] 이 있는 경우
+예시 화면
+(미니몬이 관심을 보였을 때)
+[IMG: 그림 28]
+[IMG: 그림 31]
+slime_icon
+text_icon
+[IMG: 그림 2]
+[IMG: 그림 9]
+11_orange_button_xs_empty
+[IMG: 그림 16]
+미니몬이 관심을 보일 때 [ 저장칸 ] 에 저장공간이 있는 경우 하단 UI 또한 추가적으로 등장한다.
+사용 UI :
+1. 저장칸이 있는 경우에 한하여 관심을 보일때마다 Anim을 재생한다.
+2. Anim을 재생할때 동시에 [ NEW ] Feedback_UI를 [ 도감 ] 버튼 가운데에 표시한다.
+3. 등장 Anim이 끝날때 [ GlowDot_01.prefab ] 을 slime_icon 중앙에 생성한다.
+4. text_icon 에 표기된 숫자는 [ 저장칸 ] 에 저장된 미니몬 수이며 수가 변할때마다 갱신한다.
+GoogleDrive: Bestiary Btn New Icon.prefab 참고
+DOTween
+Punch/Scale
+Duration: 0.3
+Ease: OutQuad
+TO: x 0.3, y 0.3
+Vibrato: 10
+Elasticity: 1
+등장 Anim :
+5
+[ 저장칸 ] 에 저장된 미니몬 수
+
+===== SLIDE 27 =====
+[IMG: 그림 4]
+미니몬 관심   #5
+미니몬 관심 Buttom UI – 여분의 [저장칸] 이 있는 경우
+예시 화면
+(미니몬이 관심을 보였을 때)
+[IMG: 그림 26]
+[IMG: 그림 28]
+[IMG: 그림 31]
+slime_icon
+text_icon (Color: D14A4A)
+[IMG: 그림 6]
+1_orange_button_xs (Color: FA5959)
+[ 저장칸 ] 에 저장공간이 없는 경우 하단 UI가 변경된다.
+사용 UI :
+이때 미니몬이 관심을 보여도 추가적인 Anim 재생은 없다.
+5
+[ 저장칸 ] 에 저장된 미니몬 수 (Color: FF0000)
+
+===== SLIDE 28 =====
+[IMG: 그림 20]
+[IMG: 그림 8]
+미니몬 잡기   #1
+[ 미니몬 잡기! ] 버튼
+예시 화면
+1. [ 미니몬 잡기! ] 버튼은 [ 미니몬 도감 ] 창의 왼쪽 하단부에 위치해 있다.
+2. [ 미니몬 잡기! ] 버튼은 현재 관심을 보여 [ 저장칸 ] 에 저장된 미니몬의 유무, 그리고 미니몬의 수에 따라 조금씩 변한다. (이는 다음장에 서술)
+3. [ 미니몬 잡기! ] 버튼을 통해 [ 미니몬 잡기 미니게임 ] 을 들어갈 수 있다.
+[IMG: 그림 13]
+사용 UI & Texts
+Frame_square_512
+[IMG: 그림 17]
+Title_frame_0L2
+[IMG: 그림 22]
+unnamed
+(unnamed_0)
+[IMG: 그림 27]
+Slime_Idle
+(Slime_Idle_7, Color: 000000)
+[IMG: 그림 29]
+Emoj
+CatchMinimonTitleText
+영어 “x” + [ 저장칸 ] 에 저장된 미니몬의 수
+Outline: B94748, x 0.5, y -0.5
+Move
+Duration: 0.5
+Ease: OutBack
+미니몬 도감 Frame과
+붙어있으며 화면 밖
+왼쪽에서부터
+오른쪽방향으로 들어온다.
+미니몬 도감이 켜질 때
+바로 재생.
+Move
+Duration: 0.5
+Ease: OutBack
+미니몬 잡기! Frame 안에
+위치해 있으며 Frame 밖
+왼쪽에서부터
+오른쪽방향으로 들어온다.
+미니몬 도감이 켜진 뒤
+0.4초 후 재생.
+MASK 처리
+Move
+Duration: 0.5
+Ease: OutBack
+미니몬 잡기! Frame 안에
+위치해 있으며 Frame 밖
+오른쪽에서부터
+왼쪽방향으로 들어온다.
+미니몬 도감이 켜진 뒤
+0.4초 후 재생.
+Slime_Idle 이미지에 붙어있으며
+미니몬 도감이 켜진 뒤
+0.8초 후에 이 Emoj 오브젝트를 활성화
+시킴과 동시에 Animation Clip을 재생한다.
+Animation Clip의 종류는 조건에 따라 다르다.
+( 다음장 설명 )
+Move
+Duration: 0.4
+Ease: OutBack
+미니몬 잡기! Frame 안에
+위치해 있으며 Frame 밖
+아래에서부터
+위쪽방향으로 들어온다.
+미니몬 도감이 켜진 뒤
+0.8초 후 재생.
+Minigame_CatchMinimon Button.prefab   참고
+
+===== SLIDE 29 =====
+미니몬 잡기   #2
+[ 저장칸 ] 의 저장도에 따른 [ 미니몬 기록 ] 창의 변화
+예시 화면
+[IMG: 그림 4]
+[IMG: 그림 19]
+[IMG: 그림 21]
+[IMG: 그림 22]
+- [ 미니몬 잡기! ] 버튼은 현재 관심을 보여 [ 저장칸 ] 에 저장된 미니몬의 유무, 그리고 미니몬의 수에 따라 변한다.
+[ 저장칸 ] 에 한 마리 이상의 미니몬이 있을 때
+1. Title Text: CatchMinimonTitleText 뒤에 “ ! “ 느낌표가 붙는다.
+2. Slime_Idle Image 표시.
+3. Emoj , Slime_Idle Image 왼쪽 상단부에 대각선으로 Emoj_Exclamation 재생.
+4. Button Interactive : O
+[ 저장칸 ] 에 미니몬이 없을 때
+예시 화면
+1. Title Text: CatchMinimonTitleText 뒤에 “ ? “ 물음표가 붙는다.
+2. Slime_Idle Image 를 표시하지 않는다.
+3. Emoj , Slime_Idle Image가 있던 위치에 Emoj_Question 재생.
+(재생 타이밍은 CatchMinimonTitleText 재생 타이밍과 동일)
+5. Button Interactive : X
+
+===== SLIDE 30 =====
+[IMG: 그림 18]
+미니몬 잡기   #3
+[ 미니몬 잡기! ] Popup 사용 UI
+예시 화면
+[IMG: 그림 24]
+Frame_square_256
+Sprite(None)
+DCDCDC
+[IMG: 그림 37]
+pick_hero_frame_2
+[IMG: 그림 40]
+[IMG: 그림 48]
+Title_frame_0m
+Frame_bg_big_2
+[IMG: 그림 258]
++
+여기에 Sprite(None) 레이어가
+하나 더 있음.
+Frame_bg_big_2
+보다는 뒤에
+Unnamed
+보다는 앞에 위치해 있음.
+[IMG: 그림 261]
+unnamed
+(unnamed_0)
+[IMG: 그림 267]
+Frame_bg_big_2
+CCC588
+Sprite(None)
+1A0F0F
++
+현재 잡기를 시도하고
+있는 미니몬 IMG
+MASK 처리
+
+===== SLIDE 31 =====
+미니몬 잡기   #4
+[ 미니몬 잡기! ] Popup UI Texts
+[IMG: 그림 18]
+MyMinimonText
+Outline: D17474, x 0.1, y -0.1
+CatchMinimonTitleText  +  “!”
+Text Color: FDFFB6
+Outline: 003F82, x 0.8, y -0.8
+LureBtnText
+CatchSuccessRateText <color=red>+
+길들이기 성공확률 +</color> “%”
+여태까지 시도한 길들이기 횟수 + “/” +
+확정 길들이기 횟수 + CatchSuccessAtText
+0 =   color=red
+0 < 확정 길들이기 횟수    color=orange
+확정 길들이기 횟수 = GuaranteedCatchText
+GoMandrakeBtnText
+CatchSuccessRateText + “<color=lime>100%</color>”
+ReqMandrakeText
+현재 소지중인
+만드라고라 아이템 개수
+0 =   color=red
+0 <    color=lime
+추후 설명
+시도횟수 = 확정 길들이기 횟수 일시 GuaranteedCatchText
+[IMG: 그림 5]
+[IMG: 그림 6]
+위 2개는
+해당 범위만큼
+각자의 버튼 기능을 함.
+
+===== SLIDE 32 =====
+미니몬 잡기   #5
+[ 미니몬 잡기! ] TextBox Texts
+CatchMinimonStartText1 +
+CreatureName +
+CatchMinimonStartText2
+[IMG: 그림 4]
+순서1
+[IMG: 그림 14]
+▶길들인다!
+선택 시
+TryLureText
+순서2
+[IMG: 그림 21]
+[IMG: 그림 22]
+순서3-1
+순서3-2
+LureEffectiveText
+CreatureName +
+LureNotEffectiveText
+영어일 경우
+LureNotEffectiveText 만 적용
+[IMG: 그림 28]
+LureSuccessText1 +
+CreatureName +
+LureSuccessText2
+[IMG: 그림 30]
+CreatureName +
+LureFailText
+순서4-1
+순서4-2
+잡았을 시 70% 확률로
+못 잡았을 시 30% 확률로
+잡았을 시 30% 확률로
+못 잡았을 시 70% 확률로
+잡았을 시
+못 잡았을 시
+[IMG: 그림 258]
+GoMandrakeText
+▶가랏!
+만드라고라!
+선택 시
+순서2
+[IMG: 그림 35]
+CreatureName +
+EatMandrakeText
+순서3
+Text Box Text들은 Dialogue Text와 동일한  방식으로 표시한다. (타이핑 하듯 나오는)
+
+===== SLIDE 33 =====
+미니몬 잡기   #6
+[ 미니몬 잡기! ] 버튼을 눌렀을 때
+예시 화면
+- [ 미니몬 잡기! ] 버튼을 누르게 되면 [ 미니몬 잡기! ] 팝업창이 호출 된다.
+- 팝업창은 Popup Anim이 끝난 뒤 바로 Opening Anim 을 재생한다.
+[IMG: 그림 12]
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+Playbackwards
+[IMG: 그림 4]
+Popup Anim이 끝난 즉시 Text가 표시되는
+Frame_bg_big_2 layer 뒤에 창을 덮는
+Sprite(None, Color: DBDBDA) 를 표시한다.
+이 Sprite(None)은 Opening Anim을 가지고 있다:
+Opening Anim정보:
+Color
+Duration: 0.25
+Ease: OutQuad
+Loops: 6
+Loop Type: Yoyo
+TO: 7B7B7B
+[IMG: 그림 14]
+[IMG: 그림 16]
+Opening Anim 후 Loading Anim 을 재생한다.
+이 Loading Anim 은 Type 1 과 Type 2 가 있으며,
+Type 은 무작위로 하나를 선정하여 재생한다.
+Loading Anim 은 [ Tame Popup.prefab ] 에서
+Loading Box1 과
+Loading Box2 를 참고.
+(Google Drive – 프리펩(Prefab) - Monster Attracted)
+다음장
+Type1
+Type2
+
+===== SLIDE 34 =====
+미니몬 잡기   #7
+[ 미니몬 잡기! ] Setup Anim
+Loading Anim 이후 Player IMG 와
+해당 미니몬 IMG 가 각 각 화면 밖에서부터
+지정된 위치로 1.5초에 걸쳐 들어온다.
+이때 Player IMG와 미니몬 IMG는
+Material: Grayscale이 추가된 상태이다.
+[IMG: 그림 9]
+지정된 위치
+기준 Center
+[IMG: 그림 25]
+[IMG: 그림 28]
+지정된 위치에 도착 후 각 IMG에 적용되어있던
+을 None 으로 교체한다.
+1. 미니몬 머리 위에 Emoj_Exclamation 를 재생한다.
+2. TextBox에 CatchMinimonStartText1 를 표시한다.
+3. 0.5초 간격을 두고 [ 길들인다 ] 버튼과 [ 가랏! 만드라고라! ] 버튼이 표시된다.
+4. 화면에는 바로 나왔지만 [ 나의 미니몬 ] 버튼은 [ 가랏! 만드라고라! ] 버튼 표시 후
+0.5초뒤 등장.
+5. 모든 버튼은 [ 나의 미니몬 ] 등장 후 상호작용 가능.
+다음장
+
+===== SLIDE 35 =====
+[IMG: 그림 8]
+미니몬 잡기   #8
+[ 미니몬 잡기! ] Lure Anim
+▶ 길들이기! 선택 시
+1. 순서2 Text 표시.
+2. 글자 표시가 끝나면 플레이어 Lure Anim 재생.
+3. Lure Anim 끝난 뒤 0.5초 뒤에 플레이어 머리 위에 Emoj_Lure 재생.
+4. Emoj_Lure 재생이 끝난 뒤 화면 흔들림.
+Lure Anim:
+DOTween
+Move
+Duration: 0.125
+Ease: OutQuad
+Loops: 4
+Loop Type: Yoyo
+TO: Y축 위로
+[IMG: 그림 17]
+효과 없을 때
+1. 화면 흔들림 끝난 뒤
+2. 순서3-2 Text 표시.
+3. Text 표시 시작 후 0.5초 뒤
+미니몬 머리 위에 Emoj_Dots 재생.
+[IMG: 그림 24]
+효과 있을 때
+1. 화면 흔들림 끝난 뒤
+2. 순서3-1 Text 표시와 동시에 Emoj_Excited 재생.
+3. Emoj_Excited 재생이 끝난 뒤 바로
+미니몬 머리 위에 Emoj_Dots 재생.
+다음장
+
+===== SLIDE 36 =====
+미니몬 잡기   #9
+[ 미니몬 잡기! ] 결과
+[IMG: 그림 36]
+잡기 성공했을 시
+1. 미니몬 Caught Anim 재생.
+2. Anim 재생 끝난 뒤 순서4-1 Text 표시 및
+미니몬 머리 위에 Emoj_TwoHearts 재생.
+3. Emoj_TwoHearts 재생이 끝나면 플레이어
+머리 위에 Emoj_Happy 재생.
+4. Emoj_Happy 재생이 끝나면 GlowRay가
+적용된 [ 나의 미니몬 ] Popup 호출.
+* 나의 미니몬   #5 (page 90 참고)
+Caught Anim:
+DOTween
+Move
+Duration: 0.18
+Ease: OutQuad
+Loops: 4
+Loop Type: Yoyo
+Y축 위로
+잡기 실패했을 시
+[IMG: 그림 4]
+1. 미니몬 머리 위에 Emoj_Sweat 재생 및
+미니몬 0.8초에 걸쳐 좌우 반전.
+2. 이때 동시에 플레이어 머리 위에
+Emoj_Sweat2 재생 및 순서4-2 Text 표시.
+3. 미니몬 좌우 반전이 끝나고 0.3초 뒤
+미니몬 Runaway Anim 재생.
+4. 그 후 Popup Close Anim 및 닫기.
+Runaway Anim:
+DOTween
+Move
+Duration: 0.5
+Ease: InBack
+X축 오른쪽 화면 밖으로
+다음장
+
+===== SLIDE 37 =====
+[IMG: 그림 7]
+미니몬 잡기   #10
+[ 미니몬 잡기! ] 가랏! 만드라고라! 사용 시
+가랏! 만드라고라! 선택 시
+1. 순서2 Text 표시.
+2. 1초뒤 플레이어 중앙부터 몬스터의
+중앙위치까지  0.67초에 걸쳐 포물선을
+그려 날아가는 Happy Mandrake
+IMG 생성.
+3. Happy Madrake 가 몬스터 중앙에 도착 후
+0.33초에 걸쳐 scale이 1.5, alpha가 0에
+Linear 방식으로 변함.
+4. Happy Mandrake 가 사라진 후
+몬스터 머리 위에 Emoj_Exclamation 재생
+및 jump anim 재생.
+5. Jump anim 종료 후 Eat mandrake anim
+재생.
+6. Eat Mandrake anim 재생 종료 후 미니몬
+머리 위에 Emoj_Shy 재생 및 순서3
+Text 표시.
+7. Text 표시 완료 후 1.2초 대기.
+8. 그 이후 [잡기 성공했을 시] 와 동일하게
+진행.
+Jump Anim:
+DOTween
+Move
+Duration: 0.15
+Ease: OutQuad
+Loops: 2
+Loop Type: Yoyo
+Y축 위로
+Eat Mandrake Anim:
+DOTween
+Scale
+Duration: 0.05
+Ease: OutQuad
+Loops: 24
+Loop Type: Yoyo
+TO: 1.1
+
+===== SLIDE 38 =====
+능력   #1
+기본 정보
+일반적으로 다른 게임에서 [ 스킬 ] 이라고 표현하는 것이 [ 능력 ] 이다.
+능력의 종류:
+1. 유틸리티 (ex. 미니몬 잡기 성공 확률 증가, 확정 미니몬 잡기 필요 횟수 감소, 경험치 획득량 증가 등등)
+2. 전투: (ex. 전투 관련 능력치 수치 증가, 전투 기술 및 마법 등등)
+3. 편의성: (ex. 자동물약, 미니몬 관심 최대 수 증가 등등)
+기억력과 재능:
+1. 플레이어는 [ 기억력 ] 이라는 수치를 가지고 시작함.
+2. 모든 능력은 [ 기억력 점유량 ] 을 갖고 있음.
+3. 플레이어는 해당 [ 기억력 점유량 ] 만큼의 [ 기억력 ] 을 점유(사용)해 능력을 기억(적용) 시킬 수 있음.
+4. 기억중인 능력을 잊을 시 해당 능력의 [ 기억력 점유량 ] 만큼 [ 기억력 ]을 회복한다.
+5. 만약 능력의 [ 기억력 점유량 ] 이 0일 시 해당 능력은 재능으로 치며 항시 기억(적용)중인 상태이다.
+[IMG: 그림 12]
+능력 획득 방식:
+1. 장비 +9 강화 시.
+2. 미니몬 공명도 100% 시.
+3. 특정 NPC에게 재료를 주고.
+4. 전직 시.
+5. 도감 별 작업.
+능력 단계:
+1. 모든 능력은 단계(Level)가 있다.
+2. 단계는 아래와 같은 방법으로 올릴 수 있으며, [ 기억 확장 ] 능력만 제외하고 각 능력마다 하나의 방법만 적용이 된다.
+a. 1. 장비 +9 강화 시.
+b. 미니몬 공명도 100% 시.
+c. 특정 NPC에게 재료를 주고.
+d. 전직 시.
+e. 도감 별 작업.
+f. 미니몬 사냥.
+[ 기억 확장 ] : 최대 기억력 올려주는 재능 기술
+장비 능력
+1. 장비 착용 시 해당 장비의 능력을 기억한다. ( 기술창에 표시 )
+2. 이때 기억하는 능력은 [ 기억력 ] 을 점유하지 않고 기억한다.
+3. 해당 장비를 착용 해제 하면 기억하던 능력도 사라지게 된다. ( 기술창에서 없어짐 )
+4. 만약 장비가 +9 강화에 도달하게 된다면, 해당 장비의 장비 능력은
+플레이어의 기술창에 남게 되며 해당 장비를 해제해도 능력이 사라지지 않지만 (기억은 해제 됨)
+[ 기억력 점유량 ] 만큼 [ 기억력 ] 을 점유하여 해당 능력을 기억하여 사용해야 한다.
+5. 이때, +9 강화 장비를 다시 착용하게 되면 해당 장비 능력이 자동으로 [ 점유량 ] 소모 없이
+기억하게 된다. ( 이미 기억하고 있었다면 환불 )
+6. 능력 단계가 오를 때는 동일한 능력을 지닌 장비 2개 이상을 +9 강화 했을 시에 단계가 올라간다.
+
+===== SLIDE 39 =====
+능력   #2
+전투 능력 조건
+1. 확률 발동 조건
+a. 모든 발동 조건 뒤에는 “n% 확률로” 가 들어간다. (ex. [전투 시작 시] n% 확률로)
+b. 발동 조건은 1개 이상이 될 수도 있다.
+c. 추후 더 생길 예정이다.
+-- 전투 시작 시
+-- 공격 시
+-- 타격 시
+-- 공격 후
+-- 특정 능력 사용 후
+-- 해당 전투에서 처음으로 본인/상대의 HP가 n%이하가 될 시
+-- 해당 전투에서 사망에 이르는 공격을 받은 경우
+-- 치명타 시
+-- 연속으로 n번의 타격이 치명타 시
+-- 타격이 빗나갈 시
+-- 상대방이 회피 시
+-- 자신이 회피 시
+-- 연속으로 n번의 타격을 회피 시
+-- 피격 시
+-- 체력 회복 시
+전투 능력 조건은 총 2가지가 있다.
+1. 확률 발동
+2. 시간 발동
+2. 시간 발동 조건
+a. 시간 발동 능력은 일반 게임에서 말하는 [ 쿨타임 있는 스킬 ] 이라고 볼 수 있다.
+b. 재사용 대기 시간을 충족하면 발동한다.
+--
+-- 공격 시
+-- 공격 후
+-- 특정 능력 사용 후
+-- 해당 전투에서 처음으로 본인/상대의 HP가 n%이하가 될 시
+-- 해당 전투에서 사망에 이르는 공격을 받은 경우
+-- 치명타 시
+-- 연속으로 n번의 타격이 치명타 시
+-- 타격이 빗나갈 시
+-- 상대방이 회피 시
+-- 자신이 회피 시
+-- 연속으로 n번의 타격을 회피 시
+-- 피격 시
+-- 체력 회복 시
+
+===== SLIDE 40 =====
+기술책   #1
+Opening Anim 및 사용 UI
+[IMG: 그림 4]
+예시 화면
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+DoPlayBackwards
+[IMG: 그림 9]
+[IMG: 그림 27]
+skill_073
+[IMG: 그림 33]
+Gui_atlas
+Slider01_background
+[IMG: 그림 36]
+Gui_atlas
+Slider_button01
+Scrollview
+기술 아이콘 및 하단 버튼 UI 설명은 다음장에
+
+===== SLIDE 41 =====
+도감 기획서   #1
+예시 화면
+상단 UI Sprites & Texts
+[IMG: 그림 4]
+Popup Anim정보:
+[OnActive]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[OnDisable]
+DoPlayBackwards
+[IMG: 그림 27]
+[IMG: 그림 62]
+[IMG: 그림 255]
+[IMG: 그림 256]
+= BeastiaryText
+= CompletionText
+= “+n” LevelText
+“+n” Color: FFFF00
+[IMG: 그림 261]
+= “0” Outline Color: FF00C4
+Alpha: 132
+Distance x 0.2, y -0.2
+Sprite(None)
+Color: 000000
+Alpha: 134

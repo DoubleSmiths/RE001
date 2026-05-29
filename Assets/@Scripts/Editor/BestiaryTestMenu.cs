@@ -333,5 +333,15 @@ public static class BestiaryTestMenu
         Debug.Log($"[BestiaryTest] follower {cur}→{UI_BestiaryPopup.GetFollowingId()}");
         ReopenMyMinimon(2001);
     }
+
+    // ─────────────────────────────────────────────
+    // 미니몬 잡기 (슬라이드 28~37, UI_TamePopup) — Phase 1
+    // ─────────────────────────────────────────────
+    [MenuItem("Test/Bestiary/Tame - Open Tame Popup (2001)", false, 520)]
+    static void OpenTamePopup2001()
+    {
+        if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
+        Managers.UI.ShowPopupUI<UI_TamePopup>().SetInfo(2001);
+    }
 }
 #endif
