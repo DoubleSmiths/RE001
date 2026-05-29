@@ -159,6 +159,17 @@ public class UIManager
             ClosePopupUI();
     }
 
+    // [미니몬 관심] Side UI 알림 — 팝업 스택/timeScale 미사용(게임 비정지). 자체 코루틴으로 자동 소멸.
+    public UI_AttactedPopup ShowAttractedPopup(int dataId, bool storageFull)
+    {
+        GameObject go = Managers.Resource.Instantiate(nameof(UI_AttactedPopup), pooling: false);
+        if (go == null) return null;
+        var popup = Util.GetOrAddComponent<UI_AttactedPopup>(go);
+        go.transform.SetParent(Root.transform);
+        popup.SetInfo(dataId, storageFull);
+        return popup;
+    }
+
     public UI_Toast ShowToast(string msg)
     {
         string name = typeof(UI_Toast).Name;

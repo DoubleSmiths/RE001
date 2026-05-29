@@ -177,15 +177,15 @@ public class MonsterController : CreatureController
             OnItemDropped?.Invoke(_data.DropItemId, _data.DropCount);
         }
 
-        // 슬23: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장
+        // 슬23~25: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장 + Side UI 알림
         if (_data != null)
         {
             var interest = Managers.MinMon.RollInterest(DataId);
-            // TODO 슬24/25: Added → Attracted Popup(Side UI) + 머리 위 Emoj_Shy / StorageFull → 경고 popup
             if (interest == MinMonManager.InterestResult.Added)
-                Debug.Log($"[Interest] {_data.Name} 관심! 창고 저장 ({Managers.MinMon.InterestedMinMons.Count}/{MinMonManager.INTEREST_CAPACITY})");
+                Managers.UI.ShowAttractedPopup(DataId, false);          // 슬24: 창고 여유
             else if (interest == MinMonManager.InterestResult.StorageFull)
-                Debug.Log($"[Interest] {_data.Name} 관심 but 창고 가득 — 저장 안 됨");
+                Managers.UI.ShowAttractedPopup(DataId, true);           // 슬25: 창고 가득
+            // TODO 슬24: 몬스터 머리 위 Emoj_Shy (풀 반환 전 타이밍)
         }
 
         // Die clip 종료 후 풀 반환. Slime Die clip은 0.17s지만, HP Bar Playbackwards(0.5s)와
