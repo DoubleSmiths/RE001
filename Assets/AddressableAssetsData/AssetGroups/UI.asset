@@ -81,6 +81,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83d44253fe816dd4588b57e90137240b
+    m_Address: UI_MonsterItemDropListBox
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96ae37e6a6536ad4b8fca28166b0de80
     m_Address: UI_DialoguePopup
     m_ReadOnly: 0
@@ -149,6 +155,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d672fdbdcb74c1f48863ccf14b6d0fb3
     m_Address: UI_CharacterPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc358afffd21c3544889a8e903920e6f
+    m_Address: UI_TamePopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

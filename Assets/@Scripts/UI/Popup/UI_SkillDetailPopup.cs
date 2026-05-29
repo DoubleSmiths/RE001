@@ -331,7 +331,9 @@ public class UI_SkillDetailPopup : UI_Popup
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
-        GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickClose);
+        _frameRT = GetObject((int)GameObjects.SkillDetailPopup).GetComponent<RectTransform>();
+
+        GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
 
         return true;
     }
@@ -340,12 +342,12 @@ public class UI_SkillDetailPopup : UI_Popup
     {
         SkillId = skillId;
 
-        var frameRT = GetObject((int)GameObjects.SkillDetailPopupMain).GetComponent<RectTransform>();
-        _frameOrigin = frameRT.anchoredPosition;
+        //var frameRT = GetObject((int)GameObjects.SkillDetailPopupMain).GetComponent<RectTransform>();
+        //_frameOrigin = frameRT.anchoredPosition;
 
-        frameRT.DOKill();
-        frameRT.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
-        frameRT.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
+        //frameRT.DOKill();
+        //frameRT.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
+        //frameRT.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
 
         var bg = GetButton((int)Buttons.SkillDetailPopupBackground).GetComponent<Image>();
         if (bg != null)

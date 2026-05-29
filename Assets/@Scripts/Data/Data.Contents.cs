@@ -47,6 +47,12 @@ namespace Data
         // 데미지 폰트가 transform.position 기준 위쪽으로 띄울 거리 (head 위치).
         // monster sprite 높이마다 다름. 기본 1.0 — 작은 monster는 0.5, 큰 monster는 2.0 등.
         public float DamageFontYOffset = 2.5f;
+
+        // ── 슬라이드 79: 미니몬 고유기술 ──
+        // 공명도 100% 달성 시 플레이어 기술로 영구 습득되는 몬스터별 고유기술.
+        // 슬라이드 71의 4개 완성도 스킬과는 별개. 비어있으면 코드에서 "고유기술 #{id}" 폴백.
+        public string UniqueSkillName = "";
+        public string UniqueSkillDesc = "";
     }
 
     [Serializable]

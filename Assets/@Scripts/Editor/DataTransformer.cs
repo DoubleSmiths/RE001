@@ -384,6 +384,9 @@ public class DataTransformer : EditorWindow
             d.MagicResist    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.Evasion        = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             d.RecoveryRate   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            // 슬라이드 79: 미니몬 고유기술 (Excel에 컬럼 추가 전엔 빈 값)
+            d.UniqueSkillName = i < row.Count ? row[i++] : "";
+            d.UniqueSkillDesc = i < row.Count ? row[i++] : "";
             loader.creatures.Add(d);
         }
         WriteJson("CreatureData", loader);
@@ -1095,6 +1098,9 @@ public class DataTransformer : EditorWindow
             d.DropItemId  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
             d.DropCount   = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
             d.DropChance  = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            // 슬라이드 79: 미니몬 고유기술 (Excel에 컬럼 추가 전엔 빈 값)
+            d.UniqueSkillName = i < row.Count ? row[i++] : "";
+            d.UniqueSkillDesc = i < row.Count ? row[i++] : "";
 
             loader.creatures.Add(d);
         }

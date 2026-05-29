@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Data;
 using UnityEngine;
+using UnityEngine.UI;
 
 // 마물 도감의 지역 한 덩어리. 지역명 + 그 지역 몬스터 박스(UI_BestiaryBox) 그리드.
 // UI_BestiaryPopup의 Content 안에서 지역 수만큼 동적 생성된다.
@@ -70,11 +71,17 @@ public class UI_Bestiary : UI_Base
         {
             areaText.text = regionName;
             ApplyFont(areaText, Define.FontType.UI);
+            // 슬라이드 72: PlaceName Outline 83BC00 / Alpha 180 / Distance (0.5, -0.5)
+            SetOutline(areaText, 180);
         }
 
         var bar = GetText((int)Texts.BestiaryAreaTextBar);
         if (bar != null)
+        {
             ApplyFont(bar, Define.FontType.UI);
+            // 슬라이드 72: Décor("|") Outline 동일 색 / Alpha 100
+            SetOutline(bar, 100);
+        }
 
         Transform boxGroup = GetObject((int)GameObjects.BestiayBoxGroup).transform;
 
@@ -90,6 +97,15 @@ public class UI_Bestiary : UI_Base
             UI_BestiaryBox box = Managers.UI.MakeSubItem<UI_BestiaryBox>(boxGroup, pooling: false);
             box.SetInfo(m, onClickMonster);
         }
+    }
+
+    // 슬라이드 72: 지역명/장식 Outline — 색 83BC00 고정, alpha만 가변, Distance (0.5, -0.5)
+    void SetOutline(TMPro.TMP_Text txt, byte alpha)
+    {
+        var outline = txt.GetComponent<Outline>();
+        if (outline == null) return;
+        outline.effectColor = new Color32(0x83, 0xBC, 0x00, alpha);
+        outline.effectDistance = new Vector2(0.5f, -0.5f);
     }
 
 }

@@ -96,6 +96,10 @@ public class UI_BestiaryPopup : UI_Popup
 
     #endregion
 
+    // 어떤것이 데이터가 필요한지, 엑셀화 해야됨, 근데 기존에 있는 데이터랑 잘 엮어야하는 지 아니면 새로운 데이터 테이블을 만들어야하는지 고민 필요.
+    // 지금도 REGGION_STUB도 데이터에서 가져와야함.
+
+
     // ── 지역→몬스터 스텁 매핑 ──────────────────────────────
     // 정식 BestiaryData JSON 도입 전까지 사용. region 표시명 + 그 지역 몬스터 DataId 목록.
     // DataId가 CreatureDic에 없거나 0이면 data=null로 "?" 잠금 슬롯 처리된다.
@@ -105,7 +109,220 @@ public class UI_BestiaryPopup : UI_Popup
         //("시들어가는 사막", new[] { 0, 0, 0, 0 }), // 미구현 지역: 잠금 슬롯 프리뷰
     };
 
-    const string CAPTURE_PREF_PREFIX = "BESTIARY_CAP_";
+    // ── 기록도/별등급 스텁 (정식 GameData 연동 전까지 PlayerPrefs) ──
+    // 기록도(분석률) 0~100. 0=미발견("?"/Interactive X), 0~10미만=실루엣, 10이상=풀컬러.
+    const string REC_PREF_PREFIX  = "BESTIARY_REC_";
+    // 별등급 0~3. 1 이상이면 box에 Star 표기.
+    const string STAR_PREF_PREFIX = "BESTIARY_STAR_";
+
+    // 공명도 0~100 (슬라이드 79: 포획 시 25%씩, 100%면 고유기술 습득). 미니몬 기록 스킬 게이팅용.
+    const string SYNC_PREF_PREFIX = "BESTIARY_SYNC_";
+
+    public static int  GetRecordRate(int dataId) => PlayerPrefs.GetInt(REC_PREF_PREFIX + dataId, 0);
+    public static void SetRecordRate(int dataId, int pct)
+    {
+        PlayerPrefs.SetInt(REC_PREF_PREFIX + dataId, Mathf.Clamp(pct, 0, 100));
+        PlayerPrefs.Save();
+        RecomputeStar(dataId); // 슬라이드 83: 별 자동 승급
+    }
+
+    public static int  GetSync(int dataId) => PlayerPrefs.GetInt(SYNC_PREF_PREFIX + dataId, 0);
+    public static void SetSync(int dataId, int pct)
+    {
+        int clamped = Mathf.Clamp(pct, 0, 100);
+        int old = GetSync(dataId);
+        PlayerPrefs.SetInt(SYNC_PREF_PREFIX + dataId, clamped);
+        // 슬라이드 79: 공명도 100% 달성 시 해당 미니몬 고유기술을 영구 습득
+        if (clamped >= 100 && old < 100)
+            SetUniqueSkillLearned(dataId, true);
+        PlayerPrefs.Save();
+        RecomputeStar(dataId); // 슬라이드 83: 별 자동 승급
+    }
+
+    // 슬라이드 79: 미니몬 고유기술 영구 습득 여부 (공명도 100% 시점에 마킹).
+    const string LEARNED_PREF_PREFIX = "BESTIARY_LEARNED_";
+    public static bool IsUniqueSkillLearned(int dataId)
+        => PlayerPrefs.GetInt(LEARNED_PREF_PREFIX + dataId, 0) == 1;
+    public static void SetUniqueSkillLearned(int dataId, bool learned)
+    {
+        PlayerPrefs.SetInt(LEARNED_PREF_PREFIX + dataId, learned ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    // 고유기술 이름 — CreatureData.UniqueSkillName 우선, 비어있으면 폴백.
+    public static string GetUniqueSkillName(int dataId)
+    {
+        if (Managers.Data != null
+            && Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)
+            && !string.IsNullOrEmpty(cd.UniqueSkillName))
+            return cd.UniqueSkillName;
+        return $"고유기술 #{dataId % 1000:000}";
+    }
+
+    // ── 슬라이드 86/87: 보유 미니몬 능력치(MinimonData 스텁) ──
+    // 정식 MinimonData 시트 도입 전까지 PlayerPrefs로 per-monster 보관.
+    // 능력치 등급 0~5 (슬87, 6종류). 등급 5(=S) 모두면 슬80 IsAllSS 자동 true.
+    public enum MMStat { Atk, AtkSpeed, Crit }
+    public const int MM_GRADE_MAX = 5; // 슬87: 5등급(=S)이 최고
+    static string MMGradeKey(int id, MMStat s) => $"BESTIARY_MM_{s}_GRADE_{id}";
+    static string MMValueKey(int id, MMStat s) => $"BESTIARY_MM_{s}_VALUE_{id}";
+
+    public static int  GetMMGrade(int dataId, MMStat s) => PlayerPrefs.GetInt(MMGradeKey(dataId, s), 0);
+    public static void SetMMGrade(int dataId, MMStat s, int grade)
+    {
+        PlayerPrefs.SetInt(MMGradeKey(dataId, s), Mathf.Clamp(grade, 0, MM_GRADE_MAX));
+        PlayerPrefs.Save();
+        // 슬80: 3종 등급 모두 max(=S)면 AllSS = true
+        bool allMax = GetMMGrade(dataId, MMStat.Atk)       == MM_GRADE_MAX
+                   && GetMMGrade(dataId, MMStat.AtkSpeed)  == MM_GRADE_MAX
+                   && GetMMGrade(dataId, MMStat.Crit)      == MM_GRADE_MAX;
+        SetAllSS(dataId, allMax); // RecomputeStar 자동 호출
+    }
+
+    public static int  GetMMValue(int dataId, MMStat s) => PlayerPrefs.GetInt(MMValueKey(dataId, s), 0);
+    public static void SetMMValue(int dataId, MMStat s, int v)
+    {
+        PlayerPrefs.SetInt(MMValueKey(dataId, s), Mathf.Max(0, v));
+        PlayerPrefs.Save();
+    }
+
+    // ── 슬라이드 88: 동행(미니몬 1마리) 스텁 ──
+    // 0 = 동행 없음. 새 미니몬 지정 시 이전 follower는 자동 해제(슬88 #).
+    const string FOLLOWING_KEY = "BESTIARY_FOLLOWING_ID";
+    public static int  GetFollowingId() => PlayerPrefs.GetInt(FOLLOWING_KEY, 0);
+    public static void SetFollowing(int dataId)
+    {
+        PlayerPrefs.SetInt(FOLLOWING_KEY, dataId);
+        PlayerPrefs.Save();
+    }
+
+    // 슬라이드 83: "잡은 미니몬의 능력치 등급이 모두 SS" 조건 스텁.
+    // 미니몬 포획/등급 시스템(슬86~87) 미존재 — 일단 PlayerPrefs 플래그로 시드.
+    const string ALLSS_PREF_PREFIX = "BESTIARY_ALLSS_";
+    public static bool IsAllSS(int dataId) => PlayerPrefs.GetInt(ALLSS_PREF_PREFIX + dataId, 0) == 1;
+    public static void SetAllSS(int dataId, bool v)
+    {
+        PlayerPrefs.SetInt(ALLSS_PREF_PREFIX + dataId, v ? 1 : 0);
+        PlayerPrefs.Save();
+        RecomputeStar(dataId);
+    }
+
+    // 슬라이드 83: 별 단계(0~3) 승급 조건 — ① 기록도 100% ② 공명도 100% ③ 모든 SS.
+    // 만족 조건 개수 = 별 단계. rec/sync 변경 시 자동 호출됨.
+    public static void RecomputeStar(int dataId)
+    {
+        int star = 0;
+        if (GetRecordRate(dataId) >= 100) star++;
+        if (GetSync(dataId)       >= 100) star++;
+        if (IsAllSS(dataId))              star++;
+        PlayerPrefs.SetInt(STAR_PREF_PREFIX + dataId, Mathf.Clamp(star, 0, 3));
+        PlayerPrefs.Save();
+    }
+
+    public static int  GetStarGrade(int dataId) => PlayerPrefs.GetInt(STAR_PREF_PREFIX + dataId, 0);
+    public static void SetStarGrade(int dataId, int grade)
+    {
+        PlayerPrefs.SetInt(STAR_PREF_PREFIX + dataId, Mathf.Clamp(grade, 0, 3));
+        PlayerPrefs.Save();
+    }
+
+    // ── 슬라이드 71: 완성도란 4개 스킬 (좌→우) ──
+    // 0:종을 초월한 교감 1:조련사의 기술 2:오다 주웠습니다 주인님! 3:기억 확장
+    // 시작 시 가장 오른쪽 "기억 확장"(idx3)만 해금, 나머지는 마물 도감으로만 해금.
+    const int SKILL_COUNT = 4;
+    static readonly string[] SKILL_NAMES =
+        { "종을 초월한 교감", "조련사의 기술", "오다 주웠습니다 주인님!", "기억 확장" };
+    const string SKILL_UNLOCK_PREFIX = "BESTIARY_SKILL_UNLOCK_";
+    const string SKILL_GRADE_PREFIX  = "BESTIARY_SKILL_GRADE_";
+
+    // 기본 해금: idx3(기억 확장)만 true
+    public static bool GetSkillUnlocked(int idx)
+        => PlayerPrefs.GetInt(SKILL_UNLOCK_PREFIX + idx, idx == SKILL_COUNT - 1 ? 1 : 0) == 1;
+    public static void SetSkillUnlocked(int idx, bool unlocked)
+    {
+        PlayerPrefs.SetInt(SKILL_UNLOCK_PREFIX + idx, unlocked ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+    public static int  GetSkillGrade(int idx) => PlayerPrefs.GetInt(SKILL_GRADE_PREFIX + idx, 0);
+    public static void SetSkillGrade(int idx, int grade)
+    {
+        PlayerPrefs.SetInt(SKILL_GRADE_PREFIX + idx, Mathf.Max(0, grade));
+        PlayerPrefs.Save();
+    }
+
+    // ── 슬라이드 74: 등급 상승 연출 관련 상태 ──
+    // NEW 뱃지: 해금 시 켜고, 기술 상세창을 한 번 보면 끈다.
+    const string SKILL_NEW_PREFIX = "BESTIARY_SKILL_NEW_";
+    public static bool GetSkillNew(int idx) => PlayerPrefs.GetInt(SKILL_NEW_PREFIX + idx, 0) == 1;
+    public static void SetSkillNew(int idx, bool isNew)
+    {
+        PlayerPrefs.SetInt(SKILL_NEW_PREFIX + idx, isNew ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    // 좌→우 순환 포인터: 다음에 등급 오를 스킬 idx (슬라이드 71 #4)
+    const string SKILL_ROT_PTR = "BESTIARY_SKILL_ROTPTR";
+    // 완성도 숫자: 보라(3단계) 달성 누적 수
+    const string COMPLETION_KEY = "BESTIARY_COMPLETION";
+    public static int  GetCompletion() => PlayerPrefs.GetInt(COMPLETION_KEY, 0);
+    public static void SetCompletion(int v)
+    {
+        PlayerPrefs.SetInt(COMPLETION_KEY, Mathf.Max(0, v));
+        PlayerPrefs.Save();
+    }
+
+    // 슬라이드 71 #4: 보라 달성 1건당 좌→우 순환으로 다음 스킬 +1등급. 잠금이면 해금(Lv0→Lv1)+NEW.
+    static int AdvanceSkillGrade(out bool newlyUnlocked)
+    {
+        int ptr = PlayerPrefs.GetInt(SKILL_ROT_PTR, 0) % SKILL_COUNT;
+        newlyUnlocked = !GetSkillUnlocked(ptr);
+        if (newlyUnlocked)
+        {
+            SetSkillUnlocked(ptr, true);
+            SetSkillNew(ptr, true);
+        }
+        SetSkillGrade(ptr, GetSkillGrade(ptr) + 1);
+        PlayerPrefs.SetInt(SKILL_ROT_PTR, (ptr + 1) % SKILL_COUNT);
+        PlayerPrefs.Save();
+        return ptr;
+    }
+
+    public static void ResetSkillRotation()
+    {
+        PlayerPrefs.SetInt(SKILL_ROT_PTR, 0);
+        PlayerPrefs.SetInt(COMPLETION_KEY, 0);
+        for (int i = 0; i < SKILL_COUNT; i++) SetSkillNew(i, false);
+        PlayerPrefs.Save();
+    }
+
+    // 스킬 idx별 prefab 노드 enum 매핑 (좌→우 순서)
+    static readonly int[] SKILL_ICON_BTN =
+    {
+        (int)Buttons.HybridKinshipSkillIcon, (int)Buttons.MasterHandlerSkillIcon,
+        (int)Buttons.RetrievionSkillIcon,    (int)Buttons.MemoryExpansionSkillIcon,
+    };
+    static readonly int[] SKILL_LOCK =
+    {
+        (int)Images.HybridKinshipSkillLock, (int)Images.MasterHandlerSkillLock,
+        (int)Images.RetrievionSkillLock,    (int)Images.MemoryExpansionSkillLock,
+    };
+    static readonly int[] SKILL_LOCK_ICON =
+    {
+        (int)Images.HybridKinshipSkillLockIcon, (int)Images.MasterHandlerSkillLockIcon,
+        (int)Images.RetrievionSkillLockIcon,    (int)Images.MemoryExpansionSkillLockIcon,
+    };
+    static readonly int[] SKILL_LEVEL_TEXT =
+    {
+        (int)Texts.HybridKinshipSkillLevelText, (int)Texts.MasterHandlerSkillLevelText,
+        (int)Texts.RetrievionSkillLevelText,    (int)Texts.MemoryExpansionSkillLevelText,
+    };
+    static readonly int[] SKILL_NEW_TEXT =
+    {
+        (int)Texts.HybridKinshipSkillNewText, (int)Texts.MasterHandlerSkillNewText,
+        (int)Texts.RetrievionSkillNewText,    (int)Texts.MemoryExpansionSkillNewText,
+    };
+
+    readonly Tween[] _skillIdleTweens = new Tween[SKILL_COUNT];
 
     void Awake() => Init();
 
@@ -121,6 +338,12 @@ public class UI_BestiaryPopup : UI_Popup
         _frameRT = GetObject((int)GameObjects.BestiaryPopup).GetComponent<RectTransform>();
         GetButton((int)Buttons.BestiaryPopupBackground).gameObject.BindEvent(OnClickBG);
         GetImage((int)Images.Xbutton).gameObject.BindEvent(OnClickBG);
+
+        for (int i = 0; i < SKILL_COUNT; i++)
+        {
+            int idx = i; // 클로저 캡처
+            GetButton(SKILL_ICON_BTN[i]).gameObject.BindEvent(() => OnClickSkill(idx));
+        }
 
         return true;
     }
@@ -156,14 +379,190 @@ public class UI_BestiaryPopup : UI_Popup
             bestiary.SetInfo(region, monsters, OnClickMonster);
         }
 
-        ApplyFont(GetText((int)Texts.CompletionLevelText), Define.FontType.UI);
+        RefreshCompletionNumber();
+        RefreshSkills();
+    }
 
+    // 완성도 보라별 밑 숫자 = 보라(3단계) 달성 누적 수
+    void RefreshCompletionNumber()
+    {
+        var t = GetText((int)Texts.CompletionLevelText);
+        if (t == null) return;
+        t.text = GetCompletion().ToString();
+        ApplyFont(t, Define.FontType.UI);
+
+        // 슬라이드 70: "0" Outline FF00C4 / Alpha 132 / Distance (0.2, -0.2)
+        var outline = t.GetComponent<Outline>();
+        if (outline != null)
+        {
+            outline.effectColor = new Color32(0xFF, 0x00, 0xC4, 132);
+            outline.effectDistance = new Vector2(0.2f, -0.2f);
+        }
+    }
+
+    // 슬라이드 71: 4개 스킬 아이콘 잠금/해금 + "+n 등급" + idle Anim
+    void RefreshSkills()
+    {
+        for (int i = 0; i < SKILL_COUNT; i++)
+        {
+            bool unlocked = GetSkillUnlocked(i);
+            int  grade    = GetSkillGrade(i);
+
+            // "+n 등급" — "+n"은 노란색(FFFF00), 항상 표기 (잠금 시엔 자물쇠가 위를 덮음)
+            var lvlTxt = GetText(SKILL_LEVEL_TEXT[i]);
+            if (lvlTxt != null)
+            {
+                lvlTxt.text = $"<color=yellow>+{grade}</color>등급";
+                ApplyFont(lvlTxt, Define.FontType.UI);
+            }
+
+            // 잠금 오버레이(자물쇠 + 검은 Sprite)
+            GetImage(SKILL_LOCK[i]).gameObject.SetActive(!unlocked);
+            GetImage(SKILL_LOCK_ICON[i]).gameObject.SetActive(!unlocked);
+
+            // NEW 뱃지: 해금된 스킬을 아직 안 봤을 때만 표시 (슬라이드 74)
+            var newTxt = GetText(SKILL_NEW_TEXT[i]);
+            if (newTxt != null)
+            {
+                bool showNew = unlocked && GetSkillNew(i);
+                newTxt.gameObject.SetActive(showNew);
+                if (showNew) ApplyFont(newTxt, Define.FontType.UI);
+            }
+
+            // 잠금 아이콘은 Interactive 불가
+            var iconBtn = GetButton(SKILL_ICON_BTN[i]);
+            if (iconBtn != null) iconBtn.interactable = unlocked;
+
+            // 해금 아이콘 idle Anim (DOTween Punch/Rotation, Dur 1, OutQuad, Loops -1, TO z20, Vibrato 2) 이건 별 아이콘에 적용돼야함.
+            //Transform iconTr = iconBtn != null ? iconBtn.transform : null;
+            //_skillIdleTweens[i]?.Kill();
+            //_skillIdleTweens[i] = null;
+            //if (iconTr != null)
+            //{
+            //    iconTr.localRotation = Quaternion.identity;
+            //    if (unlocked)
+            //    {
+            //        _skillIdleTweens[i] = iconTr
+            //            .DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
+            //            .SetEase(Ease.OutQuad)
+            //            .SetLoops(-1, LoopType.Restart)
+            //            .SetUpdate(true);
+            //    }
+            //}
+        }
+    }
+
+    void OnClickSkill(int idx)
+    {
+        if (!GetSkillUnlocked(idx))
+        {
+            // 잠금 상태: Interactive 불가 (슬라이드 71 #6)
+            Debug.Log($"[Bestiary] 스킬 '{SKILL_NAMES[idx]}' 잠금 상태 — 클릭 무시");
+            return;
+        }
+
+        // 본 스킬은 NEW 해제
+        if (GetSkillNew(idx))
+        {
+            SetSkillNew(idx, false);
+            var nt = GetText(SKILL_NEW_TEXT[idx]);
+            if (nt != null) nt.gameObject.SetActive(false);
+        }
+
+        // 해금 상태: 해당 [기술 상세정보창] 호출 (슬라이드 71 #7)
+        Debug.Log($"[Bestiary] 스킬 '{SKILL_NAMES[idx]}' 상세정보창 호출 (idx={idx})");
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(idx);
+    }
+
+    // ── 슬라이드 74: 별 등급 상승 연출 ──
+    // 도감이 열려있는 상태에서 어떤 몬스터의 별 등급이 올랐을 때 호출.
+    // newStar < 3 : 해당 미니몬 아이콘만 Punch/Scale
+    // newStar == 3: 기술→미니몬→완성도별→숫자 0.1s 간격 순차 + 기술/미니몬에 Flash_USETHIS
+    public void PlayGradeUp(int dataId, int newStar)
+    {
+        SetStarGrade(dataId, newStar);
+
+        UI_BestiaryBox box = FindBox(dataId);
+        box?.RefreshStarGrade();
+
+        if (newStar < 3)
+        {
+            // 3단계 미만: 별 등급 오른 미니몬 아이콘만 Anim
+            if (box != null) PunchScale(box.MonsterIconTr);
+            return;
+        }
+
+        // 3단계(보라) 달성: 좌→우 순환 등급상승 + 완성도 누적
+        int skillIdx = AdvanceSkillGrade(out bool _);
+        SetCompletion(GetCompletion() + 1);
+
+        // 비주얼 상태 먼저 갱신 (자물쇠 off / +n등급 / NEW / 숫자)
+        RefreshSkills();
+        RefreshCompletionNumber();
+
+        Transform skillTr = GetButton(SKILL_ICON_BTN[skillIdx])?.transform;
+        Transform starTr  = GetImage((int)Images.AllSStarImage)?.transform;
+        Transform numTr   = GetText((int)Texts.CompletionLevelText)?.transform;
+        Transform monTr   = box != null ? box.MonsterIconTr : null;
+
+        // 0.1초 간격 순차: a.기술 b.미니몬 c.완성도 보라별 d.그 밑 숫자
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        seq.AppendCallback(() => { PunchScale(skillTr); SpawnFlash(skillTr); });
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => { PunchScale(monTr); SpawnFlash(monTr); });
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => PunchScale(starTr));
+        seq.AppendInterval(0.1f);
+        seq.AppendCallback(() => PunchScale(numTr));
+    }
+
+    // 슬라이드 74 #3: DOTween Punch/Scale Dur 0.3 OutQuad TO(0.2,0.2,0) Vibrato 10 Elasticity 1
+    void PunchScale(Transform tr)
+    {
+        if (tr == null) return;
+        tr.DOKill();
+        tr.localScale = Vector3.one;
+        tr.DOPunchScale(new Vector3(0.2f, 0.2f, 0f), 0.3f, 10, 1f)
+          .SetEase(Ease.OutQuad)
+          .SetUpdate(true);
+    }
+
+    // 기술/미니몬 아이콘에 Flash_USETHIS.prefab 적용 (슬라이드 74)
+    void SpawnFlash(Transform parent)
+    {
+        if (parent == null) return;
+        GameObject fx = Managers.Resource.Instantiate("Flash_USETHIS", parent);
+        if (fx == null) return;
+        fx.transform.localPosition = Vector3.zero;
+        fx.transform.localScale = Vector3.one;
+        // 팝업은 timeScale 0이라 unscaled로 정리
+        DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true);
+    }
+
+    // Content 안 인스턴스화된 박스 중 dataId 일치하는 것 탐색
+    UI_BestiaryBox FindBox(int dataId)
+    {
+        Transform content = GetObject((int)GameObjects.Content).transform;
+        foreach (var b in content.GetComponentsInChildren<UI_BestiaryBox>(true))
+            if (b.DataId == dataId) return b;
+        return null;
     }
 
     void OnClickMonster(int dataId)
     {
-        // TODO: 몬스터 상세 정보 팝업(UI_BestiaryDetailPopup) 연결
-        Debug.Log($"[Bestiary] 몬스터 클릭 dataId={dataId}");
+        // 슬라이드 73 #: 몬스터 ICON 클릭 → [미니몬 기록] 창 호출 (슬라이드 76 = UI_MonsterDetailPopup)
+        Debug.Log($"[Bestiary] 몬스터 클릭 dataId={dataId} → 미니몬 기록");
+        Managers.UI.ShowPopupUI<UI_MonsterDetailPopup>().SetInfo(dataId); // 팝업이 중간에 안나오고 밑에 나오는 버그가 있음.
+    }
+
+    public override void OnDestroy()
+    {
+        //for (int i = 0; i < _skillIdleTweens.Length; i++)
+        //{
+        //    _skillIdleTweens[i]?.Kill();
+        //    _skillIdleTweens[i] = null;
+        //}
+        base.OnDestroy();
     }
 
 }
