@@ -4941,6 +4941,7 @@ GameObject:
   - component: {fileID: 5775384747625975780}
   - component: {fileID: 36081185655328230}
   - component: {fileID: 5477812122493232337}
+  - component: {fileID: 7015980436897267724}
   m_Layer: 5
   m_Name: UI_SkillBookPopup
   m_TagString: Untagged
@@ -5031,6 +5032,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7015980436897267724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009660535641941465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ce0bb0532a56f04b853694a506fc9e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_SkillBookPopup
+  _isClosing: 0
+  _frameRT: {fileID: 0}
 --- !u!1 &2013137554941288199
 GameObject:
   m_ObjectHideFlags: 0

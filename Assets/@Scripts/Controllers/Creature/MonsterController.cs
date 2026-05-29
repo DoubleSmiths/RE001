@@ -177,6 +177,9 @@ public class MonsterController : CreatureController
             OnItemDropped?.Invoke(_data.DropItemId, _data.DropCount);
         }
 
+        // 슬9: 사냥 성공 시 Kill Count 증가 (기록도/분석률 = KillCount/MaxKillCount)
+        Managers.MinMon.AddKill(DataId);
+
         // 슬23~25: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장 + Side UI 알림
         if (_data != null)
         {

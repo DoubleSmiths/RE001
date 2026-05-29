@@ -57,6 +57,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d35cdb56caa8f6409dc7cd95f86d41f
+    m_Address: SkillData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9b3763385e8ddfd4e83fab7082ddf90c
     m_Address: HPPotion
     m_ReadOnly: 0

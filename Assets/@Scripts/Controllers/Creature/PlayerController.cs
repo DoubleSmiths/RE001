@@ -298,6 +298,9 @@ public class PlayerController : CreatureController
             Def         = 0   + (lv - 1) * 1;
         }
 
+        // 슬38: 장착(기억)된 능력의 스탯 보너스 가산
+        Managers.Ability?.ApplyTo(this);
+
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
         // _expRequired가 갱신됐으니 EXP 슬라이더도 같은 시점에 신호 발화.

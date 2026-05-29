@@ -42,7 +42,7 @@ public class DataManager
         CreatureDic       = LoadJson<CreatureDataLoader,      int,    CreatureData>       ("CreatureData").MakeDict();
         //EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();
         //EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
-        //SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
+        SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
         ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("InventoryItem").MakeDict();
         RequisiteItemDic  = LoadJson<ItemDataLoader,          int,    ItemData>           ("RequisiteItem").MakeDict();
         HPPotionDic       = LoadJson<HPPotionDataLoader,      int,    HPPotionData>       ("HPPotion").MakeDict();

@@ -109,44 +109,37 @@ public class UI_BestiaryPopup : UI_Popup
         //("시들어가는 사막", new[] { 0, 0, 0, 0 }), // 미구현 지역: 잠금 슬롯 프리뷰
     };
 
-    // ── 기록도/별등급 스텁 (정식 GameData 연동 전까지 PlayerPrefs) ──
-    // 기록도(분석률) 0~100. 0=미발견("?"/Interactive X), 0~10미만=실루엣, 10이상=풀컬러.
-    const string REC_PREF_PREFIX  = "BESTIARY_REC_";
-    // 별등급 0~3. 1 이상이면 box에 Star 표기.
-    const string STAR_PREF_PREFIX = "BESTIARY_STAR_";
-
-    // 공명도 0~100 (슬라이드 79: 포획 시 25%씩, 100%면 고유기술 습득). 미니몬 기록 스킬 게이팅용.
-    const string SYNC_PREF_PREFIX = "BESTIARY_SYNC_";
-
-    public static int  GetRecordRate(int dataId) => PlayerPrefs.GetInt(REC_PREF_PREFIX + dataId, 0);
+    // ── 도감 표시 데이터 (MinMonManager 이관) ──
+    // 기록도(분석률): 0=미발견("?"/Interactive X), 0~10미만=실루엣, 10이상=풀컬러.
+    // 기록도/공명도/별/학습/AllSS/등급은 MinMonManager(실 데이터)로 이관됨.
+    //   기록도 = KillCount/MaxKillCount, 공명도 = CaughtCount×25%, 등급 = MinMonSaveData.
+    //   아래 static 메서드는 호출부 호환을 위해 시그니처만 유지하고 MinMonManager로 위임.
+    //   Set* 는 테스트(BestiaryTestMenu) 시드용 — 실 데이터(KillCount/CaughtCount/등급)를 직접 세팅.
+    public static int  GetRecordRate(int dataId) => Managers.MinMon != null ? Managers.MinMon.GetRecordRate(dataId) : 0;
     public static void SetRecordRate(int dataId, int pct)
     {
-        PlayerPrefs.SetInt(REC_PREF_PREFIX + dataId, Mathf.Clamp(pct, 0, 100));
-        PlayerPrefs.Save();
-        RecomputeStar(dataId); // 슬라이드 83: 별 자동 승급
+        if (Managers.MinMon == null) return;
+        int max = Managers.Data.CreatureDic.TryGetValue(dataId, out var cd) ? Mathf.Max(1, cd.MaxKillCount) : 100;
+        Managers.MinMon.DebugSetKillCount(dataId, Mathf.RoundToInt(Mathf.Clamp(pct, 0, 100) / 100f * max));
     }
 
-    public static int  GetSync(int dataId) => PlayerPrefs.GetInt(SYNC_PREF_PREFIX + dataId, 0);
+    public static int  GetSync(int dataId) => Managers.MinMon != null ? Mathf.RoundToInt(Managers.MinMon.GetSyncRate(dataId) * 100f) : 0;
     public static void SetSync(int dataId, int pct)
     {
-        int clamped = Mathf.Clamp(pct, 0, 100);
-        int old = GetSync(dataId);
-        PlayerPrefs.SetInt(SYNC_PREF_PREFIX + dataId, clamped);
-        // 슬라이드 79: 공명도 100% 달성 시 해당 미니몬 고유기술을 영구 습득
-        if (clamped >= 100 && old < 100)
-            SetUniqueSkillLearned(dataId, true);
-        PlayerPrefs.Save();
-        RecomputeStar(dataId); // 슬라이드 83: 별 자동 승급
+        if (Managers.MinMon == null) return;
+        // 공명도 = CaughtCount × 25% → 역산해 CaughtCount 시드
+        Managers.MinMon.DebugSetCaughtCount(dataId, Mathf.RoundToInt(Mathf.Clamp(pct, 0, 100) / 25f));
     }
 
-    // 슬라이드 79: 미니몬 고유기술 영구 습득 여부 (공명도 100% 시점에 마킹).
-    const string LEARNED_PREF_PREFIX = "BESTIARY_LEARNED_";
+    // 슬라이드 79: 공명도 100%(=4회 포획) 시 고유기술 영구 학습 — MinMonManager 위임(파생).
     public static bool IsUniqueSkillLearned(int dataId)
-        => PlayerPrefs.GetInt(LEARNED_PREF_PREFIX + dataId, 0) == 1;
+        => Managers.MinMon != null && Managers.MinMon.IsUniqueSkillLearned(dataId);
     public static void SetUniqueSkillLearned(int dataId, bool learned)
     {
-        PlayerPrefs.SetInt(LEARNED_PREF_PREFIX + dataId, learned ? 1 : 0);
-        PlayerPrefs.Save();
+        if (Managers.MinMon == null) return;
+        // 학습=공명도100% 파생 → 테스트 시 CaughtCount 시드(4회=100%)
+        if (learned) Managers.MinMon.DebugSetCaughtCount(dataId, Mathf.Max(4, (int)(Managers.MinMon.GetSyncRate(dataId) / MinMonManager.SYNC_PER_CATCH)));
+        else         Managers.MinMon.DebugSetCaughtCount(dataId, 0);
     }
 
     // 고유기술 이름 — CreatureData.UniqueSkillName 우선, 비어있으면 폴백.
@@ -159,71 +152,70 @@ public class UI_BestiaryPopup : UI_Popup
         return $"고유기술 #{dataId % 1000:000}";
     }
 
-    // ── 슬라이드 86/87: 보유 미니몬 능력치(MinimonData 스텁) ──
-    // 정식 MinimonData 시트 도입 전까지 PlayerPrefs로 per-monster 보관.
-    // 능력치 등급 0~5 (슬87, 6종류). 등급 5(=S) 모두면 슬80 IsAllSS 자동 true.
+    // ── 슬라이드 86/87: 보유 미니몬 능력치 (MinMonManager 이관) ──
+    // 능력치 등급 0~5 (슬87, 6종류 = E~S). 등급/값은 MinMonManager가 보관.
     public enum MMStat { Atk, AtkSpeed, Crit }
-    public const int MM_GRADE_MAX = 5; // 슬87: 5등급(=S)이 최고
-    static string MMGradeKey(int id, MMStat s) => $"BESTIARY_MM_{s}_GRADE_{id}";
-    static string MMValueKey(int id, MMStat s) => $"BESTIARY_MM_{s}_VALUE_{id}";
 
-    public static int  GetMMGrade(int dataId, MMStat s) => PlayerPrefs.GetInt(MMGradeKey(dataId, s), 0);
+    // 등급/값은 MinMonManager 위임. (Set* 는 테스트 시드용 — 실 등급 직접 세팅, 값은 파생이라 무시)
+    public static int  GetMMGrade(int dataId, MMStat s)
+    {
+        if (Managers.MinMon == null) return 0;
+        return s == MMStat.Atk ? Managers.MinMon.GetAtkGrade(dataId)
+             : s == MMStat.AtkSpeed ? Managers.MinMon.GetAtkSpeedGrade(dataId)
+             : Managers.MinMon.GetCritGrade(dataId);
+    }
     public static void SetMMGrade(int dataId, MMStat s, int grade)
     {
-        PlayerPrefs.SetInt(MMGradeKey(dataId, s), Mathf.Clamp(grade, 0, MM_GRADE_MAX));
-        PlayerPrefs.Save();
-        // 슬80: 3종 등급 모두 max(=S)면 AllSS = true
-        bool allMax = GetMMGrade(dataId, MMStat.Atk)       == MM_GRADE_MAX
-                   && GetMMGrade(dataId, MMStat.AtkSpeed)  == MM_GRADE_MAX
-                   && GetMMGrade(dataId, MMStat.Crit)      == MM_GRADE_MAX;
-        SetAllSS(dataId, allMax); // RecomputeStar 자동 호출
+        if (Managers.MinMon != null) Managers.MinMon.DebugSetGrade(dataId, (int)s, grade);
     }
 
-    public static int  GetMMValue(int dataId, MMStat s) => PlayerPrefs.GetInt(MMValueKey(dataId, s), 0);
-    public static void SetMMValue(int dataId, MMStat s, int v)
+    public static int  GetMMValue(int dataId, MMStat s)
     {
-        PlayerPrefs.SetInt(MMValueKey(dataId, s), Mathf.Max(0, v));
-        PlayerPrefs.Save();
+        if (Managers.MinMon == null) return 0;
+        float v = s == MMStat.Atk ? Managers.MinMon.GetAtk(dataId)
+                : s == MMStat.AtkSpeed ? Managers.MinMon.GetAtkSpeed(dataId)
+                : Managers.MinMon.GetCritRate(dataId);
+        return Mathf.RoundToInt(v);
     }
+    public static void SetMMValue(int dataId, MMStat s, int v) { /* 값은 Base×(1+공명도) 파생 — 직접 세팅 불가(무시) */ }
 
-    // ── 슬라이드 88: 동행(미니몬 1마리) 스텁 ──
-    // 0 = 동행 없음. 새 미니몬 지정 시 이전 follower는 자동 해제(슬88 #).
-    const string FOLLOWING_KEY = "BESTIARY_FOLLOWING_ID";
-    public static int  GetFollowingId() => PlayerPrefs.GetInt(FOLLOWING_KEY, 0);
+    // 슬라이드 88: 동행 — GameData.CompanionMinMonId 위임 (없음: 스텁 0 / 실데이터 -1).
+    public static int  GetFollowingId()
+    {
+        int id = Managers.Game != null ? Managers.Game.CompanionMinMonId : -1;
+        return id < 0 ? 0 : id;
+    }
     public static void SetFollowing(int dataId)
     {
-        PlayerPrefs.SetInt(FOLLOWING_KEY, dataId);
-        PlayerPrefs.Save();
+        if (Managers.MinMon == null) return;
+        if (dataId == 0) Managers.MinMon.RemoveCompanion();
+        else             Managers.MinMon.SetCompanion(dataId);
     }
 
-    // 슬라이드 83: "잡은 미니몬의 능력치 등급이 모두 SS" 조건 스텁.
-    // 미니몬 포획/등급 시스템(슬86~87) 미존재 — 일단 PlayerPrefs 플래그로 시드.
-    const string ALLSS_PREF_PREFIX = "BESTIARY_ALLSS_";
-    public static bool IsAllSS(int dataId) => PlayerPrefs.GetInt(ALLSS_PREF_PREFIX + dataId, 0) == 1;
+    // 슬라이드 80/83: AllSS / 별 단계 — MinMonManager 위임(파생). Set* 는 테스트 시드용.
+    public static bool IsAllSS(int dataId) => Managers.MinMon != null && Managers.MinMon.IsAllSS(dataId);
     public static void SetAllSS(int dataId, bool v)
     {
-        PlayerPrefs.SetInt(ALLSS_PREF_PREFIX + dataId, v ? 1 : 0);
-        PlayerPrefs.Save();
-        RecomputeStar(dataId);
+        if (Managers.MinMon == null) return;
+        // AllSS = 3등급 모두 S 파생 → 테스트 시 등급 직접 세팅
+        int g = v ? MinMonManager.GRADE_MAX : 0;
+        Managers.MinMon.DebugSetGrade(dataId, 0, g);
+        Managers.MinMon.DebugSetGrade(dataId, 1, g);
+        Managers.MinMon.DebugSetGrade(dataId, 2, g);
     }
 
-    // 슬라이드 83: 별 단계(0~3) 승급 조건 — ① 기록도 100% ② 공명도 100% ③ 모든 SS.
-    // 만족 조건 개수 = 별 단계. rec/sync 변경 시 자동 호출됨.
-    public static void RecomputeStar(int dataId)
-    {
-        int star = 0;
-        if (GetRecordRate(dataId) >= 100) star++;
-        if (GetSync(dataId)       >= 100) star++;
-        if (IsAllSS(dataId))              star++;
-        PlayerPrefs.SetInt(STAR_PREF_PREFIX + dataId, Mathf.Clamp(star, 0, 3));
-        PlayerPrefs.Save();
-    }
+    // 별 = rec100 + sync100 + AllSS 파생. RecomputeStar는 더 이상 저장 안 함(no-op).
+    public static void RecomputeStar(int dataId) { /* 파생값 — 별도 계산/저장 불필요 */ }
 
-    public static int  GetStarGrade(int dataId) => PlayerPrefs.GetInt(STAR_PREF_PREFIX + dataId, 0);
+    public static int  GetStarGrade(int dataId) => Managers.MinMon != null ? Managers.MinMon.GetStarGrade(dataId) : 0;
+    // 별은 파생값이라 직접 세팅 불가 → 테스트 시 별 n단계가 되도록 하위 조건(기록도/공명도/등급) 시드
     public static void SetStarGrade(int dataId, int grade)
     {
-        PlayerPrefs.SetInt(STAR_PREF_PREFIX + dataId, Mathf.Clamp(grade, 0, 3));
-        PlayerPrefs.Save();
+        if (Managers.MinMon == null) return;
+        grade = Mathf.Clamp(grade, 0, 3);
+        SetRecordRate(dataId, grade >= 1 ? 100 : 0);   // 1단계: 기록도
+        SetSync(dataId,       grade >= 2 ? 100 : 0);   // 2단계: 공명도
+        SetAllSS(dataId,      grade >= 3);             // 3단계: 모든 등급 S
     }
 
     // ── 슬라이드 71: 완성도란 4개 스킬 (좌→우) ──

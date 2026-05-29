@@ -190,6 +190,71 @@ public class MinMonManager
     public int GetAtkGrade(int dataId)      { var s = FindSave(dataId); return s != null ? Mathf.Max(0, s.AtkGrade)      : 0; }
     public int GetAtkSpeedGrade(int dataId) { var s = FindSave(dataId); return s != null ? Mathf.Max(0, s.AtkSpeedGrade) : 0; }
     public int GetCritGrade(int dataId)     { var s = FindSave(dataId); return s != null ? Mathf.Max(0, s.CritGrade)     : 0; }
+    public const int GRADE_MAX = 5; // S등급
+
+    // ── 기록도(분석률) / 별등급 / AllSS / 고유기술 학습 (슬9/79/80/83) ──
+    // 기록도 = KillCount / MaxKillCount (0~100%). 사냥 성공마다 AddKill, 최대치에서 정지.
+    public void AddKill(int dataId)
+    {
+        if (!Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)) return;
+        var save = GetSaveData(dataId);
+        int max = Mathf.Max(1, cd.MaxKillCount);
+        save.KillCount = Mathf.Min(save.KillCount + 1, max);
+        Managers.Game.SaveGame();
+    }
+
+    public int GetKillCount(int dataId) { var s = FindSave(dataId); return s != null ? s.KillCount : 0; }
+
+    public int GetRecordRate(int dataId)
+    {
+        if (!Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)) return 0;
+        int max = Mathf.Max(1, cd.MaxKillCount);
+        return Mathf.Clamp(Mathf.RoundToInt(GetKillCount(dataId) * 100f / max), 0, 100);
+    }
+
+    // 슬80: 잡은 미니몬의 3종 능력치 등급이 모두 S(=GRADE_MAX)
+    public bool IsAllSS(int dataId)
+    {
+        if (!IsOwned(dataId)) return false;
+        return GetAtkGrade(dataId) >= GRADE_MAX
+            && GetAtkSpeedGrade(dataId) >= GRADE_MAX
+            && GetCritGrade(dataId) >= GRADE_MAX;
+    }
+
+    // 슬79: 공명도 100%(= 4회 포획) 달성 시 고유기술 영구 학습. 공명도는 감소 없으므로 곧 학습 상태.
+    public bool IsUniqueSkillLearned(int dataId) => GetSyncRate(dataId) >= 1f;
+
+    // 슬83: 별 단계(0~3) = ① 기록도 100% ② 공명도 100% ③ 모든 등급 S — 만족 개수
+    public int GetStarGrade(int dataId)
+    {
+        int star = 0;
+        if (GetRecordRate(dataId) >= 100) star++;
+        if (GetSyncRate(dataId) >= 1f)    star++;
+        if (IsAllSS(dataId))              star++;
+        return star;
+    }
+
+    // ── 디버그/시드 세터 (UI_BestiaryPopup의 테스트용 Set* 스텁이 경유 호출) ──
+    public void DebugSetKillCount(int dataId, int killCount)
+    {
+        GetSaveData(dataId).KillCount = Mathf.Max(0, killCount);
+        Managers.Game.SaveGame();
+    }
+    public void DebugSetCaughtCount(int dataId, int caughtCount)
+    {
+        GetSaveData(dataId).CaughtCount = Mathf.Max(0, caughtCount);
+        Managers.Game.SaveGame();
+    }
+    // stat: 0=Atk 1=AtkSpeed 2=Crit
+    public void DebugSetGrade(int dataId, int stat, int grade)
+    {
+        var s = GetSaveData(dataId);
+        grade = Mathf.Clamp(grade, 0, GRADE_MAX);
+        if (stat == 0) s.AtkGrade = grade;
+        else if (stat == 1) s.AtkSpeedGrade = grade;
+        else s.CritGrade = grade;
+        Managers.Game.SaveGame();
+    }
 
     // ── 조회 ──
     public MinMonSaveData GetSaveData(int dataId)

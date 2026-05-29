@@ -877,8 +877,8 @@ public class UI_GameScene : UI_Scene
 
     void OnClickSkill()
     {
-        HandleBtmClick(TabType.Skill, Buttons.SkillButton, null,
-            () => Managers.UI.ShowToast("기술 팝업은 준비 중입니다."));
+        HandleBtmClick(TabType.Skill, Buttons.SkillButton, typeof(UI_SkillBookPopup),
+            () => Managers.UI.ShowPopupUI<UI_SkillBookPopup>().SetInfo());
     }
 
     void OnClickBestiary()

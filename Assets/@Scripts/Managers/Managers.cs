@@ -9,6 +9,7 @@ public class Managers : MonoBehaviour
     GameManager     _game     = new GameManager();
     ObjectManager   _object   = new ObjectManager();
     MinMonManager   _minMon   = new MinMonManager();
+    AbilityManager  _ability  = new AbilityManager();
     QuestManager    _quest    = new QuestManager();
     SubQuestManager _subQuest = new SubQuestManager();
     ComboManager    _combo    = new ComboManager();
@@ -17,6 +18,7 @@ public class Managers : MonoBehaviour
     public static GameManager     Game     { get { return Instance?._game; } }
     public static ObjectManager   Object   { get { return Instance?._object; } }
     public static MinMonManager   MinMon   { get { return Instance?._minMon; } }
+    public static AbilityManager  Ability  { get { return Instance?._ability; } }
     public static QuestManager    Quest    { get { return Instance?._quest; } }
     public static SubQuestManager SubQuest { get { return Instance?._subQuest; } }
     public static ComboManager    Combo    { get { return Instance?._combo; } }

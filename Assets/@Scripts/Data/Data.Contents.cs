@@ -136,9 +136,10 @@ namespace Data
         public string IconLabel;
         public SkillCategory Category;
         public SkillActiveType SkillActiveType;
-        public string StatType;
-        public float StatBonus;
+        public string StatType;        // 버프 대상: PhysicalAtk/MagicAtk/CritRate/MaxHp/AtkSpeed/Accuracy/Def/MaxMemory
+        public float StatBonus;        // 버프 수치
         public int MaxLevel;
+        public int MemoryCapacity;     // 슬38: 기억력 점유량. 0이면 [재능](항시 적용, 점유 없음)
     }
 
     [Serializable]

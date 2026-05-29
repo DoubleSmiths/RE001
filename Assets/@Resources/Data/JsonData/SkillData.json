@@ -1,0 +1,52 @@
+{
+  "skills": [
+    {
+      "DataId": 5001,
+      "Name": "기억 확장",
+      "Description": "최대 기억력을 늘려주는 재능. 항시 적용된다.",
+      "IconLabel": "",
+      "Category": "Talent",
+      "SkillActiveType": "Passive",
+      "StatType": "MaxMemory",
+      "StatBonus": 5.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 0
+    },
+    {
+      "DataId": 5002,
+      "Name": "힘의 기억",
+      "Description": "물리 공격력을 증가시킨다.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "PhysicalAtk",
+      "StatBonus": 5.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 3
+    },
+    {
+      "DataId": 5003,
+      "Name": "치명의 기억",
+      "Description": "치명타 확률을 증가시킨다.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "CritRate",
+      "StatBonus": 5.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 2
+    },
+    {
+      "DataId": 5004,
+      "Name": "강철의 기억",
+      "Description": "최대 체력을 증가시킨다.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "MaxHp",
+      "StatBonus": 50.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 4
+    }
+  ]
+}
