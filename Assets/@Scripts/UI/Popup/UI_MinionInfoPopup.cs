@@ -187,8 +187,8 @@ public class UI_MinionInfoPopup : UI_Popup
             if (sprite != null) { monImg.sprite = sprite; monImg.preserveAspect = true; }
         }
 
-        // 슬86: 공명도 — 100% 미만 FF820B / 100% 30FF00
-        int sync = GetSync(dataId);
+        // 슬86: 공명도(슬10: 포획당 +25%, MinMonManager) — 100% 미만 FF820B / 100% 30FF00
+        int sync = Mathf.RoundToInt(Managers.MinMon.GetSyncRate(dataId) * 100f);
         var syncTxt = GetText((int)Texts.SYNCText);
         if (syncTxt != null)
         {
@@ -206,6 +206,17 @@ public class UI_MinionInfoPopup : UI_Popup
             ApplyFont(skillTxt, Define.FontType.UI);
         }
 
+        // 보유 여부. 미포획이면 BlockImg("미보유") 오버레이가 몬스터 박스를 덮음.
+        bool owned = Managers.MinMon.IsOwned(dataId);
+        GetImage((int)Images.BlockImg).gameObject.SetActive(!owned);
+
+        var nameTxt = GetText((int)Texts.MinionInfoPopupNameText);
+        if (nameTxt != null && data != null)
+        {
+            nameTxt.text = data.Name;
+            ApplyFont(nameTxt, Define.FontType.UI);
+        }
+
         // 슬86/87: ATK/AS/CRIT 값 + 등급 outline 색
         RefreshStat(Texts.DamageNumberText, MMStat.Atk);
         RefreshStat(Texts.ASNumberText,    MMStat.AtkSpeed);
@@ -219,15 +230,23 @@ public class UI_MinionInfoPopup : UI_Popup
         RefreshSummonButton();
     }
 
+    // 능력치 값/등급을 MinMonManager(실 데이터)에서 조회. 등급 0~5 = E~S(슬18/20).
     void RefreshStat(Texts textId, MMStat stat)
     {
         var tmp = GetText((int)textId);
         if (tmp == null) return;
-        int val = GetMMValue(_dataId, stat);
-        tmp.text = val.ToString();
-        ApplyFont(tmp, Define.FontType.UI);
 
-        int g = GetMMGrade(_dataId, stat);
+        float val;
+        int g;
+        switch (stat)
+        {
+            case MMStat.Atk:      val = Managers.MinMon.GetAtk(_dataId);      g = Managers.MinMon.GetAtkGrade(_dataId);      break;
+            case MMStat.AtkSpeed: val = Managers.MinMon.GetAtkSpeed(_dataId); g = Managers.MinMon.GetAtkSpeedGrade(_dataId); break;
+            default:              val = Managers.MinMon.GetCritRate(_dataId); g = Managers.MinMon.GetCritGrade(_dataId);     break;
+        }
+
+        tmp.text = Mathf.RoundToInt(val).ToString();
+        ApplyFont(tmp, Define.FontType.UI);
         ApplyGradeOutline(tmp, g);
     }
 
@@ -256,29 +275,31 @@ public class UI_MinionInfoPopup : UI_Popup
         outline.effectDistance = distance;
     }
 
-    // 슬라이드 88: 부르기 / 동행중 버튼 토글. CantSummon 버튼은 현재 미사용(포획 후속).
+    // 슬라이드 88: 부르기 / 동행중 버튼 토글. 동행 상태는 MinMonManager(GameData.CompanionMinMonId) 기준.
+    // 미포획이면 부르기 불가(CantSummon 표시).
     void RefreshSummonButton()
     {
-        int following = GetFollowingId();
-        bool isFollowingThis = following == _dataId && _dataId != 0;
+        bool owned = Managers.MinMon.IsOwned(_dataId);
+        bool isFollowingThis = Managers.Game.CompanionMinMonId == _dataId && _dataId != 0;
 
-        GetButton((int)Buttons.MinionSummonButton).gameObject.SetActive(!isFollowingThis);
-        GetButton((int)Buttons.MinionSummonedButton).gameObject.SetActive(isFollowingThis);
-        GetImage((int)Images.MinionCantSummonButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.MinionSummonButton).gameObject.SetActive(owned && !isFollowingThis);
+        GetButton((int)Buttons.MinionSummonedButton).gameObject.SetActive(owned && isFollowingThis);
+        GetImage((int)Images.MinionCantSummonButton).gameObject.SetActive(!owned);
     }
 
     void OnClickSummon()
     {
-        // 슬88: 다른 미니몬과 동행 중이면 자동 해제 후 새로 지정
-        SetFollowing(_dataId);
-        Debug.Log($"[MyMinimon] {_dataId} 동행 시작 (이전 follower 자동 해제)");
+        if (!Managers.MinMon.IsOwned(_dataId)) return;
+        // 슬88/19: 다른 미니몬과 동행 중이면 자동 해제 후 새로 지정 (MinMonManager.SetCompanion이 처리)
+        Managers.MinMon.SetCompanion(_dataId);
+        Debug.Log($"[MyMinimon] {_dataId} 동행 시작 (이전 동행 자동 해제)");
         RefreshSummonButton();
         // TODO 슬88: Flash_USETHIS 효과 + Active Ef, [미니몬 기록]/[미니몬 도감] UI 갱신
     }
 
     void OnClickUnsummon()
     {
-        SetFollowing(0);
+        Managers.MinMon.RemoveCompanion();
         Debug.Log($"[MyMinimon] {_dataId} 동행 해제");
         RefreshSummonButton();
     }

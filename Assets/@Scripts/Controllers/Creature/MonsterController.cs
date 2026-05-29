@@ -177,6 +177,17 @@ public class MonsterController : CreatureController
             OnItemDropped?.Invoke(_data.DropItemId, _data.DropCount);
         }
 
+        // 슬23: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장
+        if (_data != null)
+        {
+            var interest = Managers.MinMon.RollInterest(DataId);
+            // TODO 슬24/25: Added → Attracted Popup(Side UI) + 머리 위 Emoj_Shy / StorageFull → 경고 popup
+            if (interest == MinMonManager.InterestResult.Added)
+                Debug.Log($"[Interest] {_data.Name} 관심! 창고 저장 ({Managers.MinMon.InterestedMinMons.Count}/{MinMonManager.INTEREST_CAPACITY})");
+            else if (interest == MinMonManager.InterestResult.StorageFull)
+                Debug.Log($"[Interest] {_data.Name} 관심 but 창고 가득 — 저장 안 됨");
+        }
+
         // Die clip 종료 후 풀 반환. Slime Die clip은 0.17s지만, HP Bar Playbackwards(0.5s)와
         // 동기화하기 위해 0.5s 대기.
         StartCoroutine(CoDestroyAfterDie(0.5f));

@@ -56,8 +56,13 @@ public class Equipment
 public class MinMonSaveData
 {
     public int DataId;
-    public int TameCount;
+    public int TameCount;       // 시도 횟수(천장 카운터) — 성공/실패 모두 증가. "n/10번째에 확정"
+    public int CaughtCount;     // 실제 포획 성공 횟수 — 보유 판정/재포획 등급 롤 기준
     public bool IsCompanion;
+    // 능력치 등급 (0~5 = E~S, 슬18/20). -1 = 미포획(첫 포획 시 RollGrade로 결정)
+    public int AtkGrade      = -1;
+    public int AtkSpeedGrade = -1;
+    public int CritGrade     = -1;
 }
 
 // ──────────────────────────────────────────────
@@ -91,6 +96,7 @@ public class GameData
     // 미니몬
     public List<MinMonSaveData> OwnedMinMons    = new List<MinMonSaveData>();
     public int                  CompanionMinMonId = -1;
+    public List<int>            InterestedMinMons = new List<int>(); // 슬23: 포획 가능 미니몬 창고(저장 순서)
 
     // 해금
     public List<int>    ActivationManager    = new List<int>( new int[Enum.GetValues(typeof(ActivationKey)).Length]);
@@ -219,6 +225,7 @@ public class GameManager
 
     // ── 미니몬 ──
     public List<MinMonSaveData> OwnedMinMons     => _gameData.OwnedMinMons;
+    public List<int>            InterestedMinMons => _gameData.InterestedMinMons;
     public int                  CompanionMinMonId
     {
         get => _gameData.CompanionMinMonId;

@@ -343,5 +343,51 @@ public static class BestiaryTestMenu
         if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
         Managers.UI.ShowPopupUI<UI_TamePopup>().SetInfo(2001);
     }
+
+    // ─────────────────────────────────────────────
+    // 미니몬 관심 / 포획 가능 창고 (슬라이드 23~27)
+    // ─────────────────────────────────────────────
+    [MenuItem("Test/Bestiary/Interest - Add 2001 to storage", false, 540)]
+    static void AddInterest2001()
+    {
+        if (!Application.isPlaying) { Debug.LogWarning("[BestiaryTest] PlayMode 진입 후 실행"); return; }
+        var r = Managers.MinMon.AddInterest(2001);
+        Debug.Log($"[Interest] add 2001 → {r} | 창고={string.Join(",", Managers.MinMon.InterestedMinMons)}");
+    }
+
+    [MenuItem("Test/Bestiary/Interest - Add 2002 to storage", false, 541)]
+    static void AddInterest2002()
+    {
+        if (!Application.isPlaying) { Debug.LogWarning("[BestiaryTest] PlayMode 진입 후 실행"); return; }
+        var r = Managers.MinMon.AddInterest(2002);
+        Debug.Log($"[Interest] add 2002 → {r} | 창고={string.Join(",", Managers.MinMon.InterestedMinMons)}");
+    }
+
+    [MenuItem("Test/Bestiary/Interest - Show storage", false, 542)]
+    static void ShowInterest()
+    {
+        if (!Application.isPlaying) { Debug.LogWarning("[BestiaryTest] PlayMode 진입 후 실행"); return; }
+        Debug.Log($"[Interest] 창고({Managers.MinMon.InterestedMinMons.Count}/{MinMonManager.INTEREST_CAPACITY})=" +
+                  $"{string.Join(",", Managers.MinMon.InterestedMinMons)} | HasInterest={Managers.MinMon.HasInterest}");
+    }
+
+    [MenuItem("Test/Bestiary/Interest - Clear storage", false, 543)]
+    static void ClearInterest()
+    {
+        if (!Application.isPlaying) { Debug.LogWarning("[BestiaryTest] PlayMode 진입 후 실행"); return; }
+        foreach (int id in Managers.MinMon.InterestedMinMons.ToArray())
+            Managers.MinMon.RemoveInterest(id);
+        Debug.Log("[Interest] 창고 비움");
+    }
+
+    // 창고의 첫 미니몬으로 잡기 팝업 진입 (도감 [미니몬 잡기!] 버튼 대용 — 슬28 prefab 미구현)
+    [MenuItem("Test/Bestiary/Interest - Open Tame for first stored", false, 544)]
+    static void OpenTameForFirstInterest()
+    {
+        if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
+        var list = Managers.MinMon.InterestedMinMons;
+        if (list.Count == 0) { Debug.LogWarning("[Interest] 창고 비어있음 — 먼저 Add"); return; }
+        Managers.UI.ShowPopupUI<UI_TamePopup>().SetInfo(list[0]);
+    }
 }
 #endif

@@ -214,6 +214,9 @@ public class UI_GameScene : UI_Scene
             Managers.Game.OnStatusPointChanged -= RefreshCharacterNewIcon;
         }
 
+        if (Managers.MinMon != null)
+            Managers.MinMon.OnInterestChanged -= RefreshBestiaryNewIcon;
+
         if (Managers.Quest != null)
         {
             Managers.Quest.OnFollowUIChanged -= RefreshQuestFollow;
@@ -634,6 +637,16 @@ public class UI_GameScene : UI_Scene
         }
     }
 
+    // 슬26: 포획 가능 미니몬 창고에 미니몬이 있으면 [도감] 버튼에 NEW 뱃지 표시
+    void RefreshBestiaryNewIcon()
+    {
+        bool has = Managers.MinMon != null && Managers.MinMon.HasInterest;
+        var icon = GetImage((int)Images.BestiaryBtnNewIcon)?.gameObject;
+        if (icon != null) icon.SetActive(has);
+        var txt = GetText((int)Texts.BestiaryBtnNewTxt)?.gameObject;
+        if (txt != null) txt.SetActive(has);
+    }
+
     void RefreshCharacterNewIcon()
     {
         GetImage((int)Images.CharacterBtnNewIcon).gameObject.SetActive(Managers.Game.StatusPoint > 0);
@@ -806,6 +819,8 @@ public class UI_GameScene : UI_Scene
         UpdateEXP(Managers.Game.Exp, player.ExpRequired);   // LoadGame된 현재 EXP로 슬라이더 초기화
         Managers.Game.OnStatusPointChanged += RefreshCharacterNewIcon;
         RefreshCharacterNewIcon();
+        Managers.MinMon.OnInterestChanged += RefreshBestiaryNewIcon;
+        RefreshBestiaryNewIcon();
     }
 
     // ────────────────────────────────────────
