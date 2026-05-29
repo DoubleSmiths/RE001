@@ -45,6 +45,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f4505ec4ce95e04595dfb23722be010
+    m_Address: MinMonData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6b89cc1eaeffcd74192a7fe921715118
     m_Address: CreatureData
     m_ReadOnly: 0

@@ -1,0 +1,34 @@
+{
+  "minMons": [
+    {
+      "DataId": 2001,
+      "Name": "젤리 퐁",
+      "IconLabel": "",
+      "PrefabLabel": "",
+      "MonsterDataId": 2001,
+      "BaseAtk": 5.0,
+      "BaseAtkSpeed": 100.0,
+      "BaseCritRate": 0.0,
+      "AtkGrade": 0,
+      "AtkSpeedGrade": 0,
+      "CritGrade": 0,
+      "MaxTameCount": 10,
+      "CatchChance": 0.1
+    },
+    {
+      "DataId": 2002,
+      "Name": "라비 슬라임",
+      "IconLabel": "",
+      "PrefabLabel": "",
+      "MonsterDataId": 2002,
+      "BaseAtk": 7.0,
+      "BaseAtkSpeed": 100.0,
+      "BaseCritRate": 0.0,
+      "AtkGrade": 0,
+      "AtkSpeedGrade": 0,
+      "CritGrade": 0,
+      "MaxTameCount": 12,
+      "CatchChance": 0.08
+    }
+  ]
+}

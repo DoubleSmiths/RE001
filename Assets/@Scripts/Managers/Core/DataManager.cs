@@ -50,7 +50,7 @@ public class DataManager
         //AreaDic           = LoadJson<AreaDataLoader,          int,    AreaData>           ("AreaData").MakeDict();
         TravelNodeDic       = LoadJson<TravelNodeDataLoader,      int, TravelNodeData>              ("TravelNodeData").MakeDict();
         TravelConditionDic  = LoadJson<TravelConditionDataLoader, int, List<TravelConditionData>>   ("TravelConditionData").MakeDict();
-        //MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
+        MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
         //ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
         //LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
