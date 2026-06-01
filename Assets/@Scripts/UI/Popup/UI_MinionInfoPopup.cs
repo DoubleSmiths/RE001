@@ -1,4 +1,6 @@
+using System.Collections;
 using Data;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -302,6 +304,41 @@ public class UI_MinionInfoPopup : UI_Popup
         Managers.MinMon.RemoveCompanion();
         Debug.Log($"[MyMinimon] {_dataId} 동행 해제");
         RefreshSummonButton();
+    }
+
+    // 슬20~22: 포획 직후 호출되는 결과 연출.
+    //  first    → 첫 포획: 이름 옆 NEW 표시 (GlowRays는 prefab 부재로 미적용)
+    //  improved → 재포획 능력치 향상: 공격력→공속→치명타 순차 Scale Anim (슬21)
+    //  그 외     → 향상 없음: NoImprovedText 표기 (슬22)
+    public void PlayCatchResult(bool first, bool improved)
+    {
+        var newTxt = GetText((int)Texts.MinionNewText);
+        if (newTxt != null) newTxt.gameObject.SetActive(first);
+
+        if (!first && improved) StartCoroutine(CoGrowthSequence());
+        else if (!first)
+        {
+            var noImp = GetText((int)Texts.NoImprovedText);
+            if (noImp != null) { noImp.gameObject.SetActive(true); ApplyFont(noImp, Define.FontType.UI); }
+        }
+    }
+
+    // 슬21: 1초 뒤부터 공격력→공속→치명타 순서로 숫자+등급 ICON Scale 펀치
+    IEnumerator CoGrowthSequence()
+    {
+        yield return new WaitForSecondsRealtime(1f);
+        yield return CoPunchStat(Texts.DamageNumberText, Images.DamageRankImage);
+        yield return CoPunchStat(Texts.ASNumberText,     Images.ASRankImage);
+        yield return CoPunchStat(Texts.CritNumberText,   Images.CritRankImage);
+    }
+
+    IEnumerator CoPunchStat(Texts numTxt, Images rankImg)
+    {
+        var t = GetText((int)numTxt);
+        var img = GetImage((int)rankImg);
+        if (t != null) t.rectTransform.DOPunchScale(new Vector3(0.4f, 0.4f, 0f), 0.4f, 8).SetUpdate(true);
+        if (img != null) img.rectTransform.DOPunchScale(new Vector3(0.4f, 0.4f, 0f), 0.4f, 8).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(0.45f);
     }
 
     void OnClickSkill()

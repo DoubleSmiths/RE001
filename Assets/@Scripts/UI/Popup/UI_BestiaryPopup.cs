@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Data;
 using DG.Tweening;
@@ -226,6 +227,21 @@ public class UI_BestiaryPopup : UI_Popup
         { "종을 초월한 교감", "조련사의 기술", "오다 주웠습니다 주인님!", "기억 확장" };
     const string SKILL_UNLOCK_PREFIX = "BESTIARY_SKILL_UNLOCK_";
     const string SKILL_GRADE_PREFIX  = "BESTIARY_SKILL_GRADE_";
+    // 슬2/38(도감 별 작업): 완성도 4스킬 ↔ 능력(SkillData) id 매핑. idx 0~3 좌→우.
+    static readonly int[] SKILL_ABILITY_ID = { 7000, 7001, 7002, 5001 };
+
+    // 해금/등급 변경 시 실제 능력(AbilityManager)에 반영 (재능이라 학습 즉시 항시 적용, 등급=Lv).
+    static void SyncSkillAbility(int idx)
+    {
+        if (idx < 0 || idx >= SKILL_ABILITY_ID.Length || Managers.Ability == null) return;
+        int abilityId = SKILL_ABILITY_ID[idx];
+        if (GetSkillUnlocked(idx))
+        {
+            Managers.Ability.Learn(abilityId);                 // 보유 + (재능) 자동 적용
+            Managers.Ability.SetLevel(abilityId, GetSkillGrade(idx) + 1); // 도감 +n등급 → Lv n+1
+        }
+        else Managers.Ability.Unlearn(abilityId);
+    }
 
     // 기본 해금: idx3(기억 확장)만 true
     public static bool GetSkillUnlocked(int idx)
@@ -234,12 +250,14 @@ public class UI_BestiaryPopup : UI_Popup
     {
         PlayerPrefs.SetInt(SKILL_UNLOCK_PREFIX + idx, unlocked ? 1 : 0);
         PlayerPrefs.Save();
+        SyncSkillAbility(idx);
     }
     public static int  GetSkillGrade(int idx) => PlayerPrefs.GetInt(SKILL_GRADE_PREFIX + idx, 0);
     public static void SetSkillGrade(int idx, int grade)
     {
         PlayerPrefs.SetInt(SKILL_GRADE_PREFIX + idx, Mathf.Max(0, grade));
         PlayerPrefs.Save();
+        SyncSkillAbility(idx);
     }
 
     // ── 슬라이드 74: 등급 상승 연출 관련 상태 ──
@@ -378,7 +396,9 @@ public class UI_BestiaryPopup : UI_Popup
 
         RefreshCompletionNumber();
         RefreshSkills();
+        for (int i = 0; i < SKILL_COUNT; i++) SyncSkillAbility(i); // 슬2/38: 완성도 4스킬 → 능력 반영
         RefreshMinimonButton();
+        StartCoroutine(CoMinimonButtonIntro()); // 슬28: 잡기버튼 그룹 slide-in
     }
 
     // 슬28~29: [미니몬 잡기!] 버튼 상태. 포획 가능 창고(InterestedMinMons) 유무에 따라 변화.
@@ -415,6 +435,46 @@ public class UI_BestiaryPopup : UI_Popup
         // 슬29: Button interactive
         var btn = GetButton((int)Buttons.MinimonBtn);
         if (btn != null) btn.interactable = has;
+    }
+
+    // 슬28: 도감 열림 시 [미니몬 잡기!] 버튼 그룹 slide-in 등장 (Frame 좌→ / Slime 좌→ / Title 우→ / NavBtn 하↑)
+    bool _minimonRestCached;
+    Vector2 _restFrame, _restSlime, _restTitle;
+
+    void CacheMinimonRest()
+    {
+        if (_minimonRestCached) return;
+        _restFrame = RT(GetImage((int)Images.MinimonButton));
+        _restSlime = RT(GetImage((int)Images.MinimonExistImg));
+        _restTitle = RT(GetText((int)Texts.MinimonTitleText)?.gameObject);
+        _minimonRestCached = true;
+    }
+
+    static Vector2 RT(Image img) => img != null ? img.rectTransform.anchoredPosition : Vector2.zero;
+    static Vector2 RT(GameObject go) => go != null && go.TryGetComponent<RectTransform>(out var rt) ? rt.anchoredPosition : Vector2.zero;
+
+    IEnumerator CoMinimonButtonIntro()
+    {
+        CacheMinimonRest();
+        var frame = GetImage((int)Images.MinimonButton)?.rectTransform;
+        var slime = GetImage((int)Images.MinimonExistImg)?.rectTransform;
+        var title = GetText((int)Texts.MinimonTitleText)?.rectTransform;
+
+        SlideFrom(frame, _restFrame, new Vector2(-230f, 0f), 0.5f);   // Frame 화면 밖 왼쪽
+        yield return new WaitForSecondsRealtime(0.4f);
+        SlideFrom(slime, _restSlime, new Vector2(-120f, 0f), 0.5f);   // Slime 왼쪽
+        SlideFrom(title, _restTitle, new Vector2(120f, 0f), 0.5f);    // Title 오른쪽
+        yield return new WaitForSecondsRealtime(0.4f);
+        // Emoj 0.8s 후 재생(상태 반영)
+        PlayMinimonEmoj(Managers.MinMon != null && Managers.MinMon.HasInterest ? "Emoj_Exclamation" : "Emoj_Question");
+    }
+
+    static void SlideFrom(RectTransform rt, Vector2 rest, Vector2 fromOffset, float dur)
+    {
+        if (rt == null) return;
+        rt.DOKill();
+        rt.anchoredPosition = rest + fromOffset;
+        rt.DOAnchorPos(rest, dur).SetEase(Ease.OutBack).SetUpdate(true);
     }
 
     void PlayMinimonEmoj(string state)

@@ -494,6 +494,14 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.PlayerLevelText).text = $"{Util.Localize(LocalizeKey.PlayerLvPrefix)}{lv}";
         GetText((int)Texts.PlayerRankText).text = Managers.Game.PlayerName;
 
+        // 슬7: 모험가 등급 (0이면 BLANK 표기)
+        var rankTxt = GetText((int)Texts.RankTxt);
+        if (rankTxt != null)
+        {
+            int rank = Managers.Game.AdventurerRank;
+            rankTxt.text = rank <= 0 ? "" : rank.ToString();
+        }
+
         // TODO: 직업에 따라 PortraitImg 스프라이트 교체
         // Managers.Resource.LoadAsync<Sprite>($"Portrait_{jobType}", sprite =>
         //     GetImage((int)Images.PortraitImg).sprite = sprite);
@@ -637,12 +645,25 @@ public class UI_GameScene : UI_Scene
         }
     }
 
-    // 슬26: 포획 가능 미니몬 창고에 미니몬이 있으면 [도감] 버튼에 NEW 뱃지 표시
+    // 슬26: 포획 가능 미니몬 창고에 미니몬이 있으면 [도감] 버튼에 NEW 뱃지 + 저장 수 표기 + Punch 등장 anim
     void RefreshBestiaryNewIcon()
     {
         bool has = Managers.MinMon != null && Managers.MinMon.HasInterest;
         var icon = GetImage((int)Images.BestiaryBtnNewIcon)?.gameObject;
-        if (icon != null) icon.SetActive(has);
+        if (icon != null)
+        {
+            icon.SetActive(has);
+            if (has)
+            {
+                int count = Managers.MinMon.InterestedMinMons.Count;
+                var numTxt = Util.FindChild<TMPro.TMP_Text>(icon, "BestiaryBtnFollowingNumTxt", true);
+                if (numTxt != null) numTxt.text = count.ToString();
+                // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10)
+                icon.transform.DOKill();
+                icon.transform.localScale = Vector3.one;
+                icon.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0f), 0.3f, 10, 1f);
+            }
+        }
         var txt = GetText((int)Texts.BestiaryBtnNewTxt)?.gameObject;
         if (txt != null) txt.SetActive(has);
     }

@@ -164,7 +164,12 @@ public class UI_SkillBookPopup : UI_Popup
 
         SetChild(root, "LockedIcon",    !learned);            // 미보유 = 잠금
         SetChild(root, "MemorizedIcon", equipped);            // 기억(장착) 중
-        // Lvl/New 등은 데이터(능력 레벨) 도입 후. 아이콘 sprite는 IconLabel 비어있어 prefab 기본 유지.
+
+        // 능력 단계(Lv) 표기 — 슬롯 내 LvlIcon 텍스트
+        int lv = Managers.Ability.GetLevel(abilityId);
+        foreach (var tmp in root.GetComponentsInChildren<TMPro.TMP_Text>(true))
+            if (tmp.name.Contains("LvlIcon")) { tmp.text = "Lv." + Mathf.Max(1, lv); ApplyFont(tmp, FontType.UI); }
+        // 아이콘 sprite는 IconLabel 비어있어 prefab 기본 유지.
     }
 
     void SetChild(GameObject root, string nameContains, bool on)

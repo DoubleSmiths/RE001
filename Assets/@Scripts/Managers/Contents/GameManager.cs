@@ -74,6 +74,7 @@ public class GameData
 {
     // 기본
     public string PlayerName = "여행자";
+    public int    AdventurerRank = 0;   // 슬7: 모험가 등급 0~99 (0=BLANK)
     public int    Level      = 1;
     public float  Exp        = 0f;
     public int    Gold        = 0;
@@ -99,9 +100,10 @@ public class GameData
     public int                  CompanionMinMonId = -1;
     public List<int>            InterestedMinMons = new List<int>(); // 슬23: 포획 가능 미니몬 창고(저장 순서)
 
-    // 능력(슬38): 보유한 능력 / 기억(장착)중인 능력
+    // 능력(슬38): 보유한 능력 / 기억(장착)중인 능력 / 능력별 단계(Level)
     public List<int>            LearnedAbilities  = new List<int>();
     public List<int>            EquippedAbilities = new List<int>();
+    public Dictionary<int,int>  AbilityLevels     = new Dictionary<int,int>();
 
     // 해금
     public List<int>    ActivationManager    = new List<int>( new int[Enum.GetValues(typeof(ActivationKey)).Length]);
@@ -199,6 +201,11 @@ public class GameManager
         get => _gameData.PlayerName;
         set { _gameData.PlayerName = value; }
     }
+    public int AdventurerRank
+    {
+        get => _gameData.AdventurerRank;
+        set { _gameData.AdventurerRank = Mathf.Clamp(value, 0, 99); SaveGame(); }
+    }
 
     public int Level
     {
@@ -235,6 +242,7 @@ public class GameManager
     // ── 능력 ──
     public List<int>            LearnedAbilities  => _gameData.LearnedAbilities;
     public List<int>            EquippedAbilities => _gameData.EquippedAbilities;
+    public Dictionary<int,int>  AbilityLevels     => _gameData.AbilityLevels;
     public int                  CompanionMinMonId
     {
         get => _gameData.CompanionMinMonId;

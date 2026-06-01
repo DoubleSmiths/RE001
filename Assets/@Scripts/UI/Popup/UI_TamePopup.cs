@@ -325,9 +325,14 @@ public class UI_TamePopup : UI_Popup
             PlayEmoj(Images.TamerEmoj, "Emoj_Happy");
             yield return new WaitForSecondsRealtime(0.8f);
 
-            // TODO 슬36 #4 / 슬20: GlowRays 적용된 [나의 미니몬] 창 (첫 포획 연출)
+            // 슬20~22: [나의 미니몬] 창 호출 + 포획 결과 연출(첫포획 NEW / 재포획 향상 순차 Scale).
+            //  (GlowRays는 prefab 부재로 미적용)
+            bool first = Managers.MinMon.LastCatchWasFirst;
+            bool improved = Managers.MinMon.LastCatchImproved;
             ClosePopupUI();
-            Managers.UI.ShowPopupUI<UI_MinionInfoPopup>().SetInfo(_dataId);
+            var info = Managers.UI.ShowPopupUI<UI_MinionInfoPopup>();
+            info.SetInfo(_dataId);
+            info.PlayCatchResult(first, improved);
         }
         else
         {

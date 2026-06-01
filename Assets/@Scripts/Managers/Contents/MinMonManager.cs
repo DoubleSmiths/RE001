@@ -82,12 +82,18 @@ public class MinMonManager
         return success;
     }
 
+    // 마지막 포획 결과 (UI 연출용 — 슬20 첫포획 / 슬21 재포획 향상 / 슬22 향상없음)
+    public bool LastCatchWasFirst { get; private set; }
+    public bool LastCatchImproved { get; private set; }
+
     public void AddMinMon(int dataId)
     {
         MinMonSaveData save = GetSaveData(dataId);
 
         // 슬20/21: 능력치 등급 결정. 첫 포획은 새로 롤, 재포획은 굴려서 더 높으면 갱신.
-        if (save.CaughtCount == 0)
+        LastCatchWasFirst = save.CaughtCount == 0;
+        LastCatchImproved = false;
+        if (LastCatchWasFirst)
         {
             save.AtkGrade      = RollGrade();
             save.AtkSpeedGrade = RollGrade();
@@ -95,9 +101,11 @@ public class MinMonManager
         }
         else
         {
+            int a = save.AtkGrade, s = save.AtkSpeedGrade, c = save.CritGrade;
             save.AtkGrade      = Mathf.Max(save.AtkGrade,      RollGrade());
             save.AtkSpeedGrade = Mathf.Max(save.AtkSpeedGrade, RollGrade());
             save.CritGrade     = Mathf.Max(save.CritGrade,     RollGrade());
+            LastCatchImproved  = save.AtkGrade > a || save.AtkSpeedGrade > s || save.CritGrade > c;
         }
 
         save.CaughtCount++;
@@ -105,6 +113,15 @@ public class MinMonManager
         // 포획 성공 시 포획 가능 창고에서 제거 (슬23: 창고의 미니몬을 잡은 것)
         Managers.Game.InterestedMinMons.Remove(dataId);
         Managers.Game.SaveGame();
+
+        // 슬10/11/79: 공명도 100%(4회 포획) 시 고유기술을 능력으로 영구 습득.
+        //  Lv.1 = 공명도 100% / Lv.2 = 추가로 모든 능력치 등급이 S(완벽획득, 슬11).
+        if (GetSyncRate(dataId) >= 1f)
+        {
+            int lv = 1 + (IsAllSS(dataId) ? 1 : 0);
+            Managers.Ability.LearnMinionUniqueSkill(dataId, lv);
+        }
+
         OnMinMonAdded?.Invoke(dataId);
         OnInterestChanged?.Invoke();
     }
