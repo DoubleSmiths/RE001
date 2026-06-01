@@ -149,6 +149,12 @@ public class UI_MinionInfoPopup : UI_Popup
 
         _frameRT = GetObject((int)GameObjects.MinionInfoPopup).GetComponent<RectTransform>();
         OpenAnimation();
+
+        // MinionInfoPopupBlock: 투명(alpha=0)이지만 RaycastTarget=1로 prefab에 남아있어
+        // Background/Xbutton 클릭을 가로채는 문제 → raycast 차단.
+        var block = GetImage((int)Images.MinionInfoPopupBlock);
+        if (block != null) block.raycastTarget = false;
+
         GetButton((int)Buttons.MinionInfoPopupBackground).gameObject.BindEvent(OnClickBG);
         GetImage((int)Images.Xbutton).gameObject.BindEvent(OnClickBG);
         GetButton((int)Buttons.MinionUsingSkillIcon).gameObject.BindEvent(OnClickSkill);
