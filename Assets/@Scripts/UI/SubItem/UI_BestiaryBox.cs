@@ -47,6 +47,7 @@ public class UI_BestiaryBox : UI_Base
     Tween _starIdleTween;
     Color _frameOrigColor = Color.white; // 슬6: 동행 frame색(FF00CB) 적용/복귀용 원색
     bool _frameColorCached;
+    GameObject _activeEf; // 슬6: 동행 중 frame에 활성화되는 Active Ef.prefab 인스턴스
 
     public int DataId => _dataId;
     // 슬라이드 74 연출용 — 몬스터 아이콘 Transform
@@ -83,6 +84,7 @@ public class UI_BestiaryBox : UI_Base
     {
         _starIdleTween?.Kill();
         _starIdleTween = null;
+        if (_activeEf != null) { Managers.Resource.Destroy(_activeEf); _activeEf = null; }
         base.OnDestroy();
     }
 
@@ -187,12 +189,12 @@ public class UI_BestiaryBox : UI_Base
         // 슬라이드 83: 별 1단계 이상이면 표기 + Punch/Rotation 항시 Anim
         ApplyStarVisual(star);
 
-        // 슬4 #6 / 슬6: 동행 중인 미니몬이면 도감 ICON frame 색 변경(FF00CB). (동행 해제 시 원색 복귀)
-        //  ※ 스펙상 frame에 Active Ef.prefab도 활성하나 해당 프리팹이 프로젝트에 부재 → 색 변경만 적용.
+        // 슬4 #6 / 슬6: 동행 중인 미니몬이면 도감 ICON frame에 Active Ef.prefab 활성 + frame 색 FF00CB.
+        //  (동행 해제 시 원색 복귀 + Active Ef 제거)
         RefreshCompanionVisual();
     }
 
-    // 슬6: 이 박스의 미니몬이 현재 동행(소환) 중인지에 따라 frame 색 토글. FF00CB / 원색.
+    // 슬6: 이 박스의 미니몬이 현재 동행(소환) 중인지에 따라 frame 색(FF00CB/원색) + Active Ef.prefab 토글.
     public void RefreshCompanionVisual()
     {
         var frame = GetImage((int)Images.BestiaryBoxFrame);
@@ -202,7 +204,27 @@ public class UI_BestiaryBox : UI_Base
         bool isCompanion = _dataId != 0
                         && Managers.Game != null
                         && Managers.Game.CompanionMinMonId == _dataId;
+
         frame.color = isCompanion ? Util.HexToColor("FF00CB") : _frameOrigColor;
+
+        if (isCompanion && _activeEf == null)
+        {
+            // 기획서 명칭 "Active Ef.prefab". 미등록 시 Instantiate가 에러로그를 남기므로 Load로 먼저 가드.
+            if (Managers.Resource.Load<GameObject>("Active Ef") != null)
+            {
+                _activeEf = Managers.Resource.Instantiate("Active Ef", frame.transform);
+                if (_activeEf != null)
+                {
+                    _activeEf.transform.localPosition = Vector3.zero;
+                    _activeEf.transform.localScale = Vector3.one;
+                }
+            }
+        }
+        else if (!isCompanion && _activeEf != null)
+        {
+            Managers.Resource.Destroy(_activeEf);
+            _activeEf = null;
+        }
     }
 
     // Rarity 문자열 → 글로우 색 (CreatureData.Rarity: "Common"/"Rare"/"Boss" 등)
