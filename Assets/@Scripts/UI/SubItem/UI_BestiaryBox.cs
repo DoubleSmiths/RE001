@@ -45,6 +45,8 @@ public class UI_BestiaryBox : UI_Base
     bool _interactable;
     Action<int> _onClick;
     Tween _starIdleTween;
+    Color _frameOrigColor = Color.white; // 슬6: 동행 frame색(FF00CB) 적용/복귀용 원색
+    bool _frameColorCached;
 
     public int DataId => _dataId;
     // 슬라이드 74 연출용 — 몬스터 아이콘 Transform
@@ -97,6 +99,10 @@ public class UI_BestiaryBox : UI_Base
         BindObject(typeof(GameObjects));
 
         gameObject.BindEvent(OnClickBox);
+
+        // 슬6: 동행 frame색 적용 전 원래 frame 색 캐싱(복귀용)
+        var fr = GetImage((int)Images.BestiaryBoxFrame);
+        if (fr != null) { _frameOrigColor = fr.color; _frameColorCached = true; }
 
         return true;
     }
@@ -180,6 +186,23 @@ public class UI_BestiaryBox : UI_Base
 
         // 슬라이드 83: 별 1단계 이상이면 표기 + Punch/Rotation 항시 Anim
         ApplyStarVisual(star);
+
+        // 슬4 #6 / 슬6: 동행 중인 미니몬이면 도감 ICON frame 색 변경(FF00CB). (동행 해제 시 원색 복귀)
+        //  ※ 스펙상 frame에 Active Ef.prefab도 활성하나 해당 프리팹이 프로젝트에 부재 → 색 변경만 적용.
+        RefreshCompanionVisual();
+    }
+
+    // 슬6: 이 박스의 미니몬이 현재 동행(소환) 중인지에 따라 frame 색 토글. FF00CB / 원색.
+    public void RefreshCompanionVisual()
+    {
+        var frame = GetImage((int)Images.BestiaryBoxFrame);
+        if (frame == null) return;
+        if (!_frameColorCached) { _frameOrigColor = frame.color; _frameColorCached = true; }
+
+        bool isCompanion = _dataId != 0
+                        && Managers.Game != null
+                        && Managers.Game.CompanionMinMonId == _dataId;
+        frame.color = isCompanion ? Util.HexToColor("FF00CB") : _frameOrigColor;
     }
 
     // Rarity 문자열 → 글로우 색 (CreatureData.Rarity: "Common"/"Rare"/"Boss" 등)
