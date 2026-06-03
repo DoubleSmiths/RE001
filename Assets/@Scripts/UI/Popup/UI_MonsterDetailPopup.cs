@@ -1,6 +1,7 @@
 using System.Globalization;
 using Data;
 using UnityEngine;
+using static Define;
 
 public class UI_MonsterDetailPopup : UI_Popup
 {
@@ -60,6 +61,10 @@ public class UI_MonsterDetailPopup : UI_Popup
         MonsterDetailPopupPlaceText,
         MonsterDetailPopupHPText,
         MonsterDetailPopupDEFText,
+        // 슬8: 기획서 14개 능력치 중 prefab에 없던 3개 노드 (물리저항/마법저항/마법공격력)
+        MonsterDetailPopupP_RESText,
+        MonsterDetailPopupM_RESText,
+        MonsterDetailPopupM_ATKText,
         MonsterDetailPopupDamageText,
         MonsterDetailPopupASText,
         MonsterDetailPopupACCText,
@@ -135,8 +140,27 @@ public class UI_MonsterDetailPopup : UI_Popup
         Managers.Data.CreatureDic.TryGetValue(dataId, out data);
         int rec = UI_BestiaryPopup.GetRecordRate(dataId); // 분석률(기록도)
 
+        // 슬8: 타이틀 = "미니몬 기록" (MinimonEntryText). prefab 하드코딩("마물 상세정보") 교체.
         var title = GetText((int)Texts.MonsterDetailPopupTitle);
-        if (title != null) ApplyFont(title, Define.FontType.UI);
+        if (title != null)
+        {
+            title.text = Util.Localize(LocalizeKey.MinimonEntryText);
+            ApplyFont(title, Define.FontType.UI);
+        }
+
+        // 슬8: 기초정보 헤더 / 소환 효과 문구 — prefab 하드코딩(영어) 교체해 한/영 전환.
+        var infoHeader = GetText((int)Texts.MonsterDetailPopupInfoBoText);
+        if (infoHeader != null)
+        {
+            infoHeader.text = Util.Localize(LocalizeKey.InfoAndStatsText);
+            ApplyFont(infoHeader, Define.FontType.UI);
+        }
+        var activeTxt = GetText((int)Texts.MonsterDetailPopupActiveText);
+        if (activeTxt != null)
+        {
+            activeTxt.text = Util.Localize(LocalizeKey.SummonedBonusText);
+            ApplyFont(activeTxt, Define.FontType.UI);
+        }
 
         // 슬라이드 77: "NO." 고정 + CreatureData ID 앞 2 뺀 3자리 (2001 → NO.001)
         var numTxt = GetText((int)Texts.MonsterNumberText);
@@ -164,41 +188,36 @@ public class UI_MonsterDetailPopup : UI_Popup
             monImg.color = statsUnlocked ? Color.white : new Color32(0, 0, 0, 255);
         }
 
-        // 슬라이드 77/78: 기초정보 & 확률 — 라벨/기호(○◆) 유지, 잠금 시 "???"
-        if (data != null && statsUnlocked)
-        {
-            SetStat(Texts.MonsterDetailPopupNameText, data.Name);
-            SetStat(Texts.MonsterDetailPopupHPText,   Fmt(data.MaxHp));
-            SetStat(Texts.MonsterDetailPopupDEFText,  Fmt(data.Def));
-            SetStat(Texts.MonsterDetailPopupDamageText, Fmt(data.PhysicalAtk));
-            SetStat(Texts.MonsterDetailPopupASText,   Fmt(data.AtkSpeed));
-            SetStat(Texts.MonsterDetailPopupACCText,  Fmt(data.Accuracy));
-            SetStat(Texts.MonsterDetailPopupEXPText,  Fmt(data.TotalExp));
-            SetStat(Texts.MonsterDetailPopupAPPText,  $"{Fmt(data.EncounterRate * 100f)}%");
-            SetStat(Texts.MonsterDetailPopupATTText,  $"{Fmt(data.InterestRate * 100f)}%");
-        }
-        else
-        {
-            // 기록도 0%: 기록도 제외 모든 정보 "???" (슬라이드 78 #3)
-            foreach (Texts t in new[] {
-                Texts.MonsterDetailPopupNameText, Texts.MonsterDetailPopupHPText,
-                Texts.MonsterDetailPopupDEFText,  Texts.MonsterDetailPopupDamageText,
-                Texts.MonsterDetailPopupASText,   Texts.MonsterDetailPopupACCText,
-                Texts.MonsterDetailPopupEXPText,  Texts.MonsterDetailPopupAPPText,
-                Texts.MonsterDetailPopupATTText })
-                SetStat(t, "???");
-        }
+        // 슬8/77/78: 기초정보 & 확률 (InfoAndStatsText). 기획서 14개 능력치 전부 표기.
+        //  - 라벨은 LocalizationData로 한/영 자동 전환, 값만 잠금 시 "???"
+        //  - 기호: 이름/서식지 = "○", 그 외 능력치 = "◆"
+        //  - 색: 86FFFA (분석률만 기록도 색 별도)
+        bool u = statsUnlocked && data != null;
+        SetStatLine(Texts.MonsterDetailPopupNameText, "○", LocalizeKey.MinimonNameText,        u ? data.Name                            : "???");
+        SetHabitat(u ? data : null);
+        SetStatLine(Texts.MonsterDetailPopupHPText,   "◆", LocalizeKey.MaxHitPointText,        u ? Fmt(data.MaxHp)                      : "???");
+        SetStatLine(Texts.MonsterDetailPopupDEFText,  "◆", LocalizeKey.DefenseText,            u ? Fmt(data.Def)                        : "???");
+        SetStatLine(Texts.MonsterDetailPopupP_RESText,"◆", LocalizeKey.PhysicalResistanceText, u ? $"{Fmt(data.PhysicalResist)}%"        : "???");
+        SetStatLine(Texts.MonsterDetailPopupM_RESText,"◆", LocalizeKey.MagicalResistanceText,  u ? $"{Fmt(data.MagicResist)}%"           : "???");
+        SetStatLine(Texts.MonsterDetailPopupDamageText,"◆",LocalizeKey.PhysicalAttackText,     u ? Fmt(data.PhysicalAtk)                : "???");
+        SetStatLine(Texts.MonsterDetailPopupM_ATKText,"◆", LocalizeKey.MagicalAttackText,      u ? Fmt(data.MagicAtk)                   : "???");
+        SetStatLine(Texts.MonsterDetailPopupASText,   "◆", LocalizeKey.AttackSpeedText,        u ? Fmt(data.AtkSpeed)                   : "???");
+        SetStatLine(Texts.MonsterDetailPopupACCText,  "◆", LocalizeKey.AccuracyText,           u ? Fmt(data.Accuracy)                   : "???");
+        SetStatLine(Texts.MonsterDetailPopupEXPText,  "◆", LocalizeKey.EXPText,                u ? Fmt(data.TotalExp)                   : "???");
+        SetStatLine(Texts.MonsterDetailPopupAPPText,  "◆", LocalizeKey.EncounterText,          u ? $"{Fmt(data.EncounterRate * 100f)}%" : "???");
+        SetStatLine(Texts.MonsterDetailPopupATTText,  "◆", LocalizeKey.AttentionRateText,      u ? $"{Fmt(data.InterestRate * 100f)}%"  : "???");
 
-        // 분석률(기록도) — 항상 표기. 100% 미만 EC9907 / 100% 00FF00 (슬라이드 78)
-        SetStat(Texts.MonsterDetailPopupKillCountText, $"{rec}%",
+        // 분석률(기록도) — 항상 표기. 100% 미만 EC9907 / 100% 00FF00 (슬8 LogText / 슬78)
+        SetStatLine(Texts.MonsterDetailPopupKillCountText, "◆", LocalizeKey.LogText, $"{rec}%",
                 rec >= 100 ? Util.HexToColor("00FF00") : Util.HexToColor("EC9907"));
 
-        // 공명도 텍스트 — 100% 미만 EC9907 / 100% 00FF00 (슬라이드 79)
+        // 슬8: 공명도 = "{LinkText}:{공명도}%" (콜론 뒤 공백 없음). 100% 미만 FF820B / 100% 30FF00.
+        //  (100% 시 MAT Text_ShineGreen 지정 스펙 — 머티리얼 에셋이 Resources 밖이라 런타임 로드 보류)
         var syncTxt = GetText((int)Texts.SYNCText);
         if (syncTxt != null)
         {
-            syncTxt.text = $"ASSIMILATION {sync}%";
-            syncTxt.color = sync >= 100 ? Util.HexToColor("00FF00") : Util.HexToColor("EC9907");
+            syncTxt.text = $"{Util.Localize(LocalizeKey.LinkText)}:{sync}%";
+            syncTxt.color = sync >= 100 ? Util.HexToColor("30FF00") : Util.HexToColor("FF820B");
             ApplyFont(syncTxt, Define.FontType.UI);
         }
 
@@ -378,19 +397,42 @@ public class UI_MonsterDetailPopup : UI_Popup
         box.SetInfo(item, data.DropCount, data.DropChance, unlocked);
     }
 
-    // 노드의 라벨 부분(":"까지)은 유지하고 값만 교체. 줄바꿈 접미사 보존.
-    void SetStat(Texts t, string value, Color? color = null)
+    // 슬8: "{기호} {로컬라이즈 라벨}: {값}" 형식으로 한 줄 전체를 새로 구성.
+    //  기존엔 prefab에 하드코딩된 라벨(○ HP: 등)을 그대로 보존해 한/영 전환이 안 됐음 → 라벨을 LocalizationData로 교체.
+    //  줄바꿈 접미사("\n")는 prefab 레이아웃 유지를 위해 보존. 값 색은 미지정 시 86FFFA(InfoAndStatsText).
+    void SetStatLine(Texts t, string symbol, string locKey, string value, Color? color = null)
     {
         var tmp = GetText((int)t);
-        if (tmp == null) return;
+        if (tmp == null) return; // prefab 노드 미존재(예: 신설 전 P_RES/M_RES/M_ATK) 시 무시
 
-        string s = tmp.text ?? "";
-        int colon = s.IndexOf(':');
-        string prefix = colon >= 0 ? s.Substring(0, colon + 1) : s;
-        bool nl = s.EndsWith("\n");
-        tmp.text = $"{prefix} {value}" + (nl ? "\n" : "");
-        if (color.HasValue) tmp.color = color.Value;
+        bool nl = (tmp.text ?? "").EndsWith("\n");
+        tmp.text = $"{symbol} {Util.Localize(locKey)}: {value}" + (nl ? "\n" : "");
+        //tmp.color = color ?? Util.HexToColor("86FFFA");
+        tmp.fontSizeMax = 6; // 슬8: 이름/스탯 폰트 크기 통일(이름 노드가 7이라 더 컸던 문제)
         ApplyFont(tmp, Define.FontType.UI);
+    }
+
+    // 슬8: ○ 서식지. prefab은 라벨(PlaceTitleText)/값(PlaceText)이 별도 노드라 값이 x=41에 고정 →
+    //  라벨과 값 사이가 크게 벌어졌음(기획서는 "○ 서식지: 산들바람 숲" 처럼 붙어있음).
+    //  → 라벨+값을 한 노드(PlaceTitleText)에 합쳐 표기하고 PlaceText는 비움.
+    //  값은 CreatureData.Habitat에 담긴 LocalizationData TextKey를 다시 Localize → 값까지 한/영 지원.
+    void SetHabitat(CreatureData data)
+    {
+        string val = data == null ? "???"
+                   : string.IsNullOrEmpty(data.Habitat) ? "-"
+                   : Util.Localize(data.Habitat);
+
+        var titleTxt = GetText((int)Texts.MonsterDetailPopupPlaceTitleText);
+        if (titleTxt != null)
+        {
+            titleTxt.text = $"○ {Util.Localize(LocalizeKey.HabitatText)}: {val}";
+            //titleTxt.color = Util.HexToColor("86FFFA");
+            titleTxt.fontSizeMax = 6; // 스탯과 폰트 크기 통일(기존 7)
+            ApplyFont(titleTxt, Define.FontType.UI);
+        }
+
+        var placeTxt = GetText((int)Texts.MonsterDetailPopupPlaceText);
+        if (placeTxt != null) placeTxt.text = ""; // 값은 타이틀 노드에 합침 → 빈 노드로
     }
 
     // 정수면 정수로, 아니면 소수 1자리

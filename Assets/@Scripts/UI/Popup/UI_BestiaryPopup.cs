@@ -150,7 +150,7 @@ public class UI_BestiaryPopup : UI_Popup
             && Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)
             && !string.IsNullOrEmpty(cd.UniqueSkillName))
             return cd.UniqueSkillName;
-        return $"고유기술 #{dataId % 1000:000}";
+        return $"고유기술";
     }
 
     // ── 슬라이드 86/87: 보유 미니몬 능력치 (MinMonManager 이관) ──
@@ -398,7 +398,7 @@ public class UI_BestiaryPopup : UI_Popup
         RefreshSkills();
         for (int i = 0; i < SKILL_COUNT; i++) SyncSkillAbility(i); // 슬2/38: 완성도 4스킬 → 능력 반영
         RefreshMinimonButton();
-        StartCoroutine(CoMinimonButtonIntro()); // 슬28: 잡기버튼 그룹 slide-in
+        //StartCoroutine(CoMinimonButtonIntro()); // 슬28: 잡기버튼 그룹 slide-in
     }
 
     // 슬28~29: [미니몬 잡기!] 버튼 상태. 포획 가능 창고(InterestedMinMons) 유무에 따라 변화.

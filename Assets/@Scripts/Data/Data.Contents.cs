@@ -12,6 +12,9 @@ namespace Data
         public string Name;
         public string PrefabLabel;
         public string IconLabel;
+        // 슬8: 미니몬 기록 [서식지] — LocalizationData의 TextKey를 저장(값까지 한/영 지원).
+        // 예: "BreezingWindForestNameText" → 산들바람 숲 / BREEZEWOOD FOREST. 비어있으면 "-".
+        public string Habitat = "";
         public float MaxHp;
         public float PhysicalAtk;
         public float MagicAtk;

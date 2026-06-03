@@ -278,6 +278,7 @@ public class Define
         public const string MinimonNameText = "MinimonNameText";
         public const string MyMinimon = "MyMinimon";
         public const string UniqueSkillText = "UniqueSkillText";
+        public const string SummonedBonusText = "SummonedBonusText";
 
         // ── Misc ──
         public const string LinkText = "LinkText";
