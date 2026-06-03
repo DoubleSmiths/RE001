@@ -365,9 +365,21 @@ public class UI_BestiaryPopup : UI_Popup
 
     public void SetInfo()
     {
+        // 슬1: 타이틀 "마물 도감"(BeastiaryText) — prefab 한글 하드코딩이라 영문 전환 안 됨 → 로컬라이즈.
         var title = GetText((int)Texts.BestiaryPopupTitleText);
-        if (title != null)  
+        if (title != null)
+        {
+            title.text = Util.Localize(Define.LocalizeKey.BeastiaryText);
             ApplyFont(title, Define.FontType.UI);
+        }
+
+        // 슬1: "완성도"(CompletionText) — prefab이 영어 "COMPLETION" 하드코딩이라 한글 전환 안 됨 → 로컬라이즈.
+        var completionTitle = GetText((int)Texts.BestiaryCompletionTitleText);
+        if (completionTitle != null)
+        {
+            completionTitle.text = Util.Localize(Define.LocalizeKey.CompletionText);
+            ApplyFont(completionTitle, Define.FontType.UI);
+        }
 
         Transform content = GetObject((int)GameObjects.Content).transform;
 
@@ -523,11 +535,11 @@ public class UI_BestiaryPopup : UI_Popup
             bool unlocked = GetSkillUnlocked(i);
             int  grade    = GetSkillGrade(i);
 
-            // "+n 등급" — "+n"은 노란색(FFFF00), 항상 표기 (잠금 시엔 자물쇠가 위를 덮음)
+            // 슬1: "+n 등급" — "+n"은 노란색(FFFF00), "등급"은 LevelText 로컬라이즈. 항상 표기(잠금 시 자물쇠가 덮음).
             var lvlTxt = GetText(SKILL_LEVEL_TEXT[i]);
             if (lvlTxt != null)
             {
-                lvlTxt.text = $"<color=yellow>+{grade}</color>등급";
+                lvlTxt.text = $"<color=yellow>+{grade}</color>{Util.Localize(Define.LocalizeKey.LevelText)}";
                 ApplyFont(lvlTxt, Define.FontType.UI);
             }
 

@@ -261,6 +261,7 @@ public class Define
         // ── Battle (추가) ──
         public const string ComboText = "ComboText";
         public const string CompletionText = "CompletionText";
+        public const string BeastiaryText = "BeastiaryText"; // 슬1: 도감 팝업 타이틀 "마물 도감"
         public const string CritTextPopupText = "CritTextPopupText";
         public const string EXPText = "EXPText";
         public const string LevelText = "LevelText";
