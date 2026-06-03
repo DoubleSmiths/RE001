@@ -221,7 +221,7 @@ public class UI_MonsterDetailPopup : UI_Popup
             ApplyFont(syncTxt, Define.FontType.UI);
         }
 
-        RefreshSkillGate(sync);
+        RefreshSkillGate(rec, sync);
         RefreshLearned(dataId);
         RefreshDropList(data, lootUnlocked);
         RefreshMinionButton(sync > 0); // 슬라이드 81: 포획 = 공명도 > 0
@@ -331,25 +331,26 @@ public class UI_MonsterDetailPopup : UI_Popup
         }
     }
 
-    // 슬라이드 79: 공명도에 따른 고유기술 게이팅
-    //  sync == 0     : FullLock (정보 완전 가림, interactive X)
-    //  0 < sync < 100 : Lock (정보는 보이나 interactive X)
-    //  sync == 100   : 해금 (interactive O — 클릭 시 기술 상세창)
-    void RefreshSkillGate(int sync)
+    // 슬9/10: 고유기술 게이팅 — 정보해금과 습득을 분리.
+    //  정보해금(infoUnlocked) = 포획≥1(공명도>0) 또는 기록도 100% (슬9 MinimonSkillLockedText)
+    //    → 정보 표시 + interactive O (클릭 시 기술 상세창)
+    //  습득(learned) = 공명도 100% (슬10) → 어두운 잠금 오버레이 제거
+    //  정보 미해금 = FullLock ("?" + 요구문구, interactive X)
+    void RefreshSkillGate(int rec, int sync)
     {
-        bool fullLock = sync <= 0;
-        bool unlocked = sync >= 100;
-        _skillUnlocked = unlocked;
+        bool infoUnlocked = sync > 0 || rec >= 100;
+        bool learned      = sync >= 100;
+        _skillUnlocked = infoUnlocked;
 
-        GetObject((int)GameObjects.MonsterDetailPopupSkillBoxFullLockGroup).SetActive(fullLock);
-        GetObject((int)GameObjects.MonsterDetailPopupSkillBoxLockGroup).SetActive(!fullLock && !unlocked);
+        GetObject((int)GameObjects.MonsterDetailPopupSkillBoxFullLockGroup).SetActive(!infoUnlocked);
+        GetObject((int)GameObjects.MonsterDetailPopupSkillBoxLockGroup).SetActive(infoUnlocked && !learned);
 
-        // 잠금 동안 어둡게 덮는 배경/이미지 (해금 시 제거)
-        GetImage((int)Images.MonsterSkillLockBackground).gameObject.SetActive(!unlocked);
-        GetImage((int)Images.MonsterSkillLockImage).gameObject.SetActive(!unlocked);
+        // 습득 전까지 어둡게 덮는 배경/이미지 (공명도 100% 습득 시 제거)
+        GetImage((int)Images.MonsterSkillLockBackground).gameObject.SetActive(!learned);
+        GetImage((int)Images.MonsterSkillLockImage).gameObject.SetActive(!learned);
 
         var skillBtn = GetButton((int)Buttons.SkillIcon);
-        if (skillBtn != null) skillBtn.interactable = unlocked;
+        if (skillBtn != null) skillBtn.interactable = infoUnlocked;
 
         // FullLock "?" + 안내문(6C6C6C, 슬라이드 78)
         var q = GetText((int)Texts.MonsterDetailPopupSkillBoxFullLockQuestion);
@@ -370,11 +371,11 @@ public class UI_MonsterDetailPopup : UI_Popup
     {
         if (!_skillUnlocked)
         {
-            // 슬라이드 78/79: 공명도 100% 전까지 고유기술 interactive X
-            Debug.Log("[MonsterDetail] 고유기술 잠금 상태 — 클릭 무시");
+            // 슬9: 정보 미해금(미포획 & 기록도<100%) 시 interactive X
+            Debug.Log("[MonsterDetail] 고유기술 정보 잠금 상태 — 클릭 무시");
             return;
         }
-        // 슬라이드 78: 해금 시 클릭 → 해당 기술정보 창
+        // 슬9: 정보 해금 시 클릭 → 해당 기술정보 창
         Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(_dataId);
     }
 
