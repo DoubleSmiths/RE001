@@ -145,8 +145,8 @@ public class UI_BestiaryBox : UI_Base
             return;
         }
 
-        // 기록도 > 0 : 발견
-        if (numTxt != null) numTxt.text = _dataId.ToString("000");
+        // 기록도 > 0 : 발견. 슬3: Creature ID = id에서 앞 2 뺀 3자리 (2001 → "001"), 슬8 NO. 표기와 동일.
+        if (numTxt != null) numTxt.text = (_dataId % 1000).ToString("000");
         unlock.gameObject.SetActive(false);
         question.gameObject.SetActive(false);
 
@@ -166,9 +166,10 @@ public class UI_BestiaryBox : UI_Base
 
         if (rec < 10)
         {
-            // 기록도 10% 미만 : 검정 실루엣
+            // 슬4: 기록도 10% 미만 — 몬스터는 검정 실루엣, 배경 글로우는 "분석중" 초록(슬라이드 샘플 #0B7500).
+            //  (0%의 어두운 글로우와 구분되어야 실루엣이 보임)
             icon.color = new Color32(0, 0, 0, 255);
-            glow.color = new Color32(15, 15, 15, 255);
+            glow.color = Util.HexToColor("0B7500");
         }
         else
         {

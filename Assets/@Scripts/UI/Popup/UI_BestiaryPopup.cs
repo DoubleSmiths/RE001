@@ -104,10 +104,11 @@ public class UI_BestiaryPopup : UI_Popup
     // ── 지역→몬스터 스텁 매핑 ──────────────────────────────
     // 정식 BestiaryData JSON 도입 전까지 사용. region 표시명 + 그 지역 몬스터 DataId 목록.
     // DataId가 CreatureDic에 없거나 0이면 data=null로 "?" 잠금 슬롯 처리된다.
+    // region 필드는 LocalizationData TextKey (슬3: PlaceName 한/영 전환). 표시 시 Util.Localize.
     static readonly List<(string region, int[] monsterIds)> REGION_STUB = new()
     {
-        ("신들바람 숲",   new[] { 2001, 2002 }),
-        //("시들어가는 사막", new[] { 0, 0, 0, 0 }), // 미구현 지역: 잠금 슬롯 프리뷰
+        ("BreezingWindForestNameText", new[] { 2001, 2002 }), // 산들바람 숲 / BREEZEWOOD FOREST
+        //("PlaceNameDesertText", new[] { 0, 0, 0, 0 }), // 미구현 지역: 잠금 슬롯 프리뷰
     };
 
     // ── 도감 표시 데이터 (MinMonManager 이관) ──
@@ -333,6 +334,7 @@ public class UI_BestiaryPopup : UI_Popup
     };
 
     readonly Tween[] _skillIdleTweens = new Tween[SKILL_COUNT];
+    Tween _completionStarTween; // 슬2: 완성도 중앙 보라별 항시 idle Anim
 
     void Awake() => Init();
 
@@ -403,10 +405,11 @@ public class UI_BestiaryPopup : UI_Popup
             }
 
             UI_Bestiary bestiary = Managers.UI.MakeSubItem<UI_Bestiary>(content, pooling: false);
-            bestiary.SetInfo(region, monsters, OnClickMonster);
+            bestiary.SetInfo(Util.Localize(region), monsters, OnClickMonster); // 슬3: PlaceName 로컬라이즈
         }
 
         RefreshCompletionNumber();
+        ApplyCompletionStarAnim();
         RefreshSkills();
         for (int i = 0; i < SKILL_COUNT; i++) SyncSkillAbility(i); // 슬2/38: 완성도 4스킬 → 능력 반영
         RefreshMinimonButton();
@@ -525,6 +528,22 @@ public class UI_BestiaryPopup : UI_Popup
             outline.effectColor = new Color32(0xFF, 0x00, 0xC4, 132);
             outline.effectDistance = new Vector2(0.2f, -0.2f);
         }
+    }
+
+    // 슬2: 완성도 중앙 보라별 — 항시 Punch/Rotation idle Anim (Dur 1, OutQuad, Loops -1, z20, Vibrato 2).
+    //  (per-몬스터 별과 동일한 "별 단계와 ANIM" 스펙. timeScale 0 팝업이라 SetUpdate(true).)
+    void ApplyCompletionStarAnim()
+    {
+        var star = GetImage((int)Images.AllSStarImage);
+        if (star == null) return;
+
+        _completionStarTween?.Kill();
+        Transform tr = star.transform;
+        tr.localRotation = Quaternion.identity;
+        _completionStarTween = tr.DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
+                                 .SetEase(Ease.OutQuad)
+                                 .SetLoops(-1, LoopType.Restart)
+                                 .SetUpdate(true);
     }
 
     // 슬라이드 71: 4개 스킬 아이콘 잠금/해금 + "+n 등급" + idle Anim
@@ -686,6 +705,8 @@ public class UI_BestiaryPopup : UI_Popup
     {
         if (Managers.MinMon != null)
             Managers.MinMon.OnInterestChanged -= RefreshMinimonButton;
+        _completionStarTween?.Kill();
+        _completionStarTween = null;
         //for (int i = 0; i < _skillIdleTweens.Length; i++)
         //{
         //    _skillIdleTweens[i]?.Kill();
