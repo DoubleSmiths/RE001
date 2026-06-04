@@ -92,6 +92,7 @@ public class UI_TamePopup : UI_Popup
     DialogueAnimator _dialogue;
     Transform _slimeTr;         // 0_Slime_Tame (숫자 시작이라 enum 불가 → 직접 탐색)
     Image _slimeImg;
+    Vector2 _tamerRest, _monRest; // 슬34: 플레이어/몬스터 설계 위치(Init=Awake에서 캡처, 슬라이드인 복귀 지점)
 
     void Awake() => Init();
 
@@ -110,6 +111,16 @@ public class UI_TamePopup : UI_Popup
 
         var slime = Util.FindChild<Image>(gameObject, "0_Slime_Tame", true);
         if (slime != null) { _slimeImg = slime; _slimeTr = slime.transform; }
+
+        // 슬34: prefab의 "Tamer Move"/"Monster Move"는 코드 수평 슬라이드인으로 대체 → 비활성화.
+        //  (isFrom anim이 Start에서 오브젝트를 FROM 위치로 스냅시켜 rest 캡처를 망치는 것 방지)
+        DisablePrefabAnim(GetImage((int)Images.TamerImg)?.gameObject, "Tamer Move");
+        DisablePrefabAnim(_slimeTr?.gameObject, "Monster Move");
+
+        // 설계 rest 위치 (prefab serialized: TamerImg=(-14,-66), 0_Slime_Tame=(35,130)).
+        //  런타임 캡처는 isFrom anim 스냅에 오염될 수 있어 prefab 값으로 고정. (디자이너가 옮기면 갱신)
+        _tamerRest = new Vector2(-14f, -66f);
+        _monRest   = new Vector2(35f, 130f);
 
         // 슬33 Popup Anim: From y -120, OutBack 0.5s (UI_Popup 기본값)
         OpenAnimation();
@@ -176,29 +187,44 @@ public class UI_TamePopup : UI_Popup
         SetActiveSafe(GameObjects.LoadingBox1, false);
         SetActiveSafe(GameObjects.LoadingBox2, false);
 
-        // 슬34 Setup Anim: prefab Move DOTweenAnimation 트리거 (화면 밖 → 지정위치 1.5s)
-        PlayAnim(GetImage((int)Images.TamerImg)?.gameObject, "Tamer Move");
-        PlayAnim(_slimeTr?.gameObject, "Monster Move");
+        // 슬34 Setup Anim: 몬스터=화면 밖 왼쪽→오른쪽, 플레이어=화면 밖 오른쪽→왼쪽으로 1.5s 슬라이드인.
+        //  이동 중 Grayscale(prefab 머티리얼) 유지, 도착 후 컬러. (prefab "Tamer/Monster Move"가 대각선으로
+        //  떨어지는 이상한 움직임이라 코드 수평 슬라이드인으로 대체)
+        var tamerImg = GetImage((int)Images.TamerImg);
+        var tamerRT  = tamerImg != null ? tamerImg.rectTransform : null;
+        var monRT    = _slimeImg != null ? _slimeImg.rectTransform : null;
+        const float OFF = 320f;
+        if (tamerImg != null) tamerImg.gameObject.SetActive(true);
+        if (_slimeImg != null) _slimeImg.gameObject.SetActive(true);
+        if (tamerRT != null)
+        {
+            tamerRT.DOKill();
+            tamerRT.anchoredPosition = new Vector2(_tamerRest.x + OFF, _tamerRest.y); // 오른쪽 화면 밖
+            tamerRT.DOAnchorPos(_tamerRest, 1.5f).SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+        if (monRT != null)
+        {
+            monRT.DOKill();
+            monRT.anchoredPosition = new Vector2(_monRest.x - OFF, _monRest.y);       // 왼쪽 화면 밖
+            monRT.DOAnchorPos(_monRest, 1.5f).SetEase(Ease.OutQuad).SetUpdate(true);
+        }
         yield return new WaitForSecondsRealtime(1.5f);
 
-        // 도착 후 Grayscale 해제 (None)
-        SetMaterial(GetImage((int)Images.TamerImg), null);
+        // 도착 후 Grayscale 해제 (컬러)
+        SetMaterial(tamerImg, null);
         SetMaterial(_slimeImg, null);
 
         // 미니몬 머리 위 Emoj_Exclamation
         PlayEmoj(Images.MonsterEmoj, "Emoj_Exclamation");
         yield return new WaitForSecondsRealtime(0.3f);
 
-        // 대사 표시 (슬32 순서1: CatchMinimonStartText1)
+        // 슬34: 대사 + 나의 미니몬 버튼(우측 하단)이 먼저 나오고, 그 뒤 길들인다 → 가랏! 순차 등장 (gif 순서).
         yield return CoType($"앗! 야생의 {_cName}(이)가 나타났다!");
-
-        // 슬34: 버튼 0.5s 간격 순차 등장. 길들인다 → 가랏! → 0.5s 후 나의 미니몬.
-        //  (라벨 컨테이너는 SetButtonsActive(false)가 이미 켜두고 내부는 숨김 → ShowButton이 라벨+버튼 함께 노출)
+        ShowButton(Buttons.MinimonInfoBtn);
+        yield return new WaitForSecondsRealtime(0.4f);
         ShowButton(Buttons.LureBtn);
         yield return new WaitForSecondsRealtime(0.5f);
         ShowButton(Buttons.UseMandrakeBtn);
-        yield return new WaitForSecondsRealtime(0.5f);
-        ShowButton(Buttons.MinimonInfoBtn);
 
         _busy = false; // 모든 버튼 등장 후 상호작용 가능
     }
@@ -427,6 +453,14 @@ public class UI_TamePopup : UI_Popup
             if (a.id == id) { a.DORestart(); return; }
         }
         go.GetComponent<DOTweenAnimation>()?.DORestart();
+    }
+
+    // 특정 id의 prefab DOTweenAnimation을 비활성화(스냅/자동재생 방지). 코드로 대체할 때 사용.
+    static void DisablePrefabAnim(GameObject go, string id)
+    {
+        if (go == null) return;
+        foreach (var a in go.GetComponents<DOTweenAnimation>())
+            if (a.id == id) { a.DOKill(); a.enabled = false; }
     }
 
     void PlayEmoj(Images id, string state)
