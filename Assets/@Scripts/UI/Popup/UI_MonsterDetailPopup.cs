@@ -158,7 +158,8 @@ public class UI_MonsterDetailPopup : UI_Popup
         var activeTxt = GetText((int)Texts.MonsterDetailPopupActiveText);
         if (activeTxt != null)
         {
-            activeTxt.text = Util.Localize(LocalizeKey.SummonedBonusText);
+            // 소환 효과 문구 = LogCompletionText("이 미니몬의 물품 획득 & 관심 확률"). 로컬라이즈 시트의 정식 키.
+            activeTxt.text = Util.Localize(LocalizeKey.LogCompletionText);
             ApplyFont(activeTxt, Define.FontType.UI);
         }
 
@@ -301,7 +302,8 @@ public class UI_MonsterDetailPopup : UI_Popup
             claimedTxt.gameObject.SetActive(learned);
             if (learned)
             {
-                claimedTxt.text = perfect ? "완벽획득" : "부분획득";
+                // 슬10/11: 부분획득(ParticalGetText) / 완벽획득(CompleteGetText)
+                claimedTxt.text = Util.Localize(perfect ? LocalizeKey.CompleteGetText : LocalizeKey.ParticalGetText);
                 ApplyFont(claimedTxt, Define.FontType.UI);
             }
         }
@@ -312,8 +314,9 @@ public class UI_MonsterDetailPopup : UI_Popup
             lvlIconTxt.gameObject.SetActive(learned);
             if (learned)
             {
-                // LevelIconText 노란 등급 표기 — 완벽 시 Lv.2
-                lvlIconTxt.text = perfect ? "<color=yellow>2</color>등급" : "<color=yellow>1</color>등급";
+                // LevelIconText 노란 등급 표기 — 완벽 시 Lv.2. "등급"=LevelText 로컬라이즈.
+                string lvWord = Util.Localize(LocalizeKey.LevelText);
+                lvlIconTxt.text = perfect ? $"<color=yellow>2</color>{lvWord}" : $"<color=yellow>1</color>{lvWord}";
                 ApplyFont(lvlIconTxt, Define.FontType.UI);
             }
         }
@@ -324,7 +327,9 @@ public class UI_MonsterDetailPopup : UI_Popup
             lvlTxt.gameObject.SetActive(learned);
             if (learned)
             {
-                lvlTxt.text = perfect ? "+2등급" : "+1등급";
+                // 슬10/11: +1등급(00FF00) / +2등급(FFFFFF). "등급"=LevelText 로컬라이즈.
+                string lvW = Util.Localize(LocalizeKey.LevelText);
+                lvlTxt.text = perfect ? $"+2{lvW}" : $"+1{lvW}";
                 lvlTxt.color = perfect ? Color.white : Util.HexToColor("00FF00");
                 ApplyFont(lvlTxt, Define.FontType.UI);
             }

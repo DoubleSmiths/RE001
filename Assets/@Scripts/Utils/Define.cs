@@ -279,7 +279,8 @@ public class Define
         public const string MinimonNameText = "MinimonNameText";
         public const string MyMinimon = "MyMinimon";
         public const string UniqueSkillText = "UniqueSkillText";
-        public const string SummonedBonusText = "SummonedBonusText";
+        public const string ParticalGetText = "ParticalGetText"; // 슬10: 부분획득
+        public const string CompleteGetText = "CompleteGetText"; // 슬11: 완벽획득
 
         // ── Misc ──
         public const string LinkText = "LinkText";
