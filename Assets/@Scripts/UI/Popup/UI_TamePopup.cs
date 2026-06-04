@@ -164,6 +164,10 @@ public class UI_TamePopup : UI_Popup
         SetEmojActive(Images.MonsterEmoj, false);
         SetEmojActive(Images.TamerEmoj, false);
 
+        // 슬33 Opening Anim: Popup Anim 끝난 직후 회색 Sprite(None) 오버레이가 창을 덮고 깜빡임
+        //  (Color DBDBDA ↔ 7B7B7B, OutQuad, Yoyo 6 loops × 0.25s = 1.5s)
+        yield return CoOpeningFlicker();
+
         // 슬33 Loading Anim: Type1/Type2 무작위 (autoPlay Fade 시퀀스가 자동 재생)
         bool type1 = Random.value < 0.5f;
         SetActiveSafe(GameObjects.LoadingBox1, type1);
@@ -186,10 +190,10 @@ public class UI_TamePopup : UI_Popup
         yield return new WaitForSecondsRealtime(0.3f);
 
         // 대사 표시 (슬32 순서1: CatchMinimonStartText1)
-        yield return CoType($"야생의 {_cName}(이)가 나타났다!");
+        yield return CoType($"앗! 야생의 {_cName}(이)가 나타났다!");
 
-        // 버튼 등장 (슬34: 길들인다/가랏 표시 → 0.5s 후 나의미니몬). 라벨 그룹 활성 후 버튼 pop.
-        SetActiveSafe(IsKorean ? GameObjects.KorBtnGroup : GameObjects.EngBtnGroup, true);
+        // 슬34: 버튼 0.5s 간격 순차 등장. 길들인다 → 가랏! → 0.5s 후 나의 미니몬.
+        //  (라벨 컨테이너는 SetButtonsActive(false)가 이미 켜두고 내부는 숨김 → ShowButton이 라벨+버튼 함께 노출)
         ShowButton(Buttons.LureBtn);
         yield return new WaitForSecondsRealtime(0.5f);
         ShowButton(Buttons.UseMandrakeBtn);
@@ -197,6 +201,21 @@ public class UI_TamePopup : UI_Popup
         ShowButton(Buttons.MinimonInfoBtn);
 
         _busy = false; // 모든 버튼 등장 후 상호작용 가능
+    }
+
+    // 슬33 Opening Anim: 회색 Sprite(None) 오버레이(BlockImg)가 본문을 덮고 깜빡임.
+    IEnumerator CoOpeningFlicker()
+    {
+        var block = GetImage((int)Images.BlockImg);
+        if (block == null) yield break;
+        block.gameObject.SetActive(true);
+        block.color = Util.HexToColor("DBDBDA");
+        block.DOKill();
+        block.DOColor(Util.HexToColor("7B7B7B"), 0.25f)
+             .SetEase(Ease.OutQuad).SetLoops(6, LoopType.Yoyo).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(0.25f * 6f);
+        block.DOKill();
+        block.gameObject.SetActive(false);
     }
 
     // ─────────────────────────────────────────────
@@ -216,16 +235,9 @@ public class UI_TamePopup : UI_Popup
         // 순서2: TryLureText
         yield return CoType("길들이기를 시도한다!");
 
-        // 플레이어 Lure Anim (슬35: Move Y 위로, 0.125s, Yoyo 4)
-        var tamer = GetImage((int)Images.TamerImg);
-        if (tamer != null)
-        {
-            var rt = tamer.rectTransform;
-            rt.DOKill();
-            rt.DOAnchorPosY(rt.anchoredPosition.y + 18f, 0.125f)
-              .SetEase(Ease.OutQuad).SetLoops(4, LoopType.Yoyo).SetUpdate(true);
-            yield return new WaitForSecondsRealtime(0.5f);
-        }
+        // 슬35: 플레이어 Lure Anim — prefab DOTweenAnimation "Tamer Lure"(Move Y Yoyo 0.125s ×4)
+        PlayAnim(GetImage((int)Images.TamerImg)?.gameObject, "Tamer Lure");
+        yield return new WaitForSecondsRealtime(0.5f);
 
         // 0.5s 뒤 플레이어 머리 위 Emoj_Lure
         PlayEmoj(Images.TamerEmoj, "Emoj_Lure");
@@ -285,19 +297,14 @@ public class UI_TamePopup : UI_Popup
             mandrake.gameObject.SetActive(false);
         }
 
-        // 미니몬 Emoj_Exclamation + Jump Anim
+        // 슬37: 미니몬 Emoj_Exclamation + Jump Anim — prefab "Monster Mandrake"(Move Y Yoyo 0.15s ×2)
         PlayEmoj(Images.MonsterEmoj, "Emoj_Exclamation");
-        if (_slimeTr is RectTransform jrt)
-        {
-            jrt.DOKill();
-            jrt.DOAnchorPosY(jrt.anchoredPosition.y + 20f, 0.15f)
-               .SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo).SetUpdate(true);
-            yield return new WaitForSecondsRealtime(0.3f);
-        }
+        PlayAnim(_slimeTr?.gameObject, "Monster Mandrake");
+        yield return new WaitForSecondsRealtime(0.3f);
 
-        // 순서3: EatMandrakeText + Emoj_Shy
+        // 순서3: EatMandrakeText + Emoj_Shy ("{이름}(은)는 순식간에 그것을 먹어치웠다" — gif 일치)
         PlayEmoj(Images.MonsterEmoj, "Emoj_Shy");
-        yield return CoType($"{_cName}(이)가 만드라고라를 먹었다!");
+        yield return CoType($"{_cName}(은)는 순식간에 그것을 먹어치웠다!");
         yield return new WaitForSecondsRealtime(1.2f);
 
         // 만드라고라는 확정 성공
@@ -312,14 +319,9 @@ public class UI_TamePopup : UI_Popup
     {
         if (success)
         {
-            // 미니몬 Caught Anim (Y Yoyo 4)
-            if (_slimeTr is RectTransform crt)
-            {
-                crt.DOKill();
-                crt.DOAnchorPosY(crt.anchoredPosition.y + 14f, 0.18f)
-                   .SetEase(Ease.OutQuad).SetLoops(4, LoopType.Yoyo).SetUpdate(true);
-                yield return new WaitForSecondsRealtime(0.72f);
-            }
+            // 슬36: 미니몬 Caught Anim — prefab "Monster Caught"(Move Y Yoyo 0.18s ×4)
+            PlayAnim(_slimeTr?.gameObject, "Monster Caught");
+            yield return new WaitForSecondsRealtime(0.72f);
             PlayEmoj(Images.MonsterEmoj, "Emoj_TwoHearts");
             yield return CoType($"{_cName}(을)를 길들이는 데 성공했다!");
             PlayEmoj(Images.TamerEmoj, "Emoj_Happy");
@@ -336,16 +338,12 @@ public class UI_TamePopup : UI_Popup
         }
         else
         {
-            // 실패: Emoj_Sweat + 미니몬 좌우 반전 후 Runaway
+            // 슬36 실패: Emoj_Sweat + 미니몬 좌우 반전("Monster Turn" 0.8s) 후 Runaway("Monster Runaway" 0.5s)
             PlayEmoj(Images.MonsterEmoj, "Emoj_Sweat");
             PlayEmoj(Images.TamerEmoj, "Emoj_Sweat2");
             yield return CoType($"{_cName}(이)가 도망쳤다...");
-            if (_slimeTr != null)
-            {
-                _slimeTr.DOScaleX(-Mathf.Abs(_slimeTr.localScale.x), 0.8f).SetUpdate(true);
-                yield return new WaitForSecondsRealtime(1.1f);
-            }
-            // 슬: 미니몬 Runaway Anim (prefab DOTweenAnimation "Monster Runaway")
+            PlayAnim(_slimeTr?.gameObject, "Monster Turn");
+            yield return new WaitForSecondsRealtime(1.1f);
             PlayAnim(_slimeTr?.gameObject, "Monster Runaway");
             yield return new WaitForSecondsRealtime(0.5f);
             OnClickBG();
@@ -451,22 +449,50 @@ public class UI_TamePopup : UI_Popup
         if (img != null) img.material = mat;
     }
 
+    // 버튼 → 라벨 텍스트 (라벨이 버튼과 다른 컨테이너에 있어 함께 토글해야 순차 등장이 됨)
+    int LabelOf(Buttons id)
+    {
+        switch (id)
+        {
+            case Buttons.LureBtn:        return IsKorean ? (int)Texts.KorLureBtn     : (int)Texts.EngLureBtn;
+            case Buttons.UseMandrakeBtn: return IsKorean ? (int)Texts.KorMandrakeBtn : (int)Texts.EngMandrakeBtn;
+            case Buttons.MinimonInfoBtn: return (int)Texts.Txt_MinimonInfoBtn_01;
+            default: return -1;
+        }
+    }
+
+    // 슬34: 버튼 1개를 라벨과 함께 등장 + pop anim. (가랏 버튼은 만드라고라 카운트 박스도 함께)
     void ShowButton(Buttons id)
     {
         var btn = GetButton((int)id);
-        if (btn == null) return;
-        btn.gameObject.SetActive(true);
-        btn.GetComponent<DOTweenAnimation>()?.DORestart();
+        if (btn != null)
+        {
+            btn.gameObject.SetActive(true);
+            btn.GetComponent<DOTweenAnimation>()?.DORestart();
+        }
+        int lbl = LabelOf(id);
+        if (lbl >= 0) { var t = GetText(lbl); if (t != null) t.gameObject.SetActive(true); }
+
+        // 가랏! 버튼과 함께 만드라고라 필요개수 박스 표시
+        if (id == Buttons.UseMandrakeBtn) SetButtonActiveSafe(Buttons.HappyMandrakeBox, true);
     }
 
-    // 버튼 + 언어별 라벨 그룹을 함께 토글 (라벨이 그룹 안에 있어 버튼만 숨기면 라벨이 남음)
+    // 버튼 + 라벨 + 만드라고라 박스를 모두 토글. on=false면 라벨 컨테이너만 켜고 내부는 전부 숨김(순차 등장 준비).
     void SetButtonsActive(bool on)
     {
-        SetActiveSafe(GameObjects.KorBtnGroup, on && IsKorean);
-        SetActiveSafe(GameObjects.EngBtnGroup, on && !IsKorean);
-        SetButtonActiveSafe(Buttons.LureBtn, on);
-        SetButtonActiveSafe(Buttons.UseMandrakeBtn, on);
-        SetButtonActiveSafe(Buttons.MinimonInfoBtn, on);
+        // 라벨 컨테이너는 켜두되(라벨을 개별 토글할 수 있게), 내부 라벨/버튼은 숨김
+        SetActiveSafe(GameObjects.KorBtnGroup, IsKorean);
+        SetActiveSafe(GameObjects.EngBtnGroup, !IsKorean);
+
+        foreach (Buttons b in new[] { Buttons.LureBtn, Buttons.UseMandrakeBtn, Buttons.MinimonInfoBtn })
+        {
+            SetButtonActiveSafe(b, on);
+            int lbl = LabelOf(b);
+            if (lbl >= 0) { var t = GetText(lbl); if (t != null) t.gameObject.SetActive(on); }
+        }
+        // 슬3 만드라고라 카운트 박스 — 포획 연출 중엔 숨김(이게 안 숨겨져 포획 애니 동안 만드라고라가 보였음)
+        SetButtonActiveSafe(Buttons.HappyMandrakeBox, on);
+        SetActiveSafe(Images.UseHappyMandrakeImg, false);
     }
 
     void SetButtonActiveSafe(Buttons id, bool on)
