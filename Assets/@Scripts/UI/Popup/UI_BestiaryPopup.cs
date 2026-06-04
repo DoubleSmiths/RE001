@@ -427,7 +427,8 @@ public class UI_BestiaryPopup : UI_Popup
         var title = GetText((int)Texts.MinimonTitleText);
         if (title != null)
         {
-            title.text = "미니몬 잡기" + (has ? "!" : "?");
+            // 슬28/29: CatchMinimonTitleText("미니몬 잡기") + (저장칸 1+ → "!" / 없음 → "?")
+            title.text = Util.Localize(Define.LocalizeKey.CatchMinimonTitleText) + (has ? "!" : "?");
             ApplyFont(title, Define.FontType.UI);
         }
 
