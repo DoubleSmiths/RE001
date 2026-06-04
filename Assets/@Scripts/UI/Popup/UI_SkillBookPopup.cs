@@ -114,14 +114,65 @@ public class UI_SkillBookPopup : UI_Popup
 
     public void SetInfo()
     {
+        // 슬40: 제목 = MasteryCodex_TitleText("능력 목록"). prefab 영어("SKILL LIST") 하드코딩 교체.
         var title = GetText((int)Texts.title);
-        if (title != null) ApplyFont(title, FontType.UI);
+        if (title != null)
+        {
+            title.text = Util.Localize(Define.LocalizeKey.MasteryCodex_TitleText);
+            ApplyFont(title, FontType.UI);
+        }
+        // 슬40: 하단 필터 버튼 라벨 한/영 — prefab 영어(ALL/TALENT/LOCKED…) 하드코딩 교체.
+        foreach (Filter f in System.Enum.GetValues(typeof(Filter))) SetFilterLabel(f);
+
         Refresh();
+    }
+
+    // 슬40: 활성 필터에 대응하는 하단 버튼 enum
+    int FilterButton(Filter f)
+    {
+        switch (f)
+        {
+            case Filter.Talent:      return (int)Buttons.SkillPopup_ShowTalent_Btn;
+            case Filter.OnMemory:    return (int)Buttons.SkillPopup_ShowOnMemory_Btn;
+            case Filter.NotOnMemory: return (int)Buttons.SkillPopup_ShowNotOnMemory_Btn;
+            case Filter.Locked:      return (int)Buttons.SkillPopup_ShowLocked_Btn;
+            default:                 return (int)Buttons.SkillPopup_ShowAll_Btn;
+        }
+    }
+
+    // 슬40: 필터별 라벨 로컬라이즈 키
+    string FilterLocKey(Filter f)
+    {
+        switch (f)
+        {
+            case Filter.Talent:      return Define.LocalizeKey.MasteryCodex_BtmText_Talent;
+            case Filter.OnMemory:    return Define.LocalizeKey.MasteryCodex_BtmText_OnMemory;
+            case Filter.NotOnMemory: return Define.LocalizeKey.MasteryCodex_BtmText_NotOnMemory;
+            case Filter.Locked:      return Define.LocalizeKey.MasteryCodex_BtmText_Locked;
+            default:                 return Define.LocalizeKey.MasteryCodex_BtmText_All;
+        }
+    }
+
+    // 하단 필터 버튼의 라벨 텍스트를 로컬라이즈 값으로 설정
+    void SetFilterLabel(Filter f)
+    {
+        var btn = GetButton(FilterButton(f));
+        var lbl = btn != null ? btn.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
+        if (lbl != null) { lbl.text = Util.Localize(FilterLocKey(f)); ApplyFont(lbl, FontType.UI); }
     }
 
     void Refresh()
     {
         RefreshMemoryGauge();
+
+        // 슬40: 상단 TopText(SubtitleText) = 현재 눌린 하단 필터 버튼의 라벨과 동일하게 표기
+        var sub = GetText((int)Texts.SubtitleText);
+        if (sub != null)
+        {
+            var btn = GetButton(FilterButton(_filter));
+            var lbl = btn != null ? btn.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
+            if (lbl != null) { sub.text = lbl.text; ApplyFont(sub, FontType.UI); }
+        }
 
         // 필터에 맞는 능력 목록 수집 (DataId 정렬)
         _shown.Clear();
@@ -184,7 +235,13 @@ public class UI_SkillBookPopup : UI_Popup
     {
         var txt = GetText((int)Texts.MemoryAmountTxt_1);
         if (txt == null) return;
-        txt.text = $"{Managers.Ability.UsedMemory}/{Managers.Ability.MaxMemory}";
+        int used = Managers.Ability.UsedMemory;
+        int max  = Managers.Ability.MaxMemory;
+        txt.text = $"{used}/{max}";
+        // 슬40: 현재 기억력 색 — 0=red / <max=yellow / =max=lime
+        txt.color = used == 0      ? Util.HexToColor("FF0000")
+                  : used >= max    ? Util.HexToColor("00FF00")
+                  :                  Util.HexToColor("FFFF00");
         ApplyFont(txt, FontType.UI);
     }
 

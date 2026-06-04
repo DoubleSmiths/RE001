@@ -286,6 +286,13 @@ public class Define
         public const string FollowingText = "FollowingText"; // 슬13: 동행 중 하단 UI "동행중"
         public const string MinimonGrowthFailText = "MinimonGrowthFailText"; // 슬22: 재포획 성장 실패 문구
         public const string CatchMinimonTitleText = "CatchMinimonTitleText"; // 슬28: [미니몬 잡기] 버튼/팝업 제목
+        public const string MasteryCodex_TitleText = "MasteryCodex_TitleText"; // 슬40: 능력 목록 팝업 제목
+        // 슬40: 능력 목록 하단 필터 버튼(=상단 TopText) 라벨
+        public const string MasteryCodex_BtmText_All = "MasteryCodex_BtmText_All";
+        public const string MasteryCodex_BtmText_Talent = "MasteryCodex_BtmText_Talent";
+        public const string MasteryCodex_BtmText_OnMemory = "MasteryCodex_BtmText_OnMemory";
+        public const string MasteryCodex_BtmText_NotOnMemory = "MasteryCodex_BtmText_NotOnMemory";
+        public const string MasteryCodex_BtmText_Locked = "MasteryCodex_BtmText_Locked";
         public const string MinimonInterestSuccessText = "MinimonInterestSuccessText"; // 슬24: 관심 알림(이름 뒤)
         public const string MinimonInterestFullText = "MinimonInterestFullText"; // 슬25: 관심+창고가득 알림(이름 뒤)
 
