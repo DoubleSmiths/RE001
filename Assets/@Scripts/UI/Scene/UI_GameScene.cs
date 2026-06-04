@@ -657,8 +657,14 @@ public class UI_GameScene : UI_Scene
             {
                 int count = Managers.MinMon.InterestedMinMons.Count;
                 var numTxt = Util.FindChild<TMPro.TMP_Text>(icon, "BestiaryBtnFollowingNumTxt", true);
-                if (numTxt != null) numTxt.text = count.ToString();
-                // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10)
+                if (numTxt != null)
+                {
+                    numTxt.text = count.ToString();
+                    // 슬27: 저장칸 가득이면 count 빨강(FF0000), 여유면 기본 흰색
+                    numTxt.color = count >= MinMonManager.INTEREST_CAPACITY
+                        ? Util.HexToColor("FF0000") : Color.white;
+                }
+                // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10, Elasticity 1)
                 icon.transform.DOKill();
                 icon.transform.localScale = Vector3.one;
                 icon.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0f), 0.3f, 10, 1f);
