@@ -144,8 +144,21 @@ public class UI_TamePopup : UI_Popup
         Managers.Data.CreatureDic.TryGetValue(dataId, out _creature);
         _cName = _creature != null && !string.IsNullOrEmpty(_creature.Name) ? _creature.Name : "미니몬";
 
+        // 슬31: 타이틀 = CatchMinimonTitleText + "!" ("미니몬 잡기!"). prefab 영어 하드코딩 교체 → 한/영 전환.
         var title = GetText((int)Texts.Txt_Title_03);
-        if (title != null) ApplyFont(title, FontType.UI);
+        if (title != null)
+        {
+            title.text = Util.Localize(LocalizeKey.CatchMinimonTitleText) + "!";
+            ApplyFont(title, FontType.UI);
+        }
+
+        // [나의 미니몬] 버튼 라벨 — 언어 그룹과 별개인 공용 노드라 직접 로컬라이즈(MyMinimon "나의 미니몬").
+        var infoBtnTxt = GetText((int)Texts.Txt_MinimonInfoBtn_01);
+        if (infoBtnTxt != null)
+        {
+            infoBtnTxt.text = Util.Localize(LocalizeKey.MyMinimon);
+            ApplyFont(infoBtnTxt, FontType.UI);
+        }
 
         ApplyMonsterImage();
         ApplyLanguage();
