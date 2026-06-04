@@ -226,10 +226,10 @@ public class UI_MinionInfoPopup : UI_Popup
             ApplyFont(nameTxt, Define.FontType.UI);
         }
 
-        // 슬86/87: ATK/AS/CRIT 값 + 등급 outline 색
-        RefreshStat(Texts.DamageNumberText, MMStat.Atk);
-        RefreshStat(Texts.ASNumberText,    MMStat.AtkSpeed);
-        RefreshStat(Texts.CritNumberText,  MMStat.Crit);
+        // 슬18: ATK/AS/CRIT 값 + 등급 letter 스프라이트(E/D/C/B/A/SS) + outline 색
+        RefreshStat(Texts.DamageNumberText, Images.DamageRankImage, MMStat.Atk);
+        RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     MMStat.AtkSpeed);
+        RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   MMStat.Crit);
 
         // 슬86: FullGrowthInText "(완전 성장까지: <color=#FF0000>10</color>회)"
         //  — 현재 enum에 FullGrowthInText 노드 부재. prefab에 신설 후 enum 보강 필요.
@@ -239,8 +239,11 @@ public class UI_MinionInfoPopup : UI_Popup
         RefreshSummonButton();
     }
 
-    // 능력치 값/등급을 MinMonManager(실 데이터)에서 조회. 등급 0~5 = E~S(슬18/20).
-    void RefreshStat(Texts textId, MMStat stat)
+    // 슬18: 0~5등급 → Screen FX 32 스프라이트 (E=252,D=253,C=254,B=255,A=256, SS=258 / 257 미사용)
+    static readonly int[] RANK_SPRITE_IDX = { 252, 253, 254, 255, 256, 258 };
+
+    // 능력치 값/등급을 MinMonManager(실 데이터)에서 조회. 등급 0~5 = E/D/C/B/A/SS(슬18).
+    void RefreshStat(Texts textId, Images rankImg, MMStat stat)
     {
         var tmp = GetText((int)textId);
         if (tmp == null) return;
@@ -257,6 +260,15 @@ public class UI_MinionInfoPopup : UI_Popup
         tmp.text = Mathf.RoundToInt(val).ToString();
         ApplyFont(tmp, Define.FontType.UI);
         ApplyGradeOutline(tmp, g);
+
+        // 슬18: 등급 letter 스프라이트(E/D/C/B/A/SS)를 RankImage에 표기
+        var img = GetImage((int)rankImg);
+        if (img != null)
+        {
+            int idx = RANK_SPRITE_IDX[Mathf.Clamp(g, 0, 5)];
+            var sp = Managers.Resource.Load<Sprite>($"Screen FX 32 ({idx})");
+            if (sp != null) { img.sprite = sp; img.preserveAspect = true; }
+        }
     }
 
     // 슬라이드 87: 능력치 등급별 outline 색/거리 (0~5등급)
