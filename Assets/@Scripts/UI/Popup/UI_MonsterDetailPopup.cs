@@ -1,5 +1,6 @@
 using System.Globalization;
 using Data;
+using DG.Tweening;
 using UnityEngine;
 using static Define;
 
@@ -106,6 +107,7 @@ public class UI_MonsterDetailPopup : UI_Popup
 
 
     int _dataId;
+    GameObject _frameActiveEf; // 슬13: 동행 중 창 Frame에 활성화되는 Active Ef.prefab
 
     void Awake() => Init();
 
@@ -226,6 +228,60 @@ public class UI_MonsterDetailPopup : UI_Popup
         RefreshLearned(dataId);
         RefreshDropList(data, lootUnlocked);
         RefreshMinionButton(sync > 0); // 슬라이드 81: 포획 = 공명도 > 0
+        RefreshSummonedUI();           // 슬13: 동행 중이면 FollowingText 하단 UI + Frame Active Ef
+    }
+
+    // 슬13: 동행(소환) 유무에 따른 UI. 소환 중이면 [나의 미니몬] 버튼 하단 추가 UI(FollowingText "동행중")
+    //  + [미니몬 기록] 창 Frame에 Active Ef.prefab 활성. 소환 해제 시 둘 다 비활성.
+    void RefreshSummonedUI()
+    {
+        bool isCompanion = _dataId != 0
+                        && Managers.Game != null
+                        && Managers.Game.CompanionMinMonId == _dataId;
+
+        // 추가 UI 그룹 (FollowingText)
+        var summoned = GetImage((int)Images.MonsterDetailPopupSummonedEf);
+        if (summoned != null)
+        {
+            summoned.gameObject.SetActive(isCompanion);
+            if (isCompanion)
+            {
+                // shop_frame_glow 00B906 α190
+                var glow = GetImage((int)Images.MonsterDetailPopupSummonedEfImage);
+                if (glow != null) glow.color = new Color32(0x00, 0xB9, 0x06, 190);
+
+                // TEXT: FollowingText "동행중"
+                var fTxt = GetText((int)Texts.MonsterDetailPopupSummonedEfImageText);
+                if (fTxt != null) { fTxt.text = Util.Localize(LocalizeKey.FollowingText); ApplyFont(fTxt, Define.FontType.UI); }
+
+                // 등장 Anim: Move Dur 0.4 OutBack From (0, -5, 0)
+                var rt = summoned.rectTransform;
+                rt.DOKill();
+                Vector2 rest = rt.anchoredPosition;
+                rt.anchoredPosition = rest + new Vector2(0f, -5f);
+                rt.DOAnchorPos(rest, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            }
+        }
+
+        // 창 Frame에 Active Ef.prefab (이름 미등록 시 Load 가드로 무시)
+        var frame = GetImage((int)Images.MonsterDetailPopupFrame);
+        if (isCompanion && _frameActiveEf == null && frame != null)
+        {
+            if (Managers.Resource.Load<GameObject>("Active Ef") != null)
+            {
+                _frameActiveEf = Managers.Resource.Instantiate("Active Ef", frame.transform);
+                if (_frameActiveEf != null)
+                {
+                    _frameActiveEf.transform.localPosition = Vector3.zero;
+                    _frameActiveEf.transform.localScale = Vector3.one;
+                }
+            }
+        }
+        else if (!isCompanion && _frameActiveEf != null)
+        {
+            Managers.Resource.Destroy(_frameActiveEf);
+            _frameActiveEf = null;
+        }
     }
 
     bool _captured;
