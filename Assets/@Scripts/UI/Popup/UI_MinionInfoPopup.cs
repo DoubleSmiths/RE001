@@ -195,12 +195,13 @@ public class UI_MinionInfoPopup : UI_Popup
             if (sprite != null) { monImg.sprite = sprite; monImg.preserveAspect = true; }
         }
 
-        // 슬86: 공명도(슬10: 포획당 +25%, MinMonManager) — 100% 미만 FF820B / 100% 30FF00
+        // 슬17: 공명도 = "{LinkText}:{공명도}%" (콜론, 공백 없음). 100% 미만 FF820B / 100% 30FF00.
+        //  (100% 시 MAT Text_ShineGreen 스펙 — 머티리얼 Resources 밖이라 색만 적용)
         int sync = Mathf.RoundToInt(Managers.MinMon.GetSyncRate(dataId) * 100f);
         var syncTxt = GetText((int)Texts.SYNCText);
         if (syncTxt != null)
         {
-            syncTxt.text = $"공명도 {sync}%";
+            syncTxt.text = $"{Util.Localize(Define.LocalizeKey.LinkText)}:{sync}%";
             syncTxt.color = sync >= 100 ? Util.HexToColor("30FF00") : Util.HexToColor("FF820B");
             ApplyFont(syncTxt, Define.FontType.UI);
         }
