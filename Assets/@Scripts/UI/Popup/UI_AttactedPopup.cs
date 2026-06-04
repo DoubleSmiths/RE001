@@ -71,10 +71,10 @@ public class UI_AttactedPopup : UI_Popup
         var txt = GetText((int)Texts.AttactedPopupText);
         if (txt != null)
         {
-            // 로컬라이즈 키(MinimonInterestSuccessText/FullText) 미존재 → 한글 리터럴 (TODO: 데이터화)
-            txt.text = storageFull
-                ? $"{cname}(이)가 관심을 보였지만\n창고가 가득 찼습니다!"
-                : $"{cname}(이)가 관심을 보입니다!";
+            // 슬24/25: {CreatureData.Name} + MinimonInterestSuccessText/FullText (로컬라이즈)
+            txt.text = cname + Util.Localize(storageFull
+                ? LocalizeKey.MinimonInterestFullText
+                : LocalizeKey.MinimonInterestSuccessText);
             ApplyFont(txt, FontType.UI);
         }
 

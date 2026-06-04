@@ -426,6 +426,16 @@
       "Eng": "Oh no..\nThis minion didn't grow at all"
     },
     {
+      "TextKey": "MinimonInterestSuccessText",
+      "Kor": "(이)가 관심을 보입니다!",
+      "Eng": " is interested!"
+    },
+    {
+      "TextKey": "MinimonInterestFullText",
+      "Kor": "(이)가 관심을 보였지만\n창고가 가득 찼습니다!",
+      "Eng": " is interested, but\nthe storage is full!"
+    },
+    {
       "TextKey": "LogText",
       "Kor": "기록도",
       "Eng": "LOG"
