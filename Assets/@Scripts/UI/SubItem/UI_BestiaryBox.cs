@@ -71,6 +71,12 @@ public class UI_BestiaryBox : UI_Base
         _starIdleTween = null;
         if (show)
         {
+            // 슬14: 별 등급별 색 — 1단계 흰색(아웃라인 FF00FF) / 2단계 FFFF00 / 3단계 FF00FF.
+            //  (아웃라인 FF00FF는 Mat: Outline_Mat 머티리얼 영역 — fill 색을 등급별로 적용)
+            starImg.color = star >= 3 ? Util.HexToColor("FF00FF")
+                          : star == 2 ? Util.HexToColor("FFFF00")
+                          : Color.white;
+
             Transform tr = starImg.transform;
             tr.localRotation = Quaternion.identity;
             _starIdleTween = tr.DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
