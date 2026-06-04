@@ -685,6 +685,14 @@ public class UI_BestiaryPopup : UI_Popup
         DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true);
     }
 
+    // 슬19: 외부(나의 미니몬 부르기)에서 동행 변경 시 모든 도감 박스의 동행 frame색/Active Ef 갱신
+    public void RefreshCompanionVisuals()
+    {
+        Transform content = GetObject((int)GameObjects.Content).transform;
+        foreach (var b in content.GetComponentsInChildren<UI_BestiaryBox>(true))
+            b.RefreshCompanionVisual();
+    }
+
     // Content 안 인스턴스화된 박스 중 dataId 일치하는 것 탐색
     UI_BestiaryBox FindBox(int dataId)
     {

@@ -306,16 +306,23 @@ public class UI_MinionInfoPopup : UI_Popup
         GetButton((int)Buttons.MinionSummonButton).gameObject.SetActive(owned && !isFollowingThis);
         GetButton((int)Buttons.MinionSummonedButton).gameObject.SetActive(owned && isFollowingThis);
         GetImage((int)Images.MinionCantSummonButton).gameObject.SetActive(!owned);
+
+        // 슬19: 이 창의 미니몬이 현재 동행 미니몬이면 [나의 미니몬] 창에 Active Ef 효과
+        var activeEf = GetObject((int)GameObjects.ActiveEf);
+        if (activeEf != null) activeEf.SetActive(isFollowingThis);
     }
 
     void OnClickSummon()
     {
         if (!Managers.MinMon.IsOwned(_dataId)) return;
-        // 슬88/19: 다른 미니몬과 동행 중이면 자동 해제 후 새로 지정 (MinMonManager.SetCompanion이 처리)
+        // 슬19: 다른 미니몬과 동행 중이면 자동 해제 후 새로 지정 (MinMonManager.SetCompanion이 처리)
         Managers.MinMon.SetCompanion(_dataId);
         Debug.Log($"[MyMinimon] {_dataId} 동행 시작 (이전 동행 자동 해제)");
         RefreshSummonButton();
-        // TODO 슬88: Flash_USETHIS 효과 + Active Ef, [미니몬 기록]/[미니몬 도감] UI 갱신
+
+        // 슬19: [나의 미니몬] 창에 Flash_USETHIS 효과 + [미니몬 기록]/[미니몬 도감] UI 동시 갱신
+        SpawnFlash();
+        RefreshOtherCompanionUI();
     }
 
     void OnClickUnsummon()
@@ -323,6 +330,28 @@ public class UI_MinionInfoPopup : UI_Popup
         Managers.MinMon.RemoveCompanion();
         Debug.Log($"[MyMinimon] {_dataId} 동행 해제");
         RefreshSummonButton();
+        RefreshOtherCompanionUI();
+    }
+
+    // 슬19: [나의 미니몬] 창에 Flash_USETHIS.prefab 잠깐 표시
+    void SpawnFlash()
+    {
+        if (Managers.Resource.Load<GameObject>("Flash_USETHIS") == null) return;
+        var parent = GetObject((int)GameObjects.MinionInfoPopup).transform;
+        var fx = Managers.Resource.Instantiate("Flash_USETHIS", parent);
+        if (fx == null) return;
+        fx.transform.localPosition = Vector3.zero;
+        fx.transform.localScale = Vector3.one;
+        DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true);
+    }
+
+    // 슬19: 부르기/동행 변경 시 열려있는 [미니몬 기록]/[미니몬 도감]의 동행 UI도 함께 갱신
+    static void RefreshOtherCompanionUI()
+    {
+        var detail = Object.FindObjectOfType<UI_MonsterDetailPopup>();
+        if (detail != null) detail.RefreshCompanionState();
+        var bestiary = Object.FindObjectOfType<UI_BestiaryPopup>();
+        if (bestiary != null) bestiary.RefreshCompanionVisuals();
     }
 
     // 슬20~22: 포획 직후 호출되는 결과 연출.
@@ -335,11 +364,21 @@ public class UI_MinionInfoPopup : UI_Popup
         if (newTxt != null) newTxt.gameObject.SetActive(first);
 
         if (!first && improved) StartCoroutine(CoGrowthSequence());
-        else if (!first)
-        {
-            var noImp = GetText((int)Texts.NoImprovedText);
-            if (noImp != null) { noImp.gameObject.SetActive(true); ApplyFont(noImp, Define.FontType.UI); }
-        }
+        else if (!first) StartCoroutine(CoGrowthFail());
+    }
+
+    // 슬22: 재포획 성장 실패 — 호출 1.5초 뒤 MinimonGrowthFailText를 1.5초에 걸쳐 FadeIn.
+    //  (공명도 Lerp / 0.5초 후 FullGrowthInText FadeIn 은 각각 포획 전 공명도값·성장카운트 미정으로 보류)
+    IEnumerator CoGrowthFail()
+    {
+        var t = GetText((int)Texts.NoImprovedText);
+        if (t == null) yield break;
+        t.text = Util.Localize(Define.LocalizeKey.MinimonGrowthFailText);
+        ApplyFont(t, Define.FontType.UI);
+        t.gameObject.SetActive(true);
+        var c = t.color; c.a = 0f; t.color = c;            // alpha 0에서 시작
+        yield return new WaitForSecondsRealtime(1.5f);      // 호출 1.5초 뒤
+        t.DOFade(1f, 1.5f).SetUpdate(true);                 // 1.5초에 걸쳐 FadeIn
     }
 
     // 슬21: 1초 뒤부터 공격력→공속→치명타 순서로 숫자+등급 ICON Scale 펀치

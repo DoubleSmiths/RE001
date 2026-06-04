@@ -284,6 +284,7 @@ public class Define
         public const string RequireMinimonText = "RequireMinimonText"; // 슬12: 미포획 시 버튼 "포획 필요"
         public const string MyMinimonText = "MyMinimonText"; // 슬12: 포획 시 버튼 "내 미니몬"(창 제목 MyMinimon="나의 미니몬"과 별개)
         public const string FollowingText = "FollowingText"; // 슬13: 동행 중 하단 UI "동행중"
+        public const string MinimonGrowthFailText = "MinimonGrowthFailText"; // 슬22: 재포획 성장 실패 문구
 
         // ── Misc ──
         public const string LinkText = "LinkText";

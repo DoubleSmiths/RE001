@@ -231,6 +231,9 @@ public class UI_MonsterDetailPopup : UI_Popup
         RefreshSummonedUI();           // 슬13: 동행 중이면 FollowingText 하단 UI + Frame Active Ef
     }
 
+    // 슬19: 외부(나의 미니몬 부르기)에서 동행 변경 시 이 창의 동행 UI 갱신
+    public void RefreshCompanionState() => RefreshSummonedUI();
+
     // 슬13: 동행(소환) 유무에 따른 UI. 소환 중이면 [나의 미니몬] 버튼 하단 추가 UI(FollowingText "동행중")
     //  + [미니몬 기록] 창 Frame에 Active Ef.prefab 활성. 소환 해제 시 둘 다 비활성.
     void RefreshSummonedUI()
