@@ -252,7 +252,9 @@ public class UI_MonsterDetailPopup : UI_Popup
         var maskTxt = GetText((int)Texts.MonsterDetailPopupCheckMaskText);
         if (maskTxt != null)
         {
-            maskTxt.text = captured ? "내 미니몬" : "포획 필요"; // 이것도 나중엔 Localization 해야겠지..
+            // 슬12: 포획 O → MyMinimonText("내 미니몬") / 포획 X → RequireMinimonText("포획 필요")
+            //  (버튼 MyMinimonText "내 미니몬" ≠ 창 제목 MyMinimon "나의 미니몬")
+            maskTxt.text = Util.Localize(captured ? LocalizeKey.MyMinimonText : LocalizeKey.RequireMinimonText);
             ApplyFont(maskTxt, Define.FontType.UI);
             // Outline (있을 경우): 포획 O 시 F5A200 α146 (0.1,-0.1) / 포획 X 시 끄기
             var outline = maskTxt.GetComponent<UnityEngine.UI.Outline>();

@@ -281,6 +281,8 @@ public class Define
         public const string UniqueSkillText = "UniqueSkillText";
         public const string ParticalGetText = "ParticalGetText"; // 슬10: 부분획득
         public const string CompleteGetText = "CompleteGetText"; // 슬11: 완벽획득
+        public const string RequireMinimonText = "RequireMinimonText"; // 슬12: 미포획 시 버튼 "포획 필요"
+        public const string MyMinimonText = "MyMinimonText"; // 슬12: 포획 시 버튼 "내 미니몬"(창 제목 MyMinimon="나의 미니몬"과 별개)
 
         // ── Misc ──
         public const string LinkText = "LinkText";
