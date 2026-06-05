@@ -616,9 +616,9 @@ public class UI_BestiaryPopup : UI_Popup
             if (nt != null) nt.gameObject.SetActive(false);
         }
 
-        // 해금 상태: 해당 [기술 상세정보창] 호출 (슬라이드 71 #7)
+        // 해금 상태: 해당 [기술 상세정보창] 호출 (슬라이드 71 #7). 완성도 4스킬 → 실제 능력 id.
         Debug.Log($"[Bestiary] 스킬 '{SKILL_NAMES[idx]}' 상세정보창 호출 (idx={idx})");
-        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(idx);
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(SKILL_ABILITY_ID[idx]);
     }
 
     // ── 슬라이드 74: 별 등급 상승 연출 ──

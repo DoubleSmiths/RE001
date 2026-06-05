@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Data;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using static Define;
 
-// [기술책] 팝업 (기획서 v3 슬40~41 + 능력 시스템 슬38~39).
-// 보유 능력 목록 + 기억력(used/max) 표시. 슬롯 클릭으로 기억(장착)/망각 토글.
+// [능력 목록] 팝업 (기획서 06.05 슬40~42 + 능력 시스템 슬38~39).
+// 보유 능력 목록 + 기억력(used/max) 표시. 슬롯 클릭 → [능력 정보창](기억/망각은 거기서).
 //  - 능력 데이터/회계는 AbilityManager. 슬롯은 prefab 정적(SkillBookSkill_0~6).
-//  - 잠금(미보유) / 기억중(장착) / 미기억 오버레이를 슬롯별로 표시.
-//  - 필터(전체/재능/기억중/미기억/잠금) 지원.
+//  - 슬42: 필터 = 능력 종류(전체/기술/마법/수비/지원). 잠금(미보유)은 목록에 없음(슬41).
 public class UI_SkillBookPopup : UI_Popup
 {
     #region Enum
@@ -70,7 +70,8 @@ public class UI_SkillBookPopup : UI_Popup
         (int)Buttons.Btn_SkillBookSkill_6_03,
     };
 
-    enum Filter { All, Talent, OnMemory, NotOnMemory, Locked }
+    // 슬42: 능력 종류 필터 (전체/기술/마법/수비/지원)
+    enum Filter { All, Skill, Spell, Def, Util }
     Filter _filter = Filter.All;
 
     readonly List<int> _shown = new List<int>(); // 슬롯 i에 매핑된 abilityId
@@ -97,11 +98,12 @@ public class UI_SkillBookPopup : UI_Popup
             GetButton(SLOT_BTN[i]).gameObject.BindEvent(() => OnClickSlot(slot));
         }
 
+        // 슬42: 하단 5버튼 = 능력 종류 (좌→우: 전체/기술/마법/수비/지원). prefab 버튼 이름은 구버전이라 위치로 매핑.
         BindFilter(Buttons.SkillPopup_ShowAll_Btn,         Filter.All);
-        BindFilter(Buttons.SkillPopup_ShowTalent_Btn,      Filter.Talent);
-        BindFilter(Buttons.SkillPopup_ShowOnMemory_Btn,    Filter.OnMemory);
-        BindFilter(Buttons.SkillPopup_ShowNotOnMemory_Btn, Filter.NotOnMemory);
-        BindFilter(Buttons.SkillPopup_ShowLocked_Btn,      Filter.Locked);
+        BindFilter(Buttons.SkillPopup_ShowTalent_Btn,      Filter.Skill);
+        BindFilter(Buttons.SkillPopup_ShowOnMemory_Btn,    Filter.Spell);
+        BindFilter(Buttons.SkillPopup_ShowNotOnMemory_Btn, Filter.Def);
+        BindFilter(Buttons.SkillPopup_ShowLocked_Btn,      Filter.Util);
 
         return true;
     }
@@ -114,42 +116,44 @@ public class UI_SkillBookPopup : UI_Popup
 
     public void SetInfo()
     {
-        // 슬40: 제목 = MasteryCodex_TitleText("능력 목록"). prefab 영어("SKILL LIST") 하드코딩 교체.
+        // 슬40: 제목 = AbilityCodex_TitleText("능력 목록"). prefab 영어("SKILL LIST") 하드코딩 교체.
         var title = GetText((int)Texts.title);
         if (title != null)
         {
-            title.text = Util.Localize(Define.LocalizeKey.MasteryCodex_TitleText);
+            title.text = Util.Localize(Define.LocalizeKey.AbilityCodex_TitleText);
             ApplyFont(title, FontType.UI);
         }
-        // 슬40: 하단 필터 버튼 라벨 한/영 — prefab 영어(ALL/TALENT/LOCKED…) 하드코딩 교체.
+        // 슬42: 하단 필터 버튼 라벨 한/영 (전체/기술/마법/수비/지원).
         foreach (Filter f in System.Enum.GetValues(typeof(Filter))) SetFilterLabel(f);
 
+        // 슬42: 능력 목록 호출 시 항상 [전체] 선택
+        _filter = Filter.All;
         Refresh();
     }
 
-    // 슬40: 활성 필터에 대응하는 하단 버튼 enum
+    // 슬42: 활성 필터에 대응하는 하단 버튼 enum (위치 매핑: 전체/기술/마법/수비/지원)
     int FilterButton(Filter f)
     {
         switch (f)
         {
-            case Filter.Talent:      return (int)Buttons.SkillPopup_ShowTalent_Btn;
-            case Filter.OnMemory:    return (int)Buttons.SkillPopup_ShowOnMemory_Btn;
-            case Filter.NotOnMemory: return (int)Buttons.SkillPopup_ShowNotOnMemory_Btn;
-            case Filter.Locked:      return (int)Buttons.SkillPopup_ShowLocked_Btn;
-            default:                 return (int)Buttons.SkillPopup_ShowAll_Btn;
+            case Filter.Skill: return (int)Buttons.SkillPopup_ShowTalent_Btn;
+            case Filter.Spell: return (int)Buttons.SkillPopup_ShowOnMemory_Btn;
+            case Filter.Def:   return (int)Buttons.SkillPopup_ShowNotOnMemory_Btn;
+            case Filter.Util:  return (int)Buttons.SkillPopup_ShowLocked_Btn;
+            default:           return (int)Buttons.SkillPopup_ShowAll_Btn;
         }
     }
 
-    // 슬40: 필터별 라벨 로컬라이즈 키
+    // 슬42: 필터별 라벨 로컬라이즈 키
     string FilterLocKey(Filter f)
     {
         switch (f)
         {
-            case Filter.Talent:      return Define.LocalizeKey.MasteryCodex_BtmText_Talent;
-            case Filter.OnMemory:    return Define.LocalizeKey.MasteryCodex_BtmText_OnMemory;
-            case Filter.NotOnMemory: return Define.LocalizeKey.MasteryCodex_BtmText_NotOnMemory;
-            case Filter.Locked:      return Define.LocalizeKey.MasteryCodex_BtmText_Locked;
-            default:                 return Define.LocalizeKey.MasteryCodex_BtmText_All;
+            case Filter.Skill: return Define.LocalizeKey.AbilityCodex_BtmText_Skill;
+            case Filter.Spell: return Define.LocalizeKey.AbilityCodex_BtmText_Spell;
+            case Filter.Def:   return Define.LocalizeKey.AbilityCodex_BtmText_Def;
+            case Filter.Util:  return Define.LocalizeKey.AbilityCodex_BtmText_Util;
+            default:           return Define.LocalizeKey.AbilityCodex_BtmText_All;
         }
     }
 
@@ -160,6 +164,9 @@ public class UI_SkillBookPopup : UI_Popup
         var lbl = btn != null ? btn.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
         if (lbl != null) { lbl.text = Util.Localize(FilterLocKey(f)); ApplyFont(lbl, FontType.UI); }
     }
+
+    // 외부(능력 정보창 기억/망각)에서 필터 유지한 채 갱신
+    public void RefreshUI() => Refresh();
 
     void Refresh()
     {
@@ -192,18 +199,20 @@ public class UI_SkillBookPopup : UI_Popup
         }
     }
 
+    // 슬41: 잠김(미보유) 능력은 [능력 목록]에 없음(미니몬 도감에서만) → 보유 능력만.
+    // 슬42: 필터 = 능력 종류(All/기술/마법/수비/지원).
     bool PassFilter(int id)
     {
-        bool learned = Managers.Ability.IsLearned(id);
-        bool equipped = Managers.Ability.IsEquipped(id);
-        bool talent = Managers.Ability.IsTalent(id);
+        if (!Managers.Ability.IsLearned(id)) return false;
+        if (_filter == Filter.All) return true;
+        var role = Managers.Ability.GetRole(id);
         switch (_filter)
         {
-            case Filter.Talent:      return talent;
-            case Filter.OnMemory:    return equipped;
-            case Filter.NotOnMemory: return learned && !equipped && !talent;
-            case Filter.Locked:      return !learned;
-            default:                 return true; // All
+            case Filter.Skill: return role == AbilityManager.Role.Skill;
+            case Filter.Spell: return role == AbilityManager.Role.Spell;
+            case Filter.Def:   return role == AbilityManager.Role.Def;
+            case Filter.Util:  return role == AbilityManager.Role.Util;
+            default:           return true;
         }
     }
 
@@ -246,29 +255,22 @@ public class UI_SkillBookPopup : UI_Popup
     }
 
     // 슬롯 클릭: 미보유=무시, 재능=상세만, 기억중=망각, 미기억=기억(용량 가능 시)
+    // 슬41: 능력 ICON 클릭 → Punch/Scale Anim과 함께 [능력 정보창] 호출. (기억/망각은 정보창에서)
     void OnClickSlot(int slot)
     {
         if (slot >= _shown.Count) return;
         int id = _shown[slot];
 
-        if (!Managers.Ability.IsLearned(id))
+        var root = GetObject(SLOT_ROOT[slot]);
+        if (root != null)
         {
-            Debug.Log($"[SkillBook] 미보유 능력 {id} — 잠금");
-            return;
+            root.transform.DOKill();
+            root.transform.localScale = Vector3.one;
+            // 슬41: Punch/Scale Dur 0.3 OutQuad TO(-0.25,0.15) Vibrato 10 Elasticity 1
+            root.transform.DOPunchScale(new Vector3(-0.25f, 0.15f, 0f), 0.3f, 10, 1f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
         }
-        if (Managers.Ability.IsTalent(id))
-        {
-            Debug.Log($"[SkillBook] 재능 {id} — 항시 적용(망각 불가)");
-            return;
-        }
-        if (Managers.Ability.IsEquipped(id)) Managers.Ability.Forget(id);
-        else if (!Managers.Ability.Memorize(id))
-            Debug.Log($"[SkillBook] 기억력 부족 — {id} 기억 실패 (free={Managers.Ability.FreeMemory})");
 
-        // 능력 변경 → 플레이어 스탯 즉시 재적용
-        var player = FindObjectOfType<PlayerController>();
-        if (player != null) player.RefreshStats();
-
-        Refresh();
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(id);
     }
 }

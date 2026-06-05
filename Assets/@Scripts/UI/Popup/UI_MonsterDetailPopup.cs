@@ -441,8 +441,8 @@ public class UI_MonsterDetailPopup : UI_Popup
             Debug.Log("[MonsterDetail] 고유기술 정보 잠금 상태 — 클릭 무시");
             return;
         }
-        // 슬9: 정보 해금 시 클릭 → 해당 기술정보 창
-        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(_dataId);
+        // 슬9: 정보 해금 시 클릭 → 해당 기술정보 창 (몬스터 dataId → 고유기술 능력 id)
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(Managers.Ability.MinionSkillId(_dataId));
     }
 
     // 슬라이드 77: 전리품 동적 리스트 (UI_MonsterItemDropListBox)

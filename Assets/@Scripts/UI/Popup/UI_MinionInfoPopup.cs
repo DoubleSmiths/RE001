@@ -403,6 +403,7 @@ public class UI_MinionInfoPopup : UI_Popup
     {
         // 슬86: 기술 아이콘 클릭 시 (기술 상세). 슬76~79 게이팅과 별개로 나의 미니몬에선 항상 열림.
         Debug.Log($"[MyMinimon] 고유기술 상세 호출 dataId={_dataId}");
-        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(_dataId);
+        // 몬스터 dataId → 미니몬 고유기술 능력 id (2001 → 6001)
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(Managers.Ability.MinionSkillId(_dataId));
     }
 }

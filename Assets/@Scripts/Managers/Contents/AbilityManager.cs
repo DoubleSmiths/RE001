@@ -24,6 +24,42 @@ public class AbilityManager
 
     bool TryData(int id, out SkillData d) => Managers.Data.SkillDic.TryGetValue(id, out d);
 
+    // 슬38/42: 능력 종류(Role) — 기술/마법/수비/지원. StatType에서 파생.
+    //  (기획서상 한 능력이 여러 종류를 가질 수 있으나 현재 데이터는 StatType 1개라 단일 파생)
+    public enum Role { Skill, Spell, Def, Util }
+    public Role GetRole(int id)
+    {
+        if (!TryData(id, out var d)) return Role.Util;
+        switch (d.StatType)
+        {
+            case "MagicAtk":     return Role.Spell;                                  // 마법
+            case "PhysicalAtk":
+            case "CritRate":
+            case "AtkSpeed":
+            case "Accuracy":     return Role.Skill;                                  // 기술(물리 전투)
+            case "MaxHp":
+            case "Def":
+            case "PhysicalResist":
+            case "MagicResist":
+            case "Evasion":
+            case "RecoveryRate": return Role.Def;                                    // 수비(생존)
+            default:             return Role.Util;                                   // 지원(MaxMemory 등 편의)
+        }
+    }
+
+    // 슬2: 능력 이름/설명 한/영 — NameEng/DescEng 비어있으면 한국어(Name/Description) 폴백.
+    bool IsKorean => Managers.Game == null || Managers.Game.Language == Define.Language.Korean;
+    public string GetName(int id)
+    {
+        if (!TryData(id, out var d)) return $"능력 #{id}";
+        return !IsKorean && !string.IsNullOrEmpty(d.NameEng) ? d.NameEng : d.Name;
+    }
+    public string GetDesc(int id)
+    {
+        if (!TryData(id, out var d)) return "";
+        return !IsKorean && !string.IsNullOrEmpty(d.DescEng) ? d.DescEng : d.Description;
+    }
+
     public bool IsLearned(int id)  => Learned.Contains(id);
     public bool IsEquipped(int id) => Equipped.Contains(id);
     public bool IsTalent(int id)   => TryData(id, out var d) && d.MemoryCapacity <= 0; // 점유량 0 = 재능

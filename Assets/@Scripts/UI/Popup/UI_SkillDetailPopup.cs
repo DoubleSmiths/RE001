@@ -328,26 +328,22 @@ public class UI_SkillDetailPopup : UI_Popup
             return false;
 
         BindImage(typeof(Images));
+        BindText(typeof(Texts));
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
         _frameRT = GetObject((int)GameObjects.SkillDetailPopup).GetComponent<RectTransform>();
 
         GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
+        GetButton((int)Buttons.MemorizeBtn).gameObject.BindEvent(OnClickMemorize);
 
         return true;
     }
 
+    // skillId = 능력(SkillData) DataId. 이름/설명/단계를 한/영으로 채운다.
     public void SetInfo(int skillId = -1)
     {
         SkillId = skillId;
-
-        //var frameRT = GetObject((int)GameObjects.SkillDetailPopupMain).GetComponent<RectTransform>();
-        //_frameOrigin = frameRT.anchoredPosition;
-
-        //frameRT.DOKill();
-        //frameRT.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
-        //frameRT.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
 
         var bg = GetButton((int)Buttons.SkillDetailPopupBackground).GetComponent<Image>();
         if (bg != null)
@@ -356,6 +352,69 @@ public class UI_SkillDetailPopup : UI_Popup
             Color c = bg.color; c.a = 0f; bg.color = c;
             bg.DOFade(220f / 255f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
         }
+
+        if (skillId < 0 || Managers.Ability == null) return;
+
+        // 이름 — 한/영 (NameEng 폴백). 스킬 이름 노드는 ItemPopupItemName.
+        SetText(Texts.ItemPopupItemName, Managers.Ability.GetName(skillId));
+        // 설명 — 한/영 (DescEng 폴백)
+        SetText(Texts.SkillDescText, Managers.Ability.GetDesc(skillId));
+        // 능력 단계 "【 LEVEL: lv/max 】"
+        int lv = Mathf.Max(1, Managers.Ability.GetLevel(skillId));
+        int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : lv;
+        SetText(Texts.SkillLvTxt, $"【 LEVEL: <color=yellow>{lv}</color>/{maxLv} 】");
+
+        RefreshMemorizeState();
+    }
+
+    // 슬43: 기억/망각 상태 + 마나(기억력) 점유량 표시.
+    void RefreshMemorizeState()
+    {
+        bool owned    = Managers.Ability.IsLearned(SkillId);
+        bool talent   = Managers.Ability.IsTalent(SkillId);
+        bool equipped = Managers.Ability.IsEquipped(SkillId);
+        int cap = Managers.Data.SkillDic.TryGetValue(SkillId, out var d) ? d.MemoryCapacity : 0;
+
+        // 기억력 점유량 (재능=0이면 "?")
+        SetText(Texts.Txt_GotMEM_01, talent ? "?" : cap.ToString());
+
+        // 기억력 게이지 "<color>used(-cost)</color>/max"
+        int used = Managers.Ability.UsedMemory, max = Managers.Ability.MaxMemory;
+        string col = used == 0 ? "red" : used >= max ? "lime" : "yellow";
+        SetText(Texts.Txt_MemoryDisplayGroup_02, $"<color={col}>{used}(-{cap})</color>/{max}");
+
+        // 기억 버튼 라벨 — 미보유: 습득 필요 / 재능: 항시 적용 / 기억중: 망각 / 미기억: 기억
+        string btnLabel = !owned ? "습득 필요" : talent ? "항시 적용" : equipped ? "망각" : "기억";
+        SetText(Texts.Txt_MemorizeBtn_01, btnLabel);
+        var btn = GetButton((int)Buttons.MemorizeBtn);
+        if (btn != null) btn.interactable = owned && !talent;
+    }
+
+    // 슬43/41: 기억/망각 토글 (정보창에서). 재능/미보유는 불가.
+    void OnClickMemorize()
+    {
+        if (!Managers.Ability.IsLearned(SkillId) || Managers.Ability.IsTalent(SkillId)) return;
+
+        if (Managers.Ability.IsEquipped(SkillId)) Managers.Ability.Forget(SkillId);
+        else if (!Managers.Ability.Memorize(SkillId))
+        {
+            Debug.Log($"[SkillDetail] 기억력 부족 — {SkillId} 기억 실패");
+            return;
+        }
+
+        // 스탯 재적용 + 열려있는 능력 목록/디테일 갱신
+        var player = FindObjectOfType<PlayerController>();
+        if (player != null) player.RefreshStats();
+        FindObjectOfType<UI_SkillBookPopup>()?.RefreshUI();
+        RefreshMemorizeState();
+    }
+
+    void SetText(Texts id, string value)
+    {
+        var t = GetText((int)id);
+        if (t == null) return;
+        t.text = value;
+        ApplyFont(t, Define.FontType.UI);
     }
 
     void OnClickClose()

@@ -134,8 +134,10 @@ namespace Data
     public class SkillData
     {
         public int DataId;
-        public string Name;
-        public string Description;
+        public string Name;          // 한국어 이름 (기본/폴백)
+        public string Description;   // 한국어 설명 (기본/폴백)
+        public string NameEng;       // 영문 이름 (없으면 Name 폴백)
+        public string DescEng;       // 영문 설명 (없으면 Description 폴백)
         public string IconLabel;
         public SkillCategory Category;
         public SkillActiveType SkillActiveType;
