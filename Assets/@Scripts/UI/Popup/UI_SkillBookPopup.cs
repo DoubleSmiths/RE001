@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using Data;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using static Define;
 
 // [능력 목록] 팝업 (기획서 06.05 슬40~42 + 능력 시스템 슬38~39).
-// 보유 능력 목록 + 기억력(used/max) 표시. 슬롯 클릭 → [능력 정보창](기억/망각은 거기서).
-//  - 능력 데이터/회계는 AbilityManager. 슬롯은 prefab 정적(SkillBookSkill_0~6).
+// 보유 능력 목록 + 기억력(used/max) 표시. 능력 ICON 클릭 → [능력 정보창](기억/망각은 거기서).
+//  - 능력 데이터/회계는 AbilityManager. 슬롯은 Content에 UI_SkillBookSkill 동적 생성.
 //  - 슬42: 필터 = 능력 종류(전체/기술/마법/수비/지원). 잠금(미보유)은 목록에 없음(슬41).
 public class UI_SkillBookPopup : UI_Popup
 {
@@ -23,13 +22,6 @@ public class UI_SkillBookPopup : UI_Popup
     enum Buttons
     {
         SkillPopupBackground,
-        Btn_SkillBookSkill_0_07,
-        Btn_SkillBookSkill_1_02,
-        Btn_SkillBookSkill_2_09,
-        Btn_SkillBookSkill_3_10,
-        Btn_SkillBookSkill_4_05,
-        Btn_SkillBookSkill_5_01,
-        Btn_SkillBookSkill_6_03,
         SkillPopup_ShowAll_Btn,
         SkillPopup_ShowTalent_Btn,
         SkillPopup_ShowOnMemory_Btn,
@@ -42,39 +34,19 @@ public class UI_SkillBookPopup : UI_Popup
         FIXED,
         In_Frame,
         SkillBookPopup,
-        Content,
-        SkillBookSkill_0,
-        SkillBookSkill_1,
-        SkillBookSkill_2,
-        SkillBookSkill_3,
-        SkillBookSkill_4,
-        SkillBookSkill_5,
-        SkillBookSkill_6,
+        Content,             // 능력 아이콘(UI_SkillBookSkill) 동적 생성 부모
     }
 
     #endregion
-
-    const int SLOT_COUNT = 7;
-    static readonly int[] SLOT_ROOT =
-    {
-        (int)GameObjects.SkillBookSkill_0, (int)GameObjects.SkillBookSkill_1,
-        (int)GameObjects.SkillBookSkill_2, (int)GameObjects.SkillBookSkill_3,
-        (int)GameObjects.SkillBookSkill_4, (int)GameObjects.SkillBookSkill_5,
-        (int)GameObjects.SkillBookSkill_6,
-    };
-    static readonly int[] SLOT_BTN =
-    {
-        (int)Buttons.Btn_SkillBookSkill_0_07, (int)Buttons.Btn_SkillBookSkill_1_02,
-        (int)Buttons.Btn_SkillBookSkill_2_09, (int)Buttons.Btn_SkillBookSkill_3_10,
-        (int)Buttons.Btn_SkillBookSkill_4_05, (int)Buttons.Btn_SkillBookSkill_5_01,
-        (int)Buttons.Btn_SkillBookSkill_6_03,
-    };
 
     // 슬42: 능력 종류 필터 (전체/기술/마법/수비/지원)
     enum Filter { All, Skill, Spell, Def, Util }
     Filter _filter = Filter.All;
 
-    readonly List<int> _shown = new List<int>(); // 슬롯 i에 매핑된 abilityId
+    readonly List<int> _shown = new List<int>(); // 현재 표시 중인 abilityId 목록
+
+    // 슬42: 필터 버튼 선택/기본 sprite (2_options_on/off). prefab 버튼에서 런타임 캐싱.
+    Sprite _onSprite, _offSprite;
 
     void Awake() => Init();
 
@@ -92,12 +64,6 @@ public class UI_SkillBookPopup : UI_Popup
 
         GetButton((int)Buttons.SkillPopupBackground).gameObject.BindEvent(OnClickBG);
 
-        for (int i = 0; i < SLOT_COUNT; i++)
-        {
-            int slot = i;
-            GetButton(SLOT_BTN[i]).gameObject.BindEvent(() => OnClickSlot(slot));
-        }
-
         // 슬42: 하단 5버튼 = 능력 종류 (좌→우: 전체/기술/마법/수비/지원). prefab 버튼 이름은 구버전이라 위치로 매핑.
         BindFilter(Buttons.SkillPopup_ShowAll_Btn,         Filter.All);
         BindFilter(Buttons.SkillPopup_ShowTalent_Btn,      Filter.Skill);
@@ -105,13 +71,32 @@ public class UI_SkillBookPopup : UI_Popup
         BindFilter(Buttons.SkillPopup_ShowNotOnMemory_Btn, Filter.Def);
         BindFilter(Buttons.SkillPopup_ShowLocked_Btn,      Filter.Util);
 
+        CacheOptionSprites();
         return true;
     }
 
     void BindFilter(Buttons btn, Filter f)
     {
         var b = GetButton((int)btn);
-        if (b != null) b.gameObject.BindEvent(() => { _filter = f; Refresh(); });
+        if (b != null) b.gameObject.BindEvent(() => OnClickFilter(f));
+    }
+
+    // 슬42: 필터 클릭 → 선택 상태 갱신 + Scale 연출
+    void OnClickFilter(Filter f)
+    {
+        _filter = f;
+
+        var btn = GetButton(FilterButton(f));
+        if (btn != null)
+        {
+            btn.transform.DOKill();
+            btn.transform.localScale = Vector3.one;
+            // 슬42: 상태전환 Scale Yoyo TO 0.85
+            btn.transform.DOPunchScale(new Vector3(-0.15f, -0.15f, 0f), 0.25f, 8, 1f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+
+        Refresh();
     }
 
     public void SetInfo()
@@ -160,9 +145,14 @@ public class UI_SkillBookPopup : UI_Popup
     // 하단 필터 버튼의 라벨 텍스트를 로컬라이즈 값으로 설정
     void SetFilterLabel(Filter f)
     {
-        var btn = GetButton(FilterButton(f));
-        var lbl = btn != null ? btn.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
+        var lbl = FilterLabel(f);
         if (lbl != null) { lbl.text = Util.Localize(FilterLocKey(f)); ApplyFont(lbl, FontType.UI); }
+    }
+
+    TMPro.TMP_Text FilterLabel(Filter f)
+    {
+        var btn = GetButton(FilterButton(f));
+        return btn != null ? btn.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
     }
 
     // 외부(능력 정보창 기억/망각)에서 필터 유지한 채 갱신
@@ -171,15 +161,12 @@ public class UI_SkillBookPopup : UI_Popup
     void Refresh()
     {
         RefreshMemoryGauge();
+        RefreshFilterButtons();
 
         // 슬40: 상단 TopText(SubtitleText) = 현재 눌린 하단 필터 버튼의 라벨과 동일하게 표기
         var sub = GetText((int)Texts.SubtitleText);
-        if (sub != null)
-        {
-            var btn = GetButton(FilterButton(_filter));
-            var lbl = btn != null ? btn.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
-            if (lbl != null) { sub.text = lbl.text; ApplyFont(sub, FontType.UI); }
-        }
+        var curLbl = FilterLabel(_filter);
+        if (sub != null && curLbl != null) { sub.text = curLbl.text; ApplyFont(sub, FontType.UI); }
 
         // 필터에 맞는 능력 목록 수집 (DataId 정렬)
         _shown.Clear();
@@ -188,15 +175,22 @@ public class UI_SkillBookPopup : UI_Popup
         foreach (int id in ids)
             if (PassFilter(id)) _shown.Add(id);
 
-        for (int i = 0; i < SLOT_COUNT; i++)
-        {
-            var root = GetObject(SLOT_ROOT[i]);
-            if (root == null) continue;
+        // Content 비우고 능력 아이콘 동적 생성
+        var content = GetObject((int)GameObjects.Content).transform;
+        for (int i = content.childCount - 1; i >= 0; i--)
+            Managers.Resource.Destroy(content.GetChild(i).gameObject);
 
-            if (i >= _shown.Count) { root.SetActive(false); continue; }
-            root.SetActive(true);
-            RefreshSlot(root, _shown[i]);
+        foreach (int id in _shown)
+        {
+            var item = Managers.UI.MakeSubItem<UI_SkillBookSkill>(content, pooling: false);
+            item.SetInfo(id, OnClickSkill);
         }
+    }
+
+    // 슬41: 능력 ICON 클릭 → [능력 정보창] 호출 (기억/망각은 정보창에서)
+    void OnClickSkill(int abilityId)
+    {
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(abilityId);
     }
 
     // 슬41: 잠김(미보유) 능력은 [능력 목록]에 없음(미니몬 도감에서만) → 보유 능력만.
@@ -216,30 +210,6 @@ public class UI_SkillBookPopup : UI_Popup
         }
     }
 
-    // 슬롯 내부 오버레이를 이름 부분일치로 찾아 상태 반영 (prefab 정적 슬롯이라 자식 탐색)
-    void RefreshSlot(GameObject root, int abilityId)
-    {
-        bool learned  = Managers.Ability.IsLearned(abilityId);
-        bool equipped = Managers.Ability.IsEquipped(abilityId);
-
-        SetChild(root, "LockedIcon",    !learned);            // 미보유 = 잠금
-        SetChild(root, "MemorizedIcon", equipped);            // 기억(장착) 중
-
-        // 능력 단계(Lv) 표기 — 슬롯 내 LvlIcon 텍스트
-        int lv = Managers.Ability.GetLevel(abilityId);
-        foreach (var tmp in root.GetComponentsInChildren<TMPro.TMP_Text>(true))
-            if (tmp.name.Contains("LvlIcon")) { tmp.text = "Lv." + Mathf.Max(1, lv); ApplyFont(tmp, FontType.UI); }
-        // 아이콘 sprite는 IconLabel 비어있어 prefab 기본 유지.
-    }
-
-    void SetChild(GameObject root, string nameContains, bool on)
-    {
-        foreach (var tr in root.GetComponentsInChildren<Transform>(true))
-        {
-            if (tr.name.Contains(nameContains)) tr.gameObject.SetActive(on);
-        }
-    }
-
     void RefreshMemoryGauge()
     {
         var txt = GetText((int)Texts.MemoryAmountTxt_1);
@@ -254,23 +224,48 @@ public class UI_SkillBookPopup : UI_Popup
         ApplyFont(txt, FontType.UI);
     }
 
-    // 슬롯 클릭: 미보유=무시, 재능=상세만, 기억중=망각, 미기억=기억(용량 가능 시)
-    // 슬41: 능력 ICON 클릭 → Punch/Scale Anim과 함께 [능력 정보창] 호출. (기억/망각은 정보창에서)
-    void OnClickSlot(int slot)
+    #region 슬42: 필터 버튼 선택/기본 2상태
+
+    // prefab 버튼들의 현재 sprite에서 2_options_on/off를 캐싱 (IMPORTS라 Resources.Load 불가)
+    void CacheOptionSprites()
     {
-        if (slot >= _shown.Count) return;
-        int id = _shown[slot];
-
-        var root = GetObject(SLOT_ROOT[slot]);
-        if (root != null)
+        foreach (Filter f in System.Enum.GetValues(typeof(Filter)))
         {
-            root.transform.DOKill();
-            root.transform.localScale = Vector3.one;
-            // 슬41: Punch/Scale Dur 0.3 OutQuad TO(-0.25,0.15) Vibrato 10 Elasticity 1
-            root.transform.DOPunchScale(new Vector3(-0.25f, 0.15f, 0f), 0.3f, 10, 1f)
-                .SetEase(Ease.OutQuad).SetUpdate(true);
+            var img = OptionImage(GetButton(FilterButton(f)));
+            if (img == null || img.sprite == null) continue;
+            if (img.sprite.name.Contains("_on"))  _onSprite  = img.sprite;
+            if (img.sprite.name.Contains("_off")) _offSprite = img.sprite;
         }
-
-        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(id);
     }
+
+    // 버튼(+자식) 중 2_options sprite를 쓰는 배경 Image
+    Image OptionImage(Button btn)
+    {
+        if (btn == null) return null;
+        foreach (var img in btn.GetComponentsInChildren<Image>(true))
+            if (img.sprite != null && img.sprite.name.Contains("2_options")) return img;
+        return btn.image;   // 폴백: 버튼 자신
+    }
+
+    // 슬42: 선택=2_options_on+EEB568+Outline 594A2D / 기본=2_options_off+흰색+Outline 000000
+    void RefreshFilterButtons()
+    {
+        foreach (Filter f in System.Enum.GetValues(typeof(Filter)))
+        {
+            var btn = GetButton(FilterButton(f));
+            if (btn == null) continue;
+            bool sel = (f == _filter);
+
+            var bg = OptionImage(btn);
+            if (bg != null)
+            {
+                if (sel  && _onSprite  != null) bg.sprite = _onSprite;
+                if (!sel && _offSprite != null) bg.sprite = _offSprite;
+                // 슬42: 선택=EEB568 / 기본=흰색
+                bg.color = sel ? Util.HexToColor("EEB568") : Color.white;
+            }
+        }
+    }
+
+    #endregion
 }

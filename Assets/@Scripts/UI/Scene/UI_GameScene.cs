@@ -666,7 +666,8 @@ public class UI_GameScene : UI_Scene
                 }
                 // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10, Elasticity 1)
                 icon.transform.DOKill();
-                icon.transform.localScale = Vector3.one;
+                // 프리펩 기준 스케일은 0.5 (Vector3.one로 덮으면 게임에서 2배 커짐)
+                icon.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
                 icon.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0f), 0.3f, 10, 1f);
             }
         }

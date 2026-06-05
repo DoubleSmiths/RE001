@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &724237451510547528
 RectTransform:
   m_ObjectHideFlags: 0
@@ -382,6 +382,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3861004218469253555}
   - component: {fileID: 1336649106764119397}
+  - component: {fileID: 6246701626111859321}
   m_Layer: 5
   m_Name: UI_SkillBookSkill
   m_TagString: Untagged
@@ -522,6 +523,18 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &6246701626111859321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518016879473147479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cdce9b4ff42b9d43a415a23fbcb7e23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_SkillBookSkill
 --- !u!1 &3132153138049060681
 GameObject:
   m_ObjectHideFlags: 0
@@ -1082,7 +1095,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8524592515567194647
 RectTransform:
   m_ObjectHideFlags: 0
