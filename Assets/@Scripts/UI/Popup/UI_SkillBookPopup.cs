@@ -256,13 +256,25 @@ public class UI_SkillBookPopup : UI_Popup
             if (btn == null) continue;
             bool sel = (f == _filter);
 
-            var bg = OptionImage(btn);
-            if (bg != null)
+            // 슬42: 2_options 스프라이트 스왑 — 옵션 탭(자식 이미지)에만 적용
+            var opt = OptionImage(btn);
+            if (opt != null && opt != btn.image)
             {
-                if (sel  && _onSprite  != null) bg.sprite = _onSprite;
-                if (!sel && _offSprite != null) bg.sprite = _offSprite;
-                // 슬42: 선택=EEB568 / 기본=흰색
-                bg.color = sel ? Util.HexToColor("EEB568") : Color.white;
+                if (sel  && _onSprite  != null) opt.sprite = _onSprite;
+                if (!sel && _offSprite != null) opt.sprite = _offSprite;
+            }
+
+            // 슬42: 프레임(Frame_bg_big) 색 — 선택=EEB568 / 기본=흰색.
+            // 색은 옵션 탭이 아니라 버튼 본체(targetGraphic) 프레임에 적용해야 한다.
+            if (btn.image != null)
+                btn.image.color = sel ? Util.HexToColor("EEB568") : Color.white;
+
+            // 슬42: Text Outline — 선택=594A2D / 기본=000000
+            var lbl = FilterLabel(f);
+            if (lbl != null)
+            {
+                lbl.outlineColor = sel ? Util.HexToColor("594A2D") : Util.HexToColor("000000");
+                lbl.outlineWidth = 0.15f;
             }
         }
     }
