@@ -63,7 +63,7 @@
     {
       "TextKey": "BtmInventoryBtnText",
       "Kor": "가방",
-      "Eng": "INVEN"
+      "Eng": "BAG"
     },
     {
       "TextKey": "BtmPotionBtnText",
@@ -77,13 +77,13 @@
     },
     {
       "TextKey": "BtmSkillBtnText",
-      "Kor": "기술",
-      "Eng": "SKILL"
+      "Kor": "능력",
+      "Eng": "ABILITY"
     },
     {
       "TextKey": "BtmMinimonCodexBtnText",
-      "Kor": "도감",
-      "Eng": "CODEX"
+      "Kor": "미니몬",
+      "Eng": "MINI"
     },
     {
       "TextKey": "GuildText",
@@ -144,6 +144,11 @@
       "TextKey": "MagicText",
       "Kor": "마력",
       "Eng": "MAG"
+    },
+    {
+      "TextKey": "AttackPowerText",
+      "Kor": "공격력",
+      "Eng": "ATK"
     },
     {
       "TextKey": "PhysicalAttackText",
@@ -307,7 +312,7 @@
     },
     {
       "TextKey": "CharPopupUtilityText",
-      "Kor": "유틸",
+      "Kor": "보조",
       "Eng": "GENERAL"
     },
     {
@@ -331,6 +336,86 @@
       "Eng": "HEAD OUT"
     },
     {
+      "TextKey": "AbilityCodex_TitleText",
+      "Kor": "능력 목록",
+      "Eng": "ABILITY CODEX"
+    },
+    {
+      "TextKey": "AbilityCodex_BtmText_All",
+      "Kor": "전체",
+      "Eng": "ALL"
+    },
+    {
+      "TextKey": "AbilityCodex_BtmText_Skill",
+      "Kor": "기술",
+      "Eng": "SKILL"
+    },
+    {
+      "TextKey": "AbilityCodex_BtmText_Spell",
+      "Kor": "마법",
+      "Eng": "SPELL"
+    },
+    {
+      "TextKey": "AbilityCodex_BtmText_Def",
+      "Kor": "방어",
+      "Eng": "DEF"
+    },
+    {
+      "TextKey": "AbilityCodex_BtmText_Util",
+      "Kor": "지원",
+      "Eng": "UTIL"
+    },
+    {
+      "TextKey": "AbilityCodex_TopText_All",
+      "Kor": "전체 능력",
+      "Eng": "ALL ABILITIES"
+    },
+    {
+      "TextKey": "AbilityCodex_TopText_Skill",
+      "Kor": "물리 능력",
+      "Eng": "PHYSICAL"
+    },
+    {
+      "TextKey": "AbilityCodex_TopText_Spell",
+      "Kor": "마법 능력",
+      "Eng": "MAGICAL"
+    },
+    {
+      "TextKey": "AbilityCodex_TopText_Def",
+      "Kor": "생존 능력",
+      "Eng": "SURVIVAL"
+    },
+    {
+      "TextKey": "AbilityCodex_TopText_Util",
+      "Kor": "지원 능력",
+      "Eng": "UTILITY"
+    },
+    {
+      "TextKey": "Memorized_Text_Short",
+      "Kor": "기억중",
+      "Eng": "MEMOR"
+    },
+    {
+      "TextKey": "Memorized_Text_Full",
+      "Kor": "기억중",
+      "Eng": "MEMORIZED"
+    },
+    {
+      "TextKey": "AbilityMaster_Text",
+      "Kor": "완벽숙달",
+      "Eng": "MASTERED"
+    },
+    {
+      "TextKey": "AbilityDetails_TitleText",
+      "Kor": "능력 정보",
+      "Eng": "ABILITY DETAILS"
+    },
+    {
+      "TextKey": "TalentText",
+      "Kor": "재능",
+      "Eng": "TALENT"
+    },
+    {
       "TextKey": "MinimonCodexText",
       "Kor": "미니몬 도감",
       "Eng": "MINIMON CODEX"
@@ -341,9 +426,89 @@
       "Eng": "COMPLETION"
     },
     {
-      "TextKey": "BeastiaryText",
-      "Kor": "마물 도감",
-      "Eng": "BESTIARY"
+      "TextKey": "CatchMinimonTitleText",
+      "Kor": "미니몬 잡기",
+      "Eng": "CATCH"
+    },
+    {
+      "TextKey": "CatchMinimonStartText1",
+      "Kor": "앗! 야생의 ",
+      "Eng": "Wild "
+    },
+    {
+      "TextKey": "CatchMinimonStartText2",
+      "Kor": " 이(가) 나타났다!",
+      "Eng": " appeared!"
+    },
+    {
+      "TextKey": "LureBtnText",
+      "Kor": "▶길들인다!",
+      "Eng": "▶LURE!"
+    },
+    {
+      "TextKey": "CatchSuccessRateText",
+      "Kor": "성공확률: ",
+      "Eng": "SUCCESS RATE: "
+    },
+    {
+      "TextKey": "CatchSuccessAtText",
+      "Kor": " 번째에 확정",
+      "Eng": " GUARANTEED"
+    },
+    {
+      "TextKey": "GuaranteedCatchText",
+      "Kor": "<color=lime>확정 길들이기!</color>",
+      "Eng": "<color=lime> GUARANTEED!</color>"
+    },
+    {
+      "TextKey": "GoMandrakeBtnText",
+      "Kor": "▶가랏!\n   만드라고라!",
+      "Eng": "▶Go!\n  Mandrake!"
+    },
+    {
+      "TextKey": "ReqMandrakeText",
+      "Kor": "필요: 1개의",
+      "Eng": "REQ: 1 of"
+    },
+    {
+      "TextKey": "TryLureText",
+      "Kor": "당신는(은) 매력발산!를(을) 사용했다!",
+      "Eng": "You used WORK YOUR CHARM!"
+    },
+    {
+      "TextKey": "LureNotEffectiveText",
+      "Kor": "에게는 효과가 없는 듯 하다..",
+      "Eng": "It's not very effective.."
+    },
+    {
+      "TextKey": "LureEffectiveText",
+      "Kor": "효과는 뛰어났다!",
+      "Eng": "It's super effective!"
+    },
+    {
+      "TextKey": "LureFailText",
+      "Kor": "이(는) 당신이 한심하다는 듯 돌아가 버렸다..",
+      "Eng": " turned away as if you were pathetic."
+    },
+    {
+      "TextKey": "LureSuccessText1",
+      "Kor": "신난다! ",
+      "Eng": "All right! "
+    },
+    {
+      "TextKey": "LureSuccessText2",
+      "Kor": "이를(을) 잡았다!",
+      "Eng": " was caught!"
+    },
+    {
+      "TextKey": "GoMandrakeText",
+      "Kor": "가랏! 만드라고라!",
+      "Eng": "Go! Mandrake!"
+    },
+    {
+      "TextKey": "EatMandrakeText",
+      "Kor": "(은)는 순식간에 그것을 먹어 치웠다!",
+      "Eng": " ate it in an instant!"
     },
     {
       "TextKey": "MinimonEntryText",
@@ -356,14 +521,14 @@
       "Eng": "LINK"
     },
     {
-      "TextKey": "UniqueSkillText",
-      "Kor": "고유기술",
-      "Eng": "UNIQUE SKILL"
+      "TextKey": "LinkSkillText",
+      "Kor": "공명 기술",
+      "Eng": "LINK SKILL"
     },
     {
       "TextKey": "Link100RequiredText",
-      "Kor": "공명도 100% 필요",
-      "Eng": "LINK 100% REQUIRED"
+      "Kor": "공명도\n100% 필요",
+      "Eng": "REQUIRES\n100% LINK"
     },
     {
       "TextKey": "InfoAndStatsText",
@@ -396,89 +561,14 @@
       "Eng": "ATTENTION"
     },
     {
-      "TextKey": "ParticalGetText",
-      "Kor": "부분획득",
-      "Eng": "PARTIAL"
-    },
-    {
-      "TextKey": "CompleteGetText",
-      "Kor": "완벽획득",
-      "Eng": "PERFECT"
-    },
-    {
-      "TextKey": "RequireMinimonText",
-      "Kor": "포획 필요",
-      "Eng": "CATCH REQUIRED"
-    },
-    {
-      "TextKey": "MyMinimonText",
-      "Kor": "내 미니몬",
-      "Eng": "MY MINIMON"
-    },
-    {
-      "TextKey": "FollowingText",
-      "Kor": "동행중",
-      "Eng": "FOLLOWING"
-    },
-    {
-      "TextKey": "MinimonGrowthFailText",
-      "Kor": "이런..\n하수인이 전혀 성장하지 않았다",
-      "Eng": "Oh no..\nThis minion didn't grow at all"
-    },
-    {
-      "TextKey": "CatchMinimonTitleText",
-      "Kor": "미니몬 잡기",
-      "Eng": "CATCH MINIMON"
-    },
-    {
-      "TextKey": "AbilityCodex_TitleText",
-      "Kor": "능력 목록",
-      "Eng": "SKILL LIST"
-    },
-    {
-      "TextKey": "AbilityCodex_BtmText_All",
-      "Kor": "전체",
-      "Eng": "ALL"
-    },
-    {
-      "TextKey": "AbilityCodex_BtmText_Skill",
-      "Kor": "기술",
-      "Eng": "SKILL"
-    },
-    {
-      "TextKey": "AbilityCodex_BtmText_Spell",
-      "Kor": "마법",
-      "Eng": "SPELL"
-    },
-    {
-      "TextKey": "AbilityCodex_BtmText_Def",
-      "Kor": "수비",
-      "Eng": "DEFENSE"
-    },
-    {
-      "TextKey": "AbilityCodex_BtmText_Util",
-      "Kor": "지원",
-      "Eng": "SUPPORT"
-    },
-    {
-      "TextKey": "MinimonInterestSuccessText",
-      "Kor": "(이)가 관심을 보입니다!",
-      "Eng": " is interested!"
-    },
-    {
-      "TextKey": "MinimonInterestFullText",
-      "Kor": "(이)가 관심을 보였지만\n창고가 가득 찼습니다!",
-      "Eng": " is interested, but\nthe storage is full!"
-    },
-    {
       "TextKey": "LogText",
       "Kor": "기록도",
       "Eng": "LOG"
     },
     {
       "TextKey": "LogCompletionText",
-      "Kor": "이 미니몬의 물품 획득 & 관심 확률",
-      "Eng": "THIS MINIMON'S DROP & ATTRACT"
+      "Kor": "이 미니몬의 물품 획득 & 관심 확률 + ",
+      "Eng": "THIS MINIMON'S DROP & ATTRACT + "
     },
     {
       "TextKey": "LootText",
@@ -486,9 +576,54 @@
       "Eng": "LOOT"
     },
     {
-      "TextKey": "MyMinimon",
+      "TextKey": "MyMinimonText",
       "Kor": "나의 미니몬",
       "Eng": "MY MINIMON"
+    },
+    {
+      "TextKey": "RequireMinimonText",
+      "Kor": "미니몬 필요",
+      "Eng": "REQ. MINIMON"
+    },
+    {
+      "TextKey": "MinimonSkillLockedText",
+      "Kor": "미니몬 보유 또는\n기록 완성 필요",
+      "Eng": "MINIMON OWNED\n/ COMPLETE LOG"
+    },
+    {
+      "TextKey": "ParticalGetText",
+      "Kor": "부분획득",
+      "Eng": "PARTICAL"
+    },
+    {
+      "TextKey": "CompleteGetText",
+      "Kor": "완전획득",
+      "Eng": "COMPLETE"
+    },
+    {
+      "TextKey": "FollowText",
+      "Kor": "함께하기",
+      "Eng": "FOLLOW"
+    },
+    {
+      "TextKey": "FollowingText",
+      "Kor": "동행중",
+      "Eng": "FOLLOWING"
+    },
+    {
+      "TextKey": "MinimonAbilityText",
+      "Kor": "미니몬\n사용기술",
+      "Eng": "MINIMON\nABILITY"
+    },
+    {
+      "TextKey": "FullGrowthInText",
+      "Kor": "완전 성장까지",
+      "Eng": "FULL GROWTH IN"
+    },
+    {
+      "TextKey": "MinimonGrowthFailText",
+      "Kor": "이런..\n이번엔 성장하지 않았어요.\n다시 도전해봐요!",
+      "Eng": "Hmm..\nNothing changed this time.\nLet's try again!"
     },
     {
       "TextKey": "PlaceEverywhereText",
@@ -804,6 +939,16 @@
       "TextKey": "BattleMissText",
       "Kor": "MISS",
       "Eng": "MISS"
+    },
+    {
+      "TextKey": "MinimonInterestSuccessText",
+      "Kor": "이(가) 당신의\n거친 무력에 반해버렸습니다.",
+      "Eng": " couldn't\nresist your raw power!"
+    },
+    {
+      "TextKey": "MinimonInterestFullText",
+      "Kor": "이(가) 관심을 보였지만\n이내 조용히 떠나갔습니다.",
+      "Eng": " wished to \nfollow but left quietly."
     },
     {
       "TextKey": "TravelUnlockText",

@@ -14,6 +14,10 @@ public class PlayerController : CreatureController
     public float ExpRequired => _expRequired;   // UI 초기 동기화용 read-only 노출
     bool _inBattle;
 
+    // 슬39: 능력 전투 발동조건 런너 (장착 능력의 확률/시간 발동 처리)
+    AbilityRunner _abilityRunner;
+    public MonsterController CurrentTarget => _attackTarget;   // 능력 BonusDamage 대상
+
     // ── 플레이어 전용 스탯 ──
     public float GrowthRate = 100f;  // 성장률 % (경험치 획득량에 곱함)
     public float DropRate   = 100f;  // 획득률 % (몬스터 드롭률에 곱함)
@@ -27,6 +31,9 @@ public class PlayerController : CreatureController
         ObjectType = ObjectType.Player;
         State = Define.State.Idle;
         _originalPos = transform.position;
+        // 슬39: 능력 발동 런너 부착 (RefreshStats 전에 준비돼야 OnStatsReset 콜백 가능)
+        _abilityRunner = gameObject.GetOrAddComponent<AbilityRunner>();
+        _abilityRunner.Setup(this);
         // 슬라이드 62/63 — Monster→Player Miss popup, 추후 heal popup 등이 사용할 머리 위 offset.
         // Player prefab YAML에 직렬화 안 된 경우를 대비해 명시적으로 set (CreatureController 기본 2.5).
         DamageFontYOffset = 2.5f;
@@ -34,12 +41,29 @@ public class PlayerController : CreatureController
         return true;
     }
 
-    public void StartBattle() { _inBattle = true; }
+    public void StartBattle()
+    {
+        _inBattle = true;
+        _abilityRunner?.OnBattleStart();   // 슬39: 전투 시작 발동조건
+    }
+
+    // 능력 효과/회복 — 전투 중 HP 회복(RecoveryRate 적용). 회복 시 발동조건(OnHeal) 통지.
+    public void Heal(float amount)
+    {
+        if (State == Define.State.Dead || amount <= 0f) return;
+        float healed = amount * (1f + RecoveryRate / 100f);
+        float before = Hp;
+        Hp = Mathf.Min(MaxHp, Hp + healed);
+        if (Hp <= before) return;
+        OnHpChanged?.Invoke(Hp, MaxHp);
+        _abilityRunner?.Notify(Define.AbilityCondition.OnHeal);
+    }
 
     // 슬라이드 67/69 — 마을 복귀 시 HP 회복 + Idle + 원위치 복귀 (사망/HOME/도중이탈 공통)
     public void StopBattle()
     {
         _inBattle = false;
+        _abilityRunner?.OnBattleEnd();   // 슬39: 전투 종료 — 임시 버프/쿨 정리
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
         State = Define.State.Idle;
@@ -194,8 +218,17 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     public override void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
+        bool wasHit = result.Hit;
+        float before = Hp;
         base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
+
+        // 슬39: 피격/회피/저체력 발동조건
+        if (State == Define.State.Dead) return;
+        if (!wasHit) { _abilityRunner?.Notify(Define.AbilityCondition.SelfEvade); return; }
+        float taken = before - Hp;
+        if (taken > 0f) _abilityRunner?.Notify(Define.AbilityCondition.OnDamaged);
+        if (MaxHp > 0f) _abilityRunner?.Notify(Define.AbilityCondition.LowHp, Hp / MaxHp * 100f);
     }
 
     // 슬라이드 60/64/65 Player —
@@ -300,6 +333,8 @@ public class PlayerController : CreatureController
 
         // 슬38: 장착(기억)된 능력의 스탯 보너스 가산
         Managers.Ability?.ApplyTo(this);
+        // 슬39: 스탯이 base+패시브로 리셋됐으니 런너의 임시 버프 추적도 비움(중복 환불 방지)
+        _abilityRunner?.OnStatsReset();
 
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
@@ -377,6 +412,9 @@ public class PlayerController : CreatureController
         if (State != Define.State.Attack) return;       // OnHit/Idle로 바뀌었으면 무시
         if (!_attackTarget.HasEngaged) return;          // engagement가 풀렸으면 silent miss
 
+        // 슬39: 공격 시 발동조건
+        _abilityRunner?.Notify(Define.AbilityCondition.OnAttack);
+
         // 콤보 피해증폭은 DmgAmp에 일시 가산해서 BattleMath에 전달
         float prevDmgAmp = DmgAmp;
         DmgAmp += ComboDmgBoostBonus();
@@ -387,6 +425,15 @@ public class PlayerController : CreatureController
 
         // 타격(명중) 성공 시에만 콤보 누적
         if (result.Hit)
+        {
             OnHitLanded?.Invoke(result.FinalDamage);
+            // 슬39: 타격/치명타 발동조건
+            _abilityRunner?.Notify(Define.AbilityCondition.OnHit);
+            if (result.IsCrit) _abilityRunner?.Notify(Define.AbilityCondition.OnCrit);
+        }
+        else
+        {
+            _abilityRunner?.Notify(Define.AbilityCondition.OnMiss);   // 타격 빗나감
+        }
     }
 }

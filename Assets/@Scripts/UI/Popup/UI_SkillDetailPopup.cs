@@ -320,6 +320,11 @@ public class UI_SkillDetailPopup : UI_Popup
 
     public int SkillId { get; private set; } = -1;
 
+    // [능력 정보창 #1] 능력 종류 아이콘 — prefab에 전용 노드가 없어 런타임 생성(능력 ICON 우측 가로 나열).
+    Transform _roleIconRow;
+    const float ROLE_ICON_SIZE = 11f;   // "능력 ICON과 동일" 톤의 소형 아이콘
+    const float ROLE_ICON_GAP  = 13f;
+
     void Awake() => Init();
 
     public override bool Init()
@@ -357,14 +362,155 @@ public class UI_SkillDetailPopup : UI_Popup
 
         // 이름 — 한/영 (NameEng 폴백). 스킬 이름 노드는 ItemPopupItemName.
         SetText(Texts.ItemPopupItemName, Managers.Ability.GetName(skillId));
-        // 설명 — 한/영 (DescEng 폴백)
-        SetText(Texts.SkillDescText, Managers.Ability.GetDesc(skillId));
+        // 설명 — 한/영 (DescEng 폴백) + 슬39 발동조건/효과 한 줄
+        string desc = Managers.Ability.GetDesc(skillId);
+        string trig = BuildTriggerDesc(skillId);
+        if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
+        SetText(Texts.SkillDescText, desc);
         // 능력 단계 "【 LEVEL: lv/max 】"
         int lv = Mathf.Max(1, Managers.Ability.GetLevel(skillId));
         int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : lv;
         SetText(Texts.SkillLvTxt, $"【 LEVEL: <color=yellow>{lv}</color>/{maxLv} 】");
 
         RefreshMemorizeState();
+        RefreshRoleIcons();
+    }
+
+    // [능력 정보창 #1] 능력 종류에 따라 아이콘 표시. 기획서 매핑:
+    //  기술=Sword01 / 마법=Staff01(미존재 → Hud_icon_magic 대체) / 수비=role_icon_gladiator / 지원=role_icon_darkmage.
+    //  "2가지 종류 이상이면 여러 개" — 현재 데이터는 StatType 1개라 종류 1개. 데이터 확장 시 자동으로 가로 나열.
+    static string RoleIconKey(AbilityManager.Role r)
+    {
+        switch (r)
+        {
+            case AbilityManager.Role.Skill: return "Sword01";
+            case AbilityManager.Role.Spell: return "Hud_icon_magic";
+            case AbilityManager.Role.Def:   return "role_icon_gladiator";
+            default:                        return "role_icon_darkmage";   // Util(지원)
+        }
+    }
+
+    // ── 슬39: 발동조건/효과 설명 ──
+    string BuildTriggerDesc(int id)
+    {
+        if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return "";
+        if (d.TriggerType == Define.AbilityTrigger.None) return "";
+
+        string eff = EffectDesc(d);
+        if (d.TriggerType == Define.AbilityTrigger.Probability)
+        {
+            string conds = "";
+            if (d.Conditions != null)
+                for (int i = 0; i < d.Conditions.Count; i++)
+                    conds += (i > 0 ? " / " : "") + CondKor(d.Conditions[i], d.ConditionValue);
+            return $"<color=#FFD24A>[{conds}]</color> {d.ProcChance:0}% 확률로 {eff}";
+        }
+        // Time
+        return $"<color=#FFD24A>[{ContextKor(d.ActiveContext)}]</color> {d.Cooldown:0.#}초마다 {eff}";
+    }
+
+    static string CondKor(Define.AbilityCondition c, float p)
+    {
+        switch (c)
+        {
+            case Define.AbilityCondition.BattleStart: return "전투 시작 시";
+            case Define.AbilityCondition.OnAttack:    return "공격 시";
+            case Define.AbilityCondition.OnHit:       return "타격 시";
+            case Define.AbilityCondition.OnCrit:      return "치명타 시";
+            case Define.AbilityCondition.OnMiss:      return "공격이 빗나갈 시";
+            case Define.AbilityCondition.SelfEvade:   return "회피 시";
+            case Define.AbilityCondition.OnDamaged:   return "피격 시";
+            case Define.AbilityCondition.OnHeal:      return "체력 회복 시";
+            case Define.AbilityCondition.LowHp:       return $"HP {p:0}% 이하 시";
+            default:                                  return c.ToString();
+        }
+    }
+
+    static string ContextKor(Define.AbilityContext c)
+    {
+        switch (c)
+        {
+            case Define.AbilityContext.InBattle:    return "전투 중";
+            case Define.AbilityContext.OutOfBattle: return "비전투 중";
+            default:                                return "항시";
+        }
+    }
+
+    static string EffectDesc(Data.SkillData d)
+    {
+        switch (d.Effect)
+        {
+            case Define.AbilityEffect.Heal:        return $"체력 {d.EffectValue:0} 회복";
+            case Define.AbilityEffect.BonusDamage: return $"{d.EffectValue:0} 추가 피해";
+            case Define.AbilityEffect.Buff:
+                string dur = d.EffectDuration > 0 ? $" ({d.EffectDuration:0.#}초)" : "";
+                return $"{StatKor(d.EffectStat)} +{d.EffectValue:0}{dur}";
+            default:                               return "";
+        }
+    }
+
+    static string StatKor(string s)
+    {
+        switch (s)
+        {
+            case "PhysicalAtk": return "물리공격력";
+            case "MagicAtk":    return "마법공격력";
+            case "CritRate":    return "치명타 확률";
+            case "CritDamage":  return "치명타 피해";
+            case "AtkSpeed":    return "공격속도";
+            case "Accuracy":    return "명중률";
+            case "Def":         return "방어력";
+            case "MaxHp":       return "최대 체력";
+            case "Evasion":     return "회피율";
+            default:            return s;
+        }
+    }
+
+    void RefreshRoleIcons()
+    {
+        // 부모: 능력 ICON 슬롯(SkillDetailPopupIcon) — front 레이어라 가려지지 않음.
+        //  (상단 헤더에 붙이면 내부 패널 뒤로 들어가 가려짐)
+        var parent = GetObject((int)GameObjects.SkillDetailPopupIcon)?.transform;
+        if (parent == null) return;
+
+        if (_roleIconRow == null)
+        {
+            var rowGo = new GameObject("RoleIconRow", typeof(RectTransform));
+            _roleIconRow = rowGo.transform;
+            var rt = (RectTransform)_roleIconRow;
+            rt.SetParent(parent, false);
+            rt.SetAsLastSibling();
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0f, 0.5f);
+            rt.anchoredPosition = new Vector2(20f, -4f);   // 능력 아이콘 우측
+        }
+
+        for (int i = _roleIconRow.childCount - 1; i >= 0; i--)
+            Destroy(_roleIconRow.GetChild(i).gameObject);
+
+        if (SkillId < 0 || Managers.Ability == null) return;
+
+        AbilityManager.Role[] roles = { Managers.Ability.GetRole(SkillId) };
+        float x = 0f;
+        foreach (var role in roles)
+        {
+            var sp = Managers.Resource.Load<Sprite>(RoleIconKey(role));
+            if (sp == null) continue;
+
+            var go = new GameObject("RoleIcon_" + role, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(_roleIconRow, false);
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 0.5f);
+            rt.pivot = new Vector2(0f, 0.5f);
+            rt.sizeDelta = new Vector2(ROLE_ICON_SIZE, ROLE_ICON_SIZE);
+            rt.anchoredPosition = new Vector2(x, 0f);
+
+            var img = go.GetComponent<Image>();
+            img.sprite = sp;
+            img.preserveAspect = true;
+            img.raycastTarget = false;
+            x += ROLE_ICON_GAP;
+        }
     }
 
     // 슬43: 기억/망각 상태 + 마나(기억력) 점유량 표시.

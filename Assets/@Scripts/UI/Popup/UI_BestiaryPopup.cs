@@ -535,16 +535,16 @@ public class UI_BestiaryPopup : UI_Popup
     //  (per-몬스터 별과 동일한 "별 단계와 ANIM" 스펙. timeScale 0 팝업이라 SetUpdate(true).)
     void ApplyCompletionStarAnim()
     {
-        var star = GetImage((int)Images.AllSStarImage);
-        if (star == null) return;
+        //var star = GetImage((int)Images.AllSStarImage);
+        //if (star == null) return;
 
-        _completionStarTween?.Kill();
-        Transform tr = star.transform;
-        tr.localRotation = Quaternion.identity;
-        _completionStarTween = tr.DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
-                                 .SetEase(Ease.OutQuad)
-                                 .SetLoops(-1, LoopType.Restart)
-                                 .SetUpdate(true);
+        //_completionStarTween?.Kill();
+        //Transform tr = star.transform;
+        //tr.localRotation = Quaternion.identity;
+        //_completionStarTween = tr.DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
+        //                         .SetEase(Ease.OutQuad)
+        //                         .SetLoops(-1, LoopType.Restart)
+        //                         .SetUpdate(true);
     }
 
     // 슬라이드 71: 4개 스킬 아이콘 잠금/해금 + "+n 등급" + idle Anim
@@ -658,7 +658,8 @@ public class UI_BestiaryPopup : UI_Popup
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => { PunchScale(monTr); SpawnFlash(monTr); });
         seq.AppendInterval(0.1f);
-        seq.AppendCallback(() => PunchScale(starTr));
+        // 별은 PunchScale의 DOKill로 idle 회전까지 죽으므로, punch 후 항시 회전 Anim을 재시작.
+        seq.AppendCallback(() => { PunchScale(starTr); ApplyCompletionStarAnim(); });
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => PunchScale(numTr));
     }

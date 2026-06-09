@@ -145,6 +145,19 @@ namespace Data
         public float StatBonus;        // 버프 수치
         public int MaxLevel;
         public int MemoryCapacity;     // 슬38: 기억력 점유량. 0이면 [재능](항시 적용, 점유 없음)
+
+        // ── 슬39: 전투 발동조건 (없으면 None = 패시브) ──
+        public AbilityTrigger TriggerType;                                       // None / Probability / Time
+        public List<AbilityCondition> Conditions = new List<AbilityCondition>(); // 확률 발동 조건(1개 이상)
+        public float ProcChance = 100f;                                          // 확률 발동 n%
+        public float Cooldown;                                                   // 시간 발동 재사용 대기(초)
+        public AbilityContext ActiveContext;                                     // 시간 발동 맥락(InBattle/OutOfBattle/Always)
+        public float ConditionValue;                                             // 조건 파라미터(LowHp = HP% 임계)
+        // 발동 효과
+        public AbilityEffect Effect;                                             // Heal / BonusDamage / Buff
+        public string EffectStat;                                                // Buff 대상 스탯(PhysicalAtk 등)
+        public float EffectValue;                                                // 효과 수치
+        public float EffectDuration;                                             // Buff 지속(초), 0=전투 종료까지
     }
 
     [Serializable]

@@ -117,6 +117,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21e00402d0335074f87afd054e9ce220
+    m_Address: role_icon_gladiator.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 21f014fa62c97a2499447f8b114a1fd3
     m_Address: Mythic_Button_Return.sprite
     m_ReadOnly: 0
@@ -161,6 +167,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 32595f7867305dd49b330824c92db866
     m_Address: Speed_Potion4.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 358479ccd7bc7af409a454ce9483522e
+    m_Address: role_icon_darkmage.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -251,6 +263,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55e0f2fb96f5d9045b71cff5cd3f3015
     m_Address: class05.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56930aa6212b0984f85cdf6134563d73
+    m_Address: Hud_icon_magic.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

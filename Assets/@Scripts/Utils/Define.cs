@@ -68,6 +68,46 @@ public class Define
         Repeat,
     }
 
+    // ── 슬39: 능력 전투 발동조건 ──
+    // 능력 발동 방식. None = 패시브(항시 스탯 가산, 기존 동작).
+    public enum AbilityTrigger
+    {
+        None,         // 패시브 (스탯만 가산)
+        Probability,  // 확률 발동: 조건 충족 시 ProcChance% 확률로 발동
+        Time,         // 시간 발동: ActiveContext 충족 시 Cooldown마다 발동 (쿨타임 스킬)
+    }
+
+    // 확률 발동 조건 (슬39 — 연속 n회/사망조건 등 stateful 조건은 후속).
+    public enum AbilityCondition
+    {
+        BattleStart,  // 전투 시작 시
+        OnAttack,     // 공격 시
+        OnHit,        // 타격(명중) 시
+        OnCrit,       // 치명타 시
+        OnMiss,       // 타격이 빗나갈 시
+        SelfEvade,    // 자신이 회피 시
+        OnDamaged,    // 피격 시
+        OnHeal,       // 체력 회복 시
+        LowHp,        // 본인 HP가 ConditionValue% 이하가 될 시 (전투당 1회)
+    }
+
+    // 시간 발동 맥락 (슬39).
+    public enum AbilityContext
+    {
+        InBattle,     // 전투 중 발동
+        OutOfBattle,  // 비전투 중 발동
+        Always,       // 항시 발동
+    }
+
+    // 능력 발동 효과.
+    public enum AbilityEffect
+    {
+        None,
+        Heal,         // 본인 HP 회복 (EffectValue)
+        BonusDamage,  // 현재 타겟에게 추가 피해 (EffectValue)
+        Buff,         // 본인 스탯 일시 증가 (EffectStat += EffectValue, EffectDuration초; 0이면 영구/전투종료까지)
+    }
+
     public enum CraftCategory
     {
         Potion,
