@@ -178,6 +178,12 @@ public class UI_MinionInfoPopup : UI_Popup
             var t = GetText((int)nt);
             if (t != null) t.gameObject.SetActive(false);
         }
+        // 슬21: 능력치 업그레이드 VFX도 기본 OFF (향상된 스탯에서만 CoImprovedStat이 켠다)
+        foreach (var sfx in new[] { GameObjects.MinionInfoPopupDmgUpgradeSFX, GameObjects.MinionInfoPopupASUpgradeSFX, GameObjects.MinionInfoPopupCritUpgradeSFX })
+        {
+            var go = GetObject((int)sfx);
+            if (go != null) go.SetActive(false);
+        }
 
         // 슬86: 타이틀 "나의 미니몬"(한/영) + Outline 784806 (0.5, 0.5)
         var title = GetText((int)Texts.MinionInfoPopupTitle);
@@ -282,7 +288,8 @@ public class UI_MinionInfoPopup : UI_Popup
     static readonly int[] RANK_SPRITE_IDX = { 252, 253, 254, 255, 256, 258 };
 
     // 능력치 값/등급을 MinMonManager(실 데이터)에서 조회. 등급 0~5 = E/D/C/B/A/SS(슬18).
-    void RefreshStat(Texts textId, Images rankImg, Images frameMask, MMStat stat)
+    //  gradeOverride/numberOverride 지정 시(슬21 포획 전 값 연출) 그 값으로 표기.
+    void RefreshStat(Texts textId, Images rankImg, Images frameMask, MMStat stat, int gradeOverride = -1, float numberOverride = -1f)
     {
         var tmp = GetText((int)textId);
         if (tmp == null) return;
@@ -295,6 +302,8 @@ public class UI_MinionInfoPopup : UI_Popup
             case MMStat.AtkSpeed: val = Managers.MinMon.GetAtkSpeed(_dataId); g = Managers.MinMon.GetAtkSpeedGrade(_dataId); break;
             default:              val = Managers.MinMon.GetCritRate(_dataId); g = Managers.MinMon.GetCritGrade(_dataId);     break;
         }
+        if (gradeOverride  >= 0)   g   = gradeOverride;
+        if (numberOverride >= 0f)  val = numberOverride;
 
         tmp.text = Mathf.RoundToInt(val).ToString();
         ApplyFont(tmp, Define.FontType.UI);
@@ -575,24 +584,75 @@ public class UI_MinionInfoPopup : UI_Popup
         StartCoroutine(CoFadeInFullGrowth(0.5f));           // 0.5초 후 FullGrowthInText FadeIn
     }
 
-    // 슬21: 1초 뒤부터 공격력→공속→치명타 순서로 숫자+등급 ICON Scale 펀치.
+    // 슬21: 1초 뒤부터 공격력→공속→치명타 순서로, 실제로 오른 능력치만 Anim 재생(슬21-c,e).
     //  모든 Anim 재생 후 0.5초 뒤 FullGrowthInText FadeIn (슬21-f).
     IEnumerator CoGrowthSequence()
     {
-        yield return new WaitForSecondsRealtime(1f);
-        yield return CoPunchStat(Texts.DamageNumberText, Images.DamageRankImage);
-        yield return CoPunchStat(Texts.ASNumberText,     Images.ASRankImage);
-        yield return CoPunchStat(Texts.CritNumberText,   Images.CritRankImage);
+        // 슬21-d: Anim 전엔 "포획 전 값(이전 등급/이전 공명도 기준 숫자)"을 보여준다.
+        float newSync  = Managers.MinMon.GetSyncRate(_dataId);
+        float prevSync = Mathf.Max(0f, newSync - MinMonManager.SYNC_PER_CATCH);
+        float ratio = newSync > 0f ? (1f + prevSync) / (1f + newSync) : 1f;   // 새 숫자 → 이전 숫자 환산
+        var mm = Managers.MinMon;
+        if (mm.LastAtkImproved)  RefreshStat(Texts.DamageNumberText, Images.DamageRankImage, Images.MinionInfoPopupDmgFrameMask,  MMStat.Atk,      mm.LastAtkGradePrev,  Managers.MinMon.GetAtk(_dataId)      * ratio);
+        if (mm.LastASImproved)   RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     Images.MinionInfoPopupASFrameMask,   MMStat.AtkSpeed, mm.LastASGradePrev,   Managers.MinMon.GetAtkSpeed(_dataId) * ratio);
+        if (mm.LastCritImproved) RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   Images.MinionInfoPopupCritFrameMask, MMStat.Crit,     mm.LastCritGradePrev, Managers.MinMon.GetCritRate(_dataId) * ratio);
+
+        yield return new WaitForSecondsRealtime(1f);   // 슬21-c: 1초 뒤부터
+        if (mm.LastAtkImproved)  yield return CoImprovedStat(MMStat.Atk);
+        if (mm.LastASImproved)   yield return CoImprovedStat(MMStat.AtkSpeed);
+        if (mm.LastCritImproved) yield return CoImprovedStat(MMStat.Crit);
         yield return CoFadeInFullGrowth(0.5f);
     }
 
-    IEnumerator CoPunchStat(Texts numTxt, Images rankImg)
+    // 슬21-b,d: 향상된 한 능력치의 연출 — 프레임 Flip(Rotate y180 ×4 Incremental) + Punch,
+    //  플립 중간에 숫자/등급 ICON을 새 값으로 갱신, 업그레이드 VFX 표시, NEW 뱃지 Scale(FROM 3, OutBack).
+    IEnumerator CoImprovedStat(MMStat stat)
     {
-        var t = GetText((int)numTxt);
-        var img = GetImage((int)rankImg);
-        if (t != null) t.rectTransform.DOPunchScale(new Vector3(0.4f, 0.4f, 0f), 0.4f, 8).SetUpdate(true);
-        if (img != null) img.rectTransform.DOPunchScale(new Vector3(0.4f, 0.4f, 0f), 0.4f, 8).SetUpdate(true);
-        yield return new WaitForSecondsRealtime(0.45f);
+        Texts numTxt, newTxt; Images rankImg, frameImg, frameMask; GameObjects sfx;
+        switch (stat)
+        {
+            case MMStat.Atk:
+                numTxt = Texts.DamageNumberText; rankImg = Images.DamageRankImage; frameImg = Images.MinionInfoPopupDmgFrame; frameMask = Images.MinionInfoPopupDmgFrameMask; newTxt = Texts.MinionATKNewText; sfx = GameObjects.MinionInfoPopupDmgUpgradeSFX; break;
+            case MMStat.AtkSpeed:
+                numTxt = Texts.ASNumberText; rankImg = Images.ASRankImage; frameImg = Images.MinionInfoPopupASFrame; frameMask = Images.MinionInfoPopupASFrameMask; newTxt = Texts.MinionASNewText; sfx = GameObjects.MinionInfoPopupASUpgradeSFX; break;
+            default:
+                numTxt = Texts.CritNumberText; rankImg = Images.CritRankImage; frameImg = Images.MinionInfoPopupCritFrame; frameMask = Images.MinionInfoPopupCritFrameMask; newTxt = Texts.MinionCritNewText; sfx = GameObjects.MinionInfoPopupCritUpgradeSFX; break;
+        }
+
+        var frame = GetImage((int)frameImg)?.rectTransform;
+        // 업그레이드 VFX ON (활성 시 재생)
+        var sfxGo = GetObject((int)sfx);
+        if (sfxGo != null) sfxGo.SetActive(true);
+
+        // 프레임 Flip(Rotate y180, 0.2s ×4 Incremental = 총 720°) + 0.9s 뒤 Punch (vibrato 8)
+        if (frame != null)
+        {
+            frame.DORotate(new Vector3(0f, 180f, 0f), 0.2f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Incremental).SetUpdate(true);
+            frame.DOPunchScale(new Vector3(0.5f, 0.5f, 0f), 0.4f, 8).SetDelay(0.9f).SetUpdate(true);
+        }
+
+        // 플립 중간(앞면이 안 보이는 시점)에 숫자/등급 ICON을 새 값으로 교체
+        yield return new WaitForSecondsRealtime(0.4f);
+        RefreshStat(numTxt, rankImg, frameMask, stat);
+
+        // NEW 뱃지: Scale FROM 3 → 1 (OutBack 0.3s) 후 원래 Move Anim 재생
+        var nt = GetText((int)newTxt);
+        if (nt != null)
+        {
+            nt.gameObject.SetActive(true);
+            nt.rectTransform.localScale = Vector3.one * 3f;
+            nt.rectTransform.DOScale(1f, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
+            var moveAnim = nt.GetComponent<DG.Tweening.DOTweenAnimation>();
+            if (moveAnim != null) StartCoroutine(CoDelayed(0.3f, () => moveAnim.DORestart()));
+        }
+
+        yield return new WaitForSecondsRealtime(0.9f);   // 프레임 Punch(0.9 delay)까지 마무리
+    }
+
+    IEnumerator CoDelayed(float delay, System.Action act)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        act?.Invoke();
     }
 
     void OnClickSkill()

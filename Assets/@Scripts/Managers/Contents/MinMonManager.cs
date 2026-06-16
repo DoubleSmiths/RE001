@@ -86,6 +86,14 @@ public class MinMonManager
     // 마지막 포획 결과 (UI 연출용 — 슬20 첫포획 / 슬21 재포획 향상 / 슬22 향상없음)
     public bool LastCatchWasFirst { get; private set; }
     public bool LastCatchImproved { get; private set; }
+    // 슬21-e: 실제로 오른 능력치만 Anim 재생하도록 스탯별 향상 여부 보관
+    public bool LastAtkImproved  { get; private set; }
+    public bool LastASImproved   { get; private set; }
+    public bool LastCritImproved { get; private set; }
+    // 슬21-d: Anim 중 "포획 전 등급 → 새 등급" 전환 연출용 이전 등급
+    public int LastAtkGradePrev  { get; private set; }
+    public int LastASGradePrev   { get; private set; }
+    public int LastCritGradePrev { get; private set; }
 
     public void AddMinMon(int dataId)
     {
@@ -94,6 +102,7 @@ public class MinMonManager
         // 슬20/21: 능력치 등급 결정. 첫 포획은 새로 롤, 재포획은 굴려서 더 높으면 갱신.
         LastCatchWasFirst = save.CaughtCount == 0;
         LastCatchImproved = false;
+        LastAtkImproved = LastASImproved = LastCritImproved = false;
         if (LastCatchWasFirst)
         {
             save.AtkGrade      = RollGrade();
@@ -103,10 +112,14 @@ public class MinMonManager
         else
         {
             int a = save.AtkGrade, s = save.AtkSpeedGrade, c = save.CritGrade;
+            LastAtkGradePrev = a; LastASGradePrev = s; LastCritGradePrev = c;
             save.AtkGrade      = Mathf.Max(save.AtkGrade,      RollGrade());
             save.AtkSpeedGrade = Mathf.Max(save.AtkSpeedGrade, RollGrade());
             save.CritGrade     = Mathf.Max(save.CritGrade,     RollGrade());
-            LastCatchImproved  = save.AtkGrade > a || save.AtkSpeedGrade > s || save.CritGrade > c;
+            LastAtkImproved    = save.AtkGrade      > a;
+            LastASImproved     = save.AtkSpeedGrade > s;
+            LastCritImproved   = save.CritGrade     > c;
+            LastCatchImproved  = LastAtkImproved || LastASImproved || LastCritImproved;
         }
 
         save.CaughtCount++;
