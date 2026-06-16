@@ -67,29 +67,32 @@ public class UI_WarningPopup : UI_Popup
         var txt = GetText((int)Texts.TameSlotMaxWarningPopupText);
         if (txt != null)
         {
-            // 슬23/25: 로컬라이즈 키(MinimonInterestFullText) 미존재 → 한글 리터럴 (TODO: 데이터화)
-            txt.text = $"{cname}(이)가 관심을 보였지만\n포획 창고가 가득 찼습니다!";
+            // 슬25: CreatureData.Name + MinimonInterestFullText (로컬라이즈)
+            txt.text = cname + Util.Localize(LocalizeKey.MinimonInterestFullText);
             ApplyFont(txt, FontType.UI);
         }
 
         StartCoroutine(CoShow());
     }
 
+    // 슬25: 슬24와 같은 Side UI(빨강) → AttactedPopup과 동일하게 우측에서 슬라이드인 → 3초 → 슬라이드아웃.
+    //  rest=(27,45): 바 우측 끝이 화면 우측 경계에 flush. (Instantiate 시 anchoredPosition.x 변형되므로 27 고정, y 유지)
     IEnumerator CoShow()
     {
-        var cg = gameObject.GetOrAddComponent<CanvasGroup>();
+        if (_frame == null) yield break;
 
-        if (_frame != null)
-        {
-            _frame.localScale = Vector3.one * 0.7f;
-            _frame.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
-        }
-        cg.alpha = 0f;
-        cg.DOFade(1f, 0.25f).SetUpdate(true);
+        _frame.localScale = Vector3.one;
+        Vector2 rest = new Vector2(27f, _frame.anchoredPosition.y);
+        Vector2 from = rest + new Vector2(150f, 0f);
 
-        yield return new WaitForSecondsRealtime(2f);
+        _frame.anchoredPosition = from;
+        _frame.DOKill();
+        _frame.DOAnchorPos(rest, 0.5f).SetEase(Ease.OutExpo).SetUpdate(true);
 
-        cg.DOFade(0f, 0.3f).SetEase(Ease.InQuad).SetUpdate(true)
-          .OnComplete(() => Managers.Resource.Destroy(gameObject));
+        yield return new WaitForSecondsRealtime(0.5f + 3f);
+
+        _frame.DOKill();
+        _frame.DOAnchorPos(from, 0.5f).SetEase(Ease.InExpo).SetUpdate(true)
+              .OnComplete(() => Managers.Resource.Destroy(gameObject));
     }
 }

@@ -370,8 +370,8 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/part2/Slide 23 - 관심 알림 (Side Popup 성공)", false, 211)]
     static void P2_S23_Attract() { if (!Require()) return; Managers.UI.ShowAttractedPopup(2001, storageFull: false); Spec("슬23~24", "Move From x+150 OutExpo 0.5s → 3s 유지 → DoPlayBackwards. Layer 색: 파랑/핑크 (성공). 몬스터 머리 위 Emoj_Shy 동시 (현재 prefab 부재)."); }
 
-    [MenuItem("Test/Quest Verify/part2/Slide 25 - 관심 창고가득 경고 (Side Popup 빨강)", false, 212)]
-    static void P2_S25_WarningFull() { if (!Require()) return; Managers.UI.ShowAttractedPopup(2002, storageFull: true); Spec("슬25", "Layer1~3 전부 B70000. 'CreatureName + MinimonInterestFullText'."); }
+    [MenuItem("Test/Quest Verify/part2/Slide 25 - 관심 창고가득 경고 (UI_WarningPopup 빨강)", false, 212)]
+    static void P2_S25_WarningFull() { if (!Require()) return; Managers.UI.ShowWarningPopup(2002); Spec("슬25", "UI_WarningPopup: Layer1~3 전부 B70000, 우측에서 슬라이드인(rest 27,45) → 3초 → 슬라이드아웃. Text='CreatureName + MinimonInterestFullText'. (라이브 사냥 StorageFull 경로와 동일)"); }
 
     [MenuItem("Test/Quest Verify/part2/Slide 26 - 도감 버튼 NEW + 카운트(슬18, 2002 관심 추가)", false, 213)]
     static void P2_S26_BottomUI()
