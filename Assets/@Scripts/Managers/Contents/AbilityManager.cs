@@ -60,6 +60,40 @@ public class AbilityManager
         return !IsKorean && !string.IsNullOrEmpty(d.DescEng) ? d.DescEng : d.Description;
     }
 
+    // 능력 정보창 #4: 능력 이야기(flavor) 한/영. 없으면 빈 문자열.
+    public string GetStory(int id)
+    {
+        if (!TryData(id, out var d)) return "";
+        return !IsKorean && !string.IsNullOrEmpty(d.StoryEng) ? d.StoryEng : (d.Story ?? "");
+    }
+
+    // 능력 정보창 #5: 능력 출처(획득 경로). 미니몬 고유기술(id-4000이 미니몬 범위)은 데이터 미기재여도 Minion 파생.
+    public Define.AbilitySource GetSource(int id)
+    {
+        if (TryData(id, out var d))
+        {
+            // 미니몬 고유기술(6001/6002 = creatureId+OFFSET)은 데이터 기본값이어도 Minion 취급.
+            if (d.Source == Define.AbilitySource.Unlimited && IsMinionSkill(id))
+                return Define.AbilitySource.Minion;
+            return d.Source;
+        }
+        return IsMinionSkill(id) ? Define.AbilitySource.Minion : Define.AbilitySource.Unlimited;
+    }
+
+    // 능력 정보창 #6: 게이팅 미니몬 CreatureId. 데이터 0이면 (id-OFFSET)로 파생.
+    public int GetRequiredMinionId(int id)
+    {
+        if (TryData(id, out var d) && d.RequiredMinionId > 0) return d.RequiredMinionId;
+        return IsMinionSkill(id) ? id - MINION_SKILL_OFFSET : 0;
+    }
+
+    // 미니몬 고유기술 id 범위(creatureId 2000번대 + OFFSET = 6000번대)에 해당하고 원본 미니몬이 존재하는지.
+    bool IsMinionSkill(int id)
+    {
+        int creatureId = id - MINION_SKILL_OFFSET;
+        return creatureId > 0 && Managers.Data.MinMonDic != null && Managers.Data.MinMonDic.ContainsKey(creatureId);
+    }
+
     public bool IsLearned(int id)  => Learned.Contains(id);
     public bool IsEquipped(int id) => Equipped.Contains(id);
     public bool IsTalent(int id)   => TryData(id, out var d) && d.MemoryCapacity <= 0; // 점유량 0 = 재능

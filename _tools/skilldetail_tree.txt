@@ -1,0 +1,319 @@
+UI_SkillDetailPopup
+  FIXED
+    In_Frame
+      SkillDetailPopupBackground
+      SkillDetailPopup
+        SkillDetailPopupMain
+          LvEffectTxt_Size | "○ 공격 시 <color=yellow>15%</color> 확률로
+    적을 후려쳐 <color=yellow>100%</color>의
+    공격력으로 추가 피해를 줍니다."
+            Img_LvEffectTxt_Size_01
+              NotChanging
+                Title
+                  Txt_Title_03 | "SKILL"
+                SubFrame
+                  Img_SubFrame_01
+                    SkillDetailActiveEf
+                      EFrame
+                Img_NotChanging_01
+                #FX_splash_spark_floor2
+                  floor
+                  particle
+                  dust_spread
+                  center_up
+              WhereToFindTxtFrame
+                #WhereToFindTxt | "연금공방"
+              ReqGroup
+                #ReqItemGroup
+                  Txt_ReqItemGroup_07 | "REQ.ITEMS"
+                  Img_ReqItemGroup_02
+                  Panel_ReqItemGroup_01
+                    #ReqItemBox
+                      Img_ReqItemBox_10
+                      Mask_ReqItemBox_06
+                        Img_GlowMask_16
+                      Img_ReqItemBox_03
+                      Img_ReqItemBox_07
+                      Txt_ReqItemBox_03 | "15/32"
+                    #ReqItemBox_1
+                      Img_ReqItemBox_1_16
+                      Mask_ReqItemBox_1_07
+                        Img_GlowMask_27
+                      Img_ReqItemBox_1_06
+                      Img_ReqItemBox_1_04
+                      Txt_ReqItemBox_1_09 | "15/32"
+                    #ReqItemBox_2
+                      Img_ReqItemBox_2_15
+                      Mask_ReqItemBox_2_05
+                        Img_GlowMask_24
+                      Img_ReqItemBox_2_12
+                      Img_ReqItemBox_2_10
+                      Txt_ReqItemBox_2_04 | "15/32"
+                    #ReqItemBox_3
+                      Img_ReqItemBox_3_17
+                      Mask_ReqItemBox_3_08
+                        Img_GlowMask_22
+                      Img_ReqItemBox_3_02
+                      Img_ReqItemBox_3_15
+                      Txt_ReqItemBox_3_08 | "15/32"
+                    #ReqItemBox_4
+                      Img_ReqItemBox_4_11
+                      Mask_ReqItemBox_4_09
+                        Img_GlowMask_13
+                      Img_ReqItemBox_4_07
+                      Img_ReqItemBox_4_05
+                      Txt_ReqItemBox_4_07 | "15/32"
+                #ReqEquipGroup
+                  Txt_ReqEquipGroup_06 | "REQ.EQUIP"
+                  Img_ReqEquipGroup_06
+                  #Txt_ReqEquipGroup_03 | "- MAX LEVEL -"
+                  #Panel_ReqEquipGroup_02
+                    #ReqItemBox1_1
+                      Img_ReqItemBox1_1_09
+                      Mask_ReqItemBox1_1_14
+                        Img_GlowMask_21
+                      Img_ReqItemBox1_1_04
+                      Img_ReqItemBox1_1_08
+                      Txt_ReqItemBox1_1_06 | "15/32"
+                    #ReqItemBox1_2
+                      Img_ReqItemBox1_2_13
+                      Mask_ReqItemBox1_2_04
+                        Img_GlowMask_15
+                      Img_ReqItemBox1_2_08
+                      Img_ReqItemBox1_2_11
+                      Txt_ReqItemBox1_2_02 | "15/32"
+                    #ReqItemBox1_3
+                      Img_ReqItemBox1_3_06
+                      Mask_ReqItemBox1_3_15
+                        Img_GlowMask_14
+                      Img_ReqItemBox1_3_01
+                      Img_ReqItemBox1_3_16
+                      Txt_ReqItemBox1_3_05 | "15/32"
+                    #ReqItemBox1_4
+                      Img_ReqItemBox1_4_05
+                      Mask_ReqItemBox1_4_13
+                        Img_GlowMask_20
+                      Img_ReqItemBox1_4_07
+                      Img_ReqItemBox1_4_02
+                      Txt_ReqItemBox1_4_10 | "15/32"
+                    #ReqItemBox1_5
+                      Img_ReqItemBox1_5_18
+                      Mask_ReqItemBox1_5_03
+                        Img_GlowMask_17
+                      Img_ReqItemBox1_5_11
+                      Img_ReqItemBox1_5_09
+                      Txt_ReqItemBox1_5_01 | "15/32"
+                #ReqMinionGroup
+                  Txt_ReqMinionGroup_02 | "REQ.MINION"
+                  Img_ReqMinionGroup_03
+                  #Txt_ReqMinionGroup_04 | "- MAX LEVEL -"
+                  ReqMinionList
+                    #ReqMinionBox
+                      Img_ReqMinionBox_12
+                      Mask_ReqMinionBox_10
+                        Img_GlowMask_18
+                        Img_GlowMask_30
+                      Img_ReqMinionBox_14
+                        Txt_BlockImg_05 | "?"
+                      #Img_ReqMinionBox_06
+                      #Img_ReqMinionBox_04
+                      Panel_ReqMinionBox_02
+                        Txt_NeedMinionTxtGroup_09 | "하수인 또는
+분석 필요"
+                        #Txt_NeedMinionTxtGroup_01 | "REQ<size=2> </size>MINION
+OR ANALYS"
+                      #Txt_ReqMinionBox_07 | "<color=lime>100</color>/100"
+                      #Txt_ReqMinionBox_05 | "최상등급"
+                    #ReqMinionBox_1
+                      Img_ReqMinionBox_1_04
+                      Mask_ReqMinionBox_1_12
+                        Img_GlowMask_26
+                        Img_GlowMask_11
+                      Img_ReqMinionBox_1_13
+                        Txt_BlockImg_02 | "?"
+                      #Img_ReqMinionBox_1_01
+                      #Img_ReqMinionBox_1_02
+                      Panel_ReqMinionBox_1_03
+                        Txt_NeedMinionTxtGroup_08 | "하수인 또는
+분석 필요"
+                        #Txt_NeedMinionTxtGroup_05 | "REQ<size=2> </size>MINION
+OR ANALYS"
+                      #Txt_ReqMinionBox_1_04 | "<color=lime>100</color>/100"
+                      #Txt_ReqMinionBox_1_02 | "최상등급"
+                    #ReqMinionBox_2
+                      Img_ReqMinionBox_2_07
+                      Mask_ReqMinionBox_2_02
+                        Img_GlowMask_23
+                        Img_GlowMask_29
+                      Img_ReqMinionBox_2_12
+                        Txt_BlockImg_04 | "?"
+                      #Img_ReqMinionBox_2_05
+                      #Img_ReqMinionBox_2_03
+                      Panel_ReqMinionBox_2_04
+                        Txt_NeedMinionTxtGroup_07 | "하수인 또는
+분석 필요"
+                        #Txt_NeedMinionTxtGroup_04 | "REQ<size=2> </size>MINION
+OR ANALYS"
+                      #Txt_ReqMinionBox_2_02 | "<color=lime>100</color>/100"
+                      #Txt_ReqMinionBox_2_01 | "최상등급"
+                    #ReqMinionBox_3
+                      Img_ReqMinionBox_3_08
+                      Mask_ReqMinionBox_3_11
+                        Img_GlowMask_19
+                        Img_GlowMask_28
+                      Img_ReqMinionBox_3_03
+                        Txt_BlockImg_01 | "?"
+                      #Img_ReqMinionBox_3_02
+                      #Img_ReqMinionBox_3_05
+                      Panel_ReqMinionBox_3_01
+                        Txt_NeedMinionTxtGroup_06 | "하수인 또는
+분석 필요"
+                        #Txt_NeedMinionTxtGroup_03 | "REQ<size=2> </size>MINION
+OR ANALYS"
+                      #Txt_ReqMinionBox_3_05 | "<color=lime>100</color>/100"
+                      #Txt_ReqMinionBox_3_03 | "최상등급"
+                    #ReqMinionBox_4
+                      Img_ReqMinionBox_4_14
+                      Mask_ReqMinionBox_4_01
+                        Img_GlowMask_25
+                        Img_GlowMask_12
+                      Img_ReqMinionBox_4_06
+                        Txt_BlockImg_03 | "?"
+                      #Img_ReqMinionBox_4_03
+                      #Img_ReqMinionBox_4_01
+                      Panel_ReqMinionBox_4_05
+                        Txt_NeedMinionTxtGroup_10 | "하수인 또는
+분석 필요"
+                        #Txt_NeedMinionTxtGroup_02 | "REQ<size=2> </size>MINION
+OR ANALYS"
+                      #Txt_ReqMinionBox_4_01 | "<color=lime>100</color>/100"
+                      #Txt_ReqMinionBox_4_04 | "최상등급"
+                #UnlimitedPotenGroup
+                  Txt_UnlimitedPotenGroup_08 | "무한한 잠재력"
+                  Img_UnlimitedPotenGroup_05
+                  Txt_UnlimitedPotenGroup_03 | "이 기술의 잠재력은 무궁무진하며
+배우는 길 또한 끝이 없습니다.
+하나씩 차근차근 배워나가 봅시다."
+                  #Txt_UnlimitedPotenGroup_01 | "This skill has unlimited potential,
+and the paths to learning it are endless.
+Do not hesitate. Take your time.
+Time will be on your side."
+                #ClassGroup
+                  Txt_ClassGroup_05 | "직업 기술"
+                  Img_ClassGroup_01
+                  Txt_ClassGroup_04 | "여행자"
+                  #Txt_ClassGroup_02 | "TRAVELER"
+                #Txt_ReqGroup_01 | "- MAX LEVEL -"
+                NextLvlBtn
+                  Img_NextLvlBtn_06
+                  Mask_NextLvlBtn_06
+                    Img_Item_04
+                    Img_Item_11
+                  Txt_NextLvlBtn_07 | "물약개선"
+                BackBtn
+                  Img_BackBtn_01
+                  Mask_BackBtn_02
+                    Img_Item_03
+                    Img_Item_07
+                  Txt_BackBtn_12 | "물약개선"
+                CantCraftBtn
+                  Img_CantCraftBtn_02
+                  Mask_CantCraftBtn_08
+                    Img_Item_01
+                    Img_Item_10
+                  Txt_CantCraftBtn_11 | "재료부족"
+                CraftBtn
+                  Img_CraftBtn_04
+                  Mask_CraftBtn_10
+                    Img_Item_02
+                    Img_Item_08
+                  Txt_CraftBtn_05 | "제작"
+                NotInPaceCraftBtn
+                  Img_NotInPaceCraftBtn_05
+                  Mask_NotInPaceCraftBtn_09
+                    Img_Item_05
+                    yoyo
+                    Img_Item_09
+                  Txt_NotInPaceCraftBtn_03 | "NEED
+SKILL MASTER"
+                  #Txt_NotInPaceCraftBtn_04 | "NEED
+SKILL MASTER"
+                MemorizeBtn
+                  Img_MemorizeBtn_03
+                  Mask_MemorizeBtn_04
+                    Img_Item_06
+                    Img_Item_12
+                    #Deactimg
+                      Img_Deactimg_02
+                      Img_Deactimg_04
+                    LackMemoryImg
+                      Img_LackMemoryImg_01
+                      Img_LackMemoryImg_03
+                  Txt_MemorizeBtn_01 | "기억력 부족"
+                  MemoryDisplayGroup
+                    Txt_MemoryDisplayGroup_02 | "<color=lime>999(-99)</color>/999"
+                      Btn_MemoryAmountTxt_02
+                        #Img_MemoryIcon_05
+                          Txt_Image_02 | "MEMORY"
+              SkillDetailPopupTitle
+                Img_SkillDetailPopupTitle_03
+                Mask
+                  Img_Mask_03
+                  Glow
+                  ItemPopupItemName | "OVERWHELMING CHARISMA"
+              SkillDetailPopupIcon
+                Img_SkillDetailPopupIcon_02
+                Img_SkillDetailPopupIcon_04
+                WIcon
+                #Img_SkillDetailPopupIcon_01
+                  Img_BlockImg_01
+                MasterAndMEMGroup
+                  #MasterIcon
+                    Img_MasterIcon_02
+                    Txt_MasterIcon_02 | "MASTER"
+                  #MemorizedIcon
+                    Img_MemorizedIcon_01
+                    Txt_MemorizedIcon_01 | "기억중"
+                #FX_SkillUpgrade
+                  #Star_01_Start
+                  GlowDot_01_Start
+                  GlowDot_02_Start
+                  GlowDot_01_End
+                  GlowDot_02_End
+                    GlowDot_02_End_Light
+              __2
+              __3
+              SkillDescText | "산전수전을 겪은 당신.
+
+모험에 대한 기대와 설레임은 어느덧 사라지고,
+경험에 의한 철저한 준비와 생존능력만이 남았다."
+              SkillLvTxt | "【 LEVEL: <color=yellow>5</color>/10 】"
+              LvEffectTxt_Real | "○ 공격 시 <color=yellow>20% ▶ 20%</color> 확률로
+    마법으로 만든 물 채찍을 휘둘러
+    공격력으로 추가 피해를 줍니다."
+              #Lv0Text | "- 습득 필요 -"
+              NeedMemoryGroup
+                #GotMEM
+                  Txt_GotMEM_01 | "6"
+                  Btn_GotMEM_01
+                    #Img_MemoryIcon_04
+                      Txt_Image_01 | "MEMORY"
+                #NoMEM | "재능"
+                  Btn_NoMEM_02
+                  Txt_NoMEM_04 | "?"
+                  #TalentHelpPopup
+                    #Txt_TalentHelpPopup_09 | "재능은 타고난
+능력입니다.
+
+기억할 필요
+없이 자동으로
+적용됩니다."
+                    #GameObject_1 | "TALENT is an
+inherent
+ability which
+appied
+permanently
+without
+MEMORIZING it."
+        Xbutton
+          Txt_Xbutton_01 | "X"

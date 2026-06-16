@@ -320,6 +320,8 @@ public class UI_SkillDetailPopup : UI_Popup
 
     public int SkillId { get; private set; } = -1;
 
+    int _reqMinionId;   // #6: 현재 능력의 게이팅 미니몬 CreatureId (Source=Minion일 때)
+
     // [능력 정보창 #1] 능력 종류 아이콘 — prefab에 전용 노드가 없어 런타임 생성(능력 ICON 우측 가로 나열).
     Transform _roleIconRow;
     const float ROLE_ICON_SIZE = 11f;   // "능력 ICON과 동일" 톤의 소형 아이콘
@@ -341,6 +343,8 @@ public class UI_SkillDetailPopup : UI_Popup
 
         GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
         GetButton((int)Buttons.MemorizeBtn).gameObject.BindEvent(OnClickMemorize);
+        // 능력 정보창 #6: 미니몬 요구 박스 클릭 → 해당 미니몬 [미니몬 기록] 호출
+        GetButton((int)Buttons.ReqMinionBox).gameObject.BindEvent(OnClickReqMinion);
 
         return true;
     }
@@ -362,18 +366,17 @@ public class UI_SkillDetailPopup : UI_Popup
 
         // 이름 — 한/영 (NameEng 폴백). 스킬 이름 노드는 ItemPopupItemName.
         SetText(Texts.ItemPopupItemName, Managers.Ability.GetName(skillId));
-        // 설명 — 한/영 (DescEng 폴백) + 슬39 발동조건/효과 한 줄
-        string desc = Managers.Ability.GetDesc(skillId);
-        string trig = BuildTriggerDesc(skillId);
-        if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
-        SetText(Texts.SkillDescText, desc);
-        // 능력 단계 "【 LEVEL: lv/max 】"
-        int lv = Mathf.Max(1, Managers.Ability.GetLevel(skillId));
-        int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : lv;
+        // 능력 단계 "【 LEVEL: lv/max 】" (미보유=0, 이야기/설명은 RefreshDescLayout)
+        int lv = Managers.Ability.GetLevel(skillId);   // 미보유 시 0
+        int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : Mathf.Max(1, lv);
         SetText(Texts.SkillLvTxt, $"【 LEVEL: <color=yellow>{lv}</color>/{maxLv} 】");
 
         RefreshMemorizeState();
         RefreshRoleIcons();
+        RefreshMidState();     // #3 중단 상태(최대등급/기억중/재능/습득필요)
+        RefreshDescLayout();   // #4 이야기/등급/설명 레이아웃
+        RefreshSourceUI();     // #5/#6 하단 출처별 UI
+        HidePotionButtons();   // 능력 정보창엔 물약 제작/다음단계 버튼 불필요
     }
 
     // [능력 정보창 #1] 능력 종류에 따라 아이콘 표시. 기획서 매핑:
@@ -554,6 +557,138 @@ public class UI_SkillDetailPopup : UI_Popup
         FindObjectOfType<UI_SkillBookPopup>()?.RefreshUI();
         RefreshMemorizeState();
     }
+
+    // ── 능력 정보창 #3: 중단 상태 (최대등급 / 기억중 / 재능 / 습득필요) ──
+    void RefreshMidState()
+    {
+        bool owned    = Managers.Ability.IsLearned(SkillId);
+        bool talent   = Managers.Ability.IsTalent(SkillId);
+        bool equipped = Managers.Ability.IsEquipped(SkillId);
+        int  lv       = Managers.Ability.GetLevel(SkillId);
+        int  maxLv    = Managers.Data.SkillDic.TryGetValue(SkillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : lv;
+        bool atMax    = owned && lv >= maxLv;
+
+        // 최대등급(MasterIcon) / 기억중(MemorizedIcon) — 능력 ICON 옆 뱃지
+        SetActive(GetImageGo((int)Images.MasterIcon),    atMax);
+        SetActive(GetImageGo((int)Images.MemorizedIcon), owned && equipped && !talent);
+
+        // 점유량(GotMEM) / 재능(NoMEM) — 점유량 0이면 재능 표기
+        SetActive(GetObject((int)GameObjects.GotMEM), owned && !talent);
+        SetActive(GetTextGo((int)Texts.NoMEM),        talent);
+
+        // 습득 필요(Lv0Text) — 미보유 시
+        SetActive(GetTextGo((int)Texts.Lv0Text), !owned);
+    }
+
+    // ── 능력 정보창 #4: 능력 이야기 / 등급 / 설명 ──
+    void RefreshDescLayout()
+    {
+        // 능력 이야기(flavor) — 데이터에 있으면 표시, 없으면 숨김
+        string story = Managers.Ability.GetStory(SkillId);
+        var storyT = GetText((int)Texts.SkillDescText);
+        if (storyT != null)
+        {
+            bool has = !string.IsNullOrEmpty(story);
+            storyT.gameObject.SetActive(has);
+            if (has) { storyT.text = story; storyT.fontStyle = TMPro.FontStyles.Italic; ApplyFont(storyT, Define.FontType.UI); }
+        }
+
+        // 능력 설명(mechanics) — GetDesc + 발동조건 한 줄. 미보유 시 "- 습득 필요 -"(Lv0Text)가 대체하므로 숨김.
+        bool owned = Managers.Ability.IsLearned(SkillId);
+        var realT = GetText((int)Texts.LvEffectTxt_Real);
+        if (realT != null)
+        {
+            realT.gameObject.SetActive(owned);
+            if (owned)
+            {
+                string desc = Managers.Ability.GetDesc(SkillId);
+                string trig = BuildTriggerDesc(SkillId);
+                if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
+                realT.text = desc;
+                ApplyFont(realT, Define.FontType.UI);
+            }
+        }
+    }
+
+    // ── 능력 정보창 #5/#6: 하단 출처별 UI ──
+    void RefreshSourceUI()
+    {
+        var src = Managers.Ability.GetSource(SkillId);
+
+        SetActive(GetObject((int)GameObjects.ClassGroup),          src == Define.AbilitySource.Class);
+        SetActive(GetObject((int)GameObjects.ReqMinionGroup),      src == Define.AbilitySource.Minion);
+        SetActive(GetObject((int)GameObjects.ReqEquipGroup),       src == Define.AbilitySource.Equip);
+        SetActive(GetObject((int)GameObjects.ReqItemGroup),        src == Define.AbilitySource.Npc);
+        SetActive(GetObject((int)GameObjects.UnlimitedPotenGroup), src == Define.AbilitySource.Unlimited);
+
+        _reqMinionId = 0;
+        if (src == Define.AbilitySource.Minion)
+            RefreshMinionReq(Managers.Ability.GetRequiredMinionId(SkillId));
+    }
+
+    // #6: 미니몬 요구 박스 게이팅 (기록도/색/체크·잠금). 첫 박스만 사용, 나머지는 숨김.
+    void RefreshMinionReq(int minionId)
+    {
+        _reqMinionId = minionId;
+
+        // 박스 1~4 숨김 (요구 미니몬 1마리)
+        SetActive(GetButton((int)Buttons.ReqMinionBox_1).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqMinionBox_2).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqMinionBox_3).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqMinionBox_4).gameObject, false);
+
+        var box0 = GetButton((int)Buttons.ReqMinionBox);
+        SetActive(box0.gameObject, true);
+
+        if (minionId <= 0 || Managers.MinMon == null) return;
+
+        int  rec     = Managers.MinMon.GetRecordRate(minionId);   // 0..100
+        bool owned   = Managers.MinMon.IsOwned(minionId);
+        bool allSS   = Managers.MinMon.IsAllSS(minionId);
+        int  star    = Managers.MinMon.GetStarGrade(minionId);
+        bool unlocked = rec >= 10 || owned;                       // 기록도 10%↑ 또는 보유 시 해금(상호작용)
+
+        // 기록도 텍스트 + 색 (0=red / 0<x<100=orange / 100=lime)
+        string rc = rec <= 0 ? "red" : rec >= 100 ? "lime" : "orange";
+        var recT = GetText((int)Texts.Txt_ReqMinionBox_07);
+        if (recT != null) { recT.text = $"<color={rc}>{rec}</color>/100"; SetActive(recT.gameObject, unlocked); }
+
+        // 최상등급 표기 (필요 미니몬 별 2단계↑) — AllSS면 lime, 아니면 909090
+        var maxRankT = GetText((int)Texts.Txt_ReqMinionBox_05);
+        if (maxRankT != null)
+        {
+            SetActive(maxRankT.gameObject, unlocked && star >= 2);
+            SetTextColor(maxRankT, allSS ? new Color32(0x0A, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
+        }
+
+        // 잠금 오버레이("?" + "하수인 또는 분석 필요") — 미해금 시 표시
+        SetActive(GetImageGo((int)Images.Img_ReqMinionBox_14), !unlocked);     // "?" 프레임
+        SetActive(GetObject((int)GameObjects.Panel_ReqMinionBox_02), !unlocked); // NeedMinion 텍스트
+
+        box0.interactable = unlocked;
+    }
+
+    void OnClickReqMinion()
+    {
+        if (_reqMinionId <= 0) return;
+        Managers.UI.ShowPopupUI<UI_MonsterDetailPopup>().SetInfo(_reqMinionId);
+    }
+
+    // 능력 정보창에선 물약 제작/다음단계 버튼군 불필요 — 숨김(기억 버튼만 유지).
+    void HidePotionButtons()
+    {
+        SetActive(GetButton((int)Buttons.NextLvlBtn).gameObject, false);
+        SetActive(GetButton((int)Buttons.BackBtn).gameObject,    false);
+        SetActive(GetButton((int)Buttons.CraftBtn).gameObject,   false);
+        SetActive(GetImageGo((int)Images.CantCraftBtn),          false);
+        SetActive(GetImageGo((int)Images.NotInPaceCraftBtn),     false);
+    }
+
+    // ── helpers ──
+    static void SetActive(GameObject go, bool on) { if (go != null && go.activeSelf != on) go.SetActive(on); }
+    GameObject GetImageGo(int id) { var c = GetImage(id); return c != null ? c.gameObject : null; }
+    GameObject GetTextGo(int id)  { var c = GetText(id);  return c != null ? c.gameObject : null; }
+    static void SetTextColor(TMPro.TMP_Text t, Color c) { if (t != null) t.color = c; }
 
     void SetText(Texts id, string value)
     {

@@ -146,6 +146,12 @@ namespace Data
         public int MaxLevel;
         public int MemoryCapacity;     // 슬38: 기억력 점유량. 0이면 [재능](항시 적용, 점유 없음)
 
+        // ── 능력 정보창 #4/#5/#6 ──
+        public string Story;             // 능력 이야기(flavor) — 한국어 기본/폴백. 없으면 표시 안 함.
+        public string StoryEng;          // 능력 이야기 영문
+        public AbilitySource Source;     // 능력 출처(획득 경로). 기본 Unlimited. (#5 하단 UI 분기)
+        public int RequiredMinionId;     // Source=Minion일 때 게이팅 미니몬 CreatureId. 0이면 (id-4000)로 파생.
+
         // ── 슬39: 전투 발동조건 (없으면 None = 패시브) ──
         public AbilityTrigger TriggerType;                                       // None / Probability / Time
         public List<AbilityCondition> Conditions = new List<AbilityCondition>(); // 확률 발동 조건(1개 이상)

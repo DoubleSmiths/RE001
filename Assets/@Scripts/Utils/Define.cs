@@ -108,6 +108,16 @@ public class Define
         Buff,         // 본인 스탯 일시 증가 (EffectStat += EffectValue, EffectDuration초; 0이면 영구/전투종료까지)
     }
 
+    // ── 능력 정보창 #5: 능력 출처(획득 경로) ── 하단 UI 5종 분기에 사용.
+    public enum AbilitySource
+    {
+        Unlimited,    // 무한한 잠재력 (2가지 이상 또는 다른 방식 — 도감 별 작업 등). 기본값.
+        Class,        // 전직
+        Minion,       // 미니몬 (공명도 100%) — RequiredMinionId의 미니몬 도감 게이팅(#6)
+        Equip,        // 장비 강화 (+9)
+        Npc,          // NPC에게 재료 제공
+    }
+
     public enum CraftCategory
     {
         Potion,
