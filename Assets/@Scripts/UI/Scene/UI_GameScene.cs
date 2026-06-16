@@ -663,8 +663,8 @@ public class UI_GameScene : UI_Scene
                 if (numTxt != null)
                 {
                     numTxt.text = count.ToString();
-                    // 슬27: 저장칸 가득이면 count 빨강(FF0000), 여유면 기본 흰색
-                    numTxt.color = count >= MinMonManager.INTEREST_CAPACITY
+                    // 슬27: 저장칸 가득이면 count 빨강(FF0000), 여유면 기본 흰색 (창고 칸 수는 능력으로 증가 가능 — 슬23-4)
+                    numTxt.color = count >= Managers.MinMon.InterestCapacity
                         ? Util.HexToColor("FF0000") : Color.white;
                 }
                 // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10, Elasticity 1)

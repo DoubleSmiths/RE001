@@ -10,12 +10,14 @@ public class MinMonManager
     public event Action<int> OnMaxStarReached;     // 슬2: 몬스터가 보라별(3단계) 최초 달성 (완성도 등급 상승 트리거)
 
     // ── 미니몬 관심 / 포획 가능 창고 (슬23~27) ──
-    public const int INTEREST_CAPACITY = 2;       // 창고 슬롯 수 (기술로 증가 가능 — 후속)
+    public const int INTEREST_CAPACITY = 2;       // 창고 기본 슬롯 수 (슬23)
+    // 슬23-4: 실제 창고 칸 수 = 기본 + 능력(StatType "InterestCapacity") 보너스. 능력 데이터는 후속이라 현재 0.
+    public int InterestCapacity => INTEREST_CAPACITY + (Managers.Ability != null ? Managers.Ability.InterestCapacityBonus : 0);
     public enum InterestResult { NotInterested, Added, StorageFull }
 
     public List<int> InterestedMinMons => Managers.Game.InterestedMinMons;
     public bool HasInterest     => InterestedMinMons.Count > 0;
-    public bool HasInterestRoom => InterestedMinMons.Count < INTEREST_CAPACITY;
+    public bool HasInterestRoom => InterestedMinMons.Count < InterestCapacity;
     public bool IsInterested(int dataId) => InterestedMinMons.Contains(dataId);
 
     // 사냥 성공 시 호출: InterestRate 굴려 관심 판정 → 창고 저장 (순서대로). 슬23~25.

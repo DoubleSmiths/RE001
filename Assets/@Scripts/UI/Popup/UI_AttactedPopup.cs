@@ -94,8 +94,10 @@ public class UI_AttactedPopup : UI_Popup
     {
         if (_slideRT == null) yield break;
 
-        Vector2 rest = _slideRT.anchoredPosition;
-        Vector2 from = rest + new Vector2(150f, 0f); // 슬24: 화면 밖 우측에서 진입
+        // 슬24: 우측 경계에 안착(전체 가시). anchor/pivot=(1,0.5) 우측 기준 → x=0이면 팝업 우측 끝이 화면 우측에 flush.
+        //  (Instantiate 시 anchoredPosition.x가 캔버스 스케일로 변형되므로 프리펩 x를 신뢰하지 않고 0으로 고정)
+        Vector2 rest = new Vector2(0f, _slideRT.anchoredPosition.y);
+        Vector2 from = rest + new Vector2(150f, 0f); // 화면 밖 우측에서 진입
 
         _slideRT.anchoredPosition = from;
         _slideRT.DOKill();

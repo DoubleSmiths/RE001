@@ -207,6 +207,20 @@ public class AbilityManager
         return true;
     }
 
+    // 슬23-4: 포획 가능 미니몬 창고 칸 수 확장 — StatType "InterestCapacity" 능력의 보너스 합(단계 반영).
+    //  (창고 칸은 크리처 스탯이 아니라 MinMonManager가 조회 — MaxMemory처럼 ApplyTo 스위치 밖에서 처리)
+    public int InterestCapacityBonus
+    {
+        get
+        {
+            int sum = 0;
+            foreach (int id in Equipped)
+                if (TryData(id, out var d) && d.StatType == "InterestCapacity")
+                    sum += Mathf.Max(0, Mathf.RoundToInt(d.StatBonus * GetLevel(id)));
+            return sum;
+        }
+    }
+
     // ── 효과 적용 ── 장착된 능력의 StatBonus를 크리처 스탯에 가산. (RefreshStats 말미에서 호출)
     public void ApplyTo(CreatureController c)
     {

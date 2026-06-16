@@ -367,7 +367,7 @@ public static class BestiaryTestMenu
     static void ShowInterest()
     {
         if (!Application.isPlaying) { Debug.LogWarning("[BestiaryTest] PlayMode 진입 후 실행"); return; }
-        Debug.Log($"[Interest] 창고({Managers.MinMon.InterestedMinMons.Count}/{MinMonManager.INTEREST_CAPACITY})=" +
+        Debug.Log($"[Interest] 창고({Managers.MinMon.InterestedMinMons.Count}/{Managers.MinMon.InterestCapacity})=" +
                   $"{string.Join(",", Managers.MinMon.InterestedMinMons)} | HasInterest={Managers.MinMon.HasInterest}");
     }
 

@@ -165,7 +165,7 @@ public class UIManager
         GameObject go = Managers.Resource.Instantiate(nameof(UI_AttactedPopup), pooling: false);
         if (go == null) return null;
         var popup = Util.GetOrAddComponent<UI_AttactedPopup>(go);
-        go.transform.SetParent(Root.transform);
+        go.transform.SetParent(Root.transform, false);   // worldPositionStays=false: 프리펩 anchoredPos 보존(슬24 우측 안착)
         popup.SetInfo(dataId, storageFull);
         return popup;
     }
@@ -176,7 +176,7 @@ public class UIManager
         GameObject go = Managers.Resource.Instantiate(nameof(UI_WarningPopup), pooling: false);
         if (go == null) return null;
         var popup = Util.GetOrAddComponent<UI_WarningPopup>(go);
-        go.transform.SetParent(Root.transform);
+        go.transform.SetParent(Root.transform, false);   // worldPositionStays=false: 프리펩 위치 보존
         popup.SetInfo(dataId);
         return popup;
     }

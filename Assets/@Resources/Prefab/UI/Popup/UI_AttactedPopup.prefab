@@ -265,6 +265,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d58108ef401ae40ae76ee9d370a8b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_AttactedPopup
+  _isClosing: 0
+  _frameRT: {fileID: 0}
 --- !u!1 &2341945175639167271
 GameObject:
   m_ObjectHideFlags: 0

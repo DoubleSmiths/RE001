@@ -112,7 +112,7 @@ public static class IntegrationTestMenu
                 $"Grade(Atk/AS/Crit)={m.AtkGrade}/{m.AtkSpeedGrade}/{m.CritGrade}");
         }
         sb.AppendLine($"  Companion = {Managers.Game.CompanionMinMonId}");
-        sb.AppendLine($"  Interest ({Managers.Game.InterestedMinMons.Count}/{MinMonManager.INTEREST_CAPACITY}): " +
+        sb.AppendLine($"  Interest ({Managers.Game.InterestedMinMons.Count}/{Managers.MinMon.InterestCapacity}): " +
                       $"{string.Join(",", Managers.Game.InterestedMinMons)}");
 
         // 퀘스트
