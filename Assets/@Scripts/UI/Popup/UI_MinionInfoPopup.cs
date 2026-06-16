@@ -333,16 +333,29 @@ public class UI_MinionInfoPopup : UI_Popup
         RefreshOtherCompanionUI();
     }
 
-    // 슬19: [나의 미니몬] 창에 Flash_USETHIS.prefab 잠깐 표시
+    // 슬19: [나의 미니몬] 창에 Flash_USETHIS.prefab 잠깐 표시 — MinionInfoPopupFrame 영역에만.
+    //  Flash는 Animator가 Image를 스케일업해 "뱅"을 만들어 프레임 밖으로 퍼지므로,
+    //  프레임을 꽉 채운 RectMask2D 컨테이너 안에 넣어 프레임 영역으로 클리핑한다.
     void SpawnFlash()
     {
         if (Managers.Resource.Load<GameObject>("Flash_USETHIS") == null) return;
-        var parent = GetObject((int)GameObjects.MinionInfoPopup).transform;
-        var fx = Managers.Resource.Instantiate("Flash_USETHIS", parent);
-        if (fx == null) return;
+        var frame = GetImage((int)Images.MinionInfoPopupFrame)?.rectTransform;
+        if (frame == null) return;
+
+        // 프레임을 채우는 마스크 컨테이너 (Flash만 클리핑, 프레임 본문엔 영향 없음)
+        var maskGo = new GameObject("FlashMask", typeof(RectTransform), typeof(UnityEngine.UI.RectMask2D));
+        var maskRT = (RectTransform)maskGo.transform;
+        maskRT.SetParent(frame, false);
+        maskRT.anchorMin = Vector2.zero; maskRT.anchorMax = Vector2.one;
+        maskRT.offsetMin = Vector2.zero; maskRT.offsetMax = Vector2.zero;
+        maskRT.SetAsLastSibling();   // 프레임 본문 위에 표시
+
+        var fx = Managers.Resource.Instantiate("Flash_USETHIS", maskRT);
+        if (fx == null) { Destroy(maskGo); return; }
         fx.transform.localPosition = Vector3.zero;
         fx.transform.localScale = Vector3.one;
-        DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true);
+
+        DOVirtual.DelayedCall(1f, () => { if (maskGo != null) Destroy(maskGo); }, true);
     }
 
     // 슬19: 부르기/동행 변경 시 열려있는 [미니몬 기록]/[미니몬 도감]의 동행 UI도 함께 갱신
