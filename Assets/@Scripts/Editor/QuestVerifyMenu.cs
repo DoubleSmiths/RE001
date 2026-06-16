@@ -331,17 +331,40 @@ public static class QuestVerifyMenu
         Spec("슬20", $"첫 포획: NEW 표시 + 창 뒤 GlowRays(회전+페이드) + 공명도 0→25% lerp + 능력치 랜덤 롤(40/30/15/8/5/2%). 결과: ATK={save.AtkGrade} AS={save.AtkSpeedGrade} CRIT={save.CritGrade}");
     }
 
-    [MenuItem("Test/Quest Verify/part2/Slide 21~22 - 재포획 (능력치 향상 시도, 2001)", false, 210)]
-    static void P2_S21_ReCatch()
+    // 슬21: 이미 보유한 미니몬을 또 잡았을 때 "능력치 향상될 때". 낮은 등급으로 세팅 후 향상될 때까지 재시도(결정적).
+    [MenuItem("Test/Quest Verify/part2/Slide 21 - 재포획 능력치 향상 (2001)", false, 210)]
+    static void P2_S21_ReCatchImproved()
     {
         if (!Require()) return;
-        Managers.Game.InterestedMinMons.Remove(2001);
-        Managers.MinMon.AddInterest(2001);
-        Managers.MinMon.TryCatch(2001, forceSuccess: true);
-        var info21 = Managers.UI.ShowPopupUI<UI_MinionInfoPopup>();
-        info21.SetInfo(2001);
-        info21.PlayCatchResult(Managers.MinMon.LastCatchWasFirst, Managers.MinMon.LastCatchImproved);
-        Spec("슬21~22", $"재포획. 향상={Managers.MinMon.LastCatchImproved}. 향상시: ATK→AS→CRIT 순차 Scale Anim + FullGrowthInText FadeIn 1.5s. 향상無: MinimonGrowthFailText 1.5s + FullGrowthInText FadeIn.");
+        var mm = Managers.MinMon;
+        var save = mm.GetSaveData(2001);
+        // 향상될 때까지 재시도: 매번 낮은 등급+공명도 2회로 리셋 후 재포획
+        bool ok = false;
+        for (int i = 0; i < 30; i++)
+        {
+            mm.DebugSetGrade(2001, 0, 0); mm.DebugSetGrade(2001, 1, 0); mm.DebugSetGrade(2001, 2, 0);
+            save.CaughtCount = 2; save.TameCount = Mathf.Max(save.TameCount, 2);
+            mm.TryCatch(2001, forceSuccess: true);
+            if (mm.LastCatchImproved) { ok = true; break; }
+        }
+        var info = Managers.UI.ShowPopupUI<UI_MinionInfoPopup>();
+        info.SetInfo(2001);
+        info.PlayCatchResult(mm.LastCatchWasFirst, mm.LastCatchImproved);
+        Spec("슬21", $"재포획 향상={ok}. ATK {mm.LastAtkGradePrev}->{mm.GetAtkGrade(2001)}({(mm.LastAtkImproved?"↑":"-")}) AS {mm.LastASGradePrev}->{mm.GetAtkSpeedGrade(2001)}({(mm.LastASImproved?"↑":"-")}) CRIT {mm.LastCritGradePrev}->{mm.GetCritGrade(2001)}({(mm.LastCritImproved?"↑":"-")}). 향상된 스탯만 Flip+Punch+VFX+NEW, 1초뒤 ATK→AS→CRIT 순. 모든 anim 끝나야 닫기 가능.");
+    }
+
+    // 슬22: 이미 보유한 미니몬을 또 잡았을 때 "능력치 향상되지 않을 때". 5/5/5(최대)로 막아 무조건 향상없음.
+    [MenuItem("Test/Quest Verify/part2/Slide 22 - 재포획 향상 없음 (2001)", false, 211)]
+    static void P2_S22_ReCatchNoImprove()
+    {
+        if (!Require()) return;
+        var mm = Managers.MinMon;
+        mm.DebugSetGrade(2001, 0, 5); mm.DebugSetGrade(2001, 1, 5); mm.DebugSetGrade(2001, 2, 5);
+        mm.TryCatch(2001, forceSuccess: true);
+        var info = Managers.UI.ShowPopupUI<UI_MinionInfoPopup>();
+        info.SetInfo(2001);
+        info.PlayCatchResult(mm.LastCatchWasFirst, mm.LastCatchImproved);
+        Spec("슬22", $"재포획 향상={mm.LastCatchImproved}(false 기대). NEW/VFX 미등장, 호출 1.5초뒤 MinimonGrowthFailText(\"성장하지 않았네요\") FadeIn → 0.5초뒤 FullGrowthInText FadeIn. 모든 anim 끝나야 닫기 가능.");
     }
 
     [MenuItem("Test/Quest Verify/part2/Slide 23 - 관심 알림 (Side Popup 성공)", false, 211)]

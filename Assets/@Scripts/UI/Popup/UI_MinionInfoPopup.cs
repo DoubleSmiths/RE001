@@ -134,8 +134,16 @@ public class UI_MinionInfoPopup : UI_Popup
     #endregion
 
     int _dataId;
+    bool _resultAnimPlaying;   // 슬20~22-d/g: 포획 결과 Anim 재생 중 닫기/상호작용 차단
 
     void Awake() => Init();
+
+    // 슬20~22-d/g: 결과 Anim이 모두 끝난 뒤에만 background/X 클릭으로 닫을 수 있다.
+    void OnClickBGGuarded()
+    {
+        if (_resultAnimPlaying) return;
+        OnClickBG();
+    }
 
     public override bool Init()
     {
@@ -155,8 +163,8 @@ public class UI_MinionInfoPopup : UI_Popup
         var block = GetImage((int)Images.MinionInfoPopupBlock);
         if (block != null) block.raycastTarget = false;
 
-        GetButton((int)Buttons.MinionInfoPopupBackground).gameObject.BindEvent(OnClickBG);
-        GetImage((int)Images.Xbutton).gameObject.BindEvent(OnClickBG);
+        GetButton((int)Buttons.MinionInfoPopupBackground).gameObject.BindEvent(OnClickBGGuarded);
+        GetImage((int)Images.Xbutton).gameObject.BindEvent(OnClickBGGuarded);
         GetButton((int)Buttons.MinionUsingSkillIcon).gameObject.BindEvent(OnClickSkill);
         GetButton((int)Buttons.MinionSummonButton).gameObject.BindEvent(OnClickSummon);
         GetButton((int)Buttons.MinionSummonedButton).gameObject.BindEvent(OnClickUnsummon);
@@ -497,6 +505,12 @@ public class UI_MinionInfoPopup : UI_Popup
     //  공통(포획 호출): GlowRays(창 뒤) + 공명도 lerp. (미니몬 기록 통해 연 창엔 호출 안 됨)
     public void PlayCatchResult(bool first, bool improved)
     {
+        _resultAnimPlaying = true;   // 슬20~22-d/g: 결과 Anim 끝날 때까지 닫기 차단
+
+        // 포획 결과창(첫 포획/재포획)에선 부르기/동행중 버튼 그룹 비표시 (미니몬 기록서 연 창에서만 노출)
+        var btnGroup = GetObject((int)GameObjects.MinionInfoPopupButtonGroup);
+        if (btnGroup != null) btnGroup.SetActive(false);
+
         var newTxt = GetText((int)Texts.MinionNewText);
         if (newTxt != null) newTxt.gameObject.SetActive(first);
 
@@ -513,14 +527,19 @@ public class UI_MinionInfoPopup : UI_Popup
         else StartCoroutine(CoFadeInFullGrowth(1.5f));   // 첫 포획: 공명도 lerp(1s) 후 FadeIn
     }
 
-    // 슬21-f/22-c: FullGrowthInText를 delay 뒤 1.5초에 걸쳐 FadeIn.
+    // 슬21-f/22-c: FullGrowthInText를 delay 뒤 1.5초에 걸쳐 FadeIn. (포획 연출의 마지막 Anim)
+    //  FadeIn 완료 시점에 _resultAnimPlaying 해제 → 이후 background 클릭으로 닫기 허용(슬20~22-d/g).
     IEnumerator CoFadeInFullGrowth(float delay)
     {
         var fg = GetText((int)Texts.GuranteedText);
-        if (fg == null) yield break;
-        var c = fg.color; c.a = 0f; fg.color = c;
-        yield return new WaitForSecondsRealtime(delay);
-        fg.DOFade(1f, 1.5f).SetUpdate(true);
+        if (fg != null)
+        {
+            var c = fg.color; c.a = 0f; fg.color = c;
+            yield return new WaitForSecondsRealtime(delay);
+            fg.DOFade(1f, 1.5f).SetUpdate(true);
+            yield return new WaitForSecondsRealtime(1.5f);
+        }
+        _resultAnimPlaying = false;
     }
 
     // 슬20: [나의 미니몬] 창 뒤에 GlowRays 표시 (포획으로 호출됐을 때만). 느린 회전 + 페이드 인.
