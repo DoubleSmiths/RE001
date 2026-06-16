@@ -187,13 +187,14 @@ public class UI_MinionInfoPopup : UI_Popup
             ApplyFont(numTxt, Define.FontType.UI);
         }
 
-        // 슬85: 몬스터 IMG (IconLabel). idle Anim 반복은 Animator 연동 후속.
-        var monImg = GetImage((int)Images.MinimonImage);
-        if (monImg != null && data != null && !string.IsNullOrEmpty(data.IconLabel))
+        // 슬85: 몬스터 IMG (IconLabel) — 정적 폴백. idle Anim은 아래 SetupMinionIdleAnim에서 구동.
+        _monImg = GetImage((int)Images.MinimonImage);
+        if (_monImg != null && data != null && !string.IsNullOrEmpty(data.IconLabel))
         {
             Sprite sprite = Managers.Resource.Load<Sprite>(data.IconLabel);
-            if (sprite != null) { monImg.sprite = sprite; monImg.preserveAspect = true; }
+            if (sprite != null) { _monImg.sprite = sprite; _monImg.preserveAspect = true; }
         }
+        SetupMinionIdleAnim();   // 슬16: 몬스터 IMG Idle Anim 반복
 
         // 슬17: 공명도 = "{LinkText}:{공명도}%" (콜론, 공백 없음). 100% 미만 FF820B / 100% 30FF00.
         //  (100% 시 MAT Text_ShineGreen 스펙 — 머티리얼 Resources 밖이라 색만 적용)
@@ -230,6 +231,7 @@ public class UI_MinionInfoPopup : UI_Popup
         RefreshStat(Texts.DamageNumberText, Images.DamageRankImage, MMStat.Atk);
         RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     MMStat.AtkSpeed);
         RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   MMStat.Crit);
+        RefreshWeaponIcon();   // 슬16: 공격력에 무기 아이콘(물리=Sword01 / 마법=Staff01)
 
         // 슬86: FullGrowthInText "(완전 성장까지: <color=#FF0000>10</color>회)"
         //  — 현재 enum에 FullGrowthInText 노드 부재. prefab에 신설 후 enum 보강 필요.
@@ -269,6 +271,64 @@ public class UI_MinionInfoPopup : UI_Popup
             var sp = Managers.Resource.Load<Sprite>($"Screen FX 32 ({idx})");
             if (sp != null) { img.sprite = sp; img.preserveAspect = true; }
         }
+    }
+
+    // 슬16: 몬스터 IMG Idle Anim 반복.
+    //  MinimonImage의 Animator(Slime(Green) 등)는 클립이 SpriteRenderer.m_Sprite를 구동하므로
+    //  같은 GO에 SpriteRenderer를 (렌더 off로) 두어 프레임 소스로 쓰고, 매 프레임 그 sprite를 UI Image에 복사.
+    //  (UI 캔버스 마스킹/스케일은 Image 그대로 유지)
+    Image _monImg;
+    SpriteRenderer _idleSr;
+    void SetupMinionIdleAnim()
+    {
+        if (_monImg == null) return;
+        var an = _monImg.GetComponent<Animator>();
+        if (an == null || an.runtimeAnimatorController == null) { _idleSr = null; return; }
+        an.cullingMode = AnimatorCullingMode.AlwaysAnimate;   // UI(Renderer 없음)에서도 항상 진행
+        _idleSr = _monImg.GetComponent<SpriteRenderer>();
+        if (_idleSr == null) _idleSr = _monImg.gameObject.AddComponent<SpriteRenderer>();
+        _idleSr.enabled = false;   // 월드 렌더 방지 — Animator 프레임 추출 용도
+        an.Rebind();
+    }
+
+    void Update()
+    {
+        // idle 프레임(Animator가 SpriteRenderer에 기록)을 UI Image로 복사 → 몬스터 IMG가 idle 반복.
+        if (_monImg != null && _idleSr != null && _idleSr.sprite != null)
+            _monImg.sprite = _idleSr.sprite;
+    }
+
+    // 슬16: 공격력 스탯 박스 상단에 무기 아이콘 — 물리공격력=Sword01 / 마법공격력=Staff01. Outline 000000 x1 y1.
+    //  prefab에 전용 노드가 없어 런타임 생성.
+    Image _weaponIcon;
+    void RefreshWeaponIcon()
+    {
+        var dmgFrame = GetImage((int)Images.MinionInfoPopupDmgFrame)?.transform;
+        if (dmgFrame == null) return;
+
+        bool magic = Managers.Data.CreatureDic.TryGetValue(_dataId, out var cd) && cd.MagicAtk > cd.PhysicalAtk;
+        string key = magic ? "Staff01" : "Sword01";
+        var sp = Managers.Resource.Load<Sprite>(key);
+        if (sp == null) return;
+
+        if (_weaponIcon == null)
+        {
+            var go = new GameObject("WeaponIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Outline));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(dmgFrame, false);
+            rt.anchorMin = rt.anchorMax = new Vector2(1f, 1f);   // 공격력 박스 우측 상단
+            rt.pivot = new Vector2(1f, 1f);
+            rt.anchoredPosition = new Vector2(-1f, -1f);          // 코너에서 살짝 안쪽
+            rt.sizeDelta = new Vector2(12f, 12f);
+            _weaponIcon = go.GetComponent<Image>();
+            _weaponIcon.preserveAspect = true;
+            _weaponIcon.raycastTarget = false;
+            var ol = go.GetComponent<Outline>();
+            ol.effectColor = Color.black;
+            ol.effectDistance = new Vector2(1f, 1f);
+        }
+        _weaponIcon.sprite = sp;
+        _weaponIcon.gameObject.SetActive(true);
     }
 
     // 슬라이드 87: 능력치 등급별 outline 색/거리 (0~5등급)
