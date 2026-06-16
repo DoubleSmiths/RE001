@@ -133,10 +133,6 @@ public class UI_PotionPopup : UI_Popup
     //  열기 = DORestart(정방향), 닫기 = DOPlayBackwards(역재생).
     DG.Tweening.DOTweenAnimation _boxAnim;
 
-    const string PREF_AUTO_ON   = "PotionPopup.AutoOn";
-    const string PREF_HP_RATIO  = "PotionPopup.HpRatio";
-    const string PREF_MEMORIZED = "PotionPopup.Memorized";
-
     void Awake() => Init();
 
     public override bool Init()
@@ -186,7 +182,29 @@ public class UI_PotionPopup : UI_Popup
 
         _hpRatioSlider.onValueChanged.AddListener(OnHpRatioChanged);
 
+        // 자동물약(PlayerController 상시 처리)이 발동하면 팝업이 열려 있을 때 HP 슬롯 쿨타임 바 동기화
+        if (Managers.Game.Player != null)
+            Managers.Game.Player.OnAutoPotionUsed += HandleAutoPotionUsed;
+
         return true;
+    }
+
+    void OnDestroy()
+    {
+        if (Managers.Game != null && Managers.Game.Player != null)
+            Managers.Game.Player.OnAutoPotionUsed -= HandleAutoPotionUsed;
+    }
+
+    // 자동 사용이 발동했을 때 팝업 HP 슬롯 쿨타임 바/버튼 상태를 맞춰준다(회복은 PlayerController가 이미 처리).
+    void HandleAutoPotionUsed()
+    {
+        if (_hpSlot == null) return;
+        _hpSlot.count = Mathf.Max(0, _hpSlot.count - 1);
+        _hpSlot.cooldown = _hpSlot.cooldownMax;
+        if (_hpSlot.button != null) _hpSlot.button.interactable = false;
+        if (_hpSlot.cooldownBar != null) { _hpSlot.cooldownBar.gameObject.SetActive(true); _hpSlot.cooldownBar.value = 1f; }
+        // FX(HP Potion Ef)는 PlayerController가 자동 사용 시 이미 생성 — 여기서 중복 생성 안 함.
+        RefreshSlotVisual(_hpSlot);
     }
 
     Slot BindHpSlot()
@@ -254,9 +272,9 @@ public class UI_PotionPopup : UI_Popup
     public void SetInfo()
     {
         // 저장값 복원
-        _autoOn          = PlayerPrefs.GetInt(PREF_AUTO_ON, 0) == 1;
-        _autoMemorized   = PlayerPrefs.GetInt(PREF_MEMORIZED, 0) == 1;
-        _hpRatio         = Mathf.Clamp01(PlayerPrefs.GetFloat(PREF_HP_RATIO, 0.5f));
+        _autoOn        = Managers.Game.AutoPotionOn;
+        _autoMemorized = Managers.Game.AutoPotionMemorized;
+        _hpRatio       = Managers.Game.AutoPotionHpRatio;
 
         if (_titleText != null) _titleText.text = "물약";
 
@@ -264,10 +282,12 @@ public class UI_PotionPopup : UI_Popup
         if (_hpSlot != null)
         {
             _hpSlot.unlocked = true;
-            _hpSlot.dataId = 30001;
-            _hpSlot.cooldownMax = 5f;
+            _hpSlot.dataId = Managers.Game.CurrentHPPotionDataId;
+            _hpSlot.cooldownMax = GetHpCooldown(_hpSlot.dataId);
             _hpSlot.count = 5;
-            _hpSlot.cooldown = 0f;
+            // 진행 중인 자동물약 쿨타임을 반영(쿨타임 도중 팝업을 열어도 바가 맞게 표시)
+            var pl = Managers.Game.Player;
+            _hpSlot.cooldown = pl != null ? pl.AutoPotionCooldownNormalized * _hpSlot.cooldownMax : 0f;
             RefreshSlotVisual(_hpSlot);
         }
         bool spdAnimNeeded = false;
@@ -276,8 +296,8 @@ public class UI_PotionPopup : UI_Popup
             // SPD는 연금공방 NPC가 해금한 시점(SpdPotionRevealed=true)부터 사용 가능
             _spdSlot.unlocked = Managers.Game.SpdPotionRevealed;
             _spdSlot.dataId = Managers.Game.CurrentSpeedPotionDataId;
-            _spdSlot.cooldownMax = 10f;
-            _spdSlot.count = 0;
+            _spdSlot.cooldownMax = GetSpdCooldown(_spdSlot.dataId);
+            _spdSlot.count = Managers.Game.SpdPotionRevealed ? 5 : 0;
             _spdSlot.cooldown = 0f;
             RefreshSlotVisual(_spdSlot);
 
@@ -431,32 +451,43 @@ public class UI_PotionPopup : UI_Popup
             s.cooldownBar.value = 1f; // 1=가득 → Update에서 0으로 감소 (fill 위→아래)
         }
 
-        // 물약 사용 FX (캐릭터 몸 중앙) — 에셋 있으면 스폰. HP Potion Ef 프리팹 미확인이라 스킵 가능.
-        SpawnUseFXForSlot(s);
+        // 슬42: 사용 즉시 실제 효과 적용 (회복물약=체력 회복+HP Potion Ef / 신속물약=공격속도 버프)
+        ApplyPotionEffect(s);
 
         RefreshSlotVisual(s);
     }
 
-    void SpawnUseFXForSlot(Slot s)
+    // 슬42: 물약 종류별 실제 효과 적용.
+    void ApplyPotionEffect(Slot s)
     {
-        if (s == null || s.button == null) return;
+        var player = Managers.Game.Player;
+        if (player == null) return;
 
-        // S42: 물약 사용 시 즉각 사용된 물약에 해당되는 이펙트 표시.
-        // 기획서 원본은 HP Potion Ef를 "캐릭터 몸 한 가운데"에 스폰하지만,
-        // PlayerController HP 연동이 아직 없어서 우선 물약 슬롯 중앙에 UI-native FX 재생.
-        var slotRT = s.button.GetComponent<RectTransform>();
-        if (slotRT == null) return;
-
-        // Box Group을 parent로 (Slot 내부에 parent하면 cooldown bar 등과 겹쳐서 레이어 꼬임)
-        var parent = _boxGroupRT;
-        Vector3 slotWorld = slotRT.position;
-        Vector3 slotLocal = parent.InverseTransformPoint(slotWorld);
-        Vector2 localPos = new Vector2(slotLocal.x, slotLocal.y);
-
-        // 타입별 FX: HP는 Heal(녹색 플러스), Speed는 Sparkle(반짝이)
-        var fx = (s.name == "HP") ? UIFx.FxType.Heal : UIFx.FxType.Sparkle;
-        UIFx.PlayBurst(parent, localPos, fx);
+        if (s.name == "HP")
+        {
+            // 회복물약: 고정 회복 + 최대체력 비율 회복 (ItemData/HPPotionData)
+            if (Managers.Data.HPPotionDic.TryGetValue(s.dataId, out var hp))
+            {
+                float amount = hp.FlatRecov + player.MaxHp * (hp.MaxHPRecov / 100f);
+                player.Heal(amount);
+            }
+            // 수동 사용도 자동 쿨타임을 공유 (직후 자동 중복 발동 방지)
+            player.StartHpPotionCooldown(s.cooldownMax);
+            // 슬42: HP Potion Ef를 캐릭터 몸에 생성
+            player.SpawnHpPotionFx();
+        }
+        else if (s.name == "Speed")
+        {
+            // 신속물약: 일정 시간 공격속도 버프. 데이터 AtkSpeedBonus는 분수(0.2=20%)라 ×100(퍼센트 공식 단위)
+            if (Managers.Data.SpeedPotionDic.TryGetValue(s.dataId, out var sp))
+                player.ApplySpeedBuff(sp.AtkSpeedBonus * 100f, sp.Duration);
+        }
     }
+
+    float GetHpCooldown(int dataId)
+        => Managers.Data.HPPotionDic.TryGetValue(dataId, out var d) && d.Cooldown > 0 ? d.Cooldown : 5f;
+    float GetSpdCooldown(int dataId)
+        => Managers.Data.SpeedPotionDic.TryGetValue(dataId, out var d) && d.Cooldown > 0 ? d.Cooldown : 10f;
 
     void Update()
     {
@@ -476,8 +507,8 @@ public class UI_PotionPopup : UI_Popup
             }
         }
 
-        // 자동물약 트리거 (HP 연동 미구현 → 스펙 스켈레톤만)
-        // TODO: Managers.Game.Player 등에서 현재 HP/MaxHP 읽어 _hpRatio 이하일 때 UsePotion(_hpSlot)
+        // 슬42: 자동물약은 PlayerController.UpdateAutoPotion이 전투 중 상시 처리(팝업 열림 무관).
+        //  여기서는 처리하지 않는다.
     }
 
     void OnCooldownFinished(Slot s)
@@ -528,34 +559,34 @@ public class UI_PotionPopup : UI_Popup
             return;
         }
         _autoOn = !_autoOn;
-        PlayerPrefs.SetInt(PREF_AUTO_ON, _autoOn ? 1 : 0);
-        PlayerPrefs.Save();
+        Managers.Game.AutoPotionOn = _autoOn;
         RefreshAutoUI();
     }
 
     void RefreshAutoUI()
     {
-        // AutoBtnToggleImg Animator state: "On" / "Off" 클립 가정 (prefab 설정에 의존)
-        if (_autoToggleAnimator != null)
-            _autoToggleAnimator.Play(_autoOn ? "On" : "Off", 0, 0f);
+        // AutoBtnToggleImg(로딩 스피너)는 Animator에 On/Off 상태가 없어 Play가 무효였음.
+        //  → 자동물약 작동 표시로, On일 때만 스피너 표시(활성=Animator 자동 재생), Off면 숨김.
+        if (_autoToggleAnimator != null && _autoToggleAnimator.gameObject.activeSelf != _autoOn)
+            _autoToggleAnimator.gameObject.SetActive(_autoOn);
 
-        // 슬라이더: 기억 전엔 잠금, 기억 후엔 조절 가능
+        // 슬41: 자동물약 On이면 HP Ratio 슬라이더 열림(조절 가능), Off면 잠금.
         if (_hpRatioSlider != null)
         {
-            _hpRatioSlider.interactable = _autoMemorized;
+            _hpRatioSlider.interactable = _autoOn;
             _hpRatioSlider.value = _hpRatio;
         }
         if (_autoGuageLock != null)
-            _autoGuageLock.SetActive(!_autoMemorized);
+            _autoGuageLock.SetActive(!_autoOn);
         if (_hpRatioText != null)
-            _hpRatioText.text = _autoMemorized ? $"{Mathf.RoundToInt(_hpRatio * 100)}%" : "";
+            _hpRatioText.text = _autoOn ? $"{Mathf.RoundToInt(_hpRatio * 100)}%" : "";
     }
 
     void OnHpRatioChanged(float v)
     {
-        if (!_autoMemorized) return;
+        if (!_autoOn) return;   // 슬라이더는 auto On일 때만 조절
         _hpRatio = v;
-        PlayerPrefs.SetFloat(PREF_HP_RATIO, _hpRatio);
+        Managers.Game.AutoPotionHpRatio = _hpRatio;
         if (_hpRatioText != null)
             _hpRatioText.text = $"{Mathf.RoundToInt(_hpRatio * 100)}%";
     }
@@ -564,7 +595,7 @@ public class UI_PotionPopup : UI_Popup
     public void MarkAutoPotionMemorized()
     {
         _autoMemorized = true;
-        PlayerPrefs.SetInt(PREF_MEMORIZED, 1);
+        Managers.Game.AutoPotionMemorized = true;
         if (_autoBtnNewTxt != null) _autoBtnNewTxt.SetActive(true);
         RefreshAutoUI();
     }

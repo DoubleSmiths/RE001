@@ -145,6 +145,11 @@ public class GameData
     // UI_PotionPopup(하단 탭) 내 SPD 슬롯 해금 연출이 재생되었는지.
     // 제작의뢰 해금 후 물약 팝업을 첫 번째로 열 때 1회 연출.
     public bool SpdPotionPopupAnimPlayed = false;
+
+    // 슬41/42: 자동물약 설정 (세이브 — 기존 PlayerPrefs에서 이관)
+    public bool  AutoPotionMemorized = false;   // 물약주입기 기술 습득 시 true (자동물약 사용 가능)
+    public bool  AutoPotionOn        = false;   // 자동물약 On/Off
+    public float AutoPotionHpRatio   = 0.5f;    // 자동 사용 기준 HP 비율(0~1)
 }
 
 // ──────────────────────────────────────────────
@@ -276,6 +281,23 @@ public class GameManager
     {
         get => _gameData.Mandrake;
         set { _gameData.Mandrake = Mathf.Max(0, value); SaveGame(); }
+    }
+
+    // 슬41/42: 자동물약 설정
+    public bool AutoPotionMemorized
+    {
+        get => _gameData.AutoPotionMemorized;
+        set { _gameData.AutoPotionMemorized = value; SaveGame(); }
+    }
+    public bool AutoPotionOn
+    {
+        get => _gameData.AutoPotionOn;
+        set { _gameData.AutoPotionOn = value; SaveGame(); }
+    }
+    public float AutoPotionHpRatio
+    {
+        get => Mathf.Clamp01(_gameData.AutoPotionHpRatio);
+        set { _gameData.AutoPotionHpRatio = Mathf.Clamp01(value); SaveGame(); }
     }
 
     // ── 해금 ──

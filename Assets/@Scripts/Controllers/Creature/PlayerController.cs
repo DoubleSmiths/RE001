@@ -22,6 +22,22 @@ public class PlayerController : CreatureController
     // 동행 미니몬 타격을 콤보(공세 게이지)에 누적 — 타격으로 침(슬)
     public void NotifyCompanionHit(float damage) => OnHitLanded?.Invoke(damage);
 
+    // 슬42: 신속물약 — 일정 시간 공격속도(공격쿨타임 단축) 버프. AutoAttack의 effectiveCooldown에 가산.
+    public float PotionAtkSpeedBonus { get; private set; }
+    Coroutine _potionSpeedCo;
+    public void ApplySpeedBuff(float bonusPct, float duration)
+    {
+        PotionAtkSpeedBonus = bonusPct;
+        if (_potionSpeedCo != null) StopCoroutine(_potionSpeedCo);
+        if (duration > 0f) _potionSpeedCo = StartCoroutine(CoClearSpeedBuff(duration));
+    }
+    IEnumerator CoClearSpeedBuff(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        PotionAtkSpeedBonus = 0f;
+        _potionSpeedCo = null;
+    }
+
     // 슬39: 능력 전투 발동조건 런너 (장착 능력의 확률/시간 발동 처리)
     AbilityRunner _abilityRunner;
     public MonsterController CurrentTarget => _attackTarget;   // 능력 BonusDamage 대상
@@ -114,7 +130,44 @@ public class PlayerController : CreatureController
 
         UpdateEngagementVisuals();
         AutoAttack();
+        UpdateAutoPotion();
     }
+
+    // 슬42: 자동물약 — 팝업 열림과 무관하게 전투 중 상시 동작.
+    //  기억 + On + HP가 설정 비율 이하 + 쿨타임 종료 시 회복물약 자동 사용.
+    float _autoPotionCd;
+    void UpdateAutoPotion()
+    {
+        if (_autoPotionCd > 0f) _autoPotionCd -= Time.deltaTime;
+
+        var game = Managers.Game;
+        if (game == null || !game.AutoPotionMemorized || !game.AutoPotionOn) return;
+        if (_autoPotionCd > 0f) return;
+        if (MaxHp <= 0f || Hp / MaxHp > game.AutoPotionHpRatio) return;
+
+        int id = game.CurrentHPPotionDataId;
+        if (Managers.Data?.HPPotionDic == null || !Managers.Data.HPPotionDic.TryGetValue(id, out var hp)) return;
+
+        Heal(hp.FlatRecov + MaxHp * (hp.MaxHPRecov / 100f));
+        SpawnHpPotionFx();
+        _autoPotionCd = hp.Cooldown > 0 ? hp.Cooldown : 5f;
+        OnAutoPotionUsed?.Invoke();   // 팝업이 열려 있으면 쿨타임 바 동기화용
+    }
+
+    // 슬42: HP 물약 사용 이펙트(HP Potion Ef)를 플레이어 자식으로 생성(위치는 프리팹 저작값). 자동/수동 공통.
+    public void SpawnHpPotionFx()
+    {
+        Managers.Object?.ShowHpPotionEffectOn(transform);
+    }
+
+    // 수동 사용(팝업 클릭) 시에도 자동 쿨타임을 공유 — 직후 자동 사용이 중복 발동하지 않도록.
+    public void StartHpPotionCooldown(float cd) { if (cd > _autoPotionCd) _autoPotionCd = cd; }
+
+    // 자동물약 사용 시점 통지 (열려있는 UI_PotionPopup이 쿨타임 바를 동기화).
+    public event System.Action OnAutoPotionUsed;
+    public float AutoPotionCooldownNormalized => _autoPotionCd <= 0f ? 0f :
+        (Managers.Data != null && Managers.Data.HPPotionDic.TryGetValue(Managers.Game.CurrentHPPotionDataId, out var hp) && hp.Cooldown > 0
+            ? Mathf.Clamp01(_autoPotionCd / hp.Cooldown) : 0f);
 
     // 슬라이드 57/58 — 몬스터 AtkRange 진입 여부에 따라:
     //   · 미engaged: BG scroll on, Player Run (Moving)
@@ -189,8 +242,8 @@ public class PlayerController : CreatureController
     void AutoAttack()
     {
         if (State == Define.State.Attack) return;
-        // 콤보 공격속도 버프 적용: AtkSpeedBuff(%) 만큼 쿨타임 단축
-        float effectiveCooldown = AtkCooldown / (1f + ComboAtkSpeedBonus() / 100f);
+        // 콤보 + 신속물약 공격속도 버프 적용: 합산 %만큼 쿨타임 단축
+        float effectiveCooldown = AtkCooldown / (1f + (ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / 100f);
         if (Time.time < _lastAtkTime + effectiveCooldown) return;
 
         // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster를 찾아 공격.

@@ -15,6 +15,9 @@ public class AbilityManager
 
     public const int BASE_MEMORY = 10;      // 시작 기억력 (밸런스 시드 — 엑셀 후속)
 
+    // 슬41: 물약주입기 기술 — 습득 시 자동물약 [기억](AutoPotionMemorized) 활성화.
+    public const int AUTO_POTION_SKILL_ID = 5009;
+
     // 슬79: 미니몬 고유기술 능력 id 매핑 (creatureId + OFFSET). 예) 2001 → 6001.
     public const int MINION_SKILL_OFFSET = 4000;
     public int MinionSkillId(int creatureId) => creatureId + MINION_SKILL_OFFSET;
@@ -147,6 +150,11 @@ public class AbilityManager
         if (!Learned.Contains(id)) Learned.Add(id);
         if (d.MemoryCapacity <= 0 && !Equipped.Contains(id))
             Equipped.Add(id);                       // 재능: 항시 적용
+
+        // 슬41: 물약주입기 습득 시 자동물약 [기억] 활성화
+        if (id == AUTO_POTION_SKILL_ID)
+            Managers.Game.AutoPotionMemorized = true;
+
         Managers.Game.SaveGame();
         OnAbilityChanged?.Invoke();
     }

@@ -157,6 +157,19 @@ public class ObjectManager
         //SpawnFxAt("Basic Crit", new Vector3(0, 0, 0)); // 나중에는 무기에 따라 달라져야 함.
     }
 
+    // 슬42: HP 물약 사용 시 HP Potion Ef를 부모(플레이어) 아래 생성. 좌표는 프리팹 저작 로컬값 유지(코드 보정 안 함).
+    public void ShowHpPotionEffectOn(Transform parent)
+    {
+        GameObject go = Managers.Resource.Instantiate("HP Potion Ef");
+        if (go == null)
+        {
+            Debug.LogWarning("[ObjectManager] FX prefab not found: HP Potion Ef. Addressable PreLoad 필요.");
+            return;
+        }
+        go.transform.SetParent(parent, worldPositionStays: false);   // 프리팹 로컬 위치 유지
+        Object.Destroy(go, FX_LIFETIME);
+    }
+
     void SpawnFxAt(string prefabKey, Vector3 pos)
     {
         GameObject go = Managers.Resource.Instantiate(prefabKey);

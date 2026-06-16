@@ -1,6 +1,21 @@
 {
   "skills": [
     {
+      "DataId": 5009,
+      "Name": "물약 주입기",
+      "Description": "전투 중 HP가 설정 비율 이하로 떨어지면 회복 물약을 자동으로 사용한다.",
+      "NameEng": "Potion Injector",
+      "DescEng": "Automatically uses a recovery potion when HP drops below the set ratio in battle.",
+      "IconLabel": "",
+      "Category": "Talent",
+      "SkillActiveType": "Passive",
+      "StatType": "",
+      "StatBonus": 0.0,
+      "MaxLevel": 1,
+      "MemoryCapacity": 0,
+      "Source": "Npc"
+    },
+    {
       "DataId": 5001,
       "Name": "기억 확장",
       "Description": "최대 기억력을 늘려주는 재능. 항시 적용된다.",
