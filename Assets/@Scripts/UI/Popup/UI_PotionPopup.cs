@@ -125,16 +125,13 @@ public class UI_PotionPopup : UI_Popup
     TMP_Text _hpRatioText;
     GameObject _autoGuageLock;           // 잠금 오버레이 (기억 전)
 
-    Vector2 _boxOrigin;
     bool _autoOn;
     bool _autoMemorized;
     float _hpRatio = 0.5f;
 
-    float _boxOffScreenY;  // 열릴 때 시작 / 닫힐 때 종료 y (화면 완전 밖)
-
-    // Prefab의 anchoredPosition(0, -85)은 In_Frame 바닥 아래(오프스크린)라 보이지 않음.
-    // 기획서 GIF 기준 화면 하단에 떠있는 모양 — In_Frame bottom에서 위로 120 정도.
-    static readonly Vector2 BOX_ORIGIN = new Vector2(0f, 45f);
+    // PotionBoxGroup의 등장/퇴장 DOTweenAnimation (prefab: Move (0,-85)→(0,40) OutBack 0.5s, autoKill=False).
+    //  열기 = DORestart(정방향), 닫기 = DOPlayBackwards(역재생).
+    DG.Tweening.DOTweenAnimation _boxAnim;
 
     const string PREF_AUTO_ON   = "PotionPopup.AutoOn";
     const string PREF_HP_RATIO  = "PotionPopup.HpRatio";
@@ -159,6 +156,10 @@ public class UI_PotionPopup : UI_Popup
         _titleText  = GetText((int)Texts.Txt_Title_02);
 
         _frameRT = _boxGroupRT;
+
+        // PotionBoxGroup 등장/퇴장 DOTweenAnimation 캐시. 팝업 중 timeScale 0이어도 재생되도록 unscaled로.
+        _boxAnim = GetImage((int)Images.PotionBoxGroup).GetComponent<DOTweenAnimation>();
+        if (_boxAnim != null) _boxAnim.isIndependentUpdate = true;
 
         // 슬롯 바인딩 (HP / Speed)
         _hpSlot  = BindHpSlot();
@@ -293,20 +294,15 @@ public class UI_PotionPopup : UI_Popup
         RefreshAutoUI();
         if (_autoBtnNewTxt != null) _autoBtnNewTxt.SetActive(false);
 
-        // 진입 애님: 화면 완전 밖(아래) → BOX_ORIGIN. OutBack 0.5s.
-        _boxOrigin = BOX_ORIGIN;
-        var canvasRT = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
-        _boxOffScreenY = _boxOrigin.y - canvasRT.rect.height - _boxGroupRT.rect.height;
-        _boxGroupRT.DOKill();
-        _boxGroupRT.anchoredPosition = new Vector2(0f, _boxOffScreenY);
-        _boxGroupRT.DOAnchorPos(_boxOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
+        // 등장 애님: PotionBoxGroup 컴포넌트의 DOTweenAnimation(Move 슬라이드인)을 재생. (코드 트윈 사용 안 함)
+        _boxAnim?.DORestart();
 
-        // BlackBG 페이드
+        // 배경(PotionPopupBackground)은 항상 투명 유지 — 어두운 배경 표시 안 함.
+        //  (클릭 닫기를 위해 raycastTarget은 prefab 설정 그대로 유지)
         if (_bg != null)
         {
             _bg.DOKill();
             Color c = _bg.color; c.a = 0f; _bg.color = c;
-            _bg.DOFade(220f / 255f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
         }
 
         // SPD 해금 1회 연출 (물약 팝업 첫 진입)
@@ -378,12 +374,22 @@ public class UI_PotionPopup : UI_Popup
         });
     }
 
+    bool _closing;
     void OnClickClose()
     {
-        _boxGroupRT.DOKill();
-        var seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(_boxGroupRT.DOAnchorPos(new Vector2(0f, _boxOffScreenY), 0.25f).SetEase(Ease.InBack));
-        seq.OnComplete(() => Managers.UI.ClosePopupUI());
+        if (_closing) return;
+        _closing = true;
+
+        // 닫기: 등장 DOTweenAnimation을 역재생(rewind)한 뒤 팝업 닫기.
+        if (_boxAnim != null)
+        {
+            _boxAnim.DOPlayBackwards();
+            DG.Tweening.DOVirtual.DelayedCall(_boxAnim.duration, () => Managers.UI.ClosePopupUI(), ignoreTimeScale: true);
+        }
+        else
+        {
+            Managers.UI.ClosePopupUI();
+        }
     }
 
     // ────────────────────────────────────────
