@@ -226,8 +226,6 @@ public class UI_BestiaryPopup : UI_Popup
     const int SKILL_COUNT = 4;
     static readonly string[] SKILL_NAMES =
         { "종을 초월한 교감", "조련사의 기술", "오다 주웠습니다 주인님!", "기억 확장" };
-    const string SKILL_UNLOCK_PREFIX = "BESTIARY_SKILL_UNLOCK_";
-    const string SKILL_GRADE_PREFIX  = "BESTIARY_SKILL_GRADE_";
     // 슬2/38(도감 별 작업): 완성도 4스킬 ↔ 능력(SkillData) id 매핑. idx 0~3 좌→우.
     static readonly int[] SKILL_ABILITY_ID = { 7000, 7001, 7002, 5001 };
 
@@ -244,48 +242,53 @@ public class UI_BestiaryPopup : UI_Popup
         else Managers.Ability.Unlearn(abilityId);
     }
 
-    // 기본 해금: idx3(기억 확장)만 true
+    // ── 완성도 4스킬 상태: GameData(GameManager) 단일소스로 저장/로드 (이전 PlayerPrefs에서 이관) ──
+    // 기본 해금은 idx3(기억 확장)만 — GameData.BestiarySkillUnlocked 초기값으로 보장.
+    static bool GameReady => Managers.Game != null;
+
     public static bool GetSkillUnlocked(int idx)
-        => PlayerPrefs.GetInt(SKILL_UNLOCK_PREFIX + idx, idx == SKILL_COUNT - 1 ? 1 : 0) == 1;
+        => GameReady && idx >= 0 && idx < SKILL_COUNT && Managers.Game.BestiarySkillUnlocked[idx];
     public static void SetSkillUnlocked(int idx, bool unlocked)
     {
-        PlayerPrefs.SetInt(SKILL_UNLOCK_PREFIX + idx, unlocked ? 1 : 0);
-        PlayerPrefs.Save();
+        if (!GameReady || idx < 0 || idx >= SKILL_COUNT) return;
+        Managers.Game.BestiarySkillUnlocked[idx] = unlocked;
+        Managers.Game.SaveGame();
         SyncSkillAbility(idx);
     }
-    public static int  GetSkillGrade(int idx) => PlayerPrefs.GetInt(SKILL_GRADE_PREFIX + idx, 0);
+    public static int  GetSkillGrade(int idx)
+        => GameReady && idx >= 0 && idx < SKILL_COUNT ? Managers.Game.BestiarySkillGrade[idx] : 0;
     public static void SetSkillGrade(int idx, int grade)
     {
-        PlayerPrefs.SetInt(SKILL_GRADE_PREFIX + idx, Mathf.Max(0, grade));
-        PlayerPrefs.Save();
+        if (!GameReady || idx < 0 || idx >= SKILL_COUNT) return;
+        Managers.Game.BestiarySkillGrade[idx] = Mathf.Max(0, grade);
+        Managers.Game.SaveGame();
         SyncSkillAbility(idx);
     }
 
     // ── 슬라이드 74: 등급 상승 연출 관련 상태 ──
     // NEW 뱃지: 해금 시 켜고, 기술 상세창을 한 번 보면 끈다.
-    const string SKILL_NEW_PREFIX = "BESTIARY_SKILL_NEW_";
-    public static bool GetSkillNew(int idx) => PlayerPrefs.GetInt(SKILL_NEW_PREFIX + idx, 0) == 1;
+    public static bool GetSkillNew(int idx)
+        => GameReady && idx >= 0 && idx < SKILL_COUNT && Managers.Game.BestiarySkillNew[idx];
     public static void SetSkillNew(int idx, bool isNew)
     {
-        PlayerPrefs.SetInt(SKILL_NEW_PREFIX + idx, isNew ? 1 : 0);
-        PlayerPrefs.Save();
+        if (!GameReady || idx < 0 || idx >= SKILL_COUNT) return;
+        Managers.Game.BestiarySkillNew[idx] = isNew;
+        Managers.Game.SaveGame();
     }
 
-    // 좌→우 순환 포인터: 다음에 등급 오를 스킬 idx (슬라이드 71 #4)
-    const string SKILL_ROT_PTR = "BESTIARY_SKILL_ROTPTR";
     // 완성도 숫자: 보라(3단계) 달성 누적 수
-    const string COMPLETION_KEY = "BESTIARY_COMPLETION";
-    public static int  GetCompletion() => PlayerPrefs.GetInt(COMPLETION_KEY, 0);
+    public static int  GetCompletion() => GameReady ? Managers.Game.BestiaryCompletion : 0;
     public static void SetCompletion(int v)
     {
-        PlayerPrefs.SetInt(COMPLETION_KEY, Mathf.Max(0, v));
-        PlayerPrefs.Save();
+        if (!GameReady) return;
+        Managers.Game.BestiaryCompletion = Mathf.Max(0, v);
+        Managers.Game.SaveGame();
     }
 
     // 슬라이드 71 #4: 보라 달성 1건당 좌→우 순환으로 다음 스킬 +1등급. 잠금이면 해금(Lv0→Lv1)+NEW.
     static int AdvanceSkillGrade(out bool newlyUnlocked)
     {
-        int ptr = PlayerPrefs.GetInt(SKILL_ROT_PTR, 0) % SKILL_COUNT;
+        int ptr = (GameReady ? Managers.Game.BestiarySkillRotPtr : 0) % SKILL_COUNT;
         newlyUnlocked = !GetSkillUnlocked(ptr);
         if (newlyUnlocked)
         {
@@ -293,17 +296,21 @@ public class UI_BestiaryPopup : UI_Popup
             SetSkillNew(ptr, true);
         }
         SetSkillGrade(ptr, GetSkillGrade(ptr) + 1);
-        PlayerPrefs.SetInt(SKILL_ROT_PTR, (ptr + 1) % SKILL_COUNT);
-        PlayerPrefs.Save();
+        if (GameReady)
+        {
+            Managers.Game.BestiarySkillRotPtr = (ptr + 1) % SKILL_COUNT;
+            Managers.Game.SaveGame();
+        }
         return ptr;
     }
 
     public static void ResetSkillRotation()
     {
-        PlayerPrefs.SetInt(SKILL_ROT_PTR, 0);
-        PlayerPrefs.SetInt(COMPLETION_KEY, 0);
-        for (int i = 0; i < SKILL_COUNT; i++) SetSkillNew(i, false);
-        PlayerPrefs.Save();
+        if (!GameReady) return;
+        Managers.Game.BestiarySkillRotPtr = 0;
+        Managers.Game.BestiaryCompletion = 0;
+        for (int i = 0; i < SKILL_COUNT; i++) Managers.Game.BestiarySkillNew[i] = false;
+        Managers.Game.SaveGame();
     }
 
     // 스킬 idx별 prefab 노드 enum 매핑 (좌→우 순서)
@@ -625,6 +632,7 @@ public class UI_BestiaryPopup : UI_Popup
     // 도감이 열려있는 상태에서 어떤 몬스터의 별 등급이 올랐을 때 호출.
     // newStar < 3 : 해당 미니몬 아이콘만 Punch/Scale
     // newStar == 3: 기술→미니몬→완성도별→숫자 0.1s 간격 순차 + 기술/미니몬에 Flash_USETHIS
+    // 테스트 메뉴 전용: 별을 강제로 newStar로 세팅한 뒤 연출.
     public void PlayGradeUp(int dataId, int newStar)
     {
         SetStarGrade(dataId, newStar);
@@ -639,6 +647,20 @@ public class UI_BestiaryPopup : UI_Popup
             return;
         }
 
+        AdvanceCompletionAndAnim(dataId);   // 3단계(보라) 달성
+    }
+
+    // 게임플레이: 몬스터가 이미 보라별 달성(별 재시드 X) → 완성도 좌→우 1등급 + 연출.
+    //  GrantMaxStarCompletion에서 도감이 열려있을 때만 호출됨(슬5: "도감을 열어놓은 상태에서").
+    void PlayGradeUpFromGameplay(int dataId)
+    {
+        FindBox(dataId)?.RefreshStarGrade();
+        AdvanceCompletionAndAnim(dataId);
+    }
+
+    // 완성도 상태 advance(좌→우 1등급 — 잠금이면 해금+NEW) + 보라별 연출 시퀀스.
+    void AdvanceCompletionAndAnim(int dataId)
+    {
         // 3단계(보라) 달성: 좌→우 순환 등급상승 + 완성도 누적
         int skillIdx = AdvanceSkillGrade(out bool _);
         SetCompletion(GetCompletion() + 1);
@@ -647,6 +669,7 @@ public class UI_BestiaryPopup : UI_Popup
         RefreshSkills();
         RefreshCompletionNumber();
 
+        UI_BestiaryBox box = FindBox(dataId);
         Transform skillTr = GetButton(SKILL_ICON_BTN[skillIdx])?.transform;
         Transform starTr  = GetImage((int)Images.AllSStarImage)?.transform;
         Transform numTr   = GetText((int)Texts.CompletionLevelText)?.transform;
@@ -662,6 +685,24 @@ public class UI_BestiaryPopup : UI_Popup
         seq.AppendCallback(() => { PunchScale(starTr); ApplyCompletionStarAnim(); });
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => PunchScale(numTr));
+    }
+
+    // 슬2: 몬스터가 보라별(3단계) 최초 달성 시 호출(MinMonManager.OnMaxStarReached → UI_GameScene 경유).
+    //  도감이 열려있으면 상태 advance + 연출 / 닫혀있으면 상태만 advance(연출 없음).
+    //  중복 방지는 MinMonManager(MaxStarGranted)가 보장 — 몬스터당 1회만 호출됨.
+    public static void GrantMaxStarCompletion(int dataId)
+    {
+        var popup = UnityEngine.Object.FindObjectOfType<UI_BestiaryPopup>();
+        if (popup != null)
+        {
+            popup.PlayGradeUpFromGameplay(dataId);
+        }
+        else
+        {
+            // 도감 닫힘: 연출 없이 상태만 갱신(다음에 열 때 반영)
+            AdvanceSkillGrade(out _);
+            SetCompletion(GetCompletion() + 1);
+        }
     }
 
     // 슬라이드 74 #3: DOTween Punch/Scale Dur 0.3 OutQuad TO(0.2,0.2,0) Vibrato 10 Elasticity 1

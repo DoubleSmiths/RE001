@@ -232,8 +232,9 @@ public class UI_CharacterPopup : UI_Popup
 
         _frameRT = GetObject((int)GameObjects.CharacterPopup).gameObject.GetComponent<RectTransform>();
 
-        // ── 배경 클릭 닫기 ──
-        GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(() => OnClickStatConfirm());
+        // ── 배경/X 클릭 닫기 = 저장 안 하고 닫음 → 임시 분배 롤백 ──
+        GetButton((int)Buttons.CharacterPopupBackground).gameObject.BindEvent(OnClickCloseRollback);
+        GetImage((int)Images.Xbutton).gameObject.BindEvent(OnClickCloseRollback);
 
         // ── 스탯 포인트 +/- ──
         //GetButton((int)Buttons.STRInPointBtn).gameObject.BindEvent(() => AddStat(0));
@@ -510,28 +511,45 @@ public class UI_CharacterPopup : UI_Popup
     // ────────────────────────────────────────────────────
     //  초기화 / 확인
     // ────────────────────────────────────────────────────
-    void OnClickStatReset()
-    {
-        // 투자한 포인트를 돌려줌
-        for (int i = 0; i < 4; i++)
-            Managers.Game.StatusPoint += _statDeltas[i];
-        for (int i = 0; i < 4; i++) _statDeltas[i] = 0;
+    // StatResetBtn = 롤백 버튼: 임시 투자분(델타)을 취소하고 포인트를 환불.
+    void OnClickStatReset() => RollbackDeltas();
 
+    // 저장 안 한 임시 분배를 롤백 — 투자한 포인트를 환불하고 델타 0으로.
+    void RollbackDeltas()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Managers.Game.StatusPoint += _statDeltas[i];
+            _statDeltas[i] = 0;
+        }
         RefreshUI();
     }
 
+    // 저장(확정) 없이 닫을 때 — 롤백 후 팝업 닫기.
+    void OnClickCloseRollback()
+    {
+        RollbackDeltas();
+        OnClickBG();
+    }
+
+    // StatConfirmBtn = 스탯 적용 + 저장 전용. 팝업은 닫지 않는다.
     void OnClickStatConfirm()
     {
         if (_player == null) return;
+        bool nothingToApply = true;
+        for (int i = 0; i < 4; i++) if (_statDeltas[i] != 0) nothingToApply = false;
+        if (nothingToApply) return;
 
-        // 델타 적용 (1포인트 = STR:2공격, VIT:20HP, DEX:1명중, MAG:2마법공격)
-        _player.PhysicalAtk += _statDeltas[0] * 2f;
-        _player.MaxHp       += _statDeltas[1] * 20f;
-        _player.Accuracy    += _statDeltas[2] * 1f;
-        _player.MagicAtk   += _statDeltas[3] * 2f;
-
+        // 분배 델타를 GameData에 누적(영구 저장 — 세이브/로드는 GameManager가 관리)
+        int[] inv = Managers.Game.StatInvest;
+        for (int i = 0; i < 4; i++) { inv[i] += _statDeltas[i]; _statDeltas[i] = 0; }
         Managers.Game.SaveGame();
-        OnClickBG();
+
+        // 실제 캐릭터에 적용 + PlayerBar 갱신 (RefreshStats가 OnHpChanged 발화 → HP 바/텍스트 즉시 갱신)
+        _player.RefreshStats();
+        CacheBaseValues();   // 적용 후 새 기준값 재캐싱
+        RefreshUI();
+        // 팝업은 닫지 않음 (사용자 요구)
     }
 
     void OnClickStatRestAndConfirmAnim(Transform t)

@@ -81,6 +81,8 @@ public class GameData
     public int    Crystal     = 0;
     public int    StatusPoint = 0;
     public int    Elixir      = 0;
+    // 캐릭터창 스탯 분배 누적치(영구). 0=STR(물공) 1=VIT(HP) 2=DEX(명중) 3=MAG(마공)
+    public int[]  StatInvest  = new int[4];
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -99,6 +101,14 @@ public class GameData
     public List<MinMonSaveData> OwnedMinMons    = new List<MinMonSaveData>();
     public int                  CompanionMinMonId = -1;
     public List<int>            InterestedMinMons = new List<int>(); // 슬23: 포획 가능 미니몬 창고(저장 순서)
+    public List<int>            MaxStarGranted    = new List<int>(); // 슬2: 보라별(3단계) 최초 달성으로 완성도 등급 부여한 몬스터(중복 방지)
+
+    // 슬2: 도감 완성도 4스킬 상태 (좌→우: 종을초월교감/조련사기술/오다주웠/기억확장). 기본 해금은 idx3(기억확장)만.
+    public bool[] BestiarySkillUnlocked = new bool[] { false, false, false, true };
+    public int[]  BestiarySkillGrade    = new int[4];
+    public bool[] BestiarySkillNew      = new bool[4];
+    public int    BestiarySkillRotPtr   = 0;   // 좌→우 순환 포인터(다음 등급 오를 스킬 idx)
+    public int    BestiaryCompletion    = 0;   // 보라별 달성 누적 수(완성도 숫자)
 
     // 능력(슬38): 보유한 능력 / 기억(장착)중인 능력 / 능력별 단계(Level)
     public List<int>            LearnedAbilities  = new List<int>();
@@ -170,6 +180,9 @@ public class GameManager
         set { _gameData.Elixir = value; SaveGame(); }
     }
 
+    // 캐릭터창 스탯 분배 누적치(영구). 배열 참조 반환 — 원소 수정 후 SaveGame()으로 저장.
+    public int[] StatInvest => _gameData.StatInvest;
+
     // ── 환경설정 ──
     public bool IsBGSoundOn
     {
@@ -238,6 +251,14 @@ public class GameManager
     // ── 미니몬 ──
     public List<MinMonSaveData> OwnedMinMons     => _gameData.OwnedMinMons;
     public List<int>            InterestedMinMons => _gameData.InterestedMinMons;
+    public List<int>            MaxStarGranted    => _gameData.MaxStarGranted;
+
+    // 슬2: 도감 완성도 4스킬 상태 (세이브/로드는 GameManager 단일소스)
+    public bool[] BestiarySkillUnlocked => _gameData.BestiarySkillUnlocked;
+    public int[]  BestiarySkillGrade    => _gameData.BestiarySkillGrade;
+    public bool[] BestiarySkillNew      => _gameData.BestiarySkillNew;
+    public int    BestiarySkillRotPtr { get => _gameData.BestiarySkillRotPtr; set => _gameData.BestiarySkillRotPtr = value; }
+    public int    BestiaryCompletion  { get => _gameData.BestiaryCompletion;  set => _gameData.BestiaryCompletion  = value; }
 
     // ── 능력 ──
     public List<int>            LearnedAbilities  => _gameData.LearnedAbilities;

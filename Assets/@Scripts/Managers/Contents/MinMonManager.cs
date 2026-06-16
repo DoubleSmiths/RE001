@@ -7,6 +7,7 @@ public class MinMonManager
     public event Action<int> OnCompanionChanged;
     public event Action<int> OnMinMonAdded;
     public event Action      OnInterestChanged;   // 슬23: 포획 가능 창고 변동
+    public event Action<int> OnMaxStarReached;     // 슬2: 몬스터가 보라별(3단계) 최초 달성 (완성도 등급 상승 트리거)
 
     // ── 미니몬 관심 / 포획 가능 창고 (슬23~27) ──
     public const int INTEREST_CAPACITY = 2;       // 창고 슬롯 수 (기술로 증가 가능 — 후속)
@@ -124,6 +125,7 @@ public class MinMonManager
 
         OnMinMonAdded?.Invoke(dataId);
         OnInterestChanged?.Invoke();
+        CheckMaxStar(dataId);   // 슬2: 포획으로 공명도/등급 상승 → 보라별 달성 시 완성도 트리거
     }
 
     // 슬20: 능력치 등급 확률 (0:40% 1:30% 2:15% 3:8% 4:5% 5:2%)
@@ -218,6 +220,20 @@ public class MinMonManager
         int max = Mathf.Max(1, cd.MaxKillCount);
         save.KillCount = Mathf.Min(save.KillCount + 1, max);
         Managers.Game.SaveGame();
+        CheckMaxStar(dataId);   // 슬2: 사냥으로 기록도 상승 → 보라별 달성 시 완성도 트리거
+    }
+
+    // 슬2: 몬스터의 별 단계가 보라별(=GetStarGrade 최대)에 처음 도달하면 1회만 완성도 트리거.
+    //  (도감 열림/닫힘 처리는 구독자 UI에서. 여기선 게임플레이 진척 감지 + 중복 방지만)
+    public const int STAR_MAX = 3;
+    void CheckMaxStar(int dataId)
+    {
+        if (GetStarGrade(dataId) < STAR_MAX) return;
+        var granted = Managers.Game.MaxStarGranted;
+        if (granted.Contains(dataId)) return;
+        granted.Add(dataId);
+        Managers.Game.SaveGame();
+        OnMaxStarReached?.Invoke(dataId);
     }
 
     public int GetKillCount(int dataId) { var s = FindSave(dataId); return s != null ? s.KillCount : 0; }

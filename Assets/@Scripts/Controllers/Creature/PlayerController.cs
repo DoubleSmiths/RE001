@@ -18,6 +18,10 @@ public class PlayerController : CreatureController
     AbilityRunner _abilityRunner;
     public MonsterController CurrentTarget => _attackTarget;   // 능력 BonusDamage 대상
 
+    // 캐릭터창 스탯 1포인트당 증가량: 0=STR(물공) 1=VIT(HP) 2=DEX(명중) 3=MAG(마공).
+    // RefreshStats 적용과 UI_CharacterPopup 미리보기가 이 값을 공유한다.
+    public static readonly float[] STAT_PER_POINT = { 2f, 20f, 1f, 2f };
+
     // ── 플레이어 전용 스탯 ──
     public float GrowthRate = 100f;  // 성장률 % (경험치 획득량에 곱함)
     public float DropRate   = 100f;  // 획득률 % (몬스터 드롭률에 곱함)
@@ -329,6 +333,16 @@ public class PlayerController : CreatureController
             PhysicalAtk = 10  + (lv - 1) * 2;
             MagicAtk    = 10  + (lv - 1) * 2;
             Def         = 0   + (lv - 1) * 1;
+        }
+
+        // 캐릭터창에서 분배한 스탯 포인트 적용 (영구 — GameData.StatInvest에 저장)
+        int[] inv = Managers.Game?.StatInvest;
+        if (inv != null && inv.Length >= 4)
+        {
+            PhysicalAtk += inv[0] * STAT_PER_POINT[0];
+            MaxHp       += inv[1] * STAT_PER_POINT[1];
+            Accuracy    += inv[2] * STAT_PER_POINT[2];
+            MagicAtk    += inv[3] * STAT_PER_POINT[3];
         }
 
         // 슬38: 장착(기억)된 능력의 스탯 보너스 가산

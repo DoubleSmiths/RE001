@@ -215,7 +215,10 @@ public class UI_GameScene : UI_Scene
         }
 
         if (Managers.MinMon != null)
+        {
             Managers.MinMon.OnInterestChanged -= RefreshBestiaryNewIcon;
+            Managers.MinMon.OnMaxStarReached -= OnMonsterMaxStar;
+        }
 
         if (Managers.Quest != null)
         {
@@ -842,6 +845,16 @@ public class UI_GameScene : UI_Scene
     {
         player.OnHpChanged += (cur, max) => UpdateHP(cur, max);
         player.OnExpChanged += (cur, req) => UpdateEXP(cur, req);
+
+        // HP 바는 표시 전용 — 슬라이더 클릭으로 값이 조정되지 않게 입력만 차단.
+        // (interactable=false는 비활성 틴트로 바가 어두워지므로, 컴포넌트 자체를 비활성화한다.
+        //  표시는 PlayerHPBarGuage Image.fillAmount로 별도 구동되어 영향 없음)
+        var hpSlider = GetImage((int)Images.PlayerHPBarGroup)?.GetComponent<Slider>();
+        if (hpSlider != null)
+        {
+            hpSlider.interactable = true;   // 이전에 적용됐을 비활성 틴트 제거(노멀 색 복귀)
+            hpSlider.enabled = false;       // 컴포넌트 비활성 → 클릭으로 값 조정 불가
+        }
         player.OnLevelUp += (lv, regen) => OnLevelUp(lv, regen);
         UpdateHP(player.Hp, player.MaxHp);
         UpdateEXP(Managers.Game.Exp, player.ExpRequired);   // LoadGame된 현재 EXP로 슬라이더 초기화
@@ -849,7 +862,12 @@ public class UI_GameScene : UI_Scene
         RefreshCharacterNewIcon();
         Managers.MinMon.OnInterestChanged += RefreshBestiaryNewIcon;
         RefreshBestiaryNewIcon();
+        // 슬2: 몬스터 보라별 달성 → 완성도 스킬 등급 상승(도감 열려있으면 연출)
+        Managers.MinMon.OnMaxStarReached += OnMonsterMaxStar;
     }
+
+    // 슬2: 몬스터가 보라별 최초 달성 시 — 도감 완성도 등급 상승 + (열려있으면)연출.
+    void OnMonsterMaxStar(int dataId) => UI_BestiaryPopup.GrantMaxStarCompletion(dataId);
 
     // ────────────────────────────────────────
     //  버튼 핸들러
