@@ -238,8 +238,16 @@ public class UI_TamePopup : UI_Popup
         ShowButton(Buttons.LureBtn);
         yield return new WaitForSecondsRealtime(0.5f);
         ShowButton(Buttons.UseMandrakeBtn);
+        RefreshMandrakeButton();   // 슬31/37: 만드라고라 보유 수에 따라 게이팅
 
         _busy = false; // 모든 버튼 등장 후 상호작용 가능
+    }
+
+    // 슬31/37: 만드라고라 보유 수 0이면 [가랏! 만드라고라!] 비활성(확정 포획 불가).
+    void RefreshMandrakeButton()
+    {
+        var btn = GetButton((int)Buttons.UseMandrakeBtn);
+        if (btn != null) btn.interactable = Managers.Game.MandrakeCount > 0;
     }
 
     // 슬33 Opening Anim: 회색 Sprite(None) 오버레이(BlockImg)가 본문을 덮고 깜빡임.
@@ -304,6 +312,12 @@ public class UI_TamePopup : UI_Popup
     void OnClickMandrake()
     {
         if (_busy) return;
+        // 슬31/37: 만드라고라 보유 수 체크 — 없으면 무시(버튼도 비활성이지만 이중 가드)
+        if (Managers.Game.MandrakeCount <= 0)
+        {
+            Debug.Log("[TamePopup] 만드라고라 부족 — 확정 포획 불가");
+            return;
+        }
         _busy = true;
         StartCoroutine(CoMandrake());
     }
@@ -312,7 +326,8 @@ public class UI_TamePopup : UI_Popup
     {
         SetButtonsActive(false);
 
-        // TODO 슬31/37: 만드라고라 보유 개수 체크 + 소비 (인벤토리 연동)
+        // 슬31/37: 만드라고라 1개 소비 (보유 수는 OnClickMandrake에서 이미 검증)
+        Managers.Game.MandrakeCount--;
         // 순서2
         yield return CoType("가랏! 만드라고라!");
         yield return new WaitForSecondsRealtime(1f);

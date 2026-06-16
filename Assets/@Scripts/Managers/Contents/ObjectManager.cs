@@ -25,6 +25,18 @@ public class ObjectManager
         }
     }
 
+    // 동행 미니몬 루트 — @Monster와 분리(몬스터로 오인되지 않도록).
+    public Transform CompanionTransform
+    {
+        get
+        {
+            GameObject root = GameObject.Find("@Companion");
+            if (root == null)
+                root = new GameObject { name = "@Companion" };
+            return root.transform;
+        }
+    }
+
     public Transform TextFontTransform
     {
         get
@@ -54,6 +66,25 @@ public class ObjectManager
         MonsterController mc = go.GetOrAddComponent<MonsterController>();
         mc.SetInfo(dataId);
         return mc;
+    }
+
+    // [동행 미니몬] 스폰 — 적과 동일한 CreatureData.PrefabLabel(슬라임 등) 재사용.
+    //  CompanionController가 추종/자동공격을 담당. (MonsterController는 붙이지 않음)
+    public CompanionController SpawnCompanion(int minionId, PlayerController player)
+    {
+        if (player == null) return null;
+        if (!Managers.Data.CreatureDic.TryGetValue(minionId, out var data))
+        {
+            Debug.LogWarning($"[ObjectManager] Companion CreatureData not found: {minionId}");
+            return null;
+        }
+
+        GameObject go = Managers.Resource.Instantiate(data.PrefabLabel, CompanionTransform);
+        if (go == null) return null;
+
+        CompanionController cc = go.GetOrAddComponent<CompanionController>();
+        cc.Setup(minionId, player);
+        return cc;
     }
 
     // 슬라이드 63 — Damage Textpopup. 모드는 DamageFontMode 참조.

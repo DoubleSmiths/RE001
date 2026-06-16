@@ -186,8 +186,8 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/part1/Slide 19 - 소지품 Popup %#3", false, 106)]
     static void S19_Inventory() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo(); Spec("슬19", "16칸 + 잠긴칸. Glow 색: 빈칸 FFFFFF40, 사용중 등급색, 잠금 0F0F0F. NEW 표시 = '새로운 종류' 획득 시."); }
 
-    [MenuItem("Test/Quest Verify/part1/Slide 20 - 귀중품 (현재 미구현, 인벤토리 확인)", false, 107)]
-    static void S20_Requisite() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_InventoryPopup>().SetInfo(); Spec("슬20", "❌ 전용 prefab/popup 미구현 (RequisiteItemDic만 데이터 있음). 일반 인벤토리로 임시 확인."); }
+    [MenuItem("Test/Quest Verify/part1/Slide 20 - 귀중품 (인벤토리 ImportantBag 패널)", false, 107)]
+    static void S20_Requisite() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_InventoryPopup>(); Spec("슬20", "✅ 귀중품 = 인벤토리 내 [ImportantBag] 패널(가방 버튼). Open Anim Scale 0.15 OutQuad FROM(0,1,0) 슬20 일치, RequisiteItemDic 연동, UI_ImportantSlot(shop_frame_glow 미사용), 획득순서 좌→우."); }
 
     [MenuItem("Test/Quest Verify/part1/Slide 21 - 아이템 상세 Popup", false, 108)]
     static void S21_ItemDetail() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(10001); Spec("슬21", "Move From y-120 OutBack 0.5s. Layer4=등급색, Glow=등급색, FoundAtText / RarityText 표기."); }

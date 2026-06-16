@@ -359,6 +359,8 @@ namespace Data
         public string Name;
         public string IconLabel;
         public string PrefabLabel;
+        public string PetAnimLabel;   // 동행(펫) 전용 AnimatorController Addressable 주소.
+                                      //  비면 몬스터 프리팹 기본 컨트롤러 유지. (펫 애니는 몬스터 anim 폴더 하위 Pet_* 에 제작)
         public int MonsterDataId;
         public float BaseAtk;
         public float BaseAtkSpeed;

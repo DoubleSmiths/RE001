@@ -143,8 +143,9 @@ public abstract class CreatureController : BaseController
             DamageFontMode mode = result.IsCrit ? DamageFontMode.Critical : DamageFontMode.Normal;
             Managers.Object.ShowDamageFont(fontPos, result.FinalDamage, mode, transform);
 
-            // 슬라이드 62 — 타격 성공 시 피격자 위치에 Hit Effect (Player 공격 시만)
-            bool attackerIsPlayer = attacker != null && attacker.ObjectType == ObjectType.Player;
+            // 슬라이드 62 — 타격 성공 시 피격자 위치에 Hit Effect (Player·동행 미니몬 공격 시)
+            bool attackerIsPlayer = attacker != null &&
+                (attacker.ObjectType == ObjectType.Player || attacker.ObjectType == ObjectType.Minion);
             if (attackerIsPlayer)
             {
                 // 치명타 시 추가: Crit Effect (피격자 위치) + "Critical!" callout (공격자 위치)

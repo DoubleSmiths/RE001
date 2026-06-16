@@ -13,6 +13,14 @@ public class PlayerController : CreatureController
     float _expRequired = 100f;
     public float ExpRequired => _expRequired;   // UI 초기 동기화용 read-only 노출
     bool _inBattle;
+    public bool InBattle => _inBattle;   // 동행 미니몬이 전투 중 여부 참조
+
+    // 동행 미니몬(컴패니언) — 부르기 설정 시 스폰되어 따라다니며 전투 참여(슬19/나의미니몬#5)
+    CompanionController _companion;
+    int _companionId = -1;
+
+    // 동행 미니몬 타격을 콤보(공세 게이지)에 누적 — 타격으로 침(슬)
+    public void NotifyCompanionHit(float damage) => OnHitLanded?.Invoke(damage);
 
     // 슬39: 능력 전투 발동조건 런너 (장착 능력의 확률/시간 발동 처리)
     AbilityRunner _abilityRunner;
@@ -43,6 +51,27 @@ public class PlayerController : CreatureController
         DamageFontYOffset = 2.5f;
         RefreshStats();
         return true;
+    }
+
+    bool _companionSubscribed;
+
+    void OnDestroy()
+    {
+        if (Managers.MinMon != null) Managers.MinMon.OnCompanionChanged -= OnCompanionChanged;
+    }
+
+    void OnCompanionChanged(int id) => RefreshCompanion();
+
+    // 동행 미니몬 스폰/해제 동기화. CompanionMinMonId가 유효하면 발치에 스폰, -1이면 해제.
+    public void RefreshCompanion()
+    {
+        int id = Managers.Game != null ? Managers.Game.CompanionMinMonId : -1;
+        if (id == _companionId && (id < 0 || _companion != null)) return;
+
+        if (_companion != null) { Managers.Resource.Destroy(_companion.gameObject); _companion = null; }
+        _companionId = id;
+        if (id >= 0)
+            _companion = Managers.Object?.SpawnCompanion(id, this);
     }
 
     public void StartBattle()
@@ -355,6 +384,14 @@ public class PlayerController : CreatureController
         // _expRequired가 갱신됐으니 EXP 슬라이더도 같은 시점에 신호 발화.
         // (BindPlayer가 늦게 구독한 경우엔 BindPlayer 안에서 초기 1회를 별도로 호출.)
         OnExpChanged?.Invoke(Managers.Game.Exp, _expRequired);
+
+        // 동행 미니몬: 매니저 준비 후(GameScene이 RefreshStats 재호출) 1회 구독 + 동기화.
+        if (!_companionSubscribed && Managers.MinMon != null)
+        {
+            Managers.MinMon.OnCompanionChanged += OnCompanionChanged;
+            _companionSubscribed = true;
+            RefreshCompanion();
+        }
     }
 
     // 슬라이드 67 — 플레이어 사망 시퀀스

@@ -19,6 +19,7 @@ public class Define
         Player,
         Monster,
         Projectile,
+        Minion,     // 동행 미니몬(컴패니언) — 공격 시 DMG 폰트/타격은 플레이어와 동일 취급
     }
 
     public enum CreatureRarity

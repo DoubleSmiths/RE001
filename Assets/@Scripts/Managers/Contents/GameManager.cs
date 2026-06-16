@@ -81,6 +81,7 @@ public class GameData
     public int    Crystal     = 0;
     public int    StatusPoint = 0;
     public int    Elixir      = 0;
+    public int    Mandrake    = 0;   // 슬31/37: [가랏! 만드라고라!] 확정 포획용 소비 아이템 보유 수
     // 캐릭터창 스탯 분배 누적치(영구). 0=STR(물공) 1=VIT(HP) 2=DEX(명중) 3=MAG(마공)
     public int[]  StatInvest  = new int[4];
 
@@ -268,6 +269,13 @@ public class GameManager
     {
         get => _gameData.CompanionMinMonId;
         set { _gameData.CompanionMinMonId = value; SaveGame(); }
+    }
+
+    // 슬31/37: 만드라고라 보유 수 (확정 포획 소비 아이템)
+    public int MandrakeCount
+    {
+        get => _gameData.Mandrake;
+        set { _gameData.Mandrake = Mathf.Max(0, value); SaveGame(); }
     }
 
     // ── 해금 ──
