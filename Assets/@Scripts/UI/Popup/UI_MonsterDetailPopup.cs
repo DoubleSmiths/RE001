@@ -257,12 +257,10 @@ public class UI_MonsterDetailPopup : UI_Popup
                 var fTxt = GetText((int)Texts.MonsterDetailPopupSummonedEfImageText);
                 if (fTxt != null) { fTxt.text = Util.Localize(LocalizeKey.FollowingText); ApplyFont(fTxt, Define.FontType.UI); }
 
-                // 등장 Anim: Move Dur 0.4 OutBack From (0, -5, 0)
-                var rt = summoned.rectTransform;
-                rt.DOKill();
-                Vector2 rest = rt.anchoredPosition;
-                rt.anchoredPosition = rest + new Vector2(0f, -5f);
-                rt.DOAnchorPos(rest, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+                // 등장 Anim: SummonedEf의 prefab DOTweenAnimation(Move From, OutBack 0.4s) 재생.
+                //  (SetActive(true)만으론 From 시작 위치에 머물러 안 보이므로 DORestart로 재생)
+                var anim = summoned.GetComponent<DG.Tweening.DOTweenAnimation>();
+                if (anim != null) anim.DORestart();
             }
         }
 
