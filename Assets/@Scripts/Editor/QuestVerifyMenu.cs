@@ -373,13 +373,25 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/part2/Slide 25 - 관심 창고가득 경고 (UI_WarningPopup 빨강)", false, 212)]
     static void P2_S25_WarningFull() { if (!Require()) return; Managers.UI.ShowWarningPopup(2002); Spec("슬25", "UI_WarningPopup: Layer1~3 전부 B70000, 우측에서 슬라이드인(rest 27,45) → 3초 → 슬라이드아웃. Text='CreatureName + MinimonInterestFullText'. (라이브 사냥 StorageFull 경로와 동일)"); }
 
-    [MenuItem("Test/Quest Verify/part2/Slide 26 - 도감 버튼 NEW + 카운트(슬18, 2002 관심 추가)", false, 213)]
-    static void P2_S26_BottomUI()
+    // 슬26: 저장칸 여유 있음 → 도감버튼 NEW + GlowDot_01 + Punch/Scale, count 흰색
+    [MenuItem("Test/Quest Verify/part2/Slide 26 - 도감버튼 저장칸 여유(count 흰색)", false, 213)]
+    static void P2_S26_BottomUI_Room()
     {
         if (!Require()) return;
-        if (!Managers.Game.InterestedMinMons.Contains(2002))
-            Managers.MinMon.AddInterest(2002);
-        Spec("슬26~27", "도감 버튼 우상단에 slime_icon + 저장수 텍스트 + GlowDot_01. Punch/Scale 0.3 To(0.3,0.3) Vib10. 가득 시 색 D14A4A/FA5959.");
+        Managers.Game.InterestedMinMons.Clear();
+        Managers.MinMon.AddInterest(2001);   // 1/2 → 여유
+        Spec("슬26", $"저장칸 여유(1/{Managers.MinMon.InterestCapacity}): 도감버튼 NEW Feedback + slime_icon 중앙 GlowDot_01 + Punch/Scale(0.3,Vib10,Elas1), count='1' 흰색. (관심 보일 때마다 Anim 재생)");
+    }
+
+    // 슬27: 저장칸 가득 → 하단 UI 변경 (count 빨강 FF0000, 버튼 FA5959, 박스 D14A4A), 가득 후 추가 관심은 Anim 없음
+    [MenuItem("Test/Quest Verify/part2/Slide 27 - 도감버튼 저장칸 가득(count 빨강)", false, 214)]
+    static void P2_S27_BottomUI_Full()
+    {
+        if (!Require()) return;
+        Managers.Game.InterestedMinMons.Clear();
+        Managers.MinMon.AddInterest(2001);
+        Managers.MinMon.AddInterest(2002);   // 2/2 → 가득
+        Spec("슬27", $"저장칸 가득({Managers.MinMon.InterestedMinMons.Count}/{Managers.MinMon.InterestCapacity}): count 빨강(FF0000) + 버튼 FA5959 + 박스 D14A4A. 가득 후 추가 관심은 Anim 없이 경고팝업(슬25). HasRoom={Managers.MinMon.HasInterestRoom}");
     }
 
     [MenuItem("Test/Quest Verify/part2/Slide 28~29 - 잡기 버튼 (slide-in 등장)", false, 214)]

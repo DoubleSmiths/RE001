@@ -659,19 +659,46 @@ public class UI_GameScene : UI_Scene
             if (has)
             {
                 int count = Managers.MinMon.InterestedMinMons.Count;
+                bool full = count >= Managers.MinMon.InterestCapacity;   // 저장칸 가득 (슬27)
                 var numTxt = Util.FindChild<TMPro.TMP_Text>(icon, "BestiaryBtnFollowingNumTxt", true);
                 if (numTxt != null)
                 {
                     numTxt.text = count.ToString();
                     // 슬27: 저장칸 가득이면 count 빨강(FF0000), 여유면 기본 흰색 (창고 칸 수는 능력으로 증가 가능 — 슬23-4)
-                    numTxt.color = count >= Managers.MinMon.InterestCapacity
-                        ? Util.HexToColor("FF0000") : Color.white;
+                    numTxt.color = full ? Util.HexToColor("FF0000") : Color.white;
                 }
+                // 슬26/27: 버튼 스프라이트 스왑 — 여유=11_orange_button_xs_empty(흰색) / 가득=1_orange_button_xs(FA5959)
+                var btnImg = GetImage((int)Images.BestiaryBtnNewIcon);
+                if (btnImg != null)
+                {
+                    var btnSprite = Managers.Resource.Load<Sprite>(full ? "1_orange_button_xs" : "11_orange_button_xs_empty");
+                    if (btnSprite != null) btnImg.sprite = btnSprite;
+                    btnImg.color = full ? Util.HexToColor("FA5959") : Color.white;
+                }
+                var box = Util.FindChild<UnityEngine.UI.Image>(icon, "BestiaryBtnFollowingBox", true);
+                if (box != null) box.color = full ? Util.HexToColor("D14A4A") : Color.white;
                 // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10, Elasticity 1)
                 icon.transform.DOKill();
                 // 프리펩 기준 스케일은 0.5 (Vector3.one로 덮으면 게임에서 2배 커짐)
                 icon.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
                 icon.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0f), 0.3f, 10, 1f);
+
+                // 슬26 #3: 등장 Anim(0.3s)이 끝날 때 GlowDot_01을 slime_icon(Img_BestiaryBtnNewIcon_06) 중앙에 생성
+                var slime = Util.FindChild<Transform>(icon, "Img_BestiaryBtnNewIcon_06", true);
+                if (slime != null && slime.Find("GlowDot_01") == null)
+                {
+                    DOVirtual.DelayedCall(0.3f, () =>
+                    {
+                        if (slime == null || slime.Find("GlowDot_01") != null) return;
+                        var glow = Managers.Resource.Instantiate("GlowDot_01");
+                        if (glow == null) return;
+                        glow.name = "GlowDot_01";
+                        var grt = glow.GetComponent<RectTransform>();
+                        if (grt == null) grt = glow.AddComponent<RectTransform>();
+                        grt.SetParent(slime, false);
+                        grt.anchoredPosition = Vector2.zero;
+                    }).SetUpdate(true);
+                }
             }
         }
         var txt = GetText((int)Texts.BestiaryBtnNewTxt)?.gameObject;
