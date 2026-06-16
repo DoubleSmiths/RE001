@@ -420,7 +420,7 @@ public class UI_BestiaryPopup : UI_Popup
         RefreshSkills();
         for (int i = 0; i < SKILL_COUNT; i++) SyncSkillAbility(i); // 슬2/38: 완성도 4스킬 → 능력 반영
         RefreshMinimonButton();
-        //StartCoroutine(CoMinimonButtonIntro()); // 슬28: 잡기버튼 그룹 slide-in
+        StartCoroutine(CoMinimonButtonIntro()); // 슬28: 잡기버튼 그룹 slide-in
     }
 
     // 슬28~29: [미니몬 잡기!] 버튼 상태. 포획 가능 창고(InterestedMinMons) 유무에 따라 변화.
@@ -482,13 +482,17 @@ public class UI_BestiaryPopup : UI_Popup
         var frame = GetImage((int)Images.MinimonButton)?.rectTransform;
         var slime = GetImage((int)Images.MinimonExistImg)?.rectTransform;
         var title = GetText((int)Texts.MinimonTitleText)?.rectTransform;
+        var emoj  = GetImage((int)Images.MinimonEmoj);
+        if (emoj != null) emoj.gameObject.SetActive(false);            // Emoj는 0.8s 후 등장
 
-        SlideFrom(frame, _restFrame, new Vector2(-230f, 0f), 0.5f);   // Frame 화면 밖 왼쪽
+        // 슬28: 도감 켜질 때 바로 Frame 슬라이드인 (화면 밖 왼쪽 → 오른쪽), OutBack 0.5
+        SlideFrom(frame, _restFrame, new Vector2(-260f, 0f), 0.5f);
+        // 0.4초 후: Title 슬라이드인 (Frame 밖 오른쪽 → 안), OutBack 0.5 (MASK는 prefab RectMask2D)
         yield return new WaitForSecondsRealtime(0.4f);
-        SlideFrom(slime, _restSlime, new Vector2(-120f, 0f), 0.5f);   // Slime 왼쪽
-        SlideFrom(title, _restTitle, new Vector2(120f, 0f), 0.5f);    // Title 오른쪽
+        SlideFrom(title, _restTitle, new Vector2(120f, 0f), 0.5f);
+        // 0.8초 후: Slime 아래 → 위 (OutBack 0.4) + Emoj 활성/재생 (상태별 Exclamation/Question)
         yield return new WaitForSecondsRealtime(0.4f);
-        // Emoj 0.8s 후 재생(상태 반영)
+        SlideFrom(slime, _restSlime, new Vector2(0f, -90f), 0.4f);
         PlayMinimonEmoj(Managers.MinMon != null && Managers.MinMon.HasInterest ? "Emoj_Exclamation" : "Emoj_Question");
     }
 
