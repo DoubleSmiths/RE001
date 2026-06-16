@@ -184,11 +184,14 @@ public class MonsterController : CreatureController
         if (_data != null)
         {
             var interest = Managers.MinMon.RollInterest(DataId);
-            if (interest == MinMonManager.InterestResult.Added)
-                Managers.UI.ShowAttractedPopup(DataId, false);          // 슬24: 창고 여유 → Side UI 알림
-            else if (interest == MinMonManager.InterestResult.StorageFull)
-                Managers.UI.ShowWarningPopup(DataId);                   // 슬23/25: 창고 가득 → 경고 popup
-            // TODO 슬24: 몬스터 머리 위 Emoj_Shy (풀 반환 전 타이밍)
+            if (interest != MinMonManager.InterestResult.NotInterested)
+            {
+                PlayShyEmoj();                                          // 슬24: 관심 보임 → 머리 위 Emoj_Shy
+                if (interest == MinMonManager.InterestResult.Added)
+                    Managers.UI.ShowAttractedPopup(DataId, false);      // 슬24: 창고 여유 → Side UI 알림
+                else
+                    Managers.UI.ShowWarningPopup(DataId);               // 슬23/25: 창고 가득 → 경고 popup
+            }
         }
 
         // Die clip 종료 후 풀 반환. Slime Die clip은 0.17s지만, HP Bar Playbackwards(0.5s)와
@@ -200,6 +203,32 @@ public class MonsterController : CreatureController
     {
         yield return new WaitForSeconds(delay);
         Managers.Resource.Destroy(gameObject);
+    }
+
+    // 슬24: 관심을 보였을 때 몬스터 머리 위에 Emoj_Shy 재생.
+    //  Emoj.controller 클립이 SpriteRenderer.m_Sprite를 구동(슬16 idle와 동일) → 월드 SpriteRenderer로 생성.
+    //  몬스터는 0.5초 뒤 풀 반환되므로 부모로 두지 않고 독립 오브젝트로 두어 1.2초간 자체 재생 후 파괴.
+    void PlayShyEmoj()
+    {
+        var ctrl = Managers.Resource.Load<RuntimeAnimatorController>("Emoj");
+        if (ctrl == null) return;
+
+        var sr = GetComponent<SpriteRenderer>();
+        float headY = sr != null ? sr.bounds.max.y + 0.4f : transform.position.y + 1f;
+
+        var go = new GameObject("Emoj_Shy_FX");
+        go.transform.position = new Vector3(transform.position.x, headY, transform.position.z);
+        go.transform.localScale = Vector3.one;
+
+        var esr = go.AddComponent<SpriteRenderer>();
+        if (sr != null) { esr.sortingLayerID = sr.sortingLayerID; esr.sortingOrder = sr.sortingOrder + 10; }
+
+        var an = go.AddComponent<Animator>();
+        an.runtimeAnimatorController = ctrl;
+        an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        an.Play("Emoj_Shy", 0, 0f);
+
+        Destroy(go, 1.2f);
     }
 
     // ────────────────────────────────────────
