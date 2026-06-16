@@ -242,8 +242,9 @@ public class PlayerController : CreatureController
     void AutoAttack()
     {
         if (State == Define.State.Attack) return;
-        // 콤보 + 신속물약 공격속도 버프 적용: 합산 %만큼 쿨타임 단축
-        float effectiveCooldown = AtkCooldown / (1f + (ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / 100f);
+        // 콤보 + 신속물약 공격속도 버프: 합산 %만큼 공격 사이클 전체가 빨라짐(쿨타임 + 애니 + 상태지속).
+        float speedMul = 1f + (ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / 100f;
+        float effectiveCooldown = AtkCooldown / speedMul;
         if (Time.time < _lastAtkTime + effectiveCooldown) return;
 
         // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster를 찾아 공격.
@@ -254,13 +255,16 @@ public class PlayerController : CreatureController
         _lastAtkTime = Time.time;
         _attackTarget = target;         // 슬라이드 61 — 키프레임 시점에 데미지 적용하기 위해 락온
         State = Define.State.Attack;
+        // 공격속도만큼 Attack 애니 재생속도를 올려 키프레임(AttackTrigger)과 클립 종료가 함께 빨라지도록.
+        if (_anim != null) _anim.speed = speedMul;
 
         // 명중/회피 dice + BattleMath.Resolve + TakeHit는 Attack.anim의 키프레임 이벤트
         // (AttackTrigger, 0.5s)에서 호출됨. OnHit으로 인터럽트되면 키프레임에 도달하지
         // 못해 자연스럽게 데미지 미적용 (슬라이드 60 — 인터럽트 = 빗나감).
 
         if (_attackResetCo != null) StopCoroutine(_attackResetCo);
-        _attackResetCo = StartCoroutine(CoResetStateAfterAttack());
+        // Attack 상태 지속도 공격속도만큼 단축 — 클립 길이가 병목이 되지 않도록.
+        _attackResetCo = StartCoroutine(CoResetStateAfterAttack(ATTACK_CLIP_LENGTH / speedMul));
     }
 
     Coroutine _attackResetCo;
@@ -289,10 +293,11 @@ public class PlayerController : CreatureController
     // 시간 기반 대기로 단순화한다. OnHit 등 다른 이벤트가 State를 바꿨으면 Idle로 되돌리지 않는다.
     const float ATTACK_CLIP_LENGTH = 1.0f;
 
-    IEnumerator CoResetStateAfterAttack()
+    IEnumerator CoResetStateAfterAttack(float duration)
     {
-        yield return new WaitForSeconds(ATTACK_CLIP_LENGTH);
+        yield return new WaitForSeconds(duration);
         _attackResetCo = null;
+        if (_anim != null) _anim.speed = 1f;   // 애니 재생속도 원복
 
         if (State == Define.State.Dead) yield break;
         if (State == Define.State.Attack)   // 그 사이 OnHit/Idle 등으로 바뀌었으면 건드리지 않음
@@ -327,6 +332,7 @@ public class PlayerController : CreatureController
         if (State == Define.State.Dead) return;
         if (_anim == null) return;
 
+        _anim.speed = 1f;   // 공격속도 버프로 올렸던 애니 속도 원복(피격 연출은 정상 속도)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
 
         if (_onHitCo != null) StopCoroutine(_onHitCo);
