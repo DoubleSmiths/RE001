@@ -328,7 +328,7 @@ public static class QuestVerifyMenu
         var info20 = Managers.UI.ShowPopupUI<UI_MinionInfoPopup>();
         info20.SetInfo(2002);
         info20.PlayCatchResult(Managers.MinMon.LastCatchWasFirst, Managers.MinMon.LastCatchImproved);
-        Spec("슬20", $"첫 포획: NEW 표시 + 능력치 랜덤 롤(40/30/15/8/5/2%). GlowRays prefab은 부재로 미적용. 결과: ATK={save.AtkGrade} AS={save.AtkSpeedGrade} CRIT={save.CritGrade}");
+        Spec("슬20", $"첫 포획: NEW 표시 + 창 뒤 GlowRays(회전+페이드) + 공명도 0→25% lerp + 능력치 랜덤 롤(40/30/15/8/5/2%). 결과: ATK={save.AtkGrade} AS={save.AtkSpeedGrade} CRIT={save.CritGrade}");
     }
 
     [MenuItem("Test/Quest Verify/part2/Slide 21~22 - 재포획 (능력치 향상 시도, 2001)", false, 210)]

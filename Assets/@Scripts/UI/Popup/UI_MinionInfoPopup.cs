@@ -171,6 +171,14 @@ public class UI_MinionInfoPopup : UI_Popup
         CreatureData data = null;
         Managers.Data.CreatureDic.TryGetValue(dataId, out data);
 
+        // 슬20: NEW 뱃지(이름 옆 + 능력치별) + 성장실패 텍스트는 기본 숨김.
+        //  포획 호출(PlayCatchResult) 시에만 NEW/실패문구를 켠다. (미니몬 기록 창엔 미등장)
+        foreach (var nt in new[] { Texts.MinionNewText, Texts.MinionATKNewText, Texts.MinionASNewText, Texts.MinionCritNewText, Texts.NoImprovedText })
+        {
+            var t = GetText((int)nt);
+            if (t != null) t.gameObject.SetActive(false);
+        }
+
         // 슬86: 타이틀 "나의 미니몬"(한/영) + Outline 784806 (0.5, 0.5)
         var title = GetText((int)Texts.MinionInfoPopupTitle);
         if (title != null)
@@ -474,20 +482,86 @@ public class UI_MinionInfoPopup : UI_Popup
     }
 
     // 슬20~22: 포획 직후 호출되는 결과 연출.
-    //  first    → 첫 포획: 이름 옆 NEW 표시 (GlowRays는 prefab 부재로 미적용)
+    //  first    → 첫 포획: 이름 옆 NEW 표시
     //  improved → 재포획 능력치 향상: 공격력→공속→치명타 순차 Scale Anim (슬21)
     //  그 외     → 향상 없음: NoImprovedText 표기 (슬22)
+    //  공통(포획 호출): GlowRays(창 뒤) + 공명도 lerp. (미니몬 기록 통해 연 창엔 호출 안 됨)
     public void PlayCatchResult(bool first, bool improved)
     {
         var newTxt = GetText((int)Texts.MinionNewText);
         if (newTxt != null) newTxt.gameObject.SetActive(first);
 
+        // 슬21-f/22-c: FullGrowthInText는 포획 연출에서 FadeIn으로 등장 → 먼저 alpha 0으로 숨김.
+        //  (SetInfo가 텍스트/색은 이미 세팅. 미니몬 기록 창에선 SetInfo의 풀 alpha 그대로 유지)
+        var fg = GetText((int)Texts.GuranteedText);
+        if (fg != null) { var c = fg.color; c.a = 0f; fg.color = c; }
+
+        SpawnGlowRays();                       // 슬20: 창 뒤 GlowRays (포획 시 항상)
+        StartCoroutine(CoSyncLerp());          // 슬20: 공명도 오른 만큼 lerp
+
         if (!first && improved) StartCoroutine(CoGrowthSequence());
         else if (!first) StartCoroutine(CoGrowthFail());
+        else StartCoroutine(CoFadeInFullGrowth(1.5f));   // 첫 포획: 공명도 lerp(1s) 후 FadeIn
+    }
+
+    // 슬21-f/22-c: FullGrowthInText를 delay 뒤 1.5초에 걸쳐 FadeIn.
+    IEnumerator CoFadeInFullGrowth(float delay)
+    {
+        var fg = GetText((int)Texts.GuranteedText);
+        if (fg == null) yield break;
+        var c = fg.color; c.a = 0f; fg.color = c;
+        yield return new WaitForSecondsRealtime(delay);
+        fg.DOFade(1f, 1.5f).SetUpdate(true);
+    }
+
+    // 슬20: [나의 미니몬] 창 뒤에 GlowRays 표시 (포획으로 호출됐을 때만). 느린 회전 + 페이드 인.
+    void SpawnGlowRays()
+    {
+        var panel = GetObject((int)GameObjects.MinionInfoPopupPanel)?.transform;
+        var sp = Managers.Resource.Load<Sprite>("GlowRays");
+        if (panel == null || sp == null) return;
+
+        var go = new GameObject("GlowRays", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        var rt = (RectTransform)go.transform;
+        rt.SetParent(panel, false);
+        rt.SetAsFirstSibling();                // 프레임 뒤로
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+        rt.sizeDelta = new Vector2(360f, 360f);
+        var img = go.GetComponent<Image>();
+        img.sprite = sp; img.raycastTarget = false; img.preserveAspect = true;
+        var c = img.color; c.a = 0f; img.color = c;
+        img.DOFade(0.9f, 0.5f).SetUpdate(true);
+        rt.DORotate(new Vector3(0f, 0f, 360f), 12f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1).SetUpdate(true);
+    }
+
+    // 슬20: 공명도 수치를 (포획 전→후)만큼 lerp. 0~99% 주황, 100% 달성 시 주황→초록 서서히.
+    IEnumerator CoSyncLerp()
+    {
+        var syncTxt = GetText((int)Texts.SYNCText);
+        if (syncTxt == null) yield break;
+
+        int newPct  = Mathf.RoundToInt(Managers.MinMon.GetSyncRate(_dataId) * 100f);
+        int prevPct = Mathf.Max(0, newPct - Mathf.RoundToInt(MinMonManager.SYNC_PER_CATCH * 100f));
+        string link = Util.Localize(Define.LocalizeKey.LinkText);
+        Color orange = Util.HexToColor("FF820B"), green = Util.HexToColor("30FF00");
+
+        syncTxt.color = orange;
+        float e = 0f, dur = 1f;
+        while (e < dur)
+        {
+            e += Time.unscaledDeltaTime;
+            int shown = Mathf.RoundToInt(Mathf.Lerp(prevPct, newPct, e / dur));
+            syncTxt.text = $"{link}:{shown}%";
+            yield return null;
+        }
+        syncTxt.text = $"{link}:{newPct}%";
+        // 100% 달성 시 주황→초록 서서히
+        if (newPct >= 100) syncTxt.DOColor(green, 0.5f).SetUpdate(true);
     }
 
     // 슬22: 재포획 성장 실패 — 호출 1.5초 뒤 MinimonGrowthFailText를 1.5초에 걸쳐 FadeIn.
-    //  (공명도 Lerp / 0.5초 후 FullGrowthInText FadeIn 은 각각 포획 전 공명도값·성장카운트 미정으로 보류)
+    //  실패 텍스트 FadeIn 시작 0.5초 후 FullGrowthInText도 FadeIn (슬22-c).
     IEnumerator CoGrowthFail()
     {
         var t = GetText((int)Texts.NoImprovedText);
@@ -498,15 +572,18 @@ public class UI_MinionInfoPopup : UI_Popup
         var c = t.color; c.a = 0f; t.color = c;            // alpha 0에서 시작
         yield return new WaitForSecondsRealtime(1.5f);      // 호출 1.5초 뒤
         t.DOFade(1f, 1.5f).SetUpdate(true);                 // 1.5초에 걸쳐 FadeIn
+        StartCoroutine(CoFadeInFullGrowth(0.5f));           // 0.5초 후 FullGrowthInText FadeIn
     }
 
-    // 슬21: 1초 뒤부터 공격력→공속→치명타 순서로 숫자+등급 ICON Scale 펀치
+    // 슬21: 1초 뒤부터 공격력→공속→치명타 순서로 숫자+등급 ICON Scale 펀치.
+    //  모든 Anim 재생 후 0.5초 뒤 FullGrowthInText FadeIn (슬21-f).
     IEnumerator CoGrowthSequence()
     {
         yield return new WaitForSecondsRealtime(1f);
         yield return CoPunchStat(Texts.DamageNumberText, Images.DamageRankImage);
         yield return CoPunchStat(Texts.ASNumberText,     Images.ASRankImage);
         yield return CoPunchStat(Texts.CritNumberText,   Images.CritRankImage);
+        yield return CoFadeInFullGrowth(0.5f);
     }
 
     IEnumerator CoPunchStat(Texts numTxt, Images rankImg)
