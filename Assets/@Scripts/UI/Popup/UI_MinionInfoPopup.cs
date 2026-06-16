@@ -206,6 +206,8 @@ public class UI_MinionInfoPopup : UI_Popup
             syncTxt.text = $"{Util.Localize(Define.LocalizeKey.LinkText)}:{sync}%";
             syncTxt.color = sync >= 100 ? Util.HexToColor("30FF00") : Util.HexToColor("FF820B");
             ApplyFont(syncTxt, Define.FontType.UI);
+            // 슬17: 공명도 100% Text_ShineGreen 스펙 — Text_ShineGold와 동일하게 폰트 아틀라스 없는 머티리얼이라
+            //  적용 시 글리프 깨짐 → 색(30FF00)만 적용. 폰트 프리셋 재제작 시 연결.
         }
 
         // 슬86: MinimonAbilityText (=SkillNameText) — UniqueSkillName 우선, 없으면 "-"
@@ -233,10 +235,10 @@ public class UI_MinionInfoPopup : UI_Popup
         SetLabel(Texts.ASStringText,     Define.LocalizeKey.AttackSpeedText);
         SetLabel(Texts.CritStringText,   Define.LocalizeKey.CriticalText);
 
-        // 슬18: ATK/AS/CRIT 값 + 등급 letter 스프라이트(E/D/C/B/A/SS) + outline 색
-        RefreshStat(Texts.DamageNumberText, Images.DamageRankImage, MMStat.Atk);
-        RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     MMStat.AtkSpeed);
-        RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   MMStat.Crit);
+        // 슬18: ATK/AS/CRIT 값 + 등급 letter 스프라이트(E/D/C/B/A/SS) + outline 색 + 5등급 골드 Layer2(FrameMask)
+        RefreshStat(Texts.DamageNumberText, Images.DamageRankImage, Images.MinionInfoPopupDmgFrameMask,  MMStat.Atk);
+        RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     Images.MinionInfoPopupASFrameMask,   MMStat.AtkSpeed);
+        RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   Images.MinionInfoPopupCritFrameMask, MMStat.Crit);
         RefreshWeaponIcon();   // 슬16: 공격력에 무기 아이콘(물리=Sword01 / 마법=Staff01)
 
         // 슬17/86: FullGrowthInText(=GuranteedText) "(완전 성장까지: <color=#FF0000>N</color>회)"
@@ -272,7 +274,7 @@ public class UI_MinionInfoPopup : UI_Popup
     static readonly int[] RANK_SPRITE_IDX = { 252, 253, 254, 255, 256, 258 };
 
     // 능력치 값/등급을 MinMonManager(실 데이터)에서 조회. 등급 0~5 = E/D/C/B/A/SS(슬18).
-    void RefreshStat(Texts textId, Images rankImg, MMStat stat)
+    void RefreshStat(Texts textId, Images rankImg, Images frameMask, MMStat stat)
     {
         var tmp = GetText((int)textId);
         if (tmp == null) return;
@@ -290,6 +292,10 @@ public class UI_MinionInfoPopup : UI_Popup
         ApplyFont(tmp, Define.FontType.UI);
         ApplyGradeOutline(tmp, g);
 
+        // 슬18: 5등급(SS)은 Text_ShineGold 머티리얼 스펙이나, 현재 Text_ShineGold.mat에 폰트 아틀라스가
+        //  없어(=PF_Stardust SDF의 TMP 머티리얼 프리셋이 아님) fontSharedMaterial로 적용 시 글리프가 깨짐.
+        //  → 머티리얼 미적용(등급5 outline 000000 0.7,0.7만 적용). 폰트 프리셋으로 재제작 시 연결 가능.
+
         // 슬18: 등급 letter 스프라이트(E/D/C/B/A/SS)를 RankImage에 표기
         var img = GetImage((int)rankImg);
         if (img != null)
@@ -298,6 +304,10 @@ public class UI_MinionInfoPopup : UI_Popup
             var sp = Managers.Resource.Load<Sprite>($"Screen FX 32 ({idx})");
             if (sp != null) { img.sprite = sp; img.preserveAspect = true; }
         }
+
+        // 슬18: 5등급(SS)일 때만 골드 Layer2(FrameMask) ON, 0~4등급은 OFF
+        var mask = GetImage((int)frameMask);
+        if (mask != null) mask.gameObject.SetActive(g >= 5);
     }
 
     // 슬16: 몬스터 IMG Idle Anim 반복.
