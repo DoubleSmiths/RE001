@@ -237,6 +237,7 @@ public class MinMonManager
     }
 
     public int GetKillCount(int dataId) { var s = FindSave(dataId); return s != null ? s.KillCount : 0; }
+    public int GetCaughtCount(int dataId) { var s = FindSave(dataId); return s != null ? s.CaughtCount : 0; }
 
     public int GetRecordRate(int dataId)
     {

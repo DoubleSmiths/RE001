@@ -335,6 +335,7 @@ public class Define
         public const string RequireMinimonText = "RequireMinimonText"; // 슬12: 미포획 시 버튼 "포획 필요"
         public const string MyMinimonText = "MyMinimonText"; // 슬12: 포획 시 버튼 "내 미니몬"(창 제목 MyMinimon="나의 미니몬"과 별개)
         public const string FollowingText = "FollowingText"; // 슬13: 동행 중 하단 UI "동행중"
+        public const string SummonText = "SummonText";       // 슬19: [부르기] 버튼 ("부르기"/"SUMMON")
         public const string MinimonGrowthFailText = "MinimonGrowthFailText"; // 슬22: 재포획 성장 실패 문구
         public const string CatchMinimonTitleText = "CatchMinimonTitleText"; // 슬28: [미니몬 잡기] 버튼/팝업 제목
         public const string AbilityCodex_TitleText = "AbilityCodex_TitleText"; // 슬40: 능력 목록 팝업 제목
@@ -391,6 +392,7 @@ public class Define
         public const string VitialityText = "VitialityText";
         public const string AgilityText = "AgilityText";
         public const string MagicText = "MagicText";
+        public const string AttackPowerText = "AttackPowerText";   // "공격력" (미니몬 능력치 라벨)
         public const string PhysicalAttackText = "PhysicalAttackText";
         public const string MagicalAttackText = "MagicalAttackText";
         public const string CriticalText = "CriticalText";

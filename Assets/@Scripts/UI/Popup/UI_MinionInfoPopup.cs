@@ -171,10 +171,11 @@ public class UI_MinionInfoPopup : UI_Popup
         CreatureData data = null;
         Managers.Data.CreatureDic.TryGetValue(dataId, out data);
 
-        // 슬86: 타이틀 Outline 784806 (0.5, 0.5)
+        // 슬86: 타이틀 "나의 미니몬"(한/영) + Outline 784806 (0.5, 0.5)
         var title = GetText((int)Texts.MinionInfoPopupTitle);
         if (title != null)
         {
+            title.text = Util.Localize(Define.LocalizeKey.MyMinimonText);
             ApplyFont(title, Define.FontType.UI);
             SetOutline(title, new Color32(0x78, 0x48, 0x06, 255), new Vector2(0.5f, 0.5f));
         }
@@ -227,18 +228,44 @@ public class UI_MinionInfoPopup : UI_Popup
             ApplyFont(nameTxt, Define.FontType.UI);
         }
 
+        // 슬17: 스탯 라벨 — 공격력/공격속도/치명타 (로컬라이즈)
+        SetLabel(Texts.DamageStringText, Define.LocalizeKey.AttackPowerText);
+        SetLabel(Texts.ASStringText,     Define.LocalizeKey.AttackSpeedText);
+        SetLabel(Texts.CritStringText,   Define.LocalizeKey.CriticalText);
+
         // 슬18: ATK/AS/CRIT 값 + 등급 letter 스프라이트(E/D/C/B/A/SS) + outline 색
         RefreshStat(Texts.DamageNumberText, Images.DamageRankImage, MMStat.Atk);
         RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     MMStat.AtkSpeed);
         RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   MMStat.Crit);
         RefreshWeaponIcon();   // 슬16: 공격력에 무기 아이콘(물리=Sword01 / 마법=Staff01)
 
-        // 슬86: FullGrowthInText "(완전 성장까지: <color=#FF0000>10</color>회)"
-        //  — 현재 enum에 FullGrowthInText 노드 부재. prefab에 신설 후 enum 보강 필요.
-        //  TODO: 잔여 횟수 = MaxKillCount - current. 포획 시스템 도입 전 임시 10 고정.
+        // 슬17/86: FullGrowthInText(=GuranteedText) "(완전 성장까지: <color=#FF0000>N</color>회)"
+        //  N = 완전 성장(능력치 최대치)까지 남은 포획 횟수 = MaxTameCount - CaughtCount(0 이상).
+        //  Color C8C8C8, Outline B48C08 (0.1,0.1). "회" 접미사(KR). (EN 접미사 없음)
+        var fullGrowth = GetText((int)Texts.GuranteedText);
+        if (fullGrowth != null)
+        {
+            int maxTame = Managers.Data.MinMonDic != null && Managers.Data.MinMonDic.TryGetValue(dataId, out var mm) ? mm.MaxTameCount : 0;
+            int remain = Mathf.Max(0, maxTame - Managers.MinMon.GetCaughtCount(dataId));
+            bool kr = Managers.Game == null || Managers.Game.Language == Define.Language.Korean;
+            fullGrowth.text = kr ? $"(완전 성장까지: <color=#FF0000>{remain}</color>회)"
+                                 : $"(Full growth in: <color=#FF0000>{remain}</color>)";
+            fullGrowth.color = Util.HexToColor("C8C8C8");
+            SetOutline(fullGrowth, new Color32(0xB4, 0x8C, 0x08, 255), new Vector2(0.1f, 0.1f));
+            ApplyFont(fullGrowth, Define.FontType.UI);
+        }
 
         // 슬88: 부르기/동행중 버튼 토글
         RefreshSummonButton();
+    }
+
+    // 슬17: 스탯 라벨 등 로컬라이즈 텍스트 세팅 헬퍼
+    void SetLabel(Texts id, string locKey)
+    {
+        var t = GetText((int)id);
+        if (t == null) return;
+        t.text = Util.Localize(locKey);
+        ApplyFont(t, Define.FontType.UI);
     }
 
     // 슬18: 0~5등급 → Screen FX 32 스프라이트 (E=252,D=253,C=254,B=255,A=256, SS=258 / 257 미사용)
@@ -370,6 +397,15 @@ public class UI_MinionInfoPopup : UI_Popup
         // 슬19: 이 창의 미니몬이 현재 동행 미니몬이면 [나의 미니몬] 창에 Active Ef 효과
         var activeEf = GetObject((int)GameObjects.ActiveEf);
         if (activeEf != null) activeEf.SetActive(isFollowingThis);
+
+        // 슬17/19: 버튼 텍스트 한/영 로컬라이즈 + 부르기/동행중 Outline F5A200 (alpha 146, x0.1 y-0.1)
+        var f5a200 = new Color32(0xF5, 0xA2, 0x00, 146);
+        var sumTxt = GetText((int)Texts.MinionSummonButtonText);
+        if (sumTxt != null) { sumTxt.text = Util.Localize(Define.LocalizeKey.SummonText); ApplyFont(sumTxt, Define.FontType.UI); SetOutline(sumTxt, f5a200, new Vector2(0.1f, -0.1f)); }
+        var sumdTxt = GetText((int)Texts.MinionSummonedButtonText);
+        if (sumdTxt != null) { sumdTxt.text = Util.Localize(Define.LocalizeKey.FollowingText); ApplyFont(sumdTxt, Define.FontType.UI); SetOutline(sumdTxt, f5a200, new Vector2(0.1f, -0.1f)); }
+        var cantTxt = GetText((int)Texts.MinionCantSummonButtonText);
+        if (cantTxt != null) { cantTxt.text = Util.Localize(Define.LocalizeKey.RequireMinimonText); ApplyFont(cantTxt, Define.FontType.UI); }
     }
 
     void OnClickSummon()
