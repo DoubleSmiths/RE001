@@ -420,7 +420,8 @@ public class UI_BestiaryPopup : UI_Popup
         RefreshSkills();
         for (int i = 0; i < SKILL_COUNT; i++) SyncSkillAbility(i); // 슬2/38: 완성도 4스킬 → 능력 반영
         RefreshMinimonButton();
-        StartCoroutine(CoMinimonButtonIntro()); // 슬28: 잡기버튼 그룹 slide-in
+        // 슬28 잡기버튼 그룹 slide-in: 프리펩 DOTweenAnimation(autoPlay) 사용 — Frame 0s / Slime·Player 0.4s /
+        //  Amount 0.8s (Move isFrom OutBack). 코드 인트로(CoMinimonButtonIntro)는 충돌하므로 미사용.
     }
 
     // 슬28~29: [미니몬 잡기!] 버튼 상태. 포획 가능 창고(InterestedMinMons) 유무에 따라 변화.
@@ -446,18 +447,32 @@ public class UI_BestiaryPopup : UI_Popup
             ApplyFont(amount, Define.FontType.UI);
         }
 
-        // 슬29: 슬라임(Slime_Idle) 표시 여부
+        // 슬29: 있음 → 슬라임(+자식 MinimonEmoj=Exclamation) 표시 / 없음 → MinimonNoExistImg(=Question) 표시.
+        //  MinimonEmoj는 슬라임의 자식, MinimonNoExistImg는 별도 노드. 각자 Emoj 컨트롤러를 가진다.
         var slime = GetImage((int)Images.MinimonExistImg);
-        if (slime != null) slime.gameObject.SetActive(has);
-        var noSlime = GetImage((int)Images.MinimonNoExistImg);
-        if (noSlime != null) noSlime.gameObject.SetActive(!has);
+        if (slime != null) { slime.enabled = true; slime.gameObject.SetActive(has); }
 
-        // 슬29: Emoj_Exclamation(창고 있음) / Emoj_Question(없음)
-        PlayMinimonEmoj(has ? "Emoj_Exclamation" : "Emoj_Question");
+        // 슬28#4/29: Emoj(느낌표/물음표)는 MinimonAmountTxt(prefab Move delay 0.8s)와 같은 타이밍에 등장+클립 재생.
+        //  클립이 0.9s non-loop라 0s에 바로 켜면 등장 전에 끝나버린다 → 우선 둘 다 숨김 후 0.8초 뒤 활성+재생.
+        var noSlime = GetImage((int)Images.MinimonNoExistImg);
+        if (noSlime != null) noSlime.gameObject.SetActive(false);
+        var emojOn = GetImage((int)Images.MinimonEmoj);
+        if (emojOn != null) emojOn.gameObject.SetActive(false);
+        if (_emojCo != null) StopCoroutine(_emojCo);
+        _emojCo = StartCoroutine(CoShowMinimonEmoj(has));
 
         // 슬29: Button interactive
         var btn = GetButton((int)Buttons.MinimonBtn);
         if (btn != null) btn.interactable = has;
+    }
+
+    // 슬28#4/29: Emoj(느낌표/물음표)를 MinimonAmountTxt(prefab Move delay 0.8s)와 같은 타이밍에 등장+재생.
+    Coroutine _emojCo;
+    IEnumerator CoShowMinimonEmoj(bool has)
+    {
+        yield return new WaitForSecondsRealtime(0.8f);
+        if (has) PlayMinimonEmoj(Images.MinimonEmoj, "Emoj_Exclamation");
+        else     PlayMinimonEmoj(Images.MinimonNoExistImg, "Emoj_Question");
     }
 
     // 슬28: 도감 열림 시 [미니몬 잡기!] 버튼 그룹 slide-in 등장 (Frame 좌→ / Slime 좌→ / Title 우→ / NavBtn 하↑)
@@ -493,7 +508,8 @@ public class UI_BestiaryPopup : UI_Popup
         // 0.8초 후: Slime 아래 → 위 (OutBack 0.4) + Emoj 활성/재생 (상태별 Exclamation/Question)
         yield return new WaitForSecondsRealtime(0.4f);
         SlideFrom(slime, _restSlime, new Vector2(0f, -90f), 0.4f);
-        PlayMinimonEmoj(Managers.MinMon != null && Managers.MinMon.HasInterest ? "Emoj_Exclamation" : "Emoj_Question");
+        if (Managers.MinMon != null && Managers.MinMon.HasInterest) PlayMinimonEmoj(Images.MinimonEmoj, "Emoj_Exclamation");
+        else PlayMinimonEmoj(Images.MinimonNoExistImg, "Emoj_Question");
     }
 
     static void SlideFrom(RectTransform rt, Vector2 rest, Vector2 fromOffset, float dur)
@@ -504,13 +520,19 @@ public class UI_BestiaryPopup : UI_Popup
         rt.DOAnchorPos(rest, dur).SetEase(Ease.OutBack).SetUpdate(true);
     }
 
-    void PlayMinimonEmoj(string state)
+    // 슬29: 지정 노드(MinimonEmoj=Exclamation / MinimonNoExistImg=Question)의 Emoj 클립 재생.
+    void PlayMinimonEmoj(Images emojImg, string state)
     {
-        var emoj = GetImage((int)Images.MinimonEmoj);
+        var emoj = GetImage((int)emojImg);
         if (emoj == null) return;
         emoj.gameObject.SetActive(true);
         var anim = emoj.GetComponent<Animator>();
-        if (anim != null) { anim.enabled = true; anim.Play(state, 0, 0f); }
+        if (anim != null)
+        {
+            anim.enabled = true;
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;   // UI(렌더러 없음)서도 항상 재생
+            anim.Play(state, 0, 0f);
+        }
     }
 
     // 슬28: [미니몬 잡기!] 클릭 → 창고 첫 미니몬으로 잡기 미니게임(UI_TamePopup) 진입

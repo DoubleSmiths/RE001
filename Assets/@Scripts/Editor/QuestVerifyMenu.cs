@@ -394,8 +394,28 @@ public static class QuestVerifyMenu
         Spec("슬27", $"저장칸 가득({Managers.MinMon.InterestedMinMons.Count}/{Managers.MinMon.InterestCapacity}): count 빨강(FF0000) + 버튼 FA5959 + 박스 D14A4A. 가득 후 추가 관심은 Anim 없이 경고팝업(슬25). HasRoom={Managers.MinMon.HasInterestRoom}");
     }
 
-    [MenuItem("Test/Quest Verify/part2/Slide 28~29 - 잡기 버튼 (slide-in 등장)", false, 214)]
-    static void P2_S28_TameButton() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_BestiaryPopup>().SetInfo(); Spec("슬28~29", "도감 열린 직후 0.4s 후 Frame 좌→/Slime 좌→/Title 우→ Move OutBack 0.5s, 0.8s 후 Emoj Active. 저장칸 0=Emoj_Question + Interactive X / 1+=Emoj_Exclamation + Interactive O."); }
+    // 슬28~29: 잡기 버튼 — 저장칸에 미니몬 있을 때 (포획 가능 창고 1+)
+    [MenuItem("Test/Quest Verify/part2/Slide 28~29 - 잡기버튼 저장칸 있음(!/슬라임)", false, 214)]
+    static void P2_S28_TameButton_Has()
+    {
+        if (!Require()) return;
+        foreach (var p in Object.FindObjectsOfType<UI_BestiaryPopup>()) Managers.UI.ClosePopupUI();
+        Managers.Game.InterestedMinMons.Clear();
+        Managers.MinMon.AddInterest(2001);   // 저장칸 1마리
+        Managers.UI.ShowPopupUI<UI_BestiaryPopup>().SetInfo();
+        Spec("슬28~29 (있음)", "잡기버튼: 타이틀 '미니몬 잡기!' + 슬라임 표시 + Emoj_Exclamation + Interactive O. slide-in은 prefab DOTweenAnimation(Frame 0s/Slime·Player 0.4s/Amount 0.8s, Move isFrom OutBack autoPlay).");
+    }
+
+    // 슬28~29: 잡기 버튼 — 저장칸 비어있을 때 (Emoj_Question, slime 자식이라 GO active 유지 필요)
+    [MenuItem("Test/Quest Verify/part2/Slide 28~29 - 잡기버튼 저장칸 없음(?/물음표)", false, 215)]
+    static void P2_S28_TameButton_Empty()
+    {
+        if (!Require()) return;
+        foreach (var p in Object.FindObjectsOfType<UI_BestiaryPopup>()) Managers.UI.ClosePopupUI();
+        Managers.Game.InterestedMinMons.Clear();   // 저장칸 0
+        Managers.UI.ShowPopupUI<UI_BestiaryPopup>().SetInfo();
+        Spec("슬28~29 (없음)", "잡기버튼: 타이틀 '미니몬 잡기?' + 슬라임 Image 숨김(GO는 active) + 슬라임 위치에 Emoj_Question + Interactive X.");
+    }
 
     [MenuItem("Test/Quest Verify/part2/Slide 30~37 - 잡기 미니게임 (UI_TamePopup, 2001)", false, 215)]
     static void P2_S30_TameMinigame()
