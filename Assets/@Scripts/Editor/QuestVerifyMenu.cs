@@ -417,14 +417,52 @@ public static class QuestVerifyMenu
         Spec("슬28~29 (없음)", "잡기버튼: 타이틀 '미니몬 잡기?' + 슬라임 Image 숨김(GO는 active) + 슬라임 위치에 Emoj_Question + Interactive X.");
     }
 
-    [MenuItem("Test/Quest Verify/part2/Slide 30~37 - 잡기 미니게임 (UI_TamePopup, 2001)", false, 215)]
-    static void P2_S30_TameMinigame()
+    // 공통: 2001을 창고에 넣고 TamePopup 진입
+    static UI_TamePopup OpenTame()
+    {
+        if (!Managers.Game.InterestedMinMons.Contains(2001)) Managers.MinMon.AddInterest(2001);
+        var p = Managers.UI.ShowPopupUI<UI_TamePopup>(); p.SetInfo(2001); return p;
+    }
+
+    // 슬30~34: 잡기팝업 진입 — Popup Anim→Opening 깜빡임→Loading Type1/2→Setup 슬라이드인(Grayscale)→Emoj_Exclamation→대사→버튼 순차
+    [MenuItem("Test/Quest Verify/part2/Slide 30~34 - 잡기팝업 진입(UI/로딩/Setup)", false, 215)]
+    static void P2_S30_Enter()
     {
         if (!Require()) return;
-        if (!Managers.Game.InterestedMinMons.Contains(2001))
-            Managers.MinMon.AddInterest(2001);
-        Managers.UI.ShowPopupUI<UI_TamePopup>().SetInfo(2001);
-        Spec("슬30~37", "Popup Anim→Loading Type1/2 랜덤 1.2s→Setup(Grayscale 1.5s)→Emoj_Exclamation→대사 타이핑→버튼 0.5s간격. Lure: Move Y Yoyo4 0.125s→Emoj_Lure→Shake→효과有/無 분기→결과(성공:Caught4Yoyo+Emoj_TwoHearts→MyMinimon / 실패:Sweat+Runaway). Mandrake: 포물선 0.67s→Jump 0.15Yoyo2→Eat 0.05Yoyo24→확정 성공.");
+        UI_TamePopup.DebugForceCatch = 0;
+        OpenTame();
+        Spec("슬30~34", "Popup Anim(y-120 OutBack)→Opening 깜빡임(DBDBDA↔7B7B7B Yoyo6)→Loading Type1/2 랜덤→Setup(플레이어/미니몬 화면밖→지정위치 1.5s, Grayscale 도착후 컬러)→미니몬 Emoj_Exclamation→대사 타이핑→[길들인다]→0.5s→[가랏]→0.5s→[나의미니몬] 순차 등장 후 상호작용.");
+    }
+
+    // 슬35~36: 길들이기 성공 — 팝업 진입 후 [길들인다!] 클릭 시 강제 성공
+    [MenuItem("Test/Quest Verify/part2/Slide 35~36 - 길들이기 성공(강제)", false, 216)]
+    static void P2_S35_LureSuccess()
+    {
+        if (!Require()) return;
+        UI_TamePopup.DebugForceCatch = 1;   // 다음 Lure 결과=성공
+        OpenTame();
+        Spec("슬35~36 성공", "팝업 뜨면 [길들인다!] 클릭 → Lure Anim(Y Yoyo4)→Emoj_Lure→Shake→효과(Emoj_Excited→Dots)→성공: Caught Anim(Move Y Yoyo 0.18×4)→Emoj_TwoHearts→Emoj_Happy→GlowRays [나의 미니몬] 팝업.");
+    }
+
+    // 슬35~36: 길들이기 실패 — 팝업 진입 후 [길들인다!] 클릭 시 강제 실패
+    [MenuItem("Test/Quest Verify/part2/Slide 35~36 - 길들이기 실패(강제)", false, 217)]
+    static void P2_S35_LureFail()
+    {
+        if (!Require()) return;
+        UI_TamePopup.DebugForceCatch = 2;   // 다음 Lure 결과=실패
+        OpenTame();
+        Spec("슬35~36 실패", "팝업 뜨면 [길들인다!] 클릭 → ...→실패: Emoj_Sweat + 미니몬 좌우반전(0.8s) + 플레이어 Emoj_Sweat2 + 도망 대사 → 0.3s 뒤 Runaway Anim(Move InBack 0.5s X 오른쪽 화면밖) → Popup Close.");
+    }
+
+    // 슬37: 만드라고라 확정 포획 — 만드라고라 보유 보장 후 진입, [가랏! 만드라고라!] 클릭
+    [MenuItem("Test/Quest Verify/part2/Slide 37 - 만드라고라 확정포획", false, 218)]
+    static void P2_S37_Mandrake()
+    {
+        if (!Require()) return;
+        if (Managers.Game.MandrakeCount < 1) Managers.Game.MandrakeCount = 3;
+        UI_TamePopup.DebugForceCatch = 0;
+        OpenTame();
+        Spec("슬37", $"만드라고라 보유={Managers.Game.MandrakeCount}. 팝업 뜨면 [가랏! 만드라고라!] 클릭 → 순서2 대사→1s→포물선 Happy Mandrake(0.67s)→도착 scale1.5/alpha0(0.33s)→Emoj_Exclamation+Jump(Y Yoyo 0.15×2)→Eat Mandrake(Scale Yoyo 0.05×24 TO1.1)→Emoj_Shy+순서3 대사→1.2s→[잡기 성공]과 동일.");
     }
 
     [MenuItem("Test/Quest Verify/part2/Slide 38~42 - 기술책 (능력 목록) %#7", false, 216)]

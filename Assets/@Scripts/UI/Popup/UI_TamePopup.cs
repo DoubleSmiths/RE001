@@ -84,6 +84,11 @@ public class UI_TamePopup : UI_Popup
 
     #endregion
 
+    // 테스트 전용: 다음 길들이기 결과 강제 (0=정상 확률, 1=성공, 2=실패). 사용 후 자동 리셋.
+    public static int DebugForceCatch = 0;
+
+    const float EMOJ_LEN = 0.9f;   // Emoj 클립 길이 (non-loop) — 다음 단계 전 끝까지 재생 보장용
+
     int _dataId;
     bool _busy;                 // 연출/시도 진행 중 (입력 차단)
     MinMonData _mm;
@@ -150,19 +155,20 @@ public class UI_TamePopup : UI_Popup
         {
             title.text = Util.Localize(LocalizeKey.CatchMinimonTitleText) + "!";
             ApplyFont(title, FontType.UI);
+            title.color = Util.HexToColor("FDFFB6");   // 슬31: Title Text Color FDFFB6 (Outline 003F82은 프리펩 머티리얼)
         }
 
-        // [나의 미니몬] 버튼 라벨 — 언어 그룹과 별개인 공용 노드라 직접 로컬라이즈(MyMinimon "나의 미니몬").
+        // [나의 미니몬] 버튼 라벨 — 한/영. ⚠️ "MyMinimon" 키는 미존재 → MyMinimonText("나의 미니몬"/"MY MINIMON") 사용.
         var infoBtnTxt = GetText((int)Texts.Txt_MinimonInfoBtn_01);
         if (infoBtnTxt != null)
         {
-            infoBtnTxt.text = Util.Localize(LocalizeKey.MyMinimon);
+            infoBtnTxt.text = Util.Localize(LocalizeKey.MyMinimonText);
             ApplyFont(infoBtnTxt, FontType.UI);
         }
 
         ApplyMonsterImage();
         ApplyLanguage();
-        RefreshRateTexts();
+        RefreshMandrakeButton();   // 슬31: 가랏 라벨 lime→hex + 만드라고라 이미지 밑 소지 수(AmountTxt)
 
         // 초기 상태: 버튼/확인팝업/로딩 숨김 (연출 코루틴이 단계적으로 노출)
         SetButtonsActive(false);
@@ -227,27 +233,51 @@ public class UI_TamePopup : UI_Popup
         SetMaterial(tamerImg, null);
         SetMaterial(_slimeImg, null);
 
-        // 미니몬 머리 위 Emoj_Exclamation
+        // 슬34: 미니몬 머리 위 Emoj_Exclamation 재생 → 애니가 끝나면 이모지 사라짐
         PlayEmoj(Images.MonsterEmoj, "Emoj_Exclamation");
-        yield return new WaitForSecondsRealtime(0.3f);
+        yield return new WaitForSecondsRealtime(EMOJ_LEN);
+        SetEmojActive(Images.MonsterEmoj, false);
 
-        // 슬34: 대사 + 나의 미니몬 버튼(우측 하단)이 먼저 나오고, 그 뒤 길들인다 → 가랏! 순차 등장 (gif 순서).
-        yield return CoType($"앗! 야생의 {_cName}(이)가 나타났다!");
-        ShowButton(Buttons.MinimonInfoBtn);
-        yield return new WaitForSecondsRealtime(0.4f);
+        // 슬32 순서1: CatchMinimonStartText1 + CreatureName + CatchMinimonStartText2 (로컬라이즈, 한/영)
+        yield return CoType(Util.Localize(LocalizeKey.CatchMinimonStartText1) + _cName + Util.Localize(LocalizeKey.CatchMinimonStartText2));
         ShowButton(Buttons.LureBtn);
         yield return new WaitForSecondsRealtime(0.5f);
         ShowButton(Buttons.UseMandrakeBtn);
         RefreshMandrakeButton();   // 슬31/37: 만드라고라 보유 수에 따라 게이팅
+        yield return new WaitForSecondsRealtime(0.5f);
+        ShowButton(Buttons.MinimonInfoBtn);   // 슬34-4: 나의 미니몬은 가랏 표시 0.5초 뒤 마지막 등장
 
-        _busy = false; // 모든 버튼 등장 후 상호작용 가능
+        // 슬34-5: 모든 버튼 등장 후 상호작용 가능 (interactable ON, 만드라고라는 보유 수 게이팅)
+        SetButtonInteractable(Buttons.LureBtn, true);
+        SetButtonInteractable(Buttons.MinimonInfoBtn, true);
+        RefreshMandrakeButton();
+        _busy = false;
     }
 
-    // 슬31/37: 만드라고라 보유 수 0이면 [가랏! 만드라고라!] 비활성(확정 포획 불가).
+    string _mandLabelKr, _mandLabelEn;   // 가랏 라벨 baked 원문 캐시(lime→hex 치환본)
+
+    // 슬31/37: 만드라고라 보유 수 0이면 [가랏! 만드라고라!] 비활성.
+    //  라벨엔 성공확률 100% + "필요: 1개의 [만드라고라 이미지]"(prefab baked) — lime→hex만 치환.
+    //  소지 수는 만드라고라 이미지 밑 AmountTxt에 lime(#00FF00)/red 작게 표기.
     void RefreshMandrakeButton()
     {
+        int owned = Managers.Game.MandrakeCount;
         var btn = GetButton((int)Buttons.UseMandrakeBtn);
-        if (btn != null) btn.interactable = Managers.Game.MandrakeCount > 0;
+        if (btn != null) btn.interactable = owned > 0;
+
+        // 가랏 라벨: ⚠️ TMP 'lime' 미지원 → baked <color=lime>를 hex로 치환(캐시 1회). 소지 수는 append 안 함.
+        var krTxt = GetText((int)Texts.KorMandrakeBtn);
+        if (krTxt != null) { if (_mandLabelKr == null) _mandLabelKr = krTxt.text.Replace("=lime>", "=#00FF00>"); krTxt.text = _mandLabelKr; }
+        var enTxt = GetText((int)Texts.EngMandrakeBtn);
+        if (enTxt != null) { if (_mandLabelEn == null) _mandLabelEn = enTxt.text.Replace("=lime>", "=#00FF00>"); enTxt.text = _mandLabelEn; }
+
+        // 슬31: 만드라고라 이미지 밑 소지 수 (AmountTxt) — >0=lime(#00FF00) / 0=red
+        var amount = GetText((int)Texts.AmountTxt);
+        if (amount != null)
+        {
+            amount.text = $"<color={(owned > 0 ? "#00FF00" : "red")}>{owned}</color>";
+            ApplyFont(amount, FontType.UI);
+        }
     }
 
     // 슬33 Opening Anim: 회색 Sprite(None) 오버레이(BlockImg)가 본문을 덮고 깜빡임.
@@ -279,29 +309,45 @@ public class UI_TamePopup : UI_Popup
     {
         SetButtonsActive(false);
 
-        // 순서2: TryLureText
-        yield return CoType("길들이기를 시도한다!");
+        // 슬32 순서2: TryLureText
+        yield return CoType(Util.Localize(LocalizeKey.TryLureText));
 
         // 슬35: 플레이어 Lure Anim — prefab DOTweenAnimation "Tamer Lure"(Move Y Yoyo 0.125s ×4)
         PlayAnim(GetImage((int)Images.TamerImg)?.gameObject, "Tamer Lure");
         yield return new WaitForSecondsRealtime(0.5f);
 
-        // 0.5s 뒤 플레이어 머리 위 Emoj_Lure
+        // 슬35: 0.5s 뒤 플레이어 머리 위 Emoj_Lure — 재생이 끝난 뒤 화면 흔들림
         PlayEmoj(Images.TamerEmoj, "Emoj_Lure");
-        yield return new WaitForSecondsRealtime(0.6f);
+        yield return new WaitForSecondsRealtime(EMOJ_LEN);
 
         // 화면 흔들림
         yield return CoShake();
 
-        // 잡기 판정 (천장/확률은 MinMonManager가 처리)
-        bool success = Managers.MinMon.TryCatch(_dataId);
+        // 잡기 판정 (천장/확률은 MinMonManager가 처리). 테스트 강제 결과 우선.
+        bool success;
+        if (DebugForceCatch == 1) { Managers.MinMon.TryCatch(_dataId, forceSuccess: true); success = true; }
+        else if (DebugForceCatch == 2) { success = false; }
+        else success = Managers.MinMon.TryCatch(_dataId);
+        DebugForceCatch = 0;
 
-        // 효과 有/無 분기 (슬35) — TODO: 종족별 면역(효과 없는 미니몬) 데이터 연동. 현재는 항상 효과 있음.
-        // 순서3: LureEffective
-        PlayEmoj(Images.MonsterEmoj, "Emoj_Excited");
-        yield return CoType($"{_cName}(이)가 흥미를 보인다!");
+        // "..." Emoj_Dots(생각하는 텀)를 먼저 충분히(약 3초) 보여준 뒤 결과/효과 텍스트를 낸다.
         PlayEmoj(Images.MonsterEmoj, "Emoj_Dots");
-        yield return new WaitForSecondsRealtime(0.6f);
+        yield return new WaitForSecondsRealtime(3f);
+        SetEmojActive(Images.MonsterEmoj, false);
+
+        // Dots 이후 효과 텍스트 — 효과有=성공(Excited+LureEffective) / 효과無=실패(Name+LureNotEffective).
+        //  (효과 없음 문구는 실패 시에만 — 긍정 결과에선 안 나온다)
+        if (success)
+        {
+            PlayEmoj(Images.MonsterEmoj, "Emoj_Excited");
+            yield return CoType(Util.Localize(LocalizeKey.LureEffectiveText));   // 순서3-1
+            yield return new WaitForSecondsRealtime(EMOJ_LEN);
+        }
+        else
+        {
+            // 순서3-2 (KR=CreatureName+LureNotEffectiveText / EN=LureNotEffectiveText만)
+            yield return CoType((IsKorean ? _cName : "") + Util.Localize(LocalizeKey.LureNotEffectiveText));
+        }
 
         yield return CoResult(success);
     }
@@ -328,8 +374,8 @@ public class UI_TamePopup : UI_Popup
 
         // 슬31/37: 만드라고라 1개 소비 (보유 수는 OnClickMandrake에서 이미 검증)
         Managers.Game.MandrakeCount--;
-        // 순서2
-        yield return CoType("가랏! 만드라고라!");
+        // 슬32 순서2(가랏): GoMandrakeText
+        yield return CoType(Util.Localize(LocalizeKey.GoMandrakeText));
         yield return new WaitForSecondsRealtime(1f);
 
         // 포물선 Happy Mandrake IMG (플레이어 중앙 → 미니몬 중앙, 0.67s)
@@ -351,14 +397,22 @@ public class UI_TamePopup : UI_Popup
             mandrake.gameObject.SetActive(false);
         }
 
-        // 슬37: 미니몬 Emoj_Exclamation + Jump Anim — prefab "Monster Mandrake"(Move Y Yoyo 0.15s ×2)
+        // 슬37-4: 미니몬 Emoj_Exclamation + Jump Anim — prefab "Monster Mandrake"(Move Y Yoyo 0.15s ×2 = 0.3s)
         PlayEmoj(Images.MonsterEmoj, "Emoj_Exclamation");
         PlayAnim(_slimeTr?.gameObject, "Monster Mandrake");
         yield return new WaitForSecondsRealtime(0.3f);
 
-        // 순서3: EatMandrakeText + Emoj_Shy ("{이름}(은)는 순식간에 그것을 먹어치웠다" — gif 일치)
+        // 슬37-5: Jump 종료 후 Eat Mandrake Anim — Scale Yoyo 0.05s ×24 TO 1.1 (= 1.2s)
+        if (_slimeTr != null)
+        {
+            _slimeTr.DOKill();
+            _slimeTr.DOScale(1.1f, 0.05f).SetEase(Ease.OutQuad).SetLoops(24, LoopType.Yoyo).SetUpdate(true);
+        }
+        yield return new WaitForSecondsRealtime(0.05f * 24f);
+
+        // 슬37-6/슬32 순서3: Eat 종료 후 미니몬 Emoj_Shy + CreatureName + EatMandrakeText
         PlayEmoj(Images.MonsterEmoj, "Emoj_Shy");
-        yield return CoType($"{_cName}(은)는 순식간에 그것을 먹어치웠다!");
+        yield return CoType(_cName + Util.Localize(LocalizeKey.EatMandrakeText));
         yield return new WaitForSecondsRealtime(1.2f);
 
         // 만드라고라는 확정 성공
@@ -373,16 +427,20 @@ public class UI_TamePopup : UI_Popup
     {
         if (success)
         {
-            // 슬36: 미니몬 Caught Anim — prefab "Monster Caught"(Move Y Yoyo 0.18s ×4)
+            // 슬36-1: 미니몬 Caught Anim — prefab "Monster Caught"(Move Y Yoyo 0.18s ×4 = 0.72s)
             PlayAnim(_slimeTr?.gameObject, "Monster Caught");
             yield return new WaitForSecondsRealtime(0.72f);
-            PlayEmoj(Images.MonsterEmoj, "Emoj_TwoHearts");
-            yield return CoType($"{_cName}(을)를 길들이는 데 성공했다!");
-            PlayEmoj(Images.TamerEmoj, "Emoj_Happy");
-            yield return new WaitForSecondsRealtime(0.8f);
 
-            // 슬20~22: [나의 미니몬] 창 호출 + 포획 결과 연출(첫포획 NEW / 재포획 향상 순차 Scale).
-            //  (GlowRays는 prefab 부재로 미적용)
+            // 슬36-2: Anim 끝난 뒤 순서4-1 Text + 미니몬 머리 위 Emoj_TwoHearts (재생 끝까지 본다)
+            PlayEmoj(Images.MonsterEmoj, "Emoj_TwoHearts");
+            yield return CoType(Util.Localize(LocalizeKey.LureSuccessText1) + _cName + Util.Localize(LocalizeKey.LureSuccessText2));
+            yield return new WaitForSecondsRealtime(EMOJ_LEN);   // TwoHearts 재생 완료까지
+
+            // 슬36-3: TwoHearts 끝나면 플레이어 머리 위 Emoj_Happy (재생 끝까지)
+            PlayEmoj(Images.TamerEmoj, "Emoj_Happy");
+            yield return new WaitForSecondsRealtime(EMOJ_LEN);
+
+            // 슬36-4: Happy 끝나면 GlowRays [나의 미니몬] Popup (첫포획 NEW / 재포획 향상 연출)
             bool first = Managers.MinMon.LastCatchWasFirst;
             bool improved = Managers.MinMon.LastCatchImproved;
             ClosePopupUI();
@@ -392,14 +450,31 @@ public class UI_TamePopup : UI_Popup
         }
         else
         {
-            // 슬36 실패: Emoj_Sweat + 미니몬 좌우 반전("Monster Turn" 0.8s) 후 Runaway("Monster Runaway" 0.5s)
+            // 슬36 실패: Emoj_Sweat(미니몬) + 플레이어 Emoj_Sweat2 + 순서4-2 Text
             PlayEmoj(Images.MonsterEmoj, "Emoj_Sweat");
             PlayEmoj(Images.TamerEmoj, "Emoj_Sweat2");
-            yield return CoType($"{_cName}(이)가 도망쳤다...");
-            PlayAnim(_slimeTr?.gameObject, "Monster Turn");
-            yield return new WaitForSecondsRealtime(1.1f);
-            PlayAnim(_slimeTr?.gameObject, "Monster Runaway");
-            yield return new WaitForSecondsRealtime(0.5f);
+            yield return CoType(_cName + Util.Localize(LocalizeKey.LureFailText));
+            yield return new WaitForSecondsRealtime(0.3f);
+
+            // 도망 시작 직전 머리 위 Emoj 숨김 (Emoj는 슬라임과 별개 노드라 안 숨기면 제자리에 남음)
+            SetEmojActive(Images.MonsterEmoj, false);
+            SetEmojActive(Images.TamerEmoj, false);
+
+            // 슬36 Runaway: 기존 그대로 Move InBack 0.5s(X+360) — InBack 예비동작으로 왼쪽 갔다가 오른쪽 화면 밖.
+            //  + 플립: 왼쪽 보기로 시작 → 오른쪽으로 가기 시작할 때(예비동작 후) 플립해 오른쪽 보기.
+            //  슬라임 기본 scale.x(+)=왼쪽 보기 / (-)=오른쪽 보기.
+            var srt = _slimeImg != null ? _slimeImg.rectTransform : null;
+            if (srt != null && _slimeTr != null)
+            {
+                srt.DOKill();
+                float baseX = Mathf.Abs(_slimeTr.localScale.x);
+                _slimeTr.localScale = new Vector3(baseX, _slimeTr.localScale.y, _slimeTr.localScale.z);   // 왼쪽 보기
+                srt.DOAnchorPos(new Vector2(srt.anchoredPosition.x + 360f, srt.anchoredPosition.y), 0.5f)
+                   .SetEase(Ease.InBack).SetUpdate(true);
+                yield return new WaitForSecondsRealtime(0.22f);   // InBack 왼쪽 예비동작(최저점 ~0.21s)까지 왼쪽 보기 유지
+                _slimeTr.localScale = new Vector3(-baseX, _slimeTr.localScale.y, _slimeTr.localScale.z);   // 오른쪽으로 가기 시작할 때 플립
+                yield return new WaitForSecondsRealtime(0.28f);
+            }
             OnClickBG();
         }
     }
@@ -422,22 +497,6 @@ public class UI_TamePopup : UI_Popup
 
         Sprite sprite = Managers.Resource.Load<Sprite>(iconLabel);
         if (sprite != null) { _slimeImg.sprite = sprite; _slimeImg.preserveAspect = true; }
-    }
-
-    void RefreshRateTexts()
-    {
-        var amount = GetText((int)Texts.AmountTxt);
-        if (amount == null) return;
-        ApplyFont(amount, FontType.UI);
-        if (_mm == null) { amount.text = ""; return; }
-
-        int tried = Managers.MinMon.GetSaveData(_dataId).TameCount;
-        int guaranteed = _mm.MaxTameCount;
-        float rate = Mathf.Clamp01(_mm.CatchChance) * 100f;
-        bool ceiling = tried >= guaranteed;
-        amount.text = ceiling
-            ? $"<color=#00FF00>100%</color>  ({tried}/{guaranteed})"
-            : $"{rate:0}%  ({tried}/{guaranteed})";
     }
 
     // 버튼 그룹(라벨)의 표시는 SetButtonsActive가 담당하므로 여기선 확인팝업만 언어 토글.
@@ -561,6 +620,12 @@ public class UI_TamePopup : UI_Popup
     {
         var btn = GetButton((int)id);
         if (btn != null) btn.gameObject.SetActive(on);
+    }
+
+    void SetButtonInteractable(Buttons id, bool on)
+    {
+        var btn = GetButton((int)id);
+        if (btn != null) btn.interactable = on;
     }
 
     void SetActiveSafe(GameObjects id, bool on)

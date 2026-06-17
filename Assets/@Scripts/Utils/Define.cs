@@ -338,6 +338,21 @@ public class Define
         public const string SummonText = "SummonText";       // 슬19: [부르기] 버튼 ("부르기"/"SUMMON")
         public const string MinimonGrowthFailText = "MinimonGrowthFailText"; // 슬22: 재포획 성장 실패 문구
         public const string CatchMinimonTitleText = "CatchMinimonTitleText"; // 슬28: [미니몬 잡기] 버튼/팝업 제목
+        // 슬31/32: 잡기 미니게임 대사/수치 텍스트 (한/영)
+        public const string CatchMinimonStartText1 = "CatchMinimonStartText1";
+        public const string CatchMinimonStartText2 = "CatchMinimonStartText2";
+        public const string TryLureText = "TryLureText";
+        public const string LureEffectiveText = "LureEffectiveText";
+        public const string LureNotEffectiveText = "LureNotEffectiveText";
+        public const string LureSuccessText1 = "LureSuccessText1";
+        public const string LureSuccessText2 = "LureSuccessText2";
+        public const string LureFailText = "LureFailText";
+        public const string GoMandrakeText = "GoMandrakeText";
+        public const string EatMandrakeText = "EatMandrakeText";
+        public const string CatchSuccessRateText = "CatchSuccessRateText";
+        public const string CatchSuccessAtText = "CatchSuccessAtText";
+        public const string GuaranteedCatchText = "GuaranteedCatchText";
+        public const string ReqMandrakeText = "ReqMandrakeText";
         public const string AbilityCodex_TitleText = "AbilityCodex_TitleText"; // 슬40: 능력 목록 팝업 제목
         // 슬42: 능력 목록 하단 필터 버튼(=상단 TopText) 라벨 — 능력 종류(전체/기술/마법/수비/지원)
         public const string AbilityCodex_BtmText_All = "AbilityCodex_BtmText_All";
