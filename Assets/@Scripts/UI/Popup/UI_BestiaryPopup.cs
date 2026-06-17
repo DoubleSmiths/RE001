@@ -445,6 +445,8 @@ public class UI_BestiaryPopup : UI_Popup
         {
             amount.text = $"x{count}";
             ApplyFont(amount, Define.FontType.UI);
+            // 슬28: MinimonAmountTxt 외곽선 B94748 (offset 0.5,-0.5)은 프리펩 머티리얼 프리셋
+            //  PF_Stardust_AmountOutline.mat(TMP Underlay)로 적용됨. (NicerOutline/legacy Outline은 TMP서 미동작)
         }
 
         // 슬29: 있음 → 슬라임(+자식 MinimonEmoj=Exclamation) 표시 / 없음 → MinimonNoExistImg(=Question) 표시.
