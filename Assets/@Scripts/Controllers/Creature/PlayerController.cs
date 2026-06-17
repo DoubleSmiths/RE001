@@ -444,11 +444,17 @@ public class PlayerController : CreatureController
         // (BindPlayer가 늦게 구독한 경우엔 BindPlayer 안에서 초기 1회를 별도로 호출.)
         OnExpChanged?.Invoke(Managers.Game.Exp, _expRequired);
 
-        // 동행 미니몬: 매니저 준비 후(GameScene이 RefreshStats 재호출) 1회 구독 + 동기화.
-        if (!_companionSubscribed && Managers.MinMon != null)
+        // 동행 미니몬: 1회 구독 + 매 RefreshStats마다 동기화.
+        //  (플레이어 Init의 RefreshStats는 LoadGame 전이라 CompanionMinMonId=-1 → GameScene이 LoadGame 후 RefreshStats를
+        //   재호출할 때 실제 CompanionMinMonId로 스폰돼야 함. 구독 1회 가드 안에 RefreshCompanion을 두면 재호출이 스킵돼
+        //   재시작 시 동행 미니몬이 안 뜬다 → RefreshCompanion은 가드 밖에서 매번 호출. 가드가 중복 스폰 방지.)
+        if (Managers.MinMon != null)
         {
-            Managers.MinMon.OnCompanionChanged += OnCompanionChanged;
-            _companionSubscribed = true;
+            if (!_companionSubscribed)
+            {
+                Managers.MinMon.OnCompanionChanged += OnCompanionChanged;
+                _companionSubscribed = true;
+            }
             RefreshCompanion();
         }
     }
