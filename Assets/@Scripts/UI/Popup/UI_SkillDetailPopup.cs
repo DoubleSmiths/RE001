@@ -709,9 +709,21 @@ public class UI_SkillDetailPopup : UI_Popup
         int  maxLv    = Managers.Data.SkillDic.TryGetValue(SkillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : lv;
         bool atMax    = owned && lv >= maxLv;
 
-        // 최대등급(MasterIcon) / 기억중(MemorizedIcon) — 능력 ICON 옆 뱃지
-        SetActive(GetImageGo((int)Images.MasterIcon),    atMax);
-        SetActive(GetImageGo((int)Images.MemorizedIcon), owned && equipped && !talent);
+        // 슬45: 이름 바 위 상태 배지(MasterAndMEMGroup) — 최대등급=MASTER(FF00F5) / 기억중=기억중 / 재능=재능, 둘 다 파랑(3BA6FF).
+        //  우선순위: 최대등급 > (기억중 또는 재능). MemorizedIcon을 기억중·재능 겸용으로 사용.
+        bool showMaster = atMax;
+        bool showMemBadge = !atMax && (talent || (owned && equipped));
+        SetActive(GetImageGo((int)Images.MasterIcon),    showMaster);
+        SetActive(GetImageGo((int)Images.MemorizedIcon), showMemBadge);
+        if (showMaster)
+            SetText(Texts.Txt_MasterIcon_02, Util.Localize(Define.LocalizeKey.AbilityMaster_Text));   // "MASTER"
+        if (showMemBadge)
+        {
+            // 재능이면 "재능"(TalentText), 아니면 "기억중"(Memorized_Text_Full). 프레임 파랑 3BA6FF.
+            SetText(Texts.Txt_MemorizedIcon_01, Util.Localize(talent ? Define.LocalizeKey.TalentText : Define.LocalizeKey.Memorized_Text_Full));
+            var memFrame = GetImage((int)Images.Img_MemorizedIcon_01);
+            if (memFrame != null) memFrame.color = Util.HexToColor("3BA6FF");
+        }
 
         // 점유량(GotMEM) / 재능(NoMEM) — 점유량 0이면 재능 표기
         SetActive(GetObject((int)GameObjects.GotMEM), owned && !talent);
