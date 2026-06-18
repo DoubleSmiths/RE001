@@ -152,6 +152,12 @@ namespace Data
         public AbilitySource Source;     // 능력 출처(획득 경로). 기본 Unlimited. (#5 하단 UI 분기)
         public int RequiredMinionId;     // Source=Minion일 때 게이팅 미니몬 CreatureId. 0이면 (id-4000)로 파생.
 
+        // ── 슬49/50/51: 출처별 요구 데이터 ──
+        public int RequiredEquipId;      // 슬49 Source=Equip일 때 요구 장비 DataId (장비 시스템 가동 후 사용)
+        public int RequiredItemId;       // 슬50 Source=Npc일 때 요구 재료 ItemData DataId
+        public int RequiredItemCount;    // 슬50 요구 재료 개수
+        public string NpcLocation;       // 슬51 버튼1: Source=Npc일 때 학습 NPC가 있는 장소
+
         // ── 슬39: 전투 발동조건 (없으면 None = 패시브) ──
         public AbilityTrigger TriggerType;                                       // None / Probability / Time
         public List<AbilityCondition> Conditions = new List<AbilityCondition>(); // 확률 발동 조건(1개 이상)

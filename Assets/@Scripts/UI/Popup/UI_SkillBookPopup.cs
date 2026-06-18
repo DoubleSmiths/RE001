@@ -81,22 +81,69 @@ public class UI_SkillBookPopup : UI_Popup
         if (b != null) b.gameObject.BindEvent(() => OnClickFilter(f));
     }
 
-    // 슬42: 필터 클릭 → 선택 상태 갱신 + Scale 연출
+    // 슬42: 필터 클릭 → 선택 상태 갱신 + 전환 Anim(버튼 클릭 시에만)
     void OnClickFilter(Filter f)
     {
+        if (f == _filter) return;   // 같은 버튼 재클릭 — 상태 변화 없음
+
+        Filter prev = _filter;
         _filter = f;
 
-        var btn = GetButton(FilterButton(f));
-        if (btn != null)
-        {
-            btn.transform.DOKill();
-            btn.transform.localScale = Vector3.one;
-            // 슬42: 상태전환 Scale Yoyo TO 0.85
-            btn.transform.DOPunchScale(new Vector3(-0.15f, -0.15f, 0f), 0.25f, 8, 1f)
-                .SetEase(Ease.OutQuad).SetUpdate(true);
-        }
+        // 슬42: [기본→선택] 및 [선택→기본] 둘 다 Anim 재생 (버튼 클릭 시에만).
+        //  직전 선택 버튼은 기본으로(내려감), 새 버튼은 선택으로(올라감).
+        ApplyFilterState(prev, animate: true);
+        ApplyFilterState(f,    animate: true);
 
         Refresh();
+    }
+
+    // 슬42: 각 버튼에 authored된 DOTweenAnimation을 트리거(코드 Sequence 대신 — 프로젝트 관례).
+    //  Move(id'1', base에서 위로 +1.5)/Scale(id'2', OutBack Yoyo 0.85). 선택=Move 끝(위)/기본=Move 시작(base).
+    void ApplyFilterState(Filter f, bool animate)
+    {
+        GetButtonAnims(f, out var move, out var scale);
+        bool sel = (f == _filter);
+
+        if (!animate)
+        {
+            // 열림 시 즉시 세팅(애니X): 선택=Move 끝(위)으로 완료 / 기본=Move 시작(base)으로 되감기.
+            if (scale != null) scale.DORewind();
+            if (move != null) { if (sel) move.DOComplete(); else move.DORewind(); }
+            return;
+        }
+
+        // 슬42: Scale(squash)와 Move(위/아래)를 동시 재생 — 한 번의 모션으로 보이게.
+        //  (이전엔 Scale 후 0.1s 지연 Move = squash→jump 2단계라 "두 번 튀어" 보였음)
+        if (scale != null) scale.DORestart();
+        if (move != null)
+        {
+            if (sel) move.DORestart();          // 기본(base) → 선택(위로 +1.5)
+            else     move.DOPlayBackwards();    // 선택(위) → 기본(base, 원상태 복귀)
+        }
+    }
+
+    // 필터 버튼의 authored Move(id'1')·Scale(id'2') DOTweenAnimation 컴포넌트 획득.
+    void GetButtonAnims(Filter f, out DG.Tweening.DOTweenAnimation move, out DG.Tweening.DOTweenAnimation scale)
+    {
+        move = null; scale = null;
+        var btn = GetButton(FilterButton(f));
+        if (btn == null) return;
+        foreach (var a in btn.GetComponents<DG.Tweening.DOTweenAnimation>())
+        {
+            if (a.id == "1") move = a;
+            else if (a.id == "2") scale = a;
+        }
+    }
+
+    // 슬42: 팝업 열림 시 선택(전체)=위 / 나머지=아래 — 애니 없이 즉시 세팅(클릭 시에만 Anim).
+    //  DOTweenAnimation의 tween은 Start()에서 생성되므로 1프레임 대기 후 세팅.
+    void InitFilterButtonPositions() => StartCoroutine(CoInitFilterButtons());
+
+    System.Collections.IEnumerator CoInitFilterButtons()
+    {
+        yield return null;   // DOTweenAnimation.Start()가 tween 생성하도록 1프레임 대기
+        foreach (Filter f in System.Enum.GetValues(typeof(Filter)))
+            ApplyFilterState(f, animate: false);
     }
 
     public void SetInfo()
@@ -114,6 +161,9 @@ public class UI_SkillBookPopup : UI_Popup
         // 슬42: 능력 목록 호출 시 항상 [전체] 선택
         _filter = Filter.All;
         Refresh();
+
+        // 슬42: 초기 버튼 위치 — [전체]만 올라간 상태(선택)로 즉시 세팅(애니 없이). 클릭 시에만 전환 Anim.
+        InitFilterButtonPositions();
     }
 
     // 슬42: 활성 필터에 대응하는 하단 버튼 enum (위치 매핑: 전체/기술/마법/수비/지원)
@@ -129,7 +179,7 @@ public class UI_SkillBookPopup : UI_Popup
         }
     }
 
-    // 슬42: 필터별 라벨 로컬라이즈 키
+    // 슬42: 필터별 하단 버튼 라벨(BtmText) 로컬라이즈 키 (전체/기술/마법/방어/지원)
     string FilterLocKey(Filter f)
     {
         switch (f)
@@ -139,6 +189,20 @@ public class UI_SkillBookPopup : UI_Popup
             case Filter.Def:   return Define.LocalizeKey.AbilityCodex_BtmText_Def;
             case Filter.Util:  return Define.LocalizeKey.AbilityCodex_BtmText_Util;
             default:           return Define.LocalizeKey.AbilityCodex_BtmText_All;
+        }
+    }
+
+    // 슬40/42: 상단 TopText 전용 문구 로컬라이즈 키 (전체 능력/물리 능력/마법 능력/생존 능력/지원 능력)
+    //  - 하단 BtmText(전체/기술/…)와 연동되는 같은 버튼이지만 표기는 별도 TopText_* 키를 쓴다(mockup image105 / 슬42 gif 근거).
+    string TopTextLocKey(Filter f)
+    {
+        switch (f)
+        {
+            case Filter.Skill: return Define.LocalizeKey.AbilityCodex_TopText_Skill;
+            case Filter.Spell: return Define.LocalizeKey.AbilityCodex_TopText_Spell;
+            case Filter.Def:   return Define.LocalizeKey.AbilityCodex_TopText_Def;
+            case Filter.Util:  return Define.LocalizeKey.AbilityCodex_TopText_Util;
+            default:           return Define.LocalizeKey.AbilityCodex_TopText_All;
         }
     }
 
@@ -163,10 +227,10 @@ public class UI_SkillBookPopup : UI_Popup
         RefreshMemoryGauge();
         RefreshFilterButtons();
 
-        // 슬40: 상단 TopText(SubtitleText) = 현재 눌린 하단 필터 버튼의 라벨과 동일하게 표기
+        // 슬40/42: 상단 TopText(SubtitleText) = 현재 눌린 필터에 대응하는 전용 문구(AbilityCodex_TopText_*)
+        //  ex) [기술] 버튼 선택 시 상단은 "물리 능력". (하단 BtmText는 "기술", 표기 키만 다름)
         var sub = GetText((int)Texts.SubtitleText);
-        var curLbl = FilterLabel(_filter);
-        if (sub != null && curLbl != null) { sub.text = curLbl.text; ApplyFont(sub, FontType.UI); }
+        if (sub != null) { sub.text = Util.Localize(TopTextLocKey(_filter)); ApplyFont(sub, FontType.UI); }
 
         // 필터에 맞는 능력 목록 수집 (DataId 정렬)
         _shown.Clear();
@@ -216,11 +280,13 @@ public class UI_SkillBookPopup : UI_Popup
         if (txt == null) return;
         int used = Managers.Ability.UsedMemory;
         int max  = Managers.Ability.MaxMemory;
-        txt.text = $"{used}/{max}";
-        // 슬40: 현재 기억력 색 — 0=red / <max=yellow / =max=lime
-        txt.color = used == 0      ? Util.HexToColor("FF0000")
-                  : used >= max    ? Util.HexToColor("00FF00")
-                  :                  Util.HexToColor("FFFF00");
+        // 슬40: 현재 기억력(첫 숫자)만 색 변경 — 0=red / <max=yellow / =max=lime(#00FF00).
+        //  '/'와 최대 기억력은 흰색이어야 하므로 base color=흰색 + 첫 숫자만 rich-text 색.
+        string col = used == 0   ? "#FF0000"
+                   : used >= max ? "#00FF00"
+                   :               "#FFFF00";
+        txt.color = Color.white;
+        txt.text = $"<color={col}>{used}</color>/{max}";
         ApplyFont(txt, FontType.UI);
     }
 

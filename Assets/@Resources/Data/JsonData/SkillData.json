@@ -43,6 +43,7 @@
       "MaxLevel": 5,
       "MemoryCapacity": 3,
       "Source": "Equip",
+      "RequiredEquipId": 30001,
       "Story": "두드릴수록 단단해지는 강철처럼,\n반복된 단련이 힘으로 새겨진다.",
       "StoryEng": "Like steel forged by strikes,\ntraining is carved into strength."
     },
@@ -60,6 +61,9 @@
       "MaxLevel": 5,
       "MemoryCapacity": 2,
       "Source": "Npc",
+      "RequiredItemId": 10001,
+      "RequiredItemCount": 5,
+      "NpcLocation": "연금공방",
       "Story": "급소를 노리는 한 줄기 호흡.\n그 떨림을 기억해 둔다.",
       "StoryEng": "A single breath aimed at the weak point.\nRemember that tremor."
     },
@@ -190,6 +194,9 @@
       "MaxLevel": 5,
       "MemoryCapacity": 2,
       "Source": "Npc",
+      "RequiredItemId": 10003,
+      "RequiredItemCount": 3,
+      "NpcLocation": "연금공방",
       "TriggerType": "Time",
       "ActiveContext": "InBattle",
       "Cooldown": 5.0,
@@ -239,6 +246,54 @@
       "EffectStat": "CritRate",
       "EffectValue": 30.0,
       "EffectDuration": 0.0
+    },
+    {
+      "DataId": 5012,
+      "Name": "포획의 직감",
+      "Description": "미니몬 잡기 성공 확률이 증가한다.",
+      "NameEng": "Catcher's Instinct",
+      "DescEng": "Increases minion catch success rate.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "CatchRate",
+      "StatBonus": 10.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 2,
+      "Source": "Unlimited",
+      "Story": "발자국의 깊이, 숨결의 결.\n사냥꾼은 직감으로 안다."
+    },
+    {
+      "DataId": 5010,
+      "Name": "조련의 효율",
+      "Description": "확정 포획에 필요한 길들이기 횟수가 감소한다.",
+      "NameEng": "Taming Efficiency",
+      "DescEng": "Reduces tame attempts needed for a guaranteed catch.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "GuaranteedCatchReduce",
+      "StatBonus": 1.0,
+      "MaxLevel": 3,
+      "MemoryCapacity": 2,
+      "Source": "Unlimited",
+      "Story": "급할수록 돌아가라.\n허나 길은 점점 짧아진다."
+    },
+    {
+      "DataId": 5011,
+      "Name": "탐험가의 경험",
+      "Description": "경험치 획득량이 증가한다.",
+      "NameEng": "Explorer's Experience",
+      "DescEng": "Increases experience gained.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "ExpGain",
+      "StatBonus": 20.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 0,
+      "Source": "Unlimited",
+      "Story": "걸어온 길은 모두 양분이 된다."
     }
   ]
 }

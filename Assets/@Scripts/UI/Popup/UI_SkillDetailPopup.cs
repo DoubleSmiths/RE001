@@ -315,12 +315,15 @@ public class UI_SkillDetailPopup : UI_Popup
     #endregion
 
 
-    const float FRAME_FROM_Y = -130f;
+    const float FRAME_FROM_Y = -120f;   // 슬43: From y -120 (스펙)
     Vector2 _frameOrigin;
 
     public int SkillId { get; private set; } = -1;
 
     int _reqMinionId;   // #6: 현재 능력의 게이팅 미니몬 CreatureId (Source=Minion일 때)
+    int _reqItemId;     // 슬50: 현재 능력의 요구 재료 ItemData DataId (Source=Npc일 때)
+    int _reqEquipId;    // 슬49: 현재 능력의 요구 장비 DataId (Source=Equip일 때)
+    bool _previewNext;  // 슬51 버튼2: 다음 등급 미리보기 토글 상태
 
     // [능력 정보창 #1] 능력 종류 아이콘 — prefab에 전용 노드가 없어 런타임 생성(능력 ICON 우측 가로 나열).
     Transform _roleIconRow;
@@ -341,42 +344,76 @@ public class UI_SkillDetailPopup : UI_Popup
 
         _frameRT = GetObject((int)GameObjects.SkillDetailPopup).GetComponent<RectTransform>();
 
+        // 슬43: 진입 Move 애니메이션 기준점(_frameOrigin) 캡처 — 종료 역재생 위치 계산용.
+        //  (이전엔 미설정으로 (0,0) 고정 버그 → OnClickClose 종료 위치 오류)
+        var mainGo = GetObject((int)GameObjects.SkillDetailPopupMain);
+        if (mainGo != null)
+        {
+            var mainRT = mainGo.GetComponent<RectTransform>();
+            if (mainRT != null) _frameOrigin = mainRT.anchoredPosition;
+        }
+
         GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
         GetButton((int)Buttons.MemorizeBtn).gameObject.BindEvent(OnClickMemorize);
         // 능력 정보창 #6: 미니몬 요구 박스 클릭 → 해당 미니몬 [미니몬 기록] 호출
         GetButton((int)Buttons.ReqMinionBox).gameObject.BindEvent(OnClickReqMinion);
+        // 슬51 버튼2: 다음 등급 정보 미리보기 토글
+        GetButton((int)Buttons.NextLvlBtn).gameObject.BindEvent(OnClickNextLvl);
+        // 슬50: 재료 박스 클릭 → 해당 아이템 상세 (정보 팝업 있으면)
+        GetButton((int)Buttons.ReqItemBox).gameObject.BindEvent(OnClickReqItem);
+        // 슬49: 장비 박스 클릭 → 해당 장비 상세
+        GetButton((int)Buttons.ReqItemBox1_1).gameObject.BindEvent(OnClickReqEquip);
+
+        // 슬43: 우상단 X 버튼으로 닫기 (Images.Xbutton 노드 — Buttons에 없어 Image 게임오브젝트에 직접 바인드)
+        var xGo = GetImageGo((int)Images.Xbutton);
+        if (xGo != null) xGo.BindEvent(OnClickXbutton);
 
         return true;
     }
+
+    // 슬43: X버튼/닫기 — 종료 애니(진입 Move 역재생) 후 팝업 닫기.
+    void OnClickXbutton() => OnClickClose();
 
     // skillId = 능력(SkillData) DataId. 이름/설명/단계를 한/영으로 채운다.
     public void SetInfo(int skillId = -1)
     {
         SkillId = skillId;
 
+        // 슬43: BG 딤 — #000000 alpha 130 (이전 220 → 스펙 130/255)
         var bg = GetButton((int)Buttons.SkillDetailPopupBackground).GetComponent<Image>();
         if (bg != null)
         {
             bg.DOKill();
-            Color c = bg.color; c.a = 0f; bg.color = c;
-            bg.DOFade(220f / 255f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+            Color c = bg.color; c.r = c.g = c.b = 0f; c.a = 0f; bg.color = c;
+            bg.DOFade(130f / 255f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
         }
 
+        // 슬43: 진입 Move 애니메이션 (From y-120 OutBack 0.5). prefab authored DOTweenAnimation이 있으면
+        //  그것이 우선되지만(중복 무해), 코드에서도 동일 스펙으로 보강 — UI_Popup 기본 OpenAnimation과 동일.
+        PlayOpenAnim();
+
         if (skillId < 0 || Managers.Ability == null) return;
+
+        // 슬43: 타이틀 "능력 정보" (prefab Localize 미연결 대비 코드에서도 세팅)
+        SetText(Texts.Txt_Title_03, Util.Localize(Define.LocalizeKey.AbilityDetails_TitleText));
 
         // 이름 — 한/영 (NameEng 폴백). 스킬 이름 노드는 ItemPopupItemName.
         SetText(Texts.ItemPopupItemName, Managers.Ability.GetName(skillId));
         // 능력 단계 "【 LEVEL: lv/max 】" (미보유=0, 이야기/설명은 RefreshDescLayout)
         int lv = Managers.Ability.GetLevel(skillId);   // 미보유 시 0
         int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : Mathf.Max(1, lv);
-        SetText(Texts.SkillLvTxt, $"【 LEVEL: <color=yellow>{lv}</color>/{maxLv} 】");
+        // 슬46: "【 + LevelText(등급/LEVEL) + : 현재/최대 】" — 한/영 대응 (이전 "LEVEL" 하드코딩)
+        SetText(Texts.SkillLvTxt, $"【 {Util.Localize(Define.LocalizeKey.LevelText)}: <color=yellow>{lv}</color>/{maxLv} 】");
+
+        _previewNext = false;  // 슬51: 능력 바뀌면 미리보기 해제
 
         RefreshMemorizeState();
         RefreshRoleIcons();
         RefreshMidState();     // #3 중단 상태(최대등급/기억중/재능/습득필요)
         RefreshDescLayout();   // #4 이야기/등급/설명 레이아웃
-        RefreshSourceUI();     // #5/#6 하단 출처별 UI
-        HidePotionButtons();   // 능력 정보창엔 물약 제작/다음단계 버튼 불필요
+        RefreshSourceUI();     // #5/#6 하단 출처별 UI (#7 장비/#8 재료 포함)
+        RefreshBottomButtons();// 슬51 최하단 3버튼(버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억)
+        ApplyEquipMaterial();  // 슬52: 기억중/재능이면 이름 Frame Sprite에 Material_Equip
     }
 
     // [능력 정보창 #1] 능력 종류에 따라 아이콘 표시. 기획서 매핑:
@@ -387,7 +424,7 @@ public class UI_SkillDetailPopup : UI_Popup
         switch (r)
         {
             case AbilityManager.Role.Skill: return "Sword01";
-            case AbilityManager.Role.Spell: return "Hud_icon_magic";
+            case AbilityManager.Role.Spell: return "Staff01";                // 슬44: 마법=Staff01 (에셋 존재)
             case AbilityManager.Role.Def:   return "role_icon_gladiator";
             default:                        return "role_icon_darkmage";   // Util(지원)
         }
@@ -524,38 +561,96 @@ public class UI_SkillDetailPopup : UI_Popup
         bool equipped = Managers.Ability.IsEquipped(SkillId);
         int cap = Managers.Data.SkillDic.TryGetValue(SkillId, out var d) ? d.MemoryCapacity : 0;
 
-        // 기억력 점유량 (재능=0이면 "?")
-        SetText(Texts.Txt_GotMEM_01, talent ? "?" : cap.ToString());
+        // 슬44: 기억력 점유량 (재능=0이면 "?" 색 #FDF6A6). 외곽선(C0AA70)은 prefab 머티리얼 프리셋 소관.
+        SetText(Texts.Txt_GotMEM_01, talent ? "<color=#FDF6A6>?</color>" : cap.ToString());
 
-        // 기억력 게이지 "<color>used(-cost)</color>/max"
+        // 슬44: 재능 텍스트(TalentText) — 외곽선 7073C0은 prefab 머티리얼 프리셋 소관.
+        if (talent) SetText(Texts.NoMEM, Util.Localize(Define.LocalizeKey.TalentText));
+
+        // 슬52: 기억력 게이지 "<color>used(-cost)</color>/max" — 색은 기억 가능 여부.
+        //  기억중이거나 (미기억 & 여유 기억력 >= 점유)면 가능 → #00FF00(lime), 미기억 & 여유<점유면 부족 → red.
         int used = Managers.Ability.UsedMemory, max = Managers.Ability.MaxMemory;
-        string col = used == 0 ? "red" : used >= max ? "lime" : "yellow";
+        bool canAfford = equipped || Managers.Ability.FreeMemory >= cap;
+        string col = (owned && !talent && !canAfford) ? "red" : "#00FF00";   // 'lime' TMP 미지원 → #00FF00
         SetText(Texts.Txt_MemoryDisplayGroup_02, $"<color={col}>{used}(-{cap})</color>/{max}");
 
-        // 기억 버튼 라벨 — 미보유: 습득 필요 / 재능: 항시 적용 / 기억중: 망각 / 미기억: 기억
-        string btnLabel = !owned ? "습득 필요" : talent ? "항시 적용" : equipped ? "망각" : "기억";
+        // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:기억중 / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
+        string btnLabel = !owned ? "습득 필요"
+                        : talent ? "항시 적용"
+                        : equipped ? Util.Localize(Define.LocalizeKey.Memorized_Text_Full)
+                        : canAfford ? Util.Localize(Define.LocalizeKey.MemorizeBtnText)
+                        : Util.Localize(Define.LocalizeKey.Lack_Memory_Text);
         SetText(Texts.Txt_MemorizeBtn_01, btnLabel);
         var btn = GetButton((int)Buttons.MemorizeBtn);
-        if (btn != null) btn.interactable = owned && !talent;
+        // 슬52: Interactive — 보유&비재능 & (기억중 or 여유>=점유). 부족 시 X.
+        if (btn != null) btn.interactable = owned && !talent && (equipped || canAfford);
+
+        // 슬52: 부족 표시(LackMemoryImg) — 미기억 & 기억력 부족 시
+        SetActive(GetImageGo((int)Images.LackMemoryImg), owned && !talent && !equipped && !canAfford);
     }
 
-    // 슬43/41: 기억/망각 토글 (정보창에서). 재능/미보유는 불가.
+    // 슬43/41/52: 기억/망각 토글 (정보창에서). 재능/미보유/기억력 부족은 불가.
     void OnClickMemorize()
     {
         if (!Managers.Ability.IsLearned(SkillId) || Managers.Ability.IsTalent(SkillId)) return;
 
-        if (Managers.Ability.IsEquipped(SkillId)) Managers.Ability.Forget(SkillId);
-        else if (!Managers.Ability.Memorize(SkillId))
+        if (Managers.Ability.IsEquipped(SkillId)) Managers.Ability.Forget(SkillId);     // 버튼3-2: 잊기
+        else if (!Managers.Ability.Memorize(SkillId))                                    // 버튼3-1: 기억(기억력 부족이면 실패)
         {
             Debug.Log($"[SkillDetail] 기억력 부족 — {SkillId} 기억 실패");
             return;
         }
+
+        // 슬52: 클릭 연출 — 버튼 Anim + Frame에 Flash_USETHIS 잠깐 표시.
+        PlayMemorizeClickFx();
 
         // 스탯 재적용 + 열려있는 능력 목록/디테일 갱신
         var player = FindObjectOfType<PlayerController>();
         if (player != null) player.RefreshStats();
         FindObjectOfType<UI_SkillBookPopup>()?.RefreshUI();
         RefreshMemorizeState();
+        RefreshMidState();      // 슬52: Active_Ef(아이콘 배경 빛) 추가/제거 반영
+        ApplyEquipMaterial();   // 슬52: 능력 이름 Frame Sprite에 Material_Equip 추가/제거
+    }
+
+    // 슬52: 기억/망각 클릭 연출 — 기억 버튼 Punch + 버튼 Frame 영역에 Flash_USETHIS 잠깐 표시(프레임 클리핑).
+    void PlayMemorizeClickFx()
+    {
+        var btn = GetButton((int)Buttons.MemorizeBtn);
+        if (btn != null)
+        {
+            var t = btn.transform;
+            t.DOKill(); t.localScale = Vector3.one;
+            t.DOPunchScale(new Vector3(0.06f, 0.06f, 0f), 0.25f, 8, 1f).SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+        if (Managers.Resource.Load<GameObject>("Flash_USETHIS") == null) return;
+        var frameImg = GetImage((int)Images.Img_MemorizeBtn_03);
+        var frame = frameImg != null ? frameImg.rectTransform : (btn != null ? btn.GetComponent<RectTransform>() : null);
+        if (frame == null) return;
+
+        var maskGo = new GameObject("MemoFlashMask", typeof(RectTransform), typeof(UnityEngine.UI.RectMask2D));
+        var maskRT = (RectTransform)maskGo.transform;
+        maskRT.SetParent(frame, false);
+        maskRT.anchorMin = Vector2.zero; maskRT.anchorMax = Vector2.one;
+        maskRT.offsetMin = Vector2.zero; maskRT.offsetMax = Vector2.zero;
+        maskRT.SetAsLastSibling();
+
+        var fx = Managers.Resource.Instantiate("Flash_USETHIS", maskRT);
+        if (fx == null) { Destroy(maskGo); return; }
+        fx.transform.localPosition = Vector3.zero; fx.transform.localScale = Vector3.one;
+        DOVirtual.DelayedCall(1f, () => { if (maskGo != null) Destroy(maskGo); }, true);
+    }
+
+    static Material _equipMat;   // 슬52: Material_Equip 캐시(IMPORTS → Addressable 등록 필요. 미로드 시 no-op)
+    // 슬52: 기억중이면 능력 이름 Frame의 Sprite에 Material_Equip(샤인) 추가, 망각/미기억이면 제거.
+    void ApplyEquipMaterial()
+    {
+        if (_equipMat == null) _equipMat = Managers.Resource.Load<Material>("Material_Equip");
+        var glow = GetImage((int)Images.Glow);   // 능력 이름 Frame(SkillDetailPopupTitle>Mask>Glow)의 Sprite
+        if (glow == null) return;
+        bool on = Managers.Ability.IsEquipped(SkillId) || Managers.Ability.IsTalent(SkillId);
+        // Material_Equip이 로드되면 적용, 아니면 기본 머티리얼 유지(플래그)
+        if (_equipMat != null) glow.material = on ? _equipMat : null;
     }
 
     // ── 능력 정보창 #3: 중단 상태 (최대등급 / 기억중 / 재능 / 습득필요) ──
@@ -578,6 +673,12 @@ public class UI_SkillDetailPopup : UI_Popup
 
         // 습득 필요(Lv0Text) — 미보유 시
         SetActive(GetTextGo((int)Texts.Lv0Text), !owned);
+
+        // 슬43/45: 능력이 [재능]이거나 기억(사용)중이면 아이콘 배경 Active_Ef(빛 sweep 루프) 활성.
+        //  (모션/색은 prefab authored 이펙트 유지 — 코드는 토글만. UI_SkillBookSkill.cs와 동일 패턴)
+        bool activeEf = talent || (owned && equipped);
+        SetActive(GetObject((int)GameObjects.SkillDetailActiveEf), activeEf);
+        // 슬45: 최대 등급 글로우(shop_frame_glow #636363) — prefab 노드는 MasterIcon로 대표(별도 노드 부재 가능 → MasterIcon 토글로 처리됨)
     }
 
     // ── 능력 정보창 #4: 능력 이야기 / 등급 / 설명 ──
@@ -590,8 +691,19 @@ public class UI_SkillDetailPopup : UI_Popup
         {
             bool has = !string.IsNullOrEmpty(story);
             storyT.gameObject.SetActive(has);
-            if (has) { storyT.text = story; storyT.fontStyle = TMPro.FontStyles.Italic; ApplyFont(storyT, Define.FontType.UI); }
+            // 슬46: 이야기 = Italic + 중앙 정렬 (폰트 크기 상대규칙은 prefab authored 값 유지)
+            if (has)
+            {
+                storyT.text = story;
+                storyT.fontStyle = TMPro.FontStyles.Italic;
+                storyT.alignment = TMPro.TextAlignmentOptions.Center;
+                ApplyFont(storyT, Define.FontType.UI);
+            }
         }
+
+        // 슬46: 능력 등급 텍스트 = 중앙 정렬
+        var lvT = GetText((int)Texts.SkillLvTxt);
+        if (lvT != null) lvT.alignment = TMPro.TextAlignmentOptions.Center;
 
         // 능력 설명(mechanics) — GetDesc + 발동조건 한 줄. 미보유 시 "- 습득 필요 -"(Lv0Text)가 대체하므로 숨김.
         bool owned = Managers.Ability.IsLearned(SkillId);
@@ -604,7 +716,10 @@ public class UI_SkillDetailPopup : UI_Popup
                 string desc = Managers.Ability.GetDesc(SkillId);
                 string trig = BuildTriggerDesc(SkillId);
                 if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
+                // 슬51 버튼2: 다음 등급 미리보기 토글 시 "현재 ▶ 다음" 한 줄 추가
+                if (_previewNext) desc += BuildNextLevelPreview();
                 realT.text = desc;
+                realT.alignment = TMPro.TextAlignmentOptions.Left;   // 슬46: 능력 설명 = 좌측 정렬
                 ApplyFont(realT, Define.FontType.UI);
             }
         }
@@ -621,9 +736,190 @@ public class UI_SkillDetailPopup : UI_Popup
         SetActive(GetObject((int)GameObjects.ReqItemGroup),        src == Define.AbilitySource.Npc);
         SetActive(GetObject((int)GameObjects.UnlimitedPotenGroup), src == Define.AbilitySource.Unlimited);
 
+        // 슬47: 출처별 헤더 TEXT + 색 (prefab 하드코딩 → 한/영 연동 + spec hex 보정)
+        switch (src)
+        {
+            case Define.AbilitySource.Class:
+                SetTextLoc(Texts.Txt_ClassGroup_05, Define.LocalizeKey.Class_Ability_Text, "3DC4FF");
+                // 하단 직업명 — 전직 시스템 미구현이라 현재 플레이어 직업명(기본 "여행자") 유지. 색 F3FF00.
+                SetTextColorHex(Texts.Txt_ClassGroup_04, "F3FF00");
+                break;
+            case Define.AbilitySource.Minion:
+                SetTextLoc(Texts.Txt_ReqMinionGroup_02, Define.LocalizeKey.Req_Minimon_Text, "ECCC6C");
+                break;
+            case Define.AbilitySource.Equip:
+                SetTextLoc(Texts.Txt_ReqEquipGroup_06, Define.LocalizeKey.Req_Equip_Text, "902EC8");
+                break;
+            case Define.AbilitySource.Npc:
+                SetTextLoc(Texts.Txt_ReqItemGroup_07, Define.LocalizeKey.Req_Item_Text, "8CEC6C");
+                break;
+            case Define.AbilitySource.Unlimited:
+                SetTextLoc(Texts.Txt_UnlimitedPotenGroup_08, Define.LocalizeKey.Unlimited_Potential_Text, "EC706C");
+                SetTextLoc(Texts.Txt_UnlimitedPotenGroup_03, Define.LocalizeKey.Unlimited_Potential_Desc_Text, "C8C8C8");
+                break;
+        }
+
         _reqMinionId = 0;
         if (src == Define.AbilitySource.Minion)
             RefreshMinionReq(Managers.Ability.GetRequiredMinionId(SkillId));
+
+        _reqItemId = 0;
+        if (src == Define.AbilitySource.Npc)
+            RefreshItemReq();   // 슬50 필요 재료
+
+        if (src == Define.AbilitySource.Equip)
+            RefreshEquipReq();  // 슬49 필요 장비
+    }
+
+    // ── 능력 정보창 #7 (슬49): 필요 장비 박스 (강화/내구 상태 → 능력단계). 첫 박스만 사용. ──
+    //  prefab 박스(ReqItemBox1_1)는 텍스트 1·체크 1개라, 강화/내구 2줄 rich-text + 통합 체크 1개로 표기(플래그).
+    void RefreshEquipReq()
+    {
+        // #Panel_ReqEquipGroup_02는 prefab 기본 비활성 → 박스 컨테이너 활성화
+        SetActive(GetObject((int)GameObjects.Panel_ReqEquipGroup_02), true);
+
+        // 장비 박스 1_2~1_5 숨김 (요구 장비 1종)
+        SetActive(GetButton((int)Buttons.ReqItemBox1_2).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqItemBox1_3).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqItemBox1_4).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqItemBox1_5).gameObject, false);
+
+        var box0 = GetButton((int)Buttons.ReqItemBox1_1);
+        SetActive(box0.gameObject, true);
+
+        if (!Managers.Data.SkillDic.TryGetValue(SkillId, out var d)) return;
+        _reqEquipId = d.RequiredEquipId;
+        if (_reqEquipId <= 0 || !Managers.Data.EquipmentDic.TryGetValue(_reqEquipId, out var ed)) return;
+
+        // 능력 최대 레벨 도달 시 "- 최다 등급 -"(Ability_MaxLevel_Text)만 표기, 박스 숨김(상호배타).
+        int abilLv = Managers.Ability.GetLevel(SkillId);
+        bool abilityMax = Managers.Ability.IsLearned(SkillId) && abilLv >= Mathf.Max(1, d.MaxLevel);
+        var maxLvlT = GetText((int)Texts.Txt_ReqEquipGroup_03);
+        if (maxLvlT != null)
+        {
+            SetActive(maxLvlT.gameObject, abilityMax);
+            if (abilityMax) { maxLvlT.text = Util.Localize(Define.LocalizeKey.Ability_MaxLevel_Text); ApplyFont(maxLvlT, Define.FontType.UI); }
+        }
+        SetActive(box0.gameObject, !abilityMax);
+        if (abilityMax) return;
+
+        // 최대 강화도 = 해당 장비 EquipEnhance 중 최대 Level (없으면 +9 기본).
+        int maxEnh = 0;
+        foreach (var kv in Managers.Data.EquipEnhanceDic)
+            if (kv.Value.EquipDataId == _reqEquipId && kv.Value.Level > maxEnh) maxEnh = kv.Value.Level;
+        if (maxEnh <= 0) maxEnh = 9;
+
+        var owned = Managers.Game?.OwnedEquipments?.Find(e => e.DataId == _reqEquipId);
+        bool has = owned != null;
+        bool atMaxEnh = has && owned.EnhanceLevel >= maxEnh;
+        bool atMaxDur = has && owned.Durability >= ed.MaxDurability;
+        //  (슬49 표: 보유 시 +1, 강화최대/내구최대 각 +1, 상한 +2 = 능력단계. 실제 능력 레벨 적용은
+        //   장비→능력 단계 통합 영역으로 후속. 여기선 강화/내구 상태 표시만.)
+
+        // 장비 아이콘
+        var icon = GetImage((int)Images.Img_ReqItemBox1_1_04);
+        if (icon != null && !string.IsNullOrEmpty(ed.SpriteName))
+        {
+            var sp = Managers.Resource.Load<Sprite>(ed.SpriteName);
+            if (sp != null) { icon.sprite = sp; icon.preserveAspect = true; }
+        }
+
+        // 슬49: Max_Enh_Text(최대 강화도 시 #00FF00, 그외 909090) + MAX_Dur_Text(보유&최대 내구도 시 #00FF00, 그외 909090).
+        //  박스 텍스트 노드 1개 → 2줄 rich-text로 함께 표기.
+        string enhCol = atMaxEnh ? "#00FF00" : "#909090";
+        string durCol = atMaxDur ? "#00FF00" : "#909090";
+        var txt = GetText((int)Texts.Txt_ReqItemBox1_1_06);
+        if (txt != null)
+        {
+            txt.text = $"<color={enhCol}>{Util.Localize(Define.LocalizeKey.Max_Enh_Text)}</color>\n<color={durCol}>{Util.Localize(Define.LocalizeKey.MAX_Dur_Text)}</color>";
+            SetActive(txt.gameObject, true);
+            ApplyFont(txt, Define.FontType.UI);
+        }
+
+        // 슬49: 우상단 체크 ICON — 강화도 최대 & (보유&내구도 최대) 둘 다일 때 #0AFF00. (체크 노드 1개라 통합, 2번째는 prefab 부재 플래그)
+        var chk = GetImage((int)Images.Img_GlowMask_21);
+        if (chk != null) chk.color = (atMaxEnh && atMaxDur) ? new Color32(0x0A, 0xFF, 0x00, 0xFF) : new Color32(0xBE, 0xBE, 0xBE, 150);
+
+        // 슬49: 해금된 장비면 항상 Interactive O(보유무관). 해금 전이면 X — 시드 장비는 해금 상태.
+        box0.interactable = true;
+    }
+
+    void OnClickReqEquip()
+    {
+        if (_reqEquipId <= 0) return;
+        Debug.Log($"[SkillDetail] 장비 박스 클릭 — equipId={_reqEquipId} (장비 상세 팝업 연결 대기)");
+    }
+
+    // ── 능력 정보창 #8 (슬50): 필요 재료 박스 게이팅 (보유/필요 + 색). 첫 박스만 사용. ──
+    void RefreshItemReq()
+    {
+        // 재료 박스 1~4 숨김 (요구 재료 1종 — 데이터 확장 시 박스 추가 가능)
+        SetActive(GetButton((int)Buttons.ReqItemBox_1).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqItemBox_2).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqItemBox_3).gameObject, false);
+        SetActive(GetButton((int)Buttons.ReqItemBox_4).gameObject, false);
+
+        var box0 = GetButton((int)Buttons.ReqItemBox);
+        SetActive(box0.gameObject, true);
+
+        if (!Managers.Data.SkillDic.TryGetValue(SkillId, out var d)) return;
+        _reqItemId = d.RequiredItemId;
+        int need = Mathf.Max(0, d.RequiredItemCount);
+
+        int lv = Managers.Ability.GetLevel(SkillId);
+        int maxLv = Mathf.Max(1, d.MaxLevel);
+        bool atMax = Managers.Ability.IsLearned(SkillId) && lv >= maxLv;
+
+        // 슬50: 최대치 도달 시 "- 최다 등급 -"(Ability_MaxLevel_Text)로 변경, 박스/수량 숨김
+        var maxT = GetText((int)Texts.Txt_ReqGroup_01);
+        if (maxT != null)
+        {
+            SetActive(maxT.gameObject, atMax);
+            if (atMax) { maxT.text = Util.Localize(Define.LocalizeKey.Ability_MaxLevel_Text); ApplyFont(maxT, Define.FontType.UI); }
+        }
+        SetActive(box0.gameObject, !atMax);
+        if (atMax) return;
+
+        // 재료 아이콘
+        var icon = GetImage((int)Images.Img_ReqItemBox_03);
+        var itemData = Managers.Data.ItemDic.TryGetValue(_reqItemId, out var it) ? it
+                     : Managers.Data.RequisiteItemDic.TryGetValue(_reqItemId, out var rit) ? rit : null;
+        if (icon != null && itemData != null && !string.IsNullOrEmpty(itemData.SpriteName))
+        {
+            var sp = Managers.Resource.Load<Sprite>(itemData.SpriteName);
+            if (sp != null) { icon.sprite = sp; icon.preserveAspect = true; }
+        }
+
+        // 슬50: 현재 보유량/필요량 + 색 (0=red / 0<x<필요=orange / >=필요=#00FF00)
+        int have = Managers.Game != null ? Managers.Game.GetItemCount(_reqItemId) : 0;
+        string col = have <= 0 ? "red" : have >= need ? "#00FF00" : "orange";
+        var cntT = GetText((int)Texts.Txt_ReqItemBox_03);
+        if (cntT != null) { cntT.text = $"<color={col}>{have}</color>/{need}"; SetActive(cntT.gameObject, true); ApplyFont(cntT, Define.FontType.UI); }
+
+        box0.interactable = true;   // 슬50: 획득 여부 무관 항상 Interactive O
+    }
+
+    void OnClickReqItem()
+    {
+        if (_reqItemId <= 0) return;
+        // 슬50: 누를 시 해당 아이템 상세정보창 — 전용 아이템 상세 팝업 시스템 정비 후 연결(현재 로그).
+        Debug.Log($"[SkillDetail] 재료 박스 클릭 — itemId={_reqItemId} (아이템 상세 팝업 연결 대기)");
+    }
+
+    // 로컬 텍스트 + hex 색을 함께 적용 (슬47 헤더).
+    void SetTextLoc(Texts id, string locKey, string hex)
+    {
+        var t = GetText((int)id);
+        if (t == null) return;
+        t.text = Util.Localize(locKey);
+        if (ColorUtility.TryParseHtmlString("#" + hex, out var c)) t.color = c;
+        ApplyFont(t, Define.FontType.UI);
+    }
+
+    void SetTextColorHex(Texts id, string hex)
+    {
+        var t = GetText((int)id);
+        if (t != null && ColorUtility.TryParseHtmlString("#" + hex, out var c)) t.color = c;
     }
 
     // #6: 미니몬 요구 박스 게이팅 (기록도/색/체크·잠금). 첫 박스만 사용, 나머지는 숨김.
@@ -646,24 +942,37 @@ public class UI_SkillDetailPopup : UI_Popup
         bool owned   = Managers.MinMon.IsOwned(minionId);
         bool allSS   = Managers.MinMon.IsAllSS(minionId);
         int  star    = Managers.MinMon.GetStarGrade(minionId);
-        bool unlocked = rec >= 10 || owned;                       // 기록도 10%↑ 또는 보유 시 해금(상호작용)
+        // 슬48: 상호작용 = 기록도>0 또는 보유 (0%+미보유만 X). 텍스트/잠금 노출은 동일 기준.
+        bool unlocked = rec > 0 || owned;
 
-        // 기록도 텍스트 + 색 (0=red / 0<x<100=orange / 100=lime)
-        string rc = rec <= 0 ? "red" : rec >= 100 ? "lime" : "orange";
+        // 슬48: 기록도 텍스트 + 색 (0=red / 0<x<100=orange / 100=#00FF00). 'lime' TMP 미지원 → #00FF00.
+        string rc = rec <= 0 ? "red" : rec >= 100 ? "#00FF00" : "orange";
         var recT = GetText((int)Texts.Txt_ReqMinionBox_07);
         if (recT != null) { recT.text = $"<color={rc}>{rec}</color>/100"; SetActive(recT.gameObject, unlocked); }
 
-        // 최상등급 표기 (필요 미니몬 별 2단계↑) — AllSS면 lime, 아니면 909090
+        // 슬48: 최상등급(Minimon_MaxRank_Text) — 필요 미니몬 별 2단계↑일 때. AllSS=#00FF00, 그외 #909090.
         var maxRankT = GetText((int)Texts.Txt_ReqMinionBox_05);
         if (maxRankT != null)
         {
             SetActive(maxRankT.gameObject, unlocked && star >= 2);
-            SetTextColor(maxRankT, allSS ? new Color32(0x0A, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
+            maxRankT.text = Util.Localize(Define.LocalizeKey.Minimon_MaxRank_Text);
+            SetTextColor(maxRankT, allSS ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
         }
 
-        // 잠금 오버레이("?" + "하수인 또는 분석 필요") — 미해금 시 표시
+        // 슬48: 우상단 체크 ICON 2개 — 조건 성립마다 하나씩 #0AFF00 점등. 기본=#BEBEBE.
+        //  GlowMask_18 = 기록도 100%, GlowMask_30 = 능력치 모두 SS.
+        Color32 chkOn  = new Color32(0x0A, 0xFF, 0x00, 0xFF);
+        Color32 chkOff = new Color32(0xBE, 0xBE, 0xBE, 150);
+        var chk1 = GetImage((int)Images.Img_GlowMask_18);
+        var chk2 = GetImage((int)Images.Img_GlowMask_30);
+        if (chk1 != null) chk1.color = (rec >= 100) ? (Color)chkOn : (Color)chkOff;
+        if (chk2 != null) chk2.color = allSS         ? (Color)chkOn : (Color)chkOff;
+
+        // 잠금 오버레이("?" + "미니몬 또는 기록도 필요") — 미해금 시 표시
         SetActive(GetImageGo((int)Images.Img_ReqMinionBox_14), !unlocked);     // "?" 프레임
         SetActive(GetObject((int)GameObjects.Panel_ReqMinionBox_02), !unlocked); // NeedMinion 텍스트
+        // 슬48: 잠금 라벨 문구 주입 (기존 loc MinimonSkillLockedText)
+        if (!unlocked) SetText(Texts.Txt_BlockImg_05, Util.Localize("MinimonSkillLockedText"));
 
         box0.interactable = unlocked;
     }
@@ -674,14 +983,57 @@ public class UI_SkillDetailPopup : UI_Popup
         Managers.UI.ShowPopupUI<UI_MonsterDetailPopup>().SetInfo(_reqMinionId);
     }
 
-    // 능력 정보창에선 물약 제작/다음단계 버튼군 불필요 — 숨김(기억 버튼만 유지).
-    void HidePotionButtons()
+    // ── 슬51: 능력 정보창 최하단 3버튼 (버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억) ──
+    //  prefab의 물약 잔재 버튼(Back/Craft/CantCraft/NotInPace)은 숨기고, 의미를 재매핑.
+    //  버튼3(기억=MemorizeBtn)은 RefreshMemorizeState가 담당 → 여기선 항상 표시 유지.
+    void RefreshBottomButtons()
     {
-        SetActive(GetButton((int)Buttons.NextLvlBtn).gameObject, false);
-        SetActive(GetButton((int)Buttons.BackBtn).gameObject,    false);
-        SetActive(GetButton((int)Buttons.CraftBtn).gameObject,   false);
-        SetActive(GetImageGo((int)Images.CantCraftBtn),          false);
-        SetActive(GetImageGo((int)Images.NotInPaceCraftBtn),     false);
+        // 물약 제작 잔재 버튼 숨김
+        SetActive(GetButton((int)Buttons.BackBtn).gameObject, false);
+        SetActive(GetButton((int)Buttons.CraftBtn).gameObject, false);
+        SetActive(GetImageGo((int)Images.CantCraftBtn), false);
+        SetActive(GetImageGo((int)Images.NotInPaceCraftBtn), false);
+
+        bool owned  = Managers.Ability.IsLearned(SkillId);
+        int  lv     = Managers.Ability.GetLevel(SkillId);
+        int  maxLv  = Managers.Data.SkillDic.TryGetValue(SkillId, out var d) ? Mathf.Max(1, d.MaxLevel) : lv;
+        bool hasNext = owned && lv < maxLv;   // 슬51 버튼2: 다음 등급이 존재할 경우만 표시
+
+        // 버튼2: 다음 등급 정보 미리보기 (NextLvlBtn 재활용)
+        SetActive(GetButton((int)Buttons.NextLvlBtn).gameObject, hasNext);
+        if (hasNext)
+        {
+            string label = _previewNext ? "돌아가기" : Util.Localize(Define.LocalizeKey.NextLevelInfoBtnText);
+            SetText(Texts.Txt_NextLvlBtn_07, label);
+        }
+        else _previewNext = false;
+
+        // 버튼1: NPC 학습 장소 (Source=Npc + NpcLocation 있을 때만). WhereToFindTxt/Frame 재활용.
+        string loc = (d != null && Managers.Ability.GetSource(SkillId) == Define.AbilitySource.Npc) ? d.NpcLocation : null;
+        bool hasLoc = !string.IsNullOrEmpty(loc);
+        SetActive(GetImageGo((int)Images.WhereToFindTxtFrame), hasLoc);
+        SetActive(GetTextGo((int)Texts.WhereToFindTxt), hasLoc);   // #WhereToFindTxt는 기본 비활성 노드 → 직접 활성화
+        if (hasLoc) SetText(Texts.WhereToFindTxt, loc);
+    }
+
+    // 슬51 버튼2: 다음 등급 미리보기 토글 → 설명 텍스트에 "현재 ▶ 다음" 표기.
+    void OnClickNextLvl()
+    {
+        _previewNext = !_previewNext;
+        RefreshDescLayout();
+        RefreshBottomButtons();
+    }
+
+    // 슬51 버튼2: 다음 등급 수치 미리보기 한 줄 (StatBonus×Level 파생). 높으면 #00FF00, 낮으면 red.
+    string BuildNextLevelPreview()
+    {
+        if (!Managers.Data.SkillDic.TryGetValue(SkillId, out var d)) return "";
+        int lv = Managers.Ability.GetLevel(SkillId);
+        if (Mathf.Approximately(d.StatBonus, 0f)) return "";   // 수치형 능력만 미리보기(효과형은 생략)
+        float cur  = d.StatBonus * lv;
+        float next = d.StatBonus * (lv + 1);
+        string col = next > cur ? "#00FF00" : next < cur ? "red" : "yellow";
+        return $"\n\n<color=yellow>{StatKor(d.StatType)} +{cur:0} ▶ <color={col}>+{next:0}</color></color>";
     }
 
     // ── helpers ──
@@ -698,13 +1050,33 @@ public class UI_SkillDetailPopup : UI_Popup
         ApplyFont(t, Define.FontType.UI);
     }
 
+    // 슬43: 진입 Move 애니메이션 (From y-120 OutBack 0.5). SkillDetailPopupMain 프레임을 _frameOrigin 기준으로.
+    void PlayOpenAnim()
+    {
+        var mainGo = GetObject((int)GameObjects.SkillDetailPopupMain);
+        if (mainGo == null) return;
+        var rt = mainGo.GetComponent<RectTransform>();
+        if (rt == null) return;
+
+        rt.DOKill();
+        rt.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
+        rt.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
+    }
+
+    // 슬43: 종료 — 진입 Move 역재생(DoPlayBackwards 상응) 후 닫기.
     void OnClickClose()
     {
-        var frameRT = GetObject((int)GameObjects.SkillDetailPopupMain).GetComponent<RectTransform>();
-        frameRT.DOKill();
+        if (_isClosing) return;
+        _isClosing = true;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
-        seq.Append(frameRT.DOAnchorPos(_frameOrigin + new Vector2(0f, FRAME_FROM_Y), 0.3f).SetEase(Ease.InBack));
-        seq.OnComplete(() => Managers.UI.ClosePopupUI());
+        var mainGo = GetObject((int)GameObjects.SkillDetailPopupMain);
+        var rt = mainGo != null ? mainGo.GetComponent<RectTransform>() : null;
+        if (rt == null) { ClosePopupUI(); return; }
+
+        rt.DOKill();
+        rt.DOAnchorPos(_frameOrigin + new Vector2(0f, FRAME_FROM_Y), 0.5f)
+          .SetEase(Ease.InBack)
+          .SetUpdate(true)
+          .OnComplete(() => ClosePopupUI());
     }
 }

@@ -57,6 +57,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7519eb3a429ec1747a5a7b9c899f8bb5
+    m_Address: EquipmentData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d35cdb56caa8f6409dc7cd95f86d41f
     m_Address: SkillData
     m_ReadOnly: 0
@@ -65,6 +71,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7fb05bf198c9c1f4b8a8d5acd0656c67
     m_Address: Pet_Slime(Green)
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84cf8f6f5c0d09f42b780f1426ea4da3
+    m_Address: EquipEnhanceData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -107,6 +119,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d579df4a38905b4458efa418ca239009
     m_Address: DialogueScriptData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5e38552b670ce04ba8fb21af1ac1405
+    m_Address: Material_Equip
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

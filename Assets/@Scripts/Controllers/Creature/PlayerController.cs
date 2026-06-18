@@ -349,7 +349,9 @@ public class PlayerController : CreatureController
 
     public void GainExp(float amount)
     {
-        Managers.Game.Exp += amount * (GrowthRate / 100f);
+        // 슬38 지원능력: 경험치 획득량 보너스(%)
+        float expBonus = Managers.Ability != null ? Managers.Ability.ExpGainBonus / 100f : 0f;
+        Managers.Game.Exp += amount * (GrowthRate / 100f) * (1f + expBonus);
         CheckLevelUp();
         OnExpChanged?.Invoke(Managers.Game.Exp, _expRequired);
     }

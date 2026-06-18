@@ -360,8 +360,39 @@ public class Define
         public const string AbilityCodex_BtmText_Spell = "AbilityCodex_BtmText_Spell";
         public const string AbilityCodex_BtmText_Def = "AbilityCodex_BtmText_Def";
         public const string AbilityCodex_BtmText_Util = "AbilityCodex_BtmText_Util";
+        // 슬40/42: 능력 목록 상단 TopText — 필터별 전용 문구(전체 능력/물리 능력/마법 능력/생존 능력/지원 능력)
+        // (외부 로컬 시트 재생성 대비: 아래 5개 + Memorized_Text_Short는 LocalizationData.json에 이미 존재하는 키와 동명)
+        public const string AbilityCodex_TopText_All = "AbilityCodex_TopText_All";
+        public const string AbilityCodex_TopText_Skill = "AbilityCodex_TopText_Skill";
+        public const string AbilityCodex_TopText_Spell = "AbilityCodex_TopText_Spell";
+        public const string AbilityCodex_TopText_Def = "AbilityCodex_TopText_Def";
+        public const string AbilityCodex_TopText_Util = "AbilityCodex_TopText_Util";
+        public const string Memorized_Text_Short = "Memorized_Text_Short"; // 슬41: 기억중 배지 짧은 라벨
         public const string MinimonInterestSuccessText = "MinimonInterestSuccessText"; // 슬24: 관심 알림(이름 뒤)
         public const string MinimonInterestFullText = "MinimonInterestFullText"; // 슬25: 관심+창고가득 알림(이름 뒤)
+
+        // ── 능력 정보창 (슬43~51) ── (LocalizationData.json에 이미 존재하는 키와 동명)
+        public const string AbilityDetails_TitleText = "AbilityDetails_TitleText"; // 슬43: 정보창 타이틀 "능력 정보"
+        public const string TalentText = "TalentText"; // 슬44/45: 재능 배지
+        public const string Memorized_Text_Full = "Memorized_Text_Full"; // 슬45/51: 기억중
+        public const string AbilityMaster_Text = "AbilityMaster_Text"; // 슬45: MASTERED
+        // 슬47 하단 출처 그룹 헤더 — 외부 시트 재생성 대비: 아래 6개는 코드에서 신규 추가(LocalizationData.json에도 추가됨)
+        public const string Class_Ability_Text = "Class_Ability_Text";
+        public const string Req_Minimon_Text = "Req_Minimon_Text";
+        public const string Req_Equip_Text = "Req_Equip_Text";
+        public const string Req_Item_Text = "Req_Item_Text";
+        public const string Unlimited_Potential_Text = "Unlimited_Potential_Text";
+        public const string Unlimited_Potential_Desc_Text = "Unlimited_Potential_Desc_Text";
+        // 슬48/49: 필요 미니몬/장비 보조 라벨
+        public const string Minimon_MaxRank_Text = "Minimon_MaxRank_Text"; // 슬48: 최상등급
+        public const string Max_Enh_Text = "Max_Enh_Text"; // 슬49: 최대 강화
+        public const string MAX_Dur_Text = "MAX_Dur_Text"; // 슬49: 최대 내구도
+        // 슬50: 재료로 올릴 수 있는 최대치 도달 시 표기
+        public const string Ability_MaxLevel_Text = "Ability_MaxLevel_Text"; // "- 최다 등급 -"
+        // 슬51: 최하단 버튼 라벨
+        public const string NextLevelInfoBtnText = "NextLevelInfoBtnText"; // 다음등급 정보
+        public const string MemorizeBtnText = "MemorizeBtnText"; // 기억하기
+        public const string Lack_Memory_Text = "Lack_Memory_Text"; // 슬52: 기억력 부족(기억 불가)
 
         // ── Misc ──
         public const string LinkText = "LinkText";

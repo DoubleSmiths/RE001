@@ -221,6 +221,23 @@ public class AbilityManager
         }
     }
 
+    // 슬38 지원(Util) 효과: 장착/재능 능력의 StatBonus×단계 합. (크리처 스탯 아님 → 각 시스템이 직접 조회)
+    float SumStatBonus(string statType)
+    {
+        float sum = 0f;
+        foreach (int id in Equipped)
+            if (TryData(id, out var d) && d.StatType == statType)
+                sum += d.StatBonus * GetLevel(id);
+        return sum;
+    }
+
+    // 슬38 지원: 미니몬 잡기 성공확률 보너스(%p). StatType "CatchRate". (MinMonManager.TryCatch가 조회)
+    public float CatchRateBonus => SumStatBonus("CatchRate");
+    // 슬38 지원: 확정잡기(천장) 필요 시도횟수 감소. StatType "GuaranteedCatchReduce".
+    public int GuaranteedCatchReduce => Mathf.Max(0, Mathf.RoundToInt(SumStatBonus("GuaranteedCatchReduce")));
+    // 슬38 지원: 경험치 획득량 보너스(%). StatType "ExpGain". (PlayerController.GainExp가 조회)
+    public float ExpGainBonus => SumStatBonus("ExpGain");
+
     // ── 효과 적용 ── 장착된 능력의 StatBonus를 크리처 스탯에 가산. (RefreshStats 말미에서 호출)
     public void ApplyTo(CreatureController c)
     {

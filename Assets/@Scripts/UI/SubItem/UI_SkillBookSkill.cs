@@ -90,40 +90,47 @@ public class UI_SkillBookSkill : UI_Base
             if (sp != null) { icon.sprite = sp; icon.preserveAspect = true; }
         }
 
-        // 상태 오버레이: 기억중/재능("기억중") ↔ 레벨 (택1)
+        // 슬41: 레벨(단계)은 항상 표시 — 기억중/재능이어도 함께 보인다(image105 목업: 기억중 아이콘도 "5등급" 표시).
+        Show(Images.Img_LvlIcon_03, true);
+        ShowText(Texts.Txt_LvlIcon_13, true);
+        // 슬41: 프레임(HP_MP_little_frame=Img_LvlIcon_03) = 흰색(<최대) / FF00F5(=최대).
+        var frame = GetImage((int)Images.Img_LvlIcon_03);
+        if (frame != null) frame.color = maxed ? Util.HexToColor("FF00F5") : Color.white;
+        // 슬41: 배경(Sprite(None)=Img_SkillBookSkill_0_10) = 000000(1~4등급) / 3C143A(5등급=최대).
+        var lvlBg = GetImage((int)Images.Img_SkillBookSkill_0_10);
+        if (lvlBg != null) lvlBg.color = maxed ? Util.HexToColor("3C143A") : Util.HexToColor("000000");
+        var lvlTxt = GetText((int)Texts.Txt_LvlIcon_13);
+        if (lvlTxt != null)
+        {
+            // 슬41: 스킬레벨(숫자)만 색 — 단계<최대=#B9B900(진한 노랑, 이미지 기준) / =최대=#FF00FF(magenta).
+            //       "등급"(LevelText)은 흰색이어야 하므로 base color=흰색 + 숫자만 rich-text 색.
+            string col = maxed ? "#FF00FF" : "#B9B900";
+            lvlTxt.color = Color.white;
+            lvlTxt.text = $"<color={col}>{lv}</color>{Util.Localize(Define.LocalizeKey.LevelText)}";
+            ApplyFont(lvlTxt, FontType.UI);
+        }
+
+        // 슬41: 재능/기억중이면 상단에 "기억중" 배지 표시 / 아니면 끔. 배지 배경 컨테이너(Img_SkillBookSkill_0_03)째 토글.
+        //  (기억하기 시 active=true로 켜지고, 망각 시 RefreshUI→SetInfo 재실행으로 꺼짐)
+        Show(Images.Img_SkillBookSkill_0_03, active);
         Show(Images.Img_MemorizedIcon_01, active);
         ShowText(Texts.Txt_MemorizedIcon_18, active);
-        Show(Images.Img_LvlIcon_03, !active);
-        ShowText(Texts.Txt_LvlIcon_13, !active);
-
         if (active)
         {
             var memTxt = GetText((int)Texts.Txt_MemorizedIcon_18);
-            if (memTxt != null) ApplyFont(memTxt, FontType.UI);        // prefab "기억중" 유지
-        }
-        else
-        {
-            // 슬41: 레벨<최대 = lime(프레임 기본) / =최대 = magenta(프레임 FF00F5)
-            var frame = GetImage((int)Images.Img_LvlIcon_03);
-            if (frame != null && maxed) frame.color = Util.HexToColor("FF00F5");
-
-            var lvlTxt = GetText((int)Texts.Txt_LvlIcon_13);
-            if (lvlTxt != null)
+            if (memTxt != null)
             {
-                lvlTxt.text = $"LEVEL.<color={(maxed ? "magenta" : "lime")}>{lv}</color>";
-                ApplyFont(lvlTxt, FontType.UI);
+                memTxt.text = Util.Localize(Define.LocalizeKey.Memorized_Text_Short);
+                ApplyFont(memTxt, FontType.UI);
             }
         }
     }
 
-    // 슬41: 능력 ICON 클릭 → Punch/Scale 후 [능력 정보창] 콜백
+    // 슬41: 능력 ICON 클릭 → authored Punch/Scale(루트 DOTweenAnimation, 0.3/OutQuad/-0.25,0.15/vib10/el1) 재생 후 [능력 정보창] 콜백
     void OnClick()
     {
-        transform.DOKill();
-        transform.localScale = Vector3.one;
-        transform.DOPunchScale(new Vector3(-0.25f, 0.15f, 0f), 0.3f, 10, 1f)
-            .SetEase(Ease.OutQuad).SetUpdate(true);
-
+        var anim = GetComponent<DG.Tweening.DOTweenAnimation>();
+        if (anim != null) anim.DORestart();
         _onClick?.Invoke(_abilityId);
     }
 

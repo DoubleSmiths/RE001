@@ -40,8 +40,8 @@ public class DataManager
     public void Init()
     {
         CreatureDic       = LoadJson<CreatureDataLoader,      int,    CreatureData>       ("CreatureData").MakeDict();
-        //EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();
-        //EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
+        EquipmentDic      = LoadJson<EquipmentDataLoader,     int,    EquipmentData>      ("EquipmentData").MakeDict();   // 슬49: 장비 데이터 로드 활성화(필요 장비 UI)
+        EquipEnhanceDic   = LoadJson<EquipEnhanceDataLoader,  int,    EquipEnhanceData>   ("EquipEnhanceData").MakeDict();
         SkillDic          = LoadJson<SkillDataLoader,         int,    SkillData>          ("SkillData").MakeDict();
         ItemDic           = LoadJson<ItemDataLoader,          int,    ItemData>           ("InventoryItem").MakeDict();
         RequisiteItemDic  = LoadJson<ItemDataLoader,          int,    ItemData>           ("RequisiteItem").MakeDict();

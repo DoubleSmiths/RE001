@@ -63,10 +63,15 @@ public class MinMonManager
 
         MinMonSaveData save = GetSaveData(dataId);
 
-        // 천장: TameCount가 MaxTameCount 이상이면 무조건 성공
+        // 슬38 지원능력: 확정잡기 필요횟수 감소(천장↓) / 잡기 성공확률 증가(%p).
+        int reduce = Managers.Ability != null ? Managers.Ability.GuaranteedCatchReduce : 0;
+        int ceil   = Mathf.Max(1, data.MaxTameCount - reduce);
+        float chance = data.CatchChance + (Managers.Ability != null ? Managers.Ability.CatchRateBonus / 100f : 0f);
+
+        // 천장: TameCount가 (감소된) MaxTameCount 이상이면 무조건 성공
         bool success = forceSuccess
-            || save.TameCount >= data.MaxTameCount
-            || UnityEngine.Random.value < data.CatchChance;
+            || save.TameCount >= ceil
+            || UnityEngine.Random.value < chance;
 
         if (success)
         {
