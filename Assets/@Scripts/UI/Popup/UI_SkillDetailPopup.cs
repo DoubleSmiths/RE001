@@ -406,13 +406,7 @@ public class UI_SkillDetailPopup : UI_Popup
 
         // 이름 — 한/영 (NameEng 폴백). 스킬 이름 노드는 ItemPopupItemName.
         SetText(Texts.ItemPopupItemName, Managers.Ability.GetName(skillId));
-        // 능력 단계 "【 LEVEL: lv/max 】" (미보유=0, 이야기/설명은 RefreshDescLayout)
-        int lv = Managers.Ability.GetLevel(skillId);   // 미보유 시 0
-        int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : Mathf.Max(1, lv);
-        // 슬46: "【 + LevelText(등급/LEVEL) + : 현재/최대 】". 현재등급==최대등급이면 현재등급 숫자 마젠타(#FF00FF), 아니면 yellow.
-        string gradeCol = (lv >= maxLv) ? "#FF00FF" : "yellow";
-        SetText(Texts.SkillLvTxt, $"【 {Util.Localize(Define.LocalizeKey.LevelText)}: <color={gradeCol}>{lv}</color>/{maxLv} 】");
-
+        // 능력 단계 "【 LEVEL: lv/max 】" — RefreshDescLayout이 미리보기(_previewNext) 인지하여 생성(슬46/51).
         _previewNext = false;  // 슬51: 능력 바뀌면 미리보기 해제
 
         RefreshMemorizeState();
@@ -633,12 +627,13 @@ public class UI_SkillDetailPopup : UI_Popup
         // 슬44: 재능 텍스트(TalentText) — 외곽선 7073C0은 prefab 머티리얼 프리셋 소관.
         if (talent) SetText(Texts.NoMEM, Util.Localize(Define.LocalizeKey.TalentText));
 
-        // 슬52: 기억력 게이지 "<color>used(-cost)</color>/max" — 색은 기억 가능 여부.
-        //  기억중이거나 (미기억 & 여유 기억력 >= 점유)면 가능 → #00FF00(lime), 미기억 & 여유<점유면 부족 → red.
+        // 슬52: 기억력 게이지 — 색은 기억 가능 여부(가능/기억중=#00FF00, 부족=red).
+        //  기억중(equipped)이면 점유가 이미 used에 포함 → "used/max"(mockup image152). 미기억이면 "used(-cap)/max"(image146/150).
         int used = Managers.Ability.UsedMemory, max = Managers.Ability.MaxMemory;
         bool canAfford = equipped || Managers.Ability.FreeMemory >= cap;
         string col = (owned && !talent && !canAfford) ? "red" : "#00FF00";   // 'lime' TMP 미지원 → #00FF00
-        SetText(Texts.Txt_MemoryDisplayGroup_02, $"<color={col}>{used}(-{cap})</color>/{max}");
+        string gauge = equipped ? $"<color={col}>{used}</color>/{max}" : $"<color={col}>{used}(-{cap})</color>/{max}";
+        SetText(Texts.Txt_MemoryDisplayGroup_02, gauge);
 
         // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:기억중 / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
         string btnLabel = !owned ? "습득 필요"
@@ -653,6 +648,10 @@ public class UI_SkillDetailPopup : UI_Popup
 
         // 슬52: 부족 표시(LackMemoryImg) — 미기억 & 기억력 부족 시
         SetActive(GetImageGo((int)Images.LackMemoryImg), owned && !talent && !equipped && !canAfford);
+
+        // 슬52: 버튼3 글로우색 — 기억하기/기억중(상호작용 가능)=0036A6(파랑), 부족/미보유/재능=000000.
+        bool memBlue = owned && !talent && (equipped || canAfford);
+        SetButtonGlow(Images.Img_Item_12, memBlue ? "0036A6" : "000000");
     }
 
     // 슬43/41/52: 기억/망각 토글 (정보창에서). 재능/미보유/기억력 부족은 불가.
@@ -787,9 +786,23 @@ public class UI_SkillDetailPopup : UI_Popup
             }
         }
 
-        // 슬46: 능력 등급 텍스트 = 중앙 정렬
+        // 슬46/51: 능력 등급 텍스트(중앙 정렬). 버튼2 미리보기(_previewNext) 시 "현재 ▶ 다음"(다음=#00FF00), 평소 "현재/최대"(최대도달=#FF00FF).
         var lvT = GetText((int)Texts.SkillLvTxt);
-        if (lvT != null) lvT.alignment = TMPro.TextAlignmentOptions.Center;
+        if (lvT != null)
+        {
+            lvT.alignment = TMPro.TextAlignmentOptions.Center;
+            int glv  = Managers.Ability.GetLevel(SkillId);
+            int gmax = Managers.Data.SkillDic.TryGetValue(SkillId, out var gd) ? Mathf.Max(1, gd.MaxLevel) : Mathf.Max(1, glv);
+            string lvlKey = Util.Localize(Define.LocalizeKey.LevelText);
+            if (_previewNext && glv < gmax)
+                lvT.text = $"【 {lvlKey}: <color=yellow>{glv}</color> ▶ <color=#00FF00>{glv + 1}</color> 】";
+            else
+            {
+                string gradeCol = (glv >= gmax) ? "#FF00FF" : "yellow";
+                lvT.text = $"【 {lvlKey}: <color={gradeCol}>{glv}</color>/{gmax} 】";
+            }
+            ApplyFont(lvT, Define.FontType.UI);
+        }
 
         // 능력 설명(mechanics) — GetDesc + 발동조건 한 줄. 미보유 시 "- 습득 필요 -"(Lv0Text)가 대체하므로 숨김.
         bool owned = Managers.Ability.IsLearned(SkillId);
@@ -1176,9 +1189,8 @@ public class UI_SkillDetailPopup : UI_Popup
     //  버튼3(기억=MemorizeBtn)은 RefreshMemorizeState가 담당 → 여기선 항상 표시 유지.
     void RefreshBottomButtons()
     {
-        // 물약 제작 잔재 버튼 숨김
+        // 물약 제작 잔재 버튼 숨김 (CraftBtn은 버튼1=NPC장소로 재활용 → 여기서 숨기지 않음)
         SetActive(GetButton((int)Buttons.BackBtn).gameObject, false);
-        SetActive(GetButton((int)Buttons.CraftBtn).gameObject, false);
         SetActive(GetImageGo((int)Images.CantCraftBtn), false);
         SetActive(GetImageGo((int)Images.NotInPaceCraftBtn), false);
 
@@ -1187,21 +1199,35 @@ public class UI_SkillDetailPopup : UI_Popup
         int  maxLv  = Managers.Data.SkillDic.TryGetValue(SkillId, out var d) ? Mathf.Max(1, d.MaxLevel) : lv;
         bool hasNext = owned && lv < maxLv;   // 슬51 버튼2: 다음 등급이 존재할 경우만 표시
 
-        // 버튼2: 다음 등급 정보 미리보기 (NextLvlBtn 재활용)
+        // 슬51 버튼2(우상): 다음 등급 정보 미리보기 (NextLvlBtn). 누르기 전=다음등급정보 / 누른 후=뒤로(BackBtnText). 글로우 8E5E00.
         SetActive(GetButton((int)Buttons.NextLvlBtn).gameObject, hasNext);
         if (hasNext)
         {
-            string label = _previewNext ? "돌아가기" : Util.Localize(Define.LocalizeKey.NextLevelInfoBtnText);
+            string label = _previewNext ? Util.Localize(Define.LocalizeKey.BackBtnText) : Util.Localize(Define.LocalizeKey.NextLevelInfoBtnText);
             SetText(Texts.Txt_NextLvlBtn_07, label);
+            SetButtonGlow(Images.Img_Item_11, "8E5E00");   // 슬51 버튼2 글로우색
         }
         else _previewNext = false;
 
-        // 버튼1: NPC 학습 장소 (Source=Npc + NpcLocation 있을 때만). WhereToFindTxt/Frame 재활용.
+        // 슬51 버튼1(좌상): NPC 학습 장소 (Source=Npc + NpcLocation 있을 때만). CraftBtn 재활용(버튼2/3과 동일 UI). 글로우 000000.
+        //  (구 우상단 라벨 WhereToFindTxtFrame은 숨김 — 위치가 버튼행으로 '이동')
+        SetActive(GetImageGo((int)Images.WhereToFindTxtFrame), false);
+        SetActive(GetTextGo((int)Texts.WhereToFindTxt), false);
         string loc = (d != null && Managers.Ability.GetSource(SkillId) == Define.AbilitySource.Npc) ? d.NpcLocation : null;
         bool hasLoc = !string.IsNullOrEmpty(loc);
-        SetActive(GetImageGo((int)Images.WhereToFindTxtFrame), hasLoc);
-        SetActive(GetTextGo((int)Texts.WhereToFindTxt), hasLoc);   // #WhereToFindTxt는 기본 비활성 노드 → 직접 활성화
-        if (hasLoc) SetText(Texts.WhereToFindTxt, loc);
+        SetActive(GetButton((int)Buttons.CraftBtn).gameObject, hasLoc);
+        if (hasLoc)
+        {
+            SetText(Texts.Txt_CraftBtn_05, loc);
+            SetButtonGlow(Images.Img_Item_08, "000000");   // 슬51 버튼1 글로우색
+        }
+    }
+
+    // 슬51/52: 버튼 Shop_frame_glow(Img_Item_*) 색 지정. (버튼1 000000 / 버튼2 8E5E00 / 버튼3 0036A6·000000)
+    void SetButtonGlow(Images glowImg, string hex)
+    {
+        var im = GetImage((int)glowImg);
+        if (im != null && ColorUtility.TryParseHtmlString("#" + hex, out var c)) im.color = c;
     }
 
     // 슬51 버튼2: 다음 등급 미리보기 토글 → 설명 텍스트에 "현재 ▶ 다음" 표기.

@@ -548,7 +548,7 @@ public static class QuestVerifyMenu
         Spec("슬50(재료)", "아이템 ICON(Slime_Green_Drop) + 보유/필요 수량(0 red/부족 orange/충분 #00FF00) + interactive O + 연금공방 장소.");
     }
 
-    [MenuItem("Test/Quest Verify/part2/Slide 50 - 필요 재료: 최다 등급 (5003)", false, 233)]
+    [MenuItem("Test/Quest Verify/part2/Slide 50 - 필요 재료: 최대 등급 (5003)", false, 233)]
     static void P2_S50_MaterialMax()
     {
         if (!Require()) return;
@@ -556,7 +556,47 @@ public static class QuestVerifyMenu
         int maxLv = Managers.Data.SkillDic.TryGetValue(5003, out var sd) ? System.Math.Max(1, sd.MaxLevel) : 1;
         Managers.Ability.SetLevel(5003, maxLv);
         Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5003);
-        Spec("슬50(최다등급)", "5003 최대레벨 → '- 최다 등급 -'(Ability_MaxLevel_Text) 표시 + 재료 박스 숨김.");
+        Spec("슬50(최대등급)", "5003 최대레벨 → '- 최대 등급 -'(Ability_MaxLevel_Text) 표시 + 재료 박스 숨김.");
+    }
+
+    // 슬51: 능력 정보창 최하단 3버튼 — 버튼1(NPC장소,좌·글로우000000)/버튼2(다음등급,우·8E5E00)/버튼3(기억,중앙·0036A6).
+    [MenuItem("Test/Quest Verify/part2/Slide 51 - 최하단 3버튼 (5003)", false, 234)]
+    static void P2_S51_Buttons()
+    {
+        if (!Require()) return;
+        if (!Managers.Ability.IsLearned(5003)) Managers.Ability.Learn(5003);
+        Managers.Ability.SetLevel(5003, 1);   // 다음등급 존재(버튼2 표시)
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5003);
+        Spec("슬51(3버튼)", "좌:연금공방(글로우 검정) / 우:다음등급 정보(금색 8E5E00) / 중앙:기억하기(파랑 0036A6). '다음등급 정보' 클릭 시 등급 '1 ▶ 2'·수치 '+▶+'·버튼 '뒤로'로 변경.");
+    }
+
+    // 슬52: 버튼3 기억 상태 — 기억하기(파랑·O) / 기억중(파랑·O→잊기) / 기억력 부족(검정·X).
+    [MenuItem("Test/Quest Verify/part2/Slide 52 - 기억중 (5003)", false, 235)]
+    static void P2_S52_Memorized()
+    {
+        if (!Require()) return;
+        if (!Managers.Ability.IsLearned(5003)) Managers.Ability.Learn(5003);
+        Managers.Ability.SetLevel(5003, 1);
+        if (!Managers.Ability.IsEquipped(5003)) Managers.Ability.Memorize(5003);
+        var p = Managers.UI.ShowPopupUI<UI_SkillDetailPopup>(); p.SetInfo(5003);
+        Spec("슬52(기억중)", "버튼3 '기억중'(파랑 0036A6) + 게이지 'used/max'(점유 -표기 없음, lime) + 아이콘 Active_Ef + 이름 Frame Material_Equip.");
+    }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 52 - 기억력 부족", false, 236)]
+    static void P2_S52_LackMemory()
+    {
+        if (!Require()) return;
+        // 기억력을 거의 채워 free < cap 인 미기억 능력을 띄움.
+        foreach (var id in new[] { 5002, 5004, 5005, 5007, 5008 }) { if (!Managers.Ability.IsLearned(id)) Managers.Ability.Learn(id); Managers.Ability.Memorize(id); }
+        int target = -1;
+        foreach (var kv in Managers.Data.SkillDic)
+        {
+            int id = kv.Key;
+            if (Managers.Ability.IsLearned(id) && !Managers.Ability.IsTalent(id) && !Managers.Ability.IsEquipped(id) && Managers.Ability.FreeMemory < kv.Value.MemoryCapacity) { target = id; break; }
+        }
+        if (target < 0) target = 5007;
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(target);
+        Spec("슬52(부족)", $"버튼3 '기억력 부족'(검정 000000·Interactive X) + 게이지 red(used(-cap)/max) + LackMemoryImg. (대상 {target})");
     }
 
     // ─────────────────────────────────────────────────────────
