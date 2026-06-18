@@ -491,6 +491,13 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/part2/Slide 44 - 종류 4가지 (전능의 기억 5015)", false, 220)]
     static void P2_S44_Four() { if (!Require()) return; Managers.Ability.Learn(5015); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5015); Spec("슬44(4종)", "[기술][마법] 윗줄 + [방어][지원] 아랫줄 = 2x2."); }
 
+    // 슬46: 설명 텍스트 양에 따라 정보창 세로 사이즈 자동 변화 — 짧음(5002, 1줄) vs 김(5008, 5줄) 비교.
+    [MenuItem("Test/Quest Verify/part2/Slide 46 - 긴 설명 auto-size (5008)", false, 221)]
+    static void P2_S46_AutoSizeLong() { if (!Require()) return; Managers.Ability.Learn(5008); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5008); Spec("슬46(긴설명)", "설명 5줄 → 팝업 세로 확장. 상단(이름/아이콘) 고정, 출처/버튼은 아래로 밀림(겹침 X)."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 46 - 짧은 설명 auto-size (5002)", false, 222)]
+    static void P2_S46_AutoSizeShort() { if (!Require()) return; Managers.Ability.Learn(5002); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5002); Spec("슬46(짧은설명)", "설명 1줄 → 팝업 기본(짧은) 세로. 5008과 번갈아 열어 높이 차이 확인."); }
+
     // ─────────────────────────────────────────────────────────
     // 빠른 진입 (전투/마을)
     // ─────────────────────────────────────────────────────────

@@ -326,6 +326,12 @@ public class UI_SkillDetailPopup : UI_Popup
     bool _badgeBaseCached; float _badgeBaseX;   // 슬45: 상태 배지(완벽숙달/기억중) 기본 x (둘 다일 때 좌우 분리용)
     bool _previewNext;  // 슬51 버튼2: 다음 등급 미리보기 토글 상태
 
+    // 슬46: 설명 텍스트 양에 따른 정보창 세로 자동 사이즈 — 프레임/설명 캐시 + base 값(누적 방지).
+    RectTransform _autoFrame;       // Img_LvEffectTxt_Size_01 (설명에 stretch로 묶인 프레임)
+    TMPro.TMP_Text _autoDescTmp;    // LvEffectTxt_Real (설명 본문)
+    bool  _autoSizeCached;
+    float _autoFrameBaseSize, _autoFrameBasePos;
+
     // [능력 정보창 #1] 능력 종류 아이콘 — prefab에 전용 노드가 없어 런타임 생성(능력 ICON 우측 가로 나열).
     Transform _roleIconRow;
     const float ROLE_ICON_SIZE = 11f;   // "능력 ICON과 동일" 톤의 소형 아이콘
@@ -403,8 +409,9 @@ public class UI_SkillDetailPopup : UI_Popup
         // 능력 단계 "【 LEVEL: lv/max 】" (미보유=0, 이야기/설명은 RefreshDescLayout)
         int lv = Managers.Ability.GetLevel(skillId);   // 미보유 시 0
         int maxLv = Managers.Data.SkillDic.TryGetValue(skillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : Mathf.Max(1, lv);
-        // 슬46: "【 + LevelText(등급/LEVEL) + : 현재/최대 】" — 한/영 대응 (이전 "LEVEL" 하드코딩)
-        SetText(Texts.SkillLvTxt, $"【 {Util.Localize(Define.LocalizeKey.LevelText)}: <color=yellow>{lv}</color>/{maxLv} 】");
+        // 슬46: "【 + LevelText(등급/LEVEL) + : 현재/최대 】". 현재등급==최대등급이면 현재등급 숫자 마젠타(#FF00FF), 아니면 yellow.
+        string gradeCol = (lv >= maxLv) ? "#FF00FF" : "yellow";
+        SetText(Texts.SkillLvTxt, $"【 {Util.Localize(Define.LocalizeKey.LevelText)}: <color={gradeCol}>{lv}</color>/{maxLv} 】");
 
         _previewNext = false;  // 슬51: 능력 바뀌면 미리보기 해제
 
@@ -415,6 +422,7 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshSourceUI();     // #5/#6 하단 출처별 UI (#7 장비/#8 재료 포함)
         RefreshBottomButtons();// 슬51 최하단 3버튼(버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억)
         ApplyEquipMaterial();  // 슬52: 기억중/재능이면 이름 Frame Sprite에 Material_Equip
+        RefreshAutoSize();     // 슬46: 설명 길이에 따라 정보창 세로 사이즈 자동 변화
     }
 
     // [능력 정보창 #1] 능력 종류에 따라 아이콘 표시. 기획서 매핑:
@@ -786,10 +794,55 @@ public class UI_SkillDetailPopup : UI_Popup
                 // 슬51 버튼2: 다음 등급 미리보기 토글 시 "현재 ▶ 다음" 한 줄 추가
                 if (_previewNext) desc += BuildNextLevelPreview();
                 realT.text = desc;
-                realT.alignment = TMPro.TextAlignmentOptions.Left;   // 슬46: 능력 설명 = 좌측 정렬
+                // 슬46: 능력 설명 = 중앙 + 상단 정렬. 상단정렬이라 길어지면 아래로만 넘쳐 위(능력 등급)와 겹치지 않음.
+                realT.alignment = TMPro.TextAlignmentOptions.Top;
+                // 슬46: 가로 넘침 방지 — ContentSizeFitter horizontal(=PreferredSize면 텍스트 자연폭으로 늘어나 팝업 밖으로 넘침)을
+                //  Unconstrained로 끄고, 폭을 팝업 안(부모폭-26)으로 고정해 wrap시킨다.
+                var csf = realT.GetComponent<UnityEngine.UI.ContentSizeFitter>();
+                if (csf != null) csf.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained;
+                var drt = realT.rectTransform;
+                drt.sizeDelta = new Vector2(-26f, drt.sizeDelta.y);
                 ApplyFont(realT, Define.FontType.UI);
             }
         }
+    }
+
+    // ── 슬46: 능력 설명 텍스트 양에 따라 정보창 세로 사이즈 자동 변화 ──
+    //  프레임(Img_LvEffectTxt_Size_01)에는 설명(LvEffectTxt_Real)이 stretch로 묶여 있고,
+    //  이름/아이콘은 상단 앵커, 출처(ReqGroup)/버튼은 하단 앵커에 묶여 있다.
+    //  → 프레임을 D 키우고(sizeDelta.y) D/2 아래로 내리면(anchoredPos.y):
+    //     상단(이름/아이콘) 고정 · 설명영역 아래로 D 확장 · 하단(출처·버튼) D 하강.
+    //  D = 설명 preferredHeight − 기준(base) 영역높이. 재오픈/미리보기 토글 누적 방지 위해 항상 base 리셋→측정→성장.
+    void RefreshAutoSize()
+    {
+        if (_autoFrame == null)   _autoFrame   = GetImage((int)Images.Img_LvEffectTxt_Size_01)?.rectTransform;
+        if (_autoDescTmp == null) _autoDescTmp = GetText((int)Texts.LvEffectTxt_Real);
+        if (_autoFrame == null || _autoDescTmp == null) return;
+
+        if (!_autoSizeCached)
+        {
+            _autoFrameBaseSize = _autoFrame.sizeDelta.y;
+            _autoFrameBasePos  = _autoFrame.anchoredPosition.y;
+            _autoSizeCached = true;
+        }
+
+        // 항상 base로 리셋(누적 방지)
+        _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrameBaseSize);
+        _autoFrame.anchoredPosition = new Vector2(_autoFrame.anchoredPosition.x, _autoFrameBasePos);
+
+        // 설명 미표시(미보유 = "- 습득 필요 -")면 기본 사이즈 유지
+        if (!_autoDescTmp.gameObject.activeInHierarchy) return;
+
+        // base 상태로 레이아웃 확정 후 설명 영역높이/필요높이 측정
+        UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_autoFrame);
+        _autoDescTmp.ForceMeshUpdate();
+        float regionH = _autoDescTmp.rectTransform.rect.height;   // 기준 설명영역 높이
+        float prefH   = _autoDescTmp.preferredHeight;             // 현재 폭 기준 필요 높이
+        float delta   = Mathf.Max(0f, prefH - regionH);
+        if (delta <= 1f) return;   // 한두 줄(영역 내)이면 변화 없음
+
+        _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrameBaseSize + delta);
+        _autoFrame.anchoredPosition = new Vector2(_autoFrame.anchoredPosition.x, _autoFrameBasePos - delta * 0.5f);
     }
 
     // ── 능력 정보창 #5/#6: 하단 출처별 UI ──
@@ -1089,6 +1142,7 @@ public class UI_SkillDetailPopup : UI_Popup
         _previewNext = !_previewNext;
         RefreshDescLayout();
         RefreshBottomButtons();
+        RefreshAutoSize();   // 슬46: 미리보기 줄 추가/제거에 맞춰 세로 사이즈 재조정
     }
 
     // 슬51 버튼2: 다음 등급 수치 미리보기 한 줄 (StatBonus×Level 파생). 높으면 #00FF00, 낮으면 red.
