@@ -481,6 +481,16 @@ public static class QuestVerifyMenu
         Spec("슬40", $"기억력 채움 시도. Used={Managers.Ability.UsedMemory} Max={Managers.Ability.MaxMemory}. Used==Max → Lime색.");
     }
 
+    // 슬44: 능력 종류 2/3/4가지 — 능력 아이콘 왼쪽에 역할 아이콘+BtmText 겹침 배치 검증.
+    [MenuItem("Test/Quest Verify/part2/Slide 44 - 종류 2가지 (이중의 기억 5014)", false, 218)]
+    static void P2_S44_Two() { if (!Require()) return; Managers.Ability.Learn(5014); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5014); Spec("슬44(2종)", "능력 아이콘 왼쪽 [기술][마법] 가로 1줄 중앙. 아이콘 크게+텍스트 겹침."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 44 - 종류 3가지 (만능의 기억 5013)", false, 219)]
+    static void P2_S44_Three() { if (!Require()) return; Managers.Ability.Learn(5013); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5013); Spec("슬44(3종)", "[기술][방어] 윗줄 + [지원] 아랫줄 가운데."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 44 - 종류 4가지 (전능의 기억 5015)", false, 220)]
+    static void P2_S44_Four() { if (!Require()) return; Managers.Ability.Learn(5015); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5015); Spec("슬44(4종)", "[기술][마법] 윗줄 + [방어][지원] 아랫줄 = 2x2."); }
+
     // ─────────────────────────────────────────────────────────
     // 빠른 진입 (전투/마을)
     // ─────────────────────────────────────────────────────────

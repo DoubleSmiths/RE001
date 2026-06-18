@@ -50,6 +50,17 @@ public class AbilityManager
         }
     }
 
+    // 슬44: 능력 종류 목록(여러 개 가능). RoleTypes 지정 시 그것을, 비어있으면 StatType→단일 Role 파생.
+    public List<Role> GetRoles(int id)
+    {
+        var list = new List<Role>();
+        if (TryData(id, out var d) && d.RoleTypes != null)
+            foreach (var s in d.RoleTypes)
+                if (System.Enum.TryParse<Role>(s, true, out var r) && !list.Contains(r)) list.Add(r);
+        if (list.Count == 0) list.Add(GetRole(id));
+        return list;
+    }
+
     // 슬2: 능력 이름/설명 한/영 — NameEng/DescEng 비어있으면 한국어(Name/Description) 폴백.
     bool IsKorean => Managers.Game == null || Managers.Game.Language == Define.Language.Korean;
     public string GetName(int id)

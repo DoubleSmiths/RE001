@@ -506,10 +506,10 @@ public class UI_SkillDetailPopup : UI_Popup
         }
     }
 
+    // 슬44: 능력 종류(기술/마법/방어/지원)를 능력 아이콘 '왼쪽'에 [역할 아이콘(뒤) + BtmText 라벨(앞)] 겹쳐서 표시.
+    //  2가지 종류 이상이면 흐름 배치(2개씩, 다음 줄). 단일 종류면 1개.
     void RefreshRoleIcons()
     {
-        // 부모: 능력 ICON 슬롯(SkillDetailPopupIcon) — front 레이어라 가려지지 않음.
-        //  (상단 헤더에 붙이면 내부 패널 뒤로 들어가 가려짐)
         var parent = GetObject((int)GameObjects.SkillDetailPopupIcon)?.transform;
         if (parent == null) return;
 
@@ -521,8 +521,8 @@ public class UI_SkillDetailPopup : UI_Popup
             rt.SetParent(parent, false);
             rt.SetAsLastSibling();
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0f, 0.5f);
-            rt.anchoredPosition = new Vector2(20f, -4f);   // 능력 아이콘 우측
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = new Vector2(-33.5f, 0f);   // 능력 아이콘 왼쪽 영역 중앙 (IconSlot 로컬, scale 0.05). -30이면 우측 쏠려 아이콘과 겹침 → -33.5로 양쪽 여백 균형
         }
 
         for (int i = _roleIconRow.childCount - 1; i >= 0; i--)
@@ -530,26 +530,72 @@ public class UI_SkillDetailPopup : UI_Popup
 
         if (SkillId < 0 || Managers.Ability == null) return;
 
-        AbilityManager.Role[] roles = { Managers.Ability.GetRole(SkillId) };
-        float x = 0f;
-        foreach (var role in roles)
+        var roles = Managers.Ability.GetRoles(SkillId);
+        int n = roles.Count;
+        const int perRow = 2;
+        int rows = (n + perRow - 1) / perRow;
+        const float gapX = 16f, gapY = 14f, iconSize = 16f;
+
+        for (int i = 0; i < n; i++)
         {
-            var sp = Managers.Resource.Load<Sprite>(RoleIconKey(role));
-            if (sp == null) continue;
+            int row = i / perRow;
+            int itemsInRow = Mathf.Min(perRow, n - row * perRow);   // 마지막 행은 적을 수 있음
+            int colInRow = i % perRow;
+            // 각 행을 가로 중앙 정렬 + 전체를 세로 중앙 정렬 (2가지=가로, 3가지=2+1중앙, 4가지=2x2)
+            float cx = (colInRow - (itemsInRow - 1) * 0.5f) * gapX;
+            float cy = ((rows - 1) * 0.5f - row) * gapY;
 
-            var go = new GameObject("RoleIcon_" + role, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            var rt = (RectTransform)go.transform;
-            rt.SetParent(_roleIconRow, false);
-            rt.anchorMin = rt.anchorMax = new Vector2(0f, 0.5f);
-            rt.pivot = new Vector2(0f, 0.5f);
-            rt.sizeDelta = new Vector2(ROLE_ICON_SIZE, ROLE_ICON_SIZE);
-            rt.anchoredPosition = new Vector2(x, 0f);
+            var cell = new GameObject("Role_" + roles[i], typeof(RectTransform));
+            var crt = (RectTransform)cell.transform;
+            crt.SetParent(_roleIconRow, false);
+            crt.anchorMin = crt.anchorMax = new Vector2(0.5f, 0.5f);
+            crt.pivot = new Vector2(0.5f, 0.5f);
+            crt.sizeDelta = new Vector2(iconSize, iconSize);
+            crt.anchoredPosition = new Vector2(cx, cy);
 
-            var img = go.GetComponent<Image>();
-            img.sprite = sp;
-            img.preserveAspect = true;
-            img.raycastTarget = false;
-            x += ROLE_ICON_GAP;
+            // 역할 아이콘(뒤). role_icon_gladiator/darkmage는 꽉 찬 스프라이트(74/64px)라 sword01/staff01(32px, 여백 큼)보다
+            //  같은 셀에서 더 커 보임 → Def/Util은 0.72배로 축소해 시각 크기를 sword/staff에 맞춤.
+            var sp = Managers.Resource.Load<Sprite>(RoleIconKey(roles[i]));
+            if (sp != null)
+            {
+                var igo = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                var irt = (RectTransform)igo.transform;
+                irt.SetParent(crt, false);
+                irt.anchorMin = irt.anchorMax = new Vector2(0.5f, 0.5f);
+                irt.pivot = new Vector2(0.5f, 0.5f);
+                float disp = (roles[i] == AbilityManager.Role.Def || roles[i] == AbilityManager.Role.Util) ? iconSize * 0.72f : iconSize;
+                irt.sizeDelta = new Vector2(disp, disp);
+                irt.anchoredPosition = Vector2.zero;
+                var im = igo.GetComponent<Image>();
+                im.sprite = sp; im.preserveAspect = true; im.raycastTarget = false;
+            }
+            // BtmText 라벨(앞, 겹침)
+            var tgo = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer));
+            var trt = (RectTransform)tgo.transform;
+            trt.SetParent(crt, false);
+            trt.anchorMin = new Vector2(0.5f, 0.5f); trt.anchorMax = new Vector2(0.5f, 0.5f);
+            trt.pivot = new Vector2(0.5f, 0.5f);
+            trt.sizeDelta = new Vector2(gapX + 8f, gapY);
+            trt.anchoredPosition = Vector2.zero;
+            var tmp = tgo.AddComponent<TMPro.TextMeshProUGUI>();
+            tmp.text = Util.Localize(RoleLabelKey(roles[i]));
+            tmp.alignment = TMPro.TextAlignmentOptions.Center;
+            tmp.fontSize = 8f;
+            tmp.raycastTarget = false;
+            tmp.enableWordWrapping = false;
+            ApplyFont(tmp, Define.FontType.UI);
+        }
+    }
+
+    // 슬44: 종류별 BtmText 라벨 로컬키 (기술/마법/방어/지원)
+    static string RoleLabelKey(AbilityManager.Role r)
+    {
+        switch (r)
+        {
+            case AbilityManager.Role.Skill: return Define.LocalizeKey.AbilityCodex_BtmText_Skill;
+            case AbilityManager.Role.Spell: return Define.LocalizeKey.AbilityCodex_BtmText_Spell;
+            case AbilityManager.Role.Def:   return Define.LocalizeKey.AbilityCodex_BtmText_Def;
+            default:                        return Define.LocalizeKey.AbilityCodex_BtmText_Util;
         }
     }
 

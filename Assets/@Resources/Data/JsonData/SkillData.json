@@ -294,6 +294,57 @@
       "MemoryCapacity": 0,
       "Source": "Unlimited",
       "Story": "걸어온 길은 모두 양분이 된다."
+    },
+    {
+      "DataId": 5013,
+      "Name": "만능의 기억",
+      "Description": "여러 종류의 능력을 겸비한다.",
+      "NameEng": "Memory of Versatility",
+      "DescEng": "Combines multiple ability types.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "PhysicalAtk",
+      "StatBonus": 3.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 3,
+      "Source": "Unlimited",
+      "RoleTypes": [ "Skill", "Def", "Util" ],
+      "Story": "한 길만 걷지 않은 자의 흔적."
+    },
+    {
+      "DataId": 5014,
+      "Name": "이중의 기억",
+      "Description": "두 종류의 능력을 겸비한다.",
+      "NameEng": "Dual Memory",
+      "DescEng": "Combines two ability types.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "PhysicalAtk",
+      "StatBonus": 3.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 2,
+      "Source": "Unlimited",
+      "RoleTypes": [ "Skill", "Spell" ],
+      "Story": "두 갈래의 길을 함께 걷는다."
+    },
+    {
+      "DataId": 5015,
+      "Name": "전능의 기억",
+      "Description": "네 종류의 능력을 모두 겸비한다.",
+      "NameEng": "Omni Memory",
+      "DescEng": "Combines all four ability types.",
+      "IconLabel": "",
+      "Category": "Memory",
+      "SkillActiveType": "Passive",
+      "StatType": "PhysicalAtk",
+      "StatBonus": 3.0,
+      "MaxLevel": 5,
+      "MemoryCapacity": 4,
+      "Source": "Unlimited",
+      "RoleTypes": [ "Skill", "Spell", "Def", "Util" ],
+      "Story": "모든 길의 끝에서 만나는 자."
     }
   ]
 }
