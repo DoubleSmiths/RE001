@@ -384,7 +384,8 @@ public class Define
         public const string Unlimited_Potential_Text = "Unlimited_Potential_Text";
         public const string Unlimited_Potential_Desc_Text = "Unlimited_Potential_Desc_Text";
         // 슬48/49: 필요 미니몬/장비 보조 라벨
-        public const string Minimon_MaxRank_Text = "Minimon_MaxRank_Text"; // 슬48: 최상등급
+        public const string Minimon_MaxRank_Text = "Minimon_MaxRank_Text"; // 슬48: 최상등급 (별 2단계↑)
+        public const string Req_Minimon_SubText = "Req_Minimon_SubText";    // 슬48: 1단계 미니몬 보조 라벨 (문구는 최상등급과 동일)
         public const string Max_Enh_Text = "Max_Enh_Text"; // 슬49: 최대 강화
         public const string MAX_Dur_Text = "MAX_Dur_Text"; // 슬49: 최대 내구도
         // 슬50: 재료로 올릴 수 있는 최대치 도달 시 표기

@@ -498,6 +498,29 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/part2/Slide 46 - 짧은 설명 auto-size (5002)", false, 222)]
     static void P2_S46_AutoSizeShort() { if (!Require()) return; Managers.Ability.Learn(5002); Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5002); Spec("슬46(짧은설명)", "설명 1줄 → 팝업 기본(짧은) 세로. 5008과 번갈아 열어 높이 차이 확인."); }
 
+    // 슬47: 능력 정보창 #5 하단 UI 전체정보 — 출처 5종(전직/미니몬/장비/NPC재료/잠재력) 헤더 TEXT·색 + 박스 HLG 가운데정렬.
+    [MenuItem("Test/Quest Verify/part2/Slide 47 - 출처: 전직 (5004)", false, 223)]
+    static void P2_S47_Class() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5004); Spec("슬47(전직)", "상단 '직업 기술' #3DC4FF + 하단 직업명 '여행자' #F3FF00."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 47 - 출처: 미니몬 (6001)", false, 224)]
+    static void P2_S47_Minion() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(6001); Spec("슬47(미니몬)", "상단 '미니몬 필요' #ECCC6C + 미니몬 박스 가운데 정렬."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 47 - 출처: 장비 (5002)", false, 225)]
+    static void P2_S47_Equip() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5002); Spec("슬47(장비)", "상단 '장비 필요' #902EC8 + 장비 박스 가운데 정렬."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 47 - 출처: NPC재료 (5003)", false, 226)]
+    static void P2_S47_Npc() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5003); Spec("슬47(NPC재료)", "상단 '필요 재료' #8CEC6C + 재료 박스 가운데 정렬."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 47 - 출처: 잠재력 (5001)", false, 227)]
+    static void P2_S47_Unlimited() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5001); Spec("슬47(잠재력)", "상단 '무한한 잠재력' #EC706C + 하단 설명 #C8C8C8 (3줄)."); }
+
+    // 슬48: 능력 정보창 #6 하단 UI 필요 미니몬 — 기록도 색/체크 ICON 2개(기록100%·올SS)/최상등급/잠금.
+    [MenuItem("Test/Quest Verify/part2/Slide 48 - 필요 미니몬: 완성 (6001)", false, 228)]
+    static void P2_S48_MinionFull() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(6001); Spec("슬48(완성)", "기록도 #00FF00 + 체크 2개 초록(0AFF00) + '최상등급' 초록. 미니몬 이미지=도감 IconLabel(미프리로드면 흰색)."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 48 - 필요 미니몬: 부분 (6002)", false, 229)]
+    static void P2_S48_MinionPartial() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(6002); Spec("슬48(부분)", "기록도<100 red/orange + 체크 2개 회색(BEBEBE) + '최상등급' 회색(909090). 1단계도 동일 문구."); }
+
     // ─────────────────────────────────────────────────────────
     // 빠른 진입 (전투/마을)
     // ─────────────────────────────────────────────────────────

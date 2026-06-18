@@ -1070,23 +1070,38 @@ public class UI_SkillDetailPopup : UI_Popup
         var recT = GetText((int)Texts.Txt_ReqMinionBox_07);
         if (recT != null) { recT.text = $"<color={rc}>{rec}</color>/100"; SetActive(recT.gameObject, unlocked); }
 
-        // 슬48: 최상등급(Minimon_MaxRank_Text) — 필요 미니몬 별 2단계↑일 때. AllSS=#00FF00, 그외 #909090.
-        var maxRankT = GetText((int)Texts.Txt_ReqMinionBox_05);
-        if (maxRankT != null)
+        // 슬48: 기록도 아래 부가 텍스트(Txt_ReqMinionBox_05) — 2단계 이상=Minimon_MaxRank_Text("최상등급"),
+        //  1단계=Req_Minimon_SubText(문구는 "최상등급"으로 동일 — 사용자 결정). 색은 둘 다 AllSS=#00FF00 / 그외 #909090.
+        var subT = GetText((int)Texts.Txt_ReqMinionBox_05);
+        if (subT != null)
         {
-            SetActive(maxRankT.gameObject, unlocked && star >= 2);
-            maxRankT.text = Util.Localize(Define.LocalizeKey.Minimon_MaxRank_Text);
-            SetTextColor(maxRankT, allSS ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
+            SetActive(subT.gameObject, unlocked);
+            subT.text = Util.Localize(star >= 2 ? Define.LocalizeKey.Minimon_MaxRank_Text : Define.LocalizeKey.Req_Minimon_SubText);
+            SetTextColor(subT, allSS ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
         }
 
-        // 슬48: 우상단 체크 ICON 2개 — 조건 성립마다 하나씩 #0AFF00 점등. 기본=#BEBEBE.
-        //  GlowMask_18 = 기록도 100%, GlowMask_30 = 능력치 모두 SS.
+        // 슬48: 미니몬 이미지 = 도감 ICON과 동일(CreatureData.IconLabel) 데이터 연결.
+        //  스프라이트 미프리로드면 sprite=null → 흰색 박스(사용자 승인: 이미지 준비 전까지 허용. 라비슬라임 등도 흰색 OK).
+        //  ※ 이전 버그: 이 노드(Img_GlowMask_30)를 allSS '체크'로 착색 → 비AllSS 미니몬 이미지가 회색틴트됨. 제거.
+        var minImg = GetImage((int)Images.Img_GlowMask_30);
+        if (minImg != null)
+        {
+            Sprite sp = null;
+            if (Managers.Data.CreatureDic.TryGetValue(minionId, out var cd) && !string.IsNullOrEmpty(cd.IconLabel))
+                sp = Managers.Resource.Load<Sprite>(cd.IconLabel);
+            minImg.sprite = sp;
+            if (sp != null) minImg.preserveAspect = true;
+            minImg.color = Color.white;
+        }
+
+        // 슬48: 우상단 체크 ICON 2개(Checkmark_01) — 조건 성립마다 하나씩 #0AFF00 점등, 기본 #BEBEBE(a150).
+        //  Img_ReqMinionBox_06 = 기록도 100% / Img_ReqMinionBox_04 = 능력치 모두 SS. (이전 GlowMask_18/30 오매핑 수정)
         Color32 chkOn  = new Color32(0x0A, 0xFF, 0x00, 0xFF);
         Color32 chkOff = new Color32(0xBE, 0xBE, 0xBE, 150);
-        var chk1 = GetImage((int)Images.Img_GlowMask_18);
-        var chk2 = GetImage((int)Images.Img_GlowMask_30);
-        if (chk1 != null) chk1.color = (rec >= 100) ? (Color)chkOn : (Color)chkOff;
-        if (chk2 != null) chk2.color = allSS         ? (Color)chkOn : (Color)chkOff;
+        var chk1 = GetImage((int)Images.Img_ReqMinionBox_06);
+        var chk2 = GetImage((int)Images.Img_ReqMinionBox_04);
+        if (chk1 != null) { SetActive(chk1.gameObject, unlocked); chk1.color = (rec >= 100) ? (Color)chkOn : (Color)chkOff; }
+        if (chk2 != null) { SetActive(chk2.gameObject, unlocked); chk2.color = allSS ? (Color)chkOn : (Color)chkOff; }
 
         // 잠금 오버레이("?" + "미니몬 또는 기록도 필요") — 미해금 시 표시
         SetActive(GetImageGo((int)Images.Img_ReqMinionBox_14), !unlocked);     // "?" 프레임
