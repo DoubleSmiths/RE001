@@ -422,7 +422,18 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshSourceUI();     // #5/#6 하단 출처별 UI (#7 장비/#8 재료 포함)
         RefreshBottomButtons();// 슬51 최하단 3버튼(버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억)
         ApplyEquipMaterial();  // 슬52: 기억중/재능이면 이름 Frame Sprite에 Material_Equip
+        ApplyBottomMargin();   // 슬49 피드백: 출처/버튼 블록을 위로 올려 프레임 하단 여유 확보
         RefreshAutoSize();     // 슬46: 설명 길이에 따라 정보창 세로 사이즈 자동 변화
+    }
+
+    // 슬49 피드백: 출처/버튼 블록(ReqGroup, 프레임 하단앵커)이 프레임 바닥에 너무 붙어
+    //  출처 텍스트(특히 장비 "최대 내구도")가 프레임 하단 모서리에 닿음 → 블록을 위로 올려 아래 여유 공간 확보.
+    //  (위쪽 설명과의 간격은 충분. RefreshAutoSize의 프레임 성장과 독립 — ReqGroup의 바닥 오프셋만 조정.)
+    const float REQGROUP_BOTTOM_Y = 11f;   // prefab 기본 4 → 11 (위로 7 local)
+    void ApplyBottomMargin()
+    {
+        var rt = GetObject((int)GameObjects.ReqGroup)?.GetComponent<RectTransform>();
+        if (rt != null) rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, REQGROUP_BOTTOM_Y);
     }
 
     // [능력 정보창 #1] 능력 종류에 따라 아이콘 표시. 기획서 매핑:
@@ -896,7 +907,12 @@ public class UI_SkillDetailPopup : UI_Popup
     void RefreshEquipReq()
     {
         // #Panel_ReqEquipGroup_02는 prefab 기본 비활성 → 박스 컨테이너 활성화
-        SetActive(GetObject((int)GameObjects.Panel_ReqEquipGroup_02), true);
+        var equipPanel = GetObject((int)GameObjects.Panel_ReqEquipGroup_02);
+        SetActive(equipPanel, true);
+
+        // 슬49(폭 보정): 박스 컨테이너 HLG가 childForceExpandWidth=true라 단일 박스가 좌측 정렬됨 → 끄면 UpperCenter로 가운데 정렬(스펙 "가운데 정렬").
+        var equipHlg = equipPanel != null ? equipPanel.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>() : null;
+        if (equipHlg != null) equipHlg.childForceExpandWidth = false;
 
         // 장비 박스 1_2~1_5 숨김 (요구 장비 1종)
         SetActive(GetButton((int)Buttons.ReqItemBox1_2).gameObject, false);
@@ -954,14 +970,51 @@ public class UI_SkillDetailPopup : UI_Popup
             txt.text = $"<color={enhCol}>{Util.Localize(Define.LocalizeKey.Max_Enh_Text)}</color>\n<color={durCol}>{Util.Localize(Define.LocalizeKey.MAX_Dur_Text)}</color>";
             SetActive(txt.gameObject, true);
             ApplyFont(txt, Define.FontType.UI);
+            // 슬49(오버플로 보정): 텍스트에 CSF(PreferredSize)가 있어 rect가 텍스트 폭(≈23)으로 늘어남.
+            //  박스가 좌측 정렬이면 "최대 내구도"가 팝업 끝까지 넘쳤음 → 위 equipHlg.childForceExpandWidth=false로 박스를 중앙정렬해 해결.
+            //  (autosize는 CSF와 충돌해 폰트가 과축소되므로 사용하지 않음.)
         }
 
-        // 슬49: 우상단 체크 ICON — 강화도 최대 & (보유&내구도 최대) 둘 다일 때 #0AFF00. (체크 노드 1개라 통합, 2번째는 prefab 부재 플래그)
-        var chk = GetImage((int)Images.Img_GlowMask_21);
-        if (chk != null) chk.color = (atMaxEnh && atMaxDur) ? new Color32(0x0A, 0xFF, 0x00, 0xFF) : new Color32(0xBE, 0xBE, 0xBE, 150);
+        // 슬49: 우상단 체크 ICON 2개 — 조건마다 하나씩 #0AFF00 점등, 기본 #BEBEBE(a150).
+        //  1. 강화도 최대 / 2. 보유 & 내구도 최대. prefab 장비박스엔 체크 노드가 없어 런타임 생성(EnsureEquipChecks).
+        EnsureEquipChecks();
+        if (_equipChecks != null)
+        {
+            Color32 chkOn  = new Color32(0x0A, 0xFF, 0x00, 0xFF);
+            Color32 chkOff = new Color32(0xBE, 0xBE, 0xBE, 150);
+            _equipChecks[0].color = atMaxEnh ? (Color)chkOn : (Color)chkOff;   // 1. 강화도 최대
+            _equipChecks[1].color = atMaxDur ? (Color)chkOn : (Color)chkOff;   // 2. 보유 & 내구도 최대 (atMaxDur는 보유 포함)
+        }
 
         // 슬49: 해금된 장비면 항상 Interactive O(보유무관). 해금 전이면 X — 시드 장비는 해금 상태.
         box0.interactable = true;
+    }
+
+    Image[] _equipChecks;   // 슬49: 장비박스 런타임 체크마크 2개 캐시
+    // 슬49: 장비 박스 체크 ICON 2개 런타임 생성 (prefab 부재). Checkmark_01은 Resource.Load 미프리로드라
+    //  미니몬 박스 체크 노드(Img_ReqMinionBox_06)의 baked 스프라이트를 차용. 위치/크기는 미니몬 박스와 동일(✓✓ 겹침).
+    void EnsureEquipChecks()
+    {
+        if (_equipChecks != null) return;
+        var box = GetButton((int)Buttons.ReqItemBox1_1)?.transform;
+        if (box == null) return;
+        var srcSprite = GetImage((int)Images.Img_ReqMinionBox_06)?.sprite;
+        _equipChecks = new Image[2];
+        Vector2[] pos = { new Vector2(5f, 5f), new Vector2(2f, 5f) };
+        for (int i = 0; i < 2; i++)
+        {
+            var go = new GameObject("Img_EquipCheck_" + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(box, false);
+            rt.SetAsLastSibling();
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = new Vector2(9.73f, 9.73f);
+            rt.anchoredPosition = pos[i];
+            var im = go.GetComponent<Image>();
+            im.sprite = srcSprite; im.raycastTarget = false; im.preserveAspect = true;
+            _equipChecks[i] = im;
+        }
     }
 
     void OnClickReqEquip()

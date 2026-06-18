@@ -521,6 +521,44 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/part2/Slide 48 - 필요 미니몬: 부분 (6002)", false, 229)]
     static void P2_S48_MinionPartial() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(6002); Spec("슬48(부분)", "기록도<100 red/orange + 체크 2개 회색(BEBEBE) + '최상등급' 회색(909090). 1단계도 동일 문구."); }
 
+    // 슬49: 능력 정보창 #7 하단 UI 필요 장비 — 장비 ICON + 체크 ICON 2개(강화최대·보유&내구최대) + 최대강화/최대내구도.
+    [MenuItem("Test/Quest Verify/part2/Slide 49 - 필요 장비: 미보유 (5002)", false, 230)]
+    static void P2_S49_EquipNone() { if (!Require()) return; Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5002); Spec("슬49(미보유)", "장비 ICON(Sword01) + 체크 2개 회색(BEBEBE) + '최대 강화'/'최대 내구도' 회색(909090)."); }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 49 - 필요 장비: 풀강+풀내구 (5002)", false, 231)]
+    static void P2_S49_EquipMax()
+    {
+        if (!Require()) return;
+        var list = Managers.Game.OwnedEquipments;
+        var eq = list.Find(e => e.DataId == 30001);
+        if (eq == null) { eq = new Equipment(); eq.DataId = 30001; list.Add(eq); }
+        eq.EnhanceLevel = 9; eq.Durability = 100;
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5002);
+        Spec("슬49(풀강풀내구)", "장비 30001 보유+강화9+내구100 → 체크 2개 초록(0AFF00) + '최대 강화'/'최대 내구도' 초록(#00FF00).");
+    }
+
+    // 슬50: 능력 정보창 #8 하단 UI 필요 재료 — 아이템 ICON + 보유/필요 수량 색(0 red/부족 orange/충분 lime) + 최대치 '- 최다 등급 -'.
+    [MenuItem("Test/Quest Verify/part2/Slide 50 - 필요 재료 (5003)", false, 232)]
+    static void P2_S50_Material()
+    {
+        if (!Require()) return;
+        // 최다등급 테스트가 5003 레벨을 max로 올려놨을 수 있으므로, 재료 박스가 보이도록 레벨을 낮춤(미만 = 박스 표시).
+        if (Managers.Ability.IsLearned(5003)) Managers.Ability.SetLevel(5003, 1);
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5003);
+        Spec("슬50(재료)", "아이템 ICON(Slime_Green_Drop) + 보유/필요 수량(0 red/부족 orange/충분 #00FF00) + interactive O + 연금공방 장소.");
+    }
+
+    [MenuItem("Test/Quest Verify/part2/Slide 50 - 필요 재료: 최다 등급 (5003)", false, 233)]
+    static void P2_S50_MaterialMax()
+    {
+        if (!Require()) return;
+        if (!Managers.Ability.IsLearned(5003)) Managers.Ability.Learn(5003);
+        int maxLv = Managers.Data.SkillDic.TryGetValue(5003, out var sd) ? System.Math.Max(1, sd.MaxLevel) : 1;
+        Managers.Ability.SetLevel(5003, maxLv);
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(5003);
+        Spec("슬50(최다등급)", "5003 최대레벨 → '- 최다 등급 -'(Ability_MaxLevel_Text) 표시 + 재료 박스 숨김.");
+    }
+
     // ─────────────────────────────────────────────────────────
     // 빠른 진입 (전투/마을)
     // ─────────────────────────────────────────────────────────
