@@ -323,6 +323,7 @@ public class UI_SkillDetailPopup : UI_Popup
     int _reqMinionId;   // #6: 현재 능력의 게이팅 미니몬 CreatureId (Source=Minion일 때)
     int _reqItemId;     // 슬50: 현재 능력의 요구 재료 ItemData DataId (Source=Npc일 때)
     int _reqEquipId;    // 슬49: 현재 능력의 요구 장비 DataId (Source=Equip일 때)
+    bool _badgeBaseCached; float _badgeBaseX;   // 슬45: 상태 배지(완벽숙달/기억중) 기본 x (둘 다일 때 좌우 분리용)
     bool _previewNext;  // 슬51 버튼2: 다음 등급 미리보기 토글 상태
 
     // [능력 정보창 #1] 능력 종류 아이콘 — prefab에 전용 노드가 없어 런타임 생성(능력 ICON 우측 가로 나열).
@@ -709,14 +710,18 @@ public class UI_SkillDetailPopup : UI_Popup
         int  maxLv    = Managers.Data.SkillDic.TryGetValue(SkillId, out var sd) ? Mathf.Max(1, sd.MaxLevel) : lv;
         bool atMax    = owned && lv >= maxLv;
 
-        // 슬45: 이름 바 위 상태 배지(MasterAndMEMGroup) — 최대등급=MASTER(FF00F5) / 기억중=기억중 / 재능=재능, 둘 다 파랑(3BA6FF).
-        //  우선순위: 최대등급 > (기억중 또는 재능). MemorizedIcon을 기억중·재능 겸용으로 사용.
+        // 슬45: 이름 바 위 상태 배지(MasterAndMEMGroup) — 최대등급=완벽숙달(FF00F5) / 기억중=기억중 / 재능=재능(둘 다 파랑 3BA6FF).
+        //  최대등급과 기억중(재능)은 독립 조건 → 둘 다 성립하면 둘 다 표시(좌우로 분리). 둘 다 같은 위치라 겹침 방지.
         bool showMaster = atMax;
-        bool showMemBadge = !atMax && (talent || (owned && equipped));
+        bool showMemBadge = talent || (owned && equipped);
+        var mIcon   = GetImage((int)Images.MasterIcon)?.rectTransform;
+        var memIcon = GetImage((int)Images.MemorizedIcon)?.rectTransform;
+        if (!_badgeBaseCached && mIcon != null) { _badgeBaseX = mIcon.anchoredPosition.x; _badgeBaseCached = true; }
+
         SetActive(GetImageGo((int)Images.MasterIcon),    showMaster);
         SetActive(GetImageGo((int)Images.MemorizedIcon), showMemBadge);
         if (showMaster)
-            SetText(Texts.Txt_MasterIcon_02, Util.Localize(Define.LocalizeKey.AbilityMaster_Text));   // "MASTER"
+            SetText(Texts.Txt_MasterIcon_02, Util.Localize(Define.LocalizeKey.AbilityMaster_Text));   // "완벽숙달"
         if (showMemBadge)
         {
             // 재능이면 "재능"(TalentText), 아니면 "기억중"(Memorized_Text_Full). 프레임 파랑 3BA6FF.
@@ -724,6 +729,10 @@ public class UI_SkillDetailPopup : UI_Popup
             var memFrame = GetImage((int)Images.Img_MemorizedIcon_01);
             if (memFrame != null) memFrame.color = Util.HexToColor("3BA6FF");
         }
+        // 둘 다 표시 시 좌우로 분리(완벽숙달 왼쪽 / 기억중 오른쪽), 하나만이면 기본 위치 중앙.
+        float off = (showMaster && showMemBadge) ? 12f : 0f;
+        if (mIcon   != null) mIcon.anchoredPosition   = new Vector2(_badgeBaseX - off, mIcon.anchoredPosition.y);
+        if (memIcon != null) memIcon.anchoredPosition = new Vector2(_badgeBaseX + off, memIcon.anchoredPosition.y);
 
         // 점유량(GotMEM) / 재능(NoMEM) — 점유량 0이면 재능 표기
         SetActive(GetObject((int)GameObjects.GotMEM), owned && !talent);
