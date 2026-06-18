@@ -1,4 +1,4 @@
-{
+﻿{
   "minMons": [
     {
       "DataId": 2001,
@@ -10,9 +10,9 @@
       "BaseAtk": 5.0,
       "BaseAtkSpeed": 100.0,
       "BaseCritRate": 0.0,
-      "AtkGrade": 0,
-      "AtkSpeedGrade": 0,
-      "CritGrade": 0,
+      "AtkGrade": "E",
+      "AtkSpeedGrade": "E",
+      "CritGrade": "E",
       "MaxTameCount": 10,
       "CatchChance": 0.1
     },
@@ -26,9 +26,9 @@
       "BaseAtk": 7.0,
       "BaseAtkSpeed": 100.0,
       "BaseCritRate": 0.0,
-      "AtkGrade": 0,
-      "AtkSpeedGrade": 0,
-      "CritGrade": 0,
+      "AtkGrade": "E",
+      "AtkSpeedGrade": "E",
+      "CritGrade": "E",
       "MaxTameCount": 12,
       "CatchChance": 0.08
     }

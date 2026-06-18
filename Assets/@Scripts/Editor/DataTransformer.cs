@@ -1139,4 +1139,230 @@ public class DataTransformer : EditorWindow
 
         WriteJson("ItemData", loader);
     }
+
+    // ===================================================================
+    //  추가 마스터데이터 시트 → JSON (스킬/장비/강화/미니몬/물약/콤보)
+    //  포맷: Row0=필드명, Row1=타입, Row2=한글설명, Row3+=데이터. 리스트 셀은 콤마(,) 구분.
+    //  기존 ParseExcel과 분리(이 데이터들은 구글시트 미연동) — 시트 수정 후 이 메뉴로 재생성.
+    //  enum은 가독성 위해 문자열로 직렬화(WriteJsonStr).
+    // ===================================================================
+    [MenuItem("Tools/ParseExtraData (스킬/장비/미니몬/물약/콤보)")]
+    public static void ParseExtraData()
+    {
+        ParseSkillDataSheet();
+        ParseEquipmentDataSheet();
+        ParseEquipEnhanceDataSheet();
+        ParseMinMonDataSheet();
+        ParseHPPotionDataSheet();
+        ParseSpeedPotionDataSheet();
+        ParseComboDataSheet();
+        AssetDatabase.Refresh();
+        Debug.Log("[DataTransformer] ParseExtraData 완료");
+    }
+
+    static string C(List<string> r, int i) => i < r.Count ? r[i] : "";
+    static List<string> CsvStr(string s) => string.IsNullOrEmpty(s) ? new List<string>()
+        : s.Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
+    static List<T> Csv<T>(string s) => CsvStr(s).Select(x => ConvertValue<T>(x)).ToList();
+
+    static void WriteJsonStr<T>(string filename, T loader)
+    {
+        var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
+        settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        string jsonStr = JsonConvert.SerializeObject(loader, settings);
+        File.WriteAllText($"{Application.dataPath}{JSON_PATH}/{filename}.json", jsonStr, Encoding.UTF8);
+        Debug.Log($"[DataTransformer] {filename}.json 생성 완료(시트)");
+    }
+
+    static void ParseSkillDataSheet()
+    {
+        var loader = new SkillDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/SkillData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new SkillData();
+            d.DataId            = ConvertValue<int>(C(row, 0));
+            d.Name              = C(row, 1);
+            d.Description       = C(row, 2);
+            d.NameEng           = C(row, 3);
+            d.DescEng           = C(row, 4);
+            d.IconLabel         = C(row, 5);
+            d.Category          = ConvertValue<SkillCategory>(C(row, 6));
+            d.SkillActiveType   = ConvertValue<SkillActiveType>(C(row, 7));
+            d.StatType          = C(row, 8);
+            d.StatBonus         = ConvertValue<float>(C(row, 9));
+            d.MaxLevel          = ConvertValue<int>(C(row, 10));
+            d.MemoryCapacity    = ConvertValue<int>(C(row, 11));
+            d.Story             = C(row, 12);
+            d.StoryEng          = C(row, 13);
+            d.Source            = ConvertValue<AbilitySource>(C(row, 14));
+            d.RequiredMinionId  = ConvertValue<int>(C(row, 15));
+            d.RequiredEquipId   = ConvertValue<int>(C(row, 16));
+            d.RequiredItemId    = ConvertValue<int>(C(row, 17));
+            d.RequiredItemCount = ConvertValue<int>(C(row, 18));
+            d.NpcLocation       = C(row, 19);
+            d.RoleTypes         = CsvStr(C(row, 20));
+            d.TriggerType       = ConvertValue<AbilityTrigger>(C(row, 21));
+            d.Conditions        = Csv<AbilityCondition>(C(row, 22));
+            d.ProcChance        = string.IsNullOrEmpty(C(row, 23)) ? 100f : ConvertValue<float>(C(row, 23));
+            d.Cooldown          = ConvertValue<float>(C(row, 24));
+            d.ActiveContext     = ConvertValue<AbilityContext>(C(row, 25));
+            d.ConditionValue    = ConvertValue<float>(C(row, 26));
+            d.Effect            = ConvertValue<AbilityEffect>(C(row, 27));
+            d.EffectStat        = C(row, 28);
+            d.EffectValue       = ConvertValue<float>(C(row, 29));
+            d.EffectDuration    = ConvertValue<float>(C(row, 30));
+            loader.skills.Add(d);
+        }
+        WriteJsonStr("SkillData", loader);
+    }
+
+    static void ParseEquipmentDataSheet()
+    {
+        var loader = new EquipmentDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/EquipmentData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new EquipmentData();
+            d.DataId        = ConvertValue<int>(C(row, 0));
+            d.Name          = C(row, 1);
+            d.SlotType      = ConvertValue<EquipSlotType>(C(row, 2));
+            d.Grade         = ConvertValue<EquipGrade>(C(row, 3));
+            d.SpriteName    = C(row, 4);
+            d.MaxDurability = ConvertValue<int>(C(row, 5));
+            d.BaseAtk       = ConvertValue<int>(C(row, 6));
+            d.BaseCritRate  = ConvertValue<float>(C(row, 7));
+            d.BaseMagicAtk  = ConvertValue<int>(C(row, 8));
+            loader.equipments.Add(d);
+        }
+        WriteJsonStr("EquipmentData", loader);
+    }
+
+    static void ParseEquipEnhanceDataSheet()
+    {
+        var loader = new EquipEnhanceDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/EquipEnhanceData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new EquipEnhanceData();
+            d.DataId                = ConvertValue<int>(C(row, 0));
+            d.EquipDataId           = ConvertValue<int>(C(row, 1));
+            d.Level                 = ConvertValue<int>(C(row, 2));
+            d.AtkBonus              = ConvertValue<int>(C(row, 3));
+            d.CritBonus             = ConvertValue<float>(C(row, 4));
+            d.MagicAtkBonus         = ConvertValue<int>(C(row, 5));
+            d.RequiredMaterialId    = ConvertValue<int>(C(row, 6));
+            d.RequiredMaterialCount = ConvertValue<int>(C(row, 7));
+            loader.enhances.Add(d);
+        }
+        WriteJsonStr("EquipEnhanceData", loader);
+    }
+
+    static void ParseMinMonDataSheet()
+    {
+        var loader = new MinMonDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/MinMonData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new MinMonData();
+            d.DataId        = ConvertValue<int>(C(row, 0));
+            d.Name          = C(row, 1);
+            d.IconLabel     = C(row, 2);
+            d.PrefabLabel   = C(row, 3);
+            d.PetAnimLabel  = C(row, 4);
+            d.MonsterDataId = ConvertValue<int>(C(row, 5));
+            d.BaseAtk       = ConvertValue<float>(C(row, 6));
+            d.BaseAtkSpeed  = ConvertValue<float>(C(row, 7));
+            d.BaseCritRate  = ConvertValue<float>(C(row, 8));
+            d.AtkGrade      = ConvertValue<MinMonGrade>(C(row, 9));
+            d.AtkSpeedGrade = ConvertValue<MinMonGrade>(C(row, 10));
+            d.CritGrade     = ConvertValue<MinMonGrade>(C(row, 11));
+            d.MaxTameCount  = ConvertValue<int>(C(row, 12));
+            d.CatchChance   = ConvertValue<float>(C(row, 13));
+            loader.minMons.Add(d);
+        }
+        WriteJsonStr("MinMonData", loader);
+    }
+
+    static void ParseHPPotionDataSheet()
+    {
+        var loader = new HPPotionDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/HPPotionData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new HPPotionData();
+            d.DataId            = ConvertValue<int>(C(row, 0));
+            d.Name              = C(row, 1);
+            d.Grade             = ConvertValue<EquipGrade>(C(row, 2));
+            d.Description       = C(row, 3);
+            d.SpriteName        = C(row, 4);
+            d.WhereTo           = C(row, 5);
+            d.Step              = ConvertValue<int>(C(row, 6));
+            d.FlatRecov         = ConvertValue<int>(C(row, 7));
+            d.MaxHPRecov        = ConvertValue<int>(C(row, 8));
+            d.Cooldown          = ConvertValue<int>(C(row, 9));
+            d.NeededItemIDs     = Csv<int>(C(row, 10));
+            d.NeededItemAmounts = Csv<int>(C(row, 11));
+            loader.potions.Add(d);
+        }
+        WriteJsonStr("HPPotion", loader);
+    }
+
+    static void ParseSpeedPotionDataSheet()
+    {
+        var loader = new SpeedPotionDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/SpeedPotionData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new SpeedPotionData();
+            d.DataId            = ConvertValue<int>(C(row, 0));
+            d.Name              = C(row, 1);
+            d.Grade             = ConvertValue<EquipGrade>(C(row, 2));
+            d.Description       = C(row, 3);
+            d.SpriteName        = C(row, 4);
+            d.WhereTo           = C(row, 5);
+            d.Step              = ConvertValue<int>(C(row, 6));
+            d.AtkSpeedBonus     = ConvertValue<float>(C(row, 7));
+            d.Duration          = ConvertValue<int>(C(row, 8));
+            d.Cooldown          = ConvertValue<int>(C(row, 9));
+            d.NeededItemIDs     = Csv<int>(C(row, 10));
+            d.NeededItemAmounts = Csv<int>(C(row, 11));
+            loader.potions.Add(d);
+        }
+        WriteJsonStr("SpeedPotion", loader);
+    }
+
+    static void ParseComboDataSheet()
+    {
+        var loader = new ComboStageDataLoader();
+        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/ComboData.xlsx");
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new ComboStageData();
+            d.Level        = ConvertValue<int>(C(row, 0));
+            d.NameKey      = C(row, 1);
+            d.HitsRequired = ConvertValue<int>(C(row, 2));
+            d.MaxTimer     = ConvertValue<float>(C(row, 3));
+            d.HitGain      = ConvertValue<float>(C(row, 4));
+            d.AtkSpeedBuff = ConvertValue<float>(C(row, 5));
+            d.DmgBoostBuff = ConvertValue<float>(C(row, 6));
+            d.ColorHex     = C(row, 7);
+            loader.stages.Add(d);
+        }
+        WriteJsonStr("ComboData", loader);
+    }
 }

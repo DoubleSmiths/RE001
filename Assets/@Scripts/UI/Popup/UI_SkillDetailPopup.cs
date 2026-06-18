@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -416,18 +417,40 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshSourceUI();     // #5/#6 하단 출처별 UI (#7 장비/#8 재료 포함)
         RefreshBottomButtons();// 슬51 최하단 3버튼(버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억)
         ApplyEquipMaterial();  // 슬52: 기억중/재능이면 이름 Frame Sprite에 Material_Equip
-        ApplyBottomMargin();   // 슬49 피드백: 출처/버튼 블록을 위로 올려 프레임 하단 여유 확보
         RefreshAutoSize();     // 슬46: 설명 길이에 따라 정보창 세로 사이즈 자동 변화
+        ApplyBottomMargin();   // 슬51 피드백: 하단 UI를 SubFrame 밑으로 정렬 + 외곽프레임 바닥 연장(여유)
     }
 
-    // 슬49 피드백: 출처/버튼 블록(ReqGroup, 프레임 하단앵커)이 프레임 바닥에 너무 붙어
-    //  출처 텍스트(특히 장비 "최대 내구도")가 프레임 하단 모서리에 닿음 → 블록을 위로 올려 아래 여유 공간 확보.
-    //  (위쪽 설명과의 간격은 충분. RefreshAutoSize의 프레임 성장과 독립 — ReqGroup의 바닥 오프셋만 조정.)
-    const float REQGROUP_BOTTOM_Y = 11f;   // prefab 기본 4 → 11 (위로 7 local)
+    // 슬51 피드백: 하단 UI(출처+버튼=ReqGroup)는 SubFrame(고정 장식 패널) '밑'에 있어야 하고, 그 아래 여유도 필요.
+    //  ① 외곽 설명프레임(Img_LvEffectTxt_Size_01) 바닥을 PAD만큼 아래로 연장(하단 여유) →
+    //  ② ReqGroup(외곽프레임 바닥앵커) 상단을 SubFrame 바닥 바로 아래로 동적 정렬.
+    //  RefreshAutoSize 이후 호출(프레임 사이즈 확정 후). SubFrame/ReqGroup 모두 팝업 루트 하위라 진입 애니 중에도 상대 Δ 일관.
+    const float FRAME_BOTTOM_PAD = 21f;   // 외곽프레임 바닥 연장(local) — 하단 UI 아래 여유
+    const float SUBFRAME_CLEAR   = 0.06f; // SubFrame 바닥 밑 간격(world)
+    RectTransform _subFrameRT;
     void ApplyBottomMargin()
     {
-        var rt = GetObject((int)GameObjects.ReqGroup)?.GetComponent<RectTransform>();
-        if (rt != null) rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, REQGROUP_BOTTOM_Y);
+        var rg = GetObject((int)GameObjects.ReqGroup)?.GetComponent<RectTransform>();
+        if (rg == null) return;
+
+        // ① 외곽 프레임 바닥을 아래로 연장 (위는 고정: sizeDelta+PAD, pos-PAD/2). RefreshAutoSize가 매번 base로 리셋하므로 누적 없음.
+        if (_autoFrame != null)
+        {
+            _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrame.sizeDelta.y + FRAME_BOTTOM_PAD);
+            _autoFrame.anchoredPosition = new Vector2(_autoFrame.anchoredPosition.x, _autoFrame.anchoredPosition.y - FRAME_BOTTOM_PAD * 0.5f);
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_autoFrame);
+        }
+
+        // ② ReqGroup 상단을 SubFrame 바닥 바로 아래로 정렬 (world Δ → local pos.y 보정).
+        if (_subFrameRT == null)
+            _subFrameRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SubFrame") as RectTransform;
+        if (_subFrameRT == null) return;
+        var sc = new Vector3[4]; _subFrameRT.GetWorldCorners(sc); float subBottom = sc[0].y;
+        var rc = new Vector3[4]; rg.GetWorldCorners(rc);          float rgTop     = rc[2].y;
+        float scaleY = rg.lossyScale.y;
+        if (scaleY <= 0.0001f) return;
+        float deltaLocal = ((subBottom - SUBFRAME_CLEAR) - rgTop) / scaleY;
+        rg.anchoredPosition = new Vector2(rg.anchoredPosition.x, rg.anchoredPosition.y + deltaLocal);
     }
 
     // [능력 정보창 #1] 능력 종류에 따라 아이콘 표시. 기획서 매핑:
@@ -635,10 +658,10 @@ public class UI_SkillDetailPopup : UI_Popup
         string gauge = equipped ? $"<color={col}>{used}</color>/{max}" : $"<color={col}>{used}(-{cap})</color>/{max}";
         SetText(Texts.Txt_MemoryDisplayGroup_02, gauge);
 
-        // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:기억중 / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
+        // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:- 기억중 - / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
         string btnLabel = !owned ? "습득 필요"
                         : talent ? "항시 적용"
-                        : equipped ? Util.Localize(Define.LocalizeKey.Memorized_Text_Full)
+                        : equipped ? $"- {Util.Localize(Define.LocalizeKey.Memorized_Text_Full)} -"   // 기억중 → "- 기억중 -" (mockup image152)
                         : canAfford ? Util.Localize(Define.LocalizeKey.MemorizeBtnText)
                         : Util.Localize(Define.LocalizeKey.Lack_Memory_Text);
         SetText(Texts.Txt_MemorizeBtn_01, btnLabel);
@@ -659,15 +682,17 @@ public class UI_SkillDetailPopup : UI_Popup
     {
         if (!Managers.Ability.IsLearned(SkillId) || Managers.Ability.IsTalent(SkillId)) return;
 
-        if (Managers.Ability.IsEquipped(SkillId)) Managers.Ability.Forget(SkillId);     // 버튼3-2: 잊기
+        bool wasEquipped = Managers.Ability.IsEquipped(SkillId);
+        if (wasEquipped) Managers.Ability.Forget(SkillId);                               // 버튼3-2: 잊기
         else if (!Managers.Ability.Memorize(SkillId))                                    // 버튼3-1: 기억(기억력 부족이면 실패)
         {
             Debug.Log($"[SkillDetail] 기억력 부족 — {SkillId} 기억 실패");
             return;
         }
 
-        // 슬52: 클릭 연출 — 버튼 Anim + Frame에 Flash_USETHIS 잠깐 표시.
-        PlayMemorizeClickFx();
+        // 슬52: 클릭 연출 — 버튼 Anim(양쪽). 흰색 플래시 뱅은 '기억하기'(memorize)일 때만 (기억중→잊기엔 없음).
+        PlayMemorizeButtonPunch();
+        if (!wasEquipped) PlayMemorizeFlash();
 
         // 스탯 재적용 + 열려있는 능력 목록/디테일 갱신
         var player = FindObjectOfType<PlayerController>();
@@ -678,32 +703,56 @@ public class UI_SkillDetailPopup : UI_Popup
         ApplyEquipMaterial();   // 슬52: 능력 이름 Frame Sprite에 Material_Equip 추가/제거
     }
 
-    // 슬52: 기억/망각 클릭 연출 — 기억 버튼 Punch + 버튼 Frame 영역에 Flash_USETHIS 잠깐 표시(프레임 클리핑).
-    void PlayMemorizeClickFx()
+    // 슬52: 기억/망각 버튼 Punch (양쪽 공통).
+    void PlayMemorizeButtonPunch()
     {
         var btn = GetButton((int)Buttons.MemorizeBtn);
-        if (btn != null)
-        {
-            var t = btn.transform;
-            t.DOKill(); t.localScale = Vector3.one;
-            t.DOPunchScale(new Vector3(0.06f, 0.06f, 0f), 0.25f, 8, 1f).SetEase(Ease.OutQuad).SetUpdate(true);
-        }
-        if (Managers.Resource.Load<GameObject>("Flash_USETHIS") == null) return;
-        var frameImg = GetImage((int)Images.Img_MemorizeBtn_03);
-        var frame = frameImg != null ? frameImg.rectTransform : (btn != null ? btn.GetComponent<RectTransform>() : null);
-        if (frame == null) return;
+        if (btn == null) return;
+        var t = btn.transform;
+        t.DOKill(); t.localScale = Vector3.one;
+        t.DOPunchScale(new Vector3(0.06f, 0.06f, 0f), 0.25f, 8, 1f).SetEase(Ease.OutQuad).SetUpdate(true);
+    }
 
-        var maskGo = new GameObject("MemoFlashMask", typeof(RectTransform), typeof(UnityEngine.UI.RectMask2D));
-        var maskRT = (RectTransform)maskGo.transform;
-        maskRT.SetParent(frame, false);
-        maskRT.anchorMin = Vector2.zero; maskRT.anchorMax = Vector2.one;
-        maskRT.offsetMin = Vector2.zero; maskRT.offsetMax = Vector2.zero;
-        maskRT.SetAsLastSibling();
+    // 슬52: '기억하기'(memorize) 시 흰색 "플래시 뱅". 사용자 요구:
+    //  ① 기억중→잊기엔 안 나옴(OnClickMemorize에서 memorize일 때만 호출). ② SubFrame 크기로만(SubFrame에 stretch).
+    //  ③ 배경만 깜박 — SubFrame의 '첫 자식'(테두리/콘텐츠보다 뒤)에 둬서 글자/이미지는 위에 유지.
+    //  ※ Flash_USETHIS 프리팹은 Animator+ScriptMachine이 런타임 인스턴스서 재생 안 돼(알파 0 리셋) 순수 흰 Image+코루틴 Lerp로 구동
+    //    (이 프로젝트는 Image.DOFade도 알파 갱신 안 됨 — 트랜스폼 트윈만 정상).
+    void PlayMemorizeFlash()
+    {
+        if (_subFrameRT == null)
+            _subFrameRT = System.Array.Find(GetComponentsInChildren<Transform>(true), x => x.name == "SubFrame") as RectTransform;
+        if (_subFrameRT == null) return;
 
-        var fx = Managers.Resource.Instantiate("Flash_USETHIS", maskRT);
-        if (fx == null) { Destroy(maskGo); return; }
-        fx.transform.localPosition = Vector3.zero; fx.transform.localScale = Vector3.one;
-        DOVirtual.DelayedCall(1f, () => { if (maskGo != null) Destroy(maskGo); }, true);
+        var flashGo = new GameObject("MemoFlash", typeof(RectTransform), typeof(CanvasRenderer), typeof(UnityEngine.UI.Image));
+        var flashRT = (RectTransform)flashGo.transform;
+        flashRT.SetParent(_subFrameRT, false);
+        flashRT.anchorMin = Vector2.zero; flashRT.anchorMax = Vector2.one;   // SubFrame 크기로 채움
+        flashRT.offsetMin = Vector2.zero; flashRT.offsetMax = Vector2.zero;
+        flashRT.localScale = Vector3.one;
+        flashRT.SetAsFirstSibling();   // SubFrame 테두리/콘텐츠보다 뒤 → 배경만 깜박
+
+        var flashImg = flashGo.GetComponent<UnityEngine.UI.Image>();
+        flashImg.color = new Color(1f, 1f, 1f, 0f);
+        flashImg.raycastTarget = false;
+        StartCoroutine(CoMemorizeFlash(flashImg, flashGo));
+    }
+
+    // 슬52: 흰색 플래시 "뱅" — 알파 0→0.85(번쩍) → 0(사그라듦). 프레임 무관(unscaledDeltaTime)으로 진행 후 파괴.
+    IEnumerator CoMemorizeFlash(UnityEngine.UI.Image img, GameObject go)
+    {
+        const float peak = 0.85f, inDur = 0.06f, outDur = 0.34f;
+        float e = 0f;
+        while (e < inDur) { e += Time.unscaledDeltaTime; SetImgAlpha(img, Mathf.Lerp(0f, peak, e / inDur)); yield return null; }
+        e = 0f;
+        while (e < outDur) { e += Time.unscaledDeltaTime; SetImgAlpha(img, Mathf.Lerp(peak, 0f, e / outDur)); yield return null; }
+        if (go != null) Destroy(go);
+    }
+
+    static void SetImgAlpha(UnityEngine.UI.Image img, float a)
+    {
+        if (img == null) return;
+        var c = img.color; c.a = a; img.color = c;
     }
 
     static Material _equipMat;   // 슬52: Material_Equip 캐시(IMPORTS → Addressable 등록 필요. 미로드 시 no-op)
@@ -1236,7 +1285,8 @@ public class UI_SkillDetailPopup : UI_Popup
         _previewNext = !_previewNext;
         RefreshDescLayout();
         RefreshBottomButtons();
-        RefreshAutoSize();   // 슬46: 미리보기 줄 추가/제거에 맞춰 세로 사이즈 재조정
+        RefreshAutoSize();      // 슬46: 미리보기 줄 추가/제거에 맞춰 세로 사이즈 재조정
+        ApplyBottomMargin();    // 슬51: 하단 UI를 SubFrame 밑으로 재정렬
     }
 
     // 슬51 버튼2: 다음 등급 수치 미리보기 한 줄 (StatBonus×Level 파생). 높으면 #00FF00, 낮으면 red.

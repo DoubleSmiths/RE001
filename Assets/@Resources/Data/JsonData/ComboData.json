@@ -1,11 +1,74 @@
-{
+﻿{
   "stages": [
-    { "Level": 0, "NameKey": "ComboLv0Text", "HitsRequired": 1,  "MaxTimer": 4.0, "HitGain": 1.0, "AtkSpeedBuff": 0,  "DmgBoostBuff": 0,  "ColorHex": "#FFFFFF" },
-    { "Level": 1, "NameKey": "ComboLv1Text", "HitsRequired": 3,  "MaxTimer": 3.5, "HitGain": 0.8, "AtkSpeedBuff": 5,  "DmgBoostBuff": 0,  "ColorHex": "#8AFF6F" },
-    { "Level": 2, "NameKey": "ComboLv2Text", "HitsRequired": 6,  "MaxTimer": 3.0, "HitGain": 0.6, "AtkSpeedBuff": 10, "DmgBoostBuff": 0,  "ColorHex": "#6FE3FF" },
-    { "Level": 3, "NameKey": "ComboLv3Text", "HitsRequired": 9,  "MaxTimer": 2.5, "HitGain": 0.4, "AtkSpeedBuff": 15, "DmgBoostBuff": 0,  "ColorHex": "#8A6FFF" },
-    { "Level": 4, "NameKey": "ComboLv4Text", "HitsRequired": 12, "MaxTimer": 2.0, "HitGain": 0.3, "AtkSpeedBuff": 20, "DmgBoostBuff": 10, "ColorHex": "#FF6FD8" },
-    { "Level": 5, "NameKey": "ComboLv5Text", "HitsRequired": 15, "MaxTimer": 1.5, "HitGain": 0.2, "AtkSpeedBuff": 25, "DmgBoostBuff": 20, "ColorHex": "#FFC36F" },
-    { "Level": 6, "NameKey": "ComboLv6Text", "HitsRequired": 18, "MaxTimer": 1.0, "HitGain": 0.1, "AtkSpeedBuff": 40, "DmgBoostBuff": 30, "ColorHex": "#FF3E3E" }
+    {
+      "Level": 0,
+      "NameKey": "ComboLv0Text",
+      "HitsRequired": 1,
+      "MaxTimer": 4.0,
+      "HitGain": 1.0,
+      "AtkSpeedBuff": 0.0,
+      "DmgBoostBuff": 0.0,
+      "ColorHex": "#FFFFFF"
+    },
+    {
+      "Level": 1,
+      "NameKey": "ComboLv1Text",
+      "HitsRequired": 3,
+      "MaxTimer": 3.5,
+      "HitGain": 0.8,
+      "AtkSpeedBuff": 5.0,
+      "DmgBoostBuff": 0.0,
+      "ColorHex": "#8AFF6F"
+    },
+    {
+      "Level": 2,
+      "NameKey": "ComboLv2Text",
+      "HitsRequired": 6,
+      "MaxTimer": 3.0,
+      "HitGain": 0.6,
+      "AtkSpeedBuff": 10.0,
+      "DmgBoostBuff": 0.0,
+      "ColorHex": "#6FE3FF"
+    },
+    {
+      "Level": 3,
+      "NameKey": "ComboLv3Text",
+      "HitsRequired": 9,
+      "MaxTimer": 2.5,
+      "HitGain": 0.4,
+      "AtkSpeedBuff": 15.0,
+      "DmgBoostBuff": 0.0,
+      "ColorHex": "#8A6FFF"
+    },
+    {
+      "Level": 4,
+      "NameKey": "ComboLv4Text",
+      "HitsRequired": 12,
+      "MaxTimer": 2.0,
+      "HitGain": 0.3,
+      "AtkSpeedBuff": 20.0,
+      "DmgBoostBuff": 10.0,
+      "ColorHex": "#FF6FD8"
+    },
+    {
+      "Level": 5,
+      "NameKey": "ComboLv5Text",
+      "HitsRequired": 15,
+      "MaxTimer": 1.5,
+      "HitGain": 0.2,
+      "AtkSpeedBuff": 25.0,
+      "DmgBoostBuff": 20.0,
+      "ColorHex": "#FFC36F"
+    },
+    {
+      "Level": 6,
+      "NameKey": "ComboLv6Text",
+      "HitsRequired": 18,
+      "MaxTimer": 1.0,
+      "HitGain": 0.1,
+      "AtkSpeedBuff": 40.0,
+      "DmgBoostBuff": 30.0,
+      "ColorHex": "#FF3E3E"
+    }
   ]
 }
