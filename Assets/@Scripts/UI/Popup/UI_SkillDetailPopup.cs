@@ -421,27 +421,17 @@ public class UI_SkillDetailPopup : UI_Popup
         ApplyBottomMargin();   // 슬51 피드백: 하단 UI를 SubFrame 밑으로 정렬 + 외곽프레임 바닥 연장(여유)
     }
 
-    // 슬51 피드백: 하단 UI(출처+버튼=ReqGroup)는 SubFrame(고정 장식 패널) '밑'에 있어야 하고, 그 아래 여유도 필요.
-    //  ① 외곽 설명프레임(Img_LvEffectTxt_Size_01) 바닥을 PAD만큼 아래로 연장(하단 여유) →
-    //  ② ReqGroup(외곽프레임 바닥앵커) 상단을 SubFrame 바닥 바로 아래로 동적 정렬.
-    //  RefreshAutoSize 이후 호출(프레임 사이즈 확정 후). SubFrame/ReqGroup 모두 팝업 루트 하위라 진입 애니 중에도 상대 Δ 일관.
-    const float FRAME_BOTTOM_PAD = 21f;   // 외곽프레임 바닥 연장(local) — 하단 UI 아래 여유
-    const float SUBFRAME_CLEAR   = 0.06f; // SubFrame 바닥 밑 간격(world)
+    // 슬51 피드백: 하단 UI(출처+버튼=ReqGroup)는 SubFrame(장식 패널) '밑'에 정렬.
+    //  RefreshAutoSize가 설명량에 맞춰 프레임(→SubFrame)을 줄이/늘리므로, 여기선 ReqGroup 상단을 SubFrame 바닥 바로 아래로만 정렬.
+    //  (이전엔 프레임을 PAD만큼 연장했으나 설명 rect가 그만큼 빈 공간으로 늘어나 팝업이 길어져 제거 — 길이 조절 피드백.)
+    //  RefreshAutoSize 이후 호출. SubFrame/ReqGroup 모두 팝업 루트 하위라 진입 애니 중에도 상대 Δ 일관.
+    const float SUBFRAME_CLEAR = 0.06f; // SubFrame 바닥 밑 간격(world)
     RectTransform _subFrameRT;
     void ApplyBottomMargin()
     {
         var rg = GetObject((int)GameObjects.ReqGroup)?.GetComponent<RectTransform>();
         if (rg == null) return;
 
-        // ① 외곽 프레임 바닥을 아래로 연장 (위는 고정: sizeDelta+PAD, pos-PAD/2). RefreshAutoSize가 매번 base로 리셋하므로 누적 없음.
-        if (_autoFrame != null)
-        {
-            _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrame.sizeDelta.y + FRAME_BOTTOM_PAD);
-            _autoFrame.anchoredPosition = new Vector2(_autoFrame.anchoredPosition.x, _autoFrame.anchoredPosition.y - FRAME_BOTTOM_PAD * 0.5f);
-            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_autoFrame);
-        }
-
-        // ② ReqGroup 상단을 SubFrame 바닥 바로 아래로 정렬 (world Δ → local pos.y 보정).
         if (_subFrameRT == null)
             _subFrameRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SubFrame") as RectTransform;
         if (_subFrameRT == null) return;
@@ -906,16 +896,29 @@ public class UI_SkillDetailPopup : UI_Popup
         // 설명 미표시(미보유 = "- 습득 필요 -")면 기본 사이즈 유지
         if (!_autoDescTmp.gameObject.activeInHierarchy) return;
 
-        // base 상태로 레이아웃 확정 후 설명 영역높이/필요높이 측정
+        if (_subFrameRT == null)
+            _subFrameRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SubFrame") as RectTransform;
+        if (_subFrameRT == null) return;
+
+        // base 상태로 레이아웃 확정 후, SubFrame(장식 패널) 바닥이 '설명 바닥 + 약간'에 오도록 프레임 높이를 줄이/늘림.
+        //  (설명 rect엔 CSF가 있어 frame과 무관하게 텍스트 크기로 잡힘 → 빈 공간의 실제 원인은 SubFrame이 설명보다 한참 아래까지
+        //   내려가는 것. 그래서 설명 rect 높이가 아니라 'SubFrame 바닥 vs 설명 바닥'을 기준으로 조절. 짧으면 축소/길면 확장.)
         UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_autoFrame);
         _autoDescTmp.ForceMeshUpdate();
-        float regionH = _autoDescTmp.rectTransform.rect.height;   // 기준 설명영역 높이
-        float prefH   = _autoDescTmp.preferredHeight;             // 현재 폭 기준 필요 높이
-        float delta   = Mathf.Max(0f, prefH - regionH);
-        if (delta <= 1f) return;   // 한두 줄(영역 내)이면 변화 없음
+        float scaleY = _autoFrame.lossyScale.y;
+        if (scaleY <= 0.0001f) return;
+        // 설명 rect엔 CSF가 있어 긴 텍스트는 rect 밖으로 넘침(rect 바닥≠텍스트 바닥) → 텍스트 실제 바닥 = rect상단 − preferredHeight.
+        var dc = new Vector3[4]; _autoDescTmp.rectTransform.GetWorldCorners(dc);
+        float descScaleY = _autoDescTmp.rectTransform.lossyScale.y;
+        float descBottom = dc[2].y - _autoDescTmp.preferredHeight * descScaleY;
+        var sc = new Vector3[4]; _subFrameRT.GetWorldCorners(sc);                float subBottom  = sc[0].y;
+        const float DESIRED_GAP = 0.45f;   // SubFrame 바닥이 설명 바닥보다 이만큼 아래(world)
+        float moveUpWorld = (descBottom - DESIRED_GAP) - subBottom;   // 양수=SubFrame을 위로(프레임 축소) / 음수=확장
+        float deltaLocal  = -moveUpWorld / scaleY;
+        if (Mathf.Abs(deltaLocal) < 1f) return;
 
-        _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrameBaseSize + delta);
-        _autoFrame.anchoredPosition = new Vector2(_autoFrame.anchoredPosition.x, _autoFrameBasePos - delta * 0.5f);
+        _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrameBaseSize + deltaLocal);
+        _autoFrame.anchoredPosition = new Vector2(_autoFrame.anchoredPosition.x, _autoFrameBasePos - deltaLocal * 0.5f);
     }
 
     // ── 능력 정보창 #5/#6: 하단 출처별 UI ──
