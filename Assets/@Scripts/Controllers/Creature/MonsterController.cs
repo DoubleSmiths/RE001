@@ -48,6 +48,14 @@ public class MonsterController : CreatureController
         DamageFontYOffset  = _data.DamageFontYOffset;
         if (System.Enum.TryParse(_data.Rarity, true, out CreatureRarity r))
             Rarity = r;
+
+        // 범용 몬스터 프리팹: 데이터(AnimController)로 외형/애니 런타임 교체.
+        //  비어있으면 프리팹 기본 컨트롤러 유지(슬라임). CompanionController.ApplyPetAnimator와 동일 패턴.
+        if (_anim != null && !string.IsNullOrEmpty(_data.AnimController))
+        {
+            var ctrl = Managers.Resource.Load<RuntimeAnimatorController>(_data.AnimController);
+            if (ctrl != null) _anim.runtimeAnimatorController = ctrl;
+        }
     }
 
     void Start()

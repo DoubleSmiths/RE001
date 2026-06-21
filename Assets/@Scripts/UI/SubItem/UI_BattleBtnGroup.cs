@@ -810,7 +810,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             PlayerController player = Managers.Game.Player;
             if (player == null) yield break;
 
-            int dataId = 2001;
+            // 데이터 드리븐: 현재 지역의 Habitat/EncounterRate로 슬라임/고블린 등 가중 랜덤 선택.
+            int dataId = Managers.Object.PickFieldMonsterId(2001);
             float spawnY = MONSTER_SPAWN_Y_FALLBACK;
             if (Managers.Data.CreatureDic.TryGetValue(dataId, out var creatureData))
                 spawnY = creatureData.SpawnY;

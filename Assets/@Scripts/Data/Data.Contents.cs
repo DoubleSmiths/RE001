@@ -12,8 +12,13 @@ namespace Data
         public string Name;
         public string PrefabLabel;
         public string IconLabel;
+        // 범용 몬스터 프리팹(PrefabLabel="Monster") 사용 시, 외형/애니를 데이터로 분리하기 위한
+        // 애니메이터 컨트롤러 Addressable 주소. 비어있으면 프리팹에 박힌 기본 컨트롤러 유지(슬라임).
+        // 예: "Goblin" → Goblin.controller 런타임 교체. (MonsterController.SetInfo에서 적용)
+        public string AnimController = "";
         // 슬8: 미니몬 기록 [서식지] — LocalizationData의 TextKey를 저장(값까지 한/영 지원).
         // 예: "BreezingWindForestNameText" → 산들바람 숲 / BREEZEWOOD FOREST. 비어있으면 "-".
+        // (범용 스폰 풀 필터에도 사용: 현재 전투 지역의 Habitat과 일치하는 몬스터만 등장)
         public string Habitat = "";
         public float MaxHp;
         public float PhysicalAtk;

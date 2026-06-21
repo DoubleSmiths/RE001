@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Prefabs
   m_GUID: 1bdb1fe29632760458f6e434c58bb730
   m_SerializeEntries:
+  - m_GUID: 0bdce50357013134194bdc12130e5135
+    m_Address: Goblin
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 21dd7fe9623c6204dbf9df69c5683002
     m_Address: DamageFont
     m_ReadOnly: 0
@@ -29,6 +35,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 68cfd9cd08a1f6447a030d706fe3d349
     m_Address: Village1_Alchemy_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7774a97515804aa41bc8fce44a4d6bee
+    m_Address: Monster
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

@@ -68,6 +68,47 @@ public class ObjectManager
         return mc;
     }
 
+    // 데이터 드리븐 스폰: 현재 전투 지역(CurrentTravelAreaId)의 Habitat과 일치하는 몬스터 풀에서
+    //  EncounterRate를 가중치로 랜덤 선택. 지역을 모르거나 풀이 비면 fallback(슬라임 2001).
+    //  → CreatureData의 Habitat/EncounterRate만 고치면 등장 몬스터·확률을 데이터로 조정 가능.
+    public int PickFieldMonsterId(int fallback = 2001)
+    {
+        var data = Managers.Data;
+        if (data == null || data.CreatureDic == null) return fallback;
+
+        // 현재 지역 키 집합 (현재 노드 Name + 부모 노드 Name — 입구/지역 둘 다 매칭)
+        var keys = new System.Collections.Generic.HashSet<string>();
+        int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        if (data.TravelNodeDic != null && data.TravelNodeDic.TryGetValue(nodeId, out var node))
+        {
+            if (!string.IsNullOrEmpty(node.Name)) keys.Add(node.Name);
+            if (data.TravelNodeDic.TryGetValue(node.ParentId, out var parent) && !string.IsNullOrEmpty(parent.Name))
+                keys.Add(parent.Name);
+        }
+        if (keys.Count == 0) return fallback;
+
+        // 후보 풀 + 가중치 합
+        float total = 0f;
+        var pool = new System.Collections.Generic.List<Data.CreatureData>();
+        foreach (var c in data.CreatureDic.Values)
+        {
+            if (c == null || string.IsNullOrEmpty(c.Habitat)) continue;
+            if (!keys.Contains(c.Habitat)) continue;
+            if (c.EncounterRate <= 0f) continue;
+            pool.Add(c);
+            total += c.EncounterRate;
+        }
+        if (pool.Count == 0 || total <= 0f) return fallback;
+
+        float r = Random.value * total;
+        foreach (var c in pool)
+        {
+            r -= c.EncounterRate;
+            if (r <= 0f) return c.DataId;
+        }
+        return pool[pool.Count - 1].DataId;
+    }
+
     // [동행 미니몬] 스폰 — 적과 동일한 CreatureData.PrefabLabel(슬라임 등) 재사용.
     //  CompanionController가 추종/자동공격을 담당. (MonsterController는 붙이지 않음)
     public CompanionController SpawnCompanion(int minionId, PlayerController player)
