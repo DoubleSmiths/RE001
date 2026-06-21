@@ -441,6 +441,7 @@ public class UI_SkillDetailPopup : UI_Popup
         // 중앙 위치 계산을 위해 _baseOrigin에 두고 레이아웃 확정 후 측정 (진입 애니 꺼서 측정 신뢰 가능)
         DG.Tweening.DOTween.Kill(main, false);
         main.anchoredPosition = _baseOrigin;
+        Canvas.ForceUpdateCanvases();   // 처음 열 때 첫 프레임 world 좌표 확정 (RefreshAutoSize와 동일 이유)
         UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(main);
         var tc = new Vector3[4]; titleRT.GetWorldCorners(tc); float topY = tc[2].y;
         var gc = new Vector3[4]; gaugeRT.GetWorldCorners(gc); float botY = gc[0].y;
@@ -468,6 +469,7 @@ public class UI_SkillDetailPopup : UI_Popup
         if (_subFrameRT == null)
             _subFrameRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SubFrame") as RectTransform;
         if (_subFrameRT == null) return;
+        Canvas.ForceUpdateCanvases();   // 처음 열 때 첫 프레임 world 좌표 확정 (RefreshAutoSize와 동일 이유)
         var sc = new Vector3[4]; _subFrameRT.GetWorldCorners(sc); float subBottom = sc[0].y;
         var rc = new Vector3[4]; rg.GetWorldCorners(rc);          float rgTop     = rc[2].y;
         float scaleY = rg.lossyScale.y;
@@ -936,6 +938,8 @@ public class UI_SkillDetailPopup : UI_Popup
         // base 상태로 레이아웃 확정 후, SubFrame(장식 패널) 바닥이 '설명 바닥 + 약간'에 오도록 프레임 높이를 줄이/늘림.
         //  (설명 rect엔 CSF가 있어 frame과 무관하게 텍스트 크기로 잡힘 → 빈 공간의 실제 원인은 SubFrame이 설명보다 한참 아래까지
         //   내려가는 것. 그래서 설명 rect 높이가 아니라 'SubFrame 바닥 vs 설명 바닥'을 기준으로 조절. 짧으면 축소/길면 확장.)
+        // 처음 열 때(팝업 Instantiate 첫 프레임)는 캔버스가 아직 배치 전이라 GetWorldCorners가 부정확 → 강제 갱신.
+        Canvas.ForceUpdateCanvases();
         UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_autoFrame);
         _autoDescTmp.ForceMeshUpdate();
         float scaleY = _autoFrame.lossyScale.y;
