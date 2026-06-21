@@ -318,6 +318,7 @@ public class UI_SkillDetailPopup : UI_Popup
 
     const float FRAME_FROM_Y = -120f;   // 슬43: From y -120 (스펙)
     Vector2 _frameOrigin;
+    Vector2 _baseOrigin;   // prefab 저작 위치(클램프 누적 방지용 기준)
 
     public int SkillId { get; private set; } = -1;
 
@@ -358,7 +359,11 @@ public class UI_SkillDetailPopup : UI_Popup
         if (mainGo != null)
         {
             var mainRT = mainGo.GetComponent<RectTransform>();
-            if (mainRT != null) _frameOrigin = mainRT.anchoredPosition;
+            if (mainRT != null) { _frameOrigin = mainRT.anchoredPosition; _baseOrigin = _frameOrigin; }
+            // 진입 점프 방지: 프리팹 진입 DOTweenAnimation(Main/부모)을 끄고, 코드(ClampPopupToCenter)에서 처음부터 중앙 위치로 슬라이드인.
+            //  (이게 켜져 있으면 _baseOrigin으로 슬라이드인 → 0.55s 후 클램프가 위로 올려 '훅 점프'가 생겼음)
+            foreach (var anim in mainGo.GetComponentsInParent<DG.Tweening.DOTweenAnimation>(true))
+                anim.enabled = false;
         }
 
         GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
@@ -396,11 +401,9 @@ public class UI_SkillDetailPopup : UI_Popup
             bg.DOFade(130f / 255f, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
         }
 
-        // 슬43: 진입 Move 애니메이션 (From y-120 OutBack 0.5). prefab authored DOTweenAnimation이 있으면
-        //  그것이 우선되지만(중복 무해), 코드에서도 동일 스펙으로 보강 — UI_Popup 기본 OpenAnimation과 동일.
-        PlayOpenAnim();
-
-        if (skillId < 0 || Managers.Ability == null) return;
+        // 슬43: 진입 Move 애니메이션 (From y-120 OutBack 0.5).
+        //  유효 능력이면 사이즈/중앙정렬 확정 후 ClampPopupToCenter에서 진입 애니를 재생(위치 보정 반영). 빈 팝업(skillId<0)만 여기서.
+        if (skillId < 0 || Managers.Ability == null) { PlayOpenAnim(); return; }
 
         // 슬43: 타이틀 "능력 정보" (prefab Localize 미연결 대비 코드에서도 세팅)
         SetText(Texts.Txt_Title_03, Util.Localize(Define.LocalizeKey.AbilityDetails_TitleText));
@@ -418,7 +421,37 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshBottomButtons();// 슬51 최하단 3버튼(버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억)
         ApplyEquipMaterial();  // 슬52: 기억중/재능이면 이름 Frame Sprite에 Material_Equip
         RefreshAutoSize();     // 슬46: 설명 길이에 따라 정보창 세로 사이즈 자동 변화
-        ApplyBottomMargin();   // 슬51 피드백: 하단 UI를 SubFrame 밑으로 정렬 + 외곽프레임 바닥 연장(여유)
+        ApplyBottomMargin();   // 슬51 피드백: 하단 UI를 SubFrame 밑으로 정렬
+        ClampPopupToCenter();  // 피드백: 콘텐츠(타이틀~게이지)를 화면 사용영역 중심에 맞춰 위치 → 하단 버튼이 화면 밖/HUD와 겹치지 않게
+    }
+
+    // 피드백(버튼 화면밖 / 진입 점프): 사이즈 확정 후, 콘텐츠 상단(타이틀)~하단(게이지) 중심을 화면 사용영역 중심에 맞춰
+    //  '중앙 위치'를 계산하고, 그 위치로 직접 진입 슬라이드인(From y-120). 프리팹 진입 애니는 Init에서 꺼서 점프 없음.
+    //  팝업 길이가 능력마다 달라도 항상 가운데. (_baseOrigin 기준 재계산이라 누적 없음)
+    const float SAFE_CENTER_Y = -0.4f;   // 화면 사용영역 중심(상/하 HUD 고려, world). 약간 아래로(피드백)
+    void ClampPopupToCenter()
+    {
+        var main = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SkillDetailPopupMain") as RectTransform;
+        if (main == null) return;
+        var titleRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "Title") as RectTransform;
+        var gaugeRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "MemoryDisplayGroup") as RectTransform
+                   ?? GetButton((int)Buttons.MemorizeBtn)?.GetComponent<RectTransform>();
+        if (titleRT == null || gaugeRT == null) return;
+
+        // 중앙 위치 계산을 위해 _baseOrigin에 두고 레이아웃 확정 후 측정 (진입 애니 꺼서 측정 신뢰 가능)
+        DG.Tweening.DOTween.Kill(main, false);
+        main.anchoredPosition = _baseOrigin;
+        UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(main);
+        var tc = new Vector3[4]; titleRT.GetWorldCorners(tc); float topY = tc[2].y;
+        var gc = new Vector3[4]; gaugeRT.GetWorldCorners(gc); float botY = gc[0].y;
+        float center = (topY + botY) * 0.5f;
+        float scale = main.lossyScale.y;
+        if (scale <= 0.0001f) { _frameOrigin = _baseOrigin; main.anchoredPosition = _frameOrigin; return; }
+
+        _frameOrigin = _baseOrigin + new Vector2(0f, (SAFE_CENTER_Y - center) / scale);
+        // 중앙 위치로 직접 진입 슬라이드인 (점프 없음)
+        main.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
+        main.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
     }
 
     // 슬51 피드백: 하단 UI(출처+버튼=ReqGroup)는 SubFrame(장식 패널) '밑'에 정렬.
@@ -915,6 +948,9 @@ public class UI_SkillDetailPopup : UI_Popup
         const float DESIRED_GAP = 0.45f;   // SubFrame 바닥이 설명 바닥보다 이만큼 아래(world)
         float moveUpWorld = (descBottom - DESIRED_GAP) - subBottom;   // 양수=SubFrame을 위로(프레임 축소) / 음수=확장
         float deltaLocal  = -moveUpWorld / scaleY;
+        // 설명 rect의 CSF+앵커로 측정이 길어질수록 과대 산출되어 긴 설명에서 화면 밖으로 넘침 →
+        //  성장은 화면에 맞게 cap, 축소는 충분히 허용. (정확한 중앙배치는 ClampPopupToCenter가 보정)
+        deltaLocal = Mathf.Clamp(deltaLocal, -130f, 55f);
         if (Mathf.Abs(deltaLocal) < 1f) return;
 
         _autoFrame.sizeDelta        = new Vector2(_autoFrame.sizeDelta.x, _autoFrameBaseSize + deltaLocal);
