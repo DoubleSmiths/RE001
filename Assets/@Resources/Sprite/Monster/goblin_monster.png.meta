@@ -150,7 +150,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -254,12 +254,12 @@ TextureImporter:
       name: goblin_monster_0
       rect:
         serializedVersion: 2
-        x: 55
-        y: 349
-        width: 66
-        height: 62
+        x: 0
+        y: 350
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -276,12 +276,12 @@ TextureImporter:
       name: goblin_monster_1
       rect:
         serializedVersion: 2
-        x: 175
-        y: 349
-        width: 66
-        height: 63
+        x: 120
+        y: 350
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -298,12 +298,12 @@ TextureImporter:
       name: goblin_monster_2
       rect:
         serializedVersion: 2
-        x: 295
-        y: 349
-        width: 66
-        height: 62
+        x: 240
+        y: 350
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -320,12 +320,12 @@ TextureImporter:
       name: goblin_monster_3
       rect:
         serializedVersion: 2
-        x: 415
-        y: 349
-        width: 66
-        height: 61
+        x: 360
+        y: 350
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -342,12 +342,12 @@ TextureImporter:
       name: goblin_monster_4
       rect:
         serializedVersion: 2
-        x: 536
-        y: 349
-        width: 64
-        height: 60
+        x: 480
+        y: 350
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -364,12 +364,12 @@ TextureImporter:
       name: goblin_monster_5
       rect:
         serializedVersion: 2
-        x: 60
-        y: 279
-        width: 61
-        height: 60
+        x: 0
+        y: 280
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -386,12 +386,12 @@ TextureImporter:
       name: goblin_monster_6
       rect:
         serializedVersion: 2
-        x: 180
-        y: 279
-        width: 61
-        height: 61
+        x: 120
+        y: 280
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -408,12 +408,12 @@ TextureImporter:
       name: goblin_monster_7
       rect:
         serializedVersion: 2
-        x: 298
-        y: 279
-        width: 63
-        height: 60
+        x: 240
+        y: 280
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -430,12 +430,12 @@ TextureImporter:
       name: goblin_monster_8
       rect:
         serializedVersion: 2
-        x: 394
+        x: 360
         y: 280
-        width: 68
-        height: 56
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -452,12 +452,12 @@ TextureImporter:
       name: goblin_monster_9
       rect:
         serializedVersion: 2
-        x: 443
-        y: 279
-        width: 38
-        height: 25
+        x: 480
+        y: 280
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -474,12 +474,12 @@ TextureImporter:
       name: goblin_monster_10
       rect:
         serializedVersion: 2
-        x: 486
-        y: 279
-        width: 87
-        height: 69
+        x: 0
+        y: 210
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -496,12 +496,12 @@ TextureImporter:
       name: goblin_monster_11
       rect:
         serializedVersion: 2
-        x: 563
-        y: 279
-        width: 37
-        height: 27
+        x: 120
+        y: 210
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -518,12 +518,12 @@ TextureImporter:
       name: goblin_monster_12
       rect:
         serializedVersion: 2
-        x: 8
-        y: 209
-        width: 92
-        height: 59
+        x: 240
+        y: 210
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -540,12 +540,12 @@ TextureImporter:
       name: goblin_monster_13
       rect:
         serializedVersion: 2
-        x: 83
-        y: 209
-        width: 38
-        height: 27
+        x: 360
+        y: 210
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -562,12 +562,12 @@ TextureImporter:
       name: goblin_monster_14
       rect:
         serializedVersion: 2
-        x: 128
-        y: 209
-        width: 113
-        height: 57
+        x: 480
+        y: 210
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -584,12 +584,12 @@ TextureImporter:
       name: goblin_monster_15
       rect:
         serializedVersion: 2
-        x: 248
-        y: 209
-        width: 32
-        height: 44
+        x: 0
+        y: 140
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -606,12 +606,12 @@ TextureImporter:
       name: goblin_monster_16
       rect:
         serializedVersion: 2
-        x: 292
-        y: 209
-        width: 69
-        height: 57
+        x: 120
+        y: 140
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -628,12 +628,12 @@ TextureImporter:
       name: goblin_monster_17
       rect:
         serializedVersion: 2
-        x: 416
-        y: 209
-        width: 65
-        height: 62
+        x: 240
+        y: 140
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -650,12 +650,12 @@ TextureImporter:
       name: goblin_monster_18
       rect:
         serializedVersion: 2
-        x: 534
-        y: 209
-        width: 66
-        height: 62
+        x: 360
+        y: 140
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -672,12 +672,12 @@ TextureImporter:
       name: goblin_monster_19
       rect:
         serializedVersion: 2
-        x: 53
-        y: 139
-        width: 68
-        height: 61
+        x: 480
+        y: 140
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -694,12 +694,12 @@ TextureImporter:
       name: goblin_monster_20
       rect:
         serializedVersion: 2
-        x: 175
-        y: 139
-        width: 66
-        height: 62
+        x: 0
+        y: 70
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -716,12 +716,12 @@ TextureImporter:
       name: goblin_monster_21
       rect:
         serializedVersion: 2
-        x: 295
-        y: 139
-        width: 66
-        height: 62
+        x: 120
+        y: 70
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -738,12 +738,12 @@ TextureImporter:
       name: goblin_monster_22
       rect:
         serializedVersion: 2
-        x: 415
-        y: 139
-        width: 66
-        height: 61
+        x: 240
+        y: 70
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -760,12 +760,12 @@ TextureImporter:
       name: goblin_monster_23
       rect:
         serializedVersion: 2
-        x: 535
-        y: 139
-        width: 65
-        height: 61
+        x: 360
+        y: 70
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -782,12 +782,12 @@ TextureImporter:
       name: goblin_monster_24
       rect:
         serializedVersion: 2
-        x: 55
-        y: 69
-        width: 66
-        height: 61
+        x: 480
+        y: 70
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -804,12 +804,12 @@ TextureImporter:
       name: goblin_monster_25
       rect:
         serializedVersion: 2
-        x: 173
-        y: 69
-        width: 68
-        height: 63
+        x: 0
+        y: 0
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -826,12 +826,12 @@ TextureImporter:
       name: goblin_monster_26
       rect:
         serializedVersion: 2
-        x: 293
-        y: 69
-        width: 68
-        height: 60
+        x: 120
+        y: 0
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -848,12 +848,12 @@ TextureImporter:
       name: goblin_monster_27
       rect:
         serializedVersion: 2
-        x: 414
-        y: 69
-        width: 67
-        height: 53
+        x: 240
+        y: 0
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -870,12 +870,12 @@ TextureImporter:
       name: goblin_monster_28
       rect:
         serializedVersion: 2
-        x: 535
-        y: 69
-        width: 65
-        height: 38
+        x: 360
+        y: 0
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -892,12 +892,12 @@ TextureImporter:
       name: goblin_monster_29
       rect:
         serializedVersion: 2
-        x: 57
+        x: 480
         y: 0
-        width: 64
-        height: 25
+        width: 120
+        height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -910,99 +910,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: goblin_monster_30
-      rect:
-        serializedVersion: 2
-        x: 176
-        y: 0
-        width: 65
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 93a350dc97a0edb80800000000000000
-      internalID: -8368239539360810439
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: goblin_monster_31
-      rect:
-        serializedVersion: 2
-        x: 293
-        y: 0
-        width: 68
-        height: 63
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ca6b64dac85c64cc0800000000000000
-      internalID: -3727074433609320788
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: goblin_monster_32
-      rect:
-        serializedVersion: 2
-        x: 415
-        y: 0
-        width: 66
-        height: 60
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6442f6bf2eb98fbf0800000000000000
-      internalID: -290310776782117818
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: goblin_monster_33
-      rect:
-        serializedVersion: 2
-        x: 535
-        y: 0
-        width: 65
-        height: 60
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e1355a4626a569080800000000000000
-      internalID: -9181051411706326242
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1013ec950157af64b9b578c4ea65d784
     internalID: 0
     vertices: []
     indices: 
@@ -1010,7 +922,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":5.0,"y":6.0},"gridSpriteSize":{"x":120.0,"y":70.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       goblin_monster_0: 4274603326619902791
       goblin_monster_1: -3528478857476623207
@@ -1036,10 +950,6 @@ TextureImporter:
       goblin_monster_28: -357483278283913059
       goblin_monster_29: 7139676585986174299
       goblin_monster_3: 2961134756746698853
-      goblin_monster_30: -8368239539360810439
-      goblin_monster_31: -3727074433609320788
-      goblin_monster_32: -290310776782117818
-      goblin_monster_33: -9181051411706326242
       goblin_monster_4: 607578440423045214
       goblin_monster_5: 3252183263082624798
       goblin_monster_6: -5118436579333041174
