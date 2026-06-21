@@ -1,0 +1,4 @@
+DataId,EquipDataId,Level,AtkBonus,CritBonus,MagicAtkBonus,RequiredMaterialId,RequiredMaterialCount
+int,int,int,int,float,int,int,int
+강화 데이터 ID,대상 장비 ID,강화 레벨,물공 보너스,치명 보너스,마공 보너스,요구 재료 ID,요구 재료 개수
+1,30001,9,45,0.0,0,10001,10

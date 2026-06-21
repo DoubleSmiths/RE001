@@ -1,0 +1,7 @@
+DataId,Name,Grade,Description,SpriteName,WhereTo,Step,FlatRecov,MaxHPRecov,Cooldown,NeededItemIDs,NeededItemAmounts
+int,string,int,string,string,string,int,int,int,float,list,list
+물약 ID,이름 로컬키,등급,설명 로컬키,스프라이트,획득처 로컬키,단계,고정 회복량,최대체력 % 회복,쿨타임(초),제작 재료 ID(콤마),제작 재료 수(콤마)
+30001,HPPotion1NameText,Basic,HPPotion1DescText,HP_Potion1,AlchemyText,1,1,0,2,,
+30002,HPPotion1NameText,Basic,HPPotion1DescText,HP_Potion1,AlchemyText,2,2,0,3,10001,2
+30003,HPPotion1NameText,Basic,HPPotion1DescText,HP_Potion1,AlchemyText,3,3,0,3,10001,10
+30004,HPPotion2NameText,Abnormal,HPPotion2DescText,HP_Potion2,AlchemyText,1,5,0,3,"10001,10002","20,5"

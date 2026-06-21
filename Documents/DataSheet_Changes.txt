@@ -1,0 +1,222 @@
+==================================================================
+ 데이터 시트 변경 정리 (2026-06-21)
+ 작성: 코드/JSON 실분석 기반. 구글시트 7종 기준 + 신규 시트 제안.
+==================================================================
+
+[현재 구글시트 7종]
+ PlayerStatus / Dialogue / Localization / Quest / Creature / Item / Travel
+
+[요약]
+ 1) 새로 만들 구글시트 ............ 7종 (현재 로컬 .xlsx만 존재, 게임엔 이미 로드 중)
+ 2) Localization 시트에 행 추가 ... 6개(확정) + 4개(선택)
+ 3) Travel 시트 점검 ............. 신규 노드 2곳(로컬라이즈 키 동반 추가)
+
+
+==================================================================
+ 1. 새로 만들어야 할 구글시트 (7종)  ★중요★
+==================================================================
+아래 7종은 현재 손편집 JSON → 로컬 .xlsx 로만 관리됨
+(Assets/@Resources/Data/Excel/). 게임은 이미 전부 로드해서 사용 중
+(DataManager.cs 43~67행). 디자이너가 구글에서 편집할 수 있도록
+구글시트로 신규 생성 필요.
+
+시트 포맷 규약(기존 PlayerStatus와 동일):
+  Row0 = 필드명 / Row1 = 타입 / Row2 = 한글설명 / Row3+ = 데이터
+  리스트 셀은 콤마(,)로 구분.
+
+------------------------------------------------------------------
+(1) SkillData  ─ 능력/스킬 마스터 (현재 20행)
+------------------------------------------------------------------
+ 컬럼(필드 / 타입 / 한글설명):
+  DataId          int     능력 고유 ID
+  Name            string  이름(한)
+  Description     string  설명(한)
+  NameEng         string  이름(영)
+  DescEng         string  설명(영)
+  IconLabel       string  아이콘 라벨
+  Category        enum    분류(Talent 등)
+  SkillActiveType enum    Active/Passive
+  StatType        string  버프 대상 스탯
+  StatBonus       float   레벨당 버프 수치
+  MaxLevel        int     최대 등급
+  MemoryCapacity  int     기억력 점유(0=재능)
+  Story           string  능력 이야기(한)
+  StoryEng        string  능력 이야기(영)
+  Source          enum    출처(Class/Minion/Equip/Npc/Unlimited)
+  RequiredMinionId   int  요구 미니몬 CreatureId
+  RequiredEquipId    int  요구 장비 DataId
+  RequiredItemId     int  요구 재료 ItemId
+  RequiredItemCount  int  요구 재료 개수
+  NpcLocation     string  학습 NPC 장소
+  RoleTypes       list    종류(Skill,Spell,Def,Util 콤마)
+  TriggerType     enum    발동(None/Probability/Time)
+  Conditions      list    발동조건(콤마)
+  ProcChance      float   확률 발동 %
+  Cooldown        float   시간 발동 쿨(초)
+  ActiveContext   enum    맥락(InBattle/OutOfBattle/Always)
+  ConditionValue  float   조건 파라미터(LowHp%)
+  Effect          enum    효과(Heal/BonusDamage/Buff)
+  EffectStat      string  Buff 대상 스탯
+  EffectValue     float   효과 수치
+  EffectDuration  float   Buff 지속(초,0=전투끝)
+
+------------------------------------------------------------------
+(2) EquipmentData  ─ 장비 마스터 (현재 1행)
+------------------------------------------------------------------
+  DataId        int     장비 고유 ID
+  Name          string  이름
+  SlotType      enum    부위(Weapon 등)
+  Grade         enum    등급(Basic 등)
+  SpriteName    string  스프라이트
+  MaxDurability int     최대 내구도
+  BaseAtk       int     기본 물리공격
+  BaseCritRate  float   기본 치명타율
+  BaseMagicAtk  int     기본 마법공격
+
+------------------------------------------------------------------
+(3) EquipEnhanceData  ─ 장비 강화 (현재 1행)
+------------------------------------------------------------------
+  DataId                int    강화 데이터 ID
+  EquipDataId           int    대상 장비 ID
+  Level                 int    강화 레벨
+  AtkBonus              int    물공 보너스
+  CritBonus             float  치명 보너스
+  MagicAtkBonus         int    마공 보너스
+  RequiredMaterialId    int    요구 재료 ID
+  RequiredMaterialCount int    요구 재료 개수
+
+------------------------------------------------------------------
+(4) MinMonData  ─ 미니몬 마스터 (현재 2행)
+------------------------------------------------------------------
+  DataId         int     미니몬 고유 ID
+  Name           string  이름
+  IconLabel      string  아이콘 라벨
+  PrefabLabel    string  프리팹 라벨
+  PetAnimLabel   string  펫 애니 라벨
+  MonsterDataId  int     원본 몬스터 ID(CreatureData 참조)
+  BaseAtk        float   기본 공격력
+  BaseAtkSpeed   float   기본 공격속도
+  BaseCritRate   float   기본 치명타율
+  AtkGrade       int     공격 등급
+  AtkSpeedGrade  int     공속 등급
+  CritGrade      int     치명 등급
+  MaxTameCount   int     최대 길들이기 횟수
+  CatchChance    float   포획 확률(0~1)
+
+------------------------------------------------------------------
+(5) HPPotionData  ─ HP 물약 (현재 4행)   ※JSON 파일명: HPPotion.json
+------------------------------------------------------------------
+  DataId          int    물약 ID
+  Name            string 이름 로컬키
+  Grade           int    등급
+  Description     string 설명 로컬키
+  SpriteName      string 스프라이트
+  WhereTo         string 획득처 로컬키
+  Step            int    단계
+  FlatRecov       int    고정 회복량
+  MaxHPRecov      int    최대체력 % 회복
+  Cooldown        float  쿨타임(초)
+  NeededItemIDs   list   제작 재료 ID(콤마)
+  NeededItemAmounts list 제작 재료 수(콤마)
+
+------------------------------------------------------------------
+(6) SpeedPotionData  ─ 신속 물약 (현재 4행)  ※JSON 파일명: SpeedPotion.json
+------------------------------------------------------------------
+  DataId          int    물약 ID
+  Name            string 이름 로컬키
+  Grade           int    등급
+  Description     string 설명 로컬키
+  SpriteName      string 스프라이트
+  WhereTo         string 획득처 로컬키
+  Step            int    단계
+  AtkSpeedBonus   float  공속 증가(분수,0.2=20%)
+  Duration        float  지속(초)
+  Cooldown        float  쿨타임(초)
+  NeededItemIDs   list   제작 재료 ID(콤마)
+  NeededItemAmounts list 제작 재료 수(콤마)
+
+------------------------------------------------------------------
+(7) ComboData  ─ 콤보 단계 (현재 7행)
+------------------------------------------------------------------
+  Level         int     콤보 단계
+  NameKey       string  이름 로컬키
+  HitsRequired  int     필요 타격수
+  MaxTimer      float   유지 시간(초)
+  HitGain       float   타격당 게이지
+  AtkSpeedBuff  int     공속 버프%
+  DmgBoostBuff  int     피해 증폭%
+  ColorHex      string  색상 HEX
+
+[참고] 구글시트 생성 후 DataTransformer 연동 시
+  - URL 상수 7개를 추가하고(아래 1~7), GS_Parse* 경로로 전환하면
+    완전 구글시트화 가능. 현재는 Tools/ParseExtraData(로컬 .xlsx) 사용.
+  - 컬럼 정의는 AI/gen_data_sheets.py 와 1:1 동일.
+
+
+==================================================================
+ 2. Localization 시트 행 추가
+==================================================================
+※ LocalizationData 시트 데이터 영역(현재 221개 항목) 맨 아래에 추가.
+  컬럼: TextKey / Kor / Eng
+
+------------------------------------------------------------------
+ (A) 확정 추가 — 없으면 화면에 키 원문이 노출되거나 장소명이 안 나옴
+------------------------------------------------------------------
+ [Travel 노드가 참조 중인데 누락 — TravelNodeData 노드 22000/22100/23000/23100]
+  키 WhisperingCaveNameText,       kor 속삭이는 동굴,         Eng WHISPERING CAVE
+  키 WhisperingCaveEntranceText,   kor 속삭이는 동굴(입구),    Eng WHISPERING CAVE ENTRANCE
+  키 RuinedSanctumNameText,        kor 폐허가 된 성소,        Eng RUINED SANCTUM
+  키 RuinedSanctumEntranceText,    kor 폐허가 된 성소(입구),   Eng RUINED SANCTUM ENTRANCE
+   (한/영 문구는 임시 번역 — 기획 확정명으로 교체 가능)
+
+ [코드가 Util.Localize로 호출하는데 누락 — 화면에 raw 키 노출됨]
+  키 BeastiaryText,  kor 마물 도감,  Eng BESTIARY
+     └ 사용처: UI_BestiaryPopup.cs (도감 팝업 타이틀)
+  키 StartText,      kor 시작,       Eng START
+     └ 사용처: UI_TtitleScene.cs (타이틀 화면 시작 버튼)
+
+------------------------------------------------------------------
+ (B) 선택 추가 — 코드에 상수만 있고 현재 호출은 없음(향후 대비)
+------------------------------------------------------------------
+  키 UniqueSkillText,    kor 고유 기술,   Eng UNIQUE SKILL
+     └ 미니몬 고유기술 라벨용 상수. 추가해두면 안전.
+  키 MyMinimon,          kor 나의 미니몬, Eng MY MINIMON
+     └ 미니몬 창 제목용. 단 MyMinimonText("나의 미니몬"/"MY MINIMON")가
+       이미 있어 중복 → 통합 검토 후 추가 권장(미추가 시 MyMinimonText로 대체 가능).
+  키 PlaceNameBWF0Text,  kor 산들바람 숲(초입),   Eng BREEZEWOOD ENTRY
+  키 PlaceNameBWF1Text,  kor 산들바람 숲(숲길),   Eng BREEZEWOOD PATH
+     └ 현재 어디서도 참조 안 됨(레거시 상수). BWF2/BWF3 패턴 맞춰 채울지 선택.
+
+------------------------------------------------------------------
+ (C) 추가 불필요
+------------------------------------------------------------------
+  TestKey : 개발용 placeholder(UI_GameScene UnlockButtonPopup 테스트 인자).
+            실제 노출 텍스트 아님 → 시트 추가 불필요.
+
+
+==================================================================
+ 3. Travel 시트 점검
+==================================================================
+ TravelNodeData(JSON)에 아래 신규 노드 2개 지역이 들어 있음:
+   - 22000/22100 : Whispering Cave (속삭이는 동굴) + 입구
+   - 23000/23100 : Ruined Sanctum (폐허가 된 성소) + 입구
+ → 이 노드들이 Travel 구글시트에도 실제로 있는지 확인.
+   (JSON엔 있으나 시트에 없다면, 다음 파싱 때 사라짐. 시트에 노드 행도 같이 유지 필요.)
+ → 노드의 Name 컬럼은 위 2-(A)에서 추가하는 로컬라이즈 키와 일치해야 함.
+   (Sprite: WhisperingCave_Img / WhisperingCave_Entry_Img /
+            RuinedSanctum_Img / RuinedSanctum_Entry_Img 도 자산 존재 확인)
+
+
+==================================================================
+ 4. 점검했으나 추가 불필요(정상)했던 항목
+==================================================================
+ - SkillData 참조 무결성 OK:
+     5002→장비 30001 / 5003→재료 10001 / 5006→재료 10003 /
+     6001→미니몬 2001 / 6002→미니몬 2002  전부 존재.
+ - MinMonData.MonsterDataId(2001/2002) → CreatureData 존재 OK.
+ - EquipEnhance.EquipDataId(30001) → EquipmentData 존재 OK.
+ - Creature / Item 시트: 신규 데이터가 참조하는 ID 모두 존재 → 추가분 없음.
+
+==================================================================
+ (끝)
+==================================================================

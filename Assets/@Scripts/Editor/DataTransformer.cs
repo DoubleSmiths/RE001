@@ -37,6 +37,15 @@ public class DataTransformer : EditorWindow
     const string GSHEET_ITEM           = "https://docs.google.com/spreadsheets/d/1W5hzYceXWPzKPUG7cSOKwQ_tflHzIr9J/export?format=xlsx";
     const string GSHEET_TRAVEL         = "https://docs.google.com/spreadsheets/d/1tGg8DlSGerZfHrF8uG_UhyqRS1yWv1zw/export?format=xlsx";
 
+    // 추가 마스터데이터 7종 (2026-06-21 신규 구글시트화 — RE001_DataSheets 폴더)
+    const string GSHEET_SKILL          = "https://docs.google.com/spreadsheets/d/1m-Fo0wuaFa7udlhIjJYLbjTEJScAEIrXkJWfMvAuw1E/export?format=xlsx";
+    const string GSHEET_EQUIPMENT      = "https://docs.google.com/spreadsheets/d/1SYwQcNksa18_bE_YDtoIYeICmojIv8ar-7hK99sTe8g/export?format=xlsx";
+    const string GSHEET_EQUIP_ENHANCE  = "https://docs.google.com/spreadsheets/d/1ap5hc5wd9tibBwgdXNugpOKKCDj7UO1zn1f9dXCySeo/export?format=xlsx";
+    const string GSHEET_MINMON         = "https://docs.google.com/spreadsheets/d/1lhCPKyTso9Pi0F29L8AIpAodxyBR6pgk1nkCft-_fQo/export?format=xlsx";
+    const string GSHEET_HP_POTION      = "https://docs.google.com/spreadsheets/d/1pajVmT0PUAvIFbxSHjdjHzW0Gd70X8mxxqgLawTrLA0/export?format=xlsx";
+    const string GSHEET_SPEED_POTION   = "https://docs.google.com/spreadsheets/d/1rhlNcgm5_5vILUU4GWFadcdaK3Fu0y1j3WE4MifWakU/export?format=xlsx";
+    const string GSHEET_COMBO          = "https://docs.google.com/spreadsheets/d/1VjtZ0xrGKncXn0-dCiYFbVN5NdxL_1gct-VmGVj4GC0/export?format=xlsx";
+
     // ─────────────────────────────────────────────────────────────────────────
 
     [MenuItem("Tools/ParseExcelFromGoogleSheets")]
@@ -1143,21 +1152,39 @@ public class DataTransformer : EditorWindow
     // ===================================================================
     //  추가 마스터데이터 시트 → JSON (스킬/장비/강화/미니몬/물약/콤보)
     //  포맷: Row0=필드명, Row1=타입, Row2=한글설명, Row3+=데이터. 리스트 셀은 콤마(,) 구분.
-    //  기존 ParseExcel과 분리(이 데이터들은 구글시트 미연동) — 시트 수정 후 이 메뉴로 재생성.
     //  enum은 가독성 위해 문자열로 직렬화(WriteJsonStr).
+    //  각 Parse*Sheet은 행 소스(List<List<string>>)를 주입받아 로컬/구글 양쪽에서 재사용.
     // ===================================================================
+
+    /// <summary>로컬 .xlsx(Assets/@Resources/Data/Excel)에서 추가 7종 파싱.</summary>
     [MenuItem("Tools/ParseExtraData (스킬/장비/미니몬/물약/콤보)")]
     public static void ParseExtraData()
     {
-        ParseSkillDataSheet();
-        ParseEquipmentDataSheet();
-        ParseEquipEnhanceDataSheet();
-        ParseMinMonDataSheet();
-        ParseHPPotionDataSheet();
-        ParseSpeedPotionDataSheet();
-        ParseComboDataSheet();
+        string baseDir = $"{Application.dataPath}{EXCEL_PATH}";
+        ParseSkillDataSheet      (ReadXlsx($"{baseDir}/SkillData.xlsx"));
+        ParseEquipmentDataSheet  (ReadXlsx($"{baseDir}/EquipmentData.xlsx"));
+        ParseEquipEnhanceDataSheet(ReadXlsx($"{baseDir}/EquipEnhanceData.xlsx"));
+        ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
+        ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
+        ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
+        ParseComboDataSheet      (ReadXlsx($"{baseDir}/ComboData.xlsx"));
         AssetDatabase.Refresh();
-        Debug.Log("[DataTransformer] ParseExtraData 완료");
+        Debug.Log("[DataTransformer] ParseExtraData (로컬) 완료");
+    }
+
+    /// <summary>구글시트(RE001_DataSheets)에서 추가 7종 파싱. 시트는 "링크 있는 사용자-뷰어" 공개 필요.</summary>
+    [MenuItem("Tools/ParseExtraDataFromGoogleSheets")]
+    public static void ParseExtraDataFromGoogleSheets()
+    {
+        ParseSkillDataSheet      (ReadXlsx(DownloadGoogleSheet(GSHEET_SKILL)));
+        ParseEquipmentDataSheet  (ReadXlsx(DownloadGoogleSheet(GSHEET_EQUIPMENT)));
+        ParseEquipEnhanceDataSheet(ReadXlsx(DownloadGoogleSheet(GSHEET_EQUIP_ENHANCE)));
+        ParseMinMonDataSheet     (ReadXlsx(DownloadGoogleSheet(GSHEET_MINMON)));
+        ParseHPPotionDataSheet   (ReadXlsx(DownloadGoogleSheet(GSHEET_HP_POTION)));
+        ParseSpeedPotionDataSheet(ReadXlsx(DownloadGoogleSheet(GSHEET_SPEED_POTION)));
+        ParseComboDataSheet      (ReadXlsx(DownloadGoogleSheet(GSHEET_COMBO)));
+        AssetDatabase.Refresh();
+        Debug.Log("[DataTransformer] ParseExtraDataFromGoogleSheets 완료");
     }
 
     static string C(List<string> r, int i) => i < r.Count ? r[i] : "";
@@ -1174,10 +1201,9 @@ public class DataTransformer : EditorWindow
         Debug.Log($"[DataTransformer] {filename}.json 생성 완료(시트)");
     }
 
-    static void ParseSkillDataSheet()
+    static void ParseSkillDataSheet(List<List<string>> rows)
     {
         var loader = new SkillDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/SkillData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];
@@ -1219,10 +1245,9 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("SkillData", loader);
     }
 
-    static void ParseEquipmentDataSheet()
+    static void ParseEquipmentDataSheet(List<List<string>> rows)
     {
         var loader = new EquipmentDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/EquipmentData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];
@@ -1242,10 +1267,9 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("EquipmentData", loader);
     }
 
-    static void ParseEquipEnhanceDataSheet()
+    static void ParseEquipEnhanceDataSheet(List<List<string>> rows)
     {
         var loader = new EquipEnhanceDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/EquipEnhanceData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];
@@ -1264,10 +1288,9 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("EquipEnhanceData", loader);
     }
 
-    static void ParseMinMonDataSheet()
+    static void ParseMinMonDataSheet(List<List<string>> rows)
     {
         var loader = new MinMonDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/MinMonData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];
@@ -1292,10 +1315,9 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("MinMonData", loader);
     }
 
-    static void ParseHPPotionDataSheet()
+    static void ParseHPPotionDataSheet(List<List<string>> rows)
     {
         var loader = new HPPotionDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/HPPotionData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];
@@ -1318,10 +1340,9 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("HPPotion", loader);
     }
 
-    static void ParseSpeedPotionDataSheet()
+    static void ParseSpeedPotionDataSheet(List<List<string>> rows)
     {
         var loader = new SpeedPotionDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/SpeedPotionData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];
@@ -1344,10 +1365,9 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("SpeedPotion", loader);
     }
 
-    static void ParseComboDataSheet()
+    static void ParseComboDataSheet(List<List<string>> rows)
     {
         var loader = new ComboStageDataLoader();
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/ComboData.xlsx");
         for (int y = 3; y < rows.Count; y++)
         {
             var row = rows[y];

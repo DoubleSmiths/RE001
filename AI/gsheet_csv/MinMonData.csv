@@ -1,0 +1,5 @@
+DataId,Name,IconLabel,PrefabLabel,PetAnimLabel,MonsterDataId,BaseAtk,BaseAtkSpeed,BaseCritRate,AtkGrade,AtkSpeedGrade,CritGrade,MaxTameCount,CatchChance
+int,string,string,string,string,int,float,float,float,int,int,int,int,float
+미니몬 고유 ID,이름,아이콘 라벨,프리팹 라벨,펫 애니 라벨,원본 몬스터 ID,기본 공격력,기본 공격속도,기본 치명타율,공격 등급,공속 등급,치명 등급,최대 길들이기 횟수,포획 확률(0~1)
+2001,젤리 퐁,,,Pet_Slime(Green),2001,5.0,100.0,0.0,E,E,E,10,0.1
+2002,라비 슬라임,,,Pet_Slime(Green),2002,7.0,100.0,0.0,E,E,E,12,0.08

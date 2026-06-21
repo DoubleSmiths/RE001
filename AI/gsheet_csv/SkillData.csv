@@ -1,0 +1,33 @@
+DataId,Name,Description,NameEng,DescEng,IconLabel,Category,SkillActiveType,StatType,StatBonus,MaxLevel,MemoryCapacity,Story,StoryEng,Source,RequiredMinionId,RequiredEquipId,RequiredItemId,RequiredItemCount,NpcLocation,RoleTypes,TriggerType,Conditions,ProcChance,Cooldown,ActiveContext,ConditionValue,Effect,EffectStat,EffectValue,EffectDuration
+int,string,string,string,string,string,enum,enum,string,float,int,int,string,string,enum,int,int,int,int,string,list,enum,list,float,float,enum,float,enum,string,float,float
+능력 고유 ID,이름(한),설명(한),이름(영),설명(영),아이콘 라벨,분류(Talent 등),Active/Passive,버프 대상 스탯,레벨당 버프 수치,최대 등급,기억력 점유(0=재능),능력 이야기(한),능력 이야기(영),출처(Class/Minion/Equip/Npc/Unlimited),요구 미니몬 CreatureId,요구 장비 DataId,요구 재료 ItemId,요구 재료 개수,학습 NPC 장소,"종류(Skill,Spell,Def,Util 콤마)",발동(None/Probability/Time),발동조건(콤마),확률 발동 %,시간 발동 쿨(초),맥락(InBattle/OutOfBattle/Always),조건 파라미터(LowHp%),효과(Heal/BonusDamage/Buff),Buff 대상 스탯,효과 수치,"Buff 지속(초,0=전투끝)"
+5009,물약 주입기,전투 중 HP가 설정 비율 이하로 떨어지면 회복 물약을 자동으로 사용한다.,Potion Injector,Automatically uses a recovery potion when HP drops below the set ratio in battle.,,Talent,Passive,,0.0,1,0,,,Npc,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5001,기억 확장,최대 기억력을 늘려주는 재능. 항시 적용된다.,Memory Expansion,A talent that increases max memory. Always active.,,Talent,Passive,MaxMemory,5.0,5,0,,,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5002,힘의 기억,물리 공격력을 증가시킨다.,Memory of Strength,Increases physical attack.,,Memory,Passive,PhysicalAtk,5.0,5,3,"두드릴수록 단단해지는 강철처럼,
+반복된 단련이 힘으로 새겨진다.","Like steel forged by strikes,
+training is carved into strength.",Equip,0,30001,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5003,치명의 기억,치명타 확률을 증가시킨다.,Memory of Critical,Increases critical rate.,,Memory,Passive,CritRate,5.0,5,2,"급소를 노리는 한 줄기 호흡.
+그 떨림을 기억해 둔다.","A single breath aimed at the weak point.
+Remember that tremor.",Npc,0,0,10001,5,연금공방,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5004,강철의 기억,최대 체력을 증가시킨다.,Memory of Steel,Increases max HP.,,Memory,Passive,MaxHp,50.0,5,4,"여행자의 몸은 길 위에서 단단해진다.
+버텨낸 만큼이 곧 그릇이 된다.","A traveler's body hardens on the road.
+What you endure becomes your vessel.",Class,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+7000,종을 초월한 교감,도감 완성도 보상. 명중률을 높이는 재능.,Bond Beyond Species,Codex completion reward. A talent that increases accuracy.,,Talent,Passive,Accuracy,5.0,99,0,,,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+7001,조련사의 기술,도감 완성도 보상. 치명타 확률을 높이는 재능.,Tamer's Technique,Codex completion reward. A talent that increases critical rate.,,Talent,Passive,CritRate,3.0,99,0,,,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+7002,오다 주웠습니다 주인님!,도감 완성도 보상. 물리 공격력을 높이는 재능.,"Found It, Master!",Codex completion reward. A talent that increases physical attack.,,Talent,Passive,PhysicalAtk,3.0,99,0,,,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+6001,젤리의 가호,젤리 퐁의 고유기술. 최대 체력을 늘린다.,Jelly's Blessing,Jelly Pong's unique skill. Increases max HP.,,Memory,Passive,MaxHp,30.0,2,2,"젤리 퐁의 말랑한 가호.
+곁에 두면 어쩐지 든든하다.","Jelly Pong's squishy blessing.
+Somehow reassuring to have near.",Minion,2001,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+6002,토끼의 민첩,라비 슬라임의 고유기술. 공격속도를 높인다.,Rabbit's Agility,Rabi Slime's unique skill. Increases attack speed.,,Memory,Passive,AtkSpeed,10.0,2,2,,,Minion,2002,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5005,반격의 의지,피격 시 일정 확률로 적에게 반격한다.,Will of Counter,Chance to counterattack when hit.,,Memory,Passive,PhysicalAtk,0.0,5,3,,,Equip,0,0,0,0,,,Probability,OnDamaged,50.0,0.0,InBattle,0.0,BonusDamage,,30.0,0.0
+5006,생명의 리듬,전투 중 주기적으로 체력을 회복한다.,Rhythm of Life,Periodically restores HP in battle.,,Memory,Repeat,MaxHp,0.0,5,2,,,Npc,0,0,10003,3,연금공방,,Time,,100.0,5.0,InBattle,0.0,Heal,,25.0,0.0
+5007,전투의 투지,전투 시작 시 일정 시간 물리 공격력이 증가한다.,Battle Spirit,Physical attack rises for a while at battle start.,,Memory,Passive,PhysicalAtk,0.0,5,2,,,Class,0,0,0,0,,,Probability,BattleStart,100.0,0.0,InBattle,0.0,Buff,PhysicalAtk,15.0,6.0
+5008,막판 분노,체력이 30% 이하로 떨어지면 치명타 확률이 크게 오른다. (전투당 1회),Last Stand,Critical rate surges when HP drops below 30%. (Once per battle),,Memory,Passive,CritRate,0.0,5,3,,,Unlimited,0,0,0,0,,,Probability,LowHp,100.0,0.0,InBattle,30.0,Buff,CritRate,30.0,0.0
+5012,포획의 직감,미니몬 잡기 성공 확률이 증가한다.,Catcher's Instinct,Increases minion catch success rate.,,Memory,Passive,CatchRate,10.0,5,2,"발자국의 깊이, 숨결의 결.
+사냥꾼은 직감으로 안다.",,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5010,조련의 효율,확정 포획에 필요한 길들이기 횟수가 감소한다.,Taming Efficiency,Reduces tame attempts needed for a guaranteed catch.,,Memory,Passive,GuaranteedCatchReduce,1.0,3,2,"급할수록 돌아가라.
+허나 길은 점점 짧아진다.",,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5011,탐험가의 경험,경험치 획득량이 증가한다.,Explorer's Experience,Increases experience gained.,,Memory,Passive,ExpGain,20.0,5,0,걸어온 길은 모두 양분이 된다.,,Unlimited,0,0,0,0,,,None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5013,만능의 기억,여러 종류의 능력을 겸비한다.,Memory of Versatility,Combines multiple ability types.,,Memory,Passive,PhysicalAtk,3.0,5,3,한 길만 걷지 않은 자의 흔적.,,Unlimited,0,0,0,0,,"Skill,Def,Util",None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5014,이중의 기억,두 종류의 능력을 겸비한다.,Dual Memory,Combines two ability types.,,Memory,Passive,PhysicalAtk,3.0,5,2,두 갈래의 길을 함께 걷는다.,,Unlimited,0,0,0,0,,"Skill,Spell",None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0
+5015,전능의 기억,네 종류의 능력을 모두 겸비한다.,Omni Memory,Combines all four ability types.,,Memory,Passive,PhysicalAtk,3.0,5,4,모든 길의 끝에서 만나는 자.,,Unlimited,0,0,0,0,,"Skill,Spell,Def,Util",None,,100.0,0.0,InBattle,0.0,None,,0.0,0.0

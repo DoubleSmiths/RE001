@@ -1,0 +1,7 @@
+DataId,Name,Grade,Description,SpriteName,WhereTo,Step,AtkSpeedBonus,Duration,Cooldown,NeededItemIDs,NeededItemAmounts
+int,string,int,string,string,string,int,float,float,float,list,list
+물약 ID,이름 로컬키,등급,설명 로컬키,스프라이트,획득처 로컬키,단계,"공속 증가(분수,0.2=20%)",지속(초),쿨타임(초),제작 재료 ID(콤마),제작 재료 수(콤마)
+40001,SPDPotion1NameText,Basic,SPDPotion1DescText,Speed_Potion1,AlchemyText,1,0.2,15,30,1001,2
+40002,SPDPotion1NameText,Basic,SPDPotion1DescText,Speed_Potion1,AlchemyText,2,0.25,15,30,1001,10
+40003,SPDPotion1NameText,Basic,SPDPotion1DescText,Speed_Potion1,AlchemyText,3,0.3,15,30,1001,20
+40004,SPDPotion2NameText,Abnormal,SPDPotion2DescText,Speed_Potion2,AlchemyText,1,0.3,20,30,"1001,1002","20,5"

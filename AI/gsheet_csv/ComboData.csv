@@ -1,0 +1,10 @@
+Level,NameKey,HitsRequired,MaxTimer,HitGain,AtkSpeedBuff,DmgBoostBuff,ColorHex
+int,string,int,float,float,int,int,string
+콤보 단계,이름 로컬키,필요 타격수,유지 시간(초),타격당 게이지,공속 버프%,피해 증폭%,색상 HEX
+0,ComboLv0Text,1,4.0,1.0,0.0,0.0,#FFFFFF
+1,ComboLv1Text,3,3.5,0.8,5.0,0.0,#8AFF6F
+2,ComboLv2Text,6,3.0,0.6,10.0,0.0,#6FE3FF
+3,ComboLv3Text,9,2.5,0.4,15.0,0.0,#8A6FFF
+4,ComboLv4Text,12,2.0,0.3,20.0,10.0,#FF6FD8
+5,ComboLv5Text,15,1.5,0.2,25.0,20.0,#FFC36F
+6,ComboLv6Text,18,1.0,0.1,40.0,30.0,#FF3E3E
