@@ -139,10 +139,8 @@ namespace Data
     public class SkillData
     {
         public int DataId;
-        public string Name;          // 한국어 이름 (기본/폴백)
-        public string Description;   // 한국어 설명 (기본/폴백)
-        public string NameEng;       // 영문 이름 (없으면 Name 폴백)
-        public string DescEng;       // 영문 설명 (없으면 Description 폴백)
+        public string Name;          // LocalizationData 키 (예 Skill5008NameText). 표시 시 Util.Localize로 한/영.
+        public string Description;   // LocalizationData 키 (예 Skill5008DescText).
         public string IconLabel;
         public SkillCategory Category;
         public SkillActiveType SkillActiveType;
@@ -152,8 +150,7 @@ namespace Data
         public int MemoryCapacity;     // 슬38: 기억력 점유량. 0이면 [재능](항시 적용, 점유 없음)
 
         // ── 능력 정보창 #4/#5/#6 ──
-        public string Story;             // 능력 이야기(flavor) — 한국어 기본/폴백. 없으면 표시 안 함.
-        public string StoryEng;          // 능력 이야기 영문
+        public string Story;             // 능력 이야기(flavor) — LocalizationData 키(예 Skill5002StoryText). 비면 표시 안 함.
         public AbilitySource Source;     // 능력 출처(획득 경로). 기본 Unlimited. (#5 하단 UI 분기)
         public int RequiredMinionId;     // Source=Minion일 때 게이팅 미니몬 CreatureId. 0이면 (id-4000)로 파생.
 

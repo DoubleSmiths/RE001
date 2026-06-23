@@ -61,24 +61,23 @@ public class AbilityManager
         return list;
     }
 
-    // 슬2: 능력 이름/설명 한/영 — NameEng/DescEng 비어있으면 한국어(Name/Description) 폴백.
-    bool IsKorean => Managers.Game == null || Managers.Game.Language == Define.Language.Korean;
+    // 슬2: 능력 이름/설명/이야기 — Name/Description/Story는 LocalizationData 키. Util.Localize로 한/영 전환.
     public string GetName(int id)
     {
         if (!TryData(id, out var d)) return $"능력 #{id}";
-        return !IsKorean && !string.IsNullOrEmpty(d.NameEng) ? d.NameEng : d.Name;
+        return Util.Localize(d.Name);
     }
     public string GetDesc(int id)
     {
         if (!TryData(id, out var d)) return "";
-        return !IsKorean && !string.IsNullOrEmpty(d.DescEng) ? d.DescEng : d.Description;
+        return Util.Localize(d.Description);
     }
 
-    // 능력 정보창 #4: 능력 이야기(flavor) 한/영. 없으면 빈 문자열.
+    // 능력 정보창 #4: 능력 이야기(flavor). 키 비면 빈 문자열.
     public string GetStory(int id)
     {
         if (!TryData(id, out var d)) return "";
-        return !IsKorean && !string.IsNullOrEmpty(d.StoryEng) ? d.StoryEng : (d.Story ?? "");
+        return string.IsNullOrEmpty(d.Story) ? "" : Util.Localize(d.Story);
     }
 
     // 능력 정보창 #5: 능력 출처(획득 경로). 미니몬 고유기술(id-4000이 미니몬 범위)은 데이터 미기재여도 Minion 파생.

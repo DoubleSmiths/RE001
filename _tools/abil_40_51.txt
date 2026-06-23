@@ -1,0 +1,920 @@
+===== SLIDE 40 =====
+능력 목록   
+#1
+Opening Anim 
+및 상단 
+UI
+예시 화면
+Popup Anim
+정보
+:
+[
+OnActive
+]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[
+OnDisable
+]
+DoPlayBackwards
+BAR_Basic
+Frame_bg_big_2
+skill_073
+AbilityCodex_TitleText
+AbilityCodex_TopText_All
+TopText
+는 
+BtmText
+와 동일하게 간다
+.
+(ex. 
+하단 버튼 중 
+AbilityCodex_BtmText_All
+의 버튼이 눌릴 시 
+상단에는 
+AbilityCodex_BtmText_All
+표기
+.)
+현재 기억력 
+/ 
+최대 기억력
+현재 기억력 
+= 0 = &lt;color=red&gt;
+현재 기억력 
+&lt; 
+최대 기억력 
+= &lt;color=yellow&gt;
+현재 기억력 
+= 
+최대 기억력 
+= &lt;color=lime&gt;
+
+[MEDIA] image104.png, image105.png, image106.gif, image2.png, image5.png
+
+===== SLIDE 41 =====
+능력 목록   
+#2
+중단 
+UI
+Gui_atlas
+Slider01_background
+Gui_atlas
+Slider_button01
+Scrollview
+Frame_bg_big_2
+HP_MP_little_frame
+Sprite(None)
+Color: 000000
+Skill Icon
+&lt;color=lime&gt;
+스킬레벨
+&lt;/color&gt;
++ 
+LevelText
+해당 스킬 레벨이 해당 스킬의
+최대 스킬 레벨 보다 
+낮을 시
+해당 스킬 레벨이 해당 스킬의
+최대 스킬 레벨 
+일 시
+HP_MP_little_frame
+Color: FF00F5
+Sprite(None)
+Color: 3C143A
+&lt;color=magenta&gt;
+스킬레벨
+&lt;/color&gt;
++ 
+LevelText
+HP_MP_little_frame
+Color: 3BA6FF
+Sprite(None)
+Color: 00329F
+Memorized_Text_Short
+능력 
+ICON
+또한 능력이 재능이거나 
+기억중일
+ 시 
+Frame_bg_big_2
+를 따라 
+Active_Ef
+효과 추가
+DOTween
+ Anim
+Punch/Scale
+Duration: 0.3
+Ease: 
+OutQuad
+TO: x-0.25, y0.15
+Vibrato: 10
+Elasticity: 1
+또한 능력 
+ICON
+을 누를 시 
+하단의 
+Anim
+과 함께 해당 능력의 
+[ 
+능력 
+정보창
+] 
+을 호출한다
+.
+해당 잠김 상태의 
+ICON 
+은 
+[ 
+능력 목록 
+] 
+에 해당될 일 없음
+.
+오직 
+[ 
+미니몬 도감 
+] 
+창에서만 해당됨
+.
+해당 능력을
+기억
+(
+사용
+)
+중일 시
+
+[MEDIA] image105.png, image107.png, image108.png, image109.png, image110.gif, image111.gif, image112.gif, image5.png, image7.png
+
+===== SLIDE 42 =====
+능력 목록   
+#2
+하단 
+UI
+Frame_bg_big_2
+Alpha: 200
+- 
+하단 
+UI 
+는 총 
+5
+개의 버튼으로 구성되어 있다
+.
+- 
+각 버튼은 능력의 종류로 분류되어 있다
+.
+TEXT
+는 가장 왼쪽부터 오른쪽 순으로
+1. 
+AbilityCodex_BtmText_All
+2. 
+AbilityCodex_BtmText_Skill
+3. 
+AbilityCodex_BtmText_Spell
+4. 
+AbilityCodex_BtmText_Def
+5. 
+AbilityCodex_BtmText_Util
+이며
+, 
+각 버튼 클릭 시 해당 분류에 속한 모든 능력 
+ICON
+들만 
+UI 
+중단에 표시되며 
+AbilityCodex_TopText
+또한 변경된다
+.
+2_options_off
+하단 버튼들은 
+2
+가지 상태로 나뉜다
+.
+1. 
+기본상태
+2. 
+선택상태
+임의의 버튼 클릭 시 해당 버튼은 
+[ 
+선택 상태
+ ] 
+가
+되며 나머지 버튼들은 
+[ 
+기본 상태
+ ] 
+로 변한다
+.
+[
+ 능력 목록
+ ] 
+창 호출 시 항상 
+[
+ 전체 
+] 
+목록으로 선택되어 있다
+.
+기본상태
+선택상태
+Frame_bg_big_2
+Color: EEB568
+2_options_on
+Text Outline: 000000
+Text Outline: 594A2D
+또한 
+[ 
+기본상태 
+] 
+에서 
+[ 
+선택상태 
+] 
+로 변할 시 위 
+Image 
+변화와 함께
+아래와 같은 
+Anim 
+이 재생되며 
+[ 
+선택상태 
+] 
+에서 
+[
+ 기본상태 
+] 
+로 변할 시에도 재생한다
+.
+DOTween
+Scale
+Duration: 0.05
+Ease: OutBack
+Loops: 2
+Loop Type: Yoyo
+TO: 0.85
+Move
+Duration: 0.3
+Ease: Linear
+TO: x 
+축 위로
+마친 후
+버튼 
+클릭 시에만 적용
+
+[MEDIA] image105.png, image113.png, image114.png, image115.gif, image5.png
+
+===== SLIDE 43 =====
+능력 
+정보창
+#1
+Opening Anim 
+및 
+Base
+UI
+예시 화면
+Popup Anim
+정보
+:
+[
+OnActive
+]
+Dotween
+Move
+Duration: 0.5
+Delay: 0
+Ease: OutBack
+Loops: 1
+From: x 0, y -120, z 0
+[
+OnDisable
+]
+DoPlayBackwards
+Title_frame_0m
+AbilityDetails_TitleText
+pick_hero_frame
+Frame_square_256_vert
++
+Sprite(None)
+Color: 000000
+Alpha: 130
+만약 해당 능력이 
+[ 
+재능 
+] 
+이거나
+기억
+(
+사용
+) 
+중일 경우
+:
+Sprite(None)
+에 
+Active_Ef
+생성
+
+[MEDIA] hdphoto1.wdp, image116.png, image117.gif, image118.png, image119.png, image120.gif, image9.png
+
+===== SLIDE 44 =====
+능력 
+정보창
+#2
+상단 
+UI
+예시 화면
+skill_073
+능력의 마나 
+점유량
+Outline: C0AA70 x0.1, y0.1
+TalentText
+Outline: 7073C0 x0.1, y0.1
+“?” 
+Color: FDF6A6
+마나 점유 
+있을
+ 시
+마나 점유 
+없을
+ 시
+role_icon_gladiator
+AbilityCodex_BtmText_Def
+role_icon_darkmage
+AbilityCodex_BtmText_Util
+Staff01
+AbilityCodex_BtmText_Spell
+Sword01
+AbilityCodex_BtmText_Spell
+해당 능력의 종류에 따라 아래와 같이 표시된다
+:
+만약 해당 능력이 
+2
+가지 종류 이상을 갖는 경우
+:
+능력 
+ICON 
+과 동일
+
+[MEDIA] image104.png, image116.png, image121.png, image122.png, image123.png, image124.png, image125.png, image126.png, image127.png, image128.png, image129.png, image44.png, image45.png
+
+===== SLIDE 45 =====
+능력 
+정보창
+#3
+중단 
+UI - 1
+Memorized_Text_Full
+AbilityMaster_Text
+해당 능력을
+기억
+(
+사용
+)
+중일 시
+해당 능력이
+최대 등급일 시
+Title_frame_m
+MASK
+Sprite(None)
+Color: 000000
+shop_frame_glow
+Color: 636363
+해당 능력이
+재능일 시
+TalentText
+HP_MP_little_frame
+Color: 3BA6FF
+Sprite(None)
+Color: 00329F
+Sprite(None)
+Color: 3C143A
+HP_MP_little_frame
+Color: FF00F5
+능력 이름
+Decor_Title_options
+만약 해당 능력이
+[ 
+재능 
+] 
+이거나
+기억
+(
+사용
+) 
+중일 경우
+Sprite(None) 
+에 
+Material: 
+Material_Equip
+추가
+
+[MEDIA] image105.png, image116.png, image120.gif, image130.png, image131.png, image132.png, image16.png, image7.png
+
+===== SLIDE 46 =====
+능력 
+정보창
+#4
+중단 
+UI - 2
+능력 이야기
+1. 
+밑에 
+[ 
+능력 설명 
+] 
+보다 
+font size 
+작게
+.
+2. 
+중앙 정렬
+.
+3.
+ Italic.
+“【” + 
+LevelText
+ + “: ” + 
+현재 등급 
++ “/” + 
+최대 등급 
++ “】”
+1. 
+밑에 
+[ 
+능력 설명 
+] 
+보다 
+font size 
+크게
+2. 
+중앙 정렬
+.
+message_popup_bg_default
+능력 설명
+1. 
+위에 
+[ 
+능력 등급 
+] 
+보다 
+font size 
+작게
+.
+2. 
+맨 위 
+[ 
+능력 이야기 
+] 
+보다 
+font size 
+크게
+.
+3. 
+죄측 정렬
+.
+4. 
+등급에 따라 변경되는 수치는 
+&lt;color=yellow&gt;
+능력 설명 
+Text 
+량에 따라 
+[ 
+능력 
+정보창
+]
+의 
+세로 
+Size 
+가 자동으로 변화한다
+.
+
+[MEDIA] image116.png, image133.png, image134.png, image135.png
+
+===== SLIDE 47 =====
+능력 
+정보창
+#5
+하단 
+UI - 
+전체정보
+하단 
+UI 
+같은 경우 능력의 출처에 따라 총 
+5
+종류의 다른 
+UI 
+가 존재한다
+.
+1.
+전직을 통해 해당 능력을 얻거나 등급을 올릴 때
+.
+2.
+미니몬 잡기
+!
+를 통해 해당 능력을 얻거나 등급을 올릴 때
+.
+3.
+장비 강화를 통해 해당 능력을 얻거나 등급을 올릴 때
+.
+4.
+NPC
+에게 재료를 주고 해당 능력을 얻거나 등급을 올릴 때
+.
+5.
+위 
+4
+가지 방법 중 
+2
+가지 이상 또는 전혀 다른 방식으로 얻거나 등급을 올릴 때
+.
+상단 
+TEXT: 
+Class_Ability_Text
+, Color: 3DC4FF
+하단 
+TEXT: 
+직업이름
+, Color: F3FF00
+상단 
+TEXT: 
+Req_Minimon_Text
+, Color: ECCC6C
+상단 
+TEXT: 
+Req_Equip_Text
+, Color: 902EC8
+상단 
+TEXT: 
+Req_Item_Text
+, Color: 8CEC6C
+상단 
+TEXT: 
+Unlimited_Potential_Text
+, Color: EC706C
+하단 
+TEXT: 
+Unlimited_Potential_Desc_Text
+ , Color: C8C8C8
+Horizontal Layout Group
+가운데 정렬
+.
+최대 
+5
+개 까지 표시 가능
+.
+
+[MEDIA] image116.png, image136.png, image137.png, image138.png, image139.png
+
+===== SLIDE 48 =====
+능력 
+정보창
+#6
+하단 
+UI – 
+필요 미니몬
+기록도 
+10% 
+이상 또는 미니몬 보유 시
+Interactive O
+기록도 
+10% 
+미만 및 미니몬 미 보유 시
+Interactive O
+기록도 
+0% 
+및 미니몬 미 보유 시
+Interactive X
+기본적인 
+ICON
+은 미니몬 도감의 
+ICON
+과 동일하다
+.
+Button 
+기능 역시 동일하다
+. 
+(
+누를 시 해당 미니몬 정보
+)
+해당 미니몬의 
+‘
+ 현재 기록도 
+/ 
+최대 기록도 
+‘
+3
+단계
+:
+2
+단계
+:
+1
+단계
+:
+필요 
+미니몬이
+1 
+단계일 경우
+:
+Req_Minimon_SubText
+필요 
+미니몬이
+2 
+단계 이상일 경우
+:
+Minimon_MaxRank_Text
+현재 기록도 
+= 0  ,  &lt;color=red&gt;
+현재 기록도 
+&gt; 0 &amp; &lt; 100  ,  &lt;color=orange&gt;
+현재 기록도 
+= 100  ,  &lt;color=lime&gt;
+해당 미니몬의 능력치가 모두 
+SS 
+일 경우
+: &lt;color=lime&gt;
+그 외
+: &lt;color= 909090 &gt;
+오른쪽 위 체크 
+ICON
+은 아래 조건들이 하나 성립될 때마다 하나씩 초록색 
+(
+0AFF00
+) 
+으로 변한다
+.
+1. 
+해당 미니몬의 기록도 
+= 100.
+2. 
+해당 미니몬의 능력치가 모두 
+SS
+일 경우
+.
+Checkmark_01
+(color: BEBEBE , alpha: 150)
+(Outline: 000000, alpha: 220)
+Color: 0AFF00
+
+[MEDIA] image139.png, image140.png, image141.png, image142.png, image21.png, image22.png, image23.png
+
+===== SLIDE 49 =====
+능력 
+정보창
+#7
+하단 
+UI – 
+필요 장비
+기본적인 
+ICON
+은 내구도 표시 
+Icon
+과 강화 
+Outline
+를
+제외한 장비 
+Icon 
+과 동일하다
+. 
+(
+누를 시 해당 장비 정보
+)
+능력
+단계
+장비 착용
+유
+/
+무
+최대 강화도
+최대 내구도
++0
+X
+X
+O
+/
+X
++1
+O
+X
+X
++1
+O
+O
+X
++1
+O
+X
+O
++1
+X
+O
+X
++2
+O
+/
+X
+O
+O
+각 장비별로 장비 능력 단계는 아래와 같이 처리한다
+:
+( 
+능력 단계 총 합 
+0 
+일 시 능력 
+미보유
+ 처리
+)
+해금되었고 장비 보유 시
+Interactive: O
+해금되었지만 장비 
+미보유
+ 시
+Interactive: O
+장비 해금 전일 시
+Interactive: X
+Max_Enh_Text
+ , 
+(
+최대 강화도 시 
+&lt;color=lime&gt; , 
+그 외 
+909090)
+MAX_Dur_Text
+, 
+(
+장비 보유 시 및 최대 내구도 시 
+&lt;color=lime&gt; , 
+그 외 
+909090)
+오른쪽 위 체크 
+ICON
+은 아래 조건들이 하나 성립될 때마다 하나씩 초록색 
+(
+0AFF00
+) 
+으로 변한다
+.
+1. 
+해당 장비의 강화도가 최대 강화도 시
+.
+2. 
+해당 장비를 보유하고 있고 그 장비의 내구도가 최대 내구도 일 시
+.
+
+[MEDIA] image143.png, image144.png
+
+===== SLIDE 50 =====
+능력 
+정보창
+#8
+하단 
+UI – 
+필요 재료
+기본적인 
+ICON
+은 
+Item ICON
+과 동일하다
+.
+Button 
+기능 역시 동일하다
+. 
+(
+누를 시 해당 아이템 상세정보창
+)
+획득한 적이 있고 필요 개수보다 많을 시
+Interactive: O
+획득한 적이 있고 필요 개수보다 적을 시
+Interactive: O
+획득한 적이 없을 시 
+Interactive: O
+해당 아이템의 현재 보유량 
+/ 
+필요 보유량
+현재 보유량 
+= 0  ,  &lt;color=red&gt;
+현재 보유량 
+&gt; 0 &amp; &lt; 
+필요 보유량
+  ,  &lt;color=orange&gt;
+현재 보유량 
+&gt; 
+필요 보유량
+  ,  &lt;color=lime&gt;
+만약 재료로 등급을 올릴 수 있는 최대치에 도달 했을 경우
+UI
+가 아래와 같이 변경된다
+:
+Ability_MaxLevel_Text
+
+[MEDIA] image136.png, image145.png
+
+===== SLIDE 51 =====
+능력 
+정보창
+#9
+최하단 
+UI
+Mask 
+처리
+Spite(None) 
+(000000, alpha 150)
+Shop_frame_glow
+능력 
+정보창
+ 최하단에는
+3
+가지 버튼들
+이 존재한다
+.
+버튼의 
+UI 
+구성은 
+3 
+버튼 모두 동일하며
+다음과 같다
+:
+T_gray_button_s
+1
+2
+3
+버튼
+1
+Shop_frame_glow
+(Color: 000000)
+해당 능력을 
+NPC
+를 통해 배우거나 등급을 올릴 수 있을 경우 나타난다
+.
+그 외의 경우 나타나지 않는다
+.
+안의 
+TEXT
+는 해당 
+NPC
+가 있는 장소가 표기된다
+.
+버튼
+2
+Shop_frame_glow
+(Color: 8E5E00)
+해당 능력의 다음 등급이 존재할 경우 나타난다
+.
+그 외의 경우 나타나지 않는다
+.
+누를 시 해당 능력 설명 
+Text
+와 해당 버튼의 
+Text 
+가 변한다
+:
+Next_Level_Info_Text
+Outline 
+Cclor
+: F5A200
+Alpha: 145
+x 0.1, y -0.1
+누르기 전
+누른 후
+BackBtnText
+Text 
+중 변하는 숫자에
+&lt;color=yellow&gt;
+변하는 숫자 뒤에 
+“
+▶
+” 
+와 변한 후 숫자 표기
+만약 변한 후 숫자가 높을 경우
+&lt;color=lime&gt;
+만약 변한 후 숫자가 낮을 경우
+&lt;color=red&gt;
+※ 
+낮은 게 긍정일 수도 있는데
+, 
+그냥 긍정 부정으로 나눌 수 있는지
+?
+버튼
+3
+Shop_frame_glow
+(Color: 0036A6)
+Spite(None) 
+(000000, alpha 220)
+Memorized_Text_Full
+MemorizeText
+Outline 
+Cclor
+: 00DBFF
+Alpha: 130
+x 0.1, y -0.1
+
+[MEDIA] image146.png, image147.png, image148.png, image149.png, image15.png, image37.png
+
+===== SLIDE 38-39 (능력 기본정보, 설명글) =====
+능력 = 다른 게임의 [스킬].
+능력 종류(각 능력 1개 이상): 1.기술(물리공격력 영향) 2.마법(마법공격력 영향) 3.수비(최대체력/방어력 등 생존) 4.지원(자동물약/미니몬관심최대수증가/잡기성공확률증가/확정잡기필요횟수감소/경험치획득량증가 등 편의).
+기억력/재능: 플레이어는 [기억력] 수치 보유. 모든 능력은 [기억력 점유량] 보유. 점유량만큼 기억력을 점유해 능력 기억(적용). 잊으면 점유량만큼 기억력 회복. 점유량=0이면 [재능]=항시 적용.
+능력 획득: 장비능력(착용 시 기억=점유 안 함, 해제 시 사라짐; +9강화 시 기술창에 영구 잔존하되 점유 필요, 재착용 시 자동 무점유 기억; 동일능력 장비 2개+ +9 시 단계 상승), 그 외 장비+9/미니몬공명도100%/NPC재료/전직/도감별작업.
+능력 단계(Level): 모든 능력 단계 보유. 상승: a.장비+9·최대내구도 b.미니몬공명도100% c.NPC재료 d.전직 e.도감별 f.미니몬사냥.
+전투능력조건: 1.확률발동(모든 발동조건 뒤 "n% 확률로", 조건 1개+), 2.시간발동(쿨타임 스킬; 발동조건 충족 안 하면 쿨다운도 안 줆). 발동조건 예: 전투시작시/공격시/타격시/공격후/특정능력사용후/HP n%이하 최초/사망공격받음/치명타시/연속n타치명타/빗나감/상대회피/자신회피/연속n회피/피격시/체력회복시 + 전투중/비전투중/항시.

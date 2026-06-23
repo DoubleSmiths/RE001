@@ -248,7 +248,7 @@ public class UI_MinionInfoPopup : UI_Popup
         var nameTxt = GetText((int)Texts.MinionInfoPopupNameText);
         if (nameTxt != null && data != null)
         {
-            nameTxt.text = data.Name;
+            nameTxt.text = Util.Localize(data.Name);
             ApplyFont(nameTxt, Define.FontType.UI);
         }
 

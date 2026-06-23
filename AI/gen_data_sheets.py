@@ -16,12 +16,12 @@ def cell(v):
 # 각 시트: (출력파일명, JSON파일, 루트키, [(필드, 타입, 한글설명), ...])
 SHEETS = [
  ("SkillData","SkillData.json","skills",[
-   ("DataId","int","능력 고유 ID"),("Name","string","이름(한)"),("Description","string","설명(한)"),
-   ("NameEng","string","이름(영)"),("DescEng","string","설명(영)"),("IconLabel","string","아이콘 라벨"),
+   ("DataId","int","능력 고유 ID"),("Name","string","이름(로컬키)"),("Description","string","설명(로컬키)"),
+   ("IconLabel","string","아이콘 라벨"),
    ("Category","enum","분류(Talent 등)"),("SkillActiveType","enum","Active/Passive"),
    ("StatType","string","버프 대상 스탯"),("StatBonus","float","레벨당 버프 수치"),
    ("MaxLevel","int","최대 등급"),("MemoryCapacity","int","기억력 점유(0=재능)"),
-   ("Story","string","능력 이야기(한)"),("StoryEng","string","능력 이야기(영)"),
+   ("Story","string","능력 이야기(로컬키)"),
    ("Source","enum","출처(Class/Minion/Equip/Npc/Unlimited)"),
    ("RequiredMinionId","int","요구 미니몬 CreatureId"),("RequiredEquipId","int","요구 장비 DataId"),
    ("RequiredItemId","int","요구 재료 ItemId"),("RequiredItemCount","int","요구 재료 개수"),

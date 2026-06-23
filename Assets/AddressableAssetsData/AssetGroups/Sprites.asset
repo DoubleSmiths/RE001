@@ -45,6 +45,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0672302fc59f31b49abace076970d649
+    m_Address: goblin_monster_0.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0943612c897f31a42a59c5d56596860c
     m_Address: Item_x2_Chance Icon.sprite
     m_ReadOnly: 0
@@ -713,6 +719,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: da2ef78cb76ac474a85f9d4e7322ec01
     m_Address: arrow_down.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da73381e55fbc434196ff9bc554bc2e5
+    m_Address: slime_monster_0.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

@@ -38,10 +38,10 @@ public class DataTransformer : EditorWindow
     const string GSHEET_TRAVEL         = "https://docs.google.com/spreadsheets/d/1tGg8DlSGerZfHrF8uG_UhyqRS1yWv1zw/export?format=xlsx";
 
     // 추가 마스터데이터 7종 (2026-06-21 신규 구글시트화 — RE001_DataSheets 폴더)
-    const string GSHEET_SKILL          = "https://docs.google.com/spreadsheets/d/1m-Fo0wuaFa7udlhIjJYLbjTEJScAEIrXkJWfMvAuw1E/export?format=xlsx";
-    const string GSHEET_EQUIPMENT      = "https://docs.google.com/spreadsheets/d/1SYwQcNksa18_bE_YDtoIYeICmojIv8ar-7hK99sTe8g/export?format=xlsx";
+    const string GSHEET_SKILL          = "https://docs.google.com/spreadsheets/d/1MdCPOLzHsrs152wQPYjTDnOVa6d39WDgHxlzQTynrxI/export?format=xlsx";
+    const string GSHEET_EQUIPMENT      = "https://docs.google.com/spreadsheets/d/1whc3zc8QbTUPmYmOzuTg6rjT1qHhqT5p6e_5TwLheO8/export?format=xlsx";
     const string GSHEET_EQUIP_ENHANCE  = "https://docs.google.com/spreadsheets/d/1ap5hc5wd9tibBwgdXNugpOKKCDj7UO1zn1f9dXCySeo/export?format=xlsx";
-    const string GSHEET_MINMON         = "https://docs.google.com/spreadsheets/d/1lhCPKyTso9Pi0F29L8AIpAodxyBR6pgk1nkCft-_fQo/export?format=xlsx";
+    const string GSHEET_MINMON         = "https://docs.google.com/spreadsheets/d/1EHzVXcUWj91sTpkSWIZ77gHqlxRl5jHKyUdvqM6DOfM/export?format=xlsx";
     const string GSHEET_HP_POTION      = "https://docs.google.com/spreadsheets/d/1pajVmT0PUAvIFbxSHjdjHzW0Gd70X8mxxqgLawTrLA0/export?format=xlsx";
     const string GSHEET_SPEED_POTION   = "https://docs.google.com/spreadsheets/d/1rhlNcgm5_5vILUU4GWFadcdaK3Fu0y1j3WE4MifWakU/export?format=xlsx";
     const string GSHEET_COMBO          = "https://docs.google.com/spreadsheets/d/1VjtZ0xrGKncXn0-dCiYFbVN5NdxL_1gct-VmGVj4GC0/export?format=xlsx";
@@ -1208,38 +1208,36 @@ public class DataTransformer : EditorWindow
         {
             var row = rows[y];
             if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            // 영문컬럼(NameEng/DescEng/StoryEng) 제거 — Name/Description/Story는 LocalizationData 키.
             var d = new SkillData();
             d.DataId            = ConvertValue<int>(C(row, 0));
             d.Name              = C(row, 1);
             d.Description       = C(row, 2);
-            d.NameEng           = C(row, 3);
-            d.DescEng           = C(row, 4);
-            d.IconLabel         = C(row, 5);
-            d.Category          = ConvertValue<SkillCategory>(C(row, 6));
-            d.SkillActiveType   = ConvertValue<SkillActiveType>(C(row, 7));
-            d.StatType          = C(row, 8);
-            d.StatBonus         = ConvertValue<float>(C(row, 9));
-            d.MaxLevel          = ConvertValue<int>(C(row, 10));
-            d.MemoryCapacity    = ConvertValue<int>(C(row, 11));
-            d.Story             = C(row, 12);
-            d.StoryEng          = C(row, 13);
-            d.Source            = ConvertValue<AbilitySource>(C(row, 14));
-            d.RequiredMinionId  = ConvertValue<int>(C(row, 15));
-            d.RequiredEquipId   = ConvertValue<int>(C(row, 16));
-            d.RequiredItemId    = ConvertValue<int>(C(row, 17));
-            d.RequiredItemCount = ConvertValue<int>(C(row, 18));
-            d.NpcLocation       = C(row, 19);
-            d.RoleTypes         = CsvStr(C(row, 20));
-            d.TriggerType       = ConvertValue<AbilityTrigger>(C(row, 21));
-            d.Conditions        = Csv<AbilityCondition>(C(row, 22));
-            d.ProcChance        = string.IsNullOrEmpty(C(row, 23)) ? 100f : ConvertValue<float>(C(row, 23));
-            d.Cooldown          = ConvertValue<float>(C(row, 24));
-            d.ActiveContext     = ConvertValue<AbilityContext>(C(row, 25));
-            d.ConditionValue    = ConvertValue<float>(C(row, 26));
-            d.Effect            = ConvertValue<AbilityEffect>(C(row, 27));
-            d.EffectStat        = C(row, 28);
-            d.EffectValue       = ConvertValue<float>(C(row, 29));
-            d.EffectDuration    = ConvertValue<float>(C(row, 30));
+            d.IconLabel         = C(row, 3);
+            d.Category          = ConvertValue<SkillCategory>(C(row, 4));
+            d.SkillActiveType   = ConvertValue<SkillActiveType>(C(row, 5));
+            d.StatType          = C(row, 6);
+            d.StatBonus         = ConvertValue<float>(C(row, 7));
+            d.MaxLevel          = ConvertValue<int>(C(row, 8));
+            d.MemoryCapacity    = ConvertValue<int>(C(row, 9));
+            d.Story             = C(row, 10);
+            d.Source            = ConvertValue<AbilitySource>(C(row, 11));
+            d.RequiredMinionId  = ConvertValue<int>(C(row, 12));
+            d.RequiredEquipId   = ConvertValue<int>(C(row, 13));
+            d.RequiredItemId    = ConvertValue<int>(C(row, 14));
+            d.RequiredItemCount = ConvertValue<int>(C(row, 15));
+            d.NpcLocation       = C(row, 16);
+            d.RoleTypes         = CsvStr(C(row, 17));
+            d.TriggerType       = ConvertValue<AbilityTrigger>(C(row, 18));
+            d.Conditions        = Csv<AbilityCondition>(C(row, 19));
+            d.ProcChance        = string.IsNullOrEmpty(C(row, 20)) ? 100f : ConvertValue<float>(C(row, 20));
+            d.Cooldown          = ConvertValue<float>(C(row, 21));
+            d.ActiveContext     = ConvertValue<AbilityContext>(C(row, 22));
+            d.ConditionValue    = ConvertValue<float>(C(row, 23));
+            d.Effect            = ConvertValue<AbilityEffect>(C(row, 24));
+            d.EffectStat        = C(row, 25);
+            d.EffectValue       = ConvertValue<float>(C(row, 26));
+            d.EffectDuration    = ConvertValue<float>(C(row, 27));
             loader.skills.Add(d);
         }
         WriteJsonStr("SkillData", loader);

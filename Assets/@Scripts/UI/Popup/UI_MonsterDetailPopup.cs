@@ -196,7 +196,7 @@ public class UI_MonsterDetailPopup : UI_Popup
         //  - 기호: 이름/서식지 = "○", 그 외 능력치 = "◆"
         //  - 색: 86FFFA (분석률만 기록도 색 별도)
         bool u = statsUnlocked && data != null;
-        SetStatLine(Texts.MonsterDetailPopupNameText, "○", LocalizeKey.MinimonNameText,        u ? data.Name                            : "???");
+        SetStatLine(Texts.MonsterDetailPopupNameText, "○", LocalizeKey.MinimonNameText,        u ? Util.Localize(data.Name)             : "???");
         SetHabitat(u ? data : null);
         SetStatLine(Texts.MonsterDetailPopupHPText,   "◆", LocalizeKey.MaxHitPointText,        u ? Fmt(data.MaxHp)                      : "???");
         SetStatLine(Texts.MonsterDetailPopupDEFText,  "◆", LocalizeKey.DefenseText,            u ? Fmt(data.Def)                        : "???");

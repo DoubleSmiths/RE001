@@ -1,11 +1,6 @@
 ﻿{
   "entries": [
     {
-      "TextKey": "SummonText",
-      "Kor": "부르기",
-      "Eng": "SUMMON"
-    },
-    {
       "TextKey": "TravelBtnText",
       "Kor": "여정",
       "Eng": "TRAVEL"
@@ -59,6 +54,11 @@
       "TextKey": "LevelText",
       "Kor": "등급",
       "Eng": "LEVEL"
+    },
+    {
+      "TextKey": "StartText",
+      "Kor": "시작",
+      "Eng": ""
     },
     {
       "TextKey": "BtmCharacterBtnText",
@@ -421,6 +421,81 @@
       "Eng": "TALENT"
     },
     {
+      "TextKey": "Unlimited_Potential_Text",
+      "Kor": "무한한 잠재력",
+      "Eng": "UNLIMITED POTENTIAL"
+    },
+    {
+      "TextKey": "Unlimited_Potential_Desc_Text",
+      "Kor": "이 능력의 잠재력은 무궁무진하며\n배우는 길 또한 끝이 없습니다.\n하나씩 차근차근 배워나가 봅시다.",
+      "Eng": "This ability has unlimited potential,\nand the paths to learning it are endless.\nDo not hesitate. Take your time.\nTime will be on your side."
+    },
+    {
+      "TextKey": "Req_Minimon_Text",
+      "Kor": "필요 미니몬",
+      "Eng": "REQ.MINIMON"
+    },
+    {
+      "TextKey": "Req_Minimon_SubText",
+      "Kor": "미니몬 또는\n기록도 필요",
+      "Eng": "REQ.MINIMON\nOR LOG"
+    },
+    {
+      "TextKey": "Minimon_MaxRank_Text",
+      "Kor": "최상등급",
+      "Eng": "SS.RANK"
+    },
+    {
+      "TextKey": "Req_Equip_Text",
+      "Kor": "필요 장비",
+      "Eng": "REQ.EQUIPMENT"
+    },
+    {
+      "TextKey": "Req_Item_Text",
+      "Kor": "필요 재료",
+      "Eng": "REQ.ITEM"
+    },
+    {
+      "TextKey": "Class_Ability_Text",
+      "Kor": "직업 능력",
+      "Eng": "CLASS ABILITY"
+    },
+    {
+      "TextKey": "Max_Enh_Text",
+      "Kor": "최대 강화",
+      "Eng": "MAX ENH."
+    },
+    {
+      "TextKey": "MAX_Dur_Text",
+      "Kor": "최대 내구도",
+      "Eng": "MAX DUR."
+    },
+    {
+      "TextKey": "Ability_MaxLevel_Text",
+      "Kor": "- 최대 등급 -",
+      "Eng": "- MAX LEVEL -"
+    },
+    {
+      "TextKey": "Next_Level_Info_Text",
+      "Kor": "다음등급 정보",
+      "Eng": "NEXT LEVEL\nINFO"
+    },
+    {
+      "TextKey": "MemorizeText",
+      "Kor": "기억하기",
+      "Eng": "MEMORIZE"
+    },
+    {
+      "TextKey": "Lack_Memory_Text",
+      "Kor": "기억력 부족",
+      "Eng": "NEED MORE\nMEMORY"
+    },
+    {
+      "TextKey": "NextLevelInfoBtnText",
+      "Kor": "다음등급 정보 ",
+      "Eng": "NEXT GRADE "
+    },
+    {
       "TextKey": "MinimonCodexText",
       "Kor": "미니몬 도감",
       "Eng": "MINIMON CODEX"
@@ -631,6 +706,21 @@
       "Eng": "Hmm..\nNothing changed this time.\nLet's try again!"
     },
     {
+      "TextKey": "SummonText",
+      "Kor": "부르기",
+      "Eng": "SUMMON"
+    },
+    {
+      "TextKey": "MemorizeBtnText",
+      "Kor": "기억하기",
+      "Eng": "MEMORIZE"
+    },
+    {
+      "TextKey": "MyMinimon",
+      "Kor": "나의 미니몬 ",
+      "Eng": "MY MINIMON"
+    },
+    {
       "TextKey": "PlaceEverywhereText",
       "Kor": "모든 장소",
       "Eng": "EVERYWHERE"
@@ -651,14 +741,24 @@
       "Eng": "BREEZEWOOD ENTRANCE"
     },
     {
+      "TextKey": "PlaceNameBWF0Text",
+      "Kor": "산들바람 숲(초입) ",
+      "Eng": "BREEZEWOOD ENTRY"
+    },
+    {
+      "TextKey": "PlaceNameBWF1Text",
+      "Kor": "산들바람 숲(숲길) ",
+      "Eng": "BREEZEWOOD PATH"
+    },
+    {
       "TextKey": "PlaceNameBWF2Text",
-      "Kor": "산들바람 숲(갈림길)",
-      "Eng": "BREEZEWOOD CROSSROADS"
+      "Kor": "산들바람 숲(초입) ",
+      "Eng": "BREEZEWOOD ENTRY"
     },
     {
       "TextKey": "PlaceNameBWF3Text",
-      "Kor": "산들바람 숲(중심부)",
-      "Eng": "BREEZEWOOD HEART"
+      "Kor": "산들바람 숲(숲길) ",
+      "Eng": "BREEZEWOOD PATH"
     },
     {
       "TextKey": "RarityBasicText",
@@ -1036,74 +1136,294 @@
       "Eng": "NEW"
     },
     {
-      "TextKey": "Class_Ability_Text",
-      "Kor": "직업 기술",
-      "Eng": "CLASS SKILL"
+      "TextKey": "BeastiaryText",
+      "Kor": "마물 도감",
+      "Eng": "BESTIARY"
     },
     {
-      "TextKey": "Req_Minimon_Text",
-      "Kor": "미니몬 필요",
-      "Eng": "REQ. MINIMON"
+      "TextKey": "SlimeNameText",
+      "Kor": "슬라임",
+      "Eng": "SLIME"
     },
     {
-      "TextKey": "Req_Equip_Text",
-      "Kor": "장비 필요",
-      "Eng": "REQ. EQUIP"
+      "TextKey": "RabiSlimeNameText",
+      "Kor": "라비 슬라임",
+      "Eng": "RABI SLIME"
     },
     {
-      "TextKey": "Req_Item_Text",
-      "Kor": "필요 재료",
-      "Eng": "REQ. ITEMS"
+      "TextKey": "GoblinNameText",
+      "Kor": "고블린",
+      "Eng": "GOBLIN"
     },
     {
-      "TextKey": "Unlimited_Potential_Text",
-      "Kor": "무한한 잠재력",
-      "Eng": "UNLIMITED POTENTIAL"
+      "TextKey": "Skill5009NameText",
+      "Kor": "물약 주입기",
+      "Eng": "Potion Injector"
     },
     {
-      "TextKey": "Unlimited_Potential_Desc_Text",
-      "Kor": "이 기술의 잠재력은 무궁무진하며\n배우는 길 또한 끝이 없습니다.\n하나씩 차근차근 배워봅시다.",
-      "Eng": "This skill has unlimited potential,\nand the path to learning it is endless.\nLet us learn it one step at a time."
+      "TextKey": "Skill5009DescText",
+      "Kor": "전투 중 HP가 설정 비율 이하로 떨어지면 회복 물약을 자동으로 사용한다.",
+      "Eng": "Automatically uses a recovery potion when HP drops below the set ratio in battle."
     },
     {
-      "TextKey": "Minimon_MaxRank_Text",
-      "Kor": "최상등급",
-      "Eng": "MAX RANK"
+      "TextKey": "Skill5001NameText",
+      "Kor": "기억 확장",
+      "Eng": "Memory Expansion"
     },
     {
-      "TextKey": "Req_Minimon_SubText",
-      "Kor": "최상등급",
-      "Eng": "MAX RANK"
+      "TextKey": "Skill5001DescText",
+      "Kor": "최대 기억력을 늘려주는 재능. 항시 적용된다.",
+      "Eng": "A talent that increases max memory. Always active."
     },
     {
-      "TextKey": "Max_Enh_Text",
-      "Kor": "최대 강화",
-      "Eng": "MAX ENHANCE"
+      "TextKey": "Skill5002NameText",
+      "Kor": "힘의 기억",
+      "Eng": "Memory of Strength"
     },
     {
-      "TextKey": "MAX_Dur_Text",
-      "Kor": "최대 내구도",
-      "Eng": "MAX DURABILITY"
+      "TextKey": "Skill5002DescText",
+      "Kor": "물리 공격력을 증가시킨다.",
+      "Eng": "Increases physical attack."
     },
     {
-      "TextKey": "Ability_MaxLevel_Text",
-      "Kor": "- 최대 등급 -",
-      "Eng": "- MAX GRADE -"
+      "TextKey": "Skill5002StoryText",
+      "Kor": "두드릴수록 단단해지는 강철처럼,\n 반복된 단련이 힘으로 새겨진다.",
+      "Eng": "Like steel forged by strikes,\n training is carved into strength."
     },
     {
-      "TextKey": "NextLevelInfoBtnText",
-      "Kor": "다음등급 정보",
-      "Eng": "NEXT GRADE"
+      "TextKey": "Skill5003NameText",
+      "Kor": "치명의 기억",
+      "Eng": "Memory of Critical"
     },
     {
-      "TextKey": "MemorizeBtnText",
-      "Kor": "기억하기",
-      "Eng": "MEMORIZE"
+      "TextKey": "Skill5003DescText",
+      "Kor": "치명타 확률을 증가시킨다.",
+      "Eng": "Increases critical rate."
     },
     {
-      "TextKey": "Lack_Memory_Text",
-      "Kor": "기억력 부족",
-      "Eng": "LACK MEMORY"
+      "TextKey": "Skill5003StoryText",
+      "Kor": "급소를 노리는 한 줄기 호흡.\n 그 떨림을 기억해 둔다.",
+      "Eng": "A single breath aimed at the weak point.\n Remember that tremor."
+    },
+    {
+      "TextKey": "Skill5004NameText",
+      "Kor": "강철의 기억",
+      "Eng": "Memory of Steel"
+    },
+    {
+      "TextKey": "Skill5004DescText",
+      "Kor": "최대 체력을 증가시킨다.",
+      "Eng": "Increases max HP."
+    },
+    {
+      "TextKey": "Skill5004StoryText",
+      "Kor": "여행자의 몸은 길 위에서 단단해진다.\n 버텨낸 만큼이 곧 그릇이 된다.",
+      "Eng": "A traveler's body hardens on the road.\n What you endure becomes your vessel."
+    },
+    {
+      "TextKey": "Skill7000NameText",
+      "Kor": "종을 초월한 교감",
+      "Eng": "Bond Beyond Species"
+    },
+    {
+      "TextKey": "Skill7000DescText",
+      "Kor": "도감 완성도 보상. 명중률을 높이는 재능.",
+      "Eng": "Codex completion reward. A talent that increases accuracy."
+    },
+    {
+      "TextKey": "Skill7001NameText",
+      "Kor": "조련사의 기술",
+      "Eng": "Tamer's Technique"
+    },
+    {
+      "TextKey": "Skill7001DescText",
+      "Kor": "도감 완성도 보상. 치명타 확률을 높이는 재능.",
+      "Eng": "Codex completion reward. A talent that increases critical rate."
+    },
+    {
+      "TextKey": "Skill7002NameText",
+      "Kor": "오다 주웠습니다 주인님!",
+      "Eng": "Found It, Master!"
+    },
+    {
+      "TextKey": "Skill7002DescText",
+      "Kor": "도감 완성도 보상. 물리 공격력을 높이는 재능.",
+      "Eng": "Codex completion reward. A talent that increases physical attack."
+    },
+    {
+      "TextKey": "Skill6001NameText",
+      "Kor": "젤리의 가호",
+      "Eng": "Jelly's Blessing"
+    },
+    {
+      "TextKey": "Skill6001DescText",
+      "Kor": "젤리 퐁의 고유기술. 최대 체력을 늘린다.",
+      "Eng": "Jelly Pong's unique skill. Increases max HP."
+    },
+    {
+      "TextKey": "Skill6001StoryText",
+      "Kor": "젤리 퐁의 말랑한 가호.\n 곁에 두면 어쩐지 든든하다.",
+      "Eng": "Jelly Pong's squishy blessing.\n Somehow reassuring to have near."
+    },
+    {
+      "TextKey": "Skill6002NameText",
+      "Kor": "토끼의 민첩",
+      "Eng": "Rabbit's Agility"
+    },
+    {
+      "TextKey": "Skill6002DescText",
+      "Kor": "라비 슬라임의 고유기술. 공격속도를 높인다.",
+      "Eng": "Rabi Slime's unique skill. Increases attack speed."
+    },
+    {
+      "TextKey": "Skill5005NameText",
+      "Kor": "반격의 의지",
+      "Eng": "Will of Counter"
+    },
+    {
+      "TextKey": "Skill5005DescText",
+      "Kor": "피격 시 일정 확률로 적에게 반격한다.",
+      "Eng": "Chance to counterattack when hit."
+    },
+    {
+      "TextKey": "Skill5006NameText",
+      "Kor": "생명의 리듬",
+      "Eng": "Rhythm of Life"
+    },
+    {
+      "TextKey": "Skill5006DescText",
+      "Kor": "전투 중 주기적으로 체력을 회복한다.",
+      "Eng": "Periodically restores HP in battle."
+    },
+    {
+      "TextKey": "Skill5007NameText",
+      "Kor": "전투의 투지",
+      "Eng": "Battle Spirit"
+    },
+    {
+      "TextKey": "Skill5007DescText",
+      "Kor": "전투 시작 시 일정 시간 물리 공격력이 증가한다.",
+      "Eng": "Physical attack rises for a while at battle start."
+    },
+    {
+      "TextKey": "Skill5008NameText",
+      "Kor": "막판 분노",
+      "Eng": "Last Stand"
+    },
+    {
+      "TextKey": "Skill5008DescText",
+      "Kor": "체력이 30% 이하로 떨어지면 치명타 확률이 크게 오른다. (전투당 1회)",
+      "Eng": "Critical rate surges when HP drops below 30%. (Once per battle)"
+    },
+    {
+      "TextKey": "Skill5012NameText",
+      "Kor": "포획의 직감",
+      "Eng": "Catcher's Instinct"
+    },
+    {
+      "TextKey": "Skill5012DescText",
+      "Kor": "미니몬 잡기 성공 확률이 증가한다.",
+      "Eng": "Increases minion catch success rate."
+    },
+    {
+      "TextKey": "Skill5012StoryText",
+      "Kor": "발자국의 깊이, 숨결의 결.\n 사냥꾼은 직감으로 안다.",
+      "Eng": "발자국의 깊이, 숨결의 결.\n 사냥꾼은 직감으로 안다."
+    },
+    {
+      "TextKey": "Skill5010NameText",
+      "Kor": "조련의 효율",
+      "Eng": "Taming Efficiency"
+    },
+    {
+      "TextKey": "Skill5010DescText",
+      "Kor": "확정 포획에 필요한 길들이기 횟수가 감소한다.",
+      "Eng": "Reduces tame attempts needed for a guaranteed catch."
+    },
+    {
+      "TextKey": "Skill5010StoryText",
+      "Kor": "급할수록 돌아가라.\n 허나 길은 점점 짧아진다.",
+      "Eng": "급할수록 돌아가라.\n 허나 길은 점점 짧아진다."
+    },
+    {
+      "TextKey": "Skill5011NameText",
+      "Kor": "탐험가의 경험",
+      "Eng": "Explorer's Experience"
+    },
+    {
+      "TextKey": "Skill5011DescText",
+      "Kor": "경험치 획득량이 증가한다.",
+      "Eng": "Increases experience gained."
+    },
+    {
+      "TextKey": "Skill5011StoryText",
+      "Kor": "걸어온 길은 모두 양분이 된다.",
+      "Eng": "걸어온 길은 모두 양분이 된다."
+    },
+    {
+      "TextKey": "Skill5013NameText",
+      "Kor": "만능의 기억",
+      "Eng": "Memory of Versatility"
+    },
+    {
+      "TextKey": "Skill5013DescText",
+      "Kor": "여러 종류의 능력을 겸비한다.",
+      "Eng": "Combines multiple ability types."
+    },
+    {
+      "TextKey": "Skill5013StoryText",
+      "Kor": "한 길만 걷지 않은 자의 흔적.",
+      "Eng": "한 길만 걷지 않은 자의 흔적."
+    },
+    {
+      "TextKey": "Skill5014NameText",
+      "Kor": "이중의 기억",
+      "Eng": "Dual Memory"
+    },
+    {
+      "TextKey": "Skill5014DescText",
+      "Kor": "두 종류의 능력을 겸비한다.",
+      "Eng": "Combines two ability types."
+    },
+    {
+      "TextKey": "Skill5014StoryText",
+      "Kor": "두 갈래의 길을 함께 걷는다.",
+      "Eng": "두 갈래의 길을 함께 걷는다."
+    },
+    {
+      "TextKey": "Skill5015NameText",
+      "Kor": "전능의 기억",
+      "Eng": "Omni Memory"
+    },
+    {
+      "TextKey": "Skill5015DescText",
+      "Kor": "네 종류의 능력을 모두 겸비한다.",
+      "Eng": "Combines all four ability types."
+    },
+    {
+      "TextKey": "Skill5015StoryText",
+      "Kor": "모든 길의 끝에서 만나는 자.",
+      "Eng": "모든 길의 끝에서 만나는 자."
+    },
+    {
+      "TextKey": "UniqueSkillText",
+      "Kor": "고유 기술 ",
+      "Eng": "UNIQUE SKILL"
+    },
+    {
+      "TextKey": "Equip30001NameText",
+      "Kor": "여행자의 검",
+      "Eng": "Traveler's Sword"
+    },
+    {
+      "TextKey": "Minmon2001NameText",
+      "Kor": "젤리 퐁",
+      "Eng": "Jelly Pong"
+    },
+    {
+      "TextKey": "Minmon2002NameText",
+      "Kor": "라비 슬라임",
+      "Eng": "Rabi Slime"
     }
   ]
 }

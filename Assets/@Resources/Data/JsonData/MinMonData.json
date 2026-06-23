@@ -2,7 +2,7 @@
   "minMons": [
     {
       "DataId": 2001,
-      "Name": "젤리 퐁",
+      "Name": "Minmon2001NameText",
       "IconLabel": "",
       "PrefabLabel": "",
       "PetAnimLabel": "Pet_Slime(Green)",
@@ -18,7 +18,7 @@
     },
     {
       "DataId": 2002,
-      "Name": "라비 슬라임",
+      "Name": "Minmon2002NameText",
       "IconLabel": "",
       "PrefabLabel": "",
       "PetAnimLabel": "Pet_Slime(Green)",
@@ -31,6 +31,22 @@
       "CritGrade": "E",
       "MaxTameCount": 12,
       "CatchChance": 0.08
+    },
+    {
+      "DataId": 2003,
+      "Name": "GoblinNameText",
+      "IconLabel": "goblin_monster_0",
+      "PrefabLabel": "Monster",
+      "PetAnimLabel": "Goblin",
+      "MonsterDataId": 2003,
+      "BaseAtk": 8.0,
+      "BaseAtkSpeed": 100.0,
+      "BaseCritRate": 0.0,
+      "AtkGrade": "E",
+      "AtkSpeedGrade": "E",
+      "CritGrade": "E",
+      "MaxTameCount": 10,
+      "CatchChance": 0.1
     }
   ]
 }

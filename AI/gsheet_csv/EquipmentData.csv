@@ -1,4 +1,4 @@
 DataId,Name,SlotType,Grade,SpriteName,MaxDurability,BaseAtk,BaseCritRate,BaseMagicAtk
 int,string,enum,enum,string,int,int,float,int
-장비 고유 ID,이름,부위(Weapon 등),등급(Basic 등),스프라이트,최대 내구도,기본 물리공격,기본 치명타율,기본 마법공격
-30001,여행자의 검,Weapon,Basic,Sword01,100,10,0.0,0
+장비 고유 ID,이름(로컬키),부위(Weapon 등),등급(Basic 등),스프라이트,최대 내구도,기본 물리공격,기본 치명타율,기본 마법공격
+30001,Equip30001NameText,Weapon,Basic,Sword01,100,10,0.0,0

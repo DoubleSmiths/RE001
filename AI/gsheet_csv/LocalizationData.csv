@@ -1,0 +1,456 @@
+TextKey,Kor,Eng
+BeastiaryText,마물 도감,BESTIARY
+SlimeNameText,슬라임,SLIME
+RabiSlimeNameText,라비 슬라임,RABI SLIME
+GoblinNameText,고블린,GOBLIN
+SummonText,부르기,SUMMON
+TravelBtnText,여정,TRAVEL
+ExitBtnText,나가기,EXIT
+TalkBtnText,대화,TALK
+ItemNeededText,필요 재료,REQ. ITEMS
+NeedMatsText,재료부족,NEED MATS
+DescriptionText,설명,DESCRIP
+NextInfoText,다음단계 정보,NEXT INFO
+BackBtnText,뒤로,BACK
+CraftText,제작,CRAFT
+RankText,단계,RANK
+LevelText,등급,LEVEL
+BtmCharacterBtnText,상태,CHAR
+BtmInventoryBtnText,가방,BAG
+BtmPotionBtnText,물약,POTION
+BtmEquipmentBtnText,장비,EQUIP
+BtmSkillBtnText,능력,ABILITY
+BtmMinimonCodexBtnText,미니몬,MINI
+GuildText,모험가협회,ADV.GUILD
+QuestText,임무,QUEST
+AlchemyText,연금공방,ALCHEMY
+CommissionText,제작의뢰,COMMISSION
+MonasteryText,수도원,MONASTERY
+AnointmentText,축성,ANOINT
+SmithyText,대장간,SMITHY
+ForgeText,단조,FORGE
+StrengthText,근력,STR
+VitialityText,체력,VIT
+AgilityText,민첩,AGI
+MagicText,마력,MAG
+AttackPowerText,공격력,ATK
+PhysicalAttackText,물리공격력,P.ATK
+MagicalAttackText,마법공격력,M.ATK
+CriticalText,치명타,CRIT
+CriticalDamageText,치명타피해,C.DMG
+AccuracyText,명중률,ACC
+AttackSpeedText,공격속도,AS
+MaxHitPointText,최대체력,MaxHP
+DefenseText,방어력,DEF
+PhysicalResistanceText,물리저항,P.RES
+MagicalResistanceText,마법저항,M.RES
+EvadeText,회피율,EVD
+RecoveryText,회복력,RECOV
+ExperienceGainText,성장률,EXP GAIN
+DropRateText,획득률,DROP RATE
+FlatRecovText,기본 회복량,FLAT RECOV.
+MaxHPRecovText,최대 체력 회복량,MAX HP RECOV.
+TotalRecovText,총 회복량,TOTAL RECOV.
+PotionCDText,재생산시간,COOLDOWN
+BaseStatText,기본,BASE
+SPDBonusText,공격 가속률,SPD BONUS
+DurationText,지속시간,DURATION
+SecondsUnitText,초,s
+IncreseStatText,증가율,INCRE
+BoostStatText,증폭률,BOOST
+DmgBoostText,피해증폭,F.DMG
+PlayerLvPrefix,LV.,LV.
+CharPopupTitleText,상태정보,CHARACTER
+CharPopupStatPointText,능력점수,POINTS
+CharPopupElixirText,달빛영약,ELIXIR
+CharPopupAttributeDetailText,능력 상세정보,ATTRIBUTE DETAIL
+CharPopupOffenseText,공격,OFFENSE
+CharPopupDefenseText,수비,DEFENSE
+CharPopupUtilityText,보조,GENERAL
+TownText,마을,TOWN
+ExploreText,탐험,EXPLORE
+CurrentLocationText,현재 위치,CURRENT LOCATION
+HeadOutText,이동,HEAD OUT
+AbilityCodex_TitleText,능력 목록,ABILITY CODEX
+AbilityCodex_BtmText_All,전체,ALL
+AbilityCodex_BtmText_Skill,기술,SKILL
+AbilityCodex_BtmText_Spell,마법,SPELL
+AbilityCodex_BtmText_Def,방어,DEF
+AbilityCodex_BtmText_Util,지원,UTIL
+AbilityCodex_TopText_All,전체 능력,ALL ABILITIES
+AbilityCodex_TopText_Skill,물리 능력,PHYSICAL
+AbilityCodex_TopText_Spell,마법 능력,MAGICAL
+AbilityCodex_TopText_Def,생존 능력,SURVIVAL
+AbilityCodex_TopText_Util,지원 능력,UTILITY
+Memorized_Text_Short,기억중,MEMOR
+Memorized_Text_Full,기억중,MEMORIZED
+AbilityMaster_Text,완벽숙달,MASTERED
+AbilityDetails_TitleText,능력 정보,ABILITY DETAILS
+TalentText,재능,TALENT
+MinimonCodexText,미니몬 도감,MINIMON CODEX
+CompletionText,완성도,COMPLETION
+CatchMinimonTitleText,미니몬 잡기,CATCH
+CatchMinimonStartText1,앗! 야생의 ,Wild 
+CatchMinimonStartText2, 이(가) 나타났다!, appeared!
+LureBtnText,▶길들인다!,▶LURE!
+CatchSuccessRateText,성공확률: ,SUCCESS RATE: 
+CatchSuccessAtText, 번째에 확정, GUARANTEED
+GuaranteedCatchText,<color=lime>확정 길들이기!</color>,<color=lime> GUARANTEED!</color>
+GoMandrakeBtnText,"▶가랏!
+   만드라고라!","▶Go!
+  Mandrake!"
+ReqMandrakeText,필요: 1개의,REQ: 1 of
+TryLureText,당신는(은) 매력발산!를(을) 사용했다!,You used WORK YOUR CHARM!
+LureNotEffectiveText,에게는 효과가 없는 듯 하다..,It's not very effective..
+LureEffectiveText,효과는 뛰어났다!,It's super effective!
+LureFailText,이(는) 당신이 한심하다는 듯 돌아가 버렸다.., turned away as if you were pathetic.
+LureSuccessText1,신난다! ,All right! 
+LureSuccessText2,이를(을) 잡았다!, was caught!
+GoMandrakeText,가랏! 만드라고라!,Go! Mandrake!
+EatMandrakeText,(은)는 순식간에 그것을 먹어 치웠다!, ate it in an instant!
+MinimonEntryText,미니몬 기록,MINIMON ENTRY
+LinkText,공명도,LINK
+LinkSkillText,공명 기술,LINK SKILL
+Link100RequiredText,"공명도
+100% 필요","REQUIRES
+100% LINK"
+InfoAndStatsText,기초 정보 & 확률,INFO & STATS
+MinimonNameText,이름,NAME
+HabitatText,서식지,HABITAT
+EXPText,경험치,EXP
+EncounterText,등장확률,ENCOUNTER
+AttentionRateText,관심확률,ATTENTION
+LogText,기록도,LOG
+LogCompletionText,이 미니몬의 물품 획득 & 관심 확률 + ,THIS MINIMON'S DROP & ATTRACT + 
+LootText,전리품,LOOT
+MyMinimonText,나의 미니몬,MY MINIMON
+RequireMinimonText,미니몬 필요,REQ. MINIMON
+MinimonSkillLockedText,"미니몬 보유 또는
+기록 완성 필요","MINIMON OWNED
+/ COMPLETE LOG"
+ParticalGetText,부분획득,PARTICAL
+CompleteGetText,완전획득,COMPLETE
+FollowText,함께하기,FOLLOW
+FollowingText,동행중,FOLLOWING
+MinimonAbilityText,"미니몬
+사용기술","MINIMON
+ABILITY"
+FullGrowthInText,완전 성장까지,FULL GROWTH IN
+MinimonGrowthFailText,"이런..
+이번엔 성장하지 않았어요.
+다시 도전해봐요!","Hmm..
+Nothing changed this time.
+Let's try again!"
+PlaceEverywhereText,모든 장소,EVERYWHERE
+PlaceNameTownAsdalText,아스달 마을,TOWN ASDAL
+BreezingWindForestNameText,산들바람 숲,BREEZEWOOD FOREST
+BreezingWindForestEntranceText,산들바람 숲(입구),BREEZEWOOD ENTRANCE
+PlaceNameBWF2Text,산들바람 숲(갈림길),BREEZEWOOD CROSSROADS
+PlaceNameBWF3Text,산들바람 숲(중심부),BREEZEWOOD HEART
+RarityBasicText,<color=white>일반</color>,<color=white>[Basic]</color>
+RarityAbnormalText,<color=lime>[고급]</color>,<color=lime>[Abnormal]</color>
+RarityRareText,<color=aqua>[희귀]</color>,<color=aqua>[Rare]</color>
+RarityExceptionalText,<color=magenta>[진귀]</color>,<color=magenta>[Exceptional]</color>
+RarityLegendaryText,<color=yellow>[전설]</color>,<color=yellow>[Legendary]</color>
+RarityMysticText,<color=red>[신화]</color>,<color=red>[Mythic]</color>
+RarityREQUISITEText,<color=magenta>[귀중]</color>,<color=magenta>[REQUISITE]</color>
+ItemJellyPongNameText,젤리 퐁,PONG'S JELLY
+ItemRabiJellyNameText,폴짝 젤리,RABIJELLY
+ItemPongyaPearlNameText,퐁이진주,PONGYA PEARL
+ItemScrollOfENH1NameText,장비 강화 주문서,SCROLL OF ENH.
+ItemScrollOfENH2NameText,고급 장비 강화 주문서,MAGICAL SCROLL OF ENH.
+ItemScrollOfENH3NameText,고대 장비 강화 주문서,ANCIENT SCROLL OF ENH.
+ItemScrollOfENH4NameText,이그누스의 인정,IGNUS' BOON
+ItemMastersSigil1NameText,장인의 인장 : 1단계,MASTER'S SIGIL I
+ItemMastersSigil2NameText,장인의 인장 : 2단계,MASTER'S SIGIL V
+ItemMastersSigil3NameText,장인의 인장 : 3단계,MASTER'S SIGIL X
+ItemTempPermitNameText,임시 통행증,TEMP. PERMIT
+ItemRegularPermitNameText,일반 통행증,REGULAR PERMIT
+HPPotion1NameText,보급형 회복물약,BUDGET RECOV. POTION
+HPPotion2NameText,소형 회복물약,SMALL RECOV. POTION
+SPDPotion1NameText,보급형 신속물약,BUDGET HASTE POTION
+SPDPotion2NameText,신속물약,HASTE POTION
+ItemJellyPongDescText,"퐁이의 조각.
+
+퐁이로 부터 쉽게 얻을 수 있으며
+종종 약초학에 사용된다.","A byproduct of Pong which
+can be easily obtained.
+
+It is often used in alchemy."
+ItemRabiJellyDescText,"폴짝 퐁의 젤리.
+
+젤리 퐁과는 다르게
+길쭉한 모양이 특징이다.","Rabipong’s jelly.
+
+Unlike Pong's jelly,
+it has an elongated shape."
+ItemPongyaPearlDescText,"아주 오랜 기간 살아온
+퐁에게서 얻을 수 있는 진주.
+
+아주 희귀하진 않지만,
+마법사들 사이에서 종종 거래되곤 한다.","A pearl that can be obtained
+from Pong which has lived
+for a very long time.
+
+It is often traded among wizards."
+ItemScrollOfENH1DescText,"장비를 강화시켜 주는 주문서.
+
+성공 시 장비의 성능을 향상시켜 주지만
+실패 시 장비의 내구도가 감소한다.","A scroll that can 
+strengthen equipment.
+
+When successful, it enhances equipment
+but when it fails, its durability 
+will decrease."
+ItemScrollOfENH2DescText,"장비를 강화시켜 주는 고급 주문서.
+
+이 주문서를 사용하여 강화할 시
+실패에 따른 내구도 감소율을 줄여준다.","An advanced scroll 
+that can strengthen equipment.
+
+Using this scroll,
+the durability loss upon failure
+will be mitigated."
+ItemScrollOfENH3DescText,"장비를 강화시켜 주는 고대 주문서.
+
+이 주문서를 사용하여 강화할 시
+실패에 따른 내구도 감소율을 없애준다.","An ancient scroll that can 
+strengthen equipment.
+
+Using this scroll,  
+durability loss upon failure
+will be eliminated."
+ItemScrollOfENH4DescText,"설화 속에 등장하는 궁극의 주문서.
+확정적으로 장비를 강화시켜 준다.
+
+'운을 거스르는 것, 그것이야말로
+진정한 실력 아니겠나.'
+- 이그누스","This scroll appears in folk tales,
+and is said to enhance any weapon
+without fail.
+
+'Overcoming the odds,
+isn't that true skill?'
+-Ignus"
+ItemMastersSigil1DescText,"잠재된 힘이 깃든 인장.
+
+사용 시 잠재력이 약간 증가한다.","A sigil infused with latent power.
+
+Increases potential slightly upon use."
+ItemMastersSigil2DescText,"잠재된 힘이 깃든 인장.
+
+사용 시 잠재력이 적당히 증가한다.","A sigil infused with latent power.
+
+Increases potential moderately upon use."
+ItemMastersSigil3DescText,"잠재된 힘이 깃든 인장.
+
+사용 시 잠재력이 상당히 증가한다.","A sigil infused with latent power.
+
+Increases potential greatly upon use."
+ItemTempPermitDescText,"모험가 협회에서
+발급해 준 임시 통행증
+
+마구잡이로 휘갈겨 써진 필기체가
+얼마나 발급해  주기
+귀찮았는지를 보여주고 있다(...)","A temporary pass issued by the guild.
+
+The haphazardly scribbled handwriting
+shows how cumbersome it was to issue.
+(ouch..)"
+ItemRegularPermitDescText,"모험가 협회에서 발급받은 통행증.
+
+임시 통행증에 정식 인증 인장을 덧붙였다.
+진짜 그냥 위에 덧붙여서 잘못하면 
+떨어질 것 같다.
+이런 게 인증이 된다고...?","A pass issued by the guild.
+
+An official certification seal 
+is added to the temporary pass.
+One wrong move, and it ooks
+like it will fall apart.
+Can this really be used as a pass?"
+HPPotion1DescText,"연금공방에서 처음으로 받은 회복물약.
+자체적으로 물약을 생산하는 신기한 병이다.
+
+아주 약한 체리향이 나지만
+맛은 . . . 더럽게 없다.","The first healing potion received
+from the alchemy workshop.
+Comes with a mysterious bottle that
+replenishes on its own.
+
+
+It has a very weak cherry scent,
+but its taste is . . . yeah."
+HPPotion2DescText,"보급형 물약보다 많이 뚱뚱해졌다.
+효과가 사이즈에 비례하는건가. .
+신비하게도 무게는 동일하다고 한다.
+
+맛은 . . . 여전하다.
+(개선이 시급하다.)","A lot fatter than the budget potion.
+Is bigger really better?
+Surprisingly, it still weighs the same.
+
+The taste . . . requires an urgent fix."
+SPDPotion0DescText,"모험가 사이에서는 아주 유명한
+물약으로 짧은 시간동안
+내면의 힘을 끌어내는
+신비한 효과를 가지고 있다.","A potion famous
+among adventurers, it
+has a mysterious effect that
+brings out the user's inner strength
+for a short period time."
+SPDPotion1DescText,"첫 제작의뢰로 제작한 신속 물약.
+사용된 재료는 초록색인데
+결과물은 노란색인 이상한 물건이다.
+
+물어보니 가져간 재료는 인증용이고
+다른 재료로 만들었다나 뭐라나. .","The haste potion: my first ever commission.
+
+The ingredients were green,
+but the potion is a suspicious yellow.
+
+Why did it turn yellow?
+Let's not think about that."
+SPDPotion2DescText,[아직 내용이 없습니다.],[아직 내용이 없습니다.]
+ComboText,공세 단계:,Combo:
+ComboLv0Text,무딘,Dull
+ComboLv1Text,숙련된,Skillful
+ComboLv2Text,지배적인,Dominating
+ComboLv3Text,멈출 수 없는,Unstoppable
+ComboLv4Text,압도적인,Devastating
+ComboLv5Text,물아일체,One with All
+ComboLv6Text,극의,GODLIKE
+BattleLogText,전투 기록,Battle Log
+BattleTimeText,전투 시간,Battle Time
+DmgDealtText,가한 피해량,DMG Dealt
+DmgTakenText,받은 피해량,DMG Taken
+HPRestoredText,회복량,HP Restored
+ReturnText,귀환,RETURN
+ReturnConfirmText,확실해?,SURE?
+CritTextPopupText,치명타!,Critical!
+BattleMissText,MISS,MISS
+MinimonInterestSuccessText,"이(가) 당신의
+거친 무력에 반해버렸습니다."," couldn't
+resist your raw power!"
+MinimonInterestFullText,"이(가) 관심을 보였지만
+이내 조용히 떠나갔습니다."," wished to 
+follow but left quietly."
+TravelUnlockText,"<noparse></noparse>[<#2DFF00><b>여정</b></color>]이 해금되었습니다.
+
+<size=10>이제 소유한 통행증의 허가 범위 내
+알게 된 모든 장소들로 자유로운
+이동이 가능해 졌습니다.</size>","[<#2DFF00><b>TRAVEL</b></color>]
+has been unlocked.
+
+<size=10>Now you can travel anywhere
+you have marked within
+the permitted range 
+of the pass you own.</size>"
+AlchemyUnlockText,"<noparse></noparse>[<#2DFF00><b>연금공방</b></color>]이 해금되었습니다.
+
+<size=10>이제 탐험 시 물약을 사용하실 수
+있게 되었으며 연금공방을 통해
+물약의 기능들을 해금하거나
+향상하실 수 있게 되었습니다.</size>","[<#2DFF00><b>ALCHEMY</b></color>]
+has been unlocked.
+
+<size=10>Now you can now use potions.
+Unlock or improve their functions
+through alchemy.</size>"
+LanguageText,언어,LANGUAGE
+SoundText,사운드,SOUND
+BGMText,배경음,BGM
+SFXText,효과음,SFX
+EffectsTitle,이펙트,EFFECTS
+PopupText,팝업 켜기,POPUP TEXT
+CameraShakeText,카메라 쉐이크,CAMERA SHAKE
+InvSlotNewTxt,NEW,NEW
+ImportantSlotNewTxt,NEW,NEW
+AlchemyButtonNewTxt,NEW,NEW
+MonasteryButtonNewTxt,NEW,NEW
+TravelButtonNewTxt,NEW,NEW
+AlchemyCustomOrderButtonNewTxt,NEW,NEW
+MonasteryCustomOrderButtonNewTxt,NEW,NEW
+Class_Ability_Text,직업 기술,CLASS SKILL
+Req_Minimon_Text,미니몬 필요,REQ. MINIMON
+Req_Equip_Text,장비 필요,REQ. EQUIP
+Req_Item_Text,필요 재료,REQ. ITEMS
+Unlimited_Potential_Text,무한한 잠재력,UNLIMITED POTENTIAL
+Unlimited_Potential_Desc_Text,"이 기술의 잠재력은 무궁무진하며
+배우는 길 또한 끝이 없습니다.
+하나씩 차근차근 배워봅시다.","This skill has unlimited potential,
+and the path to learning it is endless.
+Let us learn it one step at a time."
+Minimon_MaxRank_Text,최상등급,MAX RANK
+Req_Minimon_SubText,최상등급,MAX RANK
+Max_Enh_Text,최대 강화,MAX ENHANCE
+MAX_Dur_Text,최대 내구도,MAX DURABILITY
+Ability_MaxLevel_Text,- 최대 등급 -,- MAX GRADE -
+NextLevelInfoBtnText,다음등급 정보,NEXT GRADE
+MemorizeBtnText,기억하기,MEMORIZE
+Lack_Memory_Text,기억력 부족,LACK MEMORY
+Skill5009NameText,물약 주입기,Potion Injector
+Skill5009DescText,전투 중 HP가 설정 비율 이하로 떨어지면 회복 물약을 자동으로 사용한다.,Automatically uses a recovery potion when HP drops below the set ratio in battle.
+Skill5001NameText,기억 확장,Memory Expansion
+Skill5001DescText,최대 기억력을 늘려주는 재능. 항시 적용된다.,A talent that increases max memory. Always active.
+Skill5002NameText,힘의 기억,Memory of Strength
+Skill5002DescText,물리 공격력을 증가시킨다.,Increases physical attack.
+Skill5002StoryText,"두드릴수록 단단해지는 강철처럼,
+반복된 단련이 힘으로 새겨진다.","Like steel forged by strikes,
+training is carved into strength."
+Skill5003NameText,치명의 기억,Memory of Critical
+Skill5003DescText,치명타 확률을 증가시킨다.,Increases critical rate.
+Skill5003StoryText,"급소를 노리는 한 줄기 호흡.
+그 떨림을 기억해 둔다.","A single breath aimed at the weak point.
+Remember that tremor."
+Skill5004NameText,강철의 기억,Memory of Steel
+Skill5004DescText,최대 체력을 증가시킨다.,Increases max HP.
+Skill5004StoryText,"여행자의 몸은 길 위에서 단단해진다.
+버텨낸 만큼이 곧 그릇이 된다.","A traveler's body hardens on the road.
+What you endure becomes your vessel."
+Skill7000NameText,종을 초월한 교감,Bond Beyond Species
+Skill7000DescText,도감 완성도 보상. 명중률을 높이는 재능.,Codex completion reward. A talent that increases accuracy.
+Skill7001NameText,조련사의 기술,Tamer's Technique
+Skill7001DescText,도감 완성도 보상. 치명타 확률을 높이는 재능.,Codex completion reward. A talent that increases critical rate.
+Skill7002NameText,오다 주웠습니다 주인님!,"Found It, Master!"
+Skill7002DescText,도감 완성도 보상. 물리 공격력을 높이는 재능.,Codex completion reward. A talent that increases physical attack.
+Skill6001NameText,젤리의 가호,Jelly's Blessing
+Skill6001DescText,젤리 퐁의 고유기술. 최대 체력을 늘린다.,Jelly Pong's unique skill. Increases max HP.
+Skill6001StoryText,"젤리 퐁의 말랑한 가호.
+곁에 두면 어쩐지 든든하다.","Jelly Pong's squishy blessing.
+Somehow reassuring to have near."
+Skill6002NameText,토끼의 민첩,Rabbit's Agility
+Skill6002DescText,라비 슬라임의 고유기술. 공격속도를 높인다.,Rabi Slime's unique skill. Increases attack speed.
+Skill5005NameText,반격의 의지,Will of Counter
+Skill5005DescText,피격 시 일정 확률로 적에게 반격한다.,Chance to counterattack when hit.
+Skill5006NameText,생명의 리듬,Rhythm of Life
+Skill5006DescText,전투 중 주기적으로 체력을 회복한다.,Periodically restores HP in battle.
+Skill5007NameText,전투의 투지,Battle Spirit
+Skill5007DescText,전투 시작 시 일정 시간 물리 공격력이 증가한다.,Physical attack rises for a while at battle start.
+Skill5008NameText,막판 분노,Last Stand
+Skill5008DescText,체력이 30% 이하로 떨어지면 치명타 확률이 크게 오른다. (전투당 1회),Critical rate surges when HP drops below 30%. (Once per battle)
+Skill5012NameText,포획의 직감,Catcher's Instinct
+Skill5012DescText,미니몬 잡기 성공 확률이 증가한다.,Increases minion catch success rate.
+Skill5012StoryText,"발자국의 깊이, 숨결의 결.
+사냥꾼은 직감으로 안다.","발자국의 깊이, 숨결의 결.
+사냥꾼은 직감으로 안다."
+Skill5010NameText,조련의 효율,Taming Efficiency
+Skill5010DescText,확정 포획에 필요한 길들이기 횟수가 감소한다.,Reduces tame attempts needed for a guaranteed catch.
+Skill5010StoryText,"급할수록 돌아가라.
+허나 길은 점점 짧아진다.","급할수록 돌아가라.
+허나 길은 점점 짧아진다."
+Skill5011NameText,탐험가의 경험,Explorer's Experience
+Skill5011DescText,경험치 획득량이 증가한다.,Increases experience gained.
+Skill5011StoryText,걸어온 길은 모두 양분이 된다.,걸어온 길은 모두 양분이 된다.
+Skill5013NameText,만능의 기억,Memory of Versatility
+Skill5013DescText,여러 종류의 능력을 겸비한다.,Combines multiple ability types.
+Skill5013StoryText,한 길만 걷지 않은 자의 흔적.,한 길만 걷지 않은 자의 흔적.
+Skill5014NameText,이중의 기억,Dual Memory
+Skill5014DescText,두 종류의 능력을 겸비한다.,Combines two ability types.
+Skill5014StoryText,두 갈래의 길을 함께 걷는다.,두 갈래의 길을 함께 걷는다.
+Skill5015NameText,전능의 기억,Omni Memory
+Skill5015DescText,네 종류의 능력을 모두 겸비한다.,Combines all four ability types.
+Skill5015StoryText,모든 길의 끝에서 만나는 자.,모든 길의 끝에서 만나는 자.
+Equip30001NameText,여행자의 검,Traveler's Sword
+Minmon2001NameText,젤리 퐁,Jelly Pong
+Minmon2002NameText,라비 슬라임,Rabi Slime

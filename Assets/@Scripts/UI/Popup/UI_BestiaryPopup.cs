@@ -107,7 +107,7 @@ public class UI_BestiaryPopup : UI_Popup
     // region 필드는 LocalizationData TextKey (슬3: PlaceName 한/영 전환). 표시 시 Util.Localize.
     static readonly List<(string region, int[] monsterIds)> REGION_STUB = new()
     {
-        ("BreezingWindForestNameText", new[] { 2001, 2002 }), // 산들바람 숲 / BREEZEWOOD FOREST
+        ("BreezingWindForestNameText", new[] { 2001, 2002, 2003 }), // 산들바람 숲 / BREEZEWOOD FOREST (슬라임/라비/고블린)
         //("PlaceNameDesertText", new[] { 0, 0, 0, 0 }), // 미구현 지역: 잠금 슬롯 프리뷰
     };
 
