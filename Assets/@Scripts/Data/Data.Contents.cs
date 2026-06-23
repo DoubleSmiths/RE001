@@ -282,6 +282,34 @@ namespace Data
     }
     #endregion
 
+    #region BuffData
+    // 버프(강화/물약) 표시 카탈로그 — 좌상단 버프 아이콘(UI_Buff)이 참조한다.
+    // 현재는 신속(스피드) 버프뿐이지만, 버프 종류가 늘어나면 여기에 행을 추가한다.
+    [Serializable]
+    public class BuffData
+    {
+        public int DataId;
+        public string Name;        // LocalizationData 키
+        public string Description; // LocalizationData 키
+        public string IconLabel;   // 버프 아이콘 스프라이트 주소
+        public bool Timed;         // true=지속시간형(게이지/점멸/FadeOut) / false=인게임지속(정적)
+        public float Duration;     // 기본 지속(초), Timed=false면 미사용
+    }
+
+    [Serializable]
+    public class BuffDataLoader : ILoader<int, BuffData>
+    {
+        public List<BuffData> buffs = new List<BuffData>();
+        public Dictionary<int, BuffData> MakeDict()
+        {
+            var dict = new Dictionary<int, BuffData>();
+            foreach (var b in buffs)
+                dict.Add(b.DataId, b);
+            return dict;
+        }
+    }
+    #endregion
+
     #region AreaData
     [Serializable]
     public class AreaData

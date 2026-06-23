@@ -17,7 +17,7 @@ public class AbilityRunner : MonoBehaviour
     readonly Dictionary<int, float> _cooldowns = new();   // 시간발동 능력별 남은 쿨타임
     readonly HashSet<int> _firedLowHp = new();            // LowHp: 전투당 1회 발동 추적
 
-    class TempBuff { public string stat; public float value; public float expire; }
+    class TempBuff { public int id; public string stat; public float value; public float expire; }
     readonly List<TempBuff> _buffs = new();               // 활성 임시 버프
 
     bool _inBattle;
@@ -41,7 +41,12 @@ public class AbilityRunner : MonoBehaviour
     }
 
     // RefreshStats가 스탯을 base+패시브로 리셋한 직후 호출 — 임시버프 추적만 비움(환불 X, 이미 리셋됨).
-    public void OnStatsReset() => _buffs.Clear();
+    public void OnStatsReset()
+    {
+        if (_player != null)
+            foreach (var b in _buffs) _player.RaiseBuffCleared(b.id);   // 슬40: 효과가 리셋됐으니 아이콘도 제거
+        _buffs.Clear();
+    }
 
     // ── 확률 발동 조건 통지 (PlayerController 훅에서 호출) ──
     public void Notify(AbilityCondition cond, float param = 0f)
@@ -74,7 +79,9 @@ public class AbilityRunner : MonoBehaviour
         {
             if (Time.time < _buffs[i].expire) continue;
             AddStat(_buffs[i].stat, -_buffs[i].value);
+            int doneId = _buffs[i].id;
             _buffs.RemoveAt(i);
+            _player.RaiseBuffCleared(doneId);   // 슬40: 좌측상단 버프 아이콘 제거(FadeOut)
         }
 
         // 시간 발동 능력
@@ -128,17 +135,33 @@ public class AbilityRunner : MonoBehaviour
     void ApplyBuff(SkillData d)
     {
         if (string.IsNullOrEmpty(d.EffectStat) || d.EffectValue == 0f) return;
-        AddStat(d.EffectStat, d.EffectValue);
-        // EffectDuration 0 = 전투 종료까지 유지(OnBattleEnd에서 ClearBuffs로 환불)
-        if (d.EffectDuration > 0f)
-            _buffs.Add(new TempBuff { stat = d.EffectStat, value = d.EffectValue, expire = Time.time + d.EffectDuration });
+
+        bool timed = d.EffectDuration > 0f;   // ③지속시간형 / false=②인게임지속(전투끝까지)
+        float expire = timed ? Time.time + d.EffectDuration : float.MaxValue;
+
+        // 동일 능력 재발동(시간발동 반복 등): 스탯 중복 가산 없이 만료시각만 갱신.
+        var existing = _buffs.Find(b => b.id == d.DataId);
+        if (existing != null)
+        {
+            existing.expire = expire;
+        }
         else
-            _buffs.Add(new TempBuff { stat = d.EffectStat, value = d.EffectValue, expire = float.MaxValue });
+        {
+            AddStat(d.EffectStat, d.EffectValue);
+            // EffectDuration 0 = 전투 종료까지 유지(OnBattleEnd에서 ClearBuffs로 환불)
+            _buffs.Add(new TempBuff { id = d.DataId, stat = d.EffectStat, value = d.EffectValue, expire = expire });
+        }
+        // 슬40: 좌측상단 버프 아이콘 표시(②인게임지속=정적, ③지속시간형=게이지+점멸+FadeOut)
+        _player.RaiseBuffApplied(new PlayerController.BuffInfo(d.DataId, d.IconLabel, d.EffectDuration, timed));
     }
 
     void ClearBuffs()
     {
-        foreach (var b in _buffs) AddStat(b.stat, -b.value);
+        foreach (var b in _buffs)
+        {
+            AddStat(b.stat, -b.value);
+            _player.RaiseBuffCleared(b.id);
+        }
         _buffs.Clear();
     }
 

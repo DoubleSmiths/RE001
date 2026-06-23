@@ -66,6 +66,17 @@ public static class PopupTestMenu
         Debug.Log($"[Test] AutoPotion Memorized = {(cur == 0 ? "ON (기억 후)" : "OFF (기억 전)")}");
     }
 
+    [MenuItem("Test/Apply 스피드 버프 (속도+버프아이콘) %#8", false, 106)]
+    static void ApplySpeedBuffTest()
+    {
+        if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
+        var p = Object.FindObjectOfType<PlayerController>();
+        if (p == null) { Debug.LogWarning("[Test] PlayerController 없음 — GameScene에서 실행하세요"); return; }
+        // 실제 신속버프 적용 — 공격속도 +30%/15초 + 좌상단 버프 아이콘(지속게이지+점멸+FadeOut)
+        p.ApplySpeedBuff(30f, 15f);
+        Debug.Log("[Test] 스피드 버프: 공격속도 +30% / 15초 (PotionAtkSpeedBonus 적용)");
+    }
+
     [MenuItem("Test/Navigate to Alchemy Scene %#0", false, 200)]
     static void NavigateToAlchemy()
     {

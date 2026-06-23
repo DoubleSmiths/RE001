@@ -129,6 +129,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8fced6851da52b46b46ebf4e97906ab
+    m_Address: BuffData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dbdd0cb61fac1dd4081d681f436a79b2
     m_Address: SubQuestNotifyData
     m_ReadOnly: 0

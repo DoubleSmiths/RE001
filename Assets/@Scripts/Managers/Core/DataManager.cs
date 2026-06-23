@@ -36,6 +36,7 @@ public class DataManager
     public Dictionary<int, List<SubQuestNotifyData>>    SubQuestNotifyDic   { get; private set; } = new Dictionary<int, List<SubQuestNotifyData>>();
     public Dictionary<int, List<SubQuestUnlockData>>    SubQuestUnlockDic   { get; private set; } = new Dictionary<int, List<SubQuestUnlockData>>();
     public Dictionary<int, ComboStageData>              ComboStageDic       { get; private set; } = new Dictionary<int, ComboStageData>();
+    public Dictionary<int, BuffData>                    BuffDic             { get; private set; } = new Dictionary<int, BuffData>();
 
     public void Init()
     {
@@ -65,6 +66,7 @@ public class DataManager
         SubQuestNotifyDic = LoadJson<SubQuestNotifyLoader, int, List<SubQuestNotifyData>> ("SubQuestNotifyData").MakeDict();
         SubQuestUnlockDic = LoadJson<SubQuestUnlockLoader, int, List<SubQuestUnlockData>> ("SubQuestUnlockData").MakeDict();
         ComboStageDic     = LoadJson<ComboStageDataLoader, int, ComboStageData>          ("ComboData").MakeDict();
+        BuffDic           = LoadJson<BuffDataLoader,       int, BuffData>                ("BuffData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

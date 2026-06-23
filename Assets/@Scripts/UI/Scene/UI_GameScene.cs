@@ -111,6 +111,7 @@ public class UI_GameScene : UI_Scene
         GlowDot_Lens_01,
         GlowDot_Lens_02,
         GlowDot_02,
+        BuffDisplayer,
     }
 
     #endregion
@@ -891,6 +892,40 @@ public class UI_GameScene : UI_Scene
         RefreshBestiaryNewIcon();
         // 슬2: 몬스터 보라별 달성 → 완성도 스킬 등급 상승(도감 열려있으면 연출)
         Managers.MinMon.OnMaxStarReached += OnMonsterMaxStar;
+
+        // 슬40(능력#4 강화능력): 강화/물약 버프 → BuffDisplayer 노드에 UI_Buff 추가
+        player.OnBuffApplied += OnBuffApplied;
+        player.OnBuffCleared += OnBuffCleared;
+    }
+
+    // ── 슬40: 강화 버프 아이콘 (BuffDisplayer 노드에 UI_Buff 추가/제거) ──
+    readonly System.Collections.Generic.Dictionary<int, UI_Buff> _buffItems = new();
+
+    void OnBuffApplied(PlayerController.BuffInfo b)
+    {
+        var container = GetObject((int)GameObjects.BuffDisplayer);
+        if (container == null) return;
+
+        if (_buffItems.TryGetValue(b.Key, out var exist) && exist != null)
+        {
+            exist.Apply(b);   // 재발동 — 갱신
+            return;
+        }
+
+        GameObject go = Managers.Resource.Instantiate("UI_Buff", container.transform);
+        if (go == null) return;
+        var ui = Util.GetOrAddComponent<UI_Buff>(go);
+        ui.SetInfo(b, key => _buffItems.Remove(key));   // 지속 만료 시 사전 등록 해제
+        _buffItems[b.Key] = ui;
+    }
+
+    void OnBuffCleared(int key)
+    {
+        if (_buffItems.TryGetValue(key, out var ui))
+        {
+            _buffItems.Remove(key);
+            if (ui != null) ui.Remove();
+        }
     }
 
     // 슬2: 몬스터가 보라별 최초 달성 시 — 도감 완성도 등급 상승 + (열려있으면)연출.

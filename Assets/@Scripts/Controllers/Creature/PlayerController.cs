@@ -10,6 +10,26 @@ public class PlayerController : CreatureController
     public event System.Action<int, int>     OnLevelUp;   // newLevel, regenHp (MaxHp - prevHp)
     public event System.Action<float>        OnHitLanded;   // 타격 성공 시 데미지값 전달 (miss 제외) — 슬라이드 48
 
+    // 슬40(능력#4 강화능력): 강화(버프) 적용/해제 표시 — 좌측상단 버프 아이콘(UI_BuffDisplay)이 구독.
+    //  능력 버프(AbilityRunner)와 물약 버프(ApplySpeedBuff)를 한 경로로 통합한다.
+    //  Key: 능력=SkillData.DataId / 물약=음수 상수(충돌 회피). Timed=true면 지속%게이지+종료 FadeOut(③지속시간형).
+    public struct BuffInfo
+    {
+        public int Key;          // 식별자(능력 DataId / 물약 음수키)
+        public string IconLabel; // 아이콘 스프라이트 주소(비면 프리팹 기본 아이콘 유지)
+        public float Duration;   // 지속시간(초). Timed=false면 의미 없음(인게임 유지)
+        public bool Timed;       // true=지속시간형(③) / false=인게임지속(②)
+        public BuffInfo(int key, string iconLabel, float duration, bool timed)
+        { Key = key; IconLabel = iconLabel; Duration = duration; Timed = timed; }
+    }
+    public event System.Action<BuffInfo> OnBuffApplied;   // 강화 버프 적용(또는 갱신)
+    public event System.Action<int>      OnBuffCleared;   // 강화 버프 해제(Key 전달)
+    public void RaiseBuffApplied(BuffInfo b) => OnBuffApplied?.Invoke(b);
+    public void RaiseBuffCleared(int key)    => OnBuffCleared?.Invoke(key);
+
+    public const int BUFF_KEY_POTION_SPEED = -100;   // 신속물약 버프 표시용 키(UI 식별)
+    public const int BUFF_DATA_SPEED = 1;            // BuffData 신속버프 DataId(아이콘 조회)
+
     float _expRequired = 100f;
     public float ExpRequired => _expRequired;   // UI 초기 동기화용 read-only 노출
     bool _inBattle;
@@ -30,16 +50,23 @@ public class PlayerController : CreatureController
         PotionAtkSpeedBonus = bonusPct;
         if (_potionSpeedCo != null) StopCoroutine(_potionSpeedCo);
         if (duration > 0f) _potionSpeedCo = StartCoroutine(CoClearSpeedBuff(duration));
+        // 슬40: 좌측상단 버프 아이콘 표시(지속시간형 — 게이지+점멸+FadeOut). 아이콘은 BuffData에서 조회.
+        string icon = "";
+        if (Managers.Data != null && Managers.Data.BuffDic.TryGetValue(BUFF_DATA_SPEED, out var bd))
+            icon = bd.IconLabel;
+        RaiseBuffApplied(new BuffInfo(BUFF_KEY_POTION_SPEED, icon, duration, duration > 0f));
     }
     IEnumerator CoClearSpeedBuff(float duration)
     {
         yield return new WaitForSeconds(duration);
         PotionAtkSpeedBonus = 0f;
         _potionSpeedCo = null;
+        RaiseBuffCleared(BUFF_KEY_POTION_SPEED);
     }
 
     // 슬39: 능력 전투 발동조건 런너 (장착 능력의 확률/시간 발동 처리)
     AbilityRunner _abilityRunner;
+    public AbilityRunner AbilityRunner => _abilityRunner;   // 슬40: UI 버프 표시 연동용 노출
     public MonsterController CurrentTarget => _attackTarget;   // 능력 BonusDamage 대상
 
     // 캐릭터창 스탯 1포인트당 증가량: 0=STR(물공) 1=VIT(HP) 2=DEX(명중) 3=MAG(마공).

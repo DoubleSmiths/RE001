@@ -45,6 +45,7 @@ public class DataTransformer : EditorWindow
     const string GSHEET_HP_POTION      = "https://docs.google.com/spreadsheets/d/1pajVmT0PUAvIFbxSHjdjHzW0Gd70X8mxxqgLawTrLA0/export?format=xlsx";
     const string GSHEET_SPEED_POTION   = "https://docs.google.com/spreadsheets/d/1rhlNcgm5_5vILUU4GWFadcdaK3Fu0y1j3WE4MifWakU/export?format=xlsx";
     const string GSHEET_COMBO          = "https://docs.google.com/spreadsheets/d/1VjtZ0xrGKncXn0-dCiYFbVN5NdxL_1gct-VmGVj4GC0/export?format=xlsx";
+    const string GSHEET_BUFF           = "https://docs.google.com/spreadsheets/d/1CRL7YFNwQNlRBHR8sysHKj3MF4G6b5yLBweiLsLDSC8/export?format=xlsx";   // 버프(BuffData) 시트 — "링크 있는 사용자 뷰어" 공개 필요
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -1168,6 +1169,7 @@ public class DataTransformer : EditorWindow
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
         ParseComboDataSheet      (ReadXlsx($"{baseDir}/ComboData.xlsx"));
+        ParseBuffDataSheet       (ReadXlsx($"{baseDir}/BuffData.xlsx"));
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExtraData (로컬) 완료");
     }
@@ -1183,6 +1185,8 @@ public class DataTransformer : EditorWindow
         ParseHPPotionDataSheet   (ReadXlsx(DownloadGoogleSheet(GSHEET_HP_POTION)));
         ParseSpeedPotionDataSheet(ReadXlsx(DownloadGoogleSheet(GSHEET_SPEED_POTION)));
         ParseComboDataSheet      (ReadXlsx(DownloadGoogleSheet(GSHEET_COMBO)));
+        if (!string.IsNullOrEmpty(GSHEET_BUFF))
+            ParseBuffDataSheet   (ReadXlsx(DownloadGoogleSheet(GSHEET_BUFF)));
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExtraDataFromGoogleSheets 완료");
     }
@@ -1382,5 +1386,24 @@ public class DataTransformer : EditorWindow
             loader.stages.Add(d);
         }
         WriteJsonStr("ComboData", loader);
+    }
+
+    static void ParseBuffDataSheet(List<List<string>> rows)
+    {
+        var loader = new BuffDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new BuffData();
+            d.DataId      = ConvertValue<int>(C(row, 0));
+            d.Name        = C(row, 1);
+            d.Description = C(row, 2);
+            d.IconLabel   = C(row, 3);
+            d.Timed       = ConvertValue<bool>(C(row, 4));
+            d.Duration    = ConvertValue<float>(C(row, 5));
+            loader.buffs.Add(d);
+        }
+        WriteJsonStr("BuffData", loader);
     }
 }
