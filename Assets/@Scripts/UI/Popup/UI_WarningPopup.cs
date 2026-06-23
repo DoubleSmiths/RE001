@@ -62,7 +62,7 @@ public class UI_WarningPopup : UI_Popup
     {
         CreatureData data = null;
         Managers.Data.CreatureDic.TryGetValue(dataId, out data);
-        string cname = data != null && !string.IsNullOrEmpty(data.Name) ? data.Name : "미니몬";
+        string cname = data != null && !string.IsNullOrEmpty(data.Name) ? Util.Localize(data.Name) : "미니몬";
 
         var txt = GetText((int)Texts.TameSlotMaxWarningPopupText);
         if (txt != null)
