@@ -107,6 +107,10 @@ public abstract class CreatureController : BaseController
         return true;
     }
 
+    // 외부 원본 슬라임 애니 클립(Slime(Green)_Attack/Run 등)에 박혀있는 AnimationEvent("TriggerUnityEvent")
+    // 의 수신부. 우리 게임에선 사용하지 않으므로 빈 메서드로 둬 "has no receiver" 경고만 제거한다.
+    public void TriggerUnityEvent() { }
+
     protected virtual void UpdateAnimation()
     {
         if (_anim == null) return;
