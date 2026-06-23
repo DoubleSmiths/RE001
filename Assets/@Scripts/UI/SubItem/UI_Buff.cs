@@ -146,12 +146,23 @@ public class UI_Buff : UI_Base
             }
             else
             {
-                // 30%~100% 구간에서만 점멸. 끝에 가까울수록 약간 빨라지되 완만하게.
-                float t = Mathf.Clamp01((frac - 0.3f) / 0.7f);
+                float speed;
 
-                float speed = Mathf.Lerp(0.2f, 2.5f, t);
+                if (frac < 0.6f)          // 30% ~ 60%
+                {
+                    speed = 0.5f;         // 천천히
+                }
+                else if (frac < 0.9f)    // 60% ~ 90%
+                {
+                    speed = 1.5f;         // 보통
+                }
+                else                      // 90% ~ 100%
+                {
+                    speed = 6.0f;         // 빠르게
+                }
 
                 _blinkPhase += Time.deltaTime * speed;
+
                 float blink = 0.5f + 0.5f * Mathf.Sin(_blinkPhase * Mathf.PI * 2f);
                 a = Mathf.Lerp(0.35f, 1f, blink);
             }
