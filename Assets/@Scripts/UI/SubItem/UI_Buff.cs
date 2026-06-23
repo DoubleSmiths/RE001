@@ -123,6 +123,8 @@ public class UI_Buff : UI_Base
         if (gameObject != null) Object.Destroy(gameObject);
     }
 
+    private float _blinkPhase;
+
     void Update()
     {
         if (!_timed || _removing) return;
@@ -139,13 +141,19 @@ public class UI_Buff : UI_Base
             float a;
             if (frac < 0.3f)
             {
+                _blinkPhase = 0f;   // 점멸 phase 초기화
                 a = 1f;   // 30% 진행 전: 점멸 없이 선명하게
             }
             else
             {
                 // 30%~100% 구간에서만 점멸. 끝에 가까울수록 약간 빨라지되 완만하게.
-                float speed = Mathf.Lerp(2f, 4.5f, (frac - 0.3f) / 0.7f);
-                a = 0.6f + 0.4f * Mathf.Abs(Mathf.Sin(Time.time * speed));
+                float t = Mathf.Clamp01((frac - 0.3f) / 0.7f);
+
+                float speed = Mathf.Lerp(0.2f, 2.5f, t);
+
+                _blinkPhase += Time.deltaTime * speed;
+                float blink = 0.5f + 0.5f * Mathf.Sin(_blinkPhase * Mathf.PI * 2f);
+                a = Mathf.Lerp(0.35f, 1f, blink);
             }
             var c = icon.color; c.a = a; icon.color = c;
         }
