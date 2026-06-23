@@ -66,7 +66,8 @@ public class UI_AttactedPopup : UI_Popup
     {
         CreatureData data = null;
         Managers.Data.CreatureDic.TryGetValue(dataId, out data);
-        string cname = data != null && !string.IsNullOrEmpty(data.Name) ? data.Name : "미니몬";
+        // CreatureData.Name은 LocalizationData 키 → 화면 표시 시 한/영 변환
+        string cname = data != null && !string.IsNullOrEmpty(data.Name) ? Util.Localize(data.Name) : "미니몬";
 
         var txt = GetText((int)Texts.AttactedPopupText);
         if (txt != null)
