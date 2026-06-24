@@ -89,7 +89,9 @@ public class CompanionController : CreatureController
         if (ps != null && _sprite != null)
         {
             _sprite.sortingLayerID = ps.sortingLayerID;
-            _sprite.sortingOrder   = ps.sortingOrder + 1;   // 플레이어 발치 앞쪽
+            // 오더 10 고정 — 플레이어와 동일 레벨로 둬 씬 전환 Fade 오버레이에 함께 덮이게 한다.
+            //  (player.sortingOrder+1이면 Fade 이미지보다 위로 렌더돼 동행만 안 덮이던 문제)
+            _sprite.sortingOrder = 10;
         }
     }
 

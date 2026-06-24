@@ -26,6 +26,7 @@ public class UI_EventHandler : MonoBehaviour, IPointerClickHandler, IPointerDown
     {
         if (OnClickHandler != null)
         {
+            Managers.Sound?.PlayButtonClick();   // VS BtnSelectSound 이식 — 클릭 가능 UI에만 SFX_BtnSelect
             OnClickHandler.Invoke();
         }
     }

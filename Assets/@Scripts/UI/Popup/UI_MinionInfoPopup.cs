@@ -210,14 +210,20 @@ public class UI_MinionInfoPopup : UI_Popup
             ApplyFont(numTxt, Define.FontType.UI);
         }
 
-        // 슬85: 몬스터 IMG (IconLabel) — 정적 폴백. idle Anim은 아래 SetupMinionIdleAnim에서 구동.
+        // 슬85: 몬스터 IMG. idle Anim은 아래 SetupMinionIdleAnim에서 PetAnimLabel로 구동.
         _monImg = GetImage((int)Images.MinimonImage);
-        if (_monImg != null && data != null && !string.IsNullOrEmpty(data.IconLabel))
+        // 슬16: 몬스터 IMG Idle Anim 반복. prefab baked 컨트롤러가 슬라임이라 모든 미니몬이 슬라임으로 보이던
+        //  문제 → MinMonData.PetAnimLabel(잡은 몬스터별 펫 컨트롤러)로 교체. (동행 미니몬과 동일 소스)
+        string petAnimLabel = Managers.Data.MinMonDic != null && Managers.Data.MinMonDic.TryGetValue(dataId, out var mmAnim) ? mmAnim.PetAnimLabel : null;
+        // 정적 IconLabel 스프라이트는 펫 애니가 없을 때만 폴백으로 사용.
+        //  (2001 등은 IconLabel="slime_monster_0"(파란 시트)지만 PetAnimLabel="Pet_Slime(Green)"(초록)으로 구동 →
+        //   파란 정적 프레임을 먼저 깔면 애니 복사 전/실패 시 파란색이 노출되던 문제 방지)
+        if (_monImg != null && string.IsNullOrEmpty(petAnimLabel) && data != null && !string.IsNullOrEmpty(data.IconLabel))
         {
             Sprite sprite = Managers.Resource.Load<Sprite>(data.IconLabel);
             if (sprite != null) { _monImg.sprite = sprite; _monImg.preserveAspect = true; }
         }
-        SetupMinionIdleAnim();   // 슬16: 몬스터 IMG Idle Anim 반복
+        SetupMinionIdleAnim(petAnimLabel);
 
         // 슬17: 공명도 = "{LinkText}:{공명도}%" (콜론, 공백 없음). 100% 미만 FF820B / 100% 30FF00.
         //  (100% 시 MAT Text_ShineGreen 스펙 — 머티리얼 Resources 밖이라 색만 적용)
@@ -341,11 +347,20 @@ public class UI_MinionInfoPopup : UI_Popup
     //  (UI 캔버스 마스킹/스케일은 Image 그대로 유지)
     Image _monImg;
     SpriteRenderer _idleSr;
-    void SetupMinionIdleAnim()
+    void SetupMinionIdleAnim(string petAnimLabel = null)
     {
         if (_monImg == null) return;
         var an = _monImg.GetComponent<Animator>();
-        if (an == null || an.runtimeAnimatorController == null) { _idleSr = null; return; }
+        if (an == null) { _idleSr = null; return; }
+
+        // 잡은 몬스터별 펫 컨트롤러로 교체 (baked 슬라임 컨트롤러 덮어쓰기 방지). 로드 실패 시 정적 IconLabel 스프라이트 유지.
+        if (!string.IsNullOrEmpty(petAnimLabel))
+        {
+            var ctrl = Managers.Resource.Load<RuntimeAnimatorController>(petAnimLabel);
+            if (ctrl != null) an.runtimeAnimatorController = ctrl;
+        }
+        if (an.runtimeAnimatorController == null) { _idleSr = null; return; }
+
         an.cullingMode = AnimatorCullingMode.AlwaysAnimate;   // UI(Renderer 없음)에서도 항상 진행
         _idleSr = _monImg.GetComponent<SpriteRenderer>();
         if (_idleSr == null) _idleSr = _monImg.gameObject.AddComponent<SpriteRenderer>();

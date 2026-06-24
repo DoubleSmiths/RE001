@@ -51,37 +51,27 @@ public class SoundManager
     {
         AudioSource audioSource = _audioSources[(int)type];
 
-        if (type == Define.Sound.Bgm)
+        if (type == Define.Sound.Bgm || type == Define.Sound.SubBgm)
         {
             LoadAudioClip(key, (audioClip) =>
             {
+                if (audioClip == null) return;
                 if (audioSource.isPlaying)
                     audioSource.Stop();
 
                 audioSource.clip = audioClip;
-                //if (Managers.Game.BGMOn)
-                //    audioSource.Play();
-            });
-        }
-        else if (type == Define.Sound.SubBgm)
-        {
-            LoadAudioClip(key, (audioClip) =>
-            {
-                if (audioSource.isPlaying)
-                    audioSource.Stop();
-
-                audioSource.clip = audioClip;
-                //if (Managers.Game.EffectSoundOn)
-                //    audioSource.Play();
+                if (Managers.Game != null && Managers.Game.IsBGSoundOn)
+                    audioSource.Play();
             });
         }
         else
         {
             LoadAudioClip(key, (audioClip) =>
             {
+                if (audioClip == null) return;
                 audioSource.pitch = pitch;
-                //if (Managers.Game.EffectSoundOn)
-                //    audioSource.PlayOneShot(audioClip);
+                if (Managers.Game != null && Managers.Game.IsSFXOn)
+                    audioSource.PlayOneShot(audioClip);
             });
         }
     }
@@ -90,29 +80,22 @@ public class SoundManager
     {
         AudioSource audioSource = _audioSources[(int)type];
 
-        if (type == Define.Sound.Bgm)
+        if (audioClip == null) return;
+
+        if (type == Define.Sound.Bgm || type == Define.Sound.SubBgm)
         {
             if (audioSource.isPlaying)
                 audioSource.Stop();
 
             audioSource.clip = audioClip;
-            //if (Managers.Game.BGMOn)
-            //    audioSource.Play();
-        }
-        else if (type == Define.Sound.SubBgm)
-        {
-            if (audioSource.isPlaying)
-                audioSource.Stop();
-
-            audioSource.clip = audioClip;
-            //if (Managers.Game.EffectSoundOn)
-            //    audioSource.Play();
+            if (Managers.Game != null && Managers.Game.IsBGSoundOn)
+                audioSource.Play();
         }
         else
         {
             audioSource.pitch = pitch;
-            //if (Managers.Game.EffectSoundOn)
-            //    audioSource.PlayOneShot(audioClip);
+            if (Managers.Game != null && Managers.Game.IsSFXOn)
+                audioSource.PlayOneShot(audioClip);
         }
     }
 
@@ -122,14 +105,17 @@ public class SoundManager
         audioSource.Stop();
     }
 
+    // SFX 단축 헬퍼 — 키 = 어드레서블 클립명(파일명). SoundAddressableRegistrar가 등록한 주소.
+    public void PlaySFX(string key, float pitch = 1.0f) => Play(Define.Sound.Effect, key, pitch);
+
     public void PlayButtonClick()
     {
-        Play(Define.Sound.Effect, "Click_CommonButton");
+        Play(Define.Sound.Effect, "SFX_BtnSelect");
     }
 
     public void PlayPopupClose()
     {
-        Play(Define.Sound.Effect, "PopupClose_Common");
+        Play(Define.Sound.Effect, "SFX_Popup");
     }
     private void LoadAudioClip(string key, Action<AudioClip> callback)
     {

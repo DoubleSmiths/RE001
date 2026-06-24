@@ -465,6 +465,7 @@ public class UI_PotionPopup : UI_Popup
 
         if (s.name == "HP")
         {
+            Managers.Sound?.PlaySFX("SFX_RedPotion");   // 회복물약 사용
             // 회복물약: 고정 회복 + 최대체력 비율 회복 (ItemData/HPPotionData)
             if (Managers.Data.HPPotionDic.TryGetValue(s.dataId, out var hp))
             {
@@ -478,6 +479,7 @@ public class UI_PotionPopup : UI_Popup
         }
         else if (s.name == "Speed")
         {
+            Managers.Sound?.PlaySFX("SFX_SpeedPotion");   // 신속물약 사용
             // 신속물약: 일정 시간 공격속도 버프. 데이터 AtkSpeedBonus는 분수(0.2=20%)라 ×100(퍼센트 공식 단위)
             if (Managers.Data.SpeedPotionDic.TryGetValue(s.dataId, out var sp))
                 player.ApplySpeedBuff(sp.AtkSpeedBonus * 100f, sp.Duration);

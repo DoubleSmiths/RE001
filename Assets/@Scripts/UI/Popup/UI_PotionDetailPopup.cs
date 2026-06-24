@@ -880,7 +880,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
         seq.Append(_myFrameRT.DOShakeAnchorPos(1.1f, strength: new Vector3(1.5f, 0f, 0f), vibrato: 21, randomness: 0f).SetEase(Ease.OutQuad));
-        seq.AppendCallback(() => SpawnCraftFX());
+        seq.AppendCallback(() => { SpawnCraftFX(); SpawnCraftFlash(); Managers.Sound?.PlaySFX("SFX_PotionUpgrade"); });   // S40: FX + 흰 플래시 + 제작음
         seq.Append(_myFrameRT.DOPunchScale(new Vector3(0.2f, 0.2f, 1f), 0.3f, vibrato: 4, elasticity: 1f).SetEase(Ease.OutQuad));
         seq.OnComplete(() =>
         {
@@ -909,10 +909,39 @@ public class UI_PotionDetailPopup : UI_Popup
         // 팝업 프레임 중앙: FX_splash_spark_floor
         UIFx.PlayParticle(_myFrameRT, Vector2.zero, "FX_splash_spark_floor");
 
-        // 물약 아이콘 위치: FX_splash_spark_air
+        // 물약 아이콘 위치: FX_splash_spark_air + upgrade sparkle.
+        //  스펙 슬40의 아이콘 FX "FX_Potion Upgrade"는 프로젝트에 시각 에셋이 없어(동명 SFX_ PotionUpgrade는 오디오),
+        //  코드 내 'upgrade sparkle' 프리셋(UIFx.FxType.Sparkle)으로 업그레이드 반짝임을 표현한다.
         Vector3 iconWorld = _potionImg.rectTransform.position;
         Vector3 iconLocal = _myFrameRT.InverseTransformPoint(iconWorld);
-        UIFx.PlayParticle(_myFrameRT, new Vector2(iconLocal.x, iconLocal.y), "FX_splash_spark_air");
+        Vector2 iconPos = new Vector2(iconLocal.x, iconLocal.y);
+        UIFx.PlayParticle(_myFrameRT, iconPos, "FX_splash_spark_air");
+        UIFx.PlayBurst(_myFrameRT, iconPos, UIFx.FxType.Sparkle);
+    }
+
+    /// <summary>
+    /// S40: 제작 성공 순간 창 전체 흰 플래시(gif ~0.2s 번쩍 후 페이드). Sprite None(FFFFFF) 오버레이.
+    /// </summary>
+    void SpawnCraftFlash()
+    {
+        if (_myFrameRT == null) return;
+
+        var go = new GameObject("CraftFlash", typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(_myFrameRT, false);
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;     // 창 전체 덮기
+        rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+        rt.SetAsLastSibling();                                       // 최상단 렌더
+
+        var img = go.GetComponent<Image>();
+        img.raycastTarget = false;
+        img.color = new Color(1f, 1f, 1f, 0f);
+
+        // 0 → 0.85 빠르게(0.08s) → 0 페이드(0.3s)
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        seq.Append(img.DOFade(0.85f, 0.08f).SetEase(Ease.OutQuad));
+        seq.Append(img.DOFade(0f, 0.3f).SetEase(Ease.InQuad));
+        seq.OnComplete(() => { if (go != null) Destroy(go); });
     }
 
     void PunchBtnScale(Transform btn)

@@ -56,7 +56,7 @@ public class MinMonManager
     public void Init() { }
 
     // ── 포획 ──
-    public bool TryCatch(int dataId, bool forceSuccess = false)
+    public bool TryCatch(int dataId, bool forceSuccess = false, bool forceFail = false)
     {
         if (!Managers.Data.MinMonDic.TryGetValue(dataId, out var data))
             return false;
@@ -64,14 +64,15 @@ public class MinMonManager
         MinMonSaveData save = GetSaveData(dataId);
 
         // 슬38 지원능력: 확정잡기 필요횟수 감소(천장↓) / 잡기 성공확률 증가(%p).
-        int reduce = Managers.Ability != null ? Managers.Ability.GuaranteedCatchReduce : 0;
-        int ceil   = Mathf.Max(1, data.MaxTameCount - reduce);
-        float chance = data.CatchChance + (Managers.Ability != null ? Managers.Ability.CatchRateBonus / 100f : 0f);
+        //  UI(슬31 잡기 버튼) 표기와 동일 계산식을 쓰도록 GetCatchCeil/GetCatchChance로 단일화.
+        int ceil     = GetCatchCeil(dataId);
+        float chance = GetCatchChance(dataId);
 
-        // 천장: TameCount가 (감소된) MaxTameCount 이상이면 무조건 성공
-        bool success = forceSuccess
+        // 천장: TameCount가 (감소된) MaxTameCount 이상이면 무조건 성공. forceFail이면 강제 실패(시도횟수는 차감).
+        bool success = !forceFail
+            && (forceSuccess
             || save.TameCount >= ceil
-            || UnityEngine.Random.value < chance;
+            || UnityEngine.Random.value < chance);
 
         if (success)
         {
@@ -258,6 +259,29 @@ public class MinMonManager
 
     public int GetKillCount(int dataId) { var s = FindSave(dataId); return s != null ? s.KillCount : 0; }
     public int GetCaughtCount(int dataId) { var s = FindSave(dataId); return s != null ? s.CaughtCount : 0; }
+
+    // ── 잡기(천장) 표기용 — 슬31 [길들인다!] 라벨. 모두 읽기 전용(엔트리 생성 X). TryCatch와 동일 계산식. ──
+    // 시도 횟수(성공/실패 모두 누적). 천장 카운터로 0부터 증가.
+    public int GetTameCount(int dataId) { var s = FindSave(dataId); return s != null ? s.TameCount : 0; }
+
+    // 확정(천장) 도달 시도 횟수 = (감소 능력 반영된) MaxTameCount. TameCount가 이 값 이상이면 무조건 성공.
+    public int GetCatchCeil(int dataId)
+    {
+        if (!Managers.Data.MinMonDic.TryGetValue(dataId, out var data)) return 1;
+        int reduce = Managers.Ability != null ? Managers.Ability.GuaranteedCatchReduce : 0;
+        return Mathf.Max(1, data.MaxTameCount - reduce);
+    }
+
+    // 1회 시도 성공 확률(0~1). 능력 보너스(%p) 포함.
+    public float GetCatchChance(int dataId)
+    {
+        if (!Managers.Data.MinMonDic.TryGetValue(dataId, out var data)) return 0f;
+        float bonus = Managers.Ability != null ? Managers.Ability.CatchRateBonus / 100f : 0f;
+        return Mathf.Clamp01(data.CatchChance + bonus);
+    }
+
+    // 천장 도달(다음 시도가 확정 성공) 여부.
+    public bool IsCatchGuaranteed(int dataId) => GetTameCount(dataId) >= GetCatchCeil(dataId);
 
     public int GetRecordRate(int dataId)
     {

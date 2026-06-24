@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>심야의 정비소로 배우는 Unity 최적화 — RE001</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0d12;--panel:#10131a;--card:#12151d;--border:#252a36;--border-soft:#1c2029;
+  --text:#eef0f4;--sub:#9ba3b4;--dim:#6b7384;--dimmer:#454b5a;
+  --amber:#c9a36b;--amber-lt:#e6c799;--amber-deep:#a07f4a;--amber-dark:#1a1209;
+  --green:#5fa67c;--green-lt:#8ac6a3;--green-dark:#0e1c14;
+  --blue:#6a8cb5;--blue-lt:#9bb5d6;--blue-dark:#0e1620;
+  --red:#c97070;--red-lt:#dd9b9b;--red-dark:#1c0e0e;
+  --violet:#9b8bbf;--violet-lt:#bbafd6;--violet-dark:#15101e;
+  --serif:'Noto Serif KR',serif;--sans:'Noto Sans KR',sans-serif;--mono:'JetBrains Mono',monospace;
+  --fs:1;
+}
+@media (min-width:1600px){:root{--fs:1.08}}
+@media (min-width:2000px){:root{--fs:1.16}}
+@media (min-width:2400px){:root{--fs:1.24}}
+html,body{height:100%}
+html{scroll-behavior:smooth;scroll-padding-top:60px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;font-weight:400;
+  background-image:radial-gradient(ellipse 70% 50% at 30% 0%,rgba(201,163,107,.035),transparent 60%),radial-gradient(ellipse 60% 50% at 80% 100%,rgba(106,140,181,.025),transparent 60%);}
+.mono{font-family:var(--mono)}.serif{font-family:var(--serif)}
+*{cursor:none}
+.cursor-gauntlet{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;width:40px;height:36px;margin-left:-16px;margin-top:-1px;opacity:0;transition:opacity .25s ease;will-change:transform;transform:translate3d(-9999px,-9999px,0)}
+.cursor-gauntlet svg{display:block;width:100%;height:100%}
+.cg-inner{width:100%;height:100%;transition:transform .12s ease;filter:drop-shadow(0 2px 4px rgba(0,0,0,.65))}
+.cursor-active .cursor-gauntlet{opacity:1}
+.cursor-down .cg-inner{transform:scale(.88)}
+@media (hover:none) and (pointer:coarse){*{cursor:auto}.cursor-gauntlet{display:none}}
+.shell{display:grid;grid-template-columns:minmax(260px,20%) 1fr;min-height:100vh}
+aside.toc{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,var(--panel),var(--bg) 70%);border-right:1px solid var(--border-soft);padding:36px 28px 28px;display:flex;flex-direction:column;gap:28px;overflow-y:auto}
+aside.toc::-webkit-scrollbar{width:6px}aside.toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.book-head .book-title{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-.015em;color:var(--text)}
+.book-head .book-title .em{color:var(--amber-lt);font-family:var(--serif);font-style:italic;font-weight:600}
+.toc-label{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--dim);text-transform:uppercase;font-weight:600;padding-bottom:12px;border-bottom:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center}
+.toc-label .count{color:var(--dimmer)}
+.chap-list{display:flex;flex-direction:column;gap:1px;margin-top:4px}
+details.part{display:flex;flex-direction:column;gap:1px}
+details.part>summary{list-style:none;cursor:pointer;user-select:none}
+details.part>summary::-webkit-details-marker{display:none}
+.part-label{display:flex;align-items:baseline;gap:10px;padding:18px 6px 6px;font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--amber-deep);text-transform:uppercase;font-weight:700;border-radius:3px;transition:background .15s ease}
+.chap-list>details.part:first-child>.part-label{padding-top:4px}
+summary.part-label:hover{background:rgba(255,255,255,.022)}
+summary.part-label:hover .name{color:var(--amber-lt)}
+.part-caret{font-family:var(--mono);font-size:9px;color:var(--amber-deep);display:inline-block;width:10px;text-align:center;transition:transform .2s ease}
+details.part[open]>summary .part-caret{transform:rotate(90deg);color:var(--amber-lt)}
+.part-label .roman{font-family:var(--serif);font-style:italic;font-weight:700;color:var(--amber-lt);font-size:13px;letter-spacing:.04em;min-width:22px}
+.part-label .name{font-family:var(--sans);text-transform:none;font-weight:500;color:var(--sub);font-size:11.5px;letter-spacing:.01em;transition:color .15s ease}
+.part-label .line{flex:1;height:1px;background:var(--border-soft);align-self:center;margin-left:4px}
+.chap{display:grid;grid-template-columns:38px 1fr;gap:6px;padding:10px 8px;border-radius:3px;text-decoration:none;color:inherit;cursor:pointer;border-left:2px solid transparent;transition:background .2s ease,border-color .25s ease}
+.chap:hover{background:rgba(255,255,255,.022)}
+.chap.active{background:linear-gradient(90deg,rgba(201,163,107,.07),transparent);border-left-color:var(--amber)}
+.chap-num{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.18em;font-weight:600;padding-top:2px}
+.chap.active .chap-num{color:var(--amber-lt)}
+.chap-name{font-size:13.5px;font-weight:500;color:var(--sub);line-height:1.4;letter-spacing:-.005em}
+.chap.active .chap-name{color:var(--text);font-weight:600}
+.toc-foot{margin-top:auto;padding-top:18px;border-top:1px solid var(--border-soft);font-family:var(--mono);font-size:11px;color:var(--dimmer);letter-spacing:.18em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(11,13,18,.85);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--border-soft);padding:14px clamp(36px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.crumbs{font-family:var(--mono);font-size:calc(11.5px * var(--fs));letter-spacing:.18em;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:10px;font-weight:500}
+.crumbs .sep{color:var(--dimmer)}.crumbs .here{color:var(--amber-lt)}
+.read-progress{flex:1;max-width:280px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;position:relative}
+.read-progress>i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--amber-deep),var(--amber-lt));box-shadow:0 0 8px rgba(230,199,153,.4)}
+.page-of{font-family:var(--mono);font-size:calc(12px * var(--fs));color:var(--dim);letter-spacing:.18em;font-weight:600}
+.page-of .num{color:var(--text)}.page-of .of{margin:0 6px;color:var(--dimmer)}
+main.reader{min-width:0}
+.chapter{padding:clamp(36px,5vh,56px) clamp(36px,5vw,72px) 80px;max-width:clamp(900px,86%,2000px)}
+.ch-eyebrow{font-family:var(--mono);font-size:calc(11px * var(--fs));letter-spacing:.32em;color:var(--amber);text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:12px}
+.ch-eyebrow::before{content:'';width:24px;height:1px;background:var(--amber-deep)}
+.divider{margin:36px 0;display:flex;align-items:center;gap:18px}
+.divider .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border) 30%,var(--border) 70%,transparent)}
+.divider .glyph{font-family:var(--mono);font-size:calc(11px * var(--fs));color:var(--dim);letter-spacing:.4em;text-transform:uppercase;font-weight:600}
+h2.sec{font-size:calc(26px * var(--fs));font-weight:700;line-height:1.25;letter-spacing:-.012em;margin-top:48px;margin-bottom:14px;display:flex;align-items:baseline;gap:14px}
+h2.sec .num{font-family:var(--mono);font-size:calc(13px * var(--fs));color:var(--amber);letter-spacing:.22em;font-weight:600;line-height:1.2}
+h2.sec .em{color:var(--amber-lt);font-family:var(--serif);font-style:italic;font-weight:600}
+h3.sub{font-size:calc(18.5px * var(--fs));font-weight:700;letter-spacing:-.005em;margin-top:32px;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:10px}
+h3.sub::before{content:'';width:5px;height:5px;background:var(--amber);border-radius:50%;flex-shrink:0}
+p.body{font-size:calc(16px * var(--fs));line-height:1.78;color:var(--sub);margin:12px 0;letter-spacing:.005em}
+p.body .em{color:var(--amber-lt);font-family:var(--serif);font-style:italic;font-weight:600}
+p.body .strong{color:var(--text);font-weight:600}
+p.body code{font-family:var(--mono);font-size:calc(14px * var(--fs));color:var(--amber-lt);background:rgba(201,163,107,.08);padding:1px 6px;border-radius:3px;border:1px solid rgba(201,163,107,.18)}
+ul.notes,ol.notes{margin:14px 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.notes li,ol.notes li{font-size:calc(15.5px * var(--fs));line-height:1.7;color:var(--sub);padding-left:24px;position:relative}
+ul.notes li::before{content:'';position:absolute;left:6px;top:12px;width:8px;height:1px;background:var(--amber)}
+ol.notes{counter-reset:ni}ol.notes li{counter-increment:ni}
+ol.notes li::before{content:counter(ni,decimal-leading-zero);position:absolute;left:0;top:1px;font-family:var(--mono);font-size:calc(11px * var(--fs));color:var(--amber);letter-spacing:.1em;font-weight:600}
+ul.notes li .em,ol.notes li .em{color:var(--text);font-weight:600}
+.callout{margin:24px 0;padding:18px 20px 18px 22px;border-radius:3px;border-left:2px solid var(--blue);background:linear-gradient(90deg,rgba(106,140,181,.06),rgba(106,140,181,.01));display:flex;gap:16px;align-items:flex-start}
+.callout.amber{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(201,163,107,.06),rgba(201,163,107,.01))}
+.callout.green{border-left-color:var(--green);background:linear-gradient(90deg,rgba(95,166,124,.06),rgba(95,166,124,.01))}
+.callout.red{border-left-color:var(--red);background:linear-gradient(90deg,rgba(201,112,112,.06),rgba(201,112,112,.01))}
+.callout .tag{font-family:var(--mono);font-size:calc(11px * var(--fs));letter-spacing:.28em;font-weight:700;text-transform:uppercase;color:var(--blue-lt);flex-shrink:0;padding-top:2px;min-width:64px}
+.callout.amber .tag{color:var(--amber-lt)}.callout.green .tag{color:var(--green-lt)}.callout.red .tag{color:var(--red-lt)}
+.callout .content{font-size:calc(15px * var(--fs));line-height:1.7;color:var(--sub)}
+.callout .content .em{color:var(--text);font-weight:600;font-family:var(--serif);font-style:italic}
+.callout .content code{font-family:var(--mono);font-size:calc(13px * var(--fs));color:var(--text);background:rgba(255,255,255,.04);padding:1px 5px;border-radius:2px}
+figure.fig{margin:32px 0;padding:24px 20px 18px;border:1px solid var(--border-soft);border-radius:4px;background:linear-gradient(180deg,rgba(255,255,255,.012),transparent);position:relative}
+figure.fig::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--amber-deep),transparent)}
+figure.fig .fig-svg{width:100%;display:block;height:auto}
+figure.fig figcaption{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);display:flex;gap:14px;align-items:baseline;font-size:calc(13px * var(--fs));color:var(--dim);line-height:1.55}
+figure.fig figcaption .num{font-family:var(--mono);font-size:calc(11px * var(--fs));color:var(--amber);letter-spacing:.22em;font-weight:700;flex-shrink:0}
+figure.fig figcaption .desc{color:var(--sub)}figure.fig figcaption .desc .em{color:var(--text);font-weight:500}
+.pull{margin:32px auto;padding:20px 24px 22px;border-top:1px solid var(--amber);border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(201,163,107,.05),transparent);font-family:var(--serif);font-style:italic;font-weight:600;font-size:calc(21px * var(--fs));line-height:1.5;color:var(--text);text-align:center;letter-spacing:-.008em;position:relative}
+.pull::before{content:'\201C';position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-family:var(--serif);font-size:36px;color:var(--amber);background:var(--bg);padding:0 12px;line-height:1}
+.pull .em{color:var(--amber-lt)}
+table.compare{width:100%;margin:24px 0;border-collapse:collapse;font-size:calc(14.5px * var(--fs));line-height:1.6;border:1px solid var(--border-soft);background:linear-gradient(180deg,rgba(255,255,255,.012),transparent)}
+table.compare th,table.compare td{padding:12px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border-soft)}
+table.compare thead th{font-family:var(--mono);font-size:calc(11.5px * var(--fs));letter-spacing:.28em;color:var(--amber);text-transform:uppercase;font-weight:700;padding:14px 16px;background:rgba(201,163,107,.04);border-bottom:1px solid var(--amber-deep)}
+table.compare thead th:first-child{color:var(--dim);background:transparent}
+table.compare tbody th{font-family:var(--mono);font-size:calc(12px * var(--fs));letter-spacing:.18em;color:var(--dim);text-transform:uppercase;font-weight:600;width:160px;background:rgba(255,255,255,.012);border-right:1px solid var(--border-soft)}
+table.compare tbody td{color:var(--sub)}
+table.compare tbody td .em{color:var(--amber-lt);font-family:var(--serif);font-style:italic;font-weight:600}
+table.compare tbody td .strong{color:var(--text);font-weight:600}
+table.compare tbody td code{font-family:var(--mono);font-size:calc(13px * var(--fs));color:var(--amber-lt);background:rgba(201,163,107,.06);padding:1px 5px;border-radius:2px;border:1px solid rgba(201,163,107,.16)}
+table.compare tbody tr:last-child th,table.compare tbody tr:last-child td{border-bottom:none}
+.ch-nav{margin-top:64px;padding-top:24px;border-top:1px solid var(--border-soft);display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ch-nav a{display:block;padding:16px 18px;border:1px solid var(--border);border-radius:3px;text-decoration:none;color:inherit;background:linear-gradient(180deg,rgba(255,255,255,.012),transparent);transition:border-color .2s,transform .2s}
+.ch-nav a:hover{border-color:var(--amber-deep);transform:translateY(-1px)}
+.ch-nav .dir{font-family:var(--mono);font-size:calc(11px * var(--fs));color:var(--dim);letter-spacing:.28em;text-transform:uppercase;font-weight:600;display:flex;gap:8px;align-items:center}
+.ch-nav .arrow{color:var(--amber)}
+.ch-nav .target{margin-top:8px;font-size:calc(14.5px * var(--fs));font-weight:600;color:var(--text);line-height:1.4}
+.ch-nav .target .num{font-family:var(--serif);font-style:italic;color:var(--amber-lt);margin-right:8px}
+.ch-nav .next{text-align:right}.ch-nav .next .dir{justify-content:flex-end}
+/* ===== slide deck ===== */
+body.view-study .chapter:has(section.slide):not(:has(.book)){padding-top:0;padding-bottom:0}
+body.view-lecture .chapter:has(section.slide){padding-top:0;padding-bottom:0}
+html:has(body.deck-mode){overflow:hidden}
+body.deck-mode{overflow:hidden;height:100vh}
+body.deck-mode .shell{height:100vh;min-height:0}
+.slide{height:calc(100vh - 52px);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:24px 0 14px}
+.slide.slide-in{animation:slidefade .26s ease}
+@keyframes slidefade{from{opacity:0}to{opacity:1}}
+.slide-body{flex:1 1 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+.slide h2.sec{flex:0 0 auto;margin-top:0;margin-bottom:6px}
+.slide p.body{flex:0 0 auto;margin:6px 0}
+.slide figure.fig{flex:1 1 0;min-height:0;width:100%;max-width:1180px;margin:8px auto 0;align-self:center;padding:10px 8px;display:flex;flex-direction:column}
+.slide figure.fig .fig-svg{width:100%;height:100%;flex:1 1 0;min-height:0;display:block}
+.slide-next{flex:0 0 auto;align-self:center;margin:14px auto 2px;display:inline-flex;align-items:center;gap:11px;padding:12px 28px;border:1px solid var(--border);border-radius:999px;font-family:var(--mono);font-size:calc(12px * var(--fs));letter-spacing:.22em;text-transform:uppercase;font-weight:600;color:var(--sub);text-decoration:none;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);transition:border-color .2s,color .2s}
+.slide-next:hover{border-color:var(--amber-deep);color:var(--amber-lt)}
+.slide-next .arr{color:var(--amber);animation:slidebob 1.8s ease-in-out infinite}
+@keyframes slidebob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+.slide-next{display:none}
+.book{display:none}
+body.view-study .chapter:has(.book)>section.slide{display:none!important}
+body.view-study .chapter:has(.book) .slide-next{display:none}
+body.view-study .chapter>.book{display:block}
+.book>.divider:first-child{margin-top:8px}
+.view-toggle{display:none;align-items:center;gap:7px;flex:0 0 auto;font-family:var(--mono);font-size:calc(11px * var(--fs));letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--dim);background:transparent;border:1px solid var(--border);border-radius:999px;padding:5px 12px;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+.view-toggle.is-on{display:inline-flex}
+.view-toggle:hover{color:var(--sub);border-color:var(--dim)}
+body.view-study .view-toggle{color:var(--amber-lt);border-color:var(--amber-deep);background:rgba(201,163,107,.08)}
+@media (max-width:960px){.shell{grid-template-columns:1fr}aside.toc{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border-soft)}}
+</style>
+</head>
+<body class="view-lecture">
+<script>try{if(localStorage.getItem('rk-view-mode')==='study'){document.body.classList.remove('view-lecture');document.body.classList.add('view-study');}}catch(e){}</script>
+
+<div class="shell">
+  <aside class="toc">
+    <div class="book-head"><div class="book-title">심야의 정비소로 배우는<br><span class="em">Unity 최적화.</span></div></div>
+    <nav>
+      <div class="toc-label">Curriculum <span class="count">04</span></div>
+      <div class="chap-list">
+        <details class="part" open>
+          <summary class="part-label"><span class="part-caret">▸</span><span class="roman">I</span><span class="name">측정과 빌드</span><span class="line"></span></summary>
+          <a class="chap active" href="#ch-01"><span class="chap-num">01</span><span class="chap-name">계기판부터 본다 (측정)</span></a>
+          <a class="chap" href="#ch-02"><span class="chap-num">02</span><span class="chap-name">짐을 덜어낸다 (빌드)</span></a>
+        </details>
+        <details class="part">
+          <summary class="part-label"><span class="part-caret">▸</span><span class="roman">II</span><span class="name">엔진과 작업대</span><span class="line"></span></summary>
+          <a class="chap" href="#ch-03"><span class="chap-num">03</span><span class="chap-name">회전수와 재배치 (물리·리로드)</span></a>
+          <a class="chap" href="#ch-04"><span class="chap-num">04</span><span class="chap-name">부품을 묶고 기름때를 닦다 (2D·GC)</span></a>
+        </details>
+      </div>
+    </nav>
+    <div class="toc-foot"><span>RE001</span><a href="#ch-01" style="color:var(--sub);text-decoration:none">↑ Top</a></div>
+  </aside>
+
+  <main class="reader">
+    <div class="topbar">
+      <div class="crumbs"><span>UNITY OPT</span><span class="sep">/</span><span>심야 정비소</span><span class="sep">/</span><span class="here" id="crumb">Ch.01</span></div>
+      <div class="read-progress"><i id="prog"></i></div>
+      <button class="view-toggle"><span class="vt-label">간략</span></button>
+      <div class="page-of"><span class="num" id="pnum">01</span><span class="of">/</span>04</div>
+    </div>
+
+    <!-- ================= CH 01 — 측정 ================= -->
+    <article class="chapter" id="ch-01">
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-1-1"><span class="num">1.1</span><span>계기판부터 <span class="em">본다.</span></span></h2>
+          <p class="body">정비공은 보닛을 열기 전에 <span class="strong">진단기</span>부터 꽂는다. 어디가 뜨거운지 모른 채 부품을 갈면 멀쩡한 곳만 만진다. 최적화도 같다. <span class="em">Profiler</span>로 프레임의 어느 구간이 시간을 먹는지 먼저 재고, 그 다음에 손을 댄다. <span class="strong">측정 없는 최적화는 금지.</span></p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="심야 정비소. 리프트 위에 올라간 기계에 진단기 케이블이 연결되고, 계기판 바늘이 빨강 구간으로 치솟는다.">
+              <defs>
+                <linearGradient id="g1room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101521"/><stop offset="1" stop-color="#0a0d13"/></linearGradient>
+                <radialGradient id="g1lamp"><stop offset="0" stop-color="#e6c799" stop-opacity="0.5"/><stop offset="1" stop-color="#e6c799" stop-opacity="0"/></radialGradient>
+                <linearGradient id="g1desk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211a13"/><stop offset="1" stop-color="#100b07"/></linearGradient>
+                <radialGradient id="g1vign"><stop offset="0.65" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.5"/></radialGradient>
+              </defs>
+              <rect width="1200" height="680" fill="url(#g1room)"/>
+              <rect y="540" width="1200" height="140" fill="#06080d"/>
+              <ellipse cx="600" cy="300" rx="380" ry="240" fill="url(#g1lamp)" opacity="0"><animate attributeName="opacity" begin="0.2s" dur="0.8s" from="0" to="1" fill="freeze"/></ellipse>
+              <!-- 리프트 위 기계(빌드) = 초록 동작체 -->
+              <g opacity="0"><animate attributeName="opacity" begin="0.5s" dur="0.5s" from="0" to="1" fill="freeze"/>
+                <rect x="360" y="360" width="300" height="170" rx="14" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.4"/>
+                <rect x="384" y="384" width="120" height="40" rx="5" fill="#0a1510" stroke="#2a4536" stroke-width="1.4"/>
+                <circle cx="630" cy="392" r="7" fill="#5fa67c"><animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite"/></circle>
+                <rect x="330" y="530" width="360" height="14" rx="3" fill="#2a2018" stroke="#3a2c1d"/>
+              </g>
+              <!-- 진단기 케이블 = 파랑 정적선 -->
+              <path d="M660 440 C 820 440 880 300 980 280" fill="none" stroke="#6a8cb5" stroke-width="4" stroke-dasharray="420" stroke-dashoffset="420"><animate attributeName="stroke-dashoffset" begin="1.0s" dur="0.7s" to="0" fill="freeze"/></path>
+              <!-- 계기판 -->
+              <g opacity="0"><animate attributeName="opacity" begin="1.6s" dur="0.5s" from="0" to="1" fill="freeze"/>
+                <circle cx="1000" cy="270" r="92" fill="#10141d" stroke="#2a3344" stroke-width="3"/>
+                <path d="M930 300 A 90 90 0 0 1 1000 180" fill="none" stroke="#5fa67c" stroke-width="7"/>
+                <path d="M1000 180 A 90 90 0 0 1 1066 240" fill="none" stroke="#e0b24f" stroke-width="7"/>
+                <path d="M1066 240 A 90 90 0 0 1 1070 300" fill="none" stroke="#c97070" stroke-width="7"/>
+                <!-- 바늘이 빨강으로 치솟는다 -->
+                <line x1="1000" y1="270" x2="945" y2="300" stroke="#e6c799" stroke-width="4" stroke-linecap="round"><animate attributeName="x2" begin="2.0s" dur="0.9s" values="945;1062" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.6 1"/><animate attributeName="y2" begin="2.0s" dur="0.9s" values="300;248" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.6 1"/></line>
+                <circle cx="1000" cy="270" r="7" fill="#e6c799"/>
+                <text x="1000" y="350" text-anchor="middle" font-family="JetBrains Mono" font-size="15" fill="#dd9b9b" opacity="0">CPU 16.7ms<animate attributeName="opacity" begin="2.7s" dur="0.4s" to="1" fill="freeze"/></text>
+              </g>
+              <rect width="1200" height="680" fill="url(#g1vign)"/>
+            </svg>
+            <figcaption><span class="num">FIG 1.1</span><span class="desc">리프트 위 <span class="em">기계=빌드</span>에 진단기를 꽂는다. 바늘이 빨강(병목)으로 치솟는 곳 — 거기부터.</span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#s-1-2">다음 장면 <span class="arr">↓</span></a>
+      </section>
+
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-1-2"><span class="num">1.2</span><span>도구는 <span class="em">셋이면 충분.</span></span></h2>
+          <p class="body">정비소 벽에 걸린 세 도구. <span class="strong">Profiler</span>는 시간을 재고(CPU/GPU/Memory), <span class="strong">Frame Debugger</span>는 화면이 그려지는 단계를 한 장씩 넘겨 <span class="em">드로우콜이 끊기는 지점</span>을 보여주며, <span class="strong">RenderDoc</span>은 가장 비싼 셰이더를 짚어 준다. 비싼 한 곳을 고치는 게 효율이 가장 높다.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="벽에 걸린 세 진단 도구가 하나씩 불을 켠다.">
+              <defs><radialGradient id="g2glow"><stop offset="0" stop-color="#e6c799" stop-opacity="0.4"/><stop offset="1" stop-color="#e6c799" stop-opacity="0"/></radialGradient></defs>
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <line x1="0" y1="540" x2="1200" y2="540" stroke="#1c2230" stroke-width="1.4"/>
+              <g font-family="Noto Sans KR" text-anchor="middle">
+                <!-- tool 1 -->
+                <g opacity="0"><animate attributeName="opacity" begin="0.4s" dur="0.5s" to="1" fill="freeze"/>
+                  <rect x="150" y="200" width="240" height="220" rx="12" fill="#10141d" stroke="#6a8cb5" stroke-width="2.2"/>
+                  <rect x="178" y="236" width="184" height="120" rx="5" fill="#0a1018"/>
+                  <polyline points="190,330 220,300 250,320 280,270 310,300 340,250" fill="none" stroke="#9bb5d6" stroke-width="3"><animate attributeName="points" begin="0.9s" dur="1s" values="190,330 220,330 250,330 280,330 310,330 340,330;190,330 220,300 250,320 280,270 310,300 340,250" fill="freeze"/></polyline>
+                  <text x="270" y="396" font-size="19" fill="#9bb5d6" font-weight="700">Profiler</text>
+                </g>
+                <!-- tool 2 -->
+                <g opacity="0"><animate attributeName="opacity" begin="1.3s" dur="0.5s" to="1" fill="freeze"/>
+                  <rect x="480" y="200" width="240" height="220" rx="12" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.2"/>
+                  <g stroke="#8ac6a3" stroke-width="2.6" fill="none"><rect x="512" y="240" width="80" height="52" rx="4"/><rect x="610" y="240" width="80" height="52" rx="4" opacity="0.5"/><rect x="512" y="306" width="80" height="52" rx="4" opacity="0.3"/></g>
+                  <circle cx="660" cy="332" r="5" fill="#8ac6a3"><animate attributeName="cx" begin="1.8s" dur="2s" values="552;660;552" repeatCount="indefinite"/></circle>
+                  <text x="600" y="396" font-size="18" fill="#8ac6a3" font-weight="700">Frame Debugger</text>
+                </g>
+                <!-- tool 3 -->
+                <g opacity="0"><animate attributeName="opacity" begin="2.2s" dur="0.5s" to="1" fill="freeze"/>
+                  <ellipse cx="930" cy="300" rx="150" ry="120" fill="url(#g2glow)"/>
+                  <rect x="810" y="200" width="240" height="220" rx="12" fill="#15101e" stroke="#9b8bbf" stroke-width="2.2"/>
+                  <path d="M860 360 L900 280 L940 330 L980 250 L1010 360" fill="none" stroke="#bbafd6" stroke-width="3"/>
+                  <circle cx="980" cy="250" r="9" fill="#dd9b9b"><animate attributeName="r" begin="2.7s" dur="1.4s" values="9;13;9" repeatCount="indefinite"/></circle>
+                  <text x="930" y="396" font-size="19" fill="#bbafd6" font-weight="700">RenderDoc</text>
+                </g>
+              </g>
+            </svg>
+            <figcaption><span class="num">FIG 1.2</span><span class="desc">셋이 하나씩 불을 켠다. RenderDoc이 짚는 <span class="em">가장 비싼 셰이더</span> — 그 한 곳의 ROI가 가장 크다.</span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#ch-02">다음 챕터 <span class="arr">↓</span></a>
+      </section>
+
+      <!-- 학습용 본문 -->
+      <div class="book">
+        <div class="ch-eyebrow">Chapter 01 · 측정</div>
+        <h2 class="sec"><span class="num">1</span><span>계기판부터 <span class="em">본다.</span></span></h2>
+        <p class="body">최적화의 첫 규칙은 단순하다 — <span class="strong">먼저 측정한다.</span> 체감이나 추측으로 부품을 갈면, 정작 병목이 아닌 곳만 손대고 멀쩡한 코드를 망가뜨린다.</p>
+        <h3 class="sub">세 진단 도구</h3>
+        <ul class="notes">
+          <li><span class="em">Profiler</span> — CPU/GPU/Memory/Rendering 타임라인. 한 프레임의 어느 구간이 비싼지.</li>
+          <li><span class="em">Frame Debugger</span> — 드로우콜 단계별 재생. 배칭이 깨지는 지점을 눈으로.</li>
+          <li><span class="em">RenderDoc</span>(외부·Windows) — 가장 비싼 셰이더/드로우콜. 그 한 곳 최적화의 ROI가 최고.</li>
+        </ul>
+        <div class="callout amber"><span class="tag">RE001</span><div class="content">2D 게임이라 <span class="em">드로우콜</span>이 1순위 측정 대상. Frame Debugger로 스프라이트 배칭이 끊기는 머티리얼/Sorting 경계를 먼저 확인하라.</div></div>
+        <div class="ch-nav"><a href="#ch-01" style="visibility:hidden"></a><a class="next" href="#ch-02"><div class="dir">다음 <span class="arrow">→</span></div><div class="target"><span class="num">02</span>짐을 덜어낸다</div></a></div>
+      </div>
+    </article>
+
+    <!-- ================= CH 02 — 빌드 ================= -->
+    <article class="chapter" id="ch-02">
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-2-1"><span class="num">2.1</span><span>안 쓰는 짐을 <span class="em">내린다.</span></span></h2>
+          <p class="body">트렁크에 안 쓰는 공구가 가득하면 차가 무겁다. 빌드도 같다. <span class="strong">Strip Engine Code</span>·<span class="strong">Managed Stripping</span>은 안 쓰는 엔진/IL 코드를 들어낸다. 단, <span class="em">리플렉션·Visual Scripting·Json</span>이 동적으로 찾는 타입은 정적 분석이 못 잡아 날아갈 수 있다 — RE001은 그래서 <code>Low</code>까지만.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="기계에서 안 쓰는 부품 상자를 내려 무게가 줄고 바늘이 초록으로 내려간다.">
+              <defs><linearGradient id="g3box" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16243a"/><stop offset="1" stop-color="#0e1726"/></linearGradient></defs>
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <line x1="0" y1="560" x2="1200" y2="560" stroke="#1c2230" stroke-width="1.4"/>
+              <!-- 기계 -->
+              <rect x="430" y="360" width="260" height="200" rx="14" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.4"/>
+              <!-- 내려가는 짐 상자들 (파랑 정적) -->
+              <g>
+                <g><animateTransform attributeName="transform" type="translate" begin="0.6s" dur="0.9s" values="0 0;-260 80" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.7 1"/><animate attributeName="opacity" begin="1.3s" dur="0.4s" values="1;0" fill="freeze"/>
+                  <rect x="470" y="300" width="80" height="56" rx="5" fill="url(#g3box)" stroke="#6a8cb5" stroke-width="1.8"/><text x="510" y="334" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#9bb5d6">XR</text></g>
+                <g><animateTransform attributeName="transform" type="translate" begin="1.0s" dur="0.9s" values="0 0;300 90" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.7 1"/><animate attributeName="opacity" begin="1.7s" dur="0.4s" values="1;0" fill="freeze"/>
+                  <rect x="560" y="300" width="80" height="56" rx="5" fill="url(#g3box)" stroke="#6a8cb5" stroke-width="1.8"/><text x="600" y="334" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#9bb5d6">Cloth</text></g>
+              </g>
+              <!-- 보존 도장(리플렉션 타입) = 앰버 -->
+              <g opacity="0"><animate attributeName="opacity" begin="2.0s" dur="0.5s" to="1" fill="freeze"/>
+                <rect x="500" y="430" width="120" height="50" rx="6" fill="#15110a" stroke="#c9a36b" stroke-width="2"/>
+                <text x="560" y="461" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#e6c799">link.xml ✓</text>
+              </g>
+              <!-- 무게 게이지 내려간다 -->
+              <g><circle cx="960" cy="300" r="80" fill="#10141d" stroke="#2a3344" stroke-width="3"/>
+                <line x1="960" y1="300" x2="1020" y2="270" stroke="#dd9b9b" stroke-width="4" stroke-linecap="round"><animate attributeName="x2" begin="1.3s" dur="1.2s" values="1020;905" fill="freeze"/><animate attributeName="y2" begin="1.3s" dur="1.2s" values="270;272" fill="freeze"/><animate attributeName="stroke" begin="1.3s" dur="1.2s" values="#dd9b9b;#8ac6a3" fill="freeze"/></line>
+                <circle cx="960" cy="300" r="6" fill="#e6c799"/><text x="960" y="408" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#8ac6a3">BUILD ↓</text></g>
+            </svg>
+            <figcaption><span class="num">FIG 2.1</span><span class="desc">안 쓰는 모듈(XR·Cloth)은 내리고, <span class="em">리플렉션 타입은 link.xml로 도장</span> 찍어 보존. 무게(빌드)↓.</span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#s-2-2">다음 장면 <span class="arr">↓</span></a>
+      </section>
+
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-2-2"><span class="num">2.2</span><span>로그의 <span class="em">꼬리표를 뗀다.</span></span></h2>
+          <p class="body">모든 로그에 <span class="strong">스택 추적</span> 꼬리표를 달면, 그 추적이 리플렉션을 호출해 매번 값을 치른다. 플레이어 빌드에서 Log·Warning의 스택 추적을 <span class="em">None</span>으로 떼면 비용이 사라진다(Error는 남긴다). 그래픽 API도 안드로이드 Auto를 끄고 <code>GLES3</code> 하나만 — 셰이더 변형이 반으로.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="로그 줄들의 무거운 꼬리표가 떨어져 나가 가벼워진다.">
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <g font-family="JetBrains Mono">
+                <g><animate attributeName="opacity" begin="0.4s" dur="0.4s" from="0" to="1" fill="freeze"/>
+                  <rect x="260" y="180" width="680" height="60" rx="6" fill="#10141d" stroke="#2a3344"/><text x="290" y="218" font-size="18" fill="#9bb5d6">[Log] potion crafted</text>
+                  <!-- 꼬리표(스택) 떨어진다 -->
+                  <g><animateTransform attributeName="transform" type="translate" begin="1.2s" dur="0.8s" values="0 0;-30 220" fill="freeze"/><animate attributeName="opacity" begin="1.6s" dur="0.5s" values="0.8;0" fill="freeze"/>
+                    <rect x="620" y="244" width="300" height="40" rx="4" fill="#1c0e0e" stroke="#c97070" stroke-width="1.6"/><text x="640" y="270" font-size="13" fill="#dd9b9b">at A.B() at C.D() …</text></g></g>
+                <g><animate attributeName="opacity" begin="0.7s" dur="0.4s" from="0" to="1" fill="freeze"/>
+                  <rect x="260" y="300" width="680" height="60" rx="6" fill="#10141d" stroke="#2a3344"/><text x="290" y="338" font-size="18" fill="#e6c799">[Warn] storage full</text>
+                  <g><animateTransform attributeName="transform" type="translate" begin="1.6s" dur="0.8s" values="0 0;40 200" fill="freeze"/><animate attributeName="opacity" begin="2.0s" dur="0.5s" values="0.8;0" fill="freeze"/>
+                    <rect x="620" y="364" width="300" height="40" rx="4" fill="#1c0e0e" stroke="#c97070" stroke-width="1.6"/><text x="640" y="390" font-size="13" fill="#dd9b9b">at X.Y() at Z.W() …</text></g></g>
+                <!-- Error는 꼬리표 유지 -->
+                <g><animate attributeName="opacity" begin="1.0s" dur="0.4s" from="0" to="1" fill="freeze"/>
+                  <rect x="260" y="420" width="680" height="60" rx="6" fill="#1c0e0e" stroke="#c97070" stroke-width="1.8"/><text x="290" y="458" font-size="18" fill="#dd9b9b">[Error] null ref — 추적 유지</text></g>
+                <text x="600" y="560" text-anchor="middle" font-family="Noto Sans KR" font-size="18" fill="#8ac6a3" font-weight="700" opacity="0">Log·Warning 꼬리표 제거 → 비용 ↓<animate attributeName="opacity" begin="2.4s" dur="0.5s" to="1" fill="freeze"/></text>
+              </g>
+            </svg>
+            <figcaption><span class="num">FIG 2.2</span><span class="desc">Log·Warning의 스택 추적(꼬리표)을 떼 비용 제거. <span class="em">Error는 유지</span>해 디버깅은 살린다.</span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#ch-03">다음 챕터 <span class="arr">↓</span></a>
+      </section>
+
+      <div class="book">
+        <div class="ch-eyebrow">Chapter 02 · 빌드</div>
+        <h2 class="sec"><span class="num">2</span><span>짐을 <span class="em">덜어낸다.</span></span></h2>
+        <table class="compare">
+          <thead><tr><th>설정</th><th>효과</th><th>주의 / RE001</th></tr></thead>
+          <tbody>
+            <tr><th>Managed Stripping</th><td>안 쓰는 IL 제거 — 빌드·메모리↓</td><td>리플렉션/VS/Json 타입 누락 위험 → <code>link.xml</code> 후 상향. RE001=<span class="strong">Low</span></td></tr>
+            <tr><th>Strip Engine Code</th><td>안 쓰는 엔진 모듈 제거</td><td>일반 안전 — <span class="strong">on</span></td></tr>
+            <tr><th>Stack Trace</th><td>Log/Warning 추적 비용 제거</td><td>None. <span class="em">Error는 유지</span></td></tr>
+            <tr><th>Graphics API</th><td>Auto off → 변형↓·첫 컴파일↓</td><td>2D는 <code>GLES3</code>. 고사양 타깃이면 Vulkan</td></tr>
+            <tr><th>빌트인 모듈</th><td>Cloth·XR·VR·Vehicles 제거</td><td>2D 미사용 → 안전(제거 전 참조 확인)</td></tr>
+          </tbody>
+        </table>
+        <div class="ch-nav"><a href="#ch-01"><div class="dir"><span class="arrow">←</span> 이전</div><div class="target"><span class="num">01</span>계기판부터 본다</div></a><a class="next" href="#ch-03"><div class="dir">다음 <span class="arrow">→</span></div><div class="target"><span class="num">03</span>회전수와 재배치</div></a></div>
+      </div>
+    </article>
+
+    <!-- ================= CH 03 — 물리·리로드 ================= -->
+    <article class="chapter" id="ch-03">
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-3-1"><span class="num">3.1</span><span>회전수를 <span class="em">낮춘다.</span></span></h2>
+          <p class="body">공회전 RPM이 높으면 기름만 태운다. <span class="strong">Fixed Timestep</span>은 물리 엔진의 회전수다. 기본 0.02(50Hz)를 <span class="em">0.04(25Hz)</span>로 낮추면 물리 CPU가 준다 — RE001은 동행이 시뮬레이션 off라 물리 의존이 적어 안전하다. <span class="strong">Auto Sync Transforms</span>도 꺼서, 매 이동마다 동기화하던 걸 한 박자에 몰아 처리한다.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="엔진 RPM 게이지가 내려가고 톱니가 천천히 돈다.">
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <!-- RPM 게이지 -->
+              <g transform="translate(330 340)">
+                <circle r="150" fill="#10141d" stroke="#2a3344" stroke-width="3"/>
+                <path d="M-120 60 A 135 135 0 0 1 0 -135" fill="none" stroke="#5fa67c" stroke-width="9"/>
+                <path d="M0 -135 A 135 135 0 0 1 120 60" fill="none" stroke="#c97070" stroke-width="9"/>
+                <line x1="0" y1="0" x2="90" y2="-100" stroke="#e6c799" stroke-width="5" stroke-linecap="round"><animate attributeName="x2" begin="0.6s" dur="1.4s" values="90;-66" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.6 1"/><animate attributeName="y2" begin="0.6s" dur="1.4s" values="-100;-118" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.6 1"/></line>
+                <circle r="8" fill="#e6c799"/>
+                <text y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#8ac6a3">50Hz → 25Hz</text>
+              </g>
+              <!-- 톱니(물리) 천천히 회전 -->
+              <g transform="translate(800 320)" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.2">
+                <g><animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="9s" repeatCount="indefinite"/>
+                  <circle r="78"/><g stroke="#5fa67c" stroke-width="14"><line x1="0" y1="-78" x2="0" y2="-104"/><line x1="68" y1="-39" x2="90" y2="-52"/><line x1="68" y1="39" x2="90" y2="52"/><line x1="0" y1="78" x2="0" y2="104"/><line x1="-68" y1="39" x2="-90" y2="52"/><line x1="-68" y1="-39" x2="-90" y2="-52"/></g><circle r="22" fill="#0a1510"/></g>
+              </g>
+              <text x="800" y="470" text-anchor="middle" font-family="Noto Sans KR" font-size="17" fill="#9bb5d6" font-weight="700" opacity="0">Auto Sync off — 한 박자에 몰아서<animate attributeName="opacity" begin="2.0s" dur="0.5s" to="1" fill="freeze"/></text>
+            </svg>
+            <figcaption><span class="num">FIG 3.1</span><span class="desc">물리 RPM(Fixed Timestep)을 낮추고 Auto Sync를 꺼 회전 비용을 줄인다. <span class="em">레이캐스트 즉시판독 코드만 주의.</span></span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#s-3-2">다음 장면 <span class="arr">↓</span></a>
+      </section>
+
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-3-2"><span class="num">3.2</span><span>작업대가 <span class="em">한 덩어리다.</span></span></h2>
+          <p class="body">에디터 리로드가 느린 진짜 이유 — 모든 코드가 <span class="strong">하나의 작업대(Assembly-CSharp)</span>에 묶여, 나사 하나 갈아도 작업대 전체를 다시 차린다. 쪼개려면(asmdef) 칸을 나눠야 하는데, RE001은 <span class="em">Managers ↔ UI가 서로를 붙잡는 순환</span>이라 칸막이를 세울 수 없다. 그 매듭을 먼저 풀어야(인터페이스/이벤트) 분할이 가능하다.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="Managers와 UI가 서로를 화살표로 붙잡아 칸막이를 못 세운다.">
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <!-- 두 블록 -->
+              <g opacity="0"><animate attributeName="opacity" begin="0.4s" dur="0.5s" to="1" fill="freeze"/>
+                <rect x="220" y="250" width="240" height="180" rx="14" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.4"/>
+                <text x="340" y="350" text-anchor="middle" font-family="Noto Sans KR" font-size="22" fill="#8ac6a3" font-weight="700">Managers</text>
+                <rect x="740" y="250" width="240" height="180" rx="14" fill="#10192a" stroke="#6a8cb5" stroke-width="2.4"/>
+                <text x="860" y="350" text-anchor="middle" font-family="Noto Sans KR" font-size="22" fill="#9bb5d6" font-weight="700">UI</text></g>
+              <!-- 서로 붙잡는 화살표(순환) -->
+              <g fill="none" stroke-width="3.4">
+                <path d="M460 310 C 600 290 600 290 740 310" stroke="#c9a36b" marker-end="url(#a3)"><animate attributeName="opacity" begin="1.0s" dur="0.5s" from="0" to="1" fill="freeze"/></path>
+                <path d="M740 380 C 600 400 600 400 460 380" stroke="#c9a36b" marker-end="url(#a3)"><animate attributeName="opacity" begin="1.4s" dur="0.5s" from="0" to="1" fill="freeze"/></path>
+              </g>
+              <defs><marker id="a3" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#c9a36b"/></marker></defs>
+              <text x="600" y="340" text-anchor="middle" font-family="JetBrains Mono" font-size="40" fill="#dd9b9b" opacity="0">⟲<animate attributeName="opacity" begin="1.9s" dur="0.6s" values="0;1" fill="freeze"/><animateTransform attributeName="transform" type="rotate" begin="2.5s" dur="6s" from="0 600 330" to="360 600 330" repeatCount="indefinite"/></text>
+              <text x="600" y="500" text-anchor="middle" font-family="Noto Sans KR" font-size="18" fill="#dd9b9b" font-weight="700" opacity="0">순환참조 → asmdef 분할 차단<animate attributeName="opacity" begin="2.4s" dur="0.5s" to="1" fill="freeze"/></text>
+            </svg>
+            <figcaption><span class="num">FIG 3.2</span><span class="desc">Managers↔UI 순환이 칸막이(asmdef)를 막는다. 근본책은 <span class="em">매듭(순환) 풀기</span> → 그 뒤 분할.</span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#ch-04">다음 챕터 <span class="arr">↓</span></a>
+      </section>
+
+      <div class="book">
+        <div class="ch-eyebrow">Chapter 03 · 물리·리로드</div>
+        <h2 class="sec"><span class="num">3</span><span>회전수와 <span class="em">재배치.</span></span></h2>
+        <ul class="notes">
+          <li><span class="em">Auto Sync Transforms off</span> — 이동마다 동기화를 FixedUpdate에 몰아 처리. 단, 이동 직후 즉시 Raycast 판독 코드는 한 프레임 어긋날 수 있음.</li>
+          <li><span class="em">Reuse Collision Callbacks on</span> — 콜백 객체 재사용으로 GC↓.</li>
+          <li><span class="em">Fixed Timestep 0.04</span> — 물리 25Hz. RE001은 물리 의존 적어 안전.</li>
+        </ul>
+        <div class="callout red"><span class="tag">리로드</span><div class="content">에디터 리로드의 근본 병목은 단일 <code>Assembly-CSharp</code> + 강제 도메인 리로드. <span class="em">Managers↔UI 순환참조</span>로 asmdef 분할이 막혀 있어, 순환 해소(인터페이스/이벤트) 리팩터가 선행돼야 한다. EnterPlayMode 옵션은 이미 최적.</div></div>
+        <div class="ch-nav"><a href="#ch-02"><div class="dir"><span class="arrow">←</span> 이전</div><div class="target"><span class="num">02</span>짐을 덜어낸다</div></a><a class="next" href="#ch-04"><div class="dir">다음 <span class="arrow">→</span></div><div class="target"><span class="num">04</span>부품을 묶고 기름때를 닦다</div></a></div>
+      </div>
+    </article>
+
+    <!-- ================= CH 04 — 2D·GC ================= -->
+    <article class="chapter" id="ch-04">
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-4-1"><span class="num">4.1</span><span>흩어진 부품을 <span class="em">한 상자에.</span></span></h2>
+          <p class="body">2D의 성능은 <span class="strong">드로우콜</span>이 좌우한다. 스프라이트가 시트마다 흩어지면 GPU에 "이거 그려, 또 저거 그려" 하고 매번 명령한다. <span class="em">Sprite Atlas</span>로 한 상자에 묶고 머티리얼·Sorting을 통일하면 <span class="strong">한 번에 배칭</span>된다. RE001은 몬스터/UI 스프라이트가 흩어져 있어 개선 여지가 크다.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="흩어진 스프라이트 조각들이 하나의 아틀라스 상자로 모여 드로우콜이 줄어든다.">
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <!-- 흩어진 조각 → 모인다 -->
+              <g fill="#10192a" stroke="#6a8cb5" stroke-width="1.8">
+                <g><rect x="180" y="160" width="60" height="60" rx="6"/><animateTransform attributeName="transform" type="translate" begin="0.6s" dur="1s" values="0 0;360 200" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.6 1"/></g>
+                <g><rect x="300" y="120" width="60" height="60" rx="6"/><animateTransform attributeName="transform" type="translate" begin="0.8s" dur="1s" values="0 0;300 240" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.6 1"/></g>
+                <g><rect x="220" y="460" width="60" height="60" rx="6"/><animateTransform attributeName="transform" type="translate" begin="1.0s" dur="1s" values="0 0;340 -120" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.6 1"/></g>
+                <g><rect x="360" y="500" width="60" height="60" rx="6"/><animateTransform attributeName="transform" type="translate" begin="1.2s" dur="1s" values="0 0;260 -180" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.6 1"/></g>
+              </g>
+              <!-- 아틀라스 상자 -->
+              <g opacity="0"><animate attributeName="opacity" begin="0.4s" dur="0.5s" to="1" fill="freeze"/>
+                <rect x="540" y="240" width="200" height="200" rx="12" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.6"/>
+                <text x="640" y="470" text-anchor="middle" font-family="Noto Sans KR" font-size="18" fill="#8ac6a3" font-weight="700">Sprite Atlas</text></g>
+              <!-- 드로우콜 카운터 -->
+              <g font-family="JetBrains Mono" text-anchor="middle">
+                <text x="960" y="300" font-size="20" fill="#dd9b9b" opacity="0">Draw Calls: 48<animate attributeName="opacity" begin="0.5s" dur="0.4s" to="1" fill="freeze"/><animate attributeName="opacity" begin="2.2s" dur="0.4s" values="1;0" fill="freeze"/></text>
+                <text x="960" y="300" font-size="22" fill="#8ac6a3" opacity="0">Draw Calls: 6<animate attributeName="opacity" begin="2.3s" dur="0.5s" to="1" fill="freeze"/></text>
+              </g>
+            </svg>
+            <figcaption><span class="num">FIG 4.1</span><span class="desc">흩어진 스프라이트를 아틀라스 한 상자로 → 머티리얼 통일 → <span class="em">드로우콜 48 → 6</span>(예시).</span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#s-4-2">다음 장면 <span class="arr">↓</span></a>
+      </section>
+
+      <section class="slide">
+        <div class="slide-body">
+          <h2 class="sec" id="s-4-2"><span class="num">4.2</span><span>바닥의 <span class="em">기름때를 닦는다.</span></span></h2>
+          <p class="body">매 프레임 바닥에 기름(쓰레기)을 흘리면 청소부(GC)가 주기적으로 들이닥쳐 화면을 <span class="em">뚝 끊는다</span>. <code>Update</code> 안의 <code>new</code>·LINQ·문자열 보간·<code>GameObject.Find</code>가 그 기름이다. 참조는 <span class="strong">캐싱</span>하고, <code>WaitForSeconds</code>는 재활용하고, 빈출 객체는 <span class="strong">풀링</span>한다. 흘리지 않으면 청소부도 오지 않는다.</p>
+          <figure class="fig">
+            <svg class="fig-svg" viewBox="0 0 1200 680" role="img" aria-label="매 프레임 흘리던 기름방울이 멈추자 GC 청소 스파이크가 평평해진다.">
+              <rect width="1200" height="680" fill="#0c1017"/>
+              <!-- 기름 흘리는 기계 → 멈춤 -->
+              <g>
+                <rect x="200" y="180" width="160" height="110" rx="12" fill="#0e1c14" stroke="#5fa67c" stroke-width="2.2"/>
+                <circle cx="280" cy="300" r="7" fill="#dd9b9b"><animate attributeName="cy" values="300;520" dur="1.2s" begin="0.4s;drip.end" repeatCount="3"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;0.8;1" dur="1.2s" begin="0.4s;drip.end" repeatCount="3"/></circle>
+                <circle id="drip" cx="280" cy="300" r="0" fill="none"><animate attributeName="r" values="0;0" dur="3.6s" begin="0.4s"/></circle>
+                <text x="280" y="160" text-anchor="middle" font-family="Noto Sans KR" font-size="15" fill="#dd9b9b">Update: new/Find</text>
+              </g>
+              <!-- GC 그래프: 스파이크 → 평평 -->
+              <g transform="translate(520 200)">
+                <rect width="560" height="300" rx="8" fill="#10141d" stroke="#2a3344"/>
+                <polyline points="20,260 90,260 100,80 110,260 200,260 210,90 220,260 320,260" fill="none" stroke="#c97070" stroke-width="3"><animate attributeName="opacity" begin="0s" dur="3.4s" values="1;1;0.15" keyTimes="0;0.7;1" fill="freeze"/></polyline>
+                <polyline points="320,260 560,255" fill="none" stroke="#8ac6a3" stroke-width="3"><animate attributeName="opacity" begin="2.6s" dur="0.6s" from="0" to="1" fill="freeze"/></polyline>
+                <text x="120" y="50" font-family="JetBrains Mono" font-size="13" fill="#dd9b9b">GC spikes</text>
+                <text x="420" y="230" font-family="JetBrains Mono" font-size="13" fill="#8ac6a3" opacity="0">flat<animate attributeName="opacity" begin="3.0s" dur="0.5s" to="1" fill="freeze"/></text>
+              </g>
+            </svg>
+            <figcaption><span class="num">FIG 4.2</span><span class="desc">할당(기름)을 멈추면 GC 스파이크(끊김)가 평평해진다. <span class="em">캐싱·풀링·WaitForSeconds 재활용.</span></span></figcaption>
+          </figure>
+        </div>
+        <a class="slide-next" href="#ch-04">처음으로 <span class="arr">↑</span></a>
+      </section>
+
+      <div class="book">
+        <div class="ch-eyebrow">Chapter 04 · 2D·GC</div>
+        <h2 class="sec"><span class="num">4</span><span>묶고 <span class="em">닦는다.</span></span></h2>
+        <h3 class="sub">드로우콜 — 2D의 1순위</h3>
+        <p class="body">스프라이트를 <span class="em">Sprite Atlas</span>로 묶고 머티리얼·sortingLayer를 통일하면 배칭된다. Frame Debugger로 배칭이 깨지는 경계를 확인하라. RE001은 몬스터/UI 스프라이트가 시트별로 흩어져 개선 여지가 크다.</p>
+        <h3 class="sub">GC 할당 — 끊김의 주범</h3>
+        <ul class="notes">
+          <li><code>Update</code>의 <span class="em">new·LINQ·문자열 보간·박싱</span> 제거.</li>
+          <li><code>GameObject.Find</code>/<code>FindObjectOfType</code> <span class="em">캐싱</span> 또는 Managers/이벤트 경유 (RE001: <code>UI_Village1BtnGroup</code> 등).</li>
+          <li><code>WaitForSeconds</code> 캐싱 · 빈출 객체 <span class="em">풀링</span>(PoolManager 활용).</li>
+        </ul>
+        <div class="pull">측정하고 · 짐을 덜고 · 회전수를 낮추고 · <span class="em">흘리지 않는다.</span></div>
+        <div class="ch-nav"><a href="#ch-03"><div class="dir"><span class="arrow">←</span> 이전</div><div class="target"><span class="num">03</span>회전수와 재배치</div></a><a class="next" href="#ch-01"><div class="dir">처음으로 <span class="arrow">↑</span></div><div class="target"><span class="num">01</span>계기판부터 본다</div></a></div>
+      </div>
+    </article>
+
+  </main>
+</div>
+
+<script>
+// ===== 챕터 라우터: 해시에 맞는 챕터만 표시 =====
+(function(){
+  const arts=Array.from(document.querySelectorAll('article.chapter[id^="ch-"]'));
+  const links=Array.from(document.querySelectorAll('.chap'));
+  const crumb=document.getElementById('crumb'), pnum=document.getElementById('pnum'), prog=document.getElementById('prog');
+  function curId(){ const h=location.hash.slice(1); if(h.startsWith('ch-')) return h; if(/^s-(\d+)-/.test(h)){return 'ch-'+h.match(/^s-(\d+)-/)[1].padStart(2,'0');} return arts[0].id; }
+  function show(){
+    const id=curId(); let n=1;
+    arts.forEach((a,i)=>{ const on=a.id===id; a.style.display=on?'':'none'; if(on) n=i+1; });
+    links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===('#'+id) || l.getAttribute('href').startsWith('#'+id)));
+    const a=document.querySelector('.chap[href="#'+id+'"]');
+    if(crumb) crumb.textContent='Ch.'+String(n).padStart(2,'0')+(a?' '+a.querySelector('.chap-name').textContent.replace(/\s*\(.*\)/,''):'');
+    if(pnum) pnum.textContent=String(n).padStart(2,'0');
+    if(prog) prog.style.width=(n/arts.length*100)+'%';
+  }
+  window.addEventListener('hashchange',()=>{ show(); if(window.__deckRefresh) window.__deckRefresh(); });
+  show();
+})();
+
+// ===== 슬라이드 덱 (좌우=장면, 상하=챕터) =====
+(function(){
+  let slides=[],idx=0,cooling=false,curSteps=null,stepTimer=0;
+  function shownArticle(){ for(const a of document.querySelectorAll('article.chapter[id^="ch-"]')){ if(a.style.display!=='none') return a; } return null; }
+  function subId(s){ const h=s.querySelector('h2.sec[id]'); return h?h.id:null; }
+  function scroller(s){ return s.querySelector('.slide-body')||s; }
+  function setupSteps(){ curSteps=null; }
+  function setActive(n,viaHash){
+    if(!slides.length) return;
+    idx=Math.max(0,Math.min(n,slides.length-1));
+    slides.forEach((s,i)=>{ s.style.display=i===idx?'':'none'; });
+    const cur=slides[idx]; scroller(cur).scrollTop=0;
+    cur.classList.remove('slide-in'); void cur.offsetWidth; cur.classList.add('slide-in');
+    cur.querySelectorAll('svg').forEach(svg=>{ try{ svg.setCurrentTime(0); }catch(e){} });
+    const id=subId(cur);
+    if(!viaHash && id) history.replaceState(null,'',location.pathname+location.search+'#'+id);
+  }
+  const chapOrder=Array.from(document.querySelectorAll('article.chapter[id^="ch-"]')).map(a=>a.id).sort((x,y)=>parseInt(x.slice(3),10)-parseInt(y.slice(3),10));
+  function gotoChapter(dir){ const art=shownArticle(); if(!art) return; const i=chapOrder.indexOf(art.id), j=i+dir; if(i<0||j<0||j>=chapOrder.length) return; location.hash='#'+chapOrder[j]; }
+  function advance(){ if(idx<slides.length-1){ setActive(idx+1); return true; } return false; }
+  function retreat(){ if(idx>0){ setActive(idx-1); return true; } return false; }
+  function refresh(){
+    const art=shownArticle();
+    const studyMode=document.body.classList.contains('view-study');
+    const artHasBook=!!(art&&art.querySelector(':scope > .book'));
+    const deckActive=!!art&&(!studyMode||!artHasBook);
+    slides=deckActive?Array.from(art.querySelectorAll(':scope > section.slide')):[];
+    document.body.classList.toggle('deck-mode',slides.length>0);
+    if(!slides.length) return;
+    let start=0; const hash=location.hash.slice(1);
+    if(/^s-\d+-/.test(hash)){ const i=slides.findIndex(s=>{const h=s.querySelector('h2.sec[id]');return h&&h.id===hash;}); if(i>=0) start=i; }
+    setActive(start,true);
+  }
+  window.addEventListener('wheel',function(e){
+    if(e.target.closest&&e.target.closest('aside.toc')) return;
+    if(!slides.length) return;
+    const sc=scroller(slides[idx]);
+    const atTop=sc.scrollTop<=1, atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;
+    if(e.deltaY===0) return;
+    if(e.deltaY>0&&!atBottom) return; if(e.deltaY<0&&!atTop) return;
+    const fwd=e.deltaY>0, canSlide=fwd?idx<slides.length-1:idx>0;
+    if(!canSlide) return; e.preventDefault();
+    if(cooling) return; cooling=true; setTimeout(()=>cooling=false,620);
+    (fwd?advance:retreat)();
+  },{passive:false});
+  window.addEventListener('keydown',function(e){
+    if(e.key==='ArrowDown'||e.key==='PageDown'){ e.preventDefault(); gotoChapter(1); return; }
+    if(e.key==='ArrowUp'||e.key==='PageUp'){ e.preventDefault(); gotoChapter(-1); return; }
+    if(!slides.length) return;
+    if(e.key==='ArrowRight'){ if(advance()) e.preventDefault(); }
+    else if(e.key==='ArrowLeft'){ if(retreat()) e.preventDefault(); }
+  });
+  document.addEventListener('click',function(e){ const b=e.target.closest('.slide-next'); if(!b||!slides.length) return; e.preventDefault(); advance(); });
+  window.addEventListener('hashchange',refresh);
+  window.__deckRefresh=refresh; refresh();
+})();
+
+// ===== 보기 모드 토글 (강의용 ↔ 학습용) =====
+(function(){
+  const toggle=document.querySelector('.view-toggle'); if(!toggle) return;
+  if(!document.querySelector('.chapter > .book')){ document.body.classList.remove('view-study'); document.body.classList.add('view-lecture'); return; }
+  toggle.classList.add('is-on');
+  const label=toggle.querySelector('.vt-label');
+  function sync(){ const study=document.body.classList.contains('view-study'); if(label) label.textContent=study?'자세히':'간략'; }
+  toggle.addEventListener('click',()=>{
+    const study=document.body.classList.contains('view-study');
+    document.body.classList.toggle('view-study',!study); document.body.classList.toggle('view-lecture',study);
+    try{ localStorage.setItem('rk-view-mode',!study?'study':'lecture'); }catch(e){}
+    sync(); if(window.__deckRefresh) window.__deckRefresh(); window.scrollTo({top:0});
+  });
+  sync();
+})();
+
+// ===== 커스텀 커서 =====
+(function(){
+  if(matchMedia('(hover:none) and (pointer:coarse)').matches) return;
+  const c=document.createElement('div'); c.className='cursor-gauntlet';
+  c.innerHTML='<div class="cg-inner"><svg width="40" height="36" viewBox="0 0 40 36"><defs><linearGradient id="cBnr" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f4dca8"/><stop offset="50%" stop-color="#c9a36b"/><stop offset="100%" stop-color="#5a4015"/></linearGradient><radialGradient id="cBnrGem" cx=".4" cy=".35" r=".7"><stop offset="0%" stop-color="#e6c799"/><stop offset="55%" stop-color="#5a4015"/><stop offset="100%" stop-color="#1a1209"/></radialGradient></defs><g transform="rotate(-30 16 1)"><path d="M16 1 L28 24 L22 35 L16 30 L10 35 L4 24 Z" fill="url(#cBnr)" stroke="#1a1209" stroke-width="1.1" stroke-linejoin="round"/><path d="M16 12 L22 22 L16 28 L10 22 Z" fill="url(#cBnrGem)" stroke="#1a1209" stroke-width=".7" stroke-linejoin="round"/></g></svg></div>';
+  document.body.append(c);
+  let started=false; const root=document.documentElement;
+  document.addEventListener('mousemove',e=>{ c.style.transform=`translate3d(${e.clientX}px,${e.clientY}px,0)`; if(!started){ started=true; root.classList.add('cursor-active'); } });
+  document.addEventListener('mousedown',()=>root.classList.add('cursor-down'));
+  document.addEventListener('mouseup',()=>root.classList.remove('cursor-down'));
+})();
+</script>
+</body>
+</html>

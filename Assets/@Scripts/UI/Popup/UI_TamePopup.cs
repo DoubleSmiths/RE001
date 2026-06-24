@@ -117,8 +117,11 @@ public class UI_TamePopup : UI_Popup
         var slime = Util.FindChild<Image>(gameObject, "0_Slime_Tame", true);
         if (slime != null) { _slimeImg = slime; _slimeTr = slime.transform; }
 
-        // 슬34: prefab의 "Tamer Move"/"Monster Move"는 코드 수평 슬라이드인으로 대체 → 비활성화.
-        //  (isFrom anim이 Start에서 오브젝트를 FROM 위치로 스냅시켜 rest 캡처를 망치는 것 방지)
+        // [DOTweenAnimation 규약 예외 — 의도적 코드 대체] 슬34 등장 슬라이드인.
+        //  prefab "Tamer Move"는 4-loop 바운스(Move loops4 dur0.125), "Monster Move"는 짧은 0.5s 수평이라
+        //  설계 의도(1.5s 깔끔한 수평 슬라이드인)와 안 맞고, isFrom anim이 Start에서 FROM 위치로 스냅시켜
+        //  rest 캡처를 오염시킨다. → 두 prefab Move를 비활성화하고 아래 CoEnter에서 코드 수평 슬라이드로 구동.
+        //  (컴포넌트로 되돌리려면 prefab Move를 1.5s 수평으로 재저작해야 함 — 그 전엔 코드가 정답.)
         DisablePrefabAnim(GetImage((int)Images.TamerImg)?.gameObject, "Tamer Move");
         DisablePrefabAnim(_slimeTr?.gameObject, "Monster Move");
 
@@ -169,6 +172,7 @@ public class UI_TamePopup : UI_Popup
         ApplyMonsterImage();
         ApplyLanguage();
         RefreshMandrakeButton();   // 슬31: 가랏 라벨 lime→hex + 만드라고라 이미지 밑 소지 수(AmountTxt)
+        RefreshLureButton();       // 슬31: 길들인다! 라벨 = 성공확률% + 시도횟수/확정횟수(천장). baked 정적값 교체
 
         // 초기 상태: 버튼/확인팝업/로딩 숨김 (연출 코루틴이 단계적으로 노출)
         SetButtonsActive(false);
@@ -241,6 +245,7 @@ public class UI_TamePopup : UI_Popup
         // 슬32 순서1: CatchMinimonStartText1 + CreatureName + CatchMinimonStartText2 (로컬라이즈, 한/영)
         yield return CoType(Util.Localize(LocalizeKey.CatchMinimonStartText1) + _cName + Util.Localize(LocalizeKey.CatchMinimonStartText2));
         ShowButton(Buttons.LureBtn);
+        RefreshLureButton();   // 슬31: 등장 직전 최신 시도횟수/천장 반영 (언어/카운트)
         yield return new WaitForSecondsRealtime(0.5f);
         ShowButton(Buttons.UseMandrakeBtn);
         RefreshMandrakeButton();   // 슬31/37: 만드라고라 보유 수에 따라 게이팅
@@ -280,6 +285,36 @@ public class UI_TamePopup : UI_Popup
         }
     }
 
+    // 슬31: [길들인다!] 라벨 동적 갱신 — prefab baked("성공확률:10%", "1/10번째에 확정")는 정적값이라
+    //  시도해도 카운터가 안 변하고(차감 안 됨) 천장 도달도 표기 안 됐다. 실데이터(MinMonManager)로 매번 갱신.
+    //   · 성공확률 = GetCatchChance(능력 보너스 포함). 천장 도달 시 100%(lime).
+    //   · 시도/확정 = GetTameCount / GetCatchCeil. 천장 도달 시 GuaranteedCatchText("확정 길들이기!")로 교체.
+    void RefreshLureButton()
+    {
+        int lbl = LabelOf(Buttons.LureBtn);
+        var txt = lbl >= 0 ? GetText(lbl) : null;
+        if (txt == null) return;
+
+        int tame = Managers.MinMon.GetTameCount(_dataId);
+        int ceil = Managers.MinMon.GetCatchCeil(_dataId);
+        bool guaranteed = Managers.MinMon.IsCatchGuaranteed(_dataId);
+        int remaining = Mathf.Max(0, ceil - tame);   // 슬31 "확정 길들이기 횟수" = 천장까지 남은 횟수(실패할수록 차감)
+        int pct = guaranteed ? 100 : Mathf.Clamp(Mathf.RoundToInt(Managers.MinMon.GetCatchChance(_dataId) * 100f), 0, 100);
+
+        // 머리글(▶길들인다!) + 성공확률 줄(천장=lime / 그 외=red. ⚠️ TMP 'lime' 미지원 → hex)
+        string head = Util.Localize(LocalizeKey.LureBtnText);
+        string rateLine = $"<size=7>{Util.Localize(LocalizeKey.CatchSuccessRateText)}<color={(guaranteed ? "#00FF00" : "red")}>{pct}%</color></size>";
+
+        // 카운트 줄: 천장 도달(remaining 0) 시 "확정 길들이기!"(lime→hex) / 그 외 "시도/남은횟수 + 번째에 확정".
+        //  남은 횟수(확정 길들이기 횟수)를 orange로 강조 — 실패 시마다 줄어드는(차감) 카운터.
+        string countLine = guaranteed
+            ? $"<size=7>{Util.Localize(LocalizeKey.GuaranteedCatchText).Replace("=lime>", "=#00FF00>")}</size>"
+            : $"<size=7>{tame}/<color=orange>{remaining}</color>{Util.Localize(LocalizeKey.CatchSuccessAtText)}</size>";
+
+        txt.text = $"{head}\n   {rateLine}\n   {countLine}";
+        ApplyFont(txt, FontType.UI);
+    }
+
     // 슬33 Opening Anim: 회색 Sprite(None) 오버레이(BlockImg)가 본문을 덮고 깜빡임.
     IEnumerator CoOpeningFlicker()
     {
@@ -317,6 +352,7 @@ public class UI_TamePopup : UI_Popup
         yield return new WaitForSecondsRealtime(0.5f);
 
         // 슬35: 0.5s 뒤 플레이어 머리 위 Emoj_Lure — 재생이 끝난 뒤 화면 흔들림
+        Managers.Sound?.PlaySFX("SFX_Charm");   // 길들이기 시도
         PlayEmoj(Images.TamerEmoj, "Emoj_Lure");
         yield return new WaitForSecondsRealtime(EMOJ_LEN);
 
@@ -326,11 +362,12 @@ public class UI_TamePopup : UI_Popup
         // 잡기 판정 (천장/확률은 MinMonManager가 처리). 테스트 강제 결과 우선.
         bool success;
         if (DebugForceCatch == 1) { Managers.MinMon.TryCatch(_dataId, forceSuccess: true); success = true; }
-        else if (DebugForceCatch == 2) { success = false; }
+        else if (DebugForceCatch == 2) { Managers.MinMon.TryCatch(_dataId, forceFail: true); success = false; }   // 강제 실패도 시도횟수 차감
         else success = Managers.MinMon.TryCatch(_dataId);
         DebugForceCatch = 0;
 
         // "..." Emoj_Dots(생각하는 텀)를 먼저 충분히(약 3초) 보여준 뒤 결과/효과 텍스트를 낸다.
+        Managers.Sound?.PlaySFX("SFX_MinimonThink");   // 생각하는 텀
         PlayEmoj(Images.MonsterEmoj, "Emoj_Dots");
         yield return new WaitForSecondsRealtime(3f);
         SetEmojActive(Images.MonsterEmoj, false);
@@ -399,6 +436,7 @@ public class UI_TamePopup : UI_Popup
 
         // 슬37-4: 미니몬 Emoj_Exclamation + Jump Anim — prefab "Monster Mandrake"(Move Y Yoyo 0.15s ×2 = 0.3s)
         PlayEmoj(Images.MonsterEmoj, "Emoj_Exclamation");
+        Managers.Sound?.PlaySFX("SFX_UseHappyMandrake");   // 만드라고라 투척
         PlayAnim(_slimeTr?.gameObject, "Monster Mandrake");
         yield return new WaitForSecondsRealtime(0.3f);
 
@@ -428,6 +466,7 @@ public class UI_TamePopup : UI_Popup
         if (success)
         {
             // 슬36-1: 미니몬 Caught Anim — prefab "Monster Caught"(Move Y Yoyo 0.18s ×4 = 0.72s)
+            Managers.Sound?.PlaySFX("SFX_MinimonCatch");   // 포획 성공
             PlayAnim(_slimeTr?.gameObject, "Monster Caught");
             yield return new WaitForSecondsRealtime(0.72f);
 
@@ -451,6 +490,7 @@ public class UI_TamePopup : UI_Popup
         else
         {
             // 슬36 실패: Emoj_Sweat(미니몬) + 플레이어 Emoj_Sweat2 + 순서4-2 Text
+            Managers.Sound?.PlaySFX("SFX_MinimonRunaway");   // 도망
             PlayEmoj(Images.MonsterEmoj, "Emoj_Sweat");
             PlayEmoj(Images.TamerEmoj, "Emoj_Sweat2");
             yield return CoType(_cName + Util.Localize(LocalizeKey.LureFailText));

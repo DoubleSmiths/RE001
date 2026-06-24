@@ -150,6 +150,13 @@ public class GameData
     public bool  AutoPotionMemorized = false;   // 물약주입기 기술 습득 시 true (자동물약 사용 가능)
     public bool  AutoPotionOn        = false;   // 자동물약 On/Off
     public float AutoPotionHpRatio   = 0.5f;    // 자동 사용 기준 HP 비율(0~1)
+
+    // 슬35: 제작의뢰 행운물약 / 물약주입기 기술 해금 (신속물약 SpdPotionRevealed 패턴).
+    //  *Unlocked = 컨텐츠(퀘스트/등급)로 해금됐는가(잠금 해제 게이트). *Revealed = 해금 모션을 봤는가(1회 재생).
+    //  물약주입기 기술의 잠금 게이트는 AutoPotionMemorized(기술 습득)이며, 모션 1회 재생 여부만 별도 보관.
+    public bool LuckPotionUnlocked       = false;
+    public bool LuckPotionRevealed       = false;
+    public bool AutoPotionSkillRevealed  = false;
 }
 
 // ──────────────────────────────────────────────
@@ -345,6 +352,23 @@ public class GameManager
     {
         get => _gameData.SpdPotionPopupAnimPlayed;
         set { _gameData.SpdPotionPopupAnimPlayed = value; SaveGame(); }
+    }
+
+    // 슬35: 행운물약/물약주입기 기술 해금 플래그
+    public bool LuckPotionUnlocked
+    {
+        get => _gameData.LuckPotionUnlocked;
+        set { _gameData.LuckPotionUnlocked = value; SaveGame(); }
+    }
+    public bool LuckPotionRevealed
+    {
+        get => _gameData.LuckPotionRevealed;
+        set { _gameData.LuckPotionRevealed = value; SaveGame(); }
+    }
+    public bool AutoPotionSkillRevealed
+    {
+        get => _gameData.AutoPotionSkillRevealed;
+        set { _gameData.AutoPotionSkillRevealed = value; SaveGame(); }
     }
     public int CurrentHPPotionDataId
     {

@@ -1,0 +1,157 @@
+============================================================
+ 연금공방(제작의뢰) 시리즈 재확인 + 해금 방식 정리
+ 기획서 슬라이드 33~42 / 작성 2026-06-24
+============================================================
+
+[참조 슬라이드 출처]
+ https://docs.google.com/presentation/d/1P9d_zA9XQeOAAS0yNRa24jVyqBtp5C9B (70슬라이드)
+ 추출본: AppData/.../scratchpad/slides_33plus.txt
+
+
+────────────────────────────────────────────────────────────
+1. 연금공방 시리즈 구현 현황 (슬33~42)
+────────────────────────────────────────────────────────────
+슬33  연금공방 NPC/씬           : NPC(Alchemist)·말풍선·CommissionText. (씬/대화 영역)
+슬34  제작의뢰 #1 (팝업 등장)    : UI_CustomOrderPopup.cs ✅
+        - 팝업 Move OutBack(y -120, 0.5s) / 캐릭터 슬라이드인(OutBack 0.4s, delay 0.2)
+        - [물약][기술] 버튼, alchemist 대사 "무엇을 만들어드릴까요?" 타이핑
+슬35  제작의뢰 #2 (★해금)        : UI_CustomOrderPopup.cs ✅ (해금 모션 구현됨 — 아래 2번)
+        - 선택 버튼 Frame 색 F5DD6C / 두 버튼 y -40 Move OutBack 0.5s
+        - 물약 그룹: 회복·신속·행운 / 기술 그룹: 물약 주입기 (Scale from 1.8 OutBack 0.4s)
+슬36  제작의뢰 #3 (상세 진입)    : 잠금/해금 클릭 분기 → 물약·기술 상세 팝업 ✅
+슬37~40 물약 상세정보 Popup      : UI_PotionDetailPopup.cs (등급 3단계·강화·다음단계 정보 등)
+슬41~42 물약창 Popup             : UI_PotionPopup.cs (자동물약/재사용 대기 Slider 등) ✅
+
+→ 팝업/연출 골격은 슬34~36 스펙대로 구현되어 있음.
+→ 단, "해금이 언제 일어나는가"(해금 트리거)가 기획서와 다름. (아래 3번)
+
+
+────────────────────────────────────────────────────────────
+2. 슬35 해금 모션 — 적용되는가? → YES (이미 구현됨)
+────────────────────────────────────────────────────────────
+파일: Assets/@Scripts/UI/Popup/UI_CustomOrderPopup.cs
+메서드: PlaySpdPotionRevealAnim()  (L294~361)
+
+기획서 슬35 Chat_Icon_Lock 스펙과 1:1로 구현되어 있음:
+  t=0.0~0.5  Delay 0.5s
+  t=0.5~1.2  Shake/Position  Dur 0.7 / Vibrato 48 / Randomness 59 / OutQuad
+  t=1.2~1.7  Scale 1→2       Dur 0.5 / OutBack
+  t=1.7~2.1  Lock overlay(Sprite None + Chat_Icon_Lock) Fade out
+  종료       SpdPotionRevealed=true 저장 + NEW 뱃지 + 등급/레벨 아이콘 표시 + 상호작용 허용
+
+잠금 비주얼(슬35)도 구현됨 — ApplyLockVisual():
+  Sprite None (000000, alpha 180) + Chat_Icon_Lock (FFFFFF, alpha 80)
+
+즉, "해금 모션 자체"는 정상 동작함. 문제는 이 모션이 호출되는 "시점"임.
+
+
+────────────────────────────────────────────────────────────
+3. 현재 해금 트리거의 문제점
+────────────────────────────────────────────────────────────
+현재 코드 (UI_CustomOrderPopup.cs ExpandGroup, L281~283):
+
+    // 물약 그룹이 펼쳐진 순간 SPD 포션이 아직 미공개면 해금 연출 1회 재생
+    if (groupIndex == 0 && !Managers.Game.SpdPotionRevealed)
+        PlaySpdPotionRevealAnim();
+
+→ 신속물약은 "제작의뢰 → [물약] 탭을 처음 펼치는 순간" 무조건 해금됨.
+→ 모험가등급/퀘스트 진행과 전혀 무관. 게임 초반 연금공방을 처음 여는 즉시 풀림.
+
+기획서 슬35 원문:
+  "해금은 모험가등급에 따라 해금되며,
+   해금된 뒤 처음으로 플레이어가 해당 컨텐츠를 접할 시 위와같이 해금 모션을 재생한다."
+
+→ 요구사항: 신속물약은 "컨텐츠 진행(퀘스트/등급)으로 해금"된 뒤,
+            그 이후 제작의뢰를 처음 열 때 해금 모션이 재생되어야 함.
+  현재는 "컨텐츠 진행" 게이트가 빠져 있어 너무 일찍 풀림.
+
+
+────────────────────────────────────────────────────────────
+4. 올바른 해금 방식 — 컨텐츠 진행 해금 파이프라인 (기존 시스템)
+────────────────────────────────────────────────────────────
+이 프로젝트엔 이미 "퀘스트 완료 → 컨텐츠 해금" 표준 파이프라인이 있음.
+신속물약도 이 방식을 그대로 쓰면 됨. (인벤토리/이동/연금공방 버튼이 다 이 방식)
+
+[파이프라인 흐름]
+  (1) 데이터: QuestUnlockData.json / SubQuestUnlockData.json 에 해금 행 추가
+        UnlockType = 0 (UI_BUTTON), TargetID = "해금키"
+  (2) 퀘스트 완료 시 QuestManager.ProcessUnlocks() / SubQuestManager.ProcessUnlocks()
+        case UI_BUTTON: Managers.Game.AddUnlockedBtn(TargetID)  → UnlockedBtnIds 에 저장 + OnBtnUnlocked 이벤트
+  (3) 소비처: Managers.Game.UnlockedBtnIds.Contains("해금키") 로 해금 여부 확인
+
+[현재 등록된 해금 데이터 (예시)]
+  QuestUnlockData.json
+     QuestID 2 완료 → UNLOCK_INVENTORY_BUTTON, UNLOCK_TRAVEL_BUTTON
+     QuestID 5 완료 → UNLOCK_ALCHEMY_BUTTON (+ SUBQUEST_1 시작)
+  SubQuestUnlockData.json
+     SubQuestID 2 완료 → BTN_COMMISION(제작의뢰 버튼), UNLOCK_POTION_BUTTON
+
+  해금키 상수 정의: Assets/@Scripts/Utils/Define.cs  #region UnlockKey (L590~)
+  UnlockType 코드: 0=UI_BUTTON / 1=SUBQUEST_START / 2=ITEM_REWARD / 3=ITEM_REMOVE
+
+
+────────────────────────────────────────────────────────────
+5. 신속물약을 "컨텐츠 진행 중" 해금되게 만드는 구체적 절차
+────────────────────────────────────────────────────────────
+핵심 개념: 플래그 2개로 역할 분리 (기획서 슬35의 2단계와 동일)
+  A. "컨텐츠로 해금되었는가"  = UnlockedBtnIds.Contains(UNLOCK_SPD_POTION)   ← 퀘스트가 set
+  B. "해금 모션을 봤는가"      = SpdPotionRevealed                            ← 첫 조회 후 set (기존 유지)
+  → A가 true가 된 뒤, B가 false인 상태에서 제작의뢰를 처음 열 때만 모션 재생.
+
+[변경 1] Define.cs  #region UnlockKey 에 해금키 상수 추가
+    public const string UNLOCK_SPD_POTION = "UNLOCK_SPD_POTION";
+
+[변경 2] 해금 시점(퀘스트) 데이터 추가  ※ 어느 퀘스트에서 풀지는 기획 결정 사항
+    - 메인 퀘스트로 풀 경우: QuestUnlockData.json 에 행 추가
+        { "QuestID": <원하는 퀘스트>, "UnlockType": 0, "TargetID": "UNLOCK_SPD_POTION" }
+    - 서브 퀘스트로 풀 경우: SubQuestUnlockData.json 에 행 추가
+        { "SubQuestID": <원하는 서브퀘>, "QuestType": "SUB", "UnlockType": 0,
+          "TargetID": "UNLOCK_SPD_POTION", "UnlockValue": "True" }
+    ※ 실제 운영 데이터는 엑셀 시트 → DataTransformer 로 재생성되므로,
+      최종 값은 Quest 시트(또는 SubQuest 시트)의 Unlock 테이블에도 같이 넣어야 함.
+
+[변경 3] UI_CustomOrderPopup.cs — 해금 모션 트리거에 컨텐츠 게이트 추가
+    (현재) ExpandGroup L282:
+        if (groupIndex == 0 && !Managers.Game.SpdPotionRevealed)
+            PlaySpdPotionRevealAnim();
+    (수정) :
+        bool spdUnlockedByContent = Managers.Game.UnlockedBtnIds.Contains(Define.UNLOCK_SPD_POTION);
+        if (groupIndex == 0 && spdUnlockedByContent && !Managers.Game.SpdPotionRevealed)
+            PlaySpdPotionRevealAnim();
+
+[변경 4] UI_CustomOrderPopup.cs — 잠금 표시도 컨텐츠 게이트 반영 (InitLockStates L398)
+    (현재) bool spdAlreadyRevealed = Managers.Game.SpdPotionRevealed;
+    (수정) bool spdUnlockedByContent = Managers.Game.UnlockedBtnIds.Contains(Define.UNLOCK_SPD_POTION);
+           bool spdAlreadyRevealed   = spdUnlockedByContent && Managers.Game.SpdPotionRevealed;
+    → 퀘스트로 풀리기 전엔 항상 잠금 자물쇠 표시, 클릭 차단(L414 가드 유지).
+
+[동작 결과]
+  · 신속물약 잠금  : 해당 퀘스트 완료 전까지 자물쇠 유지(상호작용 불가)
+  · 퀘스트 완료    : UnlockedBtnIds 에 UNLOCK_SPD_POTION 추가 (컨텐츠 진행 해금)
+  · 그 후 첫 조회  : 제작의뢰 [물약] 탭 펼치는 순간 슬35 해금 모션 1회 재생 → SpdPotionRevealed=true
+  · 물약창(슬41)   : SpdPotionRevealed=true 이후 자동물약/사용 가능 (UI_PotionPopup L297 기존 로직 그대로)
+
+
+────────────────────────────────────────────────────────────
+6. 참고: 모험가등급(AdventurerRank) 방식으로 가려면
+────────────────────────────────────────────────────────────
+기획서 문구는 "모험가등급에 따라"임. 등급 게이팅을 직접 쓰려면:
+  · 데이터: GameData.AdventurerRank (0~99) 이미 존재 (GameManager L77/L223)
+  · 단, 현재 AdventurerRank 를 실제로 올리는 프로덕션 경로가 없음(테스트 코드만 set).
+    → 등급 게이팅을 쓰려면 먼저 "퀘스트 완료 시 AdventurerRank 상승" 훅부터 만들어야 함.
+  · 게이트 예: if (Managers.Game.AdventurerRank >= 신속물약_요구등급) ...
+    (물약 데이터 HPPotionData/SpeedPotionData 엔 현재 요구등급 필드 없음 → 추가 필요)
+
+권장: 지금 동작하는 퀘스트 해금 파이프라인(4·5번)을 쓰는 것이 가장 적은 변경으로
+      "컨텐츠 진행 중 해금"을 만족함. 등급 게이팅은 AdventurerRank 상승 시스템이
+      먼저 구축된 뒤 도입하는 것이 안전함.
+
+
+────────────────────────────────────────────────────────────
+7. 결정 필요 사항 (기획)
+────────────────────────────────────────────────────────────
+ (a) 신속물약을 해금할 "컨텐츠 진행 지점" = 어느 메인/서브 퀘스트 완료 시점인가?
+ (b) 행운물약 / 물약 주입기 기술도 동일 방식으로 각각 해금키를 둘 것인가?
+     (현재 둘 다 InitLockStates 에서 locked:true 하드코딩 — 영구 잠금 상태)
+ (c) "모험가등급" 방식을 끝까지 살릴지(6번), 퀘스트 해금으로 갈지(5번) 확정.
+============================================================

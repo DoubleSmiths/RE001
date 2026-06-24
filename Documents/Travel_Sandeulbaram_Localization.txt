@@ -1,0 +1,158 @@
+========================================================================
+여정(Travel) 팝업 - 산들바람 숲 계열 한/영 표시 버그 진단
+작성일: 2026-06-24
+대상: UI_TravelPopup (여정 팝업) / EXPLORE(탐험) 카테고리
+========================================================================
+
+증상
+----
+여정 팝업의 EXPLORE(탐험, "필드") 카테고리에서 상위 행선지 버튼 3개 중
+- 1개("산들바람 숲")는 한글로 정상 표시
+- 나머지 2개는 영어(키 문자열 비슷한 텍스트)로 표시됨
+
+결론(요약)
+----------
+- 코드 결함 아님. 로컬라이즈 경로는 모든 노드에 동일하게 적용되어 있음.
+- 원인 = 데이터 미생성. WhisperingCave / RuinedSanctum 계열 노드의
+  Name 키가 LocalizationData.json 에 아직 추가되지 않았음.
+- Util.Localize() 는 키가 사전에 없으면 "키 문자열을 그대로 반환"하므로
+  (Util.cs:75-76), 누락된 노드는 영어처럼 보이는 키 원문이 출력됨.
+
+
+------------------------------------------------------------------------
+(a) 산들바람(EXPLORE) 관련 노드 목록 — id / Name / 표시 소스
+------------------------------------------------------------------------
+데이터 소스: Assets/@Resources/Data/JsonData/TravelNodeData.json
+
+EXPLORE 카테고리는 상위(ParentId=0) 필드 노드 3개 + 각 하위 진입 노드로 구성.
+여정 팝업 EXPLORE 탭에서 처음 보이는 버튼은 ParentId=0 인 상위 3개임
+(UI_TravelPopup.cs:500-502, fieldNodes = Category==EXPLORE && ParentId==0).
+
+  [상위 필드 노드 = EXPLORE 탭 첫 화면 버튼 3개]
+  Id    | ParentId | Name(=Localize 키)              | 표시 소스
+  ------|----------|--------------------------------|------------------------------
+  21000 | 0        | BreezingWindForestNameText     | UI_FieldSelectButton (산들바람 숲)
+  22000 | 0        | WhisperingCaveNameText         | UI_FieldSelectButton (속삭이는 동굴)
+  23000 | 0        | RuinedSanctumNameText          | UI_FieldSelectButton (폐허가 된 성소)
+
+  [하위 진입 노드 = 상위 클릭 후 MapSelect 패널에 뜨는 버튼]
+  Id    | ParentId | Name(=Localize 키)              | 표시 소스
+  ------|----------|--------------------------------|------------------------------
+  21100 | 21000    | BreezingWindForestEntranceText | UI_MapSelectButton
+  22100 | 22000    | WhisperingCaveEntranceText     | UI_MapSelectButton
+  23100 | 23000    | RuinedSanctumEntranceText      | UI_MapSelectButton
+
+  (참고: TOWN 카테고리 11000 / PlaceNameTownAsdalText 는 키 존재, 정상)
+
+표시 소스 코드 근거 (Name 을 모두 Util.Localize 로 처리):
+  - UI_FieldSelectButton.cs:96-101  RefreshLanguage(): label.text = Util.Localize(_node.Name)
+  - UI_MapSelectButton.cs:99-104    RefreshLanguage(): label.text = Util.Localize(_node.Name)
+  - UI_TownSelectButton.cs:98-107   RefreshLanguage(): label.text = Util.Localize(_node.Name)
+  -> 3종 SubItem 모두 동일하게 Localize 경유. 코드상 차별 없음.
+
+
+------------------------------------------------------------------------
+(b) 각 노드가 KR/EN 중 무엇으로 나오는가 & 그 이유
+------------------------------------------------------------------------
+LocalizationData.json (utf-8-sig, BOM 있음) 에서 각 Name 키 존재 여부 검증:
+
+  Name 키                         | LocalizationData | 한국어 모드 출력           | 영어 모드 출력
+  --------------------------------|------------------|----------------------------|------------------
+  BreezingWindForestNameText      | 존재 (734-737)   | "산들바람 숲"               | "BREEZEWOOD FOREST"
+  BreezingWindForestEntranceText  | 존재 (739-742)   | "산들바람 숲(입구)"         | "BREEZEWOOD ENTRANCE"
+  WhisperingCaveNameText          | 없음             | "WhisperingCaveNameText"   | "WhisperingCaveNameText"
+  WhisperingCaveEntranceText      | 없음             | "WhisperingCaveEntranceText"| "WhisperingCaveEntranceText"
+  RuinedSanctumNameText           | 없음             | "RuinedSanctumNameText"    | "RuinedSanctumNameText"
+  RuinedSanctumEntranceText       | 없음             | "RuinedSanctumNameText"... | 동일(키 원문)
+
+  -> EXPLORE 탭 첫 화면 기준:
+     21000 BreezingWindForest = 한글로 정상 ("산들바람 숲")
+     22000 WhisperingCave     = 키 원문 "WhisperingCaveNameText" (영어처럼 보임)
+     23000 RuinedSanctum      = 키 원문 "RuinedSanctumNameText"  (영어처럼 보임)
+     => 정확히 "1개 한글 / 2개 영어" 증상과 일치.
+
+이유: Util.Localize(key) 는
+  Assets/@Scripts/Utils/Util.cs:72-79
+    74  var dic = Managers.Data?.LocalizationDic;
+    75  if (dic == null || !dic.TryGetValue(key, out var entry))
+    76      return key;            // <-- 키가 사전에 없으면 키 문자열을 그대로 반환
+    78  return Managers.Game.Language == Korean ? entry.Kor : entry.Eng;
+
+  사전에 키가 없으면 한/영 무관하게 "키 문자열 자체"를 출력 → 영어처럼 보임.
+
+
+------------------------------------------------------------------------
+(c) 근본 원인
+------------------------------------------------------------------------
+=> "데이터 미생성" (LocalizationData 키 누락) 이 근본 원인.
+   - 로컬라이즈 미적용(코드가 Localize 를 안 거침)이 아님.
+   - 일부 노드 Name 이 영어 리터럴인 것도 아님 (모두 키 형식).
+   - TravelNode 데이터 자체는 존재함 (TravelNodeData.json 에 6개 노드 정상 등록).
+   - 단지 WhisperingCave / RuinedSanctum 계열 4개 키의
+     LocalizationData.json 항목(Kor/Eng)이 아직 만들어지지 않았을 뿐.
+
+   (보강: BreezingWind 계열은 이미 키가 채워져 있어 정상. 동일 패턴으로
+    나머지 2개 지역 키만 추가하면 해결됨.)
+
+
+------------------------------------------------------------------------
+(d) 고쳐야 할 정확한 항목
+------------------------------------------------------------------------
+파일: Assets/@Resources/Data/JsonData/LocalizationData.json  (entries 배열)
+      (UTF-8 with BOM 유지, 기존 항목 형식 그대로)
+
+추가해야 할 키 4개 (Kor 값은 기획 확인 필요 — 아래는 키 이름 기반 제안):
+
+  1) {
+       "TextKey": "WhisperingCaveNameText",
+       "Kor": "속삭이는 동굴",
+       "Eng": "WHISPERING CAVE"
+     }
+  2) {
+       "TextKey": "WhisperingCaveEntranceText",
+       "Kor": "속삭이는 동굴(입구)",
+       "Eng": "WHISPERING CAVE ENTRANCE"
+     }
+  3) {
+       "TextKey": "RuinedSanctumNameText",
+       "Kor": "폐허가 된 성소",
+       "Eng": "RUINED SANCTUM"
+     }
+  4) {
+       "TextKey": "RuinedSanctumEntranceText",
+       "Kor": "폐허가 된 성소(입구)",
+       "Eng": "RUINED SANCTUM ENTRANCE"
+     }
+
+  주의:
+  - Kor/Eng 표기는 기존 BreezingWind 항목 톤(예: Eng 전부 대문자
+    "BREEZEWOOD FOREST" / "BREEZEWOOD ENTRANCE")에 맞춰 통일 권장.
+  - 실제 한국어 지역명은 기획서 기준으로 확정해야 함(위 Kor 값은 키
+    의미상 추정치). 확정 시 위 값만 교체.
+  - LocalizationData.json 은 외부 시트에서 재생성되는 파이프라인이 있으므로
+    (DataTransformer / 구글시트), JSON 직접 수정 시 다음 재생성에서 덮어쓰일 수
+    있음 -> 가능하면 원본 로컬라이즈 시트에 4개 행을 추가하는 것이 정석.
+
+TravelNode 데이터(TravelNodeData.json) 추가/수정 필요 여부:
+  - 필요 없음. 노드 6개(21000/21100/22000/22100/23000/23100)는 이미 존재하며
+    Name 키 값도 올바름. 이번 버그는 TravelNode 행 추가가 아니라
+    LocalizationData 키 추가로 해결됨.
+  - 단, 22000/23000 의 AreaType 이 ""(빈 값)이고 22100/23100 은 "Battle" 인데,
+    이는 상위 노드는 그룹 컨테이너라 정상(BreezingWind 와 동일 구조). 표시
+    버그와 무관.
+
+
+------------------------------------------------------------------------
+근거 파일/라인 정리
+------------------------------------------------------------------------
+- 노드 정의:        Assets/@Resources/Data/JsonData/TravelNodeData.json:13-72
+- 필드 버튼 빌드:   Assets/@Scripts/UI/Popup/UI_TravelPopup.cs:500-516
+- 현재위치 라벨:    Assets/@Scripts/UI/Popup/UI_TravelPopup.cs:208-215 (SetText -> Localize)
+- Field 라벨 출력:  Assets/@Scripts/UI/SubItem/UI_FieldSelectButton.cs:96-101
+- Map 라벨 출력:    Assets/@Scripts/UI/SubItem/UI_MapSelectButton.cs:99-104
+- Town 라벨 출력:   Assets/@Scripts/UI/SubItem/UI_TownSelectButton.cs:98-107
+- Localize 폴백:    Assets/@Scripts/Utils/Util.cs:72-79  (라인76: 키 없으면 키 반환)
+- 로컬라이즈 데이터:Assets/@Resources/Data/JsonData/LocalizationData.json:728-742
+                    (729 Asdal, 734 BreezingWindForestName, 739 BreezingWindForestEntrance)
+                    WhisperingCave* / RuinedSanctum* 키: 파일 전체에 부재(검색 0건)
+========================================================================

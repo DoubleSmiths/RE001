@@ -91,6 +91,11 @@ public class UI_AttactedPopup : UI_Popup
         StartCoroutine(CoSlide());
     }
 
+    // [DOTweenAnimation 규약 예외 — 의도적 코드 대체] 슬24/25 슬라이드인/아웃.
+    //  prefab(Attacted Popup.prefab)엔 Move(isFrom) DOTweenAnimation + 구버전 Visual Scripting 그래프
+    //  (OnEnable→Timer→DOPlayBackwards, 영어 리터럴 "got amused" 등 List/MonsterNum 변수 기반)가 얹혀 있는데,
+    //  이 VS 그래프가 신 로컬라이즈 텍스트 시스템과 비호환이고, Instantiate 시 anchoredPosition.x가 캔버스
+    //  스케일로 왜곡돼 authored 절대 Move가 어긋난다. → 코드로 슬라이드/타이밍/파괴를 일괄 제어한다.
     IEnumerator CoSlide()
     {
         if (_slideRT == null) yield break;

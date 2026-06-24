@@ -1,7 +1,5 @@
 using DG.Tweening;
-using NUnit.Framework;
 using System.Collections.Generic;
-using UnityEditor.U2D;
 using UnityEngine;
 using static Define;
 using static Util;

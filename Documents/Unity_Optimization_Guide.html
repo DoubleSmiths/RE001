@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>유니티 최적화 가이드 — RE001</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0d12;--panel:#10131a;--card:#12151d;--border:#252a36;--border-soft:#1c2029;
+  --text:#eef0f4;--sub:#9ba3b4;--dim:#6b7384;--dimmer:#454b5a;
+  --amber:#c9a36b;--amber-lt:#e6c799;--amber-deep:#a07f4a;
+  --green:#5fa67c;--green-lt:#8ac6a3;--red:#c97070;--red-lt:#dd9b9b;--blue:#6a8cb5;--blue-lt:#9bb5d6;
+  --serif:'Noto Serif KR',serif;--sans:'Noto Sans KR',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(ellipse 70% 50% at 30% 0%,rgba(201,163,107,.035),transparent 60%),
+  radial-gradient(ellipse 60% 50% at 80% 100%,rgba(106,140,181,.025),transparent 60%);}
+.mono{font-family:var(--mono)}
+.shell{display:grid;grid-template-columns:minmax(250px,19%) 1fr;min-height:100vh}
+aside.toc{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,var(--panel),var(--bg) 70%);
+  border-right:1px solid var(--border-soft);padding:34px 24px 24px;display:flex;flex-direction:column;gap:22px;overflow-y:auto}
+aside.toc::-webkit-scrollbar{width:6px}aside.toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;font-weight:600}
+.brand-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px rgba(201,163,107,.14)}
+.book-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--amber);text-transform:uppercase;font-weight:600;margin-bottom:9px}
+.book-title{font-size:21px;font-weight:700;line-height:1.22;letter-spacing:-.015em}
+.book-title .em{color:var(--amber-lt);font-family:var(--serif);font-style:italic}
+.book-meta{margin-top:12px;font-size:11px;color:var(--dim);line-height:1.5;font-family:var(--mono)}
+.toc-label{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;font-weight:600;padding-bottom:10px;border-bottom:1px solid var(--border-soft)}
+.chap-list{display:flex;flex-direction:column;gap:1px;margin-top:2px}
+.chap{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:9px 8px;border-radius:3px;text-decoration:none;color:inherit;border-left:2px solid transparent;transition:background .2s,border-color .25s}
+.chap:hover{background:rgba(255,255,255,.022)}
+.chap.active{background:linear-gradient(90deg,rgba(201,163,107,.07),transparent);border-left-color:var(--amber)}
+.chap-num{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em;font-weight:600;padding-top:1px}
+.chap.active .chap-num{color:var(--amber-lt)}
+.chap-name{font-size:13px;font-weight:500;color:var(--sub);line-height:1.35}
+.chap.active .chap-name{color:var(--text);font-weight:600}
+.toc-foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--border-soft);font-family:var(--mono);font-size:10px;color:var(--dimmer);letter-spacing:.16em;text-transform:uppercase}
+main{min-width:0}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(11,13,18,.85);backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid var(--border-soft);padding:13px clamp(28px,4vw,60px);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.crumbs{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;font-weight:500}
+.crumbs .here{color:var(--amber-lt)}
+.read-progress{flex:1;max-width:260px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.read-progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber-deep),var(--amber-lt));box-shadow:0 0 8px rgba(230,199,153,.4)}
+.wrap{padding:clamp(30px,4vh,48px) clamp(28px,4vw,60px) 80px;max-width:clamp(820px,84%,1500px)}
+.hero{margin-bottom:18px}
+.hero .eye{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--amber);text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:12px}
+.hero .eye::before{content:'';width:24px;height:1px;background:var(--amber-deep)}
+.hero h1{font-size:clamp(30px,4vw,48px);font-weight:700;line-height:1.14;letter-spacing:-.02em;margin-top:14px}
+.hero h1 .em{color:var(--amber-lt);font-family:var(--serif);font-style:italic}
+.hero .lede{margin-top:16px;font-size:16px;line-height:1.7;color:var(--sub);max-width:680px}
+.divider{margin:34px 0 24px;display:flex;align-items:center;gap:16px}
+.divider .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border) 30%,var(--border) 70%,transparent)}
+.divider .glyph{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.36em;text-transform:uppercase;font-weight:600}
+section.ch{padding-top:18px;margin-bottom:10px}
+h2.sec{font-size:24px;font-weight:700;line-height:1.25;letter-spacing:-.012em;margin:30px 0 14px;display:flex;align-items:baseline;gap:13px}
+h2.sec .num{font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:.2em;font-weight:600}
+h3{font-size:16px;font-weight:600;margin:22px 0 8px;color:var(--text);letter-spacing:-.005em}
+h3 .tag{font-family:var(--mono);font-size:10px;color:var(--amber-deep);letter-spacing:.1em;margin-left:8px}
+p{font-size:14.5px;line-height:1.72;color:var(--sub);margin:8px 0}
+p .em{color:var(--text);font-weight:500}
+ul{margin:8px 0 8px 4px;list-style:none}
+li{font-size:14px;line-height:1.66;color:var(--sub);padding-left:18px;position:relative;margin:5px 0}
+li::before{content:'';position:absolute;left:2px;top:11px;width:7px;height:1px;background:var(--amber-deep)}
+li .em{color:var(--text);font-weight:500}
+code{font-family:var(--mono);font-size:12.5px;background:rgba(255,255,255,.04);border:1px solid var(--border-soft);border-radius:3px;padding:1px 6px;color:var(--amber-lt)}
+/* status badges */
+.badge{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:999px;vertical-align:middle}
+.b-on{color:var(--green-lt);background:rgba(95,166,124,.13);border:1px solid rgba(95,166,124,.35)}
+.b-warn{color:var(--amber-lt);background:rgba(201,163,107,.13);border:1px solid rgba(201,163,107,.4)}
+.b-no{color:var(--red-lt);background:rgba(201,112,112,.13);border:1px solid rgba(201,112,112,.4)}
+/* table */
+.tbl{margin:14px 0;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:600;text-align:left;padding:11px 14px;background:rgba(255,255,255,.022);border-bottom:1px solid var(--border)}
+td{padding:10px 14px;color:var(--sub);border-bottom:1px solid var(--border-soft);line-height:1.5;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td .em{color:var(--text);font-weight:600}
+td code{font-size:11.5px}
+/* callout */
+.callout{margin:16px 0;padding:16px 18px;border:1px solid var(--border);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.012),transparent);position:relative}
+.callout.warn{border-color:rgba(201,163,107,.3);background:linear-gradient(180deg,rgba(201,163,107,.05),transparent)}
+.callout.no{border-color:rgba(201,112,112,.28);background:linear-gradient(180deg,rgba(201,112,112,.045),transparent)}
+.callout .clabel{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--amber-lt);margin-bottom:7px;display:block}
+.callout.no .clabel{color:var(--red-lt)}
+.callout p{margin:4px 0;color:var(--sub);font-size:13.5px}
+.footnote{margin-top:40px;padding-top:18px;border-top:1px solid var(--border-soft);font-family:var(--mono);font-size:11px;color:var(--dimmer);letter-spacing:.05em;line-height:1.7}
+@media(max-width:820px){.shell{grid-template-columns:1fr}aside.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="toc">
+  <div class="brand"><span class="brand-dot"></span>RE001 · DOCS</div>
+  <div>
+    <div class="book-eyebrow">Study / Reference</div>
+    <div class="book-title">유니티 <span class="em">최적화</span> 가이드</div>
+    <div class="book-meta">필기 + 일반지식 + 적용로그<br>2026·06·24 · Unity 6 · 2D Idle</div>
+  </div>
+  <div>
+    <div class="toc-label">Contents</div>
+    <nav class="chap-list" id="toc">
+      <a class="chap" href="#c0"><span class="chap-num">00</span><span class="chap-name">적용한 최적화 (작업 로그)</span></a>
+      <a class="chap" href="#c1"><span class="chap-num">01</span><span class="chap-name">빌드 / 플레이어 설정</span></a>
+      <a class="chap" href="#c2"><span class="chap-num">02</span><span class="chap-name">물리 (Physics)</span></a>
+      <a class="chap" href="#c3"><span class="chap-num">03</span><span class="chap-name">그래픽스 / 셰이더</span></a>
+      <a class="chap" href="#c4"><span class="chap-num">04</span><span class="chap-name">오디오</span></a>
+      <a class="chap" href="#c5"><span class="chap-num">05</span><span class="chap-name">Addressables</span></a>
+      <a class="chap" href="#c6"><span class="chap-num">06</span><span class="chap-name">패키지 / 모듈 정리</span></a>
+      <a class="chap" href="#c7"><span class="chap-num">07</span><span class="chap-name">에셋 점검</span></a>
+      <a class="chap" href="#c8"><span class="chap-num">08</span><span class="chap-name">런타임 코드 최적화</span></a>
+      <a class="chap" href="#c9"><span class="chap-num">09</span><span class="chap-name">에디터 리로드 / 컴파일</span></a>
+      <a class="chap" href="#c10"><span class="chap-num">10</span><span class="chap-name">프로파일링 도구</span></a>
+    </nav>
+  </div>
+  <div class="toc-foot">RE001 / Documents</div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <div class="crumbs">UNITY OPT · <span class="here">RE001</span></div>
+    <div class="read-progress"><i id="prog"></i></div>
+    <div class="crumbs mono">11 SECTIONS</div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="eye">Optimization Guide</div>
+      <h1>유니티 <span class="em">최적화</span> — 측정하고, 줄이고, 검증한다</h1>
+      <p class="lede">사용자 필기 + 일반 Unity 최적화 지식 + <span class="em">이 프로젝트(RE001)에 실제 적용한 작업 로그</span>를 한 곳에 모은 학습/참조 문서. 적용은 Unity Editor API로 안전하게 수행했고, 위험·보류 항목은 이유와 함께 표시했다.</p>
+    </div>
+
+    <div class="divider"><span class="line"></span><span class="glyph">APPLIED LOG</span><span class="line"></span></div>
+
+    <section class="ch" id="c0">
+      <h2 class="sec"><span class="num">00</span>이 프로젝트에 실제 적용한 최적화</h2>
+      <p><code>unity-cli exec</code>로 Editor API를 통해 <span class="em">이미 적용 완료</span>(ProjectSettings 저장됨):</p>
+      <div class="tbl"><table>
+        <tr><th>항목</th><th>값</th><th>상태</th></tr>
+        <tr><td>Physics2D / Physics — Auto Sync Transforms</td><td><code>off</code></td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Physics2D / Physics — Reuse Collision Callbacks</td><td><code>on</code></td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Fixed Timestep</td><td class="em">0.04 (25Hz)</td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>GPU Skinning / Graphics Jobs</td><td><code>on</code></td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Strip Engine Code / Optimize Mesh Data / Mipmap Stripping</td><td><code>on</code></td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Stack Trace (Log·Warning·Assert)</td><td class="em">None</td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Android Graphics API</td><td>Auto off → <span class="em">GLES3</span></td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Managed Stripping (Android·iOS)</td><td class="em">Low</td><td><span class="badge b-on">적용</span></td></tr>
+        <tr><td>Async Asset Upload (전 품질레벨)</td><td>TimeSlice 4 / Buffer 8</td><td><span class="badge b-on">적용</span></td></tr>
+      </table></div>
+      <div class="callout warn"><span class="clabel">보수 적용 / 보류 — 이유</span>
+        <p><span class="em">Fixed Timestep</span>: 필기의 0.333(3Hz)은 물리가 끊겨 보일 위험 → <span class="em">0.04</span> 절충(이 게임은 물리 의존 적음).</p>
+        <p><span class="em">Managed Stripping High 보류</span>: Visual Scripting + Newtonsoft + 리플렉션 사용 → 타입 누락 위험. <code>link.xml</code> 작성 후 상향 가능. 현재 <span class="em">Low</span>.</p>
+        <p><span class="em">Always Included Shaders / Strip PostFX / DSP Buffer / AudioClip / Addressables 세부</span>: 잘못 빼면 핑크 머티리얼·에셋 단위라 <span class="em">수동 검토</span>(아래 해당 장).</p>
+      </div>
+    </section>
+
+    <div class="divider"><span class="line"></span><span class="glyph">REFERENCE</span><span class="line"></span></div>
+
+    <section class="ch" id="c1">
+      <h2 class="sec"><span class="num">01</span>빌드 / 플레이어 설정</h2>
+      <h3>Managed Stripping Level <span class="tag">code↓ build↓</span></h3>
+      <p>안 쓰는 IL 제거(Disabled→Minimal→Low→Medium→High). 빌드·메모리↓.</p>
+      <ul><li><span class="em">주의</span>: 리플렉션·직렬화·Visual Scripting이 동적 참조하는 타입은 못 잡아 런타임 누락 → <code>link.xml</code>로 방어.</li>
+      <li>이 프로젝트: VS+리플렉션 → <span class="em">Low</span> 적용.</li></ul>
+      <h3>Strip Engine Code / Optimize Mesh Data / Texture Mipmap Stripping</h3>
+      <ul><li>엔진 미사용 모듈·메시 미사용 채널·미사용 밉맵 제거 → 빌드·메모리↓. 모두 <span class="badge b-on">적용</span>.</li>
+      <li><span class="em">주의(Optimize Mesh Data)</span>: 런타임 셰이더 스왑으로 날아간 채널이 필요해지면 문제. 2D 스프라이트 위주면 안전.</li></ul>
+      <h3>Graphics API (Android Auto off)</h3>
+      <p>Auto를 켜면 Vulkan·GLES3 변형을 모두 빌드 → 빌드·셰이더 변형↑. 끄고 원하는 API만. 이 프로젝트: <span class="em">GLES3</span>(2D 모바일 호환). 고사양 타깃이면 Vulkan 추가.</p>
+      <h3>GPU Skinning / Graphics Jobs / Stack Trace</h3>
+      <ul><li>GPU Skinning: 스키닝을 GPU로(GPU 여유). <span class="badge b-on">on</span></li>
+      <li>Graphics Jobs(실험적): 렌더 명령 멀티스레드. <span class="badge b-on">on</span> — 빌드 후 검증.</li>
+      <li>Stack Trace Log/Warning → <span class="em">None</span>: 스택 추적은 리플렉션 비용. Error는 유지.</li></ul>
+    </section>
+
+    <section class="ch" id="c2">
+      <h2 class="sec"><span class="num">02</span>물리 (Physics / Physics2D)</h2>
+      <h3>Auto Sync Transforms → off</h3>
+      <p>Transform 변경마다 즉시 동기화하던 것을 FixedUpdate에 몰아 처리 → 동기화 비용↓. <span class="badge b-on">적용</span></p>
+      <div class="callout"><span class="clabel">주의</span><p>같은 프레임에 이동 직후 <code>Raycast</code>로 결과를 즉시 읽으면 한 프레임 어긋날 수 있음(레이캐스트 의존 코드 점검).</p></div>
+      <h3>Reuse Collision Callbacks → on</h3>
+      <p>콜리전 콜백 객체를 매번 새로 만들지 않고 현재 프레임용 재사용 → GC↓. 콜백 객체를 다음 프레임에 저장해 쓰면 안 됨. <span class="badge b-on">적용</span></p>
+      <h3>Fixed Timestep</h3>
+      <p>물리/FixedUpdate 빈도. 기본 0.02(50Hz). 높이면 CPU↓, 너무 높이면 반응이 밀려 보임. → <span class="em">0.04(25Hz)</span> 적용.</p>
+    </section>
+
+    <section class="ch" id="c3">
+      <h2 class="sec"><span class="num">03</span>그래픽스 / 셰이더</h2>
+      <h3>Always Included Shaders / Strip Post Processing Variants</h3>
+      <div class="callout no"><span class="clabel">수동 검토 — 위험</span><p>안 쓰는 셰이더/후처리 변형 제거는 빌드↓지만, 런타임 동적 셰이더를 빼면 <span class="em">핑크 머티리얼</span>. Frame Debugger로 사용 셰이더 확인 후 제거.</p></div>
+      <h3>Shader Variant Loading Settings</h3>
+      <p>한 번에 로드할 청크 크기/개수 제한 → 메모리 스파이크↓. 필기 권장 <span class="em">chunk size 4 / count 2</span>(필요 변형은 스왑, 비용 작음).</p>
+      <h3>Sprite Atlas / Draw Call Batching <span class="tag">2D 1순위</span></h3>
+      <p>스프라이트를 아틀라스로 묶어 머티리얼/텍스처를 통일하면 드로우콜 배칭. 2D 성능의 핵심. 이 프로젝트는 몬스터/UI 스프라이트가 시트별로 흩어져 있어 <span class="em">아틀라스 정리 시 큰 개선 여지</span>(권장 후속).</p>
+    </section>
+
+    <section class="ch" id="c4">
+      <h2 class="sec"><span class="num">04</span>오디오</h2>
+      <h3>DSP Buffer Size</h3>
+      <p>크면 CPU↓·지연↑ / 작으면 CPU↑·지연↓. 리듬게임=Best Latency, 보통=<span class="em">Best Performance</span>.</p>
+      <h3>AudioClip Import</h3>
+      <ul><li><span class="em">Load Type</span> — Decompress On Load(짧은 효과음, CPU↓/메모리↑) · Compressed In Memory(메모리↓/CPU↑) · Streaming(긴 BGM, 메모리 최소).</li>
+      <li><span class="em">Compression Format</span> — PCM(무압축·음질↑·메모리↑) / Vorbis·ADPCM(압축).</li>
+      <li>이 프로젝트: SoundManager가 현재 사운드 비활성(PlayOneShot 주석) → 오디오 도입 시 적용.</li></ul>
+    </section>
+
+    <section class="ch" id="c5">
+      <h2 class="sec"><span class="num">05</span>Addressables</h2>
+      <ul>
+        <li><span class="em">Enable Json Catalog 해제</span> — 바이너리 카탈로그(역직렬화 빠름).</li>
+        <li><span class="em">Internal Asset Naming Mode → Dynamic/FileName</span> — 주소에서 경로 제거, 카탈로그↓.</li>
+        <li><span class="em">Max Concurrent Web Requests = 16</span>(저사양 8).</li>
+        <li><span class="em">Include GUIDs in Catalog 해제</span> · 그룹별 <span class="em">Asset Bundle CRC Disabled</span> — CPU↓.</li>
+        <li><span class="em">Shaders 전용 그룹</span> — 셰이더 중복 로드 방지(다른 그룹이 쓰는 셰이더를 명시).</li>
+      </ul>
+      <div class="callout warn"><span class="clabel">이 프로젝트</span><p>데이터/스프라이트/UI/VFX 그룹 존재. 위 설정은 에디터에서 수동 적용 권장(API 일부 네임스페이스 이슈).</p></div>
+    </section>
+
+    <section class="ch" id="c6">
+      <h2 class="sec"><span class="num">06</span>패키지 / 빌트인 모듈 정리</h2>
+      <p>안 쓰는 빌트인 모듈(Cloth·XR·VR·Vehicles 등, <code>Packages/manifest.json</code>의 <code>com.unity.modules.*</code>) 제거 → 빌드·도메인 리로드 부담↓.</p>
+      <p>이 프로젝트는 2D 방치형 → cloth/xr/vr/vehicles 미사용, 제거 안전(권장). ⚠️ 제거 전 참조 확인.</p>
+    </section>
+
+    <section class="ch" id="c7">
+      <h2 class="sec"><span class="num">07</span>에셋 점검</h2>
+      <h3>ParticleSystem → Culling Mode = Pause</h3>
+      <p>화면 밖 파티클이 실시간 계산을 멈추고 다시 보일 때 이어 재생 → CPU↓. VFX 프리팹 일괄 적용 가능(에디터 배치).</p>
+      <h3>Texture</h3>
+      <p>모바일 압축(ASTC), Max Size 적정화, 미사용 Read/Write Enabled off, UI Mipmap off.</p>
+    </section>
+
+    <section class="ch" id="c8">
+      <h2 class="sec"><span class="num">08</span>런타임 코드 최적화</h2>
+      <h3>Object Pooling</h3>
+      <p>빈출 생성/삭제(총알/몬스터/데미지폰트)는 풀링. <code>PoolManager</code> 보유 → 신규 빈출 오브젝트도 풀 경유.</p>
+      <h3>GameObject.Find / FindObjectOfType 캐싱 <span class="tag">핫스팟</span></h3>
+      <p>둘 다 씬 전체 순회(O(n)). 매 프레임/빈번 호출 금지.</p>
+      <ul><li>이 프로젝트: <code>UI_Village1BtnGroup</code>이 <code>Find("Player")</code> 반복, 일부 팝업이 <code>FindObjectOfType&lt;UI_*&gt;</code> 사용 → <span class="em">캐싱 또는 Managers/이벤트 경유</span> 권장.</li>
+      <li><code>@Skill</code>/<code>@Monster</code> 등 루트 Find는 1회성이라 무방.</li></ul>
+      <h3>GC / 할당 줄이기 · Update 최소화</h3>
+      <ul><li>Update의 <code>new</code>/LINQ/문자열 보간/박싱 제거, <code>WaitForSeconds</code> 캐싱.</li>
+      <li>빈 <code>Update()</code> 제거, 상태 변할 때만 이벤트 구동으로 갱신.</li></ul>
+    </section>
+
+    <section class="ch" id="c9">
+      <h2 class="sec"><span class="num">09</span>에디터 리로드 / 컴파일</h2>
+      <p>현재 <code>EnterPlayModeOptions=3</code>(Domain+Scene Reload 비활성) → <span class="em">플레이 진입은 이미 최적</span>. 느린 건 Ctrl+R 시 재컴파일 + 강제 도메인 리로드.</p>
+      <div class="callout no"><span class="clabel">asmdef 분할 — 이 프로젝트는 차단됨</span>
+        <p>게임 코드 전체가 단일 <code>Assembly-CSharp</code> → 한 파일만 고쳐도 전부 재컴파일. 그러나 <span class="em">Managers ↔ UI 순환참조</span>(UIManager가 22개 UI_ 타입 / UI_Base·UI_Popup이 Managers 참조)로 <span class="em">asmdef 분할 불가</span>. 분할하려면 순환참조부터 끊는 리팩터(인터페이스/이벤트)가 선행.</p>
+      </div>
+      <ul><li>도메인 리로드 비용: VS·Addressables·InputSystem 초기화. <span class="em">VS는 코드가 의존해 제거 불가</span>.</li>
+      <li>이미 수행: 런타임 파일의 미사용 Editor/Test using 제거(위생 + asmdef 전제).</li>
+      <li>권장: Preferences → Asset Pipeline → <span class="em">Directory Monitoring on</span>. 근본책은 <span class="em">순환참조 해소 → asmdef 분할</span>(중대형 리팩터).</li></ul>
+    </section>
+
+    <section class="ch" id="c10">
+      <h2 class="sec"><span class="num">10</span>프로파일링 도구</h2>
+      <ul>
+        <li><span class="em">Profiler</span>(CPU/GPU/Memory/Rendering) — 병목 먼저 측정. "측정 없는 최적화 금지".</li>
+        <li><span class="em">Frame Debugger</span> — 드로우콜 단계, 배칭 깨지는 지점.</li>
+        <li><span class="em">Memory Profiler</span>(패키지) — 누수/상주 에셋.</li>
+        <li><span class="em">RenderDoc</span>(외부·Windows) — 가장 비싼 셰이더/드로우콜 분석 → 그 셰이더 최적화가 고효율.</li>
+      </ul>
+      <div class="callout"><span class="clabel">우선순위 요약</span>
+        <p>1) Profiler로 병목 측정 · 2) 2D는 드로우콜(아틀라스/배칭) · 3) GC 할당 제거 · 4) 빌드 설정(대부분 적용 완료) · 5) 에디터 리로드는 순환참조 해소→asmdef가 근본책.</p>
+      </div>
+      <div class="footnote">RE001 · Documents/Unity_Optimization_Guide · 2026-06-24<br>적용 항목은 ProjectSettings에 저장됨. 동반 문서: Unity_Optimization_Guide.md</div>
+    </section>
+  </div>
+</main>
+</div>
+<script>
+// scroll-spy + progress (의존성 없는 최소 JS)
+const links=[...document.querySelectorAll('#toc .chap')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+const prog=document.getElementById('prog');
+function onScroll(){
+  const y=window.scrollY, h=document.body.scrollHeight-innerHeight;
+  prog.style.width=(h>0?Math.min(100,y/h*100):0)+'%';
+  let idx=0; for(let i=0;i<secs.length;i++){ if(secs[i]&&secs[i].getBoundingClientRect().top<=120) idx=i; }
+  links.forEach((a,i)=>a.classList.toggle('active',i===idx));
+}
+document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+</script>
+</body>
+</html>

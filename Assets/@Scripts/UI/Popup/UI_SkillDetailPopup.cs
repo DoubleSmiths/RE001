@@ -360,8 +360,10 @@ public class UI_SkillDetailPopup : UI_Popup
         {
             var mainRT = mainGo.GetComponent<RectTransform>();
             if (mainRT != null) { _frameOrigin = mainRT.anchoredPosition; _baseOrigin = _frameOrigin; }
-            // 진입 점프 방지: 프리팹 진입 DOTweenAnimation(Main/부모)을 끄고, 코드(ClampPopupToCenter)에서 처음부터 중앙 위치로 슬라이드인.
-            //  (이게 켜져 있으면 _baseOrigin으로 슬라이드인 → 0.55s 후 클램프가 위로 올려 '훅 점프'가 생겼음)
+            // [DOTweenAnimation 규약 예외 — 의도적 코드 대체] 진입 점프 방지.
+            //  프리팹 진입 DOTweenAnimation(Main/부모)의 isFrom이 Start에서 _baseOrigin으로 슬라이드인 →
+            //  0.55s 후 ClampPopupToCenter가 위로 올려 '훅 점프'가 생겼다. → 컴포넌트를 끄고 코드가 처음부터
+            //  중앙 위치로 슬라이드인. (컴포넌트화하려면 prefab anim의 isFrom 스냅/클램프 충돌부터 해결 필요.)
             foreach (var anim in mainGo.GetComponentsInParent<DG.Tweening.DOTweenAnimation>(true))
                 anim.enabled = false;
         }

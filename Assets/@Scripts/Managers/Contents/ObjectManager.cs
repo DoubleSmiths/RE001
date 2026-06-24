@@ -137,6 +137,7 @@ public class ObjectManager
 
     public void ShowMissPopup(Vector2 pos, Transform parent = null)
     {
+        Managers.Sound?.PlaySFX("Sound_Miss");   // 빗나감 (VS MissText &Sound 이식)
         SpawnDamageFont(pos, Util.Localize(Define.LocalizeKey.BattleMissText), DamageFontMode.Miss, parent);
     }
 

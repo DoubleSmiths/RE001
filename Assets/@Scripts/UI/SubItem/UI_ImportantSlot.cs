@@ -1,6 +1,5 @@
 using Data;
 using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class UI_ImportantSlot : UI_Base

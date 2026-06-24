@@ -347,6 +347,7 @@ public class Define
         public const string LureSuccessText1 = "LureSuccessText1";
         public const string LureSuccessText2 = "LureSuccessText2";
         public const string LureFailText = "LureFailText";
+        public const string LureBtnText = "LureBtnText";        // 슬31: [길들인다!] 버튼 라벨 머리글
         public const string GoMandrakeText = "GoMandrakeText";
         public const string EatMandrakeText = "EatMandrakeText";
         public const string CatchSuccessRateText = "CatchSuccessRateText";

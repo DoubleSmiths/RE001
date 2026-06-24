@@ -359,6 +359,7 @@ public class PlayerController : CreatureController
         if (State == Define.State.Dead) return;
         if (_anim == null) return;
 
+        Managers.Sound?.PlaySFX("Sound_PlayeronHit");   // 플레이어 피격
         _anim.speed = 1f;   // 공격속도 버프로 올렸던 애니 속도 원복(피격 연출은 정상 속도)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
 
@@ -557,6 +558,7 @@ public class PlayerController : CreatureController
         if (State != Define.State.Attack) return;       // OnHit/Idle로 바뀌었으면 무시
         if (!_attackTarget.HasEngaged) return;          // engagement가 풀렸으면 silent miss
 
+        Managers.Sound?.PlaySFX("Sound_PlayerAttack");   // 플레이어 공격
         // 슬39: 공격 시 발동조건
         _abilityRunner?.Notify(Define.AbilityCondition.OnAttack);
 

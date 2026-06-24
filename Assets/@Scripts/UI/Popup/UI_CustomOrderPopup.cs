@@ -141,8 +141,10 @@ public class UI_CustomOrderPopup : UI_Popup
             var korDup = korTf.Find("kortext_1");
             if (korDup != null) korDup.gameObject.SetActive(false);
 
-            // prefab의 ContentSizeFitter + DOTweenAnimation이 위치/크기를 조작해서 위치가 밀림.
-            // DestroyImmediate로 즉시 제거해야 이후 set이 덮어쓰여지지 않음.
+            // [DOTweenAnimation 규약 예외 — 애니 교체 아님] kortext의 ContentSizeFitter + DOTweenAnimation이
+            //  위치/크기를 조작해 텍스트가 밀린다. 이 DOTweenAnimation은 '쓰고 싶은 연출'이 아니라 레이아웃을
+            //  망치는 잔존 컴포넌트라 제거(코드로 정적 배치). 대체 애니를 코드로 만드는 케이스가 아님.
+            //  DestroyImmediate로 즉시 제거해야 이후 set이 덮어쓰여지지 않음.
             var csf = korTf.GetComponent<UnityEngine.UI.ContentSizeFitter>();
             if (csf != null) DestroyImmediate(csf);
             var dta = korTf.GetComponent<DG.Tweening.DOTweenAnimation>();
@@ -278,25 +280,34 @@ public class UI_CustomOrderPopup : UI_Popup
 
         _currentGroup = groupIndex;
 
-        // 물약 그룹이 펼쳐진 순간 SPD 포션이 아직 미공개면 해금 연출 1회 재생
-        if (groupIndex == 0 && !Managers.Game.SpdPotionRevealed)
-            PlaySpdPotionRevealAnim();
+        // 슬35 해금 연출: 컨텐츠로 해금됐는데 아직 모션을 안 본 항목이면 그룹 펼친 순간 1회 재생.
+        if (groupIndex == 0)
+        {
+            // 물약 그룹: 신속(SPD) → 행운(Luck) 순. (SPD 트리거는 별도 과제로 컨텐츠 게이팅 예정)
+            if (!Managers.Game.SpdPotionRevealed)
+                PlaySpdPotionRevealAnim();
+            else if (Managers.Game.LuckPotionUnlocked && !Managers.Game.LuckPotionRevealed)
+                PlayLuckPotionRevealAnim();
+        }
+        else if (groupIndex == 1)
+        {
+            // 기술 그룹: 물약주입기 — 기술 습득(AutoPotionMemorized) 후 첫 조회 시 해금 모션.
+            if (Managers.Game.AutoPotionMemorized && !Managers.Game.AutoPotionSkillRevealed)
+                PlayAutoPotionSkillRevealAnim();
+        }
     }
 
     /// <summary>
-    /// 연금공방 NPC가 SPD 포션을 해금해주는 연출. LockIcon에만 적용.
+    /// 슬35 해금 연출 (공통). LockIcon에만 적용. 신속/행운 물약 + 물약주입기 기술 공용.
     /// 타임라인:
     ///   t=0.0~0.5  대기 (Delay)
     ///   t=0.5~1.2  Shake/Position (Duration 0.7, Strength (1,1,0), Vibrato 48, Randomness 59, OutQuad)
     ///   t=1.2~1.7  Scale 1→2 (Duration 0.5, OutBack)
-    ///   t=1.7~2.1  Lock overlay Fade out
+    ///   t=1.7~2.1  Lock overlay Fade out → onRevealed (플래그 저장/아이콘 갱신) + MasterIcon/LvlIcon 노출
     /// </summary>
-    void PlaySpdPotionRevealAnim()
+    void PlayRevealAnim(Transform iconRoot, Image lockBg, Image lockImg, System.Action onRevealed)
     {
-        var iconRoot = GetObject((int)GameObjects.CustomOrderSPDPotionIcon)?.transform;
-        var lockBg   = GetImage((int)Images.lockbg_1);
-        var lockImg  = GetImage((int)Images.lockimg_1);
-        if (lockImg == null) return;
+        if (lockImg == null) { onRevealed?.Invoke(); return; }
 
         var lockImgTr = lockImg.rectTransform;
         Vector2 lockImgAnchorOrigin = lockImgTr.anchoredPosition;
@@ -307,43 +318,23 @@ public class UI_CustomOrderPopup : UI_Popup
         lockImgTr.anchoredPosition = lockImgAnchorOrigin;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-
-        // Delay 0.5s
-        seq.AppendInterval(0.5f);
-
-        // Shake/Position — 단독 재생 (Scale 동시 X)
-        seq.AppendCallback(() =>
-        {
-            lockImgTr
-                .DOShakeAnchorPos(0.7f, new Vector3(1f, 1f, 0f), vibrato: 48, randomness: 59f)
-                .SetEase(Ease.OutQuad)
-                .SetUpdate(true);
-        });
+        seq.AppendInterval(0.5f);                                   // Delay
+        seq.AppendCallback(() =>                                    // Shake/Position
+            lockImgTr.DOShakeAnchorPos(0.7f, new Vector3(1f, 1f, 0f), vibrato: 48, randomness: 59f)
+                     .SetEase(Ease.OutQuad).SetUpdate(true));
         seq.AppendInterval(0.7f);
-
-        // Scale 1→2 (Shake 종료 직후)
-        seq.AppendCallback(() =>
-        {
-            lockImgTr
-                .DOScale(2f, 0.5f)
-                .SetEase(Ease.OutBack)
-                .SetUpdate(true);
-        });
+        seq.AppendCallback(() =>                                    // Scale 1→2
+            lockImgTr.DOScale(2f, 0.5f).SetEase(Ease.OutBack).SetUpdate(true));
         seq.AppendInterval(0.5f);
-
-        // Lock overlay Fade out
-        seq.AppendCallback(() =>
+        seq.AppendCallback(() =>                                    // Lock overlay Fade out
         {
             if (lockBg != null) lockBg.DOFade(0f, 0.4f).SetUpdate(true);
             lockImg.DOFade(0f, 0.4f).SetUpdate(true);
         });
         seq.AppendInterval(0.4f);
-
-        // 플래그 저장 + NEW 뱃지 / 등급 아이콘 표시 + 원복
-        seq.AppendCallback(() =>
+        seq.AppendCallback(() =>                                    // 플래그 저장 + 등급/레벨 아이콘 노출 + 원복
         {
-            Managers.Game.SpdPotionRevealed = true;
-            RefreshSpeedPotionIcon();
+            onRevealed?.Invoke();
             if (iconRoot != null)
             {
                 foreach (Transform child in iconRoot)
@@ -354,11 +345,28 @@ public class UI_CustomOrderPopup : UI_Popup
                         child.gameObject.SetActive(true);
                 }
             }
-            // 다음 세션에서 locked 상태로 재사용될 수 있으므로 원복
             lockImgTr.anchoredPosition = lockImgAnchorOrigin;
             lockImgTr.localScale = Vector3.one;
         });
     }
+
+    // 슬35: 신속물약 해금 연출
+    void PlaySpdPotionRevealAnim() => PlayRevealAnim(
+        GetObject((int)GameObjects.CustomOrderSPDPotionIcon)?.transform,
+        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1),
+        () => { Managers.Game.SpdPotionRevealed = true; RefreshSpeedPotionIcon(); });
+
+    // 슬35: 행운물약 해금 연출
+    void PlayLuckPotionRevealAnim() => PlayRevealAnim(
+        GetObject((int)GameObjects.CustomOrderLuckPotionIcon)?.transform,
+        GetImage((int)Images.lockbg), GetImage((int)Images.lockimg),
+        () => { Managers.Game.LuckPotionRevealed = true; });
+
+    // 슬35: 물약주입기 기술 해금 연출 (기술 그룹)
+    void PlayAutoPotionSkillRevealAnim() => PlayRevealAnim(
+        GetObject((int)GameObjects.CustomOrder_AutoPotionCooltimeSkill)?.transform,
+        GetImage((int)Images.lockbg_AutoPotion), GetImage((int)Images.lockimg_AutoPotion),
+        () => { Managers.Game.AutoPotionSkillRevealed = true; });
 
     void PlayItemsScaleIn(GameObject groupGO)
     {
@@ -394,14 +402,14 @@ public class UI_CustomOrderPopup : UI_Popup
     /// </summary>
     void InitLockStates()
     {
-        // 첫 제작의뢰 진입 시 연금공방 NPC가 해금 — 저장 플래그 false면 처음엔 잠긴 상태로 표시
-        bool spdAlreadyRevealed = Managers.Game.SpdPotionRevealed;
+        // 슬35: 각 항목은 해금 모션을 본 뒤(*Revealed=true) 해제 상태로 표시. 그 전까지 잠금 자물쇠.
+        //  (Revealed는 컨텐츠 해금 후 첫 조회 시 ExpandGroup의 해금 연출이 set — 신속/행운/물약주입기 공통)
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrderSPDPotionIcon).transform,
-                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: !spdAlreadyRevealed);
+                        GetImage((int)Images.lockbg_1), GetImage((int)Images.lockimg_1), locked: !Managers.Game.SpdPotionRevealed);
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrderLuckPotionIcon).transform,
-                        GetImage((int)Images.lockbg),   GetImage((int)Images.lockimg),   locked: true);
+                        GetImage((int)Images.lockbg),   GetImage((int)Images.lockimg),   locked: !Managers.Game.LuckPotionRevealed);
         ApplyLockVisual(GetObject((int)GameObjects.CustomOrder_AutoPotionCooltimeSkill).transform,
-                        GetImage((int)Images.lockbg_AutoPotion), GetImage((int)Images.lockimg_AutoPotion), locked: true);
+                        GetImage((int)Images.lockbg_AutoPotion), GetImage((int)Images.lockimg_AutoPotion), locked: !Managers.Game.AutoPotionSkillRevealed);
 
         // 슬라이드 36: 해금 아이템 클릭 → 상세 팝업
         // CustomOrderHPPotionIcon 컨테이너엔 Graphic이 없어 raycast 불가 → Frame Button으로 바인딩

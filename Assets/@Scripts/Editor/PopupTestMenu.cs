@@ -56,14 +56,48 @@ public static class PopupTestMenu
         Managers.UI.ShowPopupUI<UI_PotionPopup>().SetInfo();
     }
 
-    [MenuItem("Test/Toggle AutoPotion Memorized %#7", false, 105)]
-    static void ToggleMemorized()
+    [MenuItem("Test/Toggle 자동물약 스킬 해금 (물약주입기) %#7", false, 105)]
+    static void ToggleAutoPotionSkill()
     {
-        const string PREF = "PotionPopup.Memorized";
-        int cur = UnityEngine.PlayerPrefs.GetInt(PREF, 0);
-        UnityEngine.PlayerPrefs.SetInt(PREF, cur == 0 ? 1 : 0);
-        UnityEngine.PlayerPrefs.Save();
-        Debug.Log($"[Test] AutoPotion Memorized = {(cur == 0 ? "ON (기억 후)" : "OFF (기억 전)")}");
+        if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
+        if (Managers.Game == null) { Debug.LogWarning("[Test] Managers.Game not ready"); return; }
+
+        // ⚠️ 과거엔 죽은 PlayerPrefs("PotionPopup.Memorized")를 토글했으나 실제 시스템은
+        //  Managers.Game.AutoPotionMemorized(GameData, 저장됨)를 읽는다. → 실제 해금 플래그를 토글.
+        //  이 플래그가 true여야 물약창의 자동물약 On/Off 버튼이 사용 가능(UI_PotionPopup.OnClickAutoToggle 게이팅).
+        bool next = !Managers.Game.AutoPotionMemorized;
+        Managers.Game.AutoPotionMemorized = next;
+        if (!next)
+        {
+            Managers.Game.AutoPotionOn = false;             // 잠그면 자동물약도 끔
+            Managers.Game.AutoPotionSkillRevealed = false;  // 제작의뢰 기술 해금 모션도 재시청 가능하게 리셋
+        }
+
+        // 열려있는 물약창이 있으면 즉시 갱신 (캐시된 _autoMemorized 재로드)
+        var popup = Object.FindObjectOfType<UI_PotionPopup>();
+        if (popup != null) popup.SetInfo();
+        // 열려있는 제작의뢰 팝업도 갱신 (기술 그룹 잠금/해금 반영)
+        var custom = Object.FindObjectOfType<UI_CustomOrderPopup>();
+        if (custom != null) custom.SetInfo();
+
+        Debug.Log($"[Test] 자동물약 스킬(물약주입기) 해금 = {(next ? "ON — On/Off 버튼 사용 가능 + 제작의뢰 기술 해금" : "OFF — 잠김")}");
+    }
+
+    [MenuItem("Test/Toggle 행운물약 컨텐츠 해금 %#9", false, 107)]
+    static void ToggleLuckPotionUnlock()
+    {
+        if (!Application.isPlaying) { EditorApplication.isPlaying = true; return; }
+        if (Managers.Game == null) { Debug.LogWarning("[Test] Managers.Game not ready"); return; }
+
+        // 행운물약 컨텐츠 해금 플래그 토글. ON이면 제작의뢰 물약탭 첫 조회 시 슬35 해금 모션 재생.
+        bool next = !Managers.Game.LuckPotionUnlocked;
+        Managers.Game.LuckPotionUnlocked = next;
+        if (!next) Managers.Game.LuckPotionRevealed = false;   // 잠그면 모션 재생 플래그도 리셋(재시청 가능)
+
+        var custom = Object.FindObjectOfType<UI_CustomOrderPopup>();
+        if (custom != null) custom.SetInfo();
+
+        Debug.Log($"[Test] 행운물약 컨텐츠 해금 = {(next ? "ON — 물약탭 첫 조회 시 해금 모션" : "OFF — 잠김")}");
     }
 
     [MenuItem("Test/Apply 스피드 버프 (속도+버프아이콘) %#8", false, 106)]
