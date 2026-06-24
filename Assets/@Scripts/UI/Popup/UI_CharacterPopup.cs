@@ -275,7 +275,7 @@ public class UI_CharacterPopup : UI_Popup
         BindStatButtons();
 
 
-        // ── 메인 스탯 그룹 클릭
+        // ── 메인 스탯 그룹 클릭 (각각 따로 토글: 누른 쪽 프레임+세부스탯만 열림)
         GetButton((int)Buttons.PATKDetailGroup).gameObject.BindEvent(() => OnClickMainStatGroup((int)Buttons.PATKDetailGroup, (int)GameObjects.PATKSubTexts));
         GetButton((int)Buttons.HPDetailGroup).gameObject.BindEvent(()   => OnClickMainStatGroup((int)Buttons.HPDetailGroup, (int)GameObjects.HPSubTexts));
         GetButton((int)Buttons.MATKDetailGroup).gameObject.BindEvent(() => OnClickMainStatGroup((int)Buttons.MATKDetailGroup, (int)GameObjects.MATKSubTexts));
@@ -489,23 +489,18 @@ public class UI_CharacterPopup : UI_Popup
 
     void OnClickMainStatGroup(int frameIdx, int TextBoxIdx)
     {
-        GameObject subTexts = GetObject(TextBoxIdx);
-        bool isOpen = subTexts.activeSelf;
+        bool open = !GetObject(TextBoxIdx).activeSelf;   // 현재 상태 토글
+        SetMainStatGroup(frameIdx, TextBoxIdx, open);
+    }
 
+    // 누른 쪽 프레임 높이(16↔46)만 확장/축소 + 해당 세부스탯만 표시.
+    void SetMainStatGroup(int frameIdx, int TextBoxIdx, bool open)
+    {
+        GetObject(TextBoxIdx).SetActive(open);
         RectTransform rt = GetButton(frameIdx).GetComponent<RectTransform>();
         rt.DOKill();
         rt.localScale = Vector3.one;
-
-        if (isOpen)
-        {
-            subTexts.SetActive(false);
-            rt.DOSizeDelta(new Vector2(60f, 16f), 0.3f).SetEase(Ease.Linear);
-        }
-        else
-        {
-            subTexts.SetActive(true);
-            rt.DOSizeDelta(new Vector2(60f, 46f), 0.3f).SetEase(Ease.Linear);
-        }
+        rt.DOSizeDelta(new Vector2(60f, open ? 46f : 16f), 0.3f).SetEase(Ease.Linear);
     }
 
     // ────────────────────────────────────────────────────

@@ -124,6 +124,7 @@ public class GameData
 
     // 퀘스트
     public int          CurrentQuestID = 1;
+    public List<int>    MetQuestConditions = new List<int>(); // MULTI 퀘스트의 충족 조건 Order 집합(현재 퀘스트 기준). 대화 중 종료 후 복원용.
     public int          CurrentSubQuestID = 0;  // 0 = 활성 서브퀘스트 없음
     public List<string> UnlockedBtnIds = new List<string>();
     public int          CurrentHPPotionDataId = POTION_ID_MIN + 1;
@@ -340,6 +341,9 @@ public class GameManager
         set { _gameData.CurrentSubQuestID = value; }
     }
 
+    // MULTI 퀘스트 충족 조건(Order) 영속 집합. QuestManager가 복원/저장에 사용.
+    public List<int> MetQuestConditions => _gameData.MetQuestConditions;
+
     public List<string> UnlockedBtnIds => _gameData.UnlockedBtnIds;
 
     public bool SpdPotionRevealed
@@ -543,6 +547,7 @@ public class GameManager
         if (equip.EquipmentData != null)
             equip.Durability = equip.EquipmentData.MaxDurability;
 
+        Managers.Sound?.PlaySFX("SFX_EnhanceHammer");   // 장비 강화 성공
         SaveGame();
         OnEquipmentForged?.Invoke(equip);
         return true;

@@ -183,6 +183,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
                 SwitchBG("Village1_Main_BG");
+                Managers.Game.Player?.ReturnHomeIdle();   // 암전 중 원위치+Idle (페이드 인 시 잔여 이동 방지)
             });
 
             // t=0.55 : 페이드 인 시작 시점에 장소 텍스트 1회만 재생
@@ -244,6 +245,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
                 SwitchBG("Village1_Main_BG");
+                Managers.Game.Player?.ReturnHomeIdle();   // 암전 중 원위치+Idle (페이드 인 시 잔여 이동 방지)
             });
 
             // t=0.55 : 페이드 인 시점에 장소 텍스트 재생
@@ -569,6 +571,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendCallback(() =>
         {
             SwitchBG("Village1_Main_BG");
+            Managers.Game.Player?.ReturnHomeIdle();   // 원위치+Idle (페이드 인 시 잔여 이동 방지)
         });
 
         seq.AppendInterval(1f);
@@ -656,6 +659,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             {
                 Managers.Game.LastVillage1Group = Village1Group.Guild;
                 SwitchBG("Village1_Guild_BG");
+                Managers.Game.Player?.ReturnHomeIdle();   // 암전 중 원위치+Idle (페이드 인 시 잔여 이동 방지)
             });
 
         seq.AppendInterval(0.5f);
@@ -718,6 +722,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         {
             Managers.Game.LastVillage1Group = Village1Group.Alchemy;
             SwitchBG("Village1_Alchemy_BG");
+            Managers.Game.Player?.ReturnHomeIdle();   // 암전 중 원위치+Idle (페이드 인 시 잔여 이동 방지)
         });
 
         seq.AppendInterval(0.5f);

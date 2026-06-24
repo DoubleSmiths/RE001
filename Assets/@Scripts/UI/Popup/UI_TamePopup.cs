@@ -238,6 +238,7 @@ public class UI_TamePopup : UI_Popup
         SetMaterial(_slimeImg, null);
 
         // 슬34: 미니몬 머리 위 Emoj_Exclamation 재생 → 애니가 끝나면 이모지 사라짐
+        Managers.Sound?.PlaySFX("SFX_Minimon_Appear");   // 미니몬 등장
         PlayEmoj(Images.MonsterEmoj, "Emoj_Exclamation");
         yield return new WaitForSecondsRealtime(EMOJ_LEN);
         SetEmojActive(Images.MonsterEmoj, false);
@@ -376,12 +377,14 @@ public class UI_TamePopup : UI_Popup
         //  (효과 없음 문구는 실패 시에만 — 긍정 결과에선 안 나온다)
         if (success)
         {
+            Managers.Sound?.PlaySFX("SFX_LureHit");   // 효과 有(흥미)
             PlayEmoj(Images.MonsterEmoj, "Emoj_Excited");
             yield return CoType(Util.Localize(LocalizeKey.LureEffectiveText));   // 순서3-1
             yield return new WaitForSecondsRealtime(EMOJ_LEN);
         }
         else
         {
+            Managers.Sound?.PlaySFX("SFX_LureFail");   // 효과 無
             // 순서3-2 (KR=CreatureName+LureNotEffectiveText / EN=LureNotEffectiveText만)
             yield return CoType((IsKorean ? _cName : "") + Util.Localize(LocalizeKey.LureNotEffectiveText));
         }
@@ -450,6 +453,7 @@ public class UI_TamePopup : UI_Popup
 
         // 슬37-6/슬32 순서3: Eat 종료 후 미니몬 Emoj_Shy + CreatureName + EatMandrakeText
         PlayEmoj(Images.MonsterEmoj, "Emoj_Shy");
+        Managers.Sound?.PlaySFX("SFX_MinimonEat");   // 만드라고라 먹기
         yield return CoType(_cName + Util.Localize(LocalizeKey.EatMandrakeText));
         yield return new WaitForSecondsRealtime(1.2f);
 

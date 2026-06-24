@@ -144,6 +144,7 @@ public abstract class CreatureController : BaseController
         bool attackerIsMonster = attacker != null && attacker.ObjectType == ObjectType.Monster;
         if (!attackerIsMonster)
         {
+            // 슬라이드 64 — 일반 데미지 색은 속성과 무관하게 동일(FF0000→FFFF00). 치명타만 다름(→FF00FF).
             DamageFontMode mode = result.IsCrit ? DamageFontMode.Critical : DamageFontMode.Normal;
             Managers.Object.ShowDamageFont(fontPos, result.FinalDamage, mode, transform);
 

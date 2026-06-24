@@ -130,7 +130,7 @@ public class MonsterController : CreatureController
         if (_target.State == Define.State.Dead) return;
         if (State != Define.State.Attack) return;
 
-        Managers.Sound?.PlaySFX("Slime_Attack");   // 몬스터 공격
+        Managers.Sound?.PlaySFX(_data != null ? _data.AttackSfx : "Slime_Attack");   // 몬스터 공격 (데이터 드리븐)
         BattleMath.DamageResult result = BattleMath.Resolve(this, _target, AttackType.Physical);
         _target.TakeHit(result, this);
     }
@@ -157,7 +157,7 @@ public class MonsterController : CreatureController
     {
         if (State == Define.State.Dead) return;
         if (State == Define.State.Attack) return;
-        Managers.Sound?.PlaySFX("Slime_OnHit");   // 몬스터 피격
+        Managers.Sound?.PlaySFX(_data != null ? _data.OnHitSfx : "Slime_OnHit");   // 몬스터 피격 (데이터 드리븐)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
         base.PlayHitFeedback();
     }
@@ -171,7 +171,7 @@ public class MonsterController : CreatureController
     protected override void OnDead()
     {
         base.OnDead();
-        Managers.Sound?.PlaySFX("Slime_Die");   // 몬스터 사망 (슬167)
+        Managers.Sound?.PlaySFX(_data != null ? _data.DieSfx : "Slime_Die");   // 몬스터 사망 (데이터 드리븐, 슬167)
         _rb.linearVelocity = Vector2.zero;
 
         // 보상

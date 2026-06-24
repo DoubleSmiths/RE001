@@ -21,7 +21,10 @@ public class QuestManager
     public void Init()
     {
         CurrentQuestID = Managers.Game.CurrentQuestID;
+        // MULTI 조건 충족 상태 복원 (대화 도중 종료 후 재시작해도 진입 조건이 소실되지 않도록).
         _metConditions.Clear();
+        foreach (int order in Managers.Game.MetQuestConditions)
+            _metConditions.Add(order);
 
         Managers.Game.OnItemAdded   += CheckItemAcquire;
         Managers.Game.OnItemChanged += OnInventoryChanged;
@@ -185,7 +188,15 @@ public class QuestManager
         }
 
         if (_metConditions.Count >= conditions.Count)
-            CompleteQuest(CurrentQuestID);
+        {
+            CompleteQuest(CurrentQuestID);   // 전환 시 영속 집합도 초기화·저장됨
+        }
+        else
+        {
+            // 아직 미완료여도 충족 조건을 세이브에 보존 (도중 종료 대비).
+            SyncMetConditionsToSave();
+            Managers.Game.SaveGame();
+        }
     }
 
     void CompleteQuest(int questId)
@@ -207,6 +218,7 @@ public class QuestManager
         _metConditions.Clear();
 
         Managers.Game.CurrentQuestID = questId;
+        SyncMetConditionsToSave();      // 새 퀘스트 → 충족 집합 비움(영속)
         Managers.Game.SaveGame();
 
         OnQuestChanged?.Invoke(questId);
@@ -214,6 +226,14 @@ public class QuestManager
         OnFollowUIChanged?.Invoke(questId);
 
         PlayQuestAnimation(questId);
+    }
+
+    // 런타임 _metConditions → GameData(세이브) 동기화. SaveGame 호출은 별도.
+    void SyncMetConditionsToSave()
+    {
+        var save = Managers.Game.MetQuestConditions;
+        save.Clear();
+        save.AddRange(_metConditions);
     }
 
     void ProcessUnlocks(int questId)
@@ -277,6 +297,7 @@ public class QuestManager
         CurrentQuestID = questId;
         _metConditions.Clear();
         Managers.Game.CurrentQuestID = questId;
+        SyncMetConditionsToSave();
         Managers.Game.SaveGame();
 
         OnQuestChanged?.Invoke(questId);

@@ -397,6 +397,10 @@ public class DataTransformer : EditorWindow
             // 슬라이드 79: 미니몬 고유기술 (Excel에 컬럼 추가 전엔 빈 값)
             d.UniqueSkillName = i < row.Count ? row[i++] : "";
             d.UniqueSkillDesc = i < row.Count ? row[i++] : "";
+            // 몬스터별 SFX (컬럼 없거나 비면 기본 슬라임 사운드). i 정렬 유지 위해 존재 시 항상 advance.
+            { string s = i < row.Count ? row[i++] : ""; d.AttackSfx = string.IsNullOrEmpty(s) ? "Slime_Attack" : s; }
+            { string s = i < row.Count ? row[i++] : ""; d.OnHitSfx  = string.IsNullOrEmpty(s) ? "Slime_OnHit"  : s; }
+            { string s = i < row.Count ? row[i++] : ""; d.DieSfx    = string.IsNullOrEmpty(s) ? "Slime_Die"    : s; }
             loader.creatures.Add(d);
         }
         WriteJson("CreatureData", loader);
@@ -1111,6 +1115,10 @@ public class DataTransformer : EditorWindow
             // 슬라이드 79: 미니몬 고유기술 (Excel에 컬럼 추가 전엔 빈 값)
             d.UniqueSkillName = i < row.Count ? row[i++] : "";
             d.UniqueSkillDesc = i < row.Count ? row[i++] : "";
+            // 몬스터별 SFX (컬럼 없거나 비면 기본 슬라임 사운드)
+            { string s = i < row.Count ? row[i++] : ""; d.AttackSfx = string.IsNullOrEmpty(s) ? "Slime_Attack" : s; }
+            { string s = i < row.Count ? row[i++] : ""; d.OnHitSfx  = string.IsNullOrEmpty(s) ? "Slime_OnHit"  : s; }
+            { string s = i < row.Count ? row[i++] : ""; d.DieSfx    = string.IsNullOrEmpty(s) ? "Slime_Die"    : s; }
 
             loader.creatures.Add(d);
         }

@@ -14,6 +14,7 @@ public static class BattleMath
         public bool Hit;          // false면 빗나감 (Miss)
         public bool IsCrit;       // 치명타 여부
         public int  FinalDamage;  // FINAL DMG (Miss면 0)
+        public AttackType AttackType;  // 속성(물리/마법) — 데미지 텍스트 색 분기용
     }
 
 #if UNITY_EDITOR
@@ -29,6 +30,7 @@ public static class BattleMath
         float skillMul = 1f)
     {
         DamageResult r = default;
+        r.AttackType = attackType;   // 속성 보존(miss/hit 공통)
 
         // 1. 명중 주사위
         float hitChance = Mathf.Clamp(attacker.Accuracy - defender.Evasion, 0f, 100f);
@@ -62,13 +64,14 @@ public static class BattleMath
 
     // 사전 계산된 데미지(예: 투사체)를 DamageResult 형태로 감싸는 헬퍼.
     // 명중·회피·치명타 dice를 거치지 않고 final로 바로 처리할 때 사용.
-    public static DamageResult FromRawDamage(int finalDamage, bool isCrit = false)
+    public static DamageResult FromRawDamage(int finalDamage, bool isCrit = false, AttackType attackType = AttackType.Physical)
     {
         return new DamageResult
         {
             Hit         = true,
             IsCrit      = isCrit,
             FinalDamage = Mathf.Max(1, finalDamage),
+            AttackType  = attackType,
         };
     }
 }

@@ -99,6 +99,7 @@ public class UI_ItemPopup : UI_Popup
 
     public void SetInfo(int id)
     {
+        Managers.Sound?.PlaySFX("SFX_ItemPopup");   // 아이템 팝업
         ItemData data;
         if (!Managers.Data.ItemDic.TryGetValue(id, out data) && !Managers.Data.RequisiteItemDic.TryGetValue(id, out data))
         {

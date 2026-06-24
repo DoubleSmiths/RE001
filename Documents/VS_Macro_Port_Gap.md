@@ -45,27 +45,27 @@
 |---|---|---|---|
 | Equip Arrow | 장비창 화살표로 슬롯 전환 | **미이식** | 장비창 UI 부재(장착 로직만 GameManager.cs:496 EquipItem) |
 | Equip Icon | 장비 슬롯 아이콘/등급 글로우 | **미이식** | 장비 슬롯 UI 부재 |
-| Equip Stat Cal | 장착 장비 스탯 합산·내구도 표시 | **미이식** | 합산 UI/로직 없음(EquipmentData.BaseAtk 필드만, Data.Contents.cs:82) |
-| Equip Stat Cal After Enh | 강화 후 스탯 재계산 | **부분** | 강화 로직 O(GameManager.cs:521 ForgeEquipment + EquipEnhanceData), **합산·표시 UI 없음** |
+| Equip Stat Cal | 장비 기본스탯+강화단계+내구도로 스탯 산출 | **미이식** | 스탯 계산 로직 없음. GameManager.cs:543 `Durability=MaxDurability` 스텁뿐. 미구현 TODO 명시(IntegrationTestMenu.cs:136) |
+| Equip Stat Cal After Enh | 강화 적용 후 스탯 재계산 | **미이식** | 강화 UI(T1→T3)·대장간 미구현(ForgeEquipment 로직만 존재) |
 | EquipSkill Text | 장비 고유스킬 텍스트 | **미이식** | 장비 고유스킬 데이터/UI 부재 |
-| Selected Equip Kind Name | 선택 장비 종류명 | **미이식** | EquipSlotType enum만(Define.cs), 표시 UI 없음 |
-| Inv Imp-Item Amount Check | 중요(퀵)아이템 보유수 | 이식됨 | UI_InventoryPopup.cs:188 OnClickImportantBagBtn, UI_ImportantSlot |
-| Inv Item Amount Check | 인벤 아이템 보유수 | 이식됨 | GameManager.GetItemCount, UI_InventoryPopup.cs:99-141 |
-| Inv Item Info | 아이템 상세 정보 | 이식됨 | UI_ItemPopup.cs:100-132 SetInfo |
-| Inventory Slot | 인벤 슬롯(아이콘/개수/등급색/잠금) | 이식됨 | UI_InvSlot.cs:76/103/110 |
-| Choose Item Box | 아이템 박스 선택(zoom/pan 연출) | **부분** | 클릭→상세 흐름 O(UI_InvSlot.cs:117), 카메라 zoom/pan 연출 미확인 |
-| Use Item | 아이템 사용·소모 | **부분** | RemoveItem·물약 UsePotion(UI_PotionPopup:442) O, 일반 인벤 "사용" 버튼 흐름 미확인 |
-| Loot Display Box | 전투 획득 전리품 표시 | 이식됨 | UI_BattleBtnGroup.cs:589 → UI_BattleDropItem.cs:76 |
-| Monster Item Drop Box | 몬스터 드롭 아이템 박스 | 이식됨 | MonsterController.cs:182 → UI_BattleDropItem / UI_MonsterItemDropListBox.cs:51 |
-| Monster Money Drop Box | 몬스터 골드 드롭 박스 | **부분** | 골드적립·HUD카운트업 O(MonsterController:177, UI_GameScene:461), 별도 드롭박스 슬롯 UI 미확인 |
-| Req Item Box | 요구 아이템 박스(부족색) | 이식됨 | UI_SkillDetailPopup.cs:378, UI_PotionDetailPopup.cs:601 |
-| Skill Level Text | 스킬 레벨/최대 텍스트 | 이식됨 | UI_SkillBookSkill.cs:102-109, UI_SkillDetailPopup.cs:866-879 |
-| Skill Lvl_ReqItem | 스킬 레벨업 요구 아이템 | 이식됨 | UI_SkillDetailPopup.cs:378 ReqItem 박스군 + RefreshSourceUI:422 |
-| Skill_List_AttackDefenseIcon | 스킬목록 공/방 아이콘 | 이식됨(재설계) | 능력 Role 카테고리로 통합: UI_SkillBookPopup.cs:266 PassFilter |
-| Skill_List_AttackSkillIcon | 공격스킬 아이콘 | 이식됨(재설계) | UI_SkillBookPopup.cs:42,67 필터 + AbilityManager.Role |
-| Skill_List_SkillIcon | 스킬 아이콘 | 이식됨(재설계) | UI_SkillBookSkill.cs:67 SetInfo + Role 필터 |
-| PotionCraft_ReqItem | 물약제작 요구 재료(부족색) | 이식됨 | UI_PotionDetailPopup.cs:601 UpdateReqItems / :644 HasEnoughMaterials |
-| Potion Cooldown | 물약 재사용 대기 슬라이더 | 이식됨 | UI_PotionPopup.cs:442/496-517(쿨바 fill 1→0, finishAnim) |
+| Selected Equip Kind Name | 장비 종류 인덱스→표시명 | **미이식** | EquipSlotType enum만, 이름 매핑 소비처 없음 |
+| Inv Imp-Item Amount Check | 중요(퀵)아이템 보유수 | **부분** | UI_ImportantSlot.cs:82(Count 공유). 중요 전용 경로 없음(TODO UI_InventoryPopup.cs:219) |
+| Inv Item Amount Check | 인벤 아이템 보유수 | 이식됨 | GameManager.cs:594 GetItemCount, UI_InvSlot.cs:88 |
+| Inv Item Info | 아이템 상세(이름/등급명+색/설명/장소/보유수)+현지화 | 이식됨 | UI_ItemPopup.cs:100-131, 등급색 :164 |
+| Inventory Slot | 슬롯(아이콘/수량/등급색/NEW/block/클릭) | 이식됨 | UI_InvSlot.cs:77-131 |
+| Choose Item Box | 사용/제작용 아이템 선택 슬롯(필요수량 lime/red, UseItemPopupShow) | **미이식** | UseItemPopupShow·아이템선택→사용팝업 흐름 전부 없음 |
+| Use Item | 아이템 소비(UseAmount 차감) | **부분** | GameManager.cs:577 RemoveItem 인프라만. 유저 "사용" 경로 없음(소비=제작/퀘스트만) |
+| Loot Display Box | 루팅 표시(아이콘/+N/글로우/플래시) | 이식됨 | UI_BattleDropItem.cs, 생성 UI_BattleBtnGroup.cs:589-607 |
+| Monster Item Drop Box | 도감 드롭행(아이콘/확률%/킬카운트 점진공개) | **부분** | UI_MonsterItemDropListBox.cs:51-98. **킬카운트 단계공개 없음**→기록도 100% 일괄 해금 |
+| Monster Money Drop Box | 도감 골드 드롭행(MoneyAmount/Chance/Reveal%) | **미이식** | Money 드롭 박스·로직 전무(드롭은 아이템만) |
+| Req Item Box | 제작 필요재료 박스(보유/필요·부족 빨강) | 이식됨 | UI_PotionDetailPopup.cs:601-642 (lime 미사용, 박스→ItemPopup 미연결) |
+| Skill Level Text | 스킬 레벨 "현재/최대"(MAX·현지화) | **부분** | 레벨 표시는 능력 시스템 재구현 UI_SkillBookSkill.cs:102. VS식 current/max·MAX 분기는 미대응(등급/기억력 모델) |
+| Skill Lvl_ReqItem | 스킬 레벨업 필요재료(소비) | **부분** | ReqItemBox 패턴(UI_SkillDetailPopup 슬49)은 있으나 **스킬 레벨업 재료소비 로직 미구현**(능력=기억력 점유 모델 :666) |
+| Skill_List_AttackDefenseIcon | 스킬목록 칸(공/방 변형) | **부분(재설계)** | 능력/기억력 시스템으로 치환. 공/방 구분 슬롯 분류 없음 |
+| Skill_List_AttackSkillIcon | 스킬목록 칸(공격 변형) | **부분(재설계)** | 동상. 아이콘/클릭/레벨은 옮겨졌으나 분류 없음 |
+| Skill_List_SkillIcon | 스킬리스트 칸(아이콘/ON·OFF/클릭) | **부분(재설계)** | UI_SkillBookSkill.cs:67-135. VS `Skill_ON_OFF` 활성토글 → 능력 기억/망각(OnClickMemorize)으로 의미 다르게 대체 |
+| PotionCraft_ReqItem | 물약 제작 필요재료(부족 빨강) | 이식됨 | UI_PotionDetailPopup.cs:601-642, 소비 GameManager.cs:664-670 |
+| Potion Cooldown | 물약 쿨다운 슬라이더 | 이식됨 | UI_PotionPopup.cs:71-97,199-230 (cooldownBar/finishAnim) |
 
 ## 배치 3 — 퀘스트 / 도감 / UI / 언어 (20종)
 
@@ -96,32 +96,36 @@
 
 ## ★ 미구현 백로그 (미이식 + 부분이식 종합)
 
-### 미이식 (신규 C# 구현 필요) — 13
-1. **전투 스킬 시스템** — `DoubleAttack`(확률 2회), `Smash`(확률 ×1.5), `BeforeHit_Skills`(디스패처). RE001엔 실행로직(SkillBase/DoSkill) 부재, `BattleMath.Resolve(skillMul)` 훅만 있음.
-2. **속성 데미지 텍스트** — `WaterTextShow`(물/마법 파랑). `DamageFontMode`에 속성 모드 추가 필요.
-3. **장비 시스템 UI** — `Equip Arrow/Icon/Stat Cal/Stat Cal After Enh/EquipSkill Text/Selected Equip Kind Name`(6종). ⚠️ **로직·데이터는 이미 존재**(GameManager.cs:496 `EquipItem`, :521 `ForgeEquipment`, EquipmentDic/EquipEnhanceDic) — 빠진 건 **장비창 팝업 UI**(슬롯 화살표/아이콘/스탯 합산표시/강화후 표시/고유스킬텍스트/종류명). 즉 UI만 새로 만들면 됨. (대형)
-4. **Poten Slot** — 소울 필요 잠재 장착 슬롯(완전 부재).
-5. **Path_INFO** — 길드/지역 정보 패널(게이지·색상, 완전 부재).
-6. **Quest Marker** — isOnPlace 위치 마커 토글.
-7. **Monster State_Anchored** — UI(스크린스페이스) 몬스터 변형 + Money 보상.
-8. **Btm_UI_Text** — DORestartById 하단 텍스트 애니.
-9. **BtnSelectSound** — 버튼 클릭 SFX (SoundManager 연결 필요).
-10. **Duri Text** — 장비 내구도 색상텍스트(데이터/이벤트만 존재).
+### ✅ 이번 세션 완료
+- **SFX C# 이식** — `SFX Macro_RE / MissText&Sound / BtnSelectSound` 갭 해소. SoundManager 정식화(주석 해제+게이트) + 65클립 어드레서블(PreLoad) 등록 + 전투/물약/미니몬/UI 트리거 + **CreatureData 데이터 드리븐 몬스터 사운드**(AttackSfx/OnHitSfx/DieSfx).
 
-### 부분이식 (보강 필요) — 9
-- **SFX Macro_RE / MissText&Sound / BtnSelectSound** — **사운드 시스템 자체가 stub**(SoundManager의 Play/PlayOneShot 전부 주석). → SFX C# 정식화가 공통 선결.
-- **PhysicalTextShow** — 데미지폰트에 속성별 색 모드 추가.
-- **Use Item / Choose Item Box** — 물약 외 일반 소비아이템 "사용" 버튼 흐름, 아이템 박스 선택 zoom/pan 연출.
-- **Equip Stat Cal After Enh** — 강화 로직(ForgeEquipment)은 있으나 강화 후 스탯 합산·표시 UI(장비창 의존).
-- **Monster Money Drop Box** — 골드 적립·HUD는 있으나 전투 중 골드 드롭박스 슬롯 UI.
+### 미이식 (신규 C# 구현 필요)
+1. **전투 스킬 시스템** — `DoubleAttack`(확률 2회), `Smash`(확률 ×1.5), `BeforeHit_Skills`(디스패처). 실행로직(SkillBase/DoSkill) 부재, `BattleMath.Resolve(skillMul)` 훅만 있음.
+2. **속성 데미지 텍스트** — `WaterTextShow`(물/마법 파랑). `DamageFontMode`에 속성 모드 추가 필요.
+3. **장비 시스템 (전체)** — `Equip Arrow/Icon/Stat Cal/Stat Cal After Enh/EquipSkill Text/Selected Equip Kind Name`(6종). 데이터/로더/시트파서는 갖췄으나(능력 "필요장비" 슬49 참조용으로만), **장착·스탯계산·강화·대장간 UI는 부재**(IntegrationTestMenu.cs:136 미구현 TODO 명시, GameManager.cs:543 내구도 스텁뿐). (대형)
+4. **Choose Item Box** — 사용/제작용 아이템 선택 슬롯(UseItemPopupShow·아이템선택→사용팝업 흐름 부재).
+5. **Monster Money Drop Box** — 도감 골드 드롭행(Money 드롭 박스·로직 전무).
+6. **Poten Slot** — 소울 필요 잠재 장착 슬롯.
+7. **Path_INFO** — 길드/지역 정보 패널(게이지·색상).
+8. **Quest Marker** — isOnPlace 위치 마커 토글.
+9. **Monster State_Anchored** — UI(스크린스페이스) 몬스터 변형 + Money 보상.
+10. **Btm_UI_Text** — DORestartById 하단 텍스트 애니.
+11. **Duri Text** — 장비 내구도 색상텍스트(데이터/이벤트만 존재, UI stub).
+
+### 부분이식 (보강 필요)
+- **PhysicalTextShow** — 데미지폰트에 속성별 색 모드 추가(현재 Normal/Crit/Miss/Heal만).
+- **Use Item** — `RemoveItem` 소비 인프라만, 유저 "사용" 경로 없음(소비=제작/퀘스트만).
+- **Inv Imp-Item Amount Check** — 중요아이템 전용 경로 없음(Count 공유, TODO).
+- **Monster Item Drop Box** — 킬카운트 점진공개 없음(기록도 100% 일괄 해금).
+- **Skill_List 계열(아이콘 3종·Skill Level Text·Skill Lvl_ReqItem)** — **"능력/기억력 시스템"으로 재설계**됨. 아이콘/클릭/레벨 표시는 옮겨졌으나 VS의 `Skill_ON_OFF` 활성토글·current/max 레벨텍스트·레벨업 재료소비는 의미 다른 메커니즘(기억/망각, 기억력 점유)으로 치환.
 - **StoryFollowup / Unlock_Tuto / MapSelect_CurrentLocationSet** — 스토리 씬오브젝트 토글·수치게이트·마커 이동 보강.
-- **Btm_UI_Change / UI New Txt** — in/out·뱃지 DOTween 애니(현재 정적 토글). → DOTweenAnimation 컴포넌트로.
-- **Background On_Off / Monster Money Drop** — 토글/UI 표시 등가 확인.
+- **Btm_UI_Change / UI New Txt** — in/out·뱃지 DOTween 애니(현재 정적 토글) → DOTweenAnimation 컴포넌트로.
+- **Background On_Off** — 단일 토글 등가(현재 EnterAreaWithFade BG 교체로 대체).
 
 ### 우선순위 제안
-1. **SFX C# 이식**(SoundManager 정식화) — SFX/Miss/BtnSelect 3개 갭을 한 번에 해소(저비용·고효과). *현재 SFX는 프리팹 playOnAwake로만 울림.*
-2. **전투 스킬 시스템**(DoubleAttack/Smash 등) — 전투 깊이.
+1. ✅ **SFX C# 이식** — 완료.
+2. **전투 스킬 시스템**(DoubleAttack/Smash/BeforeHit) — 전투 깊이.
 3. **속성 데미지 텍스트**(Physical/Water 색).
-4. **장비 시스템 UI**(장비창/강화) — 대형, 별도 진행.
+4. **장비 시스템**(장착/스탯계산/강화·대장간 UI) — 대형, 별도 진행.
 
-> 주의: "이식됨"은 기능 동등성 기준이며, "추정"은 명칭 매칭 기반(코드 정밀확인 권장). 배치2 일부(Skill_List 아이콘 등)는 UI_SkillBookSkill 존재로 이식 추정.
+> 주의: "이식됨"은 기능 동등성 기준. 스킬 계열은 **능력/기억력으로 재설계**되어 1:1 포팅이 아님(부분이식으로 표기). VS 원본 식별자(EquipChange/Skill_ON_OFF 등)는 C#에서 전면 리네임/재모델링됨.

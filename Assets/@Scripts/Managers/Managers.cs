@@ -25,6 +25,21 @@ public class Managers : MonoBehaviour
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 
+    // 씬에 배치된 @Managers가 DontDestroyOnLoad 싱글턴과 중복되면 이 중복을 제거.
+    // (씬 재진입 시 새 @Managers가 로드되면 Update가 둘 다 돌아, 콤보 Tick이 게임이 쓰는
+    //  s_instance._combo가 아닌 중복 인스턴스의 _combo로 가버림 → 콤보 게이지/숫자가 멈추는 버그)
+    void Awake()
+    {
+        if (s_instance != null && s_instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        // 첫 인스턴스를 싱글턴으로 확정 (lazy Init보다 Awake가 먼저 와도 안전)
+        s_instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Update()
     {
         // 콤보 타이머 감소 — Time.timeScale 영향 받음 (슬로우 모션 중엔 느려짐)

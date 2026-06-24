@@ -147,6 +147,18 @@ public class PlayerController : CreatureController
         transform.position = _originalPos;
     }
 
+    // 마을 내 장소 이동(길드/연금공방/모험가협회 등) — 페이드 암전 중 호출.
+    //  Play("Escape")로 시작한 달리기 애니/이동을 멈추고 즉시 원위치+Idle로 되돌려,
+    //  페이드 인 시 잔여 이동이 보이지 않게 한다. (전투 정리는 안 함)
+    public void ReturnHomeIdle()
+    {
+        transform.DOKill();
+        if (_onHitCo != null) StopCoroutine(_onHitCo);
+        _anim.speed = 1f;
+        transform.position = _originalPos;
+        State = Define.State.Idle;   // setter가 CrossFade(Idle)로 Escape 애니 덮음
+    }
+
     // ────────────────────────────────────────
     //  Update
     // ────────────────────────────────────────

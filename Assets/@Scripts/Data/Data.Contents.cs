@@ -61,6 +61,12 @@ namespace Data
         // 슬라이드 71의 4개 완성도 스킬과는 별개. 비어있으면 코드에서 "고유기술 #{id}" 폴백.
         public string UniqueSkillName = "";
         public string UniqueSkillDesc = "";
+
+        // 몬스터별 SFX (데이터 드리븐). 어드레서블 클립 주소(파일명). 비우면 기본 슬라임 사운드.
+        //  MonsterController가 공격/피격/사망 시 재생. 신규 몬스터는 데이터로 자기 사운드를 지정.
+        public string AttackSfx = "Slime_Attack";
+        public string OnHitSfx  = "Slime_OnHit";
+        public string DieSfx    = "Slime_Die";
     }
 
     [Serializable]
