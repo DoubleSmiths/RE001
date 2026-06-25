@@ -601,7 +601,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.TravelButtonIcon),
                     GetText((int)Texts.TravelButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Travel_Icon", LocalizeKey.ItemTempPermitNameText, LocalizeKey.TravelUnlockText)); // TODO : 정상적인 텍스트로 변경.
+                        .SetInfo("Travel_Icon", LocalizeKey.TravelBtnText, LocalizeKey.TravelUnlockText)); // 해금 대상 = [여정] 버튼
                 break;
 
             case UNLOCK_ALCHEMY_BUTTON:
