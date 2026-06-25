@@ -130,6 +130,9 @@ public class UI_ItemPopup : UI_Popup
         int count = Managers.Game.GetItemCount(id);
         GetText((int)Texts.AmountText).text = count.ToString();
         GetText((int)Texts.AmountText).gameObject.SetActive(count > 0);
+
+        // 귀중(REQUISITE) 등급 = '사용' 액션이 없는 귀중품 → 하단 버튼 그룹 숨김
+        GetObject((int)GameObjects.ButtonGroup).SetActive(data.Grade != EquipGrade.REQUISITE);
     }
 
     // ── 애니메이션 ───────────────────────────────────────────
