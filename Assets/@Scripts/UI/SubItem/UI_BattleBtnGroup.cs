@@ -532,7 +532,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     void Update()
     {
-        // Managers.Combo.Tick은 Managers.cs에서 돌림 — 여기서는 전투 기록만 처리.
+        // 콤보 Tick 안전망 — Managers.Update가 플레이키하게 안 도는 경우 대비.
+        // ComboManager.Tick은 프레임 디듑이 있어 Managers.Update와 동시 호출돼도 1회만 처리됨.
+        Managers.Combo?.Tick(Time.deltaTime);
 
         // (1) 종료 감지 — 몬스터 사망 / 플레이어 사망 → freeze
         if (!_logFrozen)
