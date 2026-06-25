@@ -9,8 +9,8 @@ using UnityEngine.UI;
 
 public class UIManager
 {
-    int _order = 10;
-    int _toastOrder = 500;
+    int _order = 1000;        // 팝업 베이스 — 월드 전투 요소(데미지폰트 350 등) 위로
+    int _toastOrder = 2000;    // 토스트는 팝업(1000+) 위
 
     Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
     Stack<UI_Toast> _toastStack = new Stack<UI_Toast>();
@@ -33,11 +33,8 @@ public class UIManager
     public void SetCanvas(GameObject go, bool sort = true, int sortOrder = 0, bool isToast = false)
     {
         Canvas canvas = Util.GetOrAddComponent<Canvas>(go);
-        if (canvas == null)
-        {
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.overrideSorting = true;
-        }
+        // 팝업 캔버스는 프리팹 설정(ScreenSpaceCamera + 수동 스케일) 유지 — Overlay로 강제하면 레이아웃이 깨짐.
+        // 월드 전투 요소(데미지폰트 350 등)가 팝업 위로 렌더되던 문제는 아래 sortingOrder 베이스를 높여 해결.
 
         CanvasScaler cs = go.GetOrAddComponent<CanvasScaler>();
         if (cs != null)
