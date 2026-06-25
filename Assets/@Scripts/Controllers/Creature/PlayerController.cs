@@ -164,6 +164,10 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void Update()
     {
+        // 콤보 Tick — 항상 활성인 Player의 Update에서 구동(Managers.Update 플레이키 대비).
+        // ComboManager.Tick은 프레임 디듑이 있어 다른 Update와 중복 호출돼도 1회만 처리됨.
+        Managers.Combo?.Tick(Time.deltaTime);
+
         if (State == Define.State.Dead) return;
         if (!_inBattle) return;
 

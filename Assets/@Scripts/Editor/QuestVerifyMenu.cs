@@ -79,7 +79,8 @@ public static class QuestVerifyMenu
         Managers.Game.AddUnlockedBtn(UNLOCK_ALCHEMY_BUTTON);
         Managers.Game.AddUnlockedBtn(UNLOCK_INVENTORY_BUTTON);
         Managers.Game.AddUnlockedBtn(UNLOCK_POTION_BUTTON);
-        log.AppendLine("● 슬10: 하단 6탭 전부 해금 + Travel/Alchemy 진입버튼 해금");
+        Managers.Game.AddUnlockedBtn(BTN_COMMISION);   // 연금공방 제작의뢰(CustomOrder) 버튼 해금
+        log.AppendLine("● 슬10: 하단 6탭 전부 해금 + Travel/Alchemy/제작의뢰 버튼 해금");
 
         // 3) 인벤토리 (슬19/슬20/슬21)
         Managers.Game.AddItem(10001, 10);   // 젤리 퐁

@@ -62,6 +62,10 @@ public class ComboManager
     // 현재 콤보 세션에서 이미 활성화된 버프 추적 (첫 활성화 감지용)
     readonly HashSet<BuffKind> _seenBuffsThisSession = new HashSet<BuffKind>();
 
+    // 프레임 중복 Tick 방지 — Managers.Update와 UI_BattleBtnGroup.Update가 둘 다 Tick을 불러도
+    // 프레임당 1회만 실제 처리(더블틱 방지). Managers.Update가 플레이키하게 안 돌 때의 안전망.
+    int _lastTickFrame = -1;
+
     // ────────────────────────────────────────
     //  Init / Cleanup
     // ────────────────────────────────────────
@@ -105,6 +109,10 @@ public class ComboManager
 
     public void Tick(float dt)
     {
+        // 프레임당 1회만 (Managers.Update + UI_BattleBtnGroup.Update 이중 호출 더블틱 방지)
+        if (UnityEngine.Time.frameCount == _lastTickFrame) return;
+        _lastTickFrame = UnityEngine.Time.frameCount;
+
         // VS 패턴: Mathf.SmoothStep(now, target, 0.3f) — 프레임당 약 30% 수렴
         // FPS 독립성을 위해 dt 기반으로 변환 (초당 수렴 속도)
         //   factor = 1 - exp(-k*dt) 가 정석이지만,
