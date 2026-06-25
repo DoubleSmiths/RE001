@@ -14,9 +14,9 @@ public class CompanionController : CreatureController
     int _minionId = -1;
 
     // 동행 위치 오프셋 — "위치는 미니몬마다 다르다"(슬). 플레이어(발치 y≈2.0) 기준 뒤(왼쪽) + 약간 위로.
-    //  (슬라임 스프라이트 pivot이 중앙이라 y=0이면 지면에 절반 묻힘 → +0.3 들어올려 발치 지면선에 맞춤.
-    //   사용자 지정 월드 위치 ≈ (-2, 2.3) = player(-0.5, 2.0) + (-1.5, 0.3))
-    static readonly Vector3 FOLLOW_OFFSET = new Vector3(-1.5f, 0.3f, 0f);
+    //  (미니몬 스프라이트 pivot이 bottom-center라 transform.y = 스프라이트 바닥. y offset 0이면
+    //   동행의 바닥이 플레이어 발치(지면선)와 일치 → 지면에 정확히 붙음. 이전 +0.3은 공중에 떠 보였음.)
+    static readonly Vector3 FOLLOW_OFFSET = new Vector3(-1.5f, 0f, 0f);
     const float FOLLOW_LERP = 8f;
     const float ATTACK_HIT_DELAY = 0.3f;   // Attack anim 키프레임(데미지 적용) 시점
     const float ATTACK_RECOVER   = 0.3f;   // 데미지 후 Idle 복귀까지
