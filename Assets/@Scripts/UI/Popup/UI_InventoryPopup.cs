@@ -145,6 +145,9 @@ public class UI_InventoryPopup : UI_Popup
     {
         base.OnDestroy();
 
+        // 가방을 닫는 순간 — 직접 확인 안 한 것 포함 모든 NEW 표시 해제(가방 버튼/내부/귀중품).
+        Managers.Game.ClearAllItemNew();
+
         Managers.Game.OnInventoryNewChanged -= RefreshImportantBagNewTxt;
         Managers.Game.OnLanguageChanged -= SetText;
     }
