@@ -81,6 +81,7 @@ public class UI_InventoryPopup : UI_Popup
         GetImage((int)Images.ImportantThingsBox).gameObject.SetActive(false);
         Managers.Game.OnInventoryNewChanged += RefreshImportantBagNewTxt;
         RefreshImportantBagNewTxt();
+        Managers.Game.OnLanguageChanged += SetText;   // 언어 변경 시 귀중품 라벨 재적용
 
         SetInfo();
         SetText();
@@ -145,13 +146,15 @@ public class UI_InventoryPopup : UI_Popup
         base.OnDestroy();
 
         Managers.Game.OnInventoryNewChanged -= RefreshImportantBagNewTxt;
+        Managers.Game.OnLanguageChanged -= SetText;
     }
 
     public void SetText()
     {
-        // TODO : 언어에 따라 텍스트 변경하기
-        //GetText((int)Texts.ImportantBagBtnText).text = Util.Localize("ImportantBagBtnText");
-
+        // 귀중품 가방 라벨 — 언어 설정에 따라 변경 (프리팹에 박힌 "REQUISITE" 대체)
+        var bagTxt = GetText((int)Texts.ImportantBagBtnText);
+        if (bagTxt != null)
+            bagTxt.text = Util.Localize(Define.LocalizeKey.RequisiteBagText);
     }
 
     private ItemData GetItemData(int dataId)

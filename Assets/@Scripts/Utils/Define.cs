@@ -483,6 +483,7 @@ public class Define
         public const string RarityLegendaryText = "RarityLegendaryText";
         public const string RarityMysticText = "RarityMysticText";
         public const string RarityREQUISITEText = "RarityREQUISITEText";
+        public const string RequisiteBagText = "RequisiteBagText";   // 귀중품 가방 퀵슬롯 라벨
 
         // ── ItemName ──
         public const string ItemJellyPongNameText = "ItemJellyPongNameText";
