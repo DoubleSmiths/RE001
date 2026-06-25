@@ -579,6 +579,22 @@ public class GameManager
         OnInventoryNewChanged?.Invoke();
     }
 
+    // 가방을 열었다 닫을 때 — 일반/귀중품 모든 아이템 NEW 표시 일괄 해제.
+    // (개별 확인 없이도 닫는 순간 가방 버튼/내부 아이템/귀중품 NEW가 모두 사라지도록)
+    public void ClearAllItemNew()
+    {
+        bool changed = false;
+        foreach (var item in Inventory)
+        {
+            if (item.isNew) { item.isNew = false; changed = true; }   // backing 필드 직접 — 이벤트/세이브 스팸 방지
+        }
+        if (changed)
+        {
+            OnInventoryNewChanged?.Invoke();
+            SaveGame();
+        }
+    }
+
     public void RemoveItem(int dataId, int count = 1)
     {
         var existing = Inventory.Find(i => i.DataId == dataId);
