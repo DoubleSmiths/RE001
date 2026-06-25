@@ -110,11 +110,12 @@ public class UI_ItemPopup : UI_Popup
         // 아이템 이름
         GetText((int)Texts.ItemPopupItemName).text = Localize(data.Name);
 
-        // 등급명 + 색상
+        // 등급명 (후광/글로우는 표시하지 않음 — 불필요한 후광 제거)
         GetText((int)Texts.ItemPopupItemDesc_Rare).text  = GetGradeName(data.Grade);
-        GetImage((int)Images.ItemPopupImgGroupGlow).color = Util.GetGradeColor(data.Grade);
-        GetImage((int)Images.ItemPopupTitleGlow).color = Util.GetGradeColor(data.Grade);
-        //GetText((int)Texts.ItemPopupItemDesc_Rare).color = GetGradeColor(data.Grade);
+        GetImage((int)Images.ItemPopupImgGroupGlow).gameObject.SetActive(false);
+        GetImage((int)Images.ItemPopupTitleGlow).gameObject.SetActive(false);
+        var shine = GetObject((int)GameObjects.shineeffect);
+        if (shine != null) shine.SetActive(false);
 
         // 발견 장소
         GetText((int)Texts.ItemPopupItemDesc_Found).text = Localize(data.FoundLocation);
@@ -131,8 +132,8 @@ public class UI_ItemPopup : UI_Popup
         GetText((int)Texts.AmountText).text = count.ToString();
         GetText((int)Texts.AmountText).gameObject.SetActive(count > 0);
 
-        // 귀중(REQUISITE) 등급 = '사용' 액션이 없는 귀중품 → 하단 버튼 그룹 숨김
-        GetObject((int)GameObjects.ButtonGroup).SetActive(data.Grade != EquipGrade.REQUISITE);
+        // 소지품 아이템(재료/귀중품)은 '사용' 액션이 없으므로 하단 버튼 그룹은 항상 숨김.
+        GetObject((int)GameObjects.ButtonGroup).SetActive(false);
     }
 
     // ── 애니메이션 ───────────────────────────────────────────
