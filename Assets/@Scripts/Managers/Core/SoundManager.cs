@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class SoundManager
@@ -9,6 +10,12 @@ public class SoundManager
     private Dictionary<string, AudioClip> _audioClips = new Dictionary<string, AudioClip>();
 
     private GameObject _soundRoot = null;
+
+    // 배경음(BGM) 크로스페이드 — RE001_Share의 BGM Player(목표 볼륨 0.4, SmoothStep 페이드) 상당.
+    const float BGM_VOLUME = 0.4f;
+    const float BGM_FADE_OUT = 0.35f;
+    const float BGM_FADE_IN  = 0.6f;
+    private string _currentBgmKey = null;
 
     public void Init()
     {
@@ -103,6 +110,79 @@ public class SoundManager
     {
         AudioSource audioSource = _audioSources[(int)type];
         audioSource.Stop();
+    }
+
+    // ── 배경음(BGM) 크로스페이드 재생 ──
+    // 같은 곡이면 무시. 현재 곡을 페이드아웃 후 새 곡을 페이드인(목표 볼륨 0.4).
+    // DOTween.SetUpdate(true)로 timeScale=0(팝업/일시정지) 중에도 페이드 진행.
+    public void PlayBgm(string key, bool restartIfSame = false)
+    {
+        if (string.IsNullOrEmpty(key)) return;
+        if (!restartIfSame && key == _currentBgmKey) return;
+        _currentBgmKey = key;
+
+        AudioSource src = _audioSources[(int)Define.Sound.Bgm];
+        if (src == null) return;
+
+        LoadAudioClip(key, (clip) =>
+        {
+            if (clip == null) return;
+            DOTween.Kill(src);
+
+            if (src.isPlaying && src.clip != null)
+            {
+                // 현재 곡 페이드아웃 → 교체 → 페이드인
+                DOTween.To(() => src.volume, v => src.volume = v, 0f, BGM_FADE_OUT)
+                       .SetTarget(src).SetUpdate(true)
+                       .OnComplete(() => StartBgmFadeIn(src, clip));
+            }
+            else
+            {
+                StartBgmFadeIn(src, clip);
+            }
+        });
+    }
+
+    private void StartBgmFadeIn(AudioSource src, AudioClip clip)
+    {
+        src.clip   = clip;
+        src.loop   = true;
+        src.volume = 0f;
+        if (Managers.Game != null && Managers.Game.IsBGSoundOn)
+            src.Play();
+
+        DOTween.To(() => src.volume, v => src.volume = v, BGM_VOLUME, BGM_FADE_IN)
+               .SetTarget(src).SetUpdate(true);
+    }
+
+    // 임시 BGM(잡기 등) — 현재 곡을 저장하고 새 곡 재생. PopBgm으로 원래 곡 복귀.
+    private string _savedBgmKey = null;
+    public void PushBgm(string key)
+    {
+        _savedBgmKey = _currentBgmKey;
+        PlayBgm(key);
+    }
+    public void PopBgm()
+    {
+        string restore = _savedBgmKey;
+        _savedBgmKey = null;
+        if (!string.IsNullOrEmpty(restore))
+            PlayBgm(restore);
+        else
+            StopBgm();
+    }
+
+    public void StopBgm(bool fade = true)
+    {
+        AudioSource src = _audioSources[(int)Define.Sound.Bgm];
+        if (src == null) return;
+        _currentBgmKey = null;
+        DOTween.Kill(src);
+        if (fade)
+            DOTween.To(() => src.volume, v => src.volume = v, 0f, BGM_FADE_OUT)
+                   .SetTarget(src).SetUpdate(true).OnComplete(() => src.Stop());
+        else
+            src.Stop();
     }
 
     // SFX 단축 헬퍼 — 키 = 어드레서블 클립명(파일명). SoundAddressableRegistrar가 등록한 주소.

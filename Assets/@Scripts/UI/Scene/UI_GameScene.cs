@@ -427,6 +427,10 @@ public class UI_GameScene : UI_Scene
         }
 
         _currentBtnGroup.Setup(this);
+
+        // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_Minion_battle은 별도)
+        Managers.Sound?.PlayBgm(area == AreaType.Battle ? "BGM_BWF" : "BGM_Village1");
+
         Debug.Log($"[UI_GameScene] SwapAreaBtnGroup success. area={area}, prefab={prefabName}");
         return true;
     }
@@ -680,9 +684,10 @@ public class UI_GameScene : UI_Scene
                 if (box != null) box.color = full ? Util.HexToColor("D14A4A") : Color.white;
                 // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10, Elasticity 1)
                 icon.transform.DOKill();
-                // 프리펩 기준 스케일은 0.5 (Vector3.one로 덮으면 게임에서 2배 커짐)
-                icon.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
-                icon.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0f), 0.3f, 10, 1f);
+                // 등장 기준 스케일 (값이 클수록 아이콘 큼 — 0.5는 너무 커서 0.35로 축소). 펀치도 비례 축소.
+                const float BESTIARY_NEW_ICON_SCALE = 0.35f;
+                icon.transform.localScale = new Vector3(BESTIARY_NEW_ICON_SCALE, BESTIARY_NEW_ICON_SCALE, 1f);
+                icon.transform.DOPunchScale(new Vector3(0.2f, 0.2f, 0f), 0.3f, 10, 1f);
 
                 // 슬26 #3: 등장 Anim(0.3s)이 끝날 때 GlowDot_01을 slime_icon(Img_BestiaryBtnNewIcon_06) 중앙에 생성
                 var slime = Util.FindChild<Transform>(icon, "Img_BestiaryBtnNewIcon_06", true);
@@ -759,7 +764,12 @@ public class UI_GameScene : UI_Scene
         int current = Managers.Game.GetItemCount(itemId);
 
         GetText((int)Texts.Quest_NeedItemNameTxt).text = quest.FollowItemName;
-        GetText((int)Texts.Quest_NeedItemAmountTxt).text = $"{current}/{quest.FollowCount}";
+
+        // 보유 개수 색상: 0=빨강 / 0<보유<필요=주황 / 보유≥필요=초록. (TMP는 lime 등 미지원 → hex)
+        // 양 쪽(보유/필요)에 괄호 표기.
+        int need = quest.FollowCount;
+        string col = current == 0 ? "#FF0000" : (current < need ? "#FFA500" : "#00FF00");
+        GetText((int)Texts.Quest_NeedItemAmountTxt).text = $"(<color={col}>{current}</color>)/({need})";
 
         bool wasInactive = !followObj.activeSelf;
         if (!followObj.activeSelf)
@@ -956,6 +966,7 @@ public class UI_GameScene : UI_Scene
     const float BTM_HL_DURATION = 0.3f;
 
     Color[] _btmBtnOriginalColor;
+    Color[] _btmTextOriginalColor;
     System.Type _btmActivePopupType;
     int _btmActiveIdx = -1;
 
@@ -979,8 +990,8 @@ public class UI_GameScene : UI_Scene
 
     void OnClickEquipment()
     {
-        HandleBtmClick(TabType.Equipment, Buttons.EquipmentButton, null,
-            () => Managers.UI.ShowToast("장비 팝업은 준비 중입니다."));
+        HandleBtmClick(TabType.Equipment, Buttons.EquipmentButton, typeof(UI_EquipmentPopup),
+            () => Managers.UI.ShowPopupUI<UI_EquipmentPopup>());
     }
 
     void OnClickSkill()
@@ -1025,6 +1036,21 @@ public class UI_GameScene : UI_Scene
         return null;
     }
 
+    // 각 Btm 버튼의 라벨 TMP_Text (아이콘과 함께 하이라이트 색 적용).
+    TMP_Text GetBtmText(Buttons btnId)
+    {
+        switch (btnId)
+        {
+            case Buttons.CharacterButton: return GetText((int)Texts.CharacterButtonText);
+            case Buttons.InventoryButton: return GetText((int)Texts.InventoryButtonText);
+            case Buttons.PotionButton:    return GetText((int)Texts.PotionButtonText);
+            case Buttons.EquipmentButton: return GetText((int)Texts.EquipmentButtonText);
+            case Buttons.SkillButton:     return GetText((int)Texts.SkillButtonText);
+            case Buttons.BestiaryButton:  return GetText((int)Texts.BestiaryButtonText);
+        }
+        return null;
+    }
+
     void PlayBtmHighlight(Buttons btnId)
     {
         Button btn = GetButton((int)btnId);
@@ -1039,6 +1065,15 @@ public class UI_GameScene : UI_Scene
         {
             icon.DOKill();
             icon.DOColor(BTM_HL_COLOR, BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+
+        // 라벨 텍스트도 동일하게 #FFDA01로 (버튼만 변하고 텍스트는 안 변하던 문제 수정)
+        TMP_Text txt = GetBtmText(btnId);
+        if (txt != null)
+        {
+            CacheBtmTextColor(btnId, txt);
+            txt.DOKill();
+            txt.DOColor(BTM_HL_COLOR, BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
         }
     }
 
@@ -1060,6 +1095,30 @@ public class UI_GameScene : UI_Scene
                 icon.DOColor(_btmBtnOriginalColor[idx], BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
             }
         }
+
+        // 라벨 텍스트 색 원복
+        TMP_Text txt = GetBtmText(btnId);
+        if (txt != null && _btmTextOriginalColor != null)
+        {
+            int idx = (int)btnId;
+            if (idx >= 0 && idx < _btmTextOriginalColor.Length && _btmTextOriginalColor[idx].a > 0f)
+            {
+                txt.DOKill();
+                txt.DOColor(_btmTextOriginalColor[idx], BTM_HL_DURATION).SetEase(Ease.OutQuad).SetUpdate(true);
+            }
+        }
+    }
+
+    void CacheBtmTextColor(Buttons btnId, TMP_Text txt)
+    {
+        if (txt == null) return;
+        int count = System.Enum.GetValues(typeof(Buttons)).Length;
+        if (_btmTextOriginalColor == null || _btmTextOriginalColor.Length < count)
+            _btmTextOriginalColor = new Color[count];
+        int idx = (int)btnId;
+        if (idx >= _btmTextOriginalColor.Length) return;
+        if (_btmTextOriginalColor[idx].a <= 0f)
+            _btmTextOriginalColor[idx] = txt.color;
     }
 
     void CacheBtmOriginalColor(Buttons btnId, Image img)
@@ -1200,6 +1259,7 @@ public class UI_GameScene : UI_Scene
         // 마을 이동/연금공방 버튼 해금
         Managers.Game.AddUnlockedBtn(UNLOCK_TRAVEL_BUTTON);
         Managers.Game.AddUnlockedBtn(UNLOCK_ALCHEMY_BUTTON);
+        Managers.Game.AddUnlockedBtn(BTN_COMMISION);   // 연금공방 제작의뢰(CustomOrder) 버튼 해금
 
         // 하단 탭 UI 즉시 갱신
         RefreshBtmButtonsLockState();

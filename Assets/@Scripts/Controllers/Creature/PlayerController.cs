@@ -462,11 +462,13 @@ public class PlayerController : CreatureController
         }
         else
         {
-            // PlayerStatusDic이 비어있거나 해당 레벨 데이터 누락 시 fallback
+            // PlayerStatusDic이 (DataId 키라) 레벨 조회에 안 잡혀 실질적으로 항상 이 경로 사용.
+            // 기본 밸런스: Lv1에 슬라임을 무난히 잡되 레벨업으로 점진 강해지도록.
             MaxHp       = 100 + (lv - 1) * 20;
-            PhysicalAtk = 10  + (lv - 1) * 2;
+            PhysicalAtk = 15  + (lv - 1) * 3;
             MagicAtk    = 10  + (lv - 1) * 2;
             Def         = 0   + (lv - 1) * 1;
+            Accuracy    = 90;   // 명중 90% (잦은 빗나감으로 콤보 끊김 방지)
         }
 
         // 캐릭터창에서 분배한 스탯 포인트 적용 (영구 — GameData.StatInvest에 저장)

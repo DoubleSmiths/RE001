@@ -15,14 +15,8 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: fbfc6295f69858f4fb9ea7ab09ba20d9
   m_SerializeEntries:
-  - m_GUID: 01cae704fdd7ce242b894450791f16da
-    m_Address: SFX_Minimon_Appear
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 06bc005bf19837b488c5d56690fdabba
-    m_Address: SFX_SpeedPotion2
+  - m_GUID: 0298348b722928146887a48f7c066e3c
+    m_Address: UI_EquipDetailPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -33,44 +27,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0765f24e8e726e748a8d63fa682e27a7
-    m_Address: SFX_Charm
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d14eb8fbc002864389f80fa65ea6139
     m_Address: UI_ItemPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0f8da4ac98e5ee640b0edd71fabdabd0
-    m_Address: ENV_OnFire
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 181fd26773f4bc34c8ee85f3c606293f
-    m_Address: WaterWhip_Ori
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1c42dc43185830b499e9b9016de6a6e3
-    m_Address: SFX_SpeedPotion
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1f321c6529c83274faeaf6af7c9e69cc
-    m_Address: SFX_Fail2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1f3e84d555bb3444ea5a8ac333bc224d
-    m_Address: SFX_MinimonRunaway
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -81,50 +39,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1ff027aa5a4a60749ae325aa7344ed39
-    m_Address: SFX_HolyShine2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 216c591cf2bda2e4d80deb1781177a31
-    m_Address: Footsteps2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 245d6f608f35c824a8919936d04e2021
-    m_Address: Water Spell Impact
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2545c88db0e93fd488f481d197d17000
-    m_Address: SFX_Fail
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 288593b82f4a977489409adde9013a75
-    m_Address: SFX_Rankup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2fc9e08ee2a82e74693bc2ebf20b1b8d
-    m_Address: WaterWhip
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3621ea03760b9914d8e2893f83dc2281
     m_Address: UI_BattleBtnGroup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 38d6c142f58921149b5b83341ff98963
-    m_Address: Sound_PlayerAttack
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -135,32 +51,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3c455eac4167e5a4d9c56410e04e2e7e
-    m_Address: SFX_Minimon_Click
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d6e57c3a380a6e48964fda016624388
     m_Address: UI_PotionPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3fa59d883952d604b8cecf7e75aa8e15
-    m_Address: SFX_RedPotion3
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 408af41339cbb4a4ca5f0d8722565be2
-    m_Address: ENV_Windbreeze
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 423ddc50a1de99941a760a353dc048e3
-    m_Address: SFX_LureFail
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -173,12 +65,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 45c7ef3d8cee2354a93c072aff55b0b9
     m_Address: UI_Buff
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4a1537d83ceb3d6459849d2d961d35f3
-    m_Address: SFX_MinimonEat
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -201,38 +87,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5c275abe2a7cfc44799a1fee480deced
-    m_Address: SFX_AnvilFall
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5c57655551426de42980b48cf9526d74
-    m_Address: Sound_Miss
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5cbbc8cef5131064f984456ec5107196
-    m_Address: SFX_Birdfly-short
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5eb60b5f26503d144893474fa6eb9651
-    m_Address: Slime_Attack
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 60bf294a38f7ca742a375f3a69ee7b4c
     m_Address: UI_TravelPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6190be196d3b8d3438392a3e58432522
-    m_Address: Slime_Die
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -243,38 +99,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6385500eaea17b046b87f2cdfbbfac3e
-    m_Address: SFX_MinimonCatch
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 64f58ca01ed882c4db755c7e5b898c09
-    m_Address: SFX_CuriousCaution2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 690ae28c3a1f7f94d8ff5701e6612129
     m_Address: UI_BattleDropItem
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6b8573123fc85374584298d60d278032
-    m_Address: SFX_Popup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6e8a96c0b1e2f6f4288565d21065d99d
-    m_Address: SFX_Success(Base)
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6f28265f00fe03e4081e9c367b402410
-    m_Address: Sound_Smash
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -285,56 +111,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 72e1c9e52fed48c4f957d1945c7d1bb1
-    m_Address: SFX_SwordBlock
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 72fff72f942c1334b8e86ec1e180e30d
     m_Address: UI_AttactedPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7465aee13f1c8dd4c83d719a16b0d689
-    m_Address: SFX_Serious
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7a86b866a59e9fe499d3e2bd1ff94d1a
-    m_Address: Slime_Move
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7c73505299926f94dae48cd763c63658
-    m_Address: SFX_Success2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7ef8921970a1c6d4ea6f0868707725ed
-    m_Address: SFX_WeaponBreak
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7f14f6496b2ae6d40a075d967c145d77
-    m_Address: Slime_OnHit
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 807630b866352e34788eb73be0d68e91
-    m_Address: SFX_RedPotion2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 812e571046d4d3a4fbabff559b816fab
-    m_Address: BGM_BWF
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -345,38 +123,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 88dccf9404b62204ab2265c93c29167a
-    m_Address: SFX_EnhanceHammer
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8efcbcdf571484a4982aa1c2d29a4bce
-    m_Address: SFX_CraftComplete
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f0f199a548a6334192690967f156a20
-    m_Address: Sound_Smash Impact
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f69c2201e5f5644e8efc04b950ae490
-    m_Address: BGM_BreezeForest
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 936da66b29db7074c9dfb4196c9fc53e
-    m_Address: SFX_NextPage
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 937538af4326c0d469a3fa1571a648b1
-    m_Address: SFX_MinimonThink
+  - m_GUID: 9395ce982f7e590478b1bc8aab3fd5cd
+    m_Address: UI_EquipmentPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -393,12 +141,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 981c71339fbfb044a8a7a30d224bf827
-    m_Address: Footsteps3
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 98ac13541e7dd2249ba39574671471c6
     m_Address: UI_BestiaryBox
     m_ReadOnly: 0
@@ -407,12 +149,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 99553a282ed9dba439ba2e79048fecba
     m_Address: UI_Toast
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a72330b0a6c9cdc40b14f8852076da80
-    m_Address: BGM_Minion_battle
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -441,20 +177,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: af3b5ecc1451f3441a88ed95c00e8c55
-    m_Address: SFX_LightHammer
+  - m_GUID: b1894f9450a57da4882daa6533fbf597
+    m_Address: UI_ForgePopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba4c4ffe089ee024aacd5b00a136946e
     m_Address: Emoj
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: beb18f39e46995e4da503b2ab75296ab
-    m_Address: BGM_Village1
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -471,50 +201,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c11206c52118e264e9aef9fdb4b998f1
-    m_Address: Sound_PlayeronHit
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c1addca6ec24bd14c85e57415ca2aca6
-    m_Address: BGM_2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c1fae1f17c55afb42915388ac69b50cf
     m_Address: UI_PlayerLevelUpTextPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c45cb40a94d570045bcec400f82b634e
-    m_Address: SFX_SharpThin
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c699efa2b859d2c40942d1aa3b3d9fa1
-    m_Address: SFX_RedPotion
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cab8b73dc75d97d4eb911fb7e632eef5
-    m_Address: SFX_BtnSelect
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cc9d5cf2648d3354d99a3a40e7a68ada
-    m_Address: SFX_Upgrade
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ce5f878e2b8433045b8450f1e7f881ab
-    m_Address: SFX_UseHappyMandrake
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -527,12 +215,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d672fdbdcb74c1f48863ccf14b6d0fb3
     m_Address: UI_CharacterPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d702ac0e34c98fb42abc385f6ef2363e
-    m_Address: SFX_NewContents
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -555,32 +237,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: dd767d821923edf449f26925d67585fa
-    m_Address: SFX_ItemPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e1568b8eba83bc346abc22cb829aa1a2
     m_Address: UI_ImportantSlot
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e3422c9060c87034ca4884d04f0d8492
-    m_Address: SFX_AnvilFloor
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e47b6a08ab7db04478df73db295db736
-    m_Address: SFX_PotionUpgrade
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ea4e81b0d6390db45b850caf34956800
-    m_Address: SFX_FairySerious
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -593,36 +251,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ee9364dda7844574e990e48211048f4e
     m_Address: UI_SkillDetailPopup
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f2ce0ea9c7ad0514d935636c583c8b98
-    m_Address: SFX_FlameOn
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f7e41269d1d32684a815eadf8cb9cc1d
-    m_Address: SFX_Footstep
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f875d77f6d0ae9a469bff0654940545e
-    m_Address: SFX_HolyShine
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fb0309268830dd94daa640e236a889cf
-    m_Address: SFX_LureHit
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fc37cb6bf1687c647a8e601abdbbb759
-    m_Address: BGM_1
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

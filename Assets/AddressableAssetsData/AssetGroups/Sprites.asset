@@ -75,12 +75,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0c39c12ddb6956f47845ce79cf190301
-    m_Address: Text_ShineGold.sprite
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 139cc5140c729c7438dc7ffeea398c18
     m_Address: Speed_Potion1.sprite
     m_ReadOnly: 0
@@ -531,12 +525,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a71800a4f12e44846b993753c36919a6
-    m_Address: Text_ShineGreen.sprite
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7c8133d08d7ab34b92b397be83a9da4
     m_Address: Memory Expansion Icon.sprite
     m_ReadOnly: 0
@@ -724,7 +712,7 @@ MonoBehaviour:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d3b282f14d810c44f8ed36263d789edb
-    m_Address: Slime_Idle.sprite
+    m_Address: Slime_Idle_4.sprite
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

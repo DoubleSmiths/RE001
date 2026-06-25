@@ -30,6 +30,8 @@ public class Managers : MonoBehaviour
     //  s_instance._combo가 아닌 중복 인스턴스의 _combo로 가버림 → 콤보 게이지/숫자가 멈추는 버그)
     void Awake()
     {
+        if (!Application.isPlaying) return;   // 에디트 모드에선 DontDestroyOnLoad가 예외 → 스킵
+
         if (s_instance != null && s_instance != this)
         {
             Destroy(gameObject);

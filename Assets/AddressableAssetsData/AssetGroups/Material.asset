@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Material
   m_GUID: 201a07350d289844da54719d3bfe7089
   m_SerializeEntries:
+  - m_GUID: 0c39c12ddb6956f47845ce79cf190301
+    m_Address: Text_ShineGold
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 342ac781a9679af44b1053a1f37c9bbd
     m_Address: Path_Image_BeastLord_Glow
     m_ReadOnly: 0
@@ -23,6 +29,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 501ee4208addcbf4e87c460406662b7d
     m_Address: Path_Image_Knight
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a71800a4f12e44846b993753c36919a6
+    m_Address: Text_ShineGreen
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

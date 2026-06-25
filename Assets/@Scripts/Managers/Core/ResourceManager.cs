@@ -68,14 +68,20 @@ public class ResourceManager
 
     public void LoadAsync<T>(string key, Action<T> callback = null) where T : UnityEngine.Object
     {
-        //스프라이트인 경우 하위객체의 찐이름으로 로드하면 스프라이트로 로딩이 됌
+        //스프라이트인 경우 하위객체의 찐이름으로 로드하면 스프라이트로 로딩이 됌.
+        // 단, 실제 Sprite 로드일 때만 [서브이름] 변환 — Material 등이 .sprite 주소로 잘못 등록된 경우
+        // 변환하면 존재하지 않는 서브에셋을 요청해 InvalidKeyException이 나므로 raw 주소로 로드.
         string loadKey = key;
-        if (key.Contains(".sprite"))
+        if (typeof(T) == typeof(Sprite) && key.Contains(".sprite"))
             loadKey = $"{key}[{key.Replace(".sprite", "")}]";
 
         var asyncOperation = Addressables.LoadAssetAsync<T>(loadKey);
         asyncOperation.Completed += (op) =>
         {
+            // 잘못 등록된 엔트리(타입 불일치 / 존재하지 않는 서브스프라이트 등)는 조용히 스킵.
+            if (op.Status != AsyncOperationStatus.Succeeded || op.Result == null)
+                return;
+
             // 캐시 확인.
             if (_resources.TryGetValue(key, out Object resource))
             {
@@ -108,7 +114,7 @@ public class ResourceManager
                     });
                 }
                 else
-                { 
+                {
                     LoadAsync<T>(result.PrimaryKey, (obj) =>
                     {
                         loadCount++;

@@ -132,7 +132,7 @@ public class UIManager
             Debug.Log("Close Popup Failed!");
             return;
         }
-        Managers.Sound.PlayPopupClose();
+        //Managers.Sound.PlayPopupClose();   // 팝업 닫기 사운드 — 이상하다는 피드백으로 일단 비활성
         ClosePopupUI();
     }
 
