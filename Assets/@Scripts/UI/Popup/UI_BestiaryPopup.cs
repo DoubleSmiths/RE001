@@ -367,7 +367,11 @@ public class UI_BestiaryPopup : UI_Popup
         // 슬28~29: [미니몬 잡기!] 버튼 — 포획 가능 창고의 미니몬으로 잡기 팝업 진입
         GetButton((int)Buttons.MinimonBtn).gameObject.BindEvent(OnClickMinimon);
         if (Managers.MinMon != null)
+        {
             Managers.MinMon.OnInterestChanged += RefreshMinimonButton;
+            // 슬6/도감#6: 동행(소환) 변경 시 도감이 열려있으면 모든 박스의 동행 frame색/Active Ef 즉시 갱신
+            Managers.MinMon.OnCompanionChanged += OnCompanionChangedRefresh;
+        }
 
         return true;
     }
@@ -570,16 +574,16 @@ public class UI_BestiaryPopup : UI_Popup
     //  (per-몬스터 별과 동일한 "별 단계와 ANIM" 스펙. timeScale 0 팝업이라 SetUpdate(true).)
     void ApplyCompletionStarAnim()
     {
-        //var star = GetImage((int)Images.AllSStarImage);
-        //if (star == null) return;
+        var star = GetImage((int)Images.AllSStarImage);
+        if (star == null) return;
 
-        //_completionStarTween?.Kill();
-        //Transform tr = star.transform;
-        //tr.localRotation = Quaternion.identity;
-        //_completionStarTween = tr.DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
-        //                         .SetEase(Ease.OutQuad)
-        //                         .SetLoops(-1, LoopType.Restart)
-        //                         .SetUpdate(true);
+        _completionStarTween?.Kill();
+        Transform tr = star.transform;
+        tr.localRotation = Quaternion.identity;
+        _completionStarTween = tr.DOPunchRotation(new Vector3(0f, 0f, 20f), 1f, 2, 0f)
+                                 .SetEase(Ease.OutQuad)
+                                 .SetLoops(-1, LoopType.Restart)
+                                 .SetUpdate(true);
     }
 
     // 슬라이드 71: 4개 스킬 아이콘 잠금/해금 + "+n 등급" + idle Anim
@@ -756,6 +760,9 @@ public class UI_BestiaryPopup : UI_Popup
         DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true);
     }
 
+    // 슬6/도감#6: 동행 변경 이벤트 핸들러 → 도감 박스 동행 표시 갱신 (OnCompanionChanged는 Action<int>)
+    void OnCompanionChangedRefresh(int _) => RefreshCompanionVisuals();
+
     // 슬19: 외부(나의 미니몬 부르기)에서 동행 변경 시 모든 도감 박스의 동행 frame색/Active Ef 갱신
     public void RefreshCompanionVisuals()
     {
@@ -783,7 +790,10 @@ public class UI_BestiaryPopup : UI_Popup
     public override void OnDestroy()
     {
         if (Managers.MinMon != null)
+        {
             Managers.MinMon.OnInterestChanged -= RefreshMinimonButton;
+            Managers.MinMon.OnCompanionChanged -= OnCompanionChangedRefresh;
+        }
         _completionStarTween?.Kill();
         _completionStarTween = null;
         //for (int i = 0; i < _skillIdleTweens.Length; i++)

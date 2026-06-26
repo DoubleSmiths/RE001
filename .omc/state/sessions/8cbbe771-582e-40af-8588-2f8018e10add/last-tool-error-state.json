@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__claude_ai_Google_Drive__download_file_content",
+  "tool_input_preview": "{\"fileId\":\"1P9d_zA9XQeOAAS0yNRa24jVyqBtp5C9B\"}",
+  "error": "File too large for download, over limit of 10 MB. For downloading larger files, use the standard Google Drive API. See https://developers.google.com/workspace/drive/api/guides/manage-downloads#curl",
+  "timestamp": "2026-06-25T17:24:40.627Z",
+  "retry_count": 1
+}

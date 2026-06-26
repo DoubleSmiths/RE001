@@ -309,18 +309,17 @@ public class UI_TamePopup : UI_Popup
         int tame = Managers.MinMon.GetTameCount(_dataId);
         int ceil = Managers.MinMon.GetCatchCeil(_dataId);
         bool guaranteed = Managers.MinMon.IsCatchGuaranteed(_dataId);
-        int remaining = Mathf.Max(0, ceil - tame);   // 슬31 "확정 길들이기 횟수" = 천장까지 남은 횟수(실패할수록 차감)
         int pct = guaranteed ? 100 : Mathf.Clamp(Mathf.RoundToInt(Managers.MinMon.GetCatchChance(_dataId) * 100f), 0, 100);
 
         // 머리글(▶길들인다!) + 성공확률 줄(천장=lime / 그 외=red. ⚠️ TMP 'lime' 미지원 → hex)
         string head = Util.Localize(LocalizeKey.LureBtnText);
         string rateLine = $"<size=7>{Util.Localize(LocalizeKey.CatchSuccessRateText)}<color={(guaranteed ? "#00FF00" : "red")}>{pct}%</color></size>";
 
-        // 카운트 줄: 천장 도달(remaining 0) 시 "확정 길들이기!"(lime→hex) / 그 외 "시도/남은횟수 + 번째에 확정".
-        //  남은 횟수(확정 길들이기 횟수)를 orange로 강조 — 실패 시마다 줄어드는(차감) 카운터.
+        // 카운트 줄: 천장 도달 시 "확정 길들이기!"(lime→hex) / 그 외 "시도횟수/확정횟수 + 번째에 확정"(슬31/잡기#4).
+        //  확정 길들이기 횟수 = 천장(ceil) — tame이 ceil에 도달하면 확정. orange로 강조.
         string countLine = guaranteed
             ? $"<size=7>{Util.Localize(LocalizeKey.GuaranteedCatchText).Replace("=lime>", "=#00FF00>")}</size>"
-            : $"<size=7>{tame}/<color=orange>{remaining}</color>{Util.Localize(LocalizeKey.CatchSuccessAtText)}</size>";
+            : $"<size=7>{tame}/<color=orange>{ceil}</color>{Util.Localize(LocalizeKey.CatchSuccessAtText)}</size>";
 
         txt.text = $"{head}\n   {rateLine}\n   {countLine}";
         ApplyFont(txt, FontType.UI);
@@ -437,8 +436,9 @@ public class UI_TamePopup : UI_Popup
             Vector2 start = rt.anchoredPosition;
             Vector2 end = _slimeTr is RectTransform srt ? srt.anchoredPosition : start;
             rt.DOKill();
-            rt.DOAnchorPos(end, 0.67f).SetEase(Ease.OutQuad).SetUpdate(true);
-            rt.DOAnchorPosY(end.y + 80f, 0.335f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo).SetUpdate(true);
+            // 포물선: DOAnchorPos + DOAnchorPosY는 같은 anchoredPosition.Y를 동시에 건드려 충돌 →
+            //  호(arc) 전용 DOJumpAnchorPos 단일 트윈으로 처리(jumpPower 80, 1회, 0.67s).
+            rt.DOJumpAnchorPos(end, 80f, 1, 0.67f).SetEase(Ease.OutQuad).SetUpdate(true);
             yield return new WaitForSecondsRealtime(0.67f);
             // 도착 후 scale 1.5 / alpha 0 (0.33s Linear)
             rt.DOScale(1.5f, 0.33f).SetEase(Ease.Linear).SetUpdate(true);

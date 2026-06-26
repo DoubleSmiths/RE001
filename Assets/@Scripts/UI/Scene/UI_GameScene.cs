@@ -532,20 +532,21 @@ public class UI_GameScene : UI_Scene
 
     public void RefreshBTMButtonGroup()
     {
-        // TODO : 일반 재료 아이템이랑 중요 아이템만 확인하게 해야 됨.
+        // 가방 버튼 NEW = 일반/귀중품 아이템 중 IsNew가 하나라도 있을 때만.
+        //  (이전엔 연산자 우선순위로 일반아이템 절에 IsNew가 안 걸려 — 아이템 존재만으로 NEW가 안 꺼졌음)
         bool flag = false;
         foreach (InventoryItem item in Managers.Game.Inventory)
         {
-            // TODO : 아이템 ID 범위는 예시입니다. 실제로는 게임 디자인에 맞게 조정해야 합니다.
-            if (item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000 || item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000 && item.IsNew)
+            bool isNormal    = item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000;
+            bool isImportant = item.DataId > Define.IMPORTANT_ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN + 1000;
+            if (item.IsNew && (isNormal || isImportant))
             {
                 flag = true;
-                GetText((int)Texts.InventoryButtonNewTxt)?.gameObject?.SetActive(true);
                 break;
             }
         }
 
-        if (!flag) GetText((int)Texts.InventoryButtonNewTxt)?.gameObject?.SetActive(false);
+        GetText((int)Texts.InventoryButtonNewTxt)?.gameObject?.SetActive(flag);
     }
 
     public void UpdateHP(float current, float max)
@@ -684,8 +685,8 @@ public class UI_GameScene : UI_Scene
                 if (box != null) box.color = full ? Util.HexToColor("D14A4A") : Color.white;
                 // 슬26 등장 Anim: Punch/Scale 0.3 (TO 0.3, Vibrato 10, Elasticity 1)
                 icon.transform.DOKill();
-                // 등장 기준 스케일 (값이 클수록 아이콘 큼 — 0.5는 너무 커서 0.35로 축소). 펀치도 비례 축소.
-                const float BESTIARY_NEW_ICON_SCALE = 0.35f;
+                // 등장 기준 스케일 (값이 클수록 아이콘 큼). 0.35는 너무 작아 원래 0.5로 복원.
+                const float BESTIARY_NEW_ICON_SCALE = 0.5f;
                 icon.transform.localScale = new Vector3(BESTIARY_NEW_ICON_SCALE, BESTIARY_NEW_ICON_SCALE, 1f);
                 icon.transform.DOPunchScale(new Vector3(0.2f, 0.2f, 0f), 0.3f, 10, 1f);
 
