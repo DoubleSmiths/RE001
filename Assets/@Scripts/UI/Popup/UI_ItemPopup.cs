@@ -110,10 +110,10 @@ public class UI_ItemPopup : UI_Popup
         // 아이템 이름
         GetText((int)Texts.ItemPopupItemName).text = Localize(data.Name);
 
-        // 등급명 (후광/글로우는 표시하지 않음 — 불필요한 후광 제거)
+        // 등급명 + TitleGlow는 항상 유지하되 색은 등급색(Util.GetGradeColor — 인벤/드롭/물약과 동일 컨벤션). ImgGroup 후광/shine만 제거.
         GetText((int)Texts.ItemPopupItemDesc_Rare).text  = GetGradeName(data.Grade);
+        GetImage((int)Images.ItemPopupTitleGlow).color = Util.GetGradeColor(data.Grade);
         GetImage((int)Images.ItemPopupImgGroupGlow).gameObject.SetActive(false);
-        GetImage((int)Images.ItemPopupTitleGlow).gameObject.SetActive(false);
         var shine = GetObject((int)GameObjects.shineeffect);
         if (shine != null) shine.SetActive(false);
 
