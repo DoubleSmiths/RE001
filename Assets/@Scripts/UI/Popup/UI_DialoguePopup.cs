@@ -85,9 +85,9 @@ public class UI_DialoguePopup : UI_Popup
     void RefreshTexts()
     {
         var dialogue = GetText((int)Texts.DialogueText);
-        if (dialogue != null) ApplyFont(dialogue, FontType.Dialogue);
+        //if (dialogue != null) ApplyFont(dialogue, FontType.Dialogue);
         var name = GetText((int)Texts.DialogueName);
-        if (name != null) ApplyFont(name, FontType.Dialogue);
+        //if (name != null) ApplyFont(name, FontType.Dialogue);
     }
 
     static void SetAlpha(UnityEngine.UI.Image img, float a)

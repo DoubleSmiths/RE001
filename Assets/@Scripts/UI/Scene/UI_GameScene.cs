@@ -154,17 +154,17 @@ public class UI_GameScene : UI_Scene
         // 폰트 등록 (숫자 텍스트는 Inspector에서 개별 지정)
         ApplyFont(GetText((int)Texts.CharacterButtonText), FontType.UI);
         ApplyFont(GetText((int)Texts.InventoryButtonText), FontType.UI);
-        ApplyFont(GetText((int)Texts.InventoryButtonNewTxt), FontType.UI);
+        //ApplyFont(GetText((int)Texts.InventoryButtonNewTxt), FontType.UI);
         ApplyFont(GetText((int)Texts.PotionButtonText), FontType.UI);
-        ApplyFont(GetText((int)Texts.PotionButtonNewTxt), FontType.UI);
+        //ApplyFont(GetText((int)Texts.PotionButtonNewTxt), FontType.UI);
         ApplyFont(GetText((int)Texts.EquipmentButtonText), FontType.UI);
-        ApplyFont(GetText((int)Texts.EquipmentButtonNewTxt), FontType.UI);
+        //ApplyFont(GetText((int)Texts.EquipmentButtonNewTxt), FontType.UI);
         ApplyFont(GetText((int)Texts.SkillButtonText), FontType.UI);
-        ApplyFont(GetText((int)Texts.SkillButtonNewTxt), FontType.UI);
+        //ApplyFont(GetText((int)Texts.SkillButtonNewTxt), FontType.UI);
         ApplyFont(GetText((int)Texts.BestiaryButtonText), FontType.UI);
-        ApplyFont(GetText((int)Texts.BestiaryBtnNewTxt), FontType.UI);
-        ApplyFont(GetText((int)Texts.PlayerRankText), FontType.UI);
-        ApplyFont(GetText((int)Texts.PlayerLevelText), FontType.UI);
+        //ApplyFont(GetText((int)Texts.BestiaryBtnNewTxt), FontType.UI);
+        //ApplyFont(GetText((int)Texts.PlayerRankText), FontType.UI);
+        //ApplyFont(GetText((int)Texts.PlayerLevelText), FontType.UI);
 
         // 버튼 이벤트
         GetButton((int)Buttons.OptionBtn).gameObject.BindEvent(OnClickOption);

@@ -65,19 +65,22 @@ public class UI_InvSlot : UI_Base
     {
         var amount = GetText((int)Texts.AmountTxt);
         if (amount != null) ApplyFont(amount, Define.FontType.UI);
+        /* 성우
         var newTxt = GetText((int)Texts.InvSlotNewTxt);
         if (newTxt != null)
         {
             ApplyFont(newTxt, Define.FontType.UI);
             newTxt.text = Util.Localize(Define.LocalizeKey.InvSlotNewTxt);
-        }
+        } */
     }
 
     public void SetInfo(InventoryItem inventoryItem = null, ItemData itemData = null)
     {
         bool hasItem = inventoryItem != null && itemData != null;
         GetImage((int)Images.BlockImg).gameObject.SetActive(false);
-
+        //성우 추가
+        GetImage((int)Images.Frame).gameObject.SetActive(hasItem);
+        
         // 아이템 아이콘
         Sprite sprite = hasItem ? Managers.Resource.Load<Sprite>(itemData.SpriteName) : null;
         GetImage((int)Images.Img).sprite = sprite;
@@ -102,6 +105,9 @@ public class UI_InvSlot : UI_Base
 
     public void SetOpenBlock()
     {
+        //성우 추가
+        GetImage((int)Images.Frame).gameObject.SetActive(false);
+
         GetImage((int)Images.BlockImg).gameObject.SetActive(false);
         // 열린 빈 슬롯: Glow FFFFFF alpha 40
         GetImage((int)Images.Glow).color = new Color32(255, 255, 255, 40);
@@ -109,6 +115,9 @@ public class UI_InvSlot : UI_Base
 
     public void SetBlock()
     {
+        //성우 추가
+        GetImage((int)Images.Frame).gameObject.SetActive(false);
+
         GetImage((int)Images.BlockImg).gameObject.SetActive(true);
         // 막힌 빈 슬롯: Glow 0F0F0F alpha 255
         GetImage((int)Images.Glow).color = Util.HexToColor("0F0F0F");

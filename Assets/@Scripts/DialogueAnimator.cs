@@ -127,14 +127,18 @@ public class DialogueAnimator : MonoBehaviour
 
     IEnumerator CoArrowLoop(Image arrow)
     {
-        const float duration = 0.2f;
+        const float duration = 0.5f;
         const float minAlpha = 100f / 255f;
         const float maxAlpha = 1f;
 
         while (arrow != null)
         {
+            //점멸
             yield return FadeArrowAlpha(arrow, maxAlpha, minAlpha, duration);
             yield return FadeArrowAlpha(arrow, minAlpha, maxAlpha, duration);
+
+            //대기
+            yield return new WaitForSeconds(0.5f);
         }
     }
 

@@ -151,8 +151,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -7.5}
-  m_SizeDelta: {x: 3.600006, y: -354.06}
+  m_AnchoredPosition: {x: 0, y: -8.5}
+  m_SizeDelta: {x: -20, y: -377}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3887037446618082339
 CanvasRenderer:
@@ -184,8 +184,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
-  m_sharedMaterial: {fileID: -5068633484602989329, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f4f77e8c024a17e4bb670cb2669cbfe2, type: 2}
+  m_sharedMaterial: {fileID: 1441053663968724295, guid: f4f77e8c024a17e4bb670cb2669cbfe2, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -422,7 +422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 3121078212141674ab36941ab10648ca, type: 2}
   m_Color: {r: 0.6313726, g: 0.6313726, b: 0.6313726, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -615,7 +615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.06666667, g: 0.06666667, b: 0.06666667, a: 1}
+  m_Color: {r: 0.09803922, g: 0.09803922, b: 0.09803922, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -764,8 +764,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 9.500002, y: -10}
-  m_SizeDelta: {x: -15.399998, y: -359.06}
+  m_AnchoredPosition: {x: 6.9000015, y: -7.7350006}
+  m_SizeDelta: {x: -10.199997, y: -354.53}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6956438866624632291
 CanvasRenderer:
@@ -797,8 +797,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC811\uC218\uC6D0 \uC544\uAC00\uC528"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
-  m_sharedMaterial: {fileID: -5068633484602989329, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a7a5c54929c789143a872d74a52611a3, type: 2}
+  m_sharedMaterial: {fileID: 8975944436856572661, guid: a7a5c54929c789143a872d74a52611a3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
