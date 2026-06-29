@@ -8,7 +8,7 @@
         "com.unity.ugui": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0"
       },
-      "hash": "92fb173507ece2c135c38733deeca82a6d49cacd"
+      "hash": "87dca448ce964ca2325d7105fa93119749743f50"
     },
     "com.unity.2d.animation": {
       "version": "13.0.4",
@@ -355,23 +355,6 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
-    },
-    "com.youngwoocho02.unity-cli-connector": {
-      "version": "https://github.com/youngwoocho02/unity-cli.git?path=unity-connector",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.2.1"
-      },
-    "com.unity.visualscripting": {
-      "version": "1.9.9",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ugui": "1.0.0",
-        "com.unity.modules.jsonserialize": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
