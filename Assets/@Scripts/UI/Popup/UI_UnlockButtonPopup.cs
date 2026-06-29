@@ -82,7 +82,7 @@ public class UI_UnlockButtonPopup : UI_Popup
         var icon = GetText((int)Texts.IconNameText);
         if (icon != null) ApplyFont(icon, Define.FontType.UI);
         var tmp = GetText((int)Texts.TextTMP);
-        if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
+        //if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
     }
 
     // TMP는 매 프레임 메시를 재갱신하므로 LateUpdate에서 알파를 강제 적용

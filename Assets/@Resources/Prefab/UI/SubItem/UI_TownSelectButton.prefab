@@ -82,7 +82,7 @@ MonoBehaviour:
   m_text: CURRENT LOCATION
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
-  m_sharedMaterial: {fileID: -5068633484602989329, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: ebc666322a0b54545abe5fa183c74df7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -384,7 +384,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 1, g: 0.77254903, b: 0, a: 1}
-    m_DisabledColor: {r: 0.13725491, g: 0.48235294, b: 0, a: 1}
+    m_DisabledColor: {r: 0.16812241, g: 1, b: 0, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -533,7 +533,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1835608628281822421}
   - component: {fileID: 8500371386613825406}
-  - component: {fileID: 6523315504326758167}
   - component: {fileID: 6454112355374677547}
   - component: {fileID: 4448478917024172611}
   m_Layer: 5
@@ -559,8 +558,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 11.5, y: 0}
-  m_SizeDelta: {x: -31, y: 0}
+  m_AnchoredPosition: {x: 12, y: 0}
+  m_SizeDelta: {x: -32, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8500371386613825406
 CanvasRenderer:
@@ -570,21 +569,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3242792125824673856}
   m_CullTransparentMesh: 1
---- !u!114 &6523315504326758167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3242792125824673856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 0.8, y: -0.7}
-  m_UseGraphicAlpha: 1
 --- !u!114 &6454112355374677547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,7 +592,7 @@ MonoBehaviour:
   m_text: Breezing Wind Forest
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
-  m_sharedMaterial: {fileID: -5068633484602989329, guid: 3f9c0c8fbf9b9884ab9aac8a5defffaa, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: e31ae2ec3f3fdeb4b9559c5778a0581a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -632,14 +616,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 6.75
+  m_fontSize: 6.65
   m_fontSizeBase: 9
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 4
-  m_fontSizeMax: 14
+  m_fontSizeMax: 9
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
