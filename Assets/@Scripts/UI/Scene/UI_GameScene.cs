@@ -194,6 +194,7 @@ public class UI_GameScene : UI_Scene
         SetInfo();
         RefreshTabLocks();
         RefreshBTMButtonGroup();
+        RestoreTabNewBadges();   // 저장된 Potion/Equipment/Skill NEW 뱃지 복원
         RefreshBtmButtonsLockState();
 
         // TODO : 플레이어의 현재 구역에 따라 EnterArea 호출
@@ -767,10 +768,10 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.Quest_NeedItemNameTxt).text = quest.FollowItemName;
 
         // 보유 개수 색상: 0=빨강 / 0<보유<필요=주황 / 보유≥필요=초록. (TMP는 lime 등 미지원 → hex)
-        // 양 쪽(보유/필요)에 괄호 표기.
+        // 표기는 (보유/필요) 한 쌍 괄호 + 슬래시, 전체에 색 적용 — 예: (1/2)
         int need = quest.FollowCount;
         string col = current == 0 ? "#FF0000" : (current < need ? "#FFA500" : "#00FF00");
-        GetText((int)Texts.Quest_NeedItemAmountTxt).text = $"(<color={col}>{current}</color>)/({need})";
+        GetText((int)Texts.Quest_NeedItemAmountTxt).text = $"(<color={col}>{current}</color>/{need})";
 
         bool wasInactive = !followObj.activeSelf;
         if (!followObj.activeSelf)
@@ -863,12 +864,15 @@ public class UI_GameScene : UI_Scene
                 break;
             case TabType.Potion:
                 GetText((int)Texts.PotionButtonNewTxt).gameObject.SetActive(true);
+                Managers.Game.SetTabNew(TabType.Potion, true);       // 저장 — 재시작 후에도 on 유지
                 break;
             case TabType.Equipment:
                 GetText((int)Texts.EquipmentButtonNewTxt).gameObject.SetActive(true);
+                Managers.Game.SetTabNew(TabType.Equipment, true);
                 break;
             case TabType.Skill:
                 GetText((int)Texts.SkillButtonNewTxt).gameObject.SetActive(true);
+                Managers.Game.SetTabNew(TabType.Skill, true);
                 break;
             case TabType.Bestiary:
                 GetText((int)Texts.BestiaryBtnNewTxt).gameObject.SetActive(true);
@@ -1020,6 +1024,31 @@ public class UI_GameScene : UI_Scene
             _btmActiveIdx = idx;
         }
         showAction?.Invoke();
+
+        // 저장형 NEW 뱃지(Potion/Equipment/Skill)는 탭을 열면 해제 + 저장(재시작 후에도 off 유지).
+        ClearPersistedTabNew(tab);
+    }
+
+    // Potion/Equipment/Skill 탭은 NEW 뱃지를 GameManager 비트마스크로 저장 — 열면 해제+저장.
+    //  (Bag/Bestiary/Status는 데이터 파생이라 여기서 건드리지 않음)
+    void ClearPersistedTabNew(TabType tab)
+    {
+        switch (tab)
+        {
+            case TabType.Potion:    GetText((int)Texts.PotionButtonNewTxt).gameObject.SetActive(false); break;
+            case TabType.Equipment: GetText((int)Texts.EquipmentButtonNewTxt).gameObject.SetActive(false); break;
+            case TabType.Skill:     GetText((int)Texts.SkillButtonNewTxt).gameObject.SetActive(false); break;
+            default: return;
+        }
+        Managers.Game.SetTabNew(tab, false);
+    }
+
+    // 재시작 시 저장된 NEW 뱃지(Potion/Equipment/Skill) 복원. Bag/Bestiary/Status는 각자 Refresh가 처리.
+    void RestoreTabNewBadges()
+    {
+        GetText((int)Texts.PotionButtonNewTxt).gameObject.SetActive(Managers.Game.IsTabNew(TabType.Potion));
+        GetText((int)Texts.EquipmentButtonNewTxt).gameObject.SetActive(Managers.Game.IsTabNew(TabType.Equipment));
+        GetText((int)Texts.SkillButtonNewTxt).gameObject.SetActive(Managers.Game.IsTabNew(TabType.Skill));
     }
 
     // 각 Btm 버튼의 아이콘 Image (Button.colors가 안 덮어쓰는 별도 Image)

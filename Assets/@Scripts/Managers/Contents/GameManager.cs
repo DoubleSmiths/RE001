@@ -138,6 +138,11 @@ public class GameData
     // 기본값 1 = [상태]만 해금. 나머지 퀘스트 진행에 따라 해금.
     public int UnlockedBtmButtons = 1;
 
+    // 최하단 탭 NEW 뱃지 on/off 비트마스크 — 게임 재시작 후에도 유지.
+    //  Bag/Bestiary/Status는 아이템 IsNew/관심/스탯포인트에서 파생되어 이미 저장되므로 제외.
+    //  ShowNewBadge로 직접 켜는 Potion/Equipment/Skill만 여기 저장한다.
+    public int NewBadgeTabs = 0;
+
     // 제작의뢰 팝업 내 SPD 포션 해금 연출이 이미 재생되었는지.
     // false = 아직 미공개 (잠긴 상태로 시작 → 팝업 오픈 시 1회 해금 애니)
     // true  = 공개됨 (바로 해금 상태로 표시)
@@ -451,6 +456,22 @@ public class GameManager
         int mask = 1 << (int)tab;
         if ((_gameData.UnlockedBtmButtons & mask) != 0) return;
         _gameData.UnlockedBtmButtons |= mask;
+        SaveGame();
+    }
+
+    // 최하단 탭 NEW 뱃지 저장 조회/설정(Potion/Equipment/Skill). Bag/Bestiary/Status는 보유 데이터에서 파생.
+    public bool IsTabNew(Define.TabType tab)
+    {
+        return (_gameData.NewBadgeTabs & (1 << (int)tab)) != 0;
+    }
+
+    public void SetTabNew(Define.TabType tab, bool on)
+    {
+        int mask = 1 << (int)tab;
+        bool cur = (_gameData.NewBadgeTabs & mask) != 0;
+        if (cur == on) return;
+        if (on) _gameData.NewBadgeTabs |= mask;
+        else    _gameData.NewBadgeTabs &= ~mask;
         SaveGame();
     }
 
