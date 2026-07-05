@@ -254,8 +254,8 @@
   "hotPaths": [
     {
       "path": "Assets\\@Scripts",
-      "accessCount": 31,
-      "lastAccessed": 1783233648094,
+      "accessCount": 32,
+      "lastAccessed": 1783234341951,
       "type": "directory"
     },
     {
@@ -307,16 +307,22 @@
       "type": "file"
     },
     {
+      "path": "Assets\\@Scripts\\Managers\\Contents\\ComboManager.cs",
+      "accessCount": 8,
+      "lastAccessed": 1783234427139,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BattleBtnGroup.cs",
+      "accessCount": 8,
+      "lastAccessed": 1783234430055,
+      "type": "file"
+    },
+    {
       "path": "Assets\\@Scripts\\Utils\\Define.cs",
       "accessCount": 7,
       "lastAccessed": 1783233800211,
       "type": "directory"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BattleBtnGroup.cs",
-      "accessCount": 6,
-      "lastAccessed": 1783233262411,
-      "type": "file"
     },
     {
       "path": "Assets\\@Scripts\\Managers\\Contents\\MinMonManager.cs",
@@ -337,9 +343,9 @@
       "type": "directory"
     },
     {
-      "path": "Assets\\@Scripts\\Managers\\Contents\\ComboManager.cs",
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_ItemPopup.cs",
       "accessCount": 5,
-      "lastAccessed": 1783233414472,
+      "lastAccessed": 1783234534711,
       "type": "file"
     },
     {
@@ -358,12 +364,6 @@
       "path": "Assets\\@Scripts\\UI\\SubItem\\UI_TownSelectButton.cs",
       "accessCount": 4,
       "lastAccessed": 1783232097461,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_ItemPopup.cs",
-      "accessCount": 4,
-      "lastAccessed": 1783232121494,
       "type": "file"
     },
     {

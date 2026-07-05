@@ -286,8 +286,16 @@ public class ComboManager
 
     public Color GetCurrentRankColor()
     {
-        var stage = GetCurrentStage();
-        if (stage == null || string.IsNullOrEmpty(stage.ColorHex)) return Color.white;
+        return GetRankColor(NowRank);
+    }
+
+    /// <summary>지정 랭크의 ComboData ColorHex 색. 미로드/파싱 실패 시 흰색 fallback.</summary>
+    public Color GetRankColor(int rank)
+    {
+        if (Managers.Data?.ComboStageDic == null ||
+            Managers.Data.ComboStageDic.TryGetValue(rank, out var stage) == false ||
+            string.IsNullOrEmpty(stage.ColorHex))
+            return Color.white;
         // 시트 ColorHex는 '#' 유무 모두 허용. 파싱 실패(오타 등) 시 투명색 방지 — 흰색 fallback.
         if (ColorUtility.TryParseHtmlString("#" + stage.ColorHex.TrimStart('#'), out Color parsed))
             return parsed;
