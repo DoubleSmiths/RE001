@@ -168,6 +168,12 @@ public class PlayerController : CreatureController
         // ComboManager.Tick은 프레임 디듑이 있어 다른 Update와 중복 호출돼도 1회만 처리됨.
         Managers.Combo?.Tick(Time.deltaTime);
 
+        // 물약 쿨타임은 전투/마을 무관하게 항상 감소.
+        // (UI_PotionPopup 쿨타임 바가 unscaled 시계로 돌므로 동일 시계 사용 —
+        //  전투 밖에서 타이머가 멈춰 팝업 재오픈 시 쿨타임이 다시 도는 버그 방지)
+        if (_autoPotionCd > 0f) _autoPotionCd -= Time.unscaledDeltaTime;
+        if (_spdPotionCd  > 0f) _spdPotionCd  -= Time.unscaledDeltaTime;
+
         if (State == Define.State.Dead) return;
         if (!_inBattle) return;
 
@@ -181,8 +187,7 @@ public class PlayerController : CreatureController
     float _autoPotionCd;
     void UpdateAutoPotion()
     {
-        if (_autoPotionCd > 0f) _autoPotionCd -= Time.deltaTime;
-
+        // (_autoPotionCd 감소는 Update에서 전투 여부와 무관하게 처리)
         var game = Managers.Game;
         if (game == null || !game.AutoPotionMemorized || !game.AutoPotionOn) return;
         if (_autoPotionCd > 0f) return;
@@ -211,6 +216,13 @@ public class PlayerController : CreatureController
     public float AutoPotionCooldownNormalized => _autoPotionCd <= 0f ? 0f :
         (Managers.Data != null && Managers.Data.HPPotionDic.TryGetValue(Managers.Game.CurrentHPPotionDataId, out var hp) && hp.Cooldown > 0
             ? Mathf.Clamp01(_autoPotionCd / hp.Cooldown) : 0f);
+
+    // 신속물약 쿨타임 — 팝업 인스턴스가 파괴돼도 남은 쿨타임을 유지 (HP 물약과 동일 패턴).
+    float _spdPotionCd;
+    public void StartSpdPotionCooldown(float cd) { if (cd > _spdPotionCd) _spdPotionCd = cd; }
+    public float SpdPotionCooldownNormalized => _spdPotionCd <= 0f ? 0f :
+        (Managers.Data != null && Managers.Data.SpeedPotionDic.TryGetValue(Managers.Game.CurrentSpeedPotionDataId, out var sp) && sp.Cooldown > 0
+            ? Mathf.Clamp01(_spdPotionCd / sp.Cooldown) : 0f);
 
     // 슬라이드 57/58 — 몬스터 AtkRange 진입 여부에 따라:
     //   · 미engaged: BG scroll on, Player Run (Moving)

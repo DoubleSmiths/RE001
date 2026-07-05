@@ -180,7 +180,14 @@ public class UI_PotionPopup : UI_Popup
             if (s != null && s.button != null)
                 s.button.onClick.AddListener(() => OnClickSlot(s));
 
+        // 슬롯 하단 [정보] 버튼 → 상세 팝업(설명 전용 모드)
+        GetButton((int)Buttons.Button).onClick.AddListener(() => OnClickInfo(_hpSlot));
+        GetButton((int)Buttons.Button_1).onClick.AddListener(() => OnClickInfo(_spdSlot));
+
         _hpRatioSlider.onValueChanged.AddListener(OnHpRatioChanged);
+
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged += RefreshTexts;
 
         // 자동물약(PlayerController 상시 처리)이 발동하면 팝업이 열려 있을 때 HP 슬롯 쿨타임 바 동기화
         if (Managers.Game.Player != null)
@@ -193,6 +200,8 @@ public class UI_PotionPopup : UI_Popup
     {
         if (Managers.Game != null && Managers.Game.Player != null)
             Managers.Game.Player.OnAutoPotionUsed -= HandleAutoPotionUsed;
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged -= RefreshTexts;
     }
 
     // 자동 사용이 발동했을 때 팝업 HP 슬롯 쿨타임 바/버튼 상태를 맞춰준다(회복은 PlayerController가 이미 처리).
@@ -276,7 +285,7 @@ public class UI_PotionPopup : UI_Popup
         _autoMemorized = Managers.Game.AutoPotionMemorized;
         _hpRatio       = Managers.Game.AutoPotionHpRatio;
 
-        if (_titleText != null) _titleText.text = "물약";
+        RefreshTexts();
 
         // 슬롯 상태 (인벤토리 미연동 → HP만 해금 가정, 수량 5개)
         if (_hpSlot != null)
@@ -298,7 +307,9 @@ public class UI_PotionPopup : UI_Popup
             _spdSlot.dataId = Managers.Game.CurrentSpeedPotionDataId;
             _spdSlot.cooldownMax = GetSpdCooldown(_spdSlot.dataId);
             _spdSlot.count = Managers.Game.SpdPotionRevealed ? 5 : 0;
-            _spdSlot.cooldown = 0f;
+            // 진행 중인 쿨타임 복원 — 팝업을 껐다 켜도 남은 쿨타임 유지 (HP와 동일)
+            var plSpd = Managers.Game.Player;
+            _spdSlot.cooldown = plSpd != null ? plSpd.SpdPotionCooldownNormalized * _spdSlot.cooldownMax : 0f;
             RefreshSlotVisual(_spdSlot);
 
             // 최초 1회만 해금 애니 재생 — RefreshSlotVisual이 lockBg/lockIcon을 감췄으므로 다시 노출
@@ -432,11 +443,27 @@ public class UI_PotionPopup : UI_Popup
         UsePotion(s);
     }
 
-    void OpenDetailFor(Slot s)
+    // [정보] 버튼 / 수량 없는 슬롯 클릭 → 상세 팝업(설명 전용). 미해금 슬롯은 무반응.
+    // UI_PotionDetailPopup은 DataId 범위(40000+=SPD)로 종류를 자동 판정하므로 HP/SPD 공용.
+    void OnClickInfo(Slot s)
     {
-        if (s.name == "HP")
-            Managers.UI.ShowPopupUI<UI_PotionDetailPopup>().SetInfo(s.dataId, fromCustomOrder: false);
-        // SPD/Luck 상세는 별도 팝업 필요 — 현재 UI_PotionDetailPopup이 HP 전용이므로 스킵
+        if (s == null || !s.unlocked) return;
+        Managers.UI.ShowPopupUI<UI_PotionDetailPopup>().SetInfo(s.dataId, fromCustomOrder: false);
+    }
+
+    void OpenDetailFor(Slot s) => OnClickInfo(s);
+
+    // 언어별 정적 텍스트 갱신 — 타이틀 / [정보] 버튼 라벨.
+    // (SPD 쪽 프리팹 라벨이 "INFO"로 저작돼 있어 언어 전환이 안 되던 문제 — 코드에서 일괄 세팅.
+    //  '정보' 전용 LocalizeKey가 시트에 없어 코드 분기. 키 추가 시 Localize로 교체할 것.)
+    void RefreshTexts()
+    {
+        if (_titleText != null) _titleText.text = Util.Localize(Define.LocalizeKey.BtmPotionBtnText);
+        string infoLabel = Managers.Game.Language == Define.Language.Korean ? "정보" : "INFO";
+        var hpInfoTxt  = GetText((int)Texts.Txt_Button_02);
+        var spdInfoTxt = GetText((int)Texts.Txt_Button_1_01);
+        if (hpInfoTxt  != null) hpInfoTxt.text  = infoLabel;
+        if (spdInfoTxt != null) spdInfoTxt.text = infoLabel;
     }
 
     void UsePotion(Slot s)
@@ -483,6 +510,8 @@ public class UI_PotionPopup : UI_Popup
             // 신속물약: 일정 시간 공격속도 버프. 데이터 AtkSpeedBonus는 분수(0.2=20%)라 ×100(퍼센트 공식 단위)
             if (Managers.Data.SpeedPotionDic.TryGetValue(s.dataId, out var sp))
                 player.ApplySpeedBuff(sp.AtkSpeedBonus * 100f, sp.Duration);
+            // 쿨타임을 플레이어에 보관 — 팝업을 껐다 켜도 유지 (HP와 동일 패턴)
+            player.StartSpdPotionCooldown(s.cooldownMax);
         }
     }
 
