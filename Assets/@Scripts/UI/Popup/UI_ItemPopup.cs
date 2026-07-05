@@ -113,17 +113,18 @@ public class UI_ItemPopup : UI_Popup
         GetText((int)Texts.ItemPopupItemName).text = Localize(data.Name);
 
         // 등급명 + TitleGlow는 항상 유지하되 색은 등급색(Util.GetGradeColor — 인벤/드롭/물약과 동일 컨벤션).
-        // ImgGroup 후광/shine은 퀘스트 클리어 보상으로 열릴 때(showGlow)만 표시.
+        // ImgGroup 후광/shine: 퀘스트 클리어 보상으로 열릴 때(showGlow) + 귀중품(REQUISITE) 아이템은 항상 표시.
+        bool glowOn = showGlow || data.Grade == EquipGrade.REQUISITE;
         GetText((int)Texts.ItemPopupItemDesc_Rare).text  = GetGradeName(data.Grade);
         GetImage((int)Images.ItemPopupTitleGlow).color = Util.GetGradeColor(data.Grade);
         var imgGlow = GetImage((int)Images.ItemPopupImgGroupGlow);
         if (imgGlow != null)
         {
             imgGlow.color = Util.GetGradeColor(data.Grade);
-            imgGlow.gameObject.SetActive(showGlow);
+            imgGlow.gameObject.SetActive(glowOn);
         }
         var shine = GetObject((int)GameObjects.shineeffect);
-        if (shine != null) shine.SetActive(showGlow);
+        if (shine != null) shine.SetActive(glowOn);
 
         // 발견 장소
         GetText((int)Texts.ItemPopupItemDesc_Found).text = Localize(data.FoundLocation);

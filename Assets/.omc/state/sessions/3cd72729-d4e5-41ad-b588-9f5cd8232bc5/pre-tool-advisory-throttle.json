@@ -1,26 +1,22 @@
 {
   "version": 1,
   "entries": {
-    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1783235789485,
-      "message": "Verify changes work after editing. Test functionality before marking complete."
-    },
     "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1783235767190,
+      "last_emitted_at_ms": 1783238824197,
       "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
     },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1783238644371,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
     "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1783235728477,
+      "last_emitted_at_ms": 1783238500330,
       "message": "Read multiple files in parallel when possible for faster analysis."
     },
     "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
-      "last_emitted_at_ms": 1783235712337,
+      "last_emitted_at_ms": 1783238484736,
       "message": "Combine searches in parallel when investigating multiple patterns."
-    },
-    "8f8ea9552b220c76d4a51a353dbe4cd537e72ee4cf6e0ce3eab5ae9d12fe45ee": {
-      "last_emitted_at_ms": 1783233077749,
-      "message": "Spawning agent: general-purpose (inherit) | Task: ComboData ColorHex 하드코딩 수정"
     }
   },
-  "updated_at": "2026-07-05T07:16:29.485Z"
+  "updated_at": "2026-07-05T08:07:04.197Z"
 }

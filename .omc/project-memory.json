@@ -254,14 +254,20 @@
   "hotPaths": [
     {
       "path": "Assets\\@Scripts",
-      "accessCount": 33,
-      "lastAccessed": 1783234564396,
+      "accessCount": 40,
+      "lastAccessed": 1783238994466,
       "type": "directory"
     },
     {
       "path": "Assets\\@Scripts\\UI\\Scene\\UI_GameScene.cs",
-      "accessCount": 30,
-      "lastAccessed": 1783233824049,
+      "accessCount": 34,
+      "lastAccessed": 1783237137077,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Village1BtnGroup.cs",
+      "accessCount": 28,
+      "lastAccessed": 1783239020584,
       "type": "file"
     },
     {
@@ -289,22 +295,16 @@
       "type": "file"
     },
     {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Village1BtnGroup.cs",
+      "path": "Assets\\@Scripts\\Controllers\\Creature\\PlayerController.cs",
       "accessCount": 10,
-      "lastAccessed": 1783233646748,
-      "type": "file"
+      "lastAccessed": 1783237204352,
+      "type": "directory"
     },
     {
       "path": "Assets\\@Resources\\Data\\JsonData\\ComboData.json",
       "accessCount": 9,
       "lastAccessed": 1783233379435,
       "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Controllers\\Creature\\PlayerController.cs",
-      "accessCount": 9,
-      "lastAccessed": 1783235457001,
-      "type": "directory"
     },
     {
       "path": "Assets\\@Scripts\\UI\\Popup\\UI_TamePopup.cs",
@@ -332,8 +332,8 @@
     },
     {
       "path": "Assets\\@Scripts\\UI\\Popup\\UI_ItemPopup.cs",
-      "accessCount": 7,
-      "lastAccessed": 1783234651195,
+      "accessCount": 8,
+      "lastAccessed": 1783239027529,
       "type": "file"
     },
     {

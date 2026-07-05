@@ -316,6 +316,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         if (Managers.SubQuest != null)
             Managers.SubQuest.OnSubQuestChanged -= OnSubQuestChanged;
         if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        if (Managers.UI != null) Managers.UI.OnPopupClosed -= OnPopupClosedForUnlock;
     }
 
     // enum Texts 모든 entry — 폰트(UI) + 한영 일괄 처리.
@@ -419,6 +420,10 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // (서브퀘스트가 발행하는 UNLOCK_POTION_BUTTON 등은 여기서 무시 — UI_GameScene이 처리)
         if (!IsUnlockAnimTarget(btnId))
             return;
+
+        // 해금 이벤트 수신 즉시 느낌표/NEW 억제 시작.
+        // (연출 시작은 0.5s 지연되므로, 여기서 걸지 않으면 그 사이 [!]가 잠깐 표시됨)
+        BeginUnlockNotifySuppression();
 
         _pendingUnlockBtnId = btnId;
 
@@ -539,6 +544,25 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         if (string.IsNullOrEmpty(prefabKey)) return;
         Managers.Resource.Instantiate(prefabKey);
+
+        ApplyPlayerBuildingScale(prefabKey);
+    }
+
+    // 기획 수정안(2026-07-05): 건물 내부(길드/연금 등)에서는 플레이어를 확대해 '건물에 들어간 느낌'을 준다.
+    // (NPC 스프라이트를 플레이어 크기로 줄이면 도트가 뭉개져서, 반대로 플레이어를 키우는 방식)
+    // SwitchBG가 진입/퇴장/복원 모든 경로의 단일 지점이라 여기서 일괄 처리 — 암전(Fade) 중에 호출되므로 팝 없음.
+    const float PLAYER_BUILDING_SCALE = 1.5f;   // 건물 내부 확대 배율 (기획 튜닝값)
+    Vector3? _playerBaseScale;
+
+    void ApplyPlayerBuildingScale(string bgKey)
+    {
+        var player = Managers.Game.Player;
+        if (player == null) return;
+
+        if (_playerBaseScale == null) _playerBaseScale = player.transform.localScale;
+
+        bool insideBuilding = bgKey != "Village1_Main_BG";
+        player.transform.localScale = _playerBaseScale.Value * (insideBuilding ? PLAYER_BUILDING_SCALE : 1f);
     }
 
     void HideAllGroup()
@@ -591,11 +615,33 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendCallback(TryPlayPendingUnlock);
     }
 
+    // ── Unlock 연출 동안 느낌표/NEW 억제 ──
+    //  기획 수정안(2026-07-05): 해금 연출·팝업 중에는 [!] Quest Mark를 표시하지 않고,
+    //  해금 팝업이 닫힌 뒤 [NEW] Text와 함께 일괄 표시한다.
+    bool _suppressNotifyForUnlock;
+
+    void BeginUnlockNotifySuppression()
+    {
+        if (_suppressNotifyForUnlock) return;   // 이미 억제 중 (중복 구독 방지)
+        _suppressNotifyForUnlock = true;
+        RefreshNotify();   // 이미 켜져 있는 느낌표/NEW도 끔
+        Managers.UI.OnPopupClosed += OnPopupClosedForUnlock;
+    }
+
+    void OnPopupClosedForUnlock(System.Type popupType)
+    {
+        if (popupType != typeof(UI_UnlockButtonPopup)) return;
+        Managers.UI.OnPopupClosed -= OnPopupClosedForUnlock;
+        _suppressNotifyForUnlock = false;
+        RefreshNotify();   // 팝업 닫힘 → [!] Quest Mark + [NEW] Text 동시 표시
+    }
+
     void TryPlayUnlockAnim(string btnId)
     {
         switch (btnId)
         {
             case UNLOCK_TRAVEL_BUTTON:
+                BeginUnlockNotifySuppression();
                 UnlockButtonAnim(
                     GetButton((int)Buttons.TravelButton).gameObject,
                     GetImage((int)Images.TravelButtonIcon),
@@ -605,6 +651,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 break;
 
             case UNLOCK_ALCHEMY_BUTTON:
+                BeginUnlockNotifySuppression();
                 UnlockButtonAnim(
                     GetButton((int)Buttons.AlchemyButton).gameObject,
                     GetImage((int)Images.AlchemyButtonIcon),
@@ -843,7 +890,15 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             speakerName: "접수원 아가씨",
             portrait: null,
             onFinished: isReportQuest
-                ? (System.Action)(() => Managers.Quest.CheckButtonClick(BTN_GUILD_QUEST))
+                ? (System.Action)(() =>
+                {
+                    Managers.Quest.CheckButtonClick(BTN_GUILD_QUEST);
+                    // 기획 수정안(2026-07-05): 완료 보고 대화 종료 → 랭크업 연출 (Player Rank Up Ef, 프리팹 저작 속도 그대로)
+                    if (Managers.Game.Player != null)
+                        Managers.Object?.ShowRankUpEffectOn(Managers.Game.Player.transform);
+                    // 랭크업 토스트 배너 (지역명 토스트와 동일 경로)
+                    Managers.UI.ShowToast("RANK UP");
+                })
                 : null,
             randomSingleLine: !isReportQuest);
     }
@@ -852,6 +907,14 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     // 버튼이 늘어나면 s_notifyBindings에 항목만 추가하면 된다. (기존: 그룹별 if문 나열)
     void RefreshNotify()
     {
+        // Unlock 연출~해금 팝업 종료까지는 느낌표/NEW 전부 끔 (팝업 닫힌 뒤 일괄 표시)
+        if (_suppressNotifyForUnlock)
+        {
+            foreach (NotifyBinding binding in s_notifyBindings)
+                SetNotifyActive(binding, false);
+            return;
+        }
+
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
 
         HashSet<string> activeIds = new HashSet<string>();

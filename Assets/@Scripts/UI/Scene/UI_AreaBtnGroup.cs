@@ -31,9 +31,6 @@ public abstract class UI_AreaBtnGroup : UI_Base
         image.color = new Color(1, 1, 1, 0);
         text.color = new Color(1, 1, 1, 0);
 
-        // 파티클 효과 추가
-        Destroy(Managers.Resource.Instantiate("Star_01_Anim_13_a", go.transform), 3.0f);
-
         // 연출 도중 모든 UI 입력을 봉쇄.
         // (1) EventSystem 자체를 비활성화 → Button.onClick / BindEvent / 드래그 등 UGUI 이벤트 전부 차단
         // (2) 전체화면 투명 블로커도 함께 깔아 시각적/구조적 의도를 명확히 함
@@ -43,13 +40,31 @@ public abstract class UI_AreaBtnGroup : UI_Base
 
         GameObject blocker = CreateInputBlocker();
 
+        // 기획 수정안(2026-07-05, 슬라이드 GIF 기준):
+        //  · 빛줄기 버스트(Star_01_Anim_13_a)는 기존처럼 페이드와 동시에 시작
+        //  · Text는 Icon과 같은 방식으로 페이드 (From 0, InQuint)
+        //  · Fade In이 끝난 뒤 터지는 글로우 플래시(GlowDot_01) 재생 → 플래시가 끝난 후 onComplete(해금 팝업)
+        const float FADE_DURATION  = 2f;
+        const float FLASH_DURATION = 1f;   // GlowDot_01 파티클 버스트 시각 길이 (기획 튜닝값)
+
+        // 빛줄기 버스트 — 페이드와 동시 재생
+        Destroy(Managers.Resource.Instantiate("Star_01_Anim_13_a", go.transform), 3.0f);
+
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(go.transform.DOShakePosition(2f, new Vector3(0.7f, 0.7f, 1f), 27, 40.1f, false, false).SetEase(Ease.OutQuad));
-        seq.Join(go.transform.DOScale(1.15f, 2f).SetEase(Ease.Linear));
-        seq.Join(image.DOFade(1f, 2f).SetEase(Ease.InQuint));
-        seq.Join(text.DOFade(1f, 2f).From(0.3f).SetEase(Ease.Linear));
-        seq.Join(go.transform.DOScale(1f, 0.1f).SetDelay(2.01f).SetEase(Ease.InOutBack));
+        seq.Join(go.transform.DOShakePosition(FADE_DURATION, new Vector3(0.7f, 0.7f, 1f), 27, 40.1f, false, false).SetEase(Ease.OutQuad));
+        seq.Join(go.transform.DOScale(1.15f, FADE_DURATION).SetEase(Ease.Linear));
+        seq.Join(image.DOFade(1f, FADE_DURATION).SetEase(Ease.InQuint));
+        seq.Join(text.DOFade(1f, FADE_DURATION).From(0f).SetEase(Ease.InQuint));
+        seq.Join(go.transform.DOScale(1f, 0.1f).SetDelay(FADE_DURATION + 0.01f).SetEase(Ease.InOutBack));
+
+        // Fade In 종료 → 터지는 글로우 플래시 재생, 끝날 때까지 대기 후 완료(팝업)
+        seq.AppendCallback(() =>
+        {
+            GameObject flash = Managers.Resource.Instantiate("GlowDot_01", go.transform);
+            if (flash != null) Destroy(flash, FLASH_DURATION + 0.5f);
+        });
+        seq.AppendInterval(FLASH_DURATION);
 
         seq.OnComplete(() =>
         {

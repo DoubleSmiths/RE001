@@ -119,6 +119,7 @@ public class UI_GameScene : UI_Scene
 
     UI_AreaBtnGroup _currentBtnGroup;
     int _followActiveQuestId = -1;
+    int _followDoneFxQuestId = -1;   // 완료 연출을 이미 재생한 퀘스트 ID (완료 전이 시 1회만 재생)
     bool _isAreaTransitioning;
 
     private void Awake() { Init(); }
@@ -809,8 +810,25 @@ public class UI_GameScene : UI_Scene
         ColorUtility.TryParseHtmlString($"#{(isDone ? Define.COMPLETE_COLOR : Define.QUEST_FOLLOW_DEFAULT_COLOR)}", out Color color);
         GetImage((int)Images.Main_QuestFollowColor).color = color;
 
-        if (isDone && _followActiveQuestId != questId)
+        // 기획 수정안(2026-07-05): 완료 "전이" 시 1회 — Follow UI 애님 재생 + 완료 파티클 + Glow_Dot 이펙트.
+        // (기존 조건 _followActiveQuestId != questId 는 같은 퀘스트 진행 중 완료되는 일반 경로에서 연출이 안 나가던 버그)
+        if (isDone && _followDoneFxQuestId != questId)
+        {
+            _followDoneFxQuestId = questId;
+            GetImage((int)Images.Main_QuestFollow).GetComponent<DOTweenAnimation>().DORestart();
             GetObject((int)GameObjects.Quest_Done_Effect).GetComponent<ParticleSystem>().Play();
+
+            GameObject glow = Managers.Resource.Instantiate("GlowDot_01");
+            if (glow != null)
+            {
+                glow.transform.SetParent(followObj.transform, worldPositionStays: false);
+                Destroy(glow, 2f);
+            }
+        }
+        else if (!isDone && _followDoneFxQuestId == questId)
+        {
+            _followDoneFxQuestId = -1;   // 아이템 소모 등으로 완료 상태가 풀리면 재무장
+        }
 
         _followActiveQuestId = questId;
 
