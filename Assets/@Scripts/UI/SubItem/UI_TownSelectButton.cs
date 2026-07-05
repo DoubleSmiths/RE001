@@ -1,5 +1,6 @@
 using Data;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -131,6 +132,15 @@ public class UI_TownSelectButton : UI_Base
     public void SetQuestVFX(bool active)
     {
         GetObject((int)GameObjects.TownSelectButtonQuestVFX)?.SetActive(active);
+    }
+
+    // 현재 활성 퀘스트 notify 목록(activeIds)에 이 노드의 ClickBtnId/EnterBtnId가 있으면 VFX 표시.
+    public void RefreshQuestVFX(HashSet<string> activeIds)
+    {
+        bool on = _node != null && activeIds != null &&
+            ((!string.IsNullOrEmpty(_node.ClickBtnId) && activeIds.Contains(_node.ClickBtnId)) ||
+             (!string.IsNullOrEmpty(_node.EnterBtnId) && activeIds.Contains(_node.EnterBtnId)));
+        SetQuestVFX(on);
     }
 
 }

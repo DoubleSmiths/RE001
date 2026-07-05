@@ -186,7 +186,9 @@ public class UI_GameScene : UI_Scene
 
         Managers.Quest.OnFollowUIChanged += RefreshQuestFollow;
         Managers.Quest.OnBtnUnlocked += OnBtnUnlocked;
+        Managers.Quest.OnNotifyChanged += RefreshQuestNotify;
         RefreshQuestFollow(Managers.Quest.CurrentQuestID);
+        RefreshQuestNotify();
 
         // 슬라이드 10: 최하단 탭 버튼 하이라이트 되돌림을 위한 Popup 닫힘 구독
         Managers.UI.OnPopupClosed += OnBtmPopupClosed;
@@ -226,10 +228,32 @@ public class UI_GameScene : UI_Scene
         {
             Managers.Quest.OnFollowUIChanged -= RefreshQuestFollow;
             Managers.Quest.OnBtnUnlocked -= OnBtnUnlocked;
+            Managers.Quest.OnNotifyChanged -= RefreshQuestNotify;
         }
 
         if (Managers.UI != null)
             Managers.UI.OnPopupClosed -= OnBtmPopupClosed;
+    }
+
+    // 퀘스트 느낌표(VFX) 갱신: 하단 나가기 버튼 / 전투 중 여정 버튼.
+    // VFX 전용 키 또는 클릭 액션 키(BTN_*) 어느 쪽이 notify 목록에 있어도 켜진다. (UI_Village1BtnGroup과 동일 패턴)
+    void RefreshQuestNotify()
+    {
+        if (Managers.Quest == null)
+            return;
+
+        bool exitOn = false;
+        bool travelOn = false;
+        foreach (var n in Managers.Quest.GetCurrentNotifyList())
+        {
+            if (n.BtnID == EXIT_QUEST_VFX || n.BtnID == BTN_EXIT)
+                exitOn = true;
+            if (n.BtnID == TRAVEL_BUTTON_ON_BATTLE_QUEST_VFX || n.BtnID == BTN_JOURNEY)
+                travelOn = true;
+        }
+
+        GetObject((int)GameObjects.ExitQuestVFX)?.SetActive(exitOn);
+        GetObject((int)GameObjects.TravelButtonOnBattleQuestVFX)?.SetActive(travelOn);
     }
 
     public void FadeInOut()

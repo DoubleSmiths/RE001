@@ -254,14 +254,14 @@
   "hotPaths": [
     {
       "path": "Assets\\@Scripts",
-      "accessCount": 23,
-      "lastAccessed": 1783232130410,
+      "accessCount": 31,
+      "lastAccessed": 1783233648094,
       "type": "directory"
     },
     {
       "path": "Assets\\@Scripts\\UI\\Scene\\UI_GameScene.cs",
-      "accessCount": 19,
-      "lastAccessed": 1783232127009,
+      "accessCount": 30,
+      "lastAccessed": 1783233824049,
       "type": "file"
     },
     {
@@ -271,21 +271,33 @@
       "type": "file"
     },
     {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_TravelPopup.cs",
+      "accessCount": 13,
+      "lastAccessed": 1783233843659,
+      "type": "file"
+    },
+    {
       "path": "Assets\\@Scripts\\Managers\\Contents\\GameManager.cs",
       "accessCount": 11,
       "lastAccessed": 1783232155388,
       "type": "file"
     },
     {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_TravelPopup.cs",
-      "accessCount": 9,
-      "lastAccessed": 1783232182249,
+      "path": "Assets\\@Scripts\\Editor\\DataTransformer.cs",
+      "accessCount": 10,
+      "lastAccessed": 1783233329709,
       "type": "file"
     },
     {
       "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Village1BtnGroup.cs",
-      "accessCount": 8,
-      "lastAccessed": 1783232112663,
+      "accessCount": 10,
+      "lastAccessed": 1783233646748,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Resources\\Data\\JsonData\\ComboData.json",
+      "accessCount": 9,
+      "lastAccessed": 1783233379435,
       "type": "file"
     },
     {
@@ -295,9 +307,15 @@
       "type": "file"
     },
     {
-      "path": "Assets\\@Scripts\\Editor\\DataTransformer.cs",
+      "path": "Assets\\@Scripts\\Utils\\Define.cs",
+      "accessCount": 7,
+      "lastAccessed": 1783233800211,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BattleBtnGroup.cs",
       "accessCount": 6,
-      "lastAccessed": 1783232187788,
+      "lastAccessed": 1783233262411,
       "type": "file"
     },
     {
@@ -307,15 +325,27 @@
       "type": "file"
     },
     {
-      "path": "Documents\\Part2_Gap_Backlog.md",
-      "accessCount": 4,
-      "lastAccessed": 1782434679935,
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_FieldSelectButton.cs",
+      "accessCount": 5,
+      "lastAccessed": 1783233030203,
       "type": "file"
     },
     {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_FieldSelectButton.cs",
+      "path": "Assets\\@Scripts\\Data\\Data.Contents.cs",
+      "accessCount": 5,
+      "lastAccessed": 1783233089321,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\Managers\\Contents\\ComboManager.cs",
+      "accessCount": 5,
+      "lastAccessed": 1783233414472,
+      "type": "file"
+    },
+    {
+      "path": "Documents\\Part2_Gap_Backlog.md",
       "accessCount": 4,
-      "lastAccessed": 1783232077614,
+      "lastAccessed": 1782434679935,
       "type": "file"
     },
     {
@@ -335,18 +365,6 @@
       "accessCount": 4,
       "lastAccessed": 1783232121494,
       "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Data\\Data.Contents.cs",
-      "accessCount": 4,
-      "lastAccessed": 1783232125389,
-      "type": "directory"
-    },
-    {
-      "path": "Assets\\@Scripts\\Utils\\Define.cs",
-      "accessCount": 4,
-      "lastAccessed": 1783232153201,
-      "type": "directory"
     },
     {
       "path": "Assets\\@Scripts\\UI\\Popup\\UI_SkillDetailPopup.cs",
@@ -385,6 +403,12 @@
       "type": "file"
     },
     {
+      "path": "Assets\\@Scripts\\Managers\\Core\\DataManager.cs",
+      "accessCount": 3,
+      "lastAccessed": 1783233203029,
+      "type": "file"
+    },
+    {
       "path": "Assets\\@Resources\\Data",
       "accessCount": 2,
       "lastAccessed": 1782919361936,
@@ -406,18 +430,6 @@
       "path": "Assets\\@Scripts\\UI\\Popup\\UI_WarningPopup.cs",
       "accessCount": 2,
       "lastAccessed": 1783232070503,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Managers\\Core\\DataManager.cs",
-      "accessCount": 2,
-      "lastAccessed": 1783232073129,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BattleBtnGroup.cs",
-      "accessCount": 2,
-      "lastAccessed": 1783232075977,
       "type": "file"
     },
     {
@@ -448,12 +460,6 @@
       "path": "Assets\\@Scripts\\UI\\Popup\\UI_InventoryPopup.cs",
       "accessCount": 2,
       "lastAccessed": 1783232120749,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Managers\\Contents\\ComboManager.cs",
-      "accessCount": 2,
-      "lastAccessed": 1783232139783,
       "type": "file"
     },
     {
@@ -509,12 +515,6 @@
       "accessCount": 1,
       "lastAccessed": 1782919178662,
       "type": "directory"
-    },
-    {
-      "path": "Assets\\@Resources\\Data\\JsonData\\ComboData.json",
-      "accessCount": 1,
-      "lastAccessed": 1782919366107,
-      "type": "file"
     },
     {
       "path": "Assets\\@Resources\\Data\\JsonData\\TravelNodeData.json",

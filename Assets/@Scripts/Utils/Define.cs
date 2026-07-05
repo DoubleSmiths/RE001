@@ -554,9 +554,14 @@ public class Define
 
     public const string BTN_EXIT = "BTN_EXIT";
 
+    // UI_GameScene 하단 (나가기 / 전투 중 여정 버튼 느낌표)
+    public const string EXIT_QUEST_VFX = "EXIT_QUEST_VFX";
+    public const string TRAVEL_BUTTON_ON_BATTLE_QUEST_VFX = "TRAVEL_BUTTON_ON_BATTLE_QUEST_VFX";
+
     // Travel UI (미구현)
     public const string BTN_JOURNEY = "BTN_JOURNEY";
     public const string BTN_EXPLORE = "BTN_EXPLORE";
+    public const string BTN_TOWN = "BTN_TOWN";   // 여정 팝업 마을 카테고리 버튼 느낌표 (BTN_EXPLORE와 대칭)
     public const string BTN_MAP_BREEZING_WIND_FOREST = "BTN_MAP_BREEZING_WIND_FOREST";
     public const string BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE = "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE";
 

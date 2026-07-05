@@ -5808,7 +5808,7 @@ GameObject:
   - component: {fileID: 8874220661514081170}
   - component: {fileID: 5928707884918575479}
   m_Layer: 5
-  m_Name: TravelButton(OnBattle)
+  m_Name: TravelButtonOnBattle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30384,7 +30384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6917533855875591474}
   m_Layer: 5
-  m_Name: TravelButton(OnBattle)QuestVFX
+  m_Name: TravelButtonOnBattleQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

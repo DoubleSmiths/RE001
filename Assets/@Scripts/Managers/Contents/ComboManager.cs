@@ -288,7 +288,10 @@ public class ComboManager
     {
         var stage = GetCurrentStage();
         if (stage == null || string.IsNullOrEmpty(stage.ColorHex)) return Color.white;
-        return Util.HexToColor(stage.ColorHex.TrimStart('#'));
+        // 시트 ColorHex는 '#' 유무 모두 허용. 파싱 실패(오타 등) 시 투명색 방지 — 흰색 fallback.
+        if (ColorUtility.TryParseHtmlString("#" + stage.ColorHex.TrimStart('#'), out Color parsed))
+            return parsed;
+        return Color.white;
     }
 
     void FireTimerChanged()

@@ -292,7 +292,7 @@ public class UI_TravelPopup : UI_Popup
     }
 
     // 현재 퀘스트 notify 목록 기준으로 여정 팝업의 퀘스트 VFX를 일괄 갱신.
-    // - 대분류(탐험) 카테고리 버튼: BTN_EXPLORE
+    // - 대분류 카테고리 버튼: 탐험=BTN_EXPLORE, 마을=BTN_TOWN
     // - 동적 목적지 버튼: 각 노드의 ClickBtnId 또는 EnterBtnId가 활성 목록에 있으면 표시
     void RefreshQuestNotify()
     {
@@ -303,8 +303,7 @@ public class UI_TravelPopup : UI_Popup
 
         // 대분류 카테고리 고정 VFX
         GetObject((int)GameObjects.FieldCategoryButtonQuestVFX)?.SetActive(activeIds.Contains(BTN_EXPLORE));
-        // TOWN 카테고리는 현재 매핑되는 BtnID 없음 (필요 시 TOWN 유도 BtnID 추가 후 여기서 처리)
-        GetObject((int)GameObjects.TownCategoryButtonQuestVFX)?.SetActive(false);
+        GetObject((int)GameObjects.TownCategoryButtonQuestVFX)?.SetActive(activeIds.Contains(BTN_TOWN));
 
         // 동적 spawn된 목적지 버튼: 노드 ClickBtnId/EnterBtnId 매칭
         foreach (GameObject go in _spawnedTownButtons)

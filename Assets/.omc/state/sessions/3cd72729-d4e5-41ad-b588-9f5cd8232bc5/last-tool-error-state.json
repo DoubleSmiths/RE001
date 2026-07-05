@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"C:/stopresent/Unity/RE001/Assets\\\" && grep -c \\\"c5f2dd889be0fcd4eb0f8106b422f642\\\" \\\"@Resources/Animation/UI/Emoj/Emoj_Exclamation.anim\\\" && grep -o \\\"fileID: 2130009[0-9]*\\\" \\\"@Resou...",
+  "error": "Exit code 1\n0",
+  "timestamp": "2026-07-05T06:33:26.562Z",
+  "retry_count": 1
+}
