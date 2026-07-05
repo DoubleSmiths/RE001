@@ -48,7 +48,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
         const float FLASH_DURATION = 1f;   // GlowDot_01 파티클 버스트 시각 길이 (기획 튜닝값)
 
         // 빛줄기 버스트 — 페이드와 동시 재생
-        Destroy(Managers.Resource.Instantiate("Star_01_Anim_13_a", go.transform), 3.0f);
+        SpawnButtonFx("Star_01_Anim_13_a", go.transform, 3.0f);
 
         Sequence seq = DOTween.Sequence();
 
@@ -59,11 +59,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
         seq.Join(go.transform.DOScale(1f, 0.1f).SetDelay(FADE_DURATION + 0.01f).SetEase(Ease.InOutBack));
 
         // Fade In 종료 → 터지는 글로우 플래시 재생, 끝날 때까지 대기 후 완료(팝업)
-        seq.AppendCallback(() =>
-        {
-            GameObject flash = Managers.Resource.Instantiate("GlowDot_01", go.transform);
-            if (flash != null) Destroy(flash, FLASH_DURATION + 0.5f);
-        });
+        seq.AppendCallback(() => SpawnButtonFx("GlowDot_01", go.transform, FLASH_DURATION + 0.5f));
         seq.AppendInterval(FLASH_DURATION);
 
         seq.OnComplete(() =>
@@ -73,6 +69,24 @@ public abstract class UI_AreaBtnGroup : UI_Base
             go.GetComponent<Button>().interactable = true;
             onComplete?.Invoke();
         });
+    }
+
+    /// <summary>월드용 파티클 프리팹을 UI 버튼 위에 스폰.
+    /// UI 캔버스 공간에서는 월드 스케일(1)이 수 픽셀 크기라 안 보이므로,
+    /// 씬에서 정상 동작 중인 Quest_Done_Effect와 동일하게 ~22.5배로 확대한다.
+    /// (프리팹들은 이미 scalingMode=Hierarchy, sortingOrder 200~300으로 저작돼 있음)</summary>
+    const float UI_FX_SCALE = 22.5f;
+    static void SpawnButtonFx(string key, Transform parent, float lifetime)
+    {
+        GameObject fx = Managers.Resource.Instantiate(key, parent);
+        if (fx == null)
+        {
+            Debug.LogWarning($"[UI_AreaBtnGroup] FX prefab not found: {key}. Addressable PreLoad 필요.");
+            return;
+        }
+        fx.transform.localPosition = Vector3.zero;
+        fx.transform.localScale *= UI_FX_SCALE;
+        Destroy(fx, lifetime);
     }
 
     /// <summary>전체화면을 덮는 투명 GraphicRaycaster를 만들어 화면 전체 입력을 일시 차단.
