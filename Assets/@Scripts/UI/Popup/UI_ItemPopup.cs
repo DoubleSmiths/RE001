@@ -97,7 +97,9 @@ public class UI_ItemPopup : UI_Popup
         return true;
     }
 
-    public void SetInfo(int id)
+    // showGlow: 퀘스트 클리어 보상으로 열릴 때만 true — 이미지 후광/shine 표시.
+    //           소지품/귀중품 슬롯 클릭 등 일반 조회는 false(기본값) — 후광 없음.
+    public void SetInfo(int id, bool showGlow = false)
     {
         Managers.Sound?.PlaySFX("SFX_ItemPopup");   // 아이템 팝업
         ItemData data;
@@ -110,12 +112,18 @@ public class UI_ItemPopup : UI_Popup
         // 아이템 이름
         GetText((int)Texts.ItemPopupItemName).text = Localize(data.Name);
 
-        // 등급명 + TitleGlow는 항상 유지하되 색은 등급색(Util.GetGradeColor — 인벤/드롭/물약과 동일 컨벤션). ImgGroup 후광/shine만 제거.
+        // 등급명 + TitleGlow는 항상 유지하되 색은 등급색(Util.GetGradeColor — 인벤/드롭/물약과 동일 컨벤션).
+        // ImgGroup 후광/shine은 퀘스트 클리어 보상으로 열릴 때(showGlow)만 표시.
         GetText((int)Texts.ItemPopupItemDesc_Rare).text  = GetGradeName(data.Grade);
         GetImage((int)Images.ItemPopupTitleGlow).color = Util.GetGradeColor(data.Grade);
-        GetImage((int)Images.ItemPopupImgGroupGlow).gameObject.SetActive(false);
+        var imgGlow = GetImage((int)Images.ItemPopupImgGroupGlow);
+        if (imgGlow != null)
+        {
+            imgGlow.color = Util.GetGradeColor(data.Grade);
+            imgGlow.gameObject.SetActive(showGlow);
+        }
         var shine = GetObject((int)GameObjects.shineeffect);
-        if (shine != null) shine.SetActive(false);
+        if (shine != null) shine.SetActive(showGlow);
 
         // 발견 장소
         GetText((int)Texts.ItemPopupItemDesc_Found).text = Localize(data.FoundLocation);
