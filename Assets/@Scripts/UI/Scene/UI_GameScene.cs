@@ -818,12 +818,8 @@ public class UI_GameScene : UI_Scene
             GetImage((int)Images.Main_QuestFollow).GetComponent<DOTweenAnimation>().DORestart();
             GetObject((int)GameObjects.Quest_Done_Effect).GetComponent<ParticleSystem>().Play();
 
-            GameObject glow = Managers.Resource.Instantiate("GlowDot_01");
-            if (glow != null)
-            {
-                glow.transform.SetParent(followObj.transform, worldPositionStays: false);
-                Destroy(glow, 2f);
-            }
+            // 월드 ParticleSystem은 SSC 캔버스 위에 직접 렌더되지 않음(UIFx.cs 참조) → UIParticle 래퍼 경유
+            UIFx.PlayParticle((RectTransform)followObj.transform, Vector2.zero, "GlowDot_01", 2f);
         }
         else if (!isDone && _followDoneFxQuestId == questId)
         {
