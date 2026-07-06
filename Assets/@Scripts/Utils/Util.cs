@@ -136,10 +136,14 @@ public static class Util
         };
     }
 
-    public static void SetTMPOutline(TMP_Text tmp, Color32 color, float width = 0.15f)
+    public static void SetTMPOutline(TMP_Text tmp, Color32 color, float width = 0.5f)
     {
         tmp.outlineColor = color;
         tmp.outlineWidth = width;
+
+        //성우 추가
+        Material mat = tmp.fontMaterial;
+        mat.SetFloat(ShaderUtilities.ID_FaceDilate, 0.5f);
     }
 
     public static void SetTMPUnderlay(TMP_Text tmp, Color32 color, float offsetX, float offsetY, float softness = 0f)
