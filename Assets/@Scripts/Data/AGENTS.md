@@ -1,5 +1,5 @@
 <!-- Parent: ../AGENTS.md -->
-<!-- Generated: 2026-07-05 | Updated: 2026-07-05 -->
+<!-- Generated: 2026-07-05 | Updated: 2026-07-08 -->
 
 # Data
 
@@ -19,7 +19,7 @@
 
 | 데이터 클래스 | Loader | 딕셔너리 키 | 비고 |
 |---|---|---|---|
-| `CreatureData` | `CreatureDataLoader` | `DataId` (int) | 몬스터 스탯/드롭/SFX/AnimController/Habitat/미니몬 고유기술 필드 포함 |
+| `CreatureData` | `CreatureDataLoader` | `DataId` (int) | 몬스터 스탯/드롭/SFX/AnimController/Habitat/미니몬 고유기술 필드 포함. 처치 보상 확률 필드(슬55 #15~17, 시트 W/X/Y열): `GoldDropChance`(0~1, **0이면 미기입 취급 = 항상 지급**), `DiaDropChance`(0~1, 0이면 드롭 없음), `DiaDropCount` |
 | `EquipmentData` | `EquipmentDataLoader` | `DataId` | EquipSlotType/EquipGrade enum 필드 |
 | `EquipEnhanceData` | `EquipEnhanceDataLoader` | `DataId` | 장비 강화 레벨별 보너스/재료 |
 | `SkillData` | `SkillDataLoader` | `DataId` | 능력(Ability) 시스템 — 발동조건(AbilityTrigger/Condition/Context/Effect), 출처(AbilitySource), MemoryCapacity(0=재능) |
@@ -29,8 +29,8 @@
 | `BuffData` | `BuffDataLoader` | `DataId` | 좌상단 버프 아이콘(UI_Buff) 카탈로그, Timed 여부 |
 | `AreaData` | `AreaDataLoader` | `DataId` | (TravelNode로 대체 추세 — IntegrationTestMenu 주석 참고) |
 | `TravelNodeData` | `TravelNodeDataLoader` | `Id` (int, DataId 아님 주의) | 여정 트리 노드 (Category "TOWN"/"EXPLORE") |
-| `TravelConditionData` | `TravelConditionDataLoader` | `NodeId` → `List<TravelConditionData>` | 1:N 그룹핑 로더 |
-| `MinMonData` | `MinMonDataLoader` | `DataId` | 미니몬 — MonsterDataId로 CreatureData 참조, MinMonGrade enum |
+| `TravelConditionData` | `TravelConditionDataLoader` | `NodeId` → `List<TravelConditionData>` | 1:N 그룹핑 로더. Type 6종(슬47 여정 해금): `QUEST_CLEAR`/`BTN_UNLOCKED`/`ITEM_REQUIRED`/`LEVEL_REQUIRED`/`KILL_COUNT`(Target=몬스터 DataId, Value=필요 처치 수)/`RANK`(Value=필요 모험가 등급) |
+| `MinMonData` | `MinMonDataLoader` | `DataId` | 미니몬 — MonsterDataId로 CreatureData 참조, MinMonGrade enum. `FollowOffsetX/Y`(기획서2 슬19): 기본 동행 위치(플레이어 왼쪽 -1.5, 발치 0)에 가산되는 미니몬별 보정, 0/0이면 현행 위치 — CompanionController에서 적용 |
 | `ForgeRecipeData` | `ForgeRecipeDataLoader` | `DataId` | 대장간 레시피 |
 | `CraftRecipeData` (+`CraftMaterial`) | `CraftRecipeDataLoader` | `DataId` | 연금공방 제작 (CraftCategory: Potion/Skill) |
 | `LevelData` | `LevelDataLoader` | `Level` (int, DataId 아님 주의) | 레벨별 요구 경험치 |
@@ -50,6 +50,13 @@
 - 필드 기본값(예: `CritDamage = 150f`, `Accuracy = 80f`, `AttackSfx = "Slime_Attack"`)은 시트 컬럼이 비어있을 때의 fallback 역할 — 임의로 바꾸면 기존 JSON 로드 결과가 달라진다.
 - `Name`/`Description`/`Story`/`NameKey` 류 string 필드 다수가 LocalizationData의 TextKey를 담는다(표시 시 `Util.Localize()` 통과). 실제 표시 문자열을 직접 넣지 말 것.
 - enum 타입 필드는 모두 `Utils/Define.cs`에 정의 — 새 enum 값이 필요하면 Define.cs 수정.
+
+### 스펙 출처 (기획서 매핑)
+게임 스펙의 원전은 구글 슬라이드 기획서 2종 — **기획서1**(70장: UI/연출/전투), **기획서2**(54장: 도감/미니몬/능력) + 수정안. 에디터 쪽 미러는 `Editor/QuestVerifyMenu.cs`(슬라이드별 시연 메뉴).
+
+| 파일 | 기획서 슬라이드 |
+|------|----------------|
+| `Data.Contents.cs` | 기획서1 슬55 (몬스터 데이터 시트 스키마) |
 
 ### Common Patterns
 - `ILoader<Key, Value>.MakeDict()` — List 필드를 순회해 Dictionary 생성. 단일 키는 `dict.Add(item.DataId, item)`, 1:N은 `Dictionary<int, List<T>>`로 그룹핑 후 `Order` 정렬.

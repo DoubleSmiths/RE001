@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"C:/stopresent/Unity/RE001\\\" && echo \\\"=== Tune() call keys (code) ===\\\" && grep -rhoE 'Tune\\\\(\\\"[A-Za-z]+\\\"' Assets/@Scripts | sed -E 's/Tune\\\\(\\\"([A-Za-z]+)\\\"/\\\\1/' | sort -u > /tmp/...",
+  "error": "Exit code 1\n=== Tune() call keys (code) ===\nAreaUnlockFlashDuration\nAreaUnlockFxScale\nComboSlowMoDuration\nComboSlowMoScale\nCritShakeDuration\nCritShakeStrength\nDialogueBgFadeDuration\nDialogueBoxFadeDuration\nDialogueTypingSpeed\nHitStopCritDuration\nHitStopDuration\nHitStopScale\nHpFxChestRatio\nOfflineEstHitsPerKill\nOfflineMaxHours\nOfflineMinMinutes\nOfflineSpawnIntervalSec\nPlayerBuildingScale\nRankUpGlowAlpha\nRankUpGlowFadeout\n\n=== JSON keys ===\nAreaUnlockFlashDuration\r\nAreaUnlockFxScale\r\nComboSlowMoDu...",
+  "timestamp": "2026-07-10T12:54:52.610Z",
+  "retry_count": 1
+}

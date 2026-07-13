@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RE001 — 성공하는 게임을 위한 제언 (조언2)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; background: #12121f; color: #e6e6ee; line-height: 1.8; padding: 48px 20px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header { border-bottom: 2px solid #c9a24b; padding-bottom: 18px; margin-bottom: 36px; }
+  h1 { color: #f0d78c; font-size: 27px; letter-spacing: -0.5px; }
+  .lead { color: #a8a8c0; font-size: 14px; margin-top: 8px; }
+  h2 { color: #8fd0ff; font-size: 20px; margin: 44px 0 6px; }
+  h2 .no { color: #c9a24b; margin-right: 8px; }
+  .why { color: #8888a8; font-size: 12.5px; margin-bottom: 14px; font-style: italic; }
+  .card { background: #1c1c30; border: 1px solid #2e2e4e; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+  .card h3 { font-size: 15px; color: #ffde9c; margin-bottom: 6px; }
+  .card p, .card li { font-size: 13.5px; color: #c6c6da; }
+  .card ul { padding-left: 18px; margin-top: 4px; }
+  .card li { margin-bottom: 3px; }
+  code { background: #0e0e1c; color: #8ee6d0; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; font-family: Consolas, monospace; }
+  .verdict { background: linear-gradient(135deg, #26263f, #1e2e35); border: 1px solid #3c5a66; border-radius: 8px; padding: 18px 22px; margin: 28px 0; }
+  .verdict h3 { color: #7ee8c8; font-size: 15px; margin-bottom: 8px; }
+  .verdict p { font-size: 13.5px; color: #c6d6d0; }
+  .grade { display: inline-block; font-size: 11px; padding: 1px 9px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+  .g1 { background: #4a2530; color: #ff9cb0; }  /* 핵심 */
+  .g2 { background: #4a3d25; color: #ffd79c; }  /* 권장 */
+  .g3 { background: #25404a; color: #9cdcff; }  /* 아이디어 */
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>RE001 — 성공하는 게임을 위한 제언</h1>
+  <div class="lead">2026-07-08 · 코드베이스/기획서/QA 세션 전체를 근거로 한 전략 제언. "지금 잘 돼 있는 것 위에 무엇을 얹어야 상용 수준이 되는가"의 관점.</div>
+</header>
+
+<div class="verdict">
+  <h3>총평</h3>
+  <p>이 프로젝트의 최대 자산은 <b>데이터 드리븐 아키텍처</b>(시트→JSON→매니저)와 <b>연출에 대한 기획 감각</b>입니다. 대화·해금·랭크업 연출의 디테일 요구 수준은 이미 상용 게임 감각입니다. 반면 가장 큰 공백은 <b>"방치형"이라는 장르 코어가 아직 코드에 없다</b>는 것(오프라인 보상·시간 루프 부재)과, <b>세로 성장 루프(장비·강화·전직)가 미완</b>이라는 점입니다. 콘텐츠보다 <u>루프를 먼저 닫는 것</u>을 권합니다 — 루프가 닫히면 지금의 데이터 파이프라인으로 콘텐츠는 빠르게 증식시킬 수 있습니다.</p>
+</div>
+
+<h2><span class="no">1</span>코어 루프를 닫아라 — 방치형의 심장</h2>
+<div class="why">현재: 전투→드롭→퀘스트는 있으나 "게임을 꺼도 성장한다"가 없음. 방치형 리텐션의 절반은 여기서 나옵니다.</div>
+<div class="card">
+  <h3>오프라인 보상 + 시간 회복 <span class="grade g1">핵심</span></h3>
+  <ul>
+    <li><code>TimeManager</code>를 부활시켜 CLAUDE.md 설계대로 오프라인 골드/경험치 정산 → 복귀 시 "부재 중 수익" 팝업. 복귀 순간의 보상 연출이 재접속 동기의 핵심.</li>
+    <li>전투 지역별 "분당 수익률"을 CreatureData(RewardGold/TotalExp)에서 자동 산출하면 별도 밸런스 시트 없이 구현 가능 — 지금 구조의 강점.</li>
+    <li>스태미나보다는 <b>수익 상한(방치 최대 시간)</b> 방식을 권장 — 세로형 캐주얼 방치 게임에서 스태미나는 이탈 요인이 되는 추세.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>자동 전투 반복(사냥 루프) 완성 <span class="grade g1">핵심</span></h3>
+  <p>지금은 필드 진입→처치→수동 귀환 구조. "몬스터 N마리 자동 반복 → 가방이 차면/목표 달성 시 알림" 루프가 있어야 방치가 성립합니다. <code>MaxKillCount</code> 컬럼이 시트에 이미 있는 것으로 보아 기획 의도가 있는 듯 — 이 필드를 실제 루프에 연결하는 것을 최우선 과제로.</p>
+</div>
+
+<h2><span class="no">2</span>성장 축을 두 개 이상으로 — 장비·강화·전직</h2>
+<div class="why">현재 성장은 레벨(스탯)뿐. 세로 성장 축이 하나면 정체 구간에서 바로 이탈합니다.</div>
+<div class="card">
+  <h3>장비 시스템 완성 <span class="grade g1">핵심</span></h3>
+  <ul>
+    <li><code>UI_EquipmentPopup</code>은 내비게이션만 구현. 장착 효과 → 스탯 반영(<code>RefreshStats</code>) → 대장간 강화(T1→T3, 기획서의 망치 연출)까지가 한 묶음.</li>
+    <li>주의: <code>RefreshStats</code>가 딕셔너리 키 불일치로 사실상 하드코딩 폴백만 타는 상태(코드 주석으로 확인) — 장비 착수 전에 이 스탯 파이프부터 정리해야 이중작업을 피합니다.</li>
+    <li><code>ForgeRecipe/CraftRecipe</code> 시트 로드가 주석 처리돼 죽은 경로 — 시트 스키마 확정 후 재활성화.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>미니언(펫)을 "수집→전투 기여" 루프로 <span class="grade g2">권장</span></h3>
+  <p>도감·포획·동기화%까지 만들어져 있는데 전투 기여가 약하면 수집 동기가 죽습니다. 미니언별 패시브(예: 특정 지역 수익 +%, 특정 몬스터 추가 데미지)를 CreatureData/MinMon 시트에 컬럼로 추가하면 데이터만으로 확장 가능. "9번 더 길들일 시" 같은 성장 훅은 이미 좋음 — 보상만 채우면 됩니다.</p>
+</div>
+<div class="card">
+  <h3>랭크(모험가 등급)를 진행 게이트로 <span class="grade g2">권장</span></h3>
+  <p>랭크업 데이터 반영(<code>RANK_SET</code>)을 붙인 뒤, 랭크를 지역 해금·의뢰 등급·제작 티어의 공통 게이트로 쓰면 "협회 게임"이라는 정체성이 삽니다. 랭크 승급 시험(보스 의뢰) 같은 마일스톤 이벤트가 좋은 리듬을 만듭니다.</p>
+</div>
+
+<h2><span class="no">3</span>전투의 손맛 — 이미 있는 재료로</h2>
+<div class="why">콤보 시스템(랭크·버프·색상)이라는 좋은 뼈대가 있는데 피드백이 약하면 아깝습니다.</div>
+<div class="card">
+  <h3>타격감 3종 세트 <span class="grade g2">권장</span></h3>
+  <ul>
+    <li>히트스톱(0.03~0.06s), 카메라 미세 쉐이크(치명타 시), 몬스터 히트 플래시 — 모두 저비용 고효율. DOTween 인프라가 이미 충분.</li>
+    <li>콤보 랭크 상승 순간에 화면 가장자리 글로우(랭크 색상 = 이미 데이터 드리븐) — <code>GetRankColor</code> 재사용.</li>
+    <li>DamageNumbersPro 보유 — 치명타/속성별 폰트 차별화만 해도 체감이 크게 다름.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>몬스터 다양성은 "행동 1개씩"만 <span class="grade g3">아이디어</span></h3>
+  <p>지역당 몬스터 3~4종 × 각 1개의 고유 행동(도망, 원거리, 자폭, 소환)이면 충분히 다르게 느껴집니다. 상태머신이 이미 있으므로 행동 타입을 CreatureData 컬럼(enum)로 빼서 데이터 드리븐으로.</p>
+</div>
+
+<h2><span class="no">4</span>리텐션 장치 — 매일 돌아올 이유</h2>
+<div class="card">
+  <h3>일일 의뢰(데일리 퀘스트) <span class="grade g1">핵심</span></h3>
+  <p>모험가 협회 컨셉과 완벽히 맞는 장치. 지금의 QuestManager는 선형 메인 퀘스트 전용이므로, <b>반복 퀘스트 트랙</b>(일일 3건: 처치 N/수집 N/제작 1)을 별도 시트+매니저로. 접수원 아가씨에게 받는 연출이면 세계관 몰입도 유지.</p>
+</div>
+<div class="card">
+  <h3>도감 완성 보상 루프 <span class="grade g2">권장</span></h3>
+  <p>도감 완성도 게이지·등급별 보상 잠금 UI는 기획서에 있음 — 보상(젬/칭호/스탯)을 실제로 지급하는 루프를 닫으면 수집형 리텐션이 생깁니다.</p>
+</div>
+<div class="card">
+  <h3>세이브 견고성 <span class="grade g1">핵심 (신뢰)</span></h3>
+  <ul>
+    <li>단일 <code>SaveData.json</code>은 크래시 타이밍에 따라 유실 위험 — <b>임시파일 쓰기→교체(atomic write) + 직전 백업 1개 + 스키마 버전 필드</b>는 출시 전 필수.</li>
+    <li>property setter마다 전체 저장하는 현재 구조는 더티 플래그+주기 저장으로 배칭 (스토리지 마모/프레임 스파이크 예방).</li>
+  </ul>
+</div>
+
+<h2><span class="no">5</span>수익화 — 세계관을 해치지 않는 설계</h2>
+<div class="card">
+  <h3>젬(별조각) 사용처 설계 <span class="grade g2">권장</span></h3>
+  <ul>
+    <li>시트에 <code>DiaDropChance</code>가 이미 있음 — 획득처는 준비됨, 사용처가 없음. 권장 순서: ①오프라인 보상 즉시 수령(광고 대체) ②제작/강화 시간 단축 ③미니언 슬롯 확장 ④코스메틱(캐릭터 스킨).</li>
+    <li>보상형 광고는 "오프라인 수익 2배 수령", "무료 뽑기 1회" 같은 <b>플러스 형</b>만 — 진행 차단형 광고는 이 아트 톤과 상성이 나쁨.</li>
+    <li>"통행증" 소재가 이미 세계관에 있음 — 시즌 패스(모험가 통행증)로 자연스럽게 확장 가능한 훌륭한 네이밍 자산.</li>
+  </ul>
+</div>
+
+<h2><span class="no">6</span>완성도 — 작지만 체감이 큰 것들</h2>
+<div class="card">
+  <h3>한/영 전환 100% <span class="grade g2">권장 (진행 중)</span></h3>
+  <p>프리팹에 한글 원문 0개(전부 런타임 Localize)라는 구조는 훌륭합니다. 진행 중인 전 프리팹 감사에서 나온 "코드 미갱신 텍스트"만 소거하면 로컬라이즈 완성 — 글로벌 세로형 픽셀 게임은 영어권 수요가 실제로 큽니다.</p>
+</div>
+<div class="card">
+  <h3>픽셀 아트 일관성 규칙 <span class="grade g3">아이디어</span></h3>
+  <p>건물 내부 플레이어 1.5배 확대에서 보였듯 픽셀 게임은 비정수 스케일에서 도트가 깨집니다. "스프라이트 스케일은 정수 배율(1x/2x)만, 예외는 기획 승인" 같은 규칙을 아트 가이드로 문서화 권장.</p>
+</div>
+<div class="card">
+  <h3>사운드 레이어 <span class="grade g3">아이디어</span></h3>
+  <p>지역별 BGM + 앰비언스(숲 새소리/공방 화로) 2레이어면 몰입감이 크게 상승. <code>SoundManager</code> 크로스페이드가 이미 있어 추가 비용 낮음. UI 사운드는 SFX 훅(자동 클릭음)이 이미 있으니 종류만 확충.</p>
+</div>
+
+<h2><span class="no">7</span>라이브 운영 준비 — 출시 전 마지막 블록</h2>
+<div class="card">
+  <h3>측정 없이는 튜닝도 없다 <span class="grade g2">권장</span></h3>
+  <ul>
+    <li>최소 이벤트 로깅: 세션 시작/종료, 퀘스트 도달/이탈 지점, 첫 결제/광고 시청. (Firebase Analytics 무료 티어로 충분)</li>
+    <li>크래시 리포팅(Crashlytics/Backtrace) — 픽셀 게임 유저층은 리뷰에 크래시를 바로 씁니다.</li>
+    <li>밸런스 수치가 전부 시트 기반인 구조는 <b>원격 구성(Remote Config)으로 JSON을 내려주는 방식</b>과 궁합이 좋음 — 빌드 없이 밸런스 핫픽스 가능해짐. 장기 과제로 검토 가치 큼.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>QA 자동화 확대 <span class="grade g3">아이디어</span></h3>
+  <p>이번에 만든 원클릭 연출 녹화(<code>UnlockAnimRecorder</code>)와 기존 Test 메뉴들을 "스모크 테스트 스위트"로 묶어 빌드 전 1회 실행하는 습관 — 기획 수정안 검증 속도가 곧 이 팀의 이터레이션 속도입니다.</p>
+</div>
+
+<div class="verdict" style="margin-top:40px">
+  <h3>권장 착수 순서 (한 줄 로드맵)</h3>
+  <p><b>① 오프라인 보상+자동 사냥 루프</b>(장르 코어) → <b>② 스탯 파이프 정리+장비/강화</b>(세로 성장) → <b>③ 일일 의뢰+도감 보상</b>(리텐션) → <b>④ 세이브 견고화+로깅</b>(출시 준비) → <b>⑤ 수익화 부착</b>. 연출과 데이터 파이프라인이라는 두 강점은 이미 상용 수준이니, 루프를 닫는 데 자원을 집중하면 성공 확률이 실제로 높은 프로젝트입니다.</p>
+</div>
+
+</div>
+</body>
+</html>

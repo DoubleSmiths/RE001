@@ -1,5 +1,5 @@
 <!-- Parent: ../AGENTS.md -->
-<!-- Generated: 2026-07-05 | Updated: 2026-07-05 -->
+<!-- Generated: 2026-07-05 | Updated: 2026-07-09 -->
 
 # Managers/Core
 
@@ -34,6 +34,9 @@
 - 이름 규약 루트 오브젝트: `@UI_Root`, `@SoundRoot`, `@{prefab}Pool` — `GameObject.Find` 후 없으면 생성.
 - DOTween `SetUpdate(true)` — timeScale 무시 페이드(BGM).
 - `.sprite` 접미사 규약: 데이터 시트의 스프라이트 키에 `.sprite`가 없으면 Load에서 임시로 붙여 재조회.
+
+### 스펙 출처 (기획서 매핑)
+원전은 구글 슬라이드 기획서(기획서1 70장 / 기획서2 54장, 개요는 `../../AGENTS.md` 동명 소절 참조). Core 계층에서 직접 매핑되는 스펙: `FontManager.cs` → **기획서1 슬3** (언어별 폰트 — Cafe24=대화, PF_Stardust=한글 UI, DOSSaemmul=영문 UI·숫자/랭크 고정).
 
 ## Dependencies
 

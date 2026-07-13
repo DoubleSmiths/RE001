@@ -1,22 +1,50 @@
 {
   "version": 1,
   "entries": {
-    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1783239543796,
-      "message": "Read multiple files in parallel when possible for faster analysis."
-    },
-    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1783239473700,
-      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
-    },
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1783238912538,
+      "last_emitted_at_ms": 1783689084314,
       "message": "Verify changes work after editing. Test functionality before marking complete."
     },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1783689059682,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
     "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
-      "last_emitted_at_ms": 1783238827063,
+      "last_emitted_at_ms": 1783689040049,
       "message": "Combine searches in parallel when investigating multiple patterns."
+    },
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1783687809510,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "808890d69fdd4ed40babfc92cfb1f8f759d4538d7b5ef09a60b808d366746483": {
+      "last_emitted_at_ms": 1783687600104,
+      "message": "Spawning agent: general-purpose (inherit) | Task: Wave2: UITuning 데이터화"
+    },
+    "6d8cfa4924adf0339efeb417144dc8d38357ae14c9b43db68fa50c03660186b4": {
+      "last_emitted_at_ms": 1783686765964,
+      "message": "Spawning agent: general-purpose (inherit) | Task: B6 재시도: 미사용 에셋 격리"
+    },
+    "1f739ecf25ff02773d027acf638f76495251989c38f61df9bc7db36859e4a379": {
+      "last_emitted_at_ms": 1783686756539,
+      "message": "Spawning agent: general-purpose (inherit) | Task: B5 재시도: 물약 수량 연동"
+    },
+    "630d610084cb92a3ecb92924809e127046bf456c649ffcdd569065324d0aa107": {
+      "last_emitted_at_ms": 1783686745397,
+      "message": "Spawning agent: general-purpose (inherit) | Task: B4 재시도: 전투 타격감"
+    },
+    "f17ecbac213078cba5c26d8932039cc4b9527e851abe1876d084061977d0e8b7": {
+      "last_emitted_at_ms": 1783686730450,
+      "message": "Spawning agent: general-purpose (inherit) | Task: B3 재시도: 에디터 검증 도구"
+    },
+    "7038fb838042019fa6b44e56e5cca6b95b2e728455723c78062db973f357ebf5": {
+      "last_emitted_at_ms": 1783686719440,
+      "message": "Spawning agent: general-purpose (inherit) | Task: B2 재시도: 오프라인 보상"
+    },
+    "112738f98d834bcfb88ab122e22b2e065289559e6715db247c8686419dce94a2": {
+      "last_emitted_at_ms": 1783686705486,
+      "message": "Spawning agent: general-purpose (inherit) | Task: B1 재시도: 세이브 견고화+랭크업"
     }
   },
-  "updated_at": "2026-07-05T08:19:03.796Z"
+  "updated_at": "2026-07-10T13:11:24.314Z"
 }

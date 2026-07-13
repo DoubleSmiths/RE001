@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RE001 코드개선사항</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Malgun Gothic','Segoe UI',sans-serif; background:#0f0f1c; color:#e8e8f0; line-height:1.6; }
+.wrap { max-width:1100px; margin:0 auto; padding:34px 20px 80px; }
+.hero { position:relative; border-radius:14px; overflow:hidden; margin-bottom:26px; border:1px solid #33335a; }
+.hero img { width:100%; display:block; filter:brightness(.4); max-height:270px; object-fit:cover; }
+.hero .t { position:absolute; left:32px; bottom:24px; }
+.hero h1 { font-size:32px; color:#ffd76a; text-shadow:0 2px 12px #000; }
+.hero p { color:#d0d0e4; font-size:13px; }
+.dash { background:#171729; border:1px solid #2c2c4e; border-radius:12px; padding:18px 22px; margin-bottom:10px; }
+.dash h3 { color:#fff; font-size:14px; margin-bottom:12px; }
+.bar { display:flex; align-items:center; gap:12px; margin-bottom:7px; font-size:12.5px; }
+.bar span { width:150px; color:#b8b8d0; }
+.bar b { width:30px; text-align:right; color:#fff; }
+.track { flex:1; height:14px; border-radius:7px; overflow:hidden; display:flex; background:#0a0a16; }
+.track i { display:block; height:100%; }
+.legend { font-size:11.5px; color:#9090ac; margin-top:10px; }
+.legend em { font-style:normal; padding:1px 9px; border-radius:9px; margin-right:6px; font-size:11px; }
+h2 { font-size:19px; margin:40px 0 3px; }
+.h2sub { color:#8484a2; font-size:12px; margin-bottom:14px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(480px,1fr)); gap:12px; }
+.card { background:#1a1a2e; border:1px solid #2c2c4e; border-radius:10px; padding:13px 16px; border-left:4px solid #555; transition:transform .15s; }
+.card:hover { transform:translateY(-3px); }
+.card.b1 { border-left-color:#ff7b7b; } .card.b2 { border-left-color:#ffd76a; } .card.b3 { border-left-color:#7ee8a0; }
+.head { display:flex; gap:9px; align-items:flex-start; margin-bottom:4px; }
+.card h3 { font-size:14px; color:#ffe4a0; line-height:1.45; }
+.sev { flex-shrink:0; font-size:10.5px; padding:2px 9px; border-radius:10px; font-weight:bold; margin-top:1px; }
+.sev.b1 { background:#4a2222; color:#ff9c9c; animation:pulse 1.6s infinite; }
+.sev.b2 { background:#4a3d1e; color:#ffe49c; } .sev.b3 { background:#1e4229; color:#9cffc0; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.file { font-family:Consolas,monospace; font-size:11px; color:#7ea8d8; margin-bottom:7px; word-break:break-all; }
+.chip { margin-top:5px; }
+.chip span { display:block; font-size:12px; padding:6px 10px; border-radius:7px; }
+.now { background:#301c22; color:#ffb8b8; border-left:3px solid #d06060; }
+.to { background:#1a3022; color:#a8ecc0; border-left:3px solid #50b870; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <img src="Documents/발표자료/play_mid.png" alt="RE001">
+    <div class="t"><h1>코드개선사항</h1>
+    <p>2026-07-08 · Assets/@Scripts 전수 감사 (6렌즈 병렬) · 총 <b style="color:#ffd76a">70건</b> — 높음 19 · 중간 36 · 낮음 15</p></div>
+  </div>
+  <div class="dash">
+    <h3>렌즈별 분포</h3>
+    <div class="bar"><span>아키텍처 · 결합도</span><div class="track"><i style="flex:4;background:#ff7b7b"></i><i style="flex:6;background:#ffd76a"></i><i style="flex:2;background:#7ee8a0"></i></div><b>12</b></div>
+<div class="bar"><span>중복 · 데드코드</span><div class="track"><i style="flex:2;background:#ff7b7b"></i><i style="flex:5;background:#ffd76a"></i><i style="flex:5;background:#7ee8a0"></i></div><b>12</b></div>
+<div class="bar"><span>성능 · GC</span><div class="track"><i style="flex:3;background:#ff7b7b"></i><i style="flex:6;background:#ffd76a"></i><i style="flex:3;background:#7ee8a0"></i></div><b>12</b></div>
+<div class="bar"><span>수명주기 · 이벤트</span><div class="track"><i style="flex:3;background:#ff7b7b"></i><i style="flex:5;background:#ffd76a"></i><i style="flex:2;background:#7ee8a0"></i></div><b>10</b></div>
+<div class="bar"><span>데이터 · 저장 견고성</span><div class="track"><i style="flex:4;background:#ff7b7b"></i><i style="flex:7;background:#ffd76a"></i><i style="flex:1;background:#7ee8a0"></i></div><b>12</b></div>
+<div class="bar"><span>일관성 · 유지보수</span><div class="track"><i style="flex:3;background:#ff7b7b"></i><i style="flex:7;background:#ffd76a"></i><i style="flex:2;background:#7ee8a0"></i></div><b>12</b></div>
+
+    <div class="legend"><em style="background:#4a2222;color:#ff9c9c">높음 19</em><em style="background:#4a3d1e;color:#ffe49c">중간 36</em><em style="background:#1e4229;color:#9cffc0">낮음 15</em> · 이미 알려진 항목(세이브 스팸, 파서 취약, 미사용 프리팹 등)은 제외한 신규 발견 기준 · 각 카드: <b style="color:#ffb8b8">현재</b> → <b style="color:#a8ecc0">개선</b></div>
+  </div>
+  <h2 style="color:#7ec8ff">아키텍처 · 결합도</h2><div class="h2sub">UI가 게임 로직을 소유하거나 서로를 직접 찾는 구조적 문제</div><div class="grid"><div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>전투 핵심 루프가 UI 서브아이템 안에 존재 (수명 결합)</h3></div>
+  <div class="file">UI/SubItem/UI_BattleBtnGroup.cs:789 (StartBattle/CoBattleLoop/EndBattle)</div>
+  <div class="chip"><span class="now">몬스터 스폰 루프(CoBattleLoop: Managers.Object.SpawnMonster, WaitUntil(childCount==0)), 전투 시작/종료, 몬스터·HP바 일괄 정리(EndBattle)가 전부 UI 버튼 그룹 컴포넌트에 있고, 전투 종료 트리거가 UI_BattleBtnGroup.OnDestroy → EndBattle로 UI 오브젝트 파괴에 묶여 있다(712-714 주석: &quot;SwapAreaBtnGroup → OnDestroy → EndBattle 자연스럽게 정리&quot;). UI 프리팹 교체·리팩토링이 곧 전투 상태 버그로 직결되는 구조.</span></div>
+  <div class="chip"><span class="to">BattleManager(Contents)를 신설해 스폰 루프·전투 시작/종료 상태를 이관하고, UI_BattleBtnGroup은 Managers.Battle의 이벤트(OnBattleStarted/OnMonsterEngaged 등)만 구독해 표시. 종료는 UI OnDestroy가 아니라 구역 전환 흐름에서 명시적으로 Managers.Battle.End() 호출.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>구역(씬) 전환 오케스트레이션이 HUD(UI_GameScene)에 집중, 전 호출자가 다운캐스트</h3></div>
+  <div class="file">UI/Scene/UI_GameScene.cs:320 (EnterAreaWithFade) — 호출부 3곳+</div>
+  <div class="chip"><span class="now">구역 전환(페이드→배경 교체→BtnGroup 스왑→배틀 스크롤 시작)이 UI_GameScene.EnterAreaWithFade에 있고, PlayerController.CoRespawnInVillage(:556 Managers.UI?.SceneUI as UI_GameScene), UI_BattleBtnGroup.ExecuteReturnToVillage(:715), UI_TravelPopup.TravelToNode(:442)가 모두 SceneUI as UI_GameScene 다운캐스트로 HUD에 의존한다. CurrentTravelAreaId 갱신 같은 게임 상태 변경도 이 UI 메서드 안(:335-348)에서 일어난다.</span></div>
+  <div class="chip"><span class="to">AreaManager(또는 GameManager 확장)에 EnterArea(AreaType)을 두고 상태 갱신·전환 시퀀스를 소유시키고, UI_GameScene은 페이드/BtnGroup 스왑 연출 콜백만 제공. 컨트롤러(사망 리스폰)는 이벤트 발행으로 대체해 UI 타입 참조 제거.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>UI_BestiaryPopup이 미니몬 도메인의 static 파사드 역할 (팝업이 데이터 API)</h3></div>
+  <div class="file">UI/Popup/UI_BestiaryPopup.cs:120-337 (public static Get/Set 약 30개)</div>
+  <div class="chip"><span class="now">GetRecordRate/GetSync/GetStarGrade/SetSkillUnlocked/GrantMaxStarCompletion 등 도메인 조회/변경 static 헬퍼가 팝업 클래스에 있고(내부는 Managers.MinMon/Game 위임), UI_MinionInfoPopup(using static UI_BestiaryPopup), UI_MonsterDetailPopup(:188,221,405), UI_BestiaryBox(:59,128), UI_GameScene(:1044 OnMonsterMaxStar), 에디터 메뉴 2개가 전부 팝업을 경유한다. GrantMaxStarCompletion(:727)은 FindObjectOfType&lt;UI_BestiaryPopup&gt;()으로 자기 인스턴스를 씬에서 탐색한다.</span></div>
+  <div class="chip"><span class="to">static 헬퍼를 Managers.MinMon으로 이관(이미 대부분 위임 중이라 기계적 이동)하고 호출부를 Managers.MinMon.XXX로 교체. 도감 열림 시 연출은 MinMonManager의 OnMaxStarReached 이벤트를 팝업이 구독하는 방향으로 역전.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>UI_Village1BtnGroup(SubItem)이 문자열 GameObject.Find로 씬 오브젝트 직접 조작</h3></div>
+  <div class="file">UI/SubItem/UI_Village1BtnGroup.cs:158 (GameObject.Find(&quot;Player&quot;) 5곳, SwitchBG :525-549)</div>
+  <div class="chip"><span class="now">GameObject.Find(&quot;Player&quot;)?.GetComponent&lt;Animator&gt;().Play(&quot;Escape&quot;)가 5곳(158,220,276,699,761)에 복붙되어 있고(Managers.Game.Player가 이미 있는데 미사용), SwitchBG는 씬 루트를 이름 문자열(&quot;Village1_Main_BG(Clone)&quot; 등)로 스캔해 Destroy하고 legacy &quot;BackgroundImage&quot;/&quot;GuildNPC&quot;까지 이름으로 정리한다. 1003줄짜리 SubItem이 배경 교체·플레이어 스케일(:557-566)·NPC 정리까지 담당. 오브젝트 이름 변경 시 조용히 실패한다.</span></div>
+  <div class="chip"><span class="to">플레이어 접근을 Managers.Game.Player로 통일하고 PlayEscape() 같은 메서드로 캡슐화. 배경 스폰/정리는 스폰 시 참조를 보관하는 BackgroundManager(또는 AreaManager)로 추출해 이름 문자열 스캔 제거.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>PlayerController 사망 시퀀스가 UI 타입을 직접 제어 (규칙 위반 지점)</h3></div>
+  <div class="file">Controllers/Creature/PlayerController.cs:546 (OnDead)</div>
+  <div class="chip"><span class="now">프로젝트 규칙은 &quot;컨트롤러가 UI를 직접 참조하지 않음&quot;이지만, OnDead가 FindObjectsByType&lt;UI_MonsterHPBar&gt;()로 HP바를 닫고(:546-547) Managers.UI?.SceneUI as UI_GameScene의 EnterAreaWithFade를 직접 호출(:556-557)한다. AGENTS.md에도 &#x27;예외&#x27;로 명시된 상태로 굳어지는 중.</span></div>
+  <div class="chip"><span class="to">OnPlayerDead 이벤트를 발행하고 UI_GameScene(HP바 정리+리스폰 페이드)이 구독하도록 역전. HP바는 MonsterController.OnHpChanged 구독으로 이미 자기 정리 로직이 있으므로 플레이어 사망 이벤트만 추가 구독하면 됨.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_PotionPopup/UI_BattleScene의 OnDestroy가 base 가상 메서드를 숨겨 폰트 구독 누수</h3></div>
+  <div class="file">UI/Popup/UI_PotionPopup.cs:199 (동일: UI/Scene/UI_BattleScene.cs:62)</div>
+  <div class="chip"><span class="now">UI_Base.OnDestroy는 public virtual(UI_Base.cs:34)로 OnLanguageChanged -= RefreshAllFonts 해제를 담당하는데, 두 클래스는 void OnDestroy()(non-override)로 이를 숨기고 base.OnDestroy()를 호출하지 않는다. ApplyFont(:53-54)가 등록한 RefreshAllFonts 구독이 팝업을 열고 닫을 때마다 GameManager 이벤트에 누적된다.</span></div>
+  <div class="chip"><span class="to">public override void OnDestroy()로 바꾸고 끝에 base.OnDestroy() 호출(Popup AGENTS.md의 기존 규약과 일치). 나머지 팝업들은 이미 override 패턴을 따르고 있어 두 파일만 수정하면 됨.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>ComboManager Tick이 Managers.Update와 UI Update 이중 구동</h3></div>
+  <div class="file">UI/SubItem/UI_BattleBtnGroup.cs:538 (ComboManager.cs:65,112 디듑 가드)</div>
+  <div class="chip"><span class="now">콤보 타이머 심장박동을 Managers.Update와 UI_BattleBtnGroup.Update(:534-538 &quot;콤보 Tick 안전망 — Managers.Update가 플레이키하게 안 도는 경우 대비&quot;)가 둘 다 호출하고, ComboManager 쪽에 프레임 중복 방지 가드(:65,112)를 추가로 깔았다. 매니저의 구동을 UI 수명에 의존시키는 역방향 결합이며, &#x27;안전망&#x27;은 근본 원인(씬 재진입 시 Managers 인스턴스 문제)을 덮는 방어 코드다.</span></div>
+  <div class="chip"><span class="to">Tick 구동 지점을 Managers.Update 하나로 고정하고 UI 쪽 호출과 디듑 가드를 제거. Managers.Awake의 중복 인스턴스 제거 로직이 이미 원인 수정을 담고 있으므로, 재발 검증 후 안전망을 삭제하는 것이 맞다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>여정 선택 버튼 3클래스 복붙 삼중화 (색상 상수 4중 중복)</h3></div>
+  <div class="file">UI/SubItem/UI_TownSelectButton.cs:38 (+UI_FieldSelectButton, UI_MapSelectButton, 합계 436줄)</div>
+  <div class="chip"><span class="now">COLOR_CURRENT/COLOR_GROUP_SELECT/COLOR_BUTTON_DEFAULT 상수와 SetSelected/SetCurrentLocation/RefreshQuestVFX/RefreshLanguage 로직이 세 클래스에 거의 동일하게 반복되고, UI_TravelPopup(:97-104)에도 같은 색상 상수가 또 있다. 같은 복붙 패턴의 실증으로 UI_Village1BtnGroup.HideAllGroup(:568-574)은 AlchemyBtnGroup을 두 번 끄고 MonasteryBtnGroup을 빠뜨린 상태다.</span></div>
+  <div class="chip"><span class="to">공용 베이스(UI_TravelSelectButton)로 색상 규칙·선택/현재위치/퀘스트VFX 로직을 통합하고 세 클래스는 enum 바인딩만 남기거나 프리팹 차이만 흡수. 색상 상수는 Define 또는 베이스 한 곳으로.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_GameScene 갓클래스 (1451줄, 책임 7개 이상)</h3></div>
+  <div class="file">UI/Scene/UI_GameScene.cs:148 (Init) — 메서드 60여 개</div>
+  <div class="chip"><span class="now">HUD(HP/EXP/재화 :492-646) + 하단탭 잠금/뱃지/하이라이트(:915-1297) + 퀘스트 팔로우 연출(:786-893) + 구역 전환(:273-405) + 배틀 배경 스크롤 시작(:407) + 버프 아이콘(:1016-1043) + 도감 완성도 중계(:1044) + 디버그 핫키/ContextMenu 테스트(:1299-1451)가 한 클래스에 있다. 사실상 게임 흐름의 허브라 모든 시스템이 여기로 결합된다.</span></div>
+  <div class="chip"><span class="to">구역 전환은 AreaManager로(발견 2와 동일 수술), 하단탭 그룹과 퀘스트 팔로우는 각각 별도 UI_SubItem/컴포넌트로 분리, 테스트 핫키·ContextMenu는 Editor 폴더 메뉴로 이동. 단계적으로 잘라도 각 조각이 독립적이라 리스크가 낮다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>팝업이 다른 팝업/플레이어를 FindObjectOfType으로 수평 갱신</h3></div>
+  <div class="file">UI/Popup/UI_SkillDetailPopup.cs:752 (유사: UI_MinionInfoPopup.cs:532-538)</div>
+  <div class="chip"><span class="now">능력 기억/망각 시 FindObjectOfType&lt;PlayerController&gt;()?.RefreshStats()와 FindObjectOfType&lt;UI_SkillBookPopup&gt;()?.RefreshUI()(:752-754)로 씬 전역 탐색해 형제 팝업을 갱신하고, UI_MinionInfoPopup.RefreshOtherCompanionUI도 UI_MonsterDetailPopup/UI_BestiaryPopup을 FindObjectOfType으로 찾아 갱신한다. 팝업 간 수평 결합이라 새 화면이 같은 데이터를 표시하면 갱신 대상 목록을 또 수정해야 한다.</span></div>
+  <div class="chip"><span class="to">AbilityManager에 OnAbilityChanged, MinMonManager에 OnCompanionChanged 이벤트를 추가하고 각 팝업이 스스로 구독/해제(기존 OnLanguageChanged 패턴 재사용). PlayerController 접근은 Managers.Game.Player로.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>MonsterController가 스폰마다 FindFirstObjectByType으로 플레이어 탐색</h3></div>
+  <div class="file">Controllers/Creature/MonsterController.cs:86</div>
+  <div class="chip"><span class="now">_target = FindFirstObjectByType&lt;PlayerController&gt;()를 Start에서 호출한다. GameScene.cs:31에서 이미 Managers.Game.Player에 등록되어 있는데 우회하며, 몬스터는 전투 루프에서 반복 스폰되므로 스폰 때마다 씬 전역 스캔이 돈다.</span></div>
+  <div class="chip"><span class="to">_target = Managers.Game.Player;로 교체(널이면 기존처럼 대기). 접근 경로가 하나로 통일되어 플레이어 교체/리스폰 시나리오에서도 일관성 확보.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>CoroutineManager가 Managers 외부의 독립 DontDestroyOnLoad 싱글톤</h3></div>
+  <div class="file">Managers/Contents/CoroutineManager.cs:21</div>
+  <div class="chip"><span class="now">프로젝트 규칙은 &#x27;DontDestroyOnLoad는 Managers 루트 하나에만&#x27;인데, CoroutineManager가 [RuntimeInitializeOnLoadMethod]로 자체 GameObject를 만들어 DontDestroyOnLoad하는 두 번째 루트다. public new static Coroutine StartCoroutine(...)으로 MonoBehaviour 멤버를 숨기는 것도 혼동 요인. 실사용은 UIManager 토스트 1곳(:188)뿐이다.</span></div>
+  <div class="chip"><span class="to">Managers(이미 MonoBehaviour)에 public static Coroutine RunCoroutine(IEnumerator)를 추가해 위임하고 CoroutineManager를 삭제. 사용처가 1곳이라 교체 비용이 거의 없다.</span></div>
+</div>
+</div>
+<h2 style="color:#c8a0ff">중복 · 데드코드</h2><div class="h2sub">삭제하거나 합치면 코드가 줄고 버그 표면이 준다</div><div class="grid"><div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>주석 처리된 데이터 로드를 살아있는 코드가 소비 — 강화 기능 조용한 사망 + 데드 데이터 클래스</h3></div>
+  <div class="file">Managers/Core/DataManager.cs:51-57 (+GameManager.cs:551, Data.Contents.cs 3곳)</div>
+  <div class="chip"><span class="now">DataManager.Init에서 AreaDic/ForgeRecipeDic/CraftRecipeDic/LevelDic 로드가 전부 주석 처리(//ForgeRecipeDic = LoadJson&lt;...&gt;)인데, GameManager.ForgeEquipment(~551줄)는 빈 ForgeRecipeDic을 foreach로 순회해 recipe를 못 찾고 항상 false 반환 — 대장간 강화가 에러 없이 무조건 실패한다. PlayerController.RefreshStats의 LevelDic 분기(~443줄)도 영원히 도달 불가. AreaData/CraftRecipeData/LevelData + Loader 3종(Data.Contents.cs ~324/469/500줄, 약 60줄)은 런타임 소비자가 DataTransformer 파서뿐.</span></div>
+  <div class="chip"><span class="to">강화/제작이 예정 기능이면 해당 JSON 로드를 활성화하고, 아니면 주석 로드 줄 + 딕셔너리 필드 + 데이터 클래스/Loader + ForgeEquipment 소비 코드를 한 세트로 삭제해 &#x27;컴파일은 되지만 동작 안 하는&#x27; 상태를 없앤다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>ComboManager 주석 처리된 슬로모 블록이 _slowMoInFlight를 영구 latch — 콤보 브레이크 FX 세션당 1회만 재생</h3></div>
+  <div class="file">Managers/Contents/ComboManager.cs:252-275</div>
+  <div class="chip"><span class="now">PlaySlowMoFX에서 if (_slowMoInFlight) return; _slowMoInFlight = true; 후, 플래그를 되돌리던 DOVirtual.DelayedCall 블록이 통째로 주석 처리(257-264줄)되어 있다. 첫 콤보 브레이크 이후 플래그가 영원히 true → FX_Combo_Break가 두 번째부터 재생 안 됨. 게다가 남은 코드는 슬로모가 아닌 FX 스폰인데 GameObject.Instantiate/Destroy 직접 호출로 프로젝트 풀링 규칙(Managers.Resource 경유)도 위반.</span></div>
+  <div class="chip"><span class="to">주석 블록을 삭제하고 _slowMoInFlight 플래그 자체를 제거(또는 FX 스폰 후 즉시 리셋). FX 스폰은 Managers.Resource.Instantiate/Destroy로 교체. 메서드명도 실제 동작(PlayComboBreakFX)에 맞게 변경.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_BattleScene.cs 127줄 전체가 레거시 데드 코드 (존재하지 않는 HubScene 참조 포함)</h3></div>
+  <div class="file">UI/Scene/UI_BattleScene.cs:1-127</div>
+  <div class="chip"><span class="now">코드 참조 0, 프리팹/씬 GUID 검색 결과도 0 (42a9ba0a... 미참조 확인). BindPlayer/AddKillCount/ShowBossHP 등 public API 호출자 없음. OnClickReturnHub는 Managers.Scene.LoadScene(Scene.HubScene)을 호출하지만 Scenes/ 폴더에 HubScene 스크립트도 씬도 없다. 현재 전투는 UI_GameScene + UI_BattleBtnGroup의 AreaType.Battle 스왑으로 동작 — 초기 설계의 잔재.</span></div>
+  <div class="chip"><span class="to">파일 삭제. Define.Scene의 HubScene/BattleScene enum 멤버도 이 파일에서만 쓰이므로 함께 제거.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_EventHandler의 죽은 Pressed 기능 — 모든 바인딩된 UI가 매 프레임 Update 비용 지불 + _pressed 해제 버그</h3></div>
+  <div class="file">UI/UI_EventHandler.cs:17-49</div>
+  <div class="chip"><span class="now">UIEvent.Pressed로 BindEvent하는 호출부가 프로젝트에 0곳(UI_Base의 switch case만 존재)인데, BindEvent된 모든 UI 오브젝트에 붙는 이 컴포넌트가 if (_pressed) OnPressedHandler?.Invoke() Update()를 매 프레임 돈다. 심지어 OnPointerUp(42줄)과 OnDrag(48줄)가 _pressed = true로 설정(해제 코드 전무 — Up은 명백히 false여야 함)이라 한 번 누른 UI는 영구히 true. 핸들러가 null이라 기능 버그는 없지만 수백 개 UI의 빈 Update 마샬링 비용이 모바일에서 실비용.</span></div>
+  <div class="chip"><span class="to">Update()/_pressed/OnPressedHandler와 UIEvent.Pressed case를 삭제. 향후 길게누르기가 필요하면 PointerDown/Up 타임스탬프로 구현하는 편이 싸다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_Field/Map/TownSelectButton 3형제 복붙 — 동일 로직 ~150줄 × 3</h3></div>
+  <div class="file">UI/SubItem/UI_FieldSelectButton.cs (외 UI_MapSelectButton.cs, UI_TownSelectButton.cs)</div>
+  <div class="chip"><span class="now">세 파일 모두 Awake→Init, SetInfo(TravelNodeData), RefreshLanguage(Util.Localize(_node.Name)), SetSelected(EFrame 토글), SetQuestVFX, RefreshQuestVFX(ClickBtnId/EnterBtnId HashSet 매칭)가 enum 멤버 이름만 다르고 문자 그대로 동일하다. RefreshQuestVFX 6줄은 3파일에서 완전 일치. 빈 enum Buttons { }에 BindButton까지 복붙됨. (현재 다른 에이전트 수정 중 — 라인 유동)</span></div>
+  <div class="chip"><span class="to">공통 abstract 베이스(예: UI_TravelNodeButton — 라벨 TMP/EFrame/VFX GameObject를 protected abstract로 공급)로 통합하고 파생 3개는 enum 선언 + 색상 스펙 차이만 남긴다. 통합 시 약 250줄 절감.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_Village1BtnGroup 내부 3중 복붙 — Exit 애니 시퀀스와 메인그룹 복귀 블록이 좌표까지 동일 반복</h3></div>
+  <div class="file">UI/SubItem/UI_Village1BtnGroup.cs:150-279</div>
+  <div class="chip"><span class="now">Guild Exit 블록(150-211)과 Alchemy Exit 블록(212-273)은 ButtonMoveAnim 좌표 세트(-53,113→-100,113 / 0,186→75,186 / 51,186→75,186 / 0,133→75,133 / 51,133→120,133 / 0,59→0,0)와 메인 6버튼 복귀 시퀀스(0,0→-51.5,45.5 등)가 버튼 enum 이름만 다르고 완전 동일하다. Monastery도 같은 패턴. 1,003줄 파일의 상당 부분이 이 반복.</span></div>
+  <div class="chip"><span class="to">PlayGroupExit(Button[] groupButtons) / PlayMainGroupEnter() 헬퍼 2개로 파라미터화(좌표는 배열 상수 1벌). 그룹 추가 시 버튼 배열만 등록하면 되고 수백 줄 절감.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>전투 UI 프로덕션 Init에 에디터 테스트 핸들러 바인딩 (ATTACKBTN → SimulateHit)</h3></div>
+  <div class="file">UI/SubItem/UI_BattleBtnGroup.cs:152 (+648-656)</div>
+  <div class="chip"><span class="now">Init()에서 GetButton((int)Buttons.ATTACKBTN)?.gameObject.BindEvent(OnClickAttackBtnForTesting) — 주석에도 &#x27;에디터 편의용&#x27;이라 명시된 핸들러가 조건 없이 바인딩된다. 핸들러는 Managers.Combo.SimulateHit(100f)로 가짜 타격을 주입하므로, 빌드에서 프리팹에 이 버튼이 활성 상태로 남으면 공격 없이 콤보/버프를 부풀릴 수 있다. 근처 RefreshNotify()(662줄)도 주석만 있는 빈 몸통.</span></div>
+  <div class="chip"><span class="to">바인딩과 핸들러를 #if UNITY_EDITOR로 감싸거나 삭제하고 기존 Editor/BattleTestMenu 경로로 일원화. 빈 RefreshNotify는 삭제하거나 프리팹에 VFX 노드 추가 시 구현.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>ProjectileController + ObjectType.Projectile 완전 데드</h3></div>
+  <div class="file">Controllers/ProjectileController.cs</div>
+  <div class="chip"><span class="now">클래스를 스폰/참조하는 코드 0곳(ObjectManager에 projectile 스폰 없음), 프리팹/씬 GUID 검색도 0건(7c17b92c... 미참조 확인). 근접 전투 게임이라 발사체 소비처 자체가 없다. Define.ObjectType.Projectile enum 멤버와 CreatureController의 관련 주석(182줄)도 이 파일만 가리킨다.</span></div>
+  <div class="chip"><span class="to">파일과 ObjectType.Projectile enum 멤버를 삭제. 원거리 몬스터가 생기면 그때 SetInfo 패턴으로 재작성하는 편이 싸다.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>UIFx의 Splash/Heal fake burst 프리셋 데드 (~75줄) — 실사용은 Sparkle 1곳</h3></div>
+  <div class="file">UI/UIFx.cs:61-136</div>
+  <div class="chip"><span class="now">PlayBurst 호출은 전 코드베이스에서 UI_PotionDetailPopup:969의 UIFx.PlayBurst(..., FxType.Sparkle) 1곳뿐. SpawnSplash(61-83)와 SpawnHeal(113-136), FxType.Splash/Heal enum 멤버는 호출자가 없다. 실파티클은 이미 PlayParticle(UIParticle 래퍼) 경로로 대체된 상태.</span></div>
+  <div class="chip"><span class="to">SpawnSplash/SpawnHeal과 enum 멤버 2종을 삭제하고 PlayBurst를 Sparkle 전용으로 단순화(switch 제거). 필요해지면 git 히스토리에서 복원.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>Extension.cs 미사용 확장 메서드 4종 + 주석 처리된 구 BindEvent</h3></div>
+  <div class="file">Utils/Extension.cs:17-62</div>
+  <div class="chip"><span class="now">IsValid(GameObject)/IsValid(BaseController)/DestroyChilds/Shuffle 모두 호출부 0곳(정의만 grep에 잡힘). 17-20줄에는 구버전 BindEvent 오버로드가 주석으로 잔존. 63줄 파일 중 실사용은 GetOrAddComponent와 BindEvent 2개뿐.</span></div>
+  <div class="chip"><span class="to">미사용 4종과 주석 블록을 삭제해 파일을 ~20줄로 축소. SlimeMaster 템플릿에서 복사된 잔재로 보이며 필요 시 그때 다시 추가.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>Util.cs — RuleTile using이 Transform 충돌을 만들어 alias까지 유발 + 미사용 메서드</h3></div>
+  <div class="file">Utils/Util.cs:8-10 (+61, 94-112)</div>
+  <div class="chip"><span class="now">using static UnityEngine.RuleTile.TilingRuleOutput;(8줄)은 이 파일에서 아무것도 안 쓰면서 TilingRuleOutput.Transform이 UnityEngine.Transform과 충돌해 using Transform = UnityEngine.Transform; alias(10줄)를 강제로 만들었다. RandomPointInAnnulus(61줄)와 ParseEnum(109줄)은 호출 0곳, GetRandomEnumValue(95-106줄)는 존재하지도 않는 _enumDict를 참조하는 주석 코드. System.Linq도 미사용.</span></div>
+  <div class="chip"><span class="to">RuleTile using + Transform alias + Linq using을 삭제하고, RandomPointInAnnulus/ParseEnum/주석 GetRandomEnumValue를 제거한다.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>임시/골격 스크립트 잔재 — UI_Test, UI_FieldTypeButton, Managers의 TimeManager 주석</h3></div>
+  <div class="file">UI/UI_Test.cs (외 UI_FieldTypeButton.cs, Managers.cs:16/25/84)</div>
+  <div class="chip"><span class="now">UI_Test.cs는 &#x27;영혼 상점 초기 상태&#x27; 위치 잡기용 임시 스크립트로 빈 Update()까지 포함, 프리팹/씬 참조 0건(GUID 확인). UI_FieldTypeButton.cs는 SetInfo()가 빈 몸통이고 핵심 로직 4건이 전부 TODO 주석인 골격인데 인스턴스화하는 코드/프리팹이 없다. Managers.cs에는 TimeManager 필드/프로퍼티/AddComponent 주석 3줄과 //s_instance._sound.Init() 잔재.</span></div>
+  <div class="chip"><span class="to">UI_Test.cs 삭제. UI_FieldTypeButton은 여정 팝업 대분류 기능 구현 시점까지 삭제(설계 의도는 UI_TravelPopup 주석에 이미 기록됨). Managers.cs 주석 3줄 제거 — 새 매니저 추가 절차는 AGENTS.md에 문서화되어 있어 견본 주석이 불필요.</span></div>
+</div>
+</div>
+<h2 style="color:#ffb46a">성능 · GC</h2><div class="h2sub">매 프레임 할당·탐색·재작성 — 모바일 프레임 저하의 씨앗</div><div class="grid"><div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>ObjectManager Transform 프로퍼티가 접근마다 GameObject.Find 실행</h3></div>
+  <div class="file">Managers/Contents/ObjectManager.cs:10-49</div>
+  <div class="chip"><span class="now">SkillTransform/MonsterTransform/CompanionTransform/TextFontTransform 4개 프로퍼티가 캐시 없이 매번 GameObject.Find(&quot;@Monster&quot;) 등 전체 하이어라키 스캔을 한다. MonsterTransform은 PlayerController.Update의 HasMonsterInAtkRange()가 전투 중 매 프레임, CompanionController의 FindEngagedMonster()도 프레임마다 호출 — 전투 씬에서 GameObject.Find가 프레임당 2회 이상 돈다.</span></div>
+  <div class="chip"><span class="to">각 프로퍼티에 Transform 캐시 필드를 두고 null(씬 전환 파괴)일 때만 Find/생성하도록 변경. Clear()에서 캐시를 비워 씬 전환에 대응하면 매 프레임 스캔이 0회가 된다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>전투 로그 텍스트 4개를 값 변화와 무관하게 매 프레임 재작성</h3></div>
+  <div class="file">UI/SubItem/UI_BattleBtnGroup.cs:534-643</div>
+  <div class="chip"><span class="now">Update()가 매 프레임 RefreshLogTexts()를 호출해 $&quot;{min:00}:{sec:00}.{cs:00}&quot; 보간 문자열 1개 + ToString() 3개를 새로 할당하고 TMP text 4개를 무조건 set한다. freeze 상태(전투 종료 후)에도 계속 돌아 문자열 GC와 TMP 갱신 비용이 상시 발생. 콤보 중에는 HandleNowValues가 프레임마다 2개 텍스트를 추가로 set한다.</span></div>
+  <div class="chip"><span class="to">마지막 표시값(centis, dealt/taken/heal의 int값)을 캐시해 정수 비교 후 변한 텍스트만 set. freeze &amp;&amp; 보간 수렴 완료 시 RefreshLogTexts 자체를 skip하면 대기 중 비용이 0이 된다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>타격 히트 이펙트가 풀링 없이 매 타격 Instantiate/Destroy</h3></div>
+  <div class="file">Managers/Contents/ObjectManager.cs:176-246</div>
+  <div class="chip"><span class="now">CreatureController.TakeHit가 타격 성공마다 ShowHitEffect/ShowCriHitEffect → SpawnFxAt를 호출하는데, Managers.Resource.Instantiate(prefabKey)(pooling 미지정) + Object.Destroy(go, 2f)로 FX_hit_04/01을 매번 생성·파괴한다. 공속 버프 + 동행 미니몬까지 겹치면 초당 수 회 Instantiate가 발생 — 같은 함수의 DamageFont는 pooling:true인데 FX만 규칙(자주 생성/삭제 오브젝트 풀링 필수)에서 빠져 있다.</span></div>
+  <div class="chip"><span class="to">SpawnFxAt를 Managers.Resource.Instantiate(prefabKey, pooling: true)로 바꾸고 Destroy(go, 2f) 대신 지연 후 Managers.Resource.Destroy(go)(풀 반환)를 호출. HP Potion Ef/RankUp Ef도 동일 패턴 적용 가능.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>재화 카운터 트윈이 Kill 없이 변경마다 누적 생성</h3></div>
+  <div class="file">UI/Scene/UI_GameScene.cs:495-518</div>
+  <div class="chip"><span class="now">RefreshCurrency()가 골드/크리스탈 변경 이벤트마다 DOTween.To(() =&gt; _displayGold, ...) 트윈 2개를 새로 만들며 이전 트윈을 Kill하지 않는다(SetTarget도 없어 text.DOKill()로도 안 죽음). 전투 드롭으로 골드가 연속 변경되면 살아있는 트윈 여러 개가 동시에 _displayGold와 같은 TMP 텍스트를 써서 트윈 누적 + 클로저 할당 + 표시 깜빡임이 생긴다.</span></div>
+  <div class="chip"><span class="to">골드/크리스탈용 Tween 핸들 필드를 보관하고 새 트윈 생성 전 _goldTween?.Kill() 하거나 .SetTarget(this) 후 DOTween.Kill(this)로 정리. 콜백 안 ToString(&quot;N0&quot;)도 값이 정수 단위로 변할 때만 set하면 할당이 줄어든다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_EventHandler: OnPointerUp이 _pressed=true로 설정 + 모든 클릭 UI에 상주 Update</h3></div>
+  <div class="file">UI/UI_EventHandler.cs:19-50</div>
+  <div class="chip"><span class="now">OnPointerUp(42행)과 OnDrag(48행)가 _pressed = true를 설정한다(해제 코드가 없음). 한 번이라도 눌린 UI는 파괴될 때까지 _pressed가 true로 남아 Update가 매 프레임 OnPressedHandler?.Invoke()를 시도한다. 현재 Pressed 바인딩 사용처가 없어 실동작 버그는 잠복 상태지만, BindEvent로 UI_EventHandler가 붙는 모든 버튼/슬롯에 빈 Update가 상주해 UI가 많은 씬에서 프레임당 수십~수백 회의 무의미한 Update 콜이 발생한다.</span></div>
+  <div class="chip"><span class="to">OnPointerUp/OnDrag에서 _pressed = false로 수정(원 의도). 나아가 Update를 없애고 Pressed가 실제 바인딩된 경우에만 코루틴을 돌리거나 enabled 토글로 Update를 켜는 방식이면 상주 비용이 사라진다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>전투 중 매 프레임 몬스터 자식 순회 + GetComponent</h3></div>
+  <div class="file">Controllers/Creature/PlayerController.cs:261-272</div>
+  <div class="chip"><span class="now">HasMonsterInAtkRange()가 전투 중 매 프레임 monsterRoot 자식마다 GetChild(i).GetComponent&lt;MonsterController&gt;()를 호출하고, CompanionController.FindEngagedMonster(160-169행)도 같은 패턴이다. 발견 1의 GameObject.Find와 결합돼 &#x27;하이어라키 스캔 + 자식 수 × GetComponent&#x27;가 프레임마다 반복된다.</span></div>
+  <div class="chip"><span class="to">ObjectManager가 살아있는 MonsterController를 List로 유지(SpawnMonster에서 add, 사망/파괴에서 remove)하고 Player/Companion은 그 리스트만 순회. GetComponent와 Find가 모두 사라진다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>런타임 Debug.Log 72건 — 히트/능력 발동/인벤 갱신 경로 포함</h3></div>
+  <div class="file">Controllers/Creature/AbilityRunner.cs:132 외 29개 파일 72건</div>
+  <div class="chip"><span class="now">AbilityRunner.ApplyEffect는 능력 발동마다 Debug.Log($&quot;[Ability] 발동: {d.Name}...&quot;), UI_InventoryPopup.SetInfo는 인벤토리 아이템마다 Debug.Log($&quot;Inventory Item: DataId=...&quot;)를 실행한다. Editor 제외 런타임 코드에 Debug.Log가 72건 — 빌드에서도 문자열 보간 할당 + 로그 I/O(모바일에서 특히 비쌈)가 그대로 발생한다.</span></div>
+  <div class="chip"><span class="to">[System.Diagnostics.Conditional(&quot;UNITY_EDITOR&quot;)] 속성을 붙인 정적 로그 래퍼(예: Util.DevLog)로 치환하면 빌드에서 호출 자체(문자열 보간 포함)가 컴파일 제거된다. 최소한 전투/인벤 루프 내 로그부터 제거.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>타이프라이터 연출이 글자당 DOTween 트윈 1개씩 생성</h3></div>
+  <div class="file">DialogueAnimator.cs:231-238 (UI_UnlockButtonPopup.cs:122-130 동일 패턴)</div>
+  <div class="chip"><span class="now">CoTyping이 글자마다 DOTween.To(() =&gt; _charAlphas[index], a =&gt; _charAlphas[index] = a, ...)를 생성 — 100자 대사면 트윈 100개 + 인덱스 캡처 클로저 200개가 한 대화 페이지마다 할당된다. UI_UnlockButtonPopup.TypewriterFade에 같은 코드가 중복 구현돼 있고, 두 클래스 모두 LateUpdate에서 전체 글자 vertex를 매 프레임 다시 쓴다.</span></div>
+  <div class="chip"><span class="to">글자별 트윈 대신 글자별 시작시각 배열만 기록하고 이미 존재하는 LateUpdate에서 alpha = Clamp01((now - start[i]) / fadeDuration)로 일괄 계산 — 트윈/클로저 할당이 0이 된다. 중복 구현은 DialogueAnimator 하나로 통합.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>빌드에 남는 디버그 키 입력 Update (인벤토리 F키 등)</h3></div>
+  <div class="file">UI/Popup/UI_InventoryPopup.cs:98-104</div>
+  <div class="chip"><span class="now">UI_InventoryPopup.Update의 Input.GetKeyDown(KeyCode.F) → 정렬 실행이 #if UNITY_EDITOR 없이 빌드에 포함된다(키보드 있는 기기에서 오동작 + 상주 Update 비용). UI_CharacterPopup.Update(201행)는 본문만 #if라 빌드에선 빈 Update가 남고, GameScene.cs·UI_Test.cs에도 빈 Update/Start가 있다.</span></div>
+  <div class="chip"><span class="to">테스트 키 입력 Update는 메서드 전체를 #if UNITY_EDITOR ... #endif로 감싸고(UI_GameScene.Update 방식), 빈 Update/Start는 삭제. 빈 매직 메서드도 Unity가 매 프레임 네이티브→매니지드 호출을 하므로 제거가 이득.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>DamageFont가 스폰마다 Hex 문자열 파싱으로 색상 생성</h3></div>
+  <div class="file">UI/DamageFont.cs:141-147</div>
+  <div class="chip"><span class="now">ApplyGradient가 데미지 폰트 스폰(=매 타격)마다 Util.HexToColor(&quot;FF0000&quot;) 등을 호출 — HexToColor는 &quot;#&quot;+color 문자열 결합 + ColorUtility.TryParseHtmlString 파싱을 매번 수행한다(스폰당 2-3회). 오브젝트 자체는 풀링돼 있는데 색상만 매번 재계산·할당된다.</span></div>
+  <div class="chip"><span class="to">모드별 Color를 static readonly Color로 1회 정의해(UI_MonsterHPBar.cs:33-35의 COLOR_COMMON 패턴과 동일) 파싱과 문자열 결합을 제거.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>SFX 재생마다 콜백 클로저 할당 (캐시 히트인데도 람다 경유)</h3></div>
+  <div class="file">Managers/Core/SoundManager.cs:57-84</div>
+  <div class="chip"><span class="now">Play(type, key)가 캐시 히트 여부와 무관하게 LoadAudioClip(key, (audioClip) =&gt; {...}) 형태로 audioSource/pitch를 캡처하는 클로저를 매 호출 할당한다. 버튼 클릭·타격음·드롭음 등 SFX가 잦은 전투 중 호출당 수십 바이트씩 GC가 쌓인다. LoadAudioClip은 이미 동기 딕셔너리 캐시라 콜백이 필요 없는 구조다.</span></div>
+  <div class="chip"><span class="to">동기 경로로 단순화: AudioClip clip = GetOrLoadClip(key); if (clip != null) audioSource.PlayOneShot(clip); 처럼 반환값 방식으로 바꾸면 클로저 할당이 사라진다.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>ComboManager.Tick 3중 호출 (프레임 디듑으로 가리는 설계 중복)</h3></div>
+  <div class="file">Managers/Managers.cs:45-49</div>
+  <div class="chip"><span class="now">Managers.Update(48행), PlayerController.Update(169행), UI_BattleBtnGroup.Update(538행)가 각각 Managers.Combo?.Tick(...)을 호출한다. Tick 내부 frameCount 디듑으로 로직은 1회만 돌지만, 매 프레임 3곳에서 Instance 프로퍼티(Init 경유) + Tick 진입 비용이 들고 &#x27;어디가 진짜 구동원인지&#x27; 불명확한 안전망 중첩이다.</span></div>
+  <div class="chip"><span class="to">Managers.Update 한 곳만 남기고 나머지 두 호출 제거(Managers는 DontDestroyOnLoad라 항상 돈다). Awake 중복 제거 로직이 이미 있으므로 &#x27;플레이키하게 안 도는 경우&#x27; 안전망은 불필요.</span></div>
+</div>
+</div>
+<h2 style="color:#ff8b8b">수명주기 · 이벤트</h2><div class="h2sub">구독 누수·파괴 후 콜백 — 재현 어려운 간헐 버그의 근원</div><div class="grid"><div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>Quest/SubQuestManager.Init 중복 구독 — Clear() 호출처 0건</h3></div>
+  <div class="file">Managers/Contents/QuestManager.cs:29 (+SubQuestManager.cs:22, Managers.cs:87)</div>
+  <div class="chip"><span class="now">UI_TtitleScene.cs:92와 GameScene.cs:26이 둘 다 Managers.Quest.Init()을 호출하는데, Init은 Managers.Game.OnItemAdded += CheckItemAcquire 등을 기존 해제 없이 구독하고, Quest.Clear()/SubQuest.Clear()는 전체 코드에서 호출처가 0건이며 Managers.Clear()(Managers.cs:87-94)에도 빠져 있다. GameManager는 DontDestroyOnLoad로 살아남으므로 Title→Game 정상 플로우만으로 핸들러가 2중 누적 → 아이템 1회 획득에 CheckItemAcquire/OnInventoryChanged가 2회 실행되어 퀘스트 완료·카운트가 이중 처리된다(씬 재진입마다 +1).</span></div>
+  <div class="chip"><span class="to">Init 첫 줄에서 자기 핸들러를 먼저 -=하여 멱등화하거나, Managers.Clear()에 Quest/SubQuest.Clear()를 추가하고 씬 전환 경로에서 반드시 타도록 한다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>토스트 자동닫기 코루틴이 씬 전환 후 파괴된 토스트를 Pop</h3></div>
+  <div class="file">Managers/Core/UIManager.cs:188</div>
+  <div class="chip"><span class="now">ShowToast는 DontDestroyOnLoad인 CoroutineManager에 3초 코루틴(CoCloseToastUI)을 건다. 토스트 GO는 씬 소속 @UI_Root 아래라 씬 전환 시 파괴되지만 코루틴은 살아남아 CloseToastUI가 파괴된 toast.gameObject에 접근 → MissingReferenceException. UIManager.Clear()(214-219행)는 _popupStack만 정리하고 _toastStack/_toastOrder는 방치해 파괴된 참조가 스택에 잔존한다.</span></div>
+  <div class="chip"><span class="to">Clear()에서 _toastStack.Clear()와 _toastOrder 리셋을 추가하고, CloseToastUI에서 Pop한 toast가 파괴됐으면(==null) 스킵하는 가드를 넣는다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>풀링된 UI_MonsterHPBar에 Kill 안 되는 DelayedCall — 사용 중인 바를 풀로 회수</h3></div>
+  <div class="file">UI/SubItem/UI_MonsterHPBar.cs:99</div>
+  <div class="chip"><span class="now">UI_MonsterHPBar는 유일하게 MakeSubItem 기본값(pooling:true)으로 생성된다(UI_BattleBtnGroup.cs:834). PlayCloseAnimation의 DOVirtual.DelayedCall(anim.duration, () =&gt; Managers.Resource.Destroy(gameObject))는 어디서도 Kill되지 않는데, 0.5초 창 안에 EndBattle(UI_BattleBtnGroup.cs:864)이 같은 바를 먼저 풀에 반환하고 새 전투에서 재사용(Pop)되면 뒤늦게 발화한 콜백이 활성 상태의 HP바를 다시 Push(Pool.Push는 activeSelf==true면 Release) → 살아있는 몬스터의 HP바가 화면에서 사라지고 풀 상태가 꼬인다. 씬 전환 직후엔 파괴된 gameObject 접근.</span></div>
+  <div class="chip"><span class="to">DelayedCall에 .SetLink(gameObject)를 걸거나 Tween을 필드로 보관해 OnDisable/OnDestroy에서 Kill한다. 재사용 이득이 없다면 이 호출만 pooling:false로 명시하는 것이 최소 수정.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>OnDestroy가 UI_Base의 virtual OnDestroy를 은닉 — base 폰트 구독 해제 미실행</h3></div>
+  <div class="file">UI/Popup/UI_PotionPopup.cs:199 (+UI_BattleScene.cs:62)</div>
+  <div class="chip"><span class="now">UI_Base는 public virtual void OnDestroy()(UI_Base.cs:34)에서 ApplyFont가 구독한 OnLanguageChanged -= RefreshAllFonts를 해제하는데, UI_PotionPopup(199행)과 UI_BattleScene(62행)은 void OnDestroy()를 override 없이 선언(CS0114 은닉)해 Unity가 파생 메서드만 호출 → base 해제가 영영 실행되지 않는다. 팝업을 열고 닫을 때마다 영구 매니저(GameManager)의 OnLanguageChanged에 파괴된 객체를 캡처한 핸들러가 무한 누적된다.</span></div>
+  <div class="chip"><span class="to">public override void OnDestroy()로 바꾸고 마지막에 base.OnDestroy()를 호출한다. 같은 은닉 패턴이 다시 생기지 않게 다른 UI 파일과 시그니처를 통일.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>UI_Village1BtnGroup: 타겟 없는 Sequence 5개 + DelayedCall, OnDestroy에서 Kill 없음</h3></div>
+  <div class="file">UI/SubItem/UI_Village1BtnGroup.cs:667 (152/214/593/731/446행 동일 계열)</div>
+  <div class="chip"><span class="now">그룹 전환 연출용 DOTween.Sequence()(약 2초, AppendCallback에서 GetButton/GetObject/_gameScene.FadeInOut 접근)와 해금 연출 DOVirtual.DelayedCall(0.5f, () =&gt; TryPlayUnlockAnim(...))(446행)이 SetTarget/SetLink 없이 생성되고, OnDestroy(309-320행)는 이벤트만 해제할 뿐 트윈은 정리하지 않는다. 시퀀스 진행 중 전투 구역 전환/씬 전환으로 이 그룹이 파괴되면 잔여 콜백이 파괴된 컴포넌트의 GetButton(...)을 호출 → MissingReferenceException과 연출 상태 꼬임.</span></div>
+  <div class="chip"><span class="to">시퀀스와 DelayedCall에 .SetLink(gameObject)를 일괄 적용하거나 필드로 보관해 OnDestroy에서 Kill한다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>파괴된 Player에 ?. 호출 — UnityEngine.Object fake-null 우회</h3></div>
+  <div class="file">UI/SubItem/UI_BattleBtnGroup.cs:847 (Village1BtnGroup 5곳 동일)</div>
+  <div class="chip"><span class="now">OnDestroy(182행)→EndBattle의 Managers.Game.Player?.StopBattle()은 C# null-조건 연산자라 Unity의 오버로드 ==를 타지 않는다. 씬 언로드 시 Player가 BattleBtnGroup보다 먼저 파괴되면 파괴된 인스턴스에서 StopBattle이 실행되어 transform.DOKill()(PlayerController.cs:146)에서 MissingReferenceException. Managers.Game.Player?.ReturnHomeIdle()(UI_Village1BtnGroup.cs:186 외 4곳)도 같은 패턴.</span></div>
+  <div class="chip"><span class="to">MonoBehaviour 참조에는 var p = Managers.Game.Player; if (p != null) p.StopBattle();처럼 명시적 null 비교를 쓰도록 통일한다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>SceneManagerEx.LoadScene: Title/Game 외 씬에서 조용한 무동작</h3></div>
+  <div class="file">Managers/Core/SceneManagerEx.cs:12</div>
+  <div class="chip"><span class="now">switch가 현재 씬 타입 TitleScene/GameScene 케이스만 처리하고 default가 없어, UI_BattleScene.OnClickReturnHub(UI_BattleScene.cs:125)가 LoadScene(Scene.HubScene)을 호출해도 현재 씬이 BattleScene/HubScene 타입이면 Managers.Clear()도 SceneManager.LoadScene도 실행되지 않고 조용히 리턴한다 — 씬 정리(팝업/풀/토스트) 누락과 전환 불가가 동시에 발생.</span></div>
+  <div class="chip"><span class="to">씬 타입 분기를 제거하고 공통으로 Managers.Clear(); SceneManager.LoadScene(...)을 수행, 씬별 특수 처리(timeScale 복원 등)만 조건으로 남긴다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>BindPlayer 계열 익명 람다 구독 — OnDestroy에서 해제 불가</h3></div>
+  <div class="file">UI/Scene/UI_GameScene.cs:986 (+UI_BattleScene.cs:78, UI_MonsterHPBar.cs:83, UI_BattleBtnGroup.cs:832)</div>
+  <div class="chip"><span class="now">player.OnHpChanged += (cur, max) =&gt; UpdateHP(cur, max) 등 Player/Monster 이벤트에 익명 람다를 구독하고 OnDestroy에서는 해제하지 않는다(UI_GameScene.OnDestroy 212-240행은 매니저 이벤트만 해제). 람다라 -= 자체가 불가능. 지금은 발행자와 구독자가 같은 씬에서 함께 파괴돼 은폐되지만, 플레이어 리스폰·UI 재생성 등 수명이 어긋나는 순간 파괴된 UI 갱신/중복 구독이 터진다. 프로젝트 규약(CLAUDE.md·UI/Scene/AGENTS.md &#x27;반드시 OnDestroy에서 전부 -=&#x27;) 위반.</span></div>
+  <div class="chip"><span class="to">명명 메서드로 바꿔 OnDestroy에서 -=하는 UnbindPlayer를 짝으로 두거나, 최소한 mc.OnEngaged처럼 발행자가 재사용될 수 있는 곳부터 명명 핸들러로 전환한다.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>UI_Toast.OnEnable: 타겟 없는 Sequence가 파괴 후 콜백 실행 가능</h3></div>
+  <div class="file">UI/Toast/UI_Toast.cs:34</div>
+  <div class="chip"><span class="now">OnEnable마다 DOTween.Sequence()(SetLink 없음)가 1.1초 뒤 Fade() 콜백으로 GetImage에 접근한다. 3초 자동 닫힘 전에 씬 전환 등으로 토스트가 먼저 파괴되면 파괴된 컴포넌트 접근 → 예외. OnEnable 재호출 시 이전 시퀀스도 정리되지 않는다.</span></div>
+  <div class="chip"><span class="to">시퀀스에 .SetLink(gameObject) 한 줄 추가(파괴 시 자동 Kill).</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>DialogueAnimator.PlayOpenSequence: InsertCallback에 파괴 가드/Link 없음</h3></div>
+  <div class="file">DialogueAnimator.cs:96</div>
+  <div class="chip"><span class="now">오픈 시퀀스의 seq.InsertCallback(0.3f, () =&gt; { nameText.SetActive(true); ... })가 SetLink 없이 생성되어, 대화 팝업이 0.3초 내에 닫히면(연타 등) 파괴된 nameText에 SetActive를 호출한다. CoTyping의 글자별 DOTween.To(234행)도 타겟/링크가 없어 파괴 후 잔여 트윈이 돈다(배열 쓰기라 무해하지만 정리 대상).</span></div>
+  <div class="chip"><span class="to">Sequence와 타이핑 트윈에 .SetLink(gameObject)를 걸어 컴포넌트 파괴 시 자동 Kill되게 한다.</span></div>
+</div>
+</div>
+<h2 style="color:#7ee8c8">데이터 · 저장 견고성</h2><div class="h2sub">세이브 유실·침묵 실패 — 출시 전 반드시 막을 것</div><div class="grid"><div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>빌드에서 세이브/데이터 초기화 전체가 #if UNITY_EDITOR에 묶임 — 실기기 저장 완전 무력화</h3></div>
+  <div class="file">Scenes/GameScene.cs:10-58</div>
+  <div class="chip"><span class="now">Managers.Data.Init() → Game.Init()(LoadGame) → Quest/SubQuest.Init() 등 초기화 체인 전체가 #if UNITY_EDITOR 브랜치의 Awake에만 있고, #else 브랜치는 Init(); + &quot;// TODO : 게임 데이터 불러오기&quot; 뿐이다. 빌드에서는 GameManager._path가 null로 남고 SaveGame()은 if (_path == null) return;(GameManager.cs:781)으로 조용히 무시되어 로드도 저장도 전혀 안 된다.</span></div>
+  <div class="chip"><span class="to">초기화 체인을 #if 밖의 공통 경로(예: BaseScene 또는 별도 부트스트랩)로 빼고, 에디터 전용은 PreLoad 로딩 방식 차이만 분기한다. SaveGame의 _path == null 침묵 리턴은 Debug.LogError로 승격.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>PlayerPrefs(ISFIRST)와 SaveData.json 혼용 — PlayerPrefs 소실 시 세이브 파일 자동 삭제</h3></div>
+  <div class="file">Managers/Contents/GameManager.cs:787-796</div>
+  <div class="chip"><span class="now">LoadGame()이 PlayerPrefs.GetInt(&quot;ISFIRST&quot;, 1) == 1이면 존재하는 SaveData.json을 File.Delete 한다. 진행 상태는 JSON 파일에, &#x27;첫 실행&#x27; 플래그는 PlayerPrefs에 있어 수명이 분리됨 — PlayerPrefs만 초기화되면(플랫폼 초기화, Editor/DataTransformer.cs:22의 PlayerPrefs.DeleteAll(), QuestVerifyMenu.cs:49의 ISFIRST=1) 멀쩡한 세이브가 통째로 삭제된다.</span></div>
+  <div class="chip"><span class="to">첫 실행 판정을 PlayerPrefs가 아니라 세이브 파일 존재 여부(또는 GameData 내부 버전 필드)로 일원화하고, 파일 삭제는 명시적 &#x27;데이터 초기화&#x27; UI에서만 수행한다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>세이브 파일 쓰기/읽기 무방비 — try/catch 없음, 원자적 쓰기 없음</h3></div>
+  <div class="file">Managers/Contents/GameManager.cs:779-808</div>
+  <div class="chip"><span class="now">SaveGame()은 File.WriteAllText를 직접 호출(쓰기 도중 강제종료/디스크풀이면 반파손 파일), LoadGame()은 JsonConvert.DeserializeObject를 try 없이 호출한다. 손상된 JSON이면 JsonReaderException이 Awake의 Init 체인 전체를 중단시켜 게임이 부팅되지 않고, 프로젝트 전체에 이를 잡는 catch가 한 곳도 없다(전체 grep 결과 catch는 Editor 1곳뿐).</span></div>
+  <div class="chip"><span class="to">임시 파일에 쓴 뒤 File.Replace로 교체(원자적 쓰기)하고, 로드는 try/catch로 감싸 실패 시 백업본(.bak) 폴백 → 그것도 실패하면 새 GameData + 경고 로그로 부팅은 보장한다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>ActivationManager 세이브 리스트를 enum 인덱스로 직접 접근 — 스키마 확장 시 크래시</h3></div>
+  <div class="file">UI/SubItem/UI_Village1BtnGroup.cs:474-479 (외 GameManager.cs:813)</div>
+  <div class="chip"><span class="now">리스트 크기가 GameData 생성 시점의 Enum.GetValues(typeof(ActivationKey)).Length(GameData 120행)로만 결정되고, 로드 후 보정이 없다. 예전 세이브를 로드한 뒤 ActivationKey에 항목이 추가되면 Managers.Game.ActivationManager[(int)ActivationKey.TravelButtonNewTxt] 등 6곳의 직접 인덱싱이 ArgumentOutOfRangeException을 던져 마을 UI 갱신이 통째로 죽는다.</span></div>
+  <div class="chip"><span class="to">LoadGame 직후 while (list.Count &lt; enumLength) list.Add(0); 한 줄로 패딩하는 마이그레이션을 넣거나, List&lt;int&gt; 대신 Dictionary&lt;ActivationKey,int&gt;/비트마스크(UnlockedBtmButtons 패턴)로 교체한다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>필요 경험치 이중 계산 — 재시작할 때마다 레벨업 요구치가 ~17% 감소</h3></div>
+  <div class="file">Controllers/Creature/PlayerController.cs:415-430</div>
+  <div class="chip"><span class="now">CheckLevelUp()이 RefreshStats()로 _expRequired = 100 * 1.2^(lv-1)을 재계산한 직후 _expRequired *= 1.2f;를 또 곱한다(세션 중 = 100*1.2^lv). 재시작하면 RefreshStats만 돌아 100*1.2^(lv-1)이 되므로, 같은 레벨인데 앱을 껐다 켜면 요구 경험치가 1.2배 낮아진다. 파생 상태(_expRequired)가 저장되지 않는데 두 계산 경로가 서로 다르다.</span></div>
+  <div class="chip"><span class="to">CheckLevelUp의 _expRequired *= 1.2f; 줄을 삭제해 RefreshStats 단일 공식으로 통일한다(LevelData 도입 시에도 동일 경로 유지).</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>Exp/Level/도감 발견 저장 누락 — 다른 시스템의 SaveGame에 편승</h3></div>
+  <div class="file">Managers/Contents/GameManager.cs:242-252 (외 MinMonManager.cs:81-82)</div>
+  <div class="chip"><span class="now">Gold/Crystal 세터는 SaveGame()을 호출하지만 Level/Exp/PlayerName 세터는 하지 않는다. GainExp/CheckLevelUp이 갱신한 경험치·레벨은 우연히 다른 저장(AddKill, AddItem 등)에 묻어갈 때만 영속된다. MinMonManager.TryCatch의 DiscoveredMonsterIds.Add(dataId)도 직후 SaveGame이 없다(AddMinMon 내부 저장이 Add보다 먼저 실행됨).</span></div>
+  <div class="chip"><span class="to">레벨업 시점(CheckLevelUp 루프 종료 후)과 DiscoveredMonsterIds.Add 직후에 SaveGame() 1회를 명시적으로 추가한다. 스팸 걱정 없이 &#x27;상태가 바뀐 트랜잭션 끝&#x27;에서 한 번씩만.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>OwnedEquipments/EquippedEquipments 이중 직렬화 — 로드 후 같은 장비가 두 인스턴스로 분리</h3></div>
+  <div class="file">Managers/Contents/GameManager.cs:95-96</div>
+  <div class="chip"><span class="now">장착 장비가 List&lt;Equipment&gt;와 Dictionary&lt;EquipSlotType,Equipment&gt; 양쪽에 같은 참조로 들어가지만, JsonConvert 기본 설정은 참조를 보존하지 않아 로드 후엔 서로 다른 복제 인스턴스가 된다. 이후 ForgeEquipment(GameManager.cs:546)로 EnhanceLevel/Durability를 올리면 반대쪽 컨테이너의 복제본은 낡은 값으로 남아 스탯/UI가 갈라진다.</span></div>
+  <div class="chip"><span class="to">EquippedEquipments를 Dictionary&lt;EquipSlotType,int&gt;(DataId 또는 OwnedEquipments 인덱스)로 저장하고 런타임 조회 시 OwnedEquipments에서 찾는 구조로 바꿔 단일 소스로 만든다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>int.Parse(quest.FollowItemID) 무방비 — 시트 오타 하나로 퀘스트 팔로우 UI 전멸</h3></div>
+  <div class="file">UI/Scene/UI_GameScene.cs:808 (근사)</div>
+  <div class="chip"><span class="now">RefreshQuestFollow가 int itemId = int.Parse(quest.FollowItemID);로 파싱한다. 같은 파일의 OnFollowItemChanged(780행)는 TryParse를 쓰는데 여기만 무방비 — QuestData 시트에 숫자가 아닌 FollowItemID가 들어오면 FormatException으로 팔로우 UI 갱신 경로가 죽는다. GetCurrentFollowUI는 null/빈 문자열만 거르고 형식은 검증하지 않는다.</span></div>
+  <div class="chip"><span class="to">780행과 동일하게 if (!int.TryParse(quest.FollowItemID, out int itemId)) { followObj.SetActive(false); return; }로 교체한다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>&quot;팝업 = timeScale 0&quot; 전제가 실제로는 빈 스텁 — 문서/주석과 코드 불일치 + 시계 혼용</h3></div>
+  <div class="file">Managers/Core/UIManager.cs:221-236</div>
+  <div class="chip"><span class="now">RefreshTimeScale() 본문이 전부 주석 처리돼 팝업이 게임을 정지시키지 않는다. 그런데 UI/Popup/AGENTS.md와 UI_TamePopup.cs:20은 &#x27;timeScale=0이므로 unscaled/SetUpdate(true) 필수&#x27;를 규칙으로 명시하고 코드 전반이 그 전제로 작성됨. 실제로는 잡기 팝업 중에도 뒤에서 전투(AutoAttack은 Time.time 기반)가 계속 돌고, 물약 쿨타임(unscaledDeltaTime)과 버프 지속(WaitForSeconds/Time.time, PlayerController.cs:59-65, UI_Buff.cs:132)이 서로 다른 시계를 쓴다 — pause를 재도입하는 순간 쿨타임만 돌고 버프는 얼어붙는 불일치가 터진다.</span></div>
+  <div class="chip"><span class="to">정지가 의도라면 RefreshTimeScale 본문을 복원하고, 아니라면 AGENTS.md/주석의 규칙을 현실에 맞게 수정한 뒤 쿨타임·버프·전투 타이머의 시계(scaled vs unscaled)를 하나로 통일한다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>Managers static 프로퍼티의 Instance?. null 전파 — 초기화 순서 버그를 침묵시킴</h3></div>
+  <div class="file">Managers/Managers.cs:18-24,60-66</div>
+  <div class="chip"><span class="now">모든 매니저 접근이 Instance?._game 형태라 초기화 이전/종료 중엔 null이 반환되고, 호출부 60여 곳이 Managers.Sound?., Managers.Combo?.Tick(...) 식으로 조용히 no-op 된다. 그 결과 위 GameScene 빌드 브랜치 같은 실제 초기화 누락도 예외 한 번 없이 &#x27;조용히 아무 일도 안 하는&#x27; 상태로 진행돼 원인 추적이 어렵다.</span></div>
+  <div class="chip"><span class="to">Instance getter가 Init()을 보장하므로 static 프로퍼티는 null 전파 대신 그대로 반환하고(종료 시점만 가드), 부팅 완료 후 핵심 매니저(Data/Game)가 null이면 LogError로 fail-fast 하는 검증 한 줄을 Init 끝에 둔다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>DataManager.LoadJson — 로드 실패 시 빈 데이터로 침묵 진행, Deserialize null/중복 DataId 무방비</h3></div>
+  <div class="file">Managers/Core/DataManager.cs:72-81</div>
+  <div class="chip"><span class="now">TextAsset 누락 시 LogError 후 Activator로 빈 로더를 반환해 게임이 빈 딕셔너리로 계속 돈다(퀘스트/몬스터가 그냥 &#x27;없음&#x27;으로 동작). 또 JsonConvert.DeserializeObject&lt;Loader&gt;(text)가 빈 파일이면 null을 반환해 .MakeDict()에서 NRE, Data.Contents.cs의 모든 MakeDict가 dict.Add(item.DataId, ...)라 시트에 DataId 중복 행이 하나만 있어도 ArgumentException으로 Init 체인이 중단된다.</span></div>
+  <div class="chip"><span class="to">Deserialize 결과 null 체크 + MakeDict를 if (!dict.TryAdd(...)) Debug.LogError($&quot;중복 DataId {id}&quot;) 패턴으로 바꿔, 시트 오류가 크래시가 아닌 명확한 로그로 드러나게 한다.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>SoundManager — 로드 실패한 클립을 null로 영구 캐싱, Init 전 Clear() 시 NRE</h3></div>
+  <div class="file">Managers/Core/SoundManager.cs:230-244</div>
+  <div class="chip"><span class="now">LoadAudioClip이 Resource.Load 실패(null)여도 _audioClips.Add(key, null)로 캐시에 넣어, 이후 어드레서블이 로드돼도 그 키는 영원히 무음이며 에러 로그도 없다(오류 은폐). 또 Clear()(44-49행)는 Init 전 호출되면 _audioSources null 원소에 Stop()을 호출해 NRE — Managers.Clear()가 무조건 Sound.Clear()를 부른다.</span></div>
+  <div class="chip"><span class="to">null 클립은 캐시에 넣지 않고 LogWarning을 남기며(다음 호출에서 재시도), Clear의 foreach에 if (audioSource != null) 가드를 추가한다.</span></div>
+</div>
+</div>
+<h2 style="color:#e8d87e">일관성 · 유지보수</h2><div class="h2sub">네 가지 패턴 공존·오타 고착 — 신규 코드가 헤매는 이유</div><div class="grid"><div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>빌드(#else) 분기 매니저 초기화 누락 — TODO 방치로 빌드 실행 불가 상태</h3></div>
+  <div class="file">Scenes/GameScene.cs:46-58</div>
+  <div class="chip"><span class="now">에디터 분기(#if UNITY_EDITOR)는 PreLoad 후 Data/Game/Font/Sound/Quest/SubQuest Init을 전부 수행하지만, #else 분기 Awake는 Init(); // TODO : 게임 데이터 불러오기; _game = Managers.Game; 뿐이라 리소스 프리로드와 매니저 Init이 전부 빠져 있다. 플레이어 연결(Managers.Game.Player), Combo.AttachPlayer, RefreshStats 재호출도 없다.</span></div>
+  <div class="chip"><span class="to">프리로드+Init 시퀀스를 하나의 공용 메서드(예: BootSequence())로 추출해 두 분기가 동일 경로를 타게 하고, #else 분기의 TODO를 해소한다. 분기 차이는 테스트 훅 유무 정도로만 남긴다.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>로컬라이징 4가지 패턴 공존 — 키가 있는데도 하드코딩된 한글/인라인 분기</h3></div>
+  <div class="file">UI/Popup/UI_ItemPopup.cs:227-233 (외 6곳+)</div>
+  <div class="chip"><span class="now">표준은 Util.Localize(LocalizeKey.X)인데 (1) UI_ItemPopup:227-233은 kor ? &quot;일반&quot; : &quot;BASIC&quot; 인라인 스위치로 등급명을 하드코딩(RarityBasicText~RarityREQUISITEText 키가 Define에 이미 존재), (2) UI_PotionDetailPopup:499는 entry.Kor : entry.Eng 조회를 자체 재구현, (3) UI_PotionPopup:462 &quot;정보&quot; : &quot;INFO&quot; 인라인 쌍, (4) UI_BattleScene:91 $&quot;처치: {_killCount}&quot;, UI_GameScene:1329 ShowToast(&quot;산들바람 숲(잎구)&quot;), UI_BestiaryPopup:154 return $&quot;고유기술&quot;(UniqueSkillText 키 존재)은 순수 한글 리터럴 — 영어 모드에서 한글이 그대로 노출된다.</span></div>
+  <div class="chip"><span class="to">이미 존재하는 LocalizeKey로 전부 치환하고, 키가 없는 문구(처치 라벨, 토스트 지역명)는 시트에 키 추가 후 Util.Localize 단일 경로로 통일. 인라인 Language == Korean ? 분기는 Localize 내부에만 존재하도록 제한.</span></div>
+</div>
+<div class="card b1">
+  <div class="head"><span class="sev b1">높음</span><h3>UIManager.RefreshTimeScale()가 전부 주석처리된 no-op — 문서·주석과 코드 불일치 + SoulShop 잔재</h3></div>
+  <div class="file">Managers/Core/UIManager.cs:221-257</div>
+  <div class="chip"><span class="now">ShowPopupUI/ClosePopupUI가 여전히 RefreshTimeScale()을 호출하지만 본문 전체가 주석이라 아무 일도 안 한다. CLAUDE.md·AGENTS.md는 &#x27;팝업이 열리면 timeScale=0&#x27;이라고 문서화하고 UI_TamePopup:20 주석도 &#x27;팝업 오픈 시 Time.timeScale=0&#x27;을 전제한다. 실제 timeScale 제어는 #region 임시의 IsActiveSoulShop(이 게임에 없는 SlimeMaster 잔재)과 UI_BattleScene.cs:119의 직접 토글로 흩어져 있고, OnTimeScaleChanged 이벤트도 SoulShop setter에서만 발화된다.</span></div>
+  <div class="chip"><span class="to">일시정지 정책을 확정해 RefreshTimeScale을 실제 구현하거나 호출부와 함께 삭제하고, IsActiveSoulShop 임시 리전을 제거. 문서(CLAUDE.md/AGENTS.md)와 UI_TamePopup 등 전제 주석을 실동작에 맞게 동기화.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>문자열 완전일치 매칭 키에 오타 고착 — NEX_TXT(NEW_TXT 오타), BTN_COMMISION</h3></div>
+  <div class="file">Utils/Define.cs:578,585,590</div>
+  <div class="chip"><span class="now">VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT/VILLAGE1_MONASTERY_..._NEX_TXT는 상수명과 값 모두 NEX_TXT인데, 같은 대상을 가리키는 Texts enum·ActivationKey는 AlchemyCustomOrderButtonNewTxt(NEW)다(UI_Village1BtnGroup.cs:992,999에서 두 표기가 한 줄에 공존). QuestNotify는 BtnID 문자열 완전일치 매칭이므로 시트 작성자가 상식적으로 NEW_TXT로 쓰면 뱃지가 조용히 안 뜬다. BTN_COMMISION도 &#x27;시트 표기 유지&#x27; 주석으로 오타가 고착됨.</span></div>
+  <div class="chip"><span class="to">시트와 코드 양쪽을 NEW_TXT/COMMISSION으로 일괄 정정(파서 재실행 포함)하거나, 최소한 Define 상수 옆에 &#x27;시트 값과 결합, 단독 수정 금지&#x27; 경고를 남기고 신규 키는 오타 없는 표기로만 추가.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>클래스명 오타가 API까지 전파 — UI_AttactedPopup vs ShowAttractedPopup, UI_TtitleScene</h3></div>
+  <div class="file">UI/Popup/UI_AttactedPopup.cs:14</div>
+  <div class="chip"><span class="now">클래스는 UI_AttactedPopup(Attracted 오타)인데 이를 여는 매니저 메서드는 UIManager.ShowAttractedPopup(UIManager.cs:159)으로 올바른 철자 — 같은 개념이 두 철자로 검색된다. enum 멤버 8개(AttactedPopupImage1...)와 프리팹명까지 오타가 전파됨. 타이틀 씬도 UI_TtitleScene(UI_TtitleScene.cs:6, AGENTS.md에 &#x27;오타 그대로&#x27;라고 명시). LocalizeKey에도 VitialityText(Vitality), IncreseStatText(Increase), BeastiaryText(Bestiary), ParticalGetText(Partial), EquipGrade.REQUISITE(유일한 전대문자) 등 오타/스타일 이탈이 산재.</span></div>
+  <div class="chip"><span class="to">프리팹 이름 변경과 함께 UI_AttractedPopup/UI_TitleScene으로 일괄 리네임(Resource.Instantiate가 클래스명 기반이라 프리팹 동시 변경 필수). JSON 키와 1:1인 LocalizeKey 오타는 시트→파서 재생성 시점에 함께 정정.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>동일 개념에 4가지 명칭 혼용 — MinMon / Minimon / Minion / Companion</h3></div>
+  <div class="file">Managers/Contents/MinMonManager.cs:1 (25개 파일 650회)</div>
+  <div class="chip"><span class="now">같은 &#x27;미니몬&#x27; 개념이 매니저는 MinMonManager(Managers.MinMon), 팝업은 UI_MinionInfoPopup(Minion), 로컬라이즈 키는 MinimonCodexText(Minimon), 전투 오브젝트는 ObjectType.Minion + CompanionController/CompanionMinMonId(Companion)로 4가지 표기가 혼재한다(grep: MinMon|Minimon|Minion 650건/25파일). 검색·리팩터링 시 누락을 유발한다.</span></div>
+  <div class="chip"><span class="to">대표 표기 하나(예: Minimon)를 정해 신규 코드부터 강제하고, AGENTS.md에 용어 표를 추가. 기존 심볼은 LSP rename으로 단계적 통일(전투 소환체=Companion처럼 역할이 다른 것만 예외로 명시).</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>GameObject.Find(&quot;Player&quot;) 문자열 조회 반복 — Managers.Game.Player가 이미 존재</h3></div>
+  <div class="file">UI/SubItem/UI_Village1BtnGroup.cs:158 (외 4곳)</div>
+  <div class="chip"><span class="now">GameObject.Find(&quot;Player&quot;)?.GetComponent&lt;Animator&gt;().Play(&quot;Escape&quot;)가 UI_Village1BtnGroup 한 파일에서 158/220/276/699/761 라인 등 5곳에 복붙돼 있다. GameScene이 Managers.Game.Player를 이미 세팅하므로 문자열 씬 검색이 불필요하고, 오브젝트명이 바뀌면 5곳이 조용히 null-skip된다. GameObject.Find(&quot;BackgroundImage&quot;) legacy 정리 코드도 UI_BattleBtnGroup.cs:880과 UI_Village1BtnGroup.cs:528에 중복.</span></div>
+  <div class="chip"><span class="to">Managers.Game.Player 경유의 PlayEscapeAnim() 헬퍼 하나로 5곳을 치환하고, legacyBG 정리도 공용 메서드로 추출해 한 곳에서 관리.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>런타임 팝업 상호참조가 FindObjectOfType — UIManager 스택 패턴과 공존</h3></div>
+  <div class="file">UI/Popup/UI_SkillDetailPopup.cs:750-752 (외 2파일)</div>
+  <div class="chip"><span class="now">팝업 접근 표준은 UIManager 스택(+OnPopupClosed 이벤트)인데, 런타임 코드가 FindObjectOfType&lt;UI_SkillBookPopup&gt;()?.RefreshUI()(UI_SkillDetailPopup:752), Object.FindObjectOfType&lt;UI_MonsterDetailPopup&gt;()(UI_MinionInfoPopup:534-536), FindObjectOfType&lt;UI_BestiaryPopup&gt;()(UI_BestiaryPopup:727)로 씬 전역 검색을 쓴다. 느리고(전 씬 스캔) 스택 관리 원칙과 어긋나는 두 패턴이 공존한다.</span></div>
+  <div class="chip"><span class="to">UIManager에 GetPopup&lt;T&gt;()(스택 탐색) 헬퍼를 추가해 전부 치환하거나, 기존 OnPopupClosed처럼 이벤트로 갱신을 전파해 팝업 간 직접 참조 자체를 제거.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>색상 정의 3가지 방식 공존 + 등급색 이중 구현(enum에 없는 &quot;Elite&quot; 케이스 포함)</h3></div>
+  <div class="file">UI/SubItem/UI_BestiaryBox.cs:237-246</div>
+  <div class="chip"><span class="now">색 지정이 (1) Define.cs:620-624 문자열 상수(DEFAULT_COLOR=&quot;FFFFFF&quot;), (2) Util.HexToColor(&quot;...&quot;) 인라인 리터럴 약 50곳, (3) new Color32(0xFF,0xC5,0x00,0xFF) static readonly 3방식으로 혼재. 특히 UI_BestiaryBox.GetRarityColor는 Util.GetGradeColor와 같은 hex(0064C8/9600FF/960E00)를 재하드코딩하면서 raw string switch를 쓰는데 &quot;Elite&quot; 케이스는 CreatureRarity enum(Common/Rare/Boss)에 존재하지 않는다. 공명도 색 쌍(30FF00/FF820B)도 UI_MinionInfoPopup 258·614, UI_MonsterDetailPopup 265 세 곳에 중복. COLOR_GROUP_SELECT/COLOR_BUTTON_DEFAULT는 UI_TravelPopup·UI_TownSelectButton·UI_MapSelectButton 3파일에 동일 정의.</span></div>
+  <div class="chip"><span class="to">Util(또는 Define)에 팔레트 static Color 상수를 모으고 중복 정의 3파일과 GetRarityColor를 그것으로 치환. Rarity는 string 대신 CreatureRarity enum으로 파싱해 Elite 같은 유령 케이스를 컴파일 타임에 드러낸다.</span></div>
+</div>
+<div class="card b2">
+  <div class="head"><span class="sev b2">중간</span><h3>로그 규약 부재 — Bind 실패가 무정보 Debug.Log, 태그 혼용/무태그, 빌드 가드 없음</h3></div>
+  <div class="file">UI/UI_Base.cs:87</div>
+  <div class="chip"><span class="now">UI 바인딩 실패가 Debug.Log($&quot;Failed to bind({names[i]})&quot;) — 어떤 UI 클래스에서 실패했는지 없고 Warning도 아니어서 프리팹 이름 오타가 조용히 묻힌다(AGENTS.md도 함정으로 문서화). 전체 210곳의 Debug.Log는 태그가 [Travel]/[UI_TravelPopup] 혼용(같은 파일 UI_TravelPopup 내), 무태그(&quot;Close Popup Failed!&quot; UIManager:129, $&quot;Current Travel Area ID...&quot; UI_TravelPopup:559), GameScene만 &quot;@&gt;&gt;&quot; 프리픽스 등 제각각이며 릴리즈 빌드 제외 수단([Conditional] 래퍼)이 없다.</span></div>
+  <div class="chip"><span class="to">Bind 실패는 Debug.LogWarning($&quot;[{GetType().Name}] Failed to bind({name})&quot;, this)로 승격. 태그 규약(클래스명 1개)으로 통일하고, 정보성 로그는 [Conditional(&quot;UNITY_EDITOR&quot;)] 래퍼(예: Util.Log)로 감싸 빌드에서 제거.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>TODO 방치 — 빈 골격 클래스와 미구현 분기 20여 곳</h3></div>
+  <div class="file">UI/SubItem/UI_FieldTypeButton.cs:49-52 (외 다수)</div>
+  <div class="chip"><span class="now">UI_FieldTypeButton은 SetInfo()가 빈 몸통이고 클릭/색상/VFX/EFrame 로직 전부가 TODO 4줄로만 존재(AGENTS.md도 &#x27;골격만 존재&#x27;로 명시). UI_GameScene.cs 206(&#x27;현재 구역에 따라 EnterArea&#x27;)·542(&#x27;직업에 따라 초상화 교체&#x27;)·1349(&#x27;전투로 이동&#x27;), UI_InventoryPopup.cs 116·237, UI_TamePopup.cs 21(&#x27;한글 리터럴 처리 TODO: 데이터화&#x27;) 등 소유자·기한 없는 TODO가 산재한다.</span></div>
+  <div class="chip"><span class="to">여행 UI 계열(현재 다른 작업 진행 중)을 제외한 TODO를 이슈로 옮기고 코드에는 이슈 번호를 남기거나 삭제. 골격만 있는 UI_FieldTypeButton은 사용 계획이 없으면 파일째 제거.</span></div>
+</div>
+<div class="card b3">
+  <div class="head"><span class="sev b3">낮음</span><h3>이벤트 선언 불일치 + 프로젝트 잔재(미사용 using, 빈 Unity 메시지)</h3></div>
+  <div class="file">Managers/Contents/GameManager.cs:491,495</div>
+  <div class="chip"><span class="now">GameManager 이벤트 10개 중 public event Action EquipInfoChanged만 On 접두사가 없고, public Action OnInventoryNewChanged만 event 키워드가 빠져 외부에서 = 대입/직접 Invoke가 가능(캡슐화 이탈). 또 Util.cs:8 using static UnityEngine.RuleTile.TilingRuleOutput; 때문에 Transform = UnityEngine.Transform alias(10행)가 필요해졌고, UIManager.cs:7 using UnityEngine.SocialPlatforms;는 미사용. GameScene.cs:72-80과 UI_Test.cs:15-18의 빈 Start()/Update()는 매 프레임 호출 오버헤드만 남긴다.</span></div>
+  <div class="chip"><span class="to">OnEquipInfoChanged로 리네임하고 OnInventoryNewChanged에 event 키워드 추가. 미사용 using 2건과 빈 Start/Update 블록은 삭제.</span></div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

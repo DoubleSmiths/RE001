@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RE001 수정 정리본 1 (07.05 ~ 07.08)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; background: #14141f; color: #e8e8f0; line-height: 1.7; padding: 40px 20px; }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+  h1 { color: #ffd76a; font-size: 25px; }
+  .sub { color: #9a9ab0; font-size: 13px; margin: 6px 0 28px; }
+  h2 { color: #7ec8ff; font-size: 18px; margin: 34px 0 12px; padding-bottom: 5px; border-bottom: 1px solid #34345a; }
+  .overflow { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { border: 1px solid #34345a; padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: #24243f; color: #ffd76a; white-space: nowrap; }
+  td.n { white-space: nowrap; color: #9ad0ff; }
+  code { background: #0e0e1c; color: #8ee6d0; padding: 1px 5px; border-radius: 4px; font-size: 12px; font-family: Consolas, monospace; }
+  .st { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; white-space: nowrap; }
+  .done { background: #234a2e; color: #9cffb8; }
+  .sheet { background: #4a3d23; color: #ffe49c; }
+  .run { background: #23364a; color: #9cd4ff; }
+  .note { background: #20203a; border-left: 4px solid #ffd76a; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 13.5px; color: #d0d0e4; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RE001 수정 정리본 1</h1>
+  <div class="sub">기간: 2026-07-05 ~ 07-08 · 범례: <span class="st done">완료</span> <span class="st sheet">완료+시트 반영 필요</span> <span class="st run">진행 중</span> · 모든 항목은 Unity 에디터 컴파일/플레이 확인 권장</div>
+
+  <h2>1. 버그 수정</h2>
+  <div class="overflow"><table>
+    <tr><th>항목</th><th>원인</th><th>수정</th><th>파일</th><th>상태</th></tr>
+    <tr><td class="n">콤보 ColorHex 미반영</td><td>파서 미실행 (JSON에 구 팔레트) + 파싱 실패 시 투명색 함정</td><td>JSON 갱신 + <code>GetRankColor</code> 흰색 폴백, IDLE 색도 Lv0 데이터화</td><td>ComboManager, UI_BattleBtnGroup, ComboData.json</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">물약 쿨타임 리셋</td><td>쿨타임 타이머가 전투 밖에서 감소하지 않음 → 재오픈마다 복원값이 그대로</td><td>Update에서 항상 감소(unscaled) + 신속물약 쿨타임 영속(Start/Normalized)</td><td>PlayerController, UI_PotionPopup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">물약 [정보] 버튼 무반응</td><td>클릭 리스너 미연결 + 라벨 정적 저작(한/영 불일치)</td><td>정보 버튼 → 상세팝업(설명 모드), RefreshTexts + OnLanguageChanged</td><td>UI_PotionPopup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">아이템 정보창 후광/버튼</td><td>후광 무조건 표시 + 발견장소 키 노출(이전 수정) 등</td><td>후광: 퀘스트 보상(showGlow)·귀중품만 표시, 하단 버튼 상시 숨김, 상세·물약상세 팝업 후광 정책 통일</td><td>UI_ItemPopup, UI_PotionDetailPopup, Quest/SubQuestManager</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">대화 텍스트박스 크기 미적용</td><td><code>PlayEmotionEffect</code>가 매 타이핑마다 위치를 0으로 리셋 → 프리팹 저작값 소실</td><td>최초 위치 보존·복원, Sad 이동도 원점 기준</td><td>DialogueAnimator</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">배경음 설정 즉시 미적용</td><td>BGM이 루프 재생 중이라 설정을 다음 재생 때만 검사</td><td><code>RefreshBgmSetting()</code> — 토글 즉시 일시정지/재개 (SFX는 원래 정상)</td><td>SoundManager, GameManager</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">능력 상세 (수비)/(보조) 안 밀림</td><td>좌/우 별도 컬럼 구조 — 반대편 컬럼 스페이서가 미구현(프리팹에 애니만 존재)</td><td>펼침 상태 기반 반대편 스페이서 트윈 연결 (공격→수비+보조, 수비→보조)</td><td>UI_CharacterPopup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">여정 팝업 이미지/장소명 미표시</td><td>미리보기 이미지 설정 코드 부재 + 첫 실행 시 현재 위치 ID=0</td><td><code>RefreshPlacePreview</code> — 오픈 시 현재 위치/선택 시 해당 지역 (TravelNode 시트 Sprite/Name)</td><td>UI_TravelPopup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">임시 통행증 획득 시 미반영</td><td>가방 해금이 퀘2(나가기) 보상으로 걸림 + 퀘2에 팔로우 데이터 없음</td><td>가방 해금 퀘1로 이동, 퀘2에 젤리 퐁(0/2) 팔로우 지정</td><td>QuestUnlockData.json, QuestData.json</td><td><span class="st sheet">완료+시트</span></td></tr>
+    <tr><td class="n">고블린 공격 안 함/스폰 불가</td><td>파서 재실행으로 크리쳐 JSON 오염(고블린 소실) + Attack 클립에 데미지 이벤트 누락 + 슬라임 클립 길이(0.4s) 하드코딩</td><td>데이터 복원, AttackTrigger 이벤트 추가, 실제 클립 길이 기반 상태 유지, 컨트롤러 전환 보정</td><td>CreatureData.json, Goblin_Attack.anim, Goblin.controller, MonsterController</td><td><span class="st sheet">완료+시트</span></td></tr>
+    <tr><td class="n">슬라임 이름 "1" 표시</td><td>크리쳐 시트 27컬럼 개편 후 파서 미갱신 → 컬럼 밀림 (Name←CreatureID)</td><td>파서 27컬럼 재작성(+28열~ 선택컬럼), Name→로컬라이즈 키 전환</td><td>DataTransformer, CreatureData.json, LocalizationData.json</td><td><span class="st sheet">완료+시트</span></td></tr>
+    <tr><td class="n">물약 업그레이드 깨짐</td><td>신속물약 재료 ID 오타(1001→존재하지 않음) → 업그레이드 영구 불가 + 제작 연출 DOTween 충돌/<code>_craftBusy</code> 영구 잠김</td><td>재료 ID 교정(JSON+로컬 xlsx), 트윈 정리/try-finally/Z펀치 교정/등급 스케일 팝</td><td>SpeedPotion.json, SpeedPotionData.xlsx, UI_PotionDetailPopup</td><td><span class="st sheet">완료+시트</span></td></tr>
+    <tr><td class="n">QuestNotify 키 불일치 (퀘4)</td><td><code>BTN_BATTLE_SCENE_JOURNEY</code>가 어떤 바인딩에도 없음 (BTN_GUILD_QUEST는 정상 매핑)</td><td>전투 중 여정 버튼 느낌표 매칭에 연결</td><td>Define, UI_GameScene</td><td><span class="st done">완료</span></td></tr>
+  </table></div>
+
+  <h2>2. 기획 수정안 반영 (연출)</h2>
+  <div class="overflow"><table>
+    <tr><th>항목</th><th>내용</th><th>파일</th><th>상태</th></tr>
+    <tr><td class="n">대화 오프닝</td><td>클릭 즉시 Box+캐릭터 0.3s 페이드 + 배경 1.0s 페이드 동시 진행, 0.3s에 이름/타이핑 시작</td><td>DialogueAnimator</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">해금(Unlock) 연출</td><td>텍스트 페이드를 아이콘과 통일 → 빛줄기 버스트 동시 재생 → 페이드 후 글로우 플래시 → 플래시 후 팝업. 연출~팝업 중 [!] 억제, 닫힌 후 [!]+NEW 동시 표시. 자동 녹화로 타이밍 검증 완료</td><td>UI_AreaBtnGroup, UI_Village1BtnGroup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">UI 파티클 구조 문제 해결</td><td>월드 파티클이 SSC 캔버스에 렌더되지 않는 한계 발견 → <code>UIFx.PlayParticle</code>(UIParticle 래퍼) 경유로 전환 + scale 파라미터(2.25)</td><td>UIFx, UI_AreaBtnGroup, UI_GameScene</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">랭크업 연출</td><td>완료 보고 대화 종료 시 Player Rank Up Ef(발밑 정렬) + "RANK UP" 토스트. ※데이터 랭크 변경은 미구현 확인(별도 결정 대기)</td><td>ObjectManager, UI_Village1BtnGroup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">Quest Follow 연출</td><td>목표치 달성 시 Effect만, 퀘스트 완료(전환) 시 Anim+Effect (완료 전이 감지 버그도 수정)</td><td>UI_GameScene</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">건물 진입 플레이어 확대</td><td>길드/연금 등 내부 진입 시 플레이어 1.5배(SwitchBG 일괄 처리, 암전 중 전환), 메인 복귀 시 원복</td><td>UI_Village1BtnGroup</td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">QuestVFX 연결 정비</td><td>나가기/전투 중 여정 느낌표 키 신설·연결, 여정팝업 마을 카테고리(BTN_TOWN) 연결, 프리팹 괄호 이름 교정</td><td>UI_GameScene, UI_TravelPopup, Define, UI_GameScene.prefab</td><td><span class="st done">완료</span></td></tr>
+  </table></div>
+
+  <h2>3. 한/영 전환 (감사 → 일괄 수정)</h2>
+  <div class="overflow"><table>
+    <tr><th>항목</th><th>내용</th><th>상태</th></tr>
+    <tr><td class="n">전 프리팹 감사</td><td>61개 프리팹/839개 텍스트 전수 — 빈 칸 위험 0건, 미적용 높음 36건·경미 15건, 오저작 2건, 미사용 프리팹 25개. 보고서: <code>Documents/한영전환_점검보고.md</code></td><td><span class="st done">완료</span></td></tr>
+    <tr><td class="n">높음 36건 일괄 수정</td><td>CustomOrder(NPC 대사 언어 분기 포함)/Equipment(BindText 신설)/Setting/SkillBook 필터 5종/Character(스탯 라벨 26종 "공격력" 오저작 교정)/Item(등급·발견장소·사용/사용불가 6종)/Inventory/MinionInfo/MonsterDetail/Tame(REALLY? 등)/PotionDetail(제작·재료부족·뒤로)/SkillDetail("물약개선" 오저작→뒤로)/GameScene(나가기·여정·팔로우 아이템명) — 전 팝업 RefreshTexts + OnLanguageChanged 구독/해제 패턴 통일. LocalizationData.json 307키·중복 0 검증</td><td><span class="st done">완료</span></td></tr>
+  </table></div>
+
+  <h2>4. 도구 · 문서 산출물</h2>
+  <div class="overflow"><table>
+    <tr><th>산출물</th><th>내용</th></tr>
+    <tr><td class="n">AGENTS.md 16개</td><td>코드베이스 계층 문서 생성(07-05) 및 세션 변경분 갱신(07-08)</td></tr>
+    <tr><td class="n">에디터 도구 2종</td><td><code>UnlockAnimRecorder</code>(원클릭 연출 자동 녹화 → Documents 저장), <code>UnlockFxDebugMenu</code>(이펙트 진단)</td></tr>
+    <tr><td class="n">기획 문서</td><td><code>Documents/QuestVFX_느낌표_정리.md</code> (느낌표 26곳 ↔ 시트 키 매핑), <code>Documents/한영전환_점검보고.md</code></td></tr>
+    <tr><td class="n">전략 문서</td><td><code>조언1.html</code>(작업 리스트) · <code>조언2.html</code>(성공 전략) · <code>변화하면 좋은점.html</code>(발표 자료)</td></tr>
+  </table></div>
+
+  <div class="note">
+    <b>⚠️ 구글시트에 반영해야 되돌아가지 않는 항목</b> (게임은 JSON만 읽고, 파서 재실행 시 시트값으로 덮어씀)<br>
+    ① QuestUnlock: 가방 해금 퀘2→퀘1 이동 &nbsp;② QuestData: 퀘2 팔로우(젤리 퐁/2) &nbsp;③ ComboData: 로컬 xlsx 구버전 주의 &nbsp;④ 크리쳐 시트: Name을 TextKey로, PrefabLabel=Monster, IconLabel 채움, 고블린 행 재추가, 28열~ 선택컬럼(Habitat 등) &nbsp;⑤ Localization 시트: 아래 5절 신규 키 17종 추가 &nbsp;⑥ 신속물약 재료 ID 1001→10001 &nbsp;⑦ <b>크리쳐 시트 수정 완료 전 구글시트 파서 재실행 금지 / 크리쳐 로컬 파서(빈 xlsx) 실행 금지</b>
+  </div>
+
+  <h2>5. Localization 시트에 추가할 신규 키 17종</h2>
+  <div class="overflow"><table>
+    <tr><th>TextKey</th><th>Kor</th><th>Eng</th><th>사용처</th></tr>
+    <tr><td class="n">MonsterJellyPongNameText</td><td>젤리 퐁</td><td>JELLY PONG</td><td>크리쳐 이름 (Name 키 전환)</td></tr>
+    <tr><td class="n">CustomOrderTitleText</td><td>주문제작</td><td>CUSTOM ORDER</td><td>주문제작 팝업 타이틀</td></tr>
+    <tr><td class="n">CustomOrderTalkText</td><td>무엇을 만들어드릴까요?</td><td>What shall I make for you?</td><td>연금 NPC 대사</td></tr>
+    <tr><td class="n">EquipmentTitleText</td><td>장비</td><td>EQUIPMENT</td><td>장비 팝업 타이틀</td></tr>
+    <tr><td class="n">SettingsTitleText</td><td>설정</td><td>SETTINGS</td><td>설정 팝업 타이틀</td></tr>
+    <tr><td class="n">TravelerText</td><td>여행자</td><td>TRAVELER</td><td>기술상세 직업명</td></tr>
+    <tr><td class="n">NeedSkillMasterText</td><td>기술 스승\n필요</td><td>NEED\nSKILL MASTER</td><td>기술상세 제작불가 버튼</td></tr>
+    <tr><td class="n">NeedMinionAnalysisText</td><td>하수인 또는\n분석 필요</td><td>REQ MINION\nOR ANALYSIS</td><td>기술상세 잠금 미니언 박스</td></tr>
+    <tr><td class="n">ItemGradeLabelText</td><td>&nbsp;등급:&nbsp;</td><td>&nbsp;GRADE:&nbsp;</td><td>아이템 정보창</td></tr>
+    <tr><td class="n">ItemFoundPlaceLabelText</td><td>&nbsp;발견장소:</td><td>&nbsp;FOUND AT:</td><td>아이템 정보창</td></tr>
+    <tr><td class="n">UseBtnText</td><td>사용</td><td>USE</td><td>아이템 사용 버튼 3종</td></tr>
+    <tr><td class="n">CannotUseBtnText</td><td>사용불가</td><td>UNUSABLE</td><td>아이템 사용불가 버튼 3종</td></tr>
+    <tr><td class="n">InventoryTitleText</td><td>소지품</td><td>INVENTORY</td><td>소지품 팝업 타이틀</td></tr>
+    <tr><td class="n">SortBtnText</td><td>정리</td><td>SORT</td><td>소지품 정리 버튼</td></tr>
+    <tr><td class="n">NotOwnedText</td><td>미보유</td><td>NOT OWNED</td><td>미니언 정보 미보유 오버레이</td></tr>
+    <tr><td class="n">TameConfirmReallyText</td><td>정말로?</td><td>REALLY?</td><td>잡기 확인 버튼</td></tr>
+    <tr><td class="n">TameConfirmNotYetText</td><td>아직은!</td><td>COURSE NOT!</td><td>잡기 취소 버튼</td></tr>
+  </table></div>
+  <div class="note">신규 키는 코드에서 문자열 리터럴로 참조 중 — 시트에 위 행들을 추가하고 <code>Tools/GenerateLocalizeKeys</code>를 실행하면 Define.LocalizeKey 상수가 생성되며, 이후 상수 참조로 교체할 수 있습니다 (교체 전에도 동작에는 문제 없음). 줄바꿈이 필요한 값(\n)은 시트에 저작된 관례대로 입력해 주세요.</div>
+
+</div>
+</body>
+</html>

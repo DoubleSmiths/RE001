@@ -1,4 +1,4 @@
-<!-- Generated: 2026-07-05 | Updated: 2026-07-05 -->
+<!-- Generated: 2026-07-05 | Updated: 2026-07-08 -->
 
 # RE001
 
@@ -19,6 +19,7 @@
 | `Assets/@Resources/` | 게임 리소스 — `Data/`(JSON 데이터), `Prefab/`, `Sprite/`, `Sound/`, `Font/`, `Animation/`, `Particles/` |
 | `Assets/@Scenes/` | Unity 씬 파일 |
 | `Assets/AddressableAssetsData/` | Addressables 설정 (리소스 로딩은 Addressables 기반) |
+| `Documents/` | 기획·QA 문서 (버그 스크린샷/GIF, `QuestVFX_느낌표_정리.md` 등 기획자용 정리 문서, 연출 검증 녹화본) |
 | `_tools/` | 개발 보조 스크립트 모음 (퀘스트 xlsx 검증/수정 Python 스크립트, enum 검증, 스크린샷 등 작업 산출물) |
 | `tools/` | 데이터 시트 생성 PowerShell 스크립트 |
 | `ProjectSettings/`, `Packages/` | Unity 프로젝트 설정 / 패키지 매니페스트 |

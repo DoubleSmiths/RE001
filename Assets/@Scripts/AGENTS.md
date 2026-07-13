@@ -1,5 +1,5 @@
 <!-- Parent: ../../AGENTS.md -->
-<!-- Generated: 2026-07-05 | Updated: 2026-07-05 -->
+<!-- Generated: 2026-07-05 | Updated: 2026-07-08 -->
 
 # @Scripts
 
@@ -9,7 +9,7 @@ RE001의 모든 런타임/에디터 C# 소스 코드 루트. Manager 싱글톤 �
 ## Key Files
 | File | Description |
 |------|-------------|
-| `DialogueAnimator.cs` | NPC 대화 텍스트 연출용 컴포넌트 (루트에 위치한 단독 스크립트) |
+| `DialogueAnimator.cs` | NPC 대화 연출 컴포넌트 (루트 단독 스크립트). 오프닝 시퀀스 `PlayOpenSequence` — 클릭 즉시 Dialogue Box+초상화 0.3s / 배경(Gradient+Panel) 1.0s **동시** 페이드(OutQuad), 0.3s 시점에 이름 ON+타이핑 시작 콜백. 글자별 알파 페이드 타이핑(TMP 메시 재갱신 대응으로 LateUpdate에서 강제 적용, `SkipTyping` 지원), 감정 연출(DOShake/Punch — `_textOriginPos`로 프리팹 저작 텍스트 위치 보존·복원), 초상화 발화 강조, Arrow 점멸 루프 |
 
 ## Subdirectories
 | Directory | Purpose |
@@ -30,8 +30,16 @@ RE001의 모든 런타임/에디터 C# 소스 코드 루트. Manager 싱글톤 �
 - 팝업은 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`로만 열고 닫는다 (직접 SetActive 금지).
 - 상태 전환은 property setter를 통해서만 (직접 필드 변경 금지).
 - 이벤트 구독은 `OnDestroy()`에서 반드시 해제.
+- **UI 캔버스 위 파티클**: 월드 ParticleSystem은 Screen Space Camera 캔버스 위에 직접 렌더되지 않는다 — 반드시 `UIFx.PlayParticle()`(UIParticle 래퍼) 경유 (UI/UIFx.cs 참조).
 - 게임 수치는 JSON 데이터(`Assets/@Resources/Data`)로 관리 — 코드 하드코딩 금지. `DataId`(int)가 기본 키.
 - 모든 스크립트는 UTF-8 (BOM 없음).
+
+### 스펙 출처 (기획서 매핑)
+게임 스펙의 원전은 구글 슬라이드 기획서 2종 — **기획서1**(70장: UI/연출/전투), **기획서2**(54장: 도감/미니몬/능력) + 수정안. 코드 주석의 "슬N"/"슬라이드 N" 표기가 이 슬라이드 번호를 가리키며, 에디터 미러는 `Editor/QuestVerifyMenu.cs`(슬라이드별 시연 메뉴). 파일별 상세 매핑은 각 하위 디렉터리 AGENTS.md의 동명 소절 참조.
+
+| 파일 | 기획서 슬라이드 |
+|------|----------------|
+| `DialogueAnimator.cs` | 기획서1 슬31·32 (대화 연출), 수정안 슬1·2 (오프닝 페이드 타이밍) |
 
 ### Testing Requirements
 - `Editor/`의 테스트 메뉴(BattleTestMenu, PopupTestMenu, IntegrationTestMenu, QuestVerifyMenu 등)와 Unity 플레이 모드로 검증.

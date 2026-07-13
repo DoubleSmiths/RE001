@@ -1,5 +1,5 @@
 <!-- Parent: ../AGENTS.md -->
-<!-- Generated: 2026-07-05 | Updated: 2026-07-05 -->
+<!-- Generated: 2026-07-05 | Updated: 2026-07-08 -->
 
 # UI
 
@@ -12,7 +12,7 @@
 | `UI_Base.cs` | 모든 UI의 abstract 베이스. enum 이름으로 자식 오브젝트를 찾아 바인딩하는 `Bind<T>`/`Get<T>` 시스템, static `BindEvent`(UI_EventHandler 연결), `ApplyFont`(언어 변경 시 자동 폰트 갱신), `PopupOpenAnimation`/`FadeIn`/`FadeOut`/`FadeInOut` DOTween 연출 헬퍼 제공 |
 | `UI_EventHandler.cs` | `IPointerClickHandler` 등 6종 UGUI 인터페이스 구현체. 포인터 이벤트를 `OnClickHandler` 등 public `Action` 필드로 전달하며, 클릭 시 `Managers.Sound.PlayButtonClick()` SFX를 자동 재생. `_pressed` 상태로 `OnPressedHandler`를 Update마다 호출 |
 | `DamageFont.cs` | world-space `TextMeshPro` 데미지 팝업. `DamageFontMode` 5종(Normal/Critical/Miss/CriticalCallout/Heal)별 vertex gradient 색상 + outline 적용, DOTween으로 Fade-in+Scale(0.3s) → 상승+Fade-out(1.5s) 후 `Managers.Resource.Destroy`로 풀 반환. Critical 시 글로우 sprite(`CritAdditive`)를 텍스트 좌상단에 lazy 생성 |
-| `UIFx.cs` | static 클래스. World-space ParticleSystem이 Screen Space Camera Canvas에 렌더되지 않는 한계를 우회해 RectTransform+Image+DOTween으로 구현한 fake burst(`PlayBurst`: Splash/Sparkle/Heal 3종)와 `Coffee.UIExtensions.UIParticle`로 실제 파티클 prefab을 UI 위에 렌더하는 `PlayParticle` 제공 |
+| `UIFx.cs` | static 클래스. World-space ParticleSystem이 Screen Space Camera Canvas에 렌더되지 않는 한계를 우회해 RectTransform+Image+DOTween으로 구현한 fake burst(`PlayBurst`: Splash/Sparkle/Heal 3종)와 `Coffee.UIExtensions.UIParticle`로 실제 파티클 prefab을 UI 위에 렌더하는 `PlayParticle(parent, localPos, prefabKey, lifetime, scale)` 제공. `scale` 파라미터는 호스트 RectTransform의 localScale 배율(기본 1) — 월드용 프리팹이 UI에서 작게 보일 때 확대용 (해금 연출은 `UI_AreaBtnGroup.UNLOCK_FX_SCALE`=2.25배 사용) |
 | `UI_Test.cs` | RectTransform 위치를 잡는 임시 테스트 스크립트 (영혼 상점 초기 상태) |
 
 ## Subdirectories
@@ -33,6 +33,7 @@
 - **팝업 열기/닫기**: 반드시 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`를 통해서만. 직접 `SetActive` 금지.
 - **폰트/로컬라이징**: TMP 텍스트에 폰트를 줄 때는 `ApplyFont(text, FontType.XX)`를 사용 — 첫 등록 시 `Managers.Game.OnLanguageChanged`를 구독해 언어 변경 시 자동 갱신된다. `OnDestroy()` override 시 반드시 `base.OnDestroy()`를 호출해 구독 해제를 유지할 것.
 - **클릭 SFX**: `UI_EventHandler.OnPointerClick`이 자동으로 `Managers.Sound.PlayButtonClick()`을 호출하므로 개별 버튼에 클릭 사운드를 추가로 넣지 않는다.
+- **UI 위 파티클**: world-space `ParticleSystem`은 Screen Space Camera Canvas 위에 직접 렌더되지 않는다(구조적 제약). UI 위에 실제 파티클 prefab을 재생할 때는 반드시 `UIFx.PlayParticle()`(Coffee.UIExtensions `UIParticle` 래퍼) 경유 — 사용처: `UI_AreaBtnGroup.UnlockButtonAnim`(Star_01_Anim_13_a/GlowDot_01, scale 2.25), `UI_GameScene.PlayFollowDoneSequence` 완료 연출 등. 크기가 작게 보이면 프리팹을 고치지 말고 `scale` 인자로 배율 지정.
 - **오브젝트 생성/삭제**: `Managers.Resource.Instantiate()` / `Managers.Resource.Destroy()` 사용 (풀 반환 포함). `DamageFont`처럼 풀에서 재사용되는 오브젝트는 `SetInfo` 시작에서 `DOTween.Kill(this)`로 잔상 트윈을 정리한다.
 
 ### Common Patterns
@@ -41,6 +42,16 @@
 - DOTween `Sequence` 연출 + `SetUpdate(true)`(timeScale 무시, 팝업 일시정지 중에도 동작) + `OnComplete` 콜백에서 정리/풀 반환.
 - Time-scale 독립 UI 연출: `PopupOpenAnimation`(0.8→1.0 scale), `FadeInOut`(Image alpha), `OnClickButtonAnim`(`DOTweenAnimation.DORestart`).
 - 색상은 `Util.HexToColor("FF0000")` hex 문자열로 지정, TMP outline은 `Util.SetTMPOutline`.
+
+### 스펙 출처 (기획서 매핑)
+이 폴더 파일이 구현하는 스펙의 기획서 슬라이드 매핑. 덱 원본은 구글 슬라이드이며, 에디터 내 스펙 미러(검증 메뉴)는 `Editor/QuestVerifyMenu.cs` 참조.
+
+| File | 기획서 슬라이드 |
+|------|----------------|
+| `UI_Base.cs` | 기획서1 슬27 |
+| `DamageFont.cs` | 기획서1 슬64 |
+
+대화 연출 스크립트 `DialogueAnimator.cs`는 `@Scripts` 루트 소속(기획서1 슬31·32, 수정안 슬1·2) — UI 문서에서 대화 연출을 참조할 때는 수정안 반영된 최신 시퀀스 기준으로 볼 것.
 
 ## Dependencies
 
