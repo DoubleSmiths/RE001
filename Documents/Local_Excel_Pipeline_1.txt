@@ -1,0 +1,68 @@
+==================================================================
+ 데이터 파이프라인 전환 #1 — 구글시트 폐기, 로컬 엑셀 단일 원천화
+ 작성일: 2026-07-24
+ 대상: 기획자/개발자
+==================================================================
+
+[배경]
+구글 계정 저장용량 초과로 스프레드시트 편집이 계정 차원에서 차단됨
+("생성, 수정, 업로드 불가"). 이에 데이터 원천을 리포 내 로컬 엑셀
+(Assets/@Resources/Data/Excel/)로 전환. 구글시트는 더 이상 사용하지 않음.
+
+[새 워크플로 — 이것만 기억하면 됨]
+ 1. Assets/@Resources/Data/Excel/ 의 xlsx를 수정
+ 2. Unity 메뉴 Tools > ParseAllLocal (로컬 전체 파싱)
+ → JsonData/*.json 갱신 → 게임 반영. 이게 전부.
+
+==================================================================
+ 1. 코드 변경 (DataTransformer.cs)
+==================================================================
+ - [신규] Tools > ParseAllLocal — ParseExcel(코어 7종) + ParseExtraData
+   (추가 8종)를 한 번에 실행
+ - [가드] ParseExcelFromGoogleSheets / ParseExtraDataFromGoogleSheets는
+   에러 로그만 내고 중단 (s_useGoogleSheets=false). 실수로 실행해도
+   로컬 데이터가 옛 구글시트로 덮이는 사고 방지
+ - [최신화] 로컬 파서 3개가 구식이어서 재작성:
+   · ParsePlayerStatusData — 신규 스탯 10컬럼(치명~획득률) 추가 (GS와 동일)
+   · ParseCreatureData — 13→37컬럼. 특히 수기 JSON에만 있고 어떤 파서에도
+     없어 파싱 시 소실되던 필드 10종(AnimController/Habitat/DmgAmp/Rarity/
+     MonsterAttackDelay/EncounterRate/InterestRate/MaxKillCount/SpawnY/
+     DamageFontYOffset)을 컬럼으로 편입 — 지뢰 제거
+   · ParseItemData — 단일시트 레거시(ItemData.json 생성)를 멀티시트
+     (InventoryItem/RequisiteItem/Equipment → 각 JSON)로 교체
+
+==================================================================
+ 2. 엑셀 재생성 (JSON이 진실 — JSON에서 역생성)
+==================================================================
+ - _tools/rebuild_xlsx_from_json.py [신규]: PlayerStatus/Creature/
+   Item(3시트)/Localization/Dialogue/Travel(신규 파일)/Buff 재생성.
+   컬럼 순서는 파서와 1:1 — 파서를 바꾸면 이 스크립트도 같이.
+ - AI/gen_data_sheets.py (기존): Skill/Equipment/EquipEnhance/MinMon/
+   HPPotion/SpeedPotion/Combo 재생성.
+ - QuestData.xlsx: 기존 유지 + 구글시트에만 있던 SubQuest_Main/
+   SubQuest_Notify/SubQuest_Unlock_Table 시트 3개 복원.
+ - ScriptData.xlsx 삭제 (참조 0건 레거시).
+
+==================================================================
+ 3. 라운드트립 검증에서 확인된 의도적 JSON 변화 (전부 무해/개선)
+==================================================================
+ 1) HPPotion/SpeedPotion의 Grade: 숫자(0) → 문자열("Basic") — 표현 통일,
+    게임 로드는 Newtonsoft가 양쪽 다 지원
+ 2) CreatureData에 AttackSfx/OnHitSfx/DieSfx 키 명시 (기존 수기 JSON에
+    누락 → null이던 것이 "Slime_*" 기본값으로 명시됨)
+ 3) DialogueScriptData에 GuildOnQuestText 그룹 추가 (로컬 xlsx에만 있던
+    미래용 대사 — 코드 참조는 아직 없음, 무해)
+ 4) QuestConditionData 퀘4 레거시 2행 자동 정리 (미사용 확인됨)
+ 5) QuestUnlockData 행 순서 재배열 (내용 동일 — 로더가 QuestID별로
+    그룹화하므로 순서 무관)
+
+==================================================================
+ 4. 주의
+==================================================================
+ - 이전 문서(Quest_Changes_1.txt / Travel_Unlock_Changes_1.txt)의
+   "구글시트 반영 필수" 항목은 전부 폐기 — 해당 데이터는 이미 로컬
+   xlsx에 들어 있음.
+ - 구글시트를 되살리려면: 시트를 로컬 xlsx와 먼저 동기화한 뒤
+   DataTransformer.cs의 s_useGoogleSheets를 true로.
+ - xlsx에 시트를 추가하면 파서(DataTransformer)와 재생성 스크립트
+   (_tools/rebuild_xlsx_from_json.py)에도 같이 반영할 것.

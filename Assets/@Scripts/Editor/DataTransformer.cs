@@ -49,9 +49,27 @@ public class DataTransformer : EditorWindow
 
     // ─────────────────────────────────────────────────────────────────────────
 
+    // 2026-07: 구글시트 폐기 — 로컬 xlsx(Assets/@Resources/Data/Excel)가 단일 원천.
+    // 되살리려면 true로 바꾸되, 구글시트를 로컬 xlsx와 먼저 동기화할 것 (안 하면 최신 데이터가 옛 시트로 덮임).
+    static readonly bool s_useGoogleSheets = false;
+
+    /// <summary>로컬 xlsx 전체 파싱 (코어 7종 + 추가 8종) — 데이터 수정 후 이것 하나만 실행하면 됨.</summary>
+    [MenuItem("Tools/ParseAllLocal (로컬 전체 파싱)")]
+    public static void ParseAllLocal()
+    {
+        ParseExcel();
+        ParseExtraData();
+        Debug.Log("[DataTransformer] ParseAllLocal 완료 — 로컬 xlsx → JSON 전체 갱신");
+    }
+
     [MenuItem("Tools/ParseExcelFromGoogleSheets")]
     public static void ParseExcelFromGoogleSheets()
     {
+        if (!s_useGoogleSheets)
+        {
+            Debug.LogError("[DataTransformer] 구글시트 경로는 폐기되었습니다(로컬 xlsx가 원천). Tools/ParseAllLocal 을 사용하세요.");
+            return;
+        }
         GS_ParsePlayerStatusData();
         GS_ParseDialogueScriptData();
         GS_ParseLocalizationData();
@@ -617,6 +635,18 @@ public class DataTransformer : EditorWindow
             data.StartSkills      = SplitLines(skillRaw).Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
             data.StartSkillLevels = SplitLines(skillLvRaw).Select(s => s.Trim()).Where(s => s.Length > 0).Select(s => ConvertValue<int>(s)).ToList();
 
+            // 신규 컬럼 (StartSkill_Lv 뒤에 추가) — GS 파서와 동일 순서
+            data.StartCritRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartCritDamage     = i < row.Count ? ConvertValue<float>(row[i++]) : 150f;
+            data.StartAccuracy       = i < row.Count ? ConvertValue<float>(row[i++]) : 80f;
+            data.StartAtkSpeed       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            data.StartPhysicalResist = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartMagicResist    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartEvasion        = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartRecoveryRate   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            data.StartGrowthRate     = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            data.StartDropRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+
             loader.playerStatuses.Add(data);
         }
 
@@ -1112,6 +1142,16 @@ public class DataTransformer : EditorWindow
             d.DropItemId  = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
             d.DropCount   = i < row.Count ? ConvertValue<int>(row[i++]) : 0;
             d.DropChance  = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            // 전투 스탯 (GS 파서와 동일 순서)
+            d.MagicAtk       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.CritRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.CritDamage     = i < row.Count ? ConvertValue<float>(row[i++]) : 150f;
+            d.Accuracy       = i < row.Count ? ConvertValue<float>(row[i++]) : 80f;
+            d.AtkSpeed       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            d.PhysicalResist = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.MagicResist    = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.Evasion        = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.RecoveryRate   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             // 슬라이드 79: 미니몬 고유기술 (Excel에 컬럼 추가 전엔 빈 값)
             d.UniqueSkillName = i < row.Count ? row[i++] : "";
             d.UniqueSkillDesc = i < row.Count ? row[i++] : "";
@@ -1119,6 +1159,17 @@ public class DataTransformer : EditorWindow
             { string s = i < row.Count ? row[i++] : ""; d.AttackSfx = string.IsNullOrEmpty(s) ? "Slime_Attack" : s; }
             { string s = i < row.Count ? row[i++] : ""; d.OnHitSfx  = string.IsNullOrEmpty(s) ? "Slime_OnHit"  : s; }
             { string s = i < row.Count ? row[i++] : ""; d.DieSfx    = string.IsNullOrEmpty(s) ? "Slime_Die"    : s; }
+            // 수기 JSON 전용이던 필드 편입 (구글시트 시절 파서에 없어 파싱 시 소실되던 것 — 로컬 전환으로 해소)
+            d.AnimController     = i < row.Count ? row[i++] : "";
+            d.Habitat            = i < row.Count ? row[i++] : "";
+            d.DmgAmp             = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            { string s = i < row.Count ? row[i++] : ""; d.Rarity = string.IsNullOrEmpty(s) ? "Common" : s; }
+            d.MonsterAttackDelay = i < row.Count ? ConvertValue<float>(row[i++]) : 1.5f;
+            d.EncounterRate      = i < row.Count ? ConvertValue<float>(row[i++]) : 1f;
+            d.InterestRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.MaxKillCount       = i < row.Count ? ConvertValue<int>(row[i++]) : 100;
+            d.SpawnY             = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
+            d.DamageFontYOffset  = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
 
             loader.creatures.Add(d);
         }
@@ -1133,29 +1184,43 @@ public class DataTransformer : EditorWindow
     // -------------------------------------------------------------------
     static void ParseItemData()
     {
-        ItemDataLoader loader = new ItemDataLoader();
+        // 시트 3개(InventoryItem/RequisiteItem/Equipment) → 시트명과 동일한 JSON 3개 생성 (GS_ParseItemData와 동일 구조).
+        // 물약(HPPotion/SpeedPotion)은 별도 HPPotionData.xlsx/SpeedPotionData.xlsx — ParseExtraData 담당.
+        var sheets = ReadAllXlsxSheets($"{Application.dataPath}{EXCEL_PATH}/ItemData.xlsx");
 
-        var rows = ReadXlsx($"{Application.dataPath}{EXCEL_PATH}/ItemData.xlsx");
-
-        for (int y = 1; y < rows.Count; y++)
+        foreach (var (sheetName, rows) in sheets)
         {
-            List<string> row = rows[y];
-            if (row.Count == 0 || string.IsNullOrEmpty(row[0]))
-                continue;
+            if (sheetName.StartsWith("_")) continue;
 
-            int i = 0;
-            ItemData d = new ItemData();
-            d.DataId        = ConvertValue<int>(row[i++]);
-            d.Name          = i < row.Count ? row[i++] : "";
-            d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
-            d.Description   = i < row.Count ? row[i++] : "";
-            d.SpriteName    = i < row.Count ? row[i++] : "";
-            d.FoundLocation = i < row.Count ? row[i++] : "";
-
-            loader.items.Add(d);
+            switch (sheetName)
+            {
+                case "InventoryItem":
+                case "RequisiteItem":
+                case "Equipment":
+                {
+                    var loader = new ItemDataLoader();
+                    for (int y = 1; y < rows.Count; y++)
+                    {
+                        var row = rows[y];
+                        if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+                        int i = 0;
+                        var d = new ItemData();
+                        d.DataId        = ConvertValue<int>(row[i++]);
+                        d.Name          = i < row.Count ? row[i++] : "";
+                        d.Grade         = i < row.Count ? ConvertValue<EquipGrade>(row[i++]) : EquipGrade.Basic;
+                        d.Description   = i < row.Count ? row[i++] : "";
+                        d.SpriteName    = i < row.Count ? row[i++] : "";
+                        d.FoundLocation = i < row.Count ? row[i++] : "";
+                        loader.items.Add(d);
+                    }
+                    WriteJson(sheetName, loader);
+                    break;
+                }
+                default:
+                    Debug.LogWarning($"[DataTransformer] ItemData 시트 '{sheetName}' 는 파서가 없습니다.");
+                    break;
+            }
         }
-
-        WriteJson("ItemData", loader);
     }
 
     // ===================================================================
@@ -1186,6 +1251,11 @@ public class DataTransformer : EditorWindow
     [MenuItem("Tools/ParseExtraDataFromGoogleSheets")]
     public static void ParseExtraDataFromGoogleSheets()
     {
+        if (!s_useGoogleSheets)
+        {
+            Debug.LogError("[DataTransformer] 구글시트 경로는 폐기되었습니다(로컬 xlsx가 원천). Tools/ParseAllLocal 을 사용하세요.");
+            return;
+        }
         ParseSkillDataSheet      (ReadXlsx(DownloadGoogleSheet(GSHEET_SKILL)));
         ParseEquipmentDataSheet  (ReadXlsx(DownloadGoogleSheet(GSHEET_EQUIPMENT)));
         ParseEquipEnhanceDataSheet(ReadXlsx(DownloadGoogleSheet(GSHEET_EQUIP_ENHANCE)));

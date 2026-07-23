@@ -34,13 +34,17 @@
       "SpawnY": 2.3,
       "DamageFontYOffset": 2.5,
       "UniqueSkillName": "0",
-      "UniqueSkillDesc": "0"
+      "UniqueSkillDesc": "0",
+      "AttackSfx": "Slime_Attack",
+      "OnHitSfx": "Slime_OnHit",
+      "DieSfx": "Slime_Die"
     },
     {
       "DataId": 2002,
       "Name": "RabiSlimeNameText",
       "PrefabLabel": "Monster",
       "IconLabel": "slime_monster_0",
+      "AnimController": "",
       "Habitat": "",
       "MaxHp": 110.0,
       "PhysicalAtk": 14.0,
@@ -69,7 +73,10 @@
       "SpawnY": 2.3,
       "DamageFontYOffset": 2.5,
       "UniqueSkillName": "0",
-      "UniqueSkillDesc": "0"
+      "UniqueSkillDesc": "0",
+      "AttackSfx": "Slime_Attack",
+      "OnHitSfx": "Slime_OnHit",
+      "DieSfx": "Slime_Die"
     },
     {
       "DataId": 2003,
@@ -105,7 +112,10 @@
       "SpawnY": 2.3,
       "DamageFontYOffset": 3.0,
       "UniqueSkillName": "0",
-      "UniqueSkillDesc": "0"
+      "UniqueSkillDesc": "0",
+      "AttackSfx": "Slime_Attack",
+      "OnHitSfx": "Slime_OnHit",
+      "DieSfx": "Slime_Die"
     }
   ]
 }
