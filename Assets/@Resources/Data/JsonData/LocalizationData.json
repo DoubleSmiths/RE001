@@ -58,7 +58,7 @@
     {
       "TextKey": "StartText",
       "Kor": "시작",
-      "Eng": ""
+      "Eng": "START"
     },
     {
       "TextKey": "BtmCharacterBtnText",
@@ -282,8 +282,8 @@
     },
     {
       "TextKey": "PlayerLvPrefix",
-      "Kor": "LV.",
-      "Eng": "LV."
+      "Kor": "| LV.",
+      "Eng": "| LV."
     },
     {
       "TextKey": "CharPopupTitleText",
@@ -1449,6 +1449,16 @@
       "TextKey": "Minmon2002NameText",
       "Kor": "라비 슬라임",
       "Eng": "Rabi Slime"
+    },
+    {
+      "TextKey": "ItemRank2PermitNameText",
+      "Kor": "2급 통행증",
+      "Eng": "RANK 2 PERMIT"
+    },
+    {
+      "TextKey": "ItemRank2PermitDescText",
+      "Kor": "2급 모험가에게 발급되는 통행증.\n\n일반 통행증과 다르게\n제대로 된 양식에 인장까지 찍혀있다.\n접수원의 정성이…\n느껴지는 것 같기도 하다.",
+      "Eng": "A permit issued to rank-2 adventurers.\n\nUnlike the regular permit, it's written\non a proper form with an official seal.\nYou can almost feel the receptionist's\nsincerity... almost."
     }
   ]
 }

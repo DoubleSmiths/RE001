@@ -122,7 +122,7 @@ for k in sorted(set(xl_n) | set(js_n)):
 
 # ── Quest_Unlock ──────────────────────────────────
 print("\n=== Quest_Unlock ===")
-UNLOCK_TYPE = ["UI_BUTTON", "SUBQUEST_START", "ITEM_REWARD"]
+UNLOCK_TYPE = ["UI_BUTTON", "SUBQUEST_START", "ITEM_REWARD", "ITEM_REMOVE"]
 xl_u = rows_dict("Quest_Unlock", ["QuestID", "TargetID"])
 # 키를 (QuestID, str(TargetID))로 정규화 (Excel int vs JSON str 혼용 흡수)
 xl_u = {(qid, str(tid)): v for (qid, tid), v in xl_u.items()}

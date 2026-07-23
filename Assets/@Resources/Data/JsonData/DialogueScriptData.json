@@ -179,6 +179,56 @@
           "Eng": "Until next time."
         }
       ]
+    },
+    {
+      "GroupKey": "GuildQuest3Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>폴짝 젤리</b></color>] <#2DFF00><b>5</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring 5 <color=#2DFF00><b>Rabijelly</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>2</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a\n<color=#00B9FF>[<color=#858585>2</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "기존 <#00B9FF>일반 통행증</color>은 회수하고\n<#00B9FF>[<#858585>2</color>]급 통행증</color>을 새로 발급해 드리겠습니다.\n이번에도 확인만을 위한 절차라\n재료를 제출하실 필요는 없습니다.",
+          "Eng": "Your <color=#00B9FF>Regular Permit</color> will be collected,\nand a new <color=#00B9FF>Rank 2 Permit</color> will be issued.\nAs before, this is merely a verification —\nno materials need to be submitted."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "<#00B9FF>[<#858585>2</color>]급 모험가</color>로 승급되신 것을 축하드립니다.\n상위 등급의 임무와 새로운 지역 출입 허가는\n협회에서 준비 중입니다.",
+          "Eng": "Congratulations on your promotion to a\n<color=#00B9FF>[<color=#858585>2</color>]-rank Adventurer</color>.\nHigher-rank commissions and access to\nnew regions are being prepared by the guild."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다음에 다시 뵙죠.",
+          "Eng": "Until next time."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildOnQuestText",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "재료는 구해 오신건가요?",
+          "Eng": "You got the materials?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "많이 한가하신가 보군요.",
+          "Eng": "Seems like\nyou’ve got nothing better to do."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "용건이 없으시다면 저는 이만.",
+          "Eng": "If that's all, I have work to do."
+        }
+      ]
     }
   ]
 }

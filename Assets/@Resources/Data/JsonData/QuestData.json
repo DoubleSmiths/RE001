@@ -19,9 +19,9 @@
       "CompleteType": 4,
       "CompleteTarget": "GUILD_EXIT_QUEST_VFX",
       "CompleteCount": 0,
-      "FollowItemID": "10001",
-      "FollowItemName": "젤리 퐁",
-      "FollowCount": 2,
+      "FollowItemID": "",
+      "FollowItemName": "",
+      "FollowCount": 0,
       "AnimationID": "ANIM_JOURNEY_UNLOCK",
       "AnimBlocking": true,
       "DialogueID": ""
@@ -77,6 +77,19 @@
       "AnimationID": "",
       "AnimBlocking": false,
       "DialogueID": ""
+    },
+    {
+      "QuestID": 7,
+      "QuestName": "2급 모험가 완료 보고",
+      "CompleteType": 4,
+      "CompleteTarget": "BTN_GUILD_QUEST",
+      "CompleteCount": 0,
+      "FollowItemID": "10002",
+      "FollowItemName": "폴짝 젤리",
+      "FollowCount": 5,
+      "AnimationID": "",
+      "AnimBlocking": false,
+      "DialogueID": "GuildQuest3Text"
     }
   ]
 }
