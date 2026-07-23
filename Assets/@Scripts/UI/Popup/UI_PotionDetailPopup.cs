@@ -505,6 +505,10 @@ public class UI_PotionDetailPopup : UI_Popup
         // 등급 색상 반영 (Glow, 물약 이미지 옆 Rank 프레임 등)
         ApplyGradeColor(data.Grade);
 
+        // 물약 이미지 후광/shine은 표시하지 않음 (UI_ItemPopup과 동일 정책 — 타이틀 후광만 유지)
+        GetImage((int)Images.GlowMask_1)?.gameObject.SetActive(false);
+        GetObject((int)GameObjects.PotionDetailPopupshineeffect)?.SetActive(false);
+
         var nextData = GetNextView(_currentDataId);
 
         // 필요 재료는 다음 단계 업그레이드 기준으로 표시

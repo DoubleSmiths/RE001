@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RE001 추후 작업 리스트 (조언1)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; background: #1a1a2e; color: #e8e8e8; line-height: 1.7; padding: 40px 20px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { color: #ffd76a; font-size: 26px; margin-bottom: 6px; }
+  .sub { color: #9a9ab0; font-size: 13px; margin-bottom: 32px; }
+  h2 { color: #7ec8ff; font-size: 19px; margin: 36px 0 14px; padding-bottom: 6px; border-bottom: 1px solid #3a3a5c; }
+  .item { background: #23233d; border-left: 4px solid #555; border-radius: 6px; padding: 14px 18px; margin-bottom: 12px; }
+  .item.p1 { border-left-color: #ff6b6b; }
+  .item.p2 { border-left-color: #ffd76a; }
+  .item.p3 { border-left-color: #6bcB77; }
+  .item h3 { font-size: 15px; color: #fff; margin-bottom: 4px; }
+  .item p { font-size: 13.5px; color: #c8c8d8; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+  .tag.high { background: #5c2b2b; color: #ff9c9c; }
+  .tag.mid { background: #5c522b; color: #ffe49c; }
+  .tag.low { background: #2b5c38; color: #9cffb8; }
+  code { background: #16162a; color: #8ee6d0; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; font-family: Consolas, monospace; }
+  .overflow { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 8px; }
+  th, td { border: 1px solid #3a3a5c; padding: 6px 10px; text-align: left; }
+  th { background: #2b2b4a; color: #ffd76a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RE001 — 추후 작업 리스트</h1>
+  <div class="sub">2026-07-08 기준 · 코드/데이터 분석과 QA 세션에서 확인된 항목 정리 (우선순위: <span style="color:#ff6b6b">■ 높음</span> <span style="color:#ffd76a">■ 중간</span> <span style="color:#6bcB77">■ 낮음</span>)</div>
+
+  <h2>1. 미구현 · 스텁 기능</h2>
+
+  <div class="item p1">
+    <h3>데이터 랭크업 미구현 <span class="tag high">기능 공백</span></h3>
+    <p>랭크업은 현재 연출(이펙트+토스트)만 있고 <code>GameData.AdventurerRank</code>는 아무도 쓰지 않아 항상 0(BLANK). 필드·세이브·HUD 표시가 전부 준비돼 있어, <code>QuestUnlockType.RANK_SET</code> 추가 + 퀘스트 시트 한 행 + <code>ProcessUnlocks</code> case 하나 + HUD 갱신 이벤트면 완성. (기대값: 퀘4 완료 시 5)</p>
+  </div>
+
+  <div class="item p1">
+    <h3>물약 보유 수량 스텁 <span class="tag high">인벤토리 미연동</span></h3>
+    <p><code>UI_PotionPopup</code>의 수량이 <code>count = 5</code> 하드코딩이라 팝업을 껐다 켜면 5개로 리셋. 물약을 실제 아이템/인벤토리와 연동해 소모·저장되도록 해야 함.</p>
+  </div>
+
+  <div class="item p2">
+    <h3>UI_EquipmentPopup 부분 구현 <span class="tag mid">장비 시스템</span></h3>
+    <p>장비 팝업은 내비게이션만 구현된 상태(코드에 명시). 장착/강화(대장간 T1→T3)/내구도 등 기획서 5-3 장비 시스템 본체 작업 필요. 연계: <code>DataManager</code>에서 <code>ForgeRecipe/CraftRecipe</code> 시트 로드가 주석 처리돼 있어 <code>GameManager.ForgeEquipment</code>가 사실상 죽은 경로.</p>
+  </div>
+
+  <div class="item p2">
+    <h3>UI_FieldTypeButton 미구현 <span class="tag mid">여정 팝업</span></h3>
+    <p><code>SetInfo()</code>가 빈 몸체 + TODO. 여정 팝업의 필드 타입 필터 버튼 기능 구현 필요. TOWN 카테고리도 현재 마을 1개(아스달)뿐 — 마을 추가 시 <code>BTN_TOWN</code> 유도 키/노드 확장.</p>
+  </div>
+
+  <div class="item p2">
+    <h3>전투 버튼 그룹 느낌표 미구현 <span class="tag mid">Quest Notify</span></h3>
+    <p><code>UI_BattleBtnGroup.RefreshNotify()</code>가 빈 함수(프리팹에 VFX 오브젝트 없음). 전투 씬 버튼에도 퀘스트 유도 느낌표가 필요하면 프리팹 오브젝트 추가 + 바인딩 연결.</p>
+  </div>
+
+  <div class="item p3">
+    <h3>전직 시스템 미구현 <span class="tag low">장기</span></h3>
+    <p><code>PlayerName</code>이 "여행자" 고정. <code>UI_SkillDetailPopup</code> 주석에도 의도적 미구현으로 명시 — 기획 확정 후 착수.</p>
+  </div>
+
+  <div class="item p3">
+    <h3>TimeManager 미등록 <span class="tag low">방치형 코어</span></h3>
+    <p><code>Managers.cs</code>에서 주석 처리 상태. 오프라인 보상·스태미나(CLAUDE.md 설계의 방치형 핵심 루프)가 아직 없음.</p>
+  </div>
+
+  <h2>2. 데이터 · 파이프라인 리스크</h2>
+
+  <div class="item p1">
+    <h3>시트 ↔ JSON 동기화 밀린 항목 <span class="tag high">파서 실행 필요</span></h3>
+    <p>게임은 JSON만 읽으므로, 로컬에서 수정한 JSON은 <b>구글시트에 반영하지 않으면 다음 파서 실행 때 되돌아감</b>:</p>
+    <div class="overflow"><table>
+      <tr><th>수정된 JSON</th><th>내용</th><th>시트에 할 일</th></tr>
+      <tr><td>QuestUnlockData</td><td>UNLOCK_INVENTORY_BUTTON: 퀘2 → 퀘1 (통행증 획득 즉시 가방 해금)</td><td>동일 이동</td></tr>
+      <tr><td>QuestData</td><td>퀘2에 팔로우 지정 (젤리 퐁 0/2 즉시 표시)</td><td>FollowItemID=10001, 이름, Count=2</td></tr>
+      <tr><td>ComboData</td><td>ColorHex 신 팔레트 반영 완료</td><td>로컬 ComboData.xlsx가 구버전 — 구글시트 파서만 사용하거나 로컬 xlsx 동기화</td></tr>
+      <tr><td>CreatureData(진행 중)</td><td>Name을 Localization TextKey로 전환 작업 중</td><td>Name 컬럼에 TextKey 기입 규칙 확정</td></tr>
+    </table></div>
+  </div>
+
+  <div class="item p2">
+    <h3>DataTransformer 취약점 <span class="tag mid">구조적</span></h3>
+    <p>컬럼 인덱스(<code>row[i++]</code>) 기반 파싱이라 시트 컬럼 순서 변경이 파괴적(이번 "슬라임 이름 1" 계열 사고의 배경). Extra 8종 시트는 enum을 문자열로 저장(StringEnumConverter)해 enum 이름 변경도 호환성 파괴. 장기적으로 헤더명 기반 파싱 전환 권장.</p>
+  </div>
+
+  <div class="item p2">
+    <h3>세이브 스팸 <span class="tag mid">성능/수명</span></h3>
+    <p><code>GameManager</code>의 여러 property setter가 변경 즉시 <code>SaveGame()</code>(전체 직렬화+파일 쓰기) 호출. 전투 중 빈번한 변경 시 IO 부담 — 더티 플래그 + 주기 저장으로 배칭 권장.</p>
+  </div>
+
+  <h2>3. 코드 · 에셋 정리</h2>
+
+  <div class="item p3">
+    <h3>이름/잔재 정리 <span class="tag low">혼동 방지</span></h3>
+    <p>① <code>CameraController.cs</code> 안의 실제 클래스는 <code>FixedResolution</code> (파일명 불일치) ② <code>UI_TtitleScene</code> 파일명 오타 ③ <code>UI/Legecy/UI_BattleBtnGroup_Legecy.prefab</code> 미사용 레거시 ④ 폴더명과 달리 <code>UI_SubItem</code> 베이스 클래스는 없음(대부분 UI_Base 직상속) — 정리하거나 컨벤션 문서화.</p>
+  </div>
+
+  <div class="item p3">
+    <h3>UI 파티클 규칙 준수 <span class="tag low">재발 방지</span></h3>
+    <p>월드 ParticleSystem은 SSC 캔버스 위에 직접 렌더되지 않음 — UI 위 이펙트는 반드시 <code>UIFx.PlayParticle()</code>(UIParticle 래퍼) 경유. 씬에 저작된 <code>Quest_Done_Effect</code>류도 실제 게임 뷰에서 보이는지 QA 필요.</p>
+  </div>
+
+  <h2>4. 진행 중 조사 (완료 시 반영)</h2>
+
+  <div class="item p2">
+    <h3>미해결 티켓 조사 중 <span class="tag mid">에이전트 진행</span></h3>
+    <p>① 물약 업그레이드 깨지는 현상 ② 고블린 공격 안 함/애니 어색 ③ 슬라임 이름 "1" + 크리쳐 Name 로컬라이즈 키 전환 ④ 전 프리팹 누락 텍스트/한·영 전환 감사 (프리팹 61개·텍스트 839개 중 빈 텍스트 24개, 한글 원문 0개 확인 — 코드 미갱신 텍스트 대조 중).</p>
+  </div>
+
+  <h2>5. QA · 자동화 제안</h2>
+
+  <div class="item p3">
+    <h3>연출 자동 녹화 확대 <span class="tag low">QA 효율</span></h3>
+    <p><code>UnlockAnimRecorder</code>(메뉴 1클릭 → 플레이 진입 → 연출 트리거 → MP4 저장) 패턴이 검증됨. 대화 오프닝/랭크업/퀘스트 팔로우 등 다른 연출에도 같은 방식의 녹화 메뉴를 추가하면 기획 수정안 대비 검증이 빨라짐.</p>
+  </div>
+
+  <div class="item p3">
+    <h3>바인딩 검증 자동화 <span class="tag low">회귀 방지</span></h3>
+    <p>enum 이름 ↔ 프리팹 오브젝트명 완전일치 규약이라 이름 불일치가 조용히 깨짐(과거 <code>TravelButton(OnBattle)</code> 사례). 기존 <code>verify_enum_bindings.py</code>를 에디터 메뉴/CI로 정례화 권장.</p>
+  </div>
+
+</div>
+</body>
+</html>

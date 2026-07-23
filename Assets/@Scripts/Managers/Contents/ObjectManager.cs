@@ -212,6 +212,27 @@ public class ObjectManager
         Object.Destroy(go, FX_LIFETIME);
     }
 
+    // 기획 수정안(2026-07-05): 랭크업 연출 — Player Rank Up Ef를 부모(플레이어) 아래 생성.
+    // 재생 속도/타이밍은 프리팹 저작값 그대로 사용 (코드 보정 안 함).
+    // 위치는 캐릭터 발밑 기준: 프리팹 로컬 오프셋을 쓰면 머리쪽에 떠서, 스프라이트 바운즈 하단(y)에 정렬한다.
+    const float RANKUP_FX_LIFETIME = 4f;
+    public void ShowRankUpEffectOn(Transform parent)
+    {
+        GameObject go = Managers.Resource.Instantiate("Player Rank Up Ef");
+        if (go == null)
+        {
+            Debug.LogWarning("[ObjectManager] FX prefab not found: Player Rank Up Ef. Addressable PreLoad 필요.");
+            return;
+        }
+        go.transform.SetParent(parent, worldPositionStays: false);
+
+        var sr = parent.GetComponentInChildren<SpriteRenderer>();
+        float footY = sr != null ? sr.bounds.min.y : parent.position.y;
+        go.transform.position = new Vector3(parent.position.x, footY, parent.position.z);
+
+        Object.Destroy(go, RANKUP_FX_LIFETIME);
+    }
+
     void SpawnFxAt(string prefabKey, Vector3 pos)
     {
         GameObject go = Managers.Resource.Instantiate(prefabKey);

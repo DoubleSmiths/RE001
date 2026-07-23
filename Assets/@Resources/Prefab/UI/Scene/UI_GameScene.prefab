@@ -5808,7 +5808,7 @@ GameObject:
   - component: {fileID: 8874220661514081170}
   - component: {fileID: 5928707884918575479}
   m_Layer: 5
-  m_Name: TravelButton(OnBattle)
+  m_Name: TravelButtonOnBattle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30384,7 +30384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6917533855875591474}
   m_Layer: 5
-  m_Name: TravelButton(OnBattle)QuestVFX
+  m_Name: TravelButtonOnBattleQuestVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37824,8 +37824,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 18}
+  m_AnchoredPosition: {x: 0, y: -1}
+  m_SizeDelta: {x: -2, y: 18}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &84344417255500702
 CanvasRenderer:

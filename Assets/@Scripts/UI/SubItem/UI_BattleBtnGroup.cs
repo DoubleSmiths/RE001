@@ -84,7 +84,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     // ── 콤보 Text 스타일 (슬라이드 47) ──
     // 초기/IDLE 상태의 ComboText / ComboNum 기본 색 (흰색).
-    static readonly Color COMBO_IDLE_COLOR = Color.white;
+    // 콤보 IDLE 색 = ComboData Lv0 ColorHex (하드코딩 금지 — 시트에서 결정)
+    static Color COMBO_IDLE_COLOR => Managers.Combo?.GetRankColor(0) ?? Color.white;
     static readonly Color32 COMBO_OUTLINE  = new Color32(0x00, 0x00, 0x00, 0xFF);
     const float COMBO_OUTLINE_X =  0.6f;
     const float COMBO_OUTLINE_Y = -0.6f;

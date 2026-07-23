@@ -3,7 +3,7 @@
     {
       "DataId": 30001,
       "Name": "HPPotion1NameText",
-      "Grade": "Basic",
+      "Grade": 0,
       "Description": "HPPotion1DescText",
       "SpriteName": "HP_Potion1",
       "WhereTo": "AlchemyText",
@@ -17,7 +17,7 @@
     {
       "DataId": 30002,
       "Name": "HPPotion1NameText",
-      "Grade": "Basic",
+      "Grade": 0,
       "Description": "HPPotion1DescText",
       "SpriteName": "HP_Potion1",
       "WhereTo": "AlchemyText",
@@ -35,7 +35,7 @@
     {
       "DataId": 30003,
       "Name": "HPPotion1NameText",
-      "Grade": "Basic",
+      "Grade": 0,
       "Description": "HPPotion1DescText",
       "SpriteName": "HP_Potion1",
       "WhereTo": "AlchemyText",
@@ -53,7 +53,7 @@
     {
       "DataId": 30004,
       "Name": "HPPotion2NameText",
-      "Grade": "Abnormal",
+      "Grade": 1,
       "Description": "HPPotion2DescText",
       "SpriteName": "HP_Potion2",
       "WhereTo": "AlchemyText",

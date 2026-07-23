@@ -147,12 +147,9 @@ public class UI_TravelPopup : UI_Popup
         if (popupGo != null)
             _frameRT = popupGo.GetComponent<RectTransform>();
 
-        //if (Managers.Quest != null)
-        //{
-        //    Managers.Quest.OnNotifyChanged += RefreshAll;
-        //    Managers.Quest.OnQuestChanged += OnQuestChanged;
-        //    Managers.Quest.OnBtnUnlocked += OnButtonUnlocked;
-        //}
+        // 퀘스트 느낌표(VFX) 갱신: 현재 퀘스트 notify 목록 변경 시 카테고리/목적지 버튼 VFX 재평가
+        if (Managers.Quest != null)
+            Managers.Quest.OnNotifyChanged += RefreshQuestNotify;
 
         if (Managers.Game != null)
         {
@@ -167,12 +164,8 @@ public class UI_TravelPopup : UI_Popup
     {
         base.OnDestroy();
 
-        //if (Managers.Quest != null)
-        //{
-        //    Managers.Quest.OnNotifyChanged -= RefreshAll;
-        //    Managers.Quest.OnQuestChanged -= OnQuestChanged;
-        //    Managers.Quest.OnBtnUnlocked -= OnButtonUnlocked;
-        //}
+        if (Managers.Quest != null)
+            Managers.Quest.OnNotifyChanged -= RefreshQuestNotify;
 
         if (Managers.Game != null)
         {
@@ -295,6 +288,30 @@ public class UI_TravelPopup : UI_Popup
             btn.SetSelected(btn.NodeId == _selectedMapId);
         }
 
+        RefreshQuestNotify();
+    }
+
+    // 현재 퀘스트 notify 목록 기준으로 여정 팝업의 퀘스트 VFX를 일괄 갱신.
+    // - 대분류 카테고리 버튼: 탐험=BTN_EXPLORE, 마을=BTN_TOWN
+    // - 동적 목적지 버튼: 각 노드의 ClickBtnId 또는 EnterBtnId가 활성 목록에 있으면 표시
+    void RefreshQuestNotify()
+    {
+        HashSet<string> activeIds = new HashSet<string>();
+        if (Managers.Quest != null)
+            foreach (var n in Managers.Quest.GetCurrentNotifyList())
+                activeIds.Add(n.BtnID);
+
+        // 대분류 카테고리 고정 VFX
+        GetObject((int)GameObjects.FieldCategoryButtonQuestVFX)?.SetActive(activeIds.Contains(BTN_EXPLORE));
+        GetObject((int)GameObjects.TownCategoryButtonQuestVFX)?.SetActive(activeIds.Contains(BTN_TOWN));
+
+        // 동적 spawn된 목적지 버튼: 노드 ClickBtnId/EnterBtnId 매칭
+        foreach (GameObject go in _spawnedTownButtons)
+            go?.GetComponent<UI_TownSelectButton>()?.RefreshQuestVFX(activeIds);
+        foreach (GameObject go in _spawnedFieldButtons)
+            go?.GetComponent<UI_FieldSelectButton>()?.RefreshQuestVFX(activeIds);
+        foreach (GameObject go in _spawnedMapButtons)
+            go?.GetComponent<UI_MapSelectButton>()?.RefreshQuestVFX(activeIds);
     }
 
     bool CanGo()

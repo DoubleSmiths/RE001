@@ -25,7 +25,14 @@
       "Bash(cd:*)",
       "Bash(head -10 grep -rn \"item_jellypong\\\\|item_temp_pass\" /c/stopresent/Unity/RE001/Assets/@Resources/)",
       "Bash(head -5 grep -n \"^public class InventoryItem\\\\|^    public class InventoryItem\\\\|InventoryItem\" /c/stopresent/Unity/RE001/Assets/@Scripts/Data/*.cs)",
-      "Bash(pip show:*)"
+      "Bash(pip show:*)",
+      "Bash(bash \"C:/Users/mamy4/.claude/plugins/cache/omc/oh-my-claudecode/4.15.0/scripts/setup-claude-md.sh\" global)",
+      "Bash(node -e \"const p=require\\('path'\\),f=require\\('fs'\\),h=require\\('os'\\).homedir\\(\\),d=process.env.CLAUDE_CONFIG_DIR||p.join\\(h,'.claude'\\),b=p.join\\(d,'plugins','cache','omc','oh-my-claudecode'\\);try{const v=f.readdirSync\\(b\\).filter\\(x=>/^\\\\d/.test\\(x\\)\\).sort\\(\\(a,c\\)=>a.localeCompare\\(c,void 0,{numeric:true}\\)\\);console.log\\('Installed:',v.length?v[v.length-1]:'\\(none\\)'\\)}catch{console.log\\('Installed: \\(none\\)'\\)}\")",
+      "Bash(npm view *)",
+      "Bash(command -v ruby)",
+      "Bash(ruby --version)",
+      "Bash(node -e \"const p=require\\('path'\\),f=require\\('fs'\\),h=require\\('os'\\).homedir\\(\\),d=process.env.CLAUDE_CONFIG_DIR||p.join\\(h,'.claude'\\),b=p.join\\(d,'plugins','cache','omc','oh-my-claudecode'\\);try{const v=f.readdirSync\\(b\\).filter\\(x=>/^\\\\d/.test\\(x\\)\\);console.log\\(v.length+' version\\(s\\):',v.join\\(', '\\)\\)}catch{console.log\\('0 versions'\\)}\")",
+      "Bash(node -e \"const p=require\\('path'\\),f=require\\('fs'\\),h=require\\('os'\\).homedir\\(\\),d=process.env.CLAUDE_CONFIG_DIR||p.join\\(h,'.claude'\\);const base=p.join\\(d,'CLAUDE.md'\\);let baseContent='';try{baseContent=f.readFileSync\\(base,'utf8'\\)}catch{};let candidates=[base];const importMatch=baseContent.match\\(/CLAUDE-[^ \\)]*\\\\.md/\\);if\\(importMatch\\){candidates.push\\(p.join\\(d,importMatch[0]\\)\\)}else{const dc=p.join\\(d,'CLAUDE-omc.md'\\);if\\(f.existsSync\\(dc\\)\\)candidates.push\\(dc\\)};let claudeV='\\(missing\\)',src='\\(none\\)';for\\(const file of candidates\\){try{const c=f.readFileSync\\(file,'utf8'\\);const m=c.match\\(/<!--\\\\s*OMC:VERSION:\\([^\\\\s]+\\)\\\\s*-->/i\\);if\\(m\\){claudeV=m[1];src=file;break}}catch{}};let pluginV='\\(none\\)';try{const b=p.join\\(d,'plugins','cache','omc','oh-my-claudecode'\\);const v=f.readdirSync\\(b\\).filter\\(x=>/^\\\\d/.test\\(x\\)\\).sort\\(\\(a,c\\)=>a.localeCompare\\(c,void 0,{numeric:true}\\)\\);pluginV=v.length?v[v.length-1]:'\\(none\\)'}catch{};console.log\\('CLAUDE.md OMC version:',claudeV\\);console.log\\('Source:',src\\);console.log\\('Plugin version:',pluginV\\);console.log\\(claudeV===pluginV?'VERSION MATCH':'VERSION DRIFT/UNKNOWN'\\)\")"
     ]
   }
 }

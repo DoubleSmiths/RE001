@@ -47,10 +47,10 @@ public class DialogueAnimator : MonoBehaviour
     // ────────────────────────────────────────
 
     /// <summary>
-    /// 슬라이드 32 STEP 1~3 시퀀스 재생.
-    /// STEP 1: Gradient01 + Sprite(None) 페이드 인 (0.5s, OutQuad)
-    /// STEP 2: 0.5s 대기 후 dia_box2 페이드 인 (0.5s, OutQuad)
-    /// STEP 3: 0.2s 대기 후 캐릭터 Sprite ON + 이름 + Text Show Start 콜백
+    /// 대화 오프닝 시퀀스 (기획 수정안 2026-07-05, 클릭 즉시 두 페이드 병행):
+    ///  · Dialogue Box(dia_box2) + Char Img(portrait): 0.3s 페이드 인 (OutQuad)
+    ///  · Background(Gradient01 + Sprite None): 1.0s 페이드 인 (OutQuad)
+    ///  · Box/Char 페이드가 끝나는 0.3s 시점에 이름 표시 + Text Show Start 콜백 (배경 페이드와 병행)
     /// </summary>
     public void PlayOpenSequence(
         Image gradient,
@@ -60,32 +60,41 @@ public class DialogueAnimator : MonoBehaviour
         GameObject nameText,
         Action onTextShowStart)
     {
-        // 초기 상태 (알파 0, portrait/name 비활성)
+        const float BOX_FADE_DURATION = 0.3f;
+        const float BG_FADE_DURATION  = 1.0f;
+
+        // 초기 상태 (알파 0, name 비활성 / portrait는 알파 0으로 켜두고 페이드)
         SetImageAlpha(gradient, 0f);
         SetImageAlpha(panel, 0f);
         SetImageAlpha(box, 0f);
         gradient.gameObject.SetActive(true);
         panel.gameObject.SetActive(true);
         box.gameObject.SetActive(true);
-        if (portrait != null) portrait.SetActive(false);
         if (nameText != null) nameText.SetActive(false);
+
+        Image portraitImg = portrait != null ? portrait.GetComponent<Image>() : null;
+        if (portrait != null)
+        {
+            portrait.SetActive(true);
+            SetImageAlpha(portraitImg, 0f);
+        }
 
         float panelTargetAlpha = 220f / 255f;
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
-        // STEP 1
-        seq.Append(gradient.DOFade(1f, 0.5f).SetEase(Ease.OutQuad).SetUpdate(true));
-        seq.Join(panel.DOFade(panelTargetAlpha, 0.5f).SetEase(Ease.OutQuad).SetUpdate(true));
+        // Background: 1.0s 페이드 (시퀀스 기준 트랙)
+        seq.Append(gradient.DOFade(1f, BG_FADE_DURATION).SetEase(Ease.OutQuad).SetUpdate(true));
+        seq.Join(panel.DOFade(panelTargetAlpha, BG_FADE_DURATION).SetEase(Ease.OutQuad).SetUpdate(true));
 
-        // STEP 2: 0.5초 뒤 dia_box2 페이드 인
-        seq.Append(box.DOFade(1f, 0.5f).SetEase(Ease.OutQuad).SetUpdate(true));
+        // Dialogue Box + Char Img: 클릭 즉시 0.3s 페이드 (배경과 병행)
+        seq.Join(box.DOFade(1f, BOX_FADE_DURATION).SetEase(Ease.OutQuad).SetUpdate(true));
+        if (portraitImg != null)
+            seq.Join(portraitImg.DOFade(1f, BOX_FADE_DURATION).SetEase(Ease.OutQuad).SetUpdate(true));
 
-        // STEP 3: 0.2초 뒤 캐릭터/이름 ON + Text Show Start
-        seq.AppendInterval(0.2f);
-        seq.AppendCallback(() =>
+        // 0.3s(Box/Char 페이드 완료) 시점: 이름 ON + Text Show Start
+        seq.InsertCallback(BOX_FADE_DURATION, () =>
         {
-            if (portrait != null) portrait.SetActive(true);
             if (nameText != null) nameText.SetActive(true);
             onTextShowStart?.Invoke();
         });
@@ -269,11 +278,16 @@ public class DialogueAnimator : MonoBehaviour
     //  Emotion
     // ────────────────────────────────────────
 
+    // DialogueText의 프리팹 저작 위치 (Top/Bottom 비대칭 오프셋 보존용).
+    // localPosition=0으로 리셋하면 프리팹에서 조정한 위치가 매 타이핑마다 지워지므로 최초 위치를 기억해 복원한다.
+    Vector2? _textOriginPos;
+
     void PlayEmotionEffect(TMP_Text text, DialogueEmotion emotion)
     {
         RectTransform rt = text.rectTransform;
         rt.DOKill();
-        rt.localPosition = Vector3.zero;
+        if (_textOriginPos == null) _textOriginPos = rt.anchoredPosition;
+        rt.anchoredPosition = _textOriginPos.Value;
 
         switch (emotion)
         {
@@ -293,7 +307,7 @@ public class DialogueAnimator : MonoBehaviour
                 break;
 
             case DialogueEmotion.Sad:
-                rt.DOAnchorPos(new Vector2(0f, -6f), 0.3f)
+                rt.DOAnchorPos(_textOriginPos.Value + new Vector2(0f, -6f), 0.3f)
                   .SetEase(Ease.OutSine)
                   .SetUpdate(true);
                 break;

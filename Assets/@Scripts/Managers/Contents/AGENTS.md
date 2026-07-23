@@ -1,0 +1,66 @@
+<!-- Parent: ../AGENTS.md -->
+<!-- Generated: 2026-07-05 | Updated: 2026-07-08 -->
+
+# Managers/Contents
+
+## Purpose
+RE001 게임 로직 전용 매니저 계층. 계정 세이브데이터(GameData)의 단일 소스인 GameManager를 중심으로, 메인/서브 퀘스트 상태머신(Quest/SubQuestManager), 미니몬 포획·등급·공명도(MinMonManager), 능력(스킬) 학습·기억 장착(AbilityManager), 콤보 Rank/버프(ComboManager), 전투 오브젝트·FX 스폰(ObjectManager)을 담당한다. 대부분의 상태 변경은 GameData에 기록 후 `Managers.Game.SaveGame()`으로 즉시 저장하고 `event Action`으로 UI에 통지하는 구조다.
+
+## Key Files
+| File | Description |
+|------|-------------|
+| `GameManager.cs` | 세이브 단일 소스. `GameData`(재화/장비/인벤토리/미니몬/능력/퀘스트ID/탭 해금 비트마스크/자동물약 설정 등) + 런타임 클래스 `InventoryItem`/`Equipment`/`MinMonSaveData` 정의. property setter가 변경 즉시 `SaveGame()`(persistentDataPath/SaveData.json, Newtonsoft) + 이벤트 발행. `AddItem`/`RemoveItem`/`HasItem`, `EquipItem`/`ForgeEquipment`, HP·SPD 물약 제작(`TryCraftHPPotion` 등), `LoadGame()`은 PlayerPrefs "ISFIRST"로 초기화 여부 판단. 언어 설정만 PlayerPrefs 저장 |
+| `QuestManager.cs` | 메인퀘스트 선형 진행(CurrentQuestID, 완료 시 +1). CompleteType별 체크 진입점 `CheckItemAcquire`/`CheckButtonClick`/`CheckAnimationEnd`, MULTI 조건은 `_metConditions` HashSet(세이브 동기화로 중단 복원), ITEM_COUNT 롤백 지원. 완료 시 `ProcessUnlocks`(UI_BUTTON 해금/SUBQUEST_START/ITEM_REWARD/ITEM_REMOVE — ITEM_REWARD는 `UI_ItemPopup.SetInfo(itemId, showGlow: true)`로 후광 표시, SubQuestManager도 동일). `GetCurrentNotifyList()`는 서브퀘스트 Notify를 합쳐 반환. 이벤트: OnQuestChanged/OnFollowUIChanged/OnNotifyChanged/OnBtnUnlocked |
+| `SubQuestManager.cs` | 메인퀘스트에서 분기되는 서브퀘스트 상태머신(CurrentSubQuestID, 0=비활성). `StartSubQuestFromTarget("SUBQUEST_N")` 파싱 시작, BTN_CLICK/LEVEL_COUNT("HPPotion_Rank:N") 완료 조건, 다음 ID 없으면 라인 종료. 시작 직후 자동완료 검사를 의도적으로 생략(Notify UI 1프레임 미표시 버그 방지 주석 참고) |
+| `MinMonManager.cs` | 미니몬(펫) 시스템. `TryCatch`(확률+천장 TameCount 확정 포획, Ability 보너스 반영), `AddMinMon`(첫 포획 등급 롤 `RollGrade` 40/30/15/8/5/2%, 재포획은 상향 갱신), 공명도(`GetSyncRate` = 포획 1회당 25%), 기록도(`AddKill`/`GetRecordRate`), 별 3단계(`GetStarGrade`) 및 보라별 최초 달성 트리거(`OnMaxStarReached`), 관심 창고(`RollInterest`, 기본 2칸+능력 보너스), 동행 설정(`SetCompanion`), 공명도 100% 시 `Managers.Ability.LearnMinionUniqueSkill` 호출 |
+| `AbilityManager.cs` | 능력(=스킬) 시스템. 기억력(Memory) 자원 회계: `MaxMemory`(BASE 10+장착 보너스)/`UsedMemory`/`FreeMemory`, `Learn`/`Memorize`(장착)/`Forget`, 점유량 0=재능(자동 장착·망각 불가). 데이터는 `Managers.Data.SkillDic`, 보유/장착 목록은 GameData에 저장. `ApplyTo(CreatureController)`가 장착 능력 StatBonus×Level을 스탯 가산. 미니몬 고유기술 id = creatureId+4000. 지원 보너스 조회 API: `CatchRateBonus`/`GuaranteedCatchReduce`/`ExpGainBonus`/`InterestCapacityBonus`. `GetEquipAbilityLevel(id)`는 장비 유래 능력 단계 훅 — 장비 강화 시스템 미구현으로 현재 항상 0 반환하는 명시적 스텁(기획서2 슬38·49) |
+| `ComboManager.cs` | 콤보 시스템(Visual Scripting FSM의 C# 포팅). `Managers.Update`가 매 프레임 `Tick(dt)` 호출(프레임 중복 방지 가드 내장) — 타이머 감소·표시값 Smooth 보간. `AttachPlayer`로 `PlayerController.OnHitLanded` 구독, ComboStageDic(HitsRequired) 기반 Rank 산정, Rank별 `AtkSpeedBonus`/`DmgBoostBonus` 버프 노출. `GetRankColor(int rank)`가 ComboData ColorHex 파싱('#' 유무 허용, 미로드/파싱 실패 시 흰색 fallback)으로 랭크 색을 제공 — `GetCurrentRankColor()`가 이를 사용하고, 콤보 IDLE 색도 Lv0 데이터 기반(`UI_BattleBtnGroup.COMBO_IDLE_COLOR` 프로퍼티 = `GetRankColor(0)`). 이벤트: OnRankChanged/OnTimerChanged/OnComboBreak/OnComboChanged/OnNowValuesChanged/OnFirstBuffActivated. 콤보 브레이크(타이머 0) 시 슬로우모션 0.4s 실시간(timeScale 0.2 → 원복, 팝업 열림 중이면 원복 스킵 가드) + `FX_Combo_Break` 이펙트 키(에셋 미등록 시 LogWarning만) — `_slowMoInFlight` 리셋 누락으로 2회차부터 연출이 스킵되던 버그 수정됨(:266) |
+| `ObjectManager.cs` | 전투 오브젝트 스폰. `SpawnMonster(dataId,pos)`/`SpawnCompanion(minionId,player)`(CreatureData.PrefabLabel 기반), `PickFieldMonsterId()`(현재 TravelArea의 Habitat 매칭 + EncounterRate 가중 랜덤, fallback 2001), 데미지 폰트(`ShowDamageFont`/`ShowMissPopup`/`ShowCriticalCallout`/`ShowHealFont` — pooling), 히트 FX(`ShowHitEffect`/`ShowCriHitEffect`, 2초 후 Destroy), 치명타 확정 연출 `ShowCritEffect(pos)`("Basic Crit" 프리팹 — 피격자 위치, CreatureController.TakeHit 치명 분기에서 호출, 기획서1 슬63), 랭크업 연출 `ShowRankUpEffectOn(Transform)`("Player Rank Up Ef" 프리팹을 플레이어 발밑 — 스프라이트 바운즈 하단 y 정렬 — 에 생성, `RANKUP_FX_LIFETIME`=4s 후 Destroy). 루트 Transform property: `@Skill`/`@Monster`/`@Companion`/`@TextFont` |
+| `CoroutineManager.cs` | Managers.cs 미등록의 독립 유틸. `[RuntimeInitializeOnLoadMethod]`로 자체 생성되는 DontDestroyOnLoad MonoBehaviour — 비-MonoBehaviour 매니저가 `CoroutineManager.StartCoroutine(...)` static으로 코루틴 실행 |
+
+## For AI Agents
+
+### Working In This Directory
+- 접근은 `Managers.Game`/`Managers.Quest`/`Managers.MinMon`/`Managers.Ability`/`Managers.SubQuest`/`Managers.Combo`/`Managers.Object` static property로만. CoroutineManager만 예외(자체 static).
+- **영속 상태는 전부 GameData에**: 다른 매니저(MinMon/Ability/Quest/SubQuest)는 자체 저장 없이 `Managers.Game`의 리스트/필드를 참조하고 변경 후 `Managers.Game.SaveGame()`을 호출한다. 새 영속 필드는 GameData에 추가 → GameManager에 property 노출 순서로.
+- setter가 SaveGame을 호출하는 property가 많음 — 루프 안 반복 설정은 세이브 스팸이 됨. 대량 변경은 backing 필드를 직접 만지고 마지막에 1회 저장하는 기존 패턴(`ClearAllItemNew`) 참고.
+- 퀘스트 완료 처리 순서 불변: `CompleteQuest`는 **퀘스트 전환 후** `ProcessUnlocks`(보상 AddItem 이벤트가 다음 퀘스트 기준으로 체크되도록). SubQuest도 상태 갱신 → Unlock → 이벤트 순서 보장 주석 있음 — 순서 변경 금지.
+- 퀘스트 BtnID/TargetID는 문자열 **완전일치** 매칭 (`quest.CompleteTarget == btnId`). 버튼 ID 오탈자는 조용히 무시되므로 데이터 시트와 코드의 문자열을 반드시 대조.
+- Init/Clear에서 이벤트 구독/해제 쌍 유지 (QuestManager.Init의 `OnItemAdded += ` ↔ Clear의 `-=` 패턴). 이벤트 구독 추가 시 Clear 해제 누락 금지.
+- ComboManager.Tick은 Managers.Update와 UI 양쪽에서 불릴 수 있어 `_lastTickFrame` 가드가 있음 — Tick 호출 지점을 추가해도 안전하지만 가드를 제거하면 더블틱 버그 재발.
+- 게임 수치(등급 확률, 콤보 스테이지, 포획 확률 등)는 가능하면 JSON(Data 시트)으로 — 단 `RollGrade` 확률표, `SYNC_PER_CATCH`(0.25), `BASE_MEMORY`(10), `INTEREST_CAPACITY`(2) 등 일부는 현재 코드 상수로 남아있음(주석에 "밸런스 시드 — 엑셀 후속" 표기).
+
+### Common Patterns
+- `event Action` / `event Action<T>` Observer — 상태 변경 → 이벤트 발행 → UI 구독 갱신 (컨트롤러/매니저가 UI를 직접 참조하지 않음).
+- 데이터 조회는 `Managers.Data.XxxDic.TryGetValue(dataId, ...)` — 실패 시 조용히 반환하거나 LogWarning.
+- Find-or-Create 세이브 엔트리: `GetSaveData(dataId)`는 없으면 생성(쓰기용), `FindSave`는 읽기 전용(부작용 없음) — 조회 API에는 FindSave 계열 사용.
+- `#if UNITY_EDITOR` 디버그 점프 API (`JumpToQuest`/`JumpToSubQuest`), Debug 세터(`DebugSetKillCount` 등).
+- 비트마스크 해금 상태 (`UnlockedBtmButtons`, `NewBadgeTabs` — `1 << (int)TabType`).
+- 슬라이드 번호 주석("슬38", "슬23" 등) = 기획서 슬라이드 참조 — 수정 시 해당 기획 의도 유지.
+
+### 스펙 출처 (기획서 매핑)
+원전은 구글 슬라이드 기획서 2종 — **기획서1**(70장: UI/연출/전투), **기획서2**(54장: 도감/미니몬/능력) + 수정안 덱. 에디터 미러는 `Editor/QuestVerifyMenu.cs`(슬라이드별 시연 메뉴).
+
+| 파일 | 기획서 슬라이드 |
+|------|----------------|
+| `GameManager.cs` | 기획서1 슬10(하단 버튼)·슬19(소지품 NEW 조건) |
+| `QuestManager.cs` | 기획서1 슬24(퀘스트 유도/notify) |
+| `AbilityManager.cs` | 기획서2 슬38(능력 획득 5경로)·슬46(기억력) |
+| `MinMonManager.cs` | 기획서2 슬10(공명도)·슬38(공명 100% 능력) |
+| `ObjectManager.cs` | 기획서1 슬63(히트/치명 이펙트), 수정안 슬4(랭크업) |
+| `ComboManager.cs` | 기획서1 슬48~49(공세 단계/브레이크) |
+
+## Dependencies
+
+### Internal
+- `Managers` (상호 참조 허브: Game↔Quest↔SubQuest, MinMon→Ability/Game, Combo→Data/Game.Player, Object→Data/Resource/Sound)
+- `Data` 네임스페이스(CreatureData/QuestData/SubQuestData/ComboStageData/SkillData 등), `Define`(EquipSlotType/TabType/QuestCompleteType/DamageFontMode/ActivationKey 등, `using static`)
+- Controllers: `PlayerController`, `MonsterController`, `CompanionController`, `CreatureController`
+- UI: `UI_ItemPopup`(퀘스트 보상 팝업 — `SetInfo(itemId, showGlow: true)`, 후광은 퀘스트 보상 경로에서만), `DamageFont`, `Util`(Localize/HexToColor)
+
+### External
+- Newtonsoft.Json (GameManager 세이브/로드)
+- DOTween (ComboManager — 콤보 브레이크 슬로우모션/FX, SoundManager 경유 페이드)
+- UnityEngine (PlayerPrefs, Random, Mathf, File I/O는 System.IO)
+
+<!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1782408021144,
+  "lastScanned": 1783687376778,
   "projectRoot": "C:\\stopresent\\Unity\\RE001",
   "techStack": {
     "languages": [],
@@ -36,7 +36,7 @@
       "path": "-o",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1782408021112,
+      "lastAccessed": 1783687376710,
       "keyFiles": [
         "slide34_shape004_그림_23.gif",
         "slide34_shape005_그림_5.png",
@@ -49,7 +49,7 @@
       "path": "AI",
       "purpose": null,
       "fileCount": 273,
-      "lastAccessed": 1782408021113,
+      "lastAccessed": 1783687376711,
       "keyFiles": [
         "abil_book2.png",
         "abil_book2_grid.png",
@@ -61,8 +61,8 @@
     "Assets": {
       "path": "Assets",
       "purpose": "Static assets",
-      "fileCount": 21,
-      "lastAccessed": 1782408021114,
+      "fileCount": 26,
+      "lastAccessed": 1783687376712,
       "keyFiles": [
         "@Resources.meta",
         "@Scenes.meta",
@@ -75,7 +75,7 @@
       "path": "codexProm",
       "purpose": null,
       "fileCount": 7,
-      "lastAccessed": 1782408021115,
+      "lastAccessed": 1783687376713,
       "keyFiles": [
         "slide_03_font_settings.md",
         "slide_04_ui_feedback_guide.md",
@@ -87,8 +87,8 @@
     "Documents": {
       "path": "Documents",
       "purpose": null,
-      "fileCount": 18,
-      "lastAccessed": 1782408021115,
+      "fileCount": 29,
+      "lastAccessed": 1783687376713,
       "keyFiles": [
         "Alchemy_Unlock_Method.txt",
         "Battle_Phase_Log.md",
@@ -100,41 +100,41 @@
     "Library": {
       "path": "Library",
       "purpose": null,
-      "fileCount": 29,
-      "lastAccessed": 1782408021116,
+      "fileCount": 28,
+      "lastAccessed": 1783687376714,
       "keyFiles": [
-        "AddressablesConfig.dat",
         "AnnotationManager",
         "ArtifactDB",
         "ArtifactDB-lock",
-        "BuildPlayer.prefs"
+        "BuildPlayer.prefs",
+        "BuildProfileContext.asset"
       ]
     },
     "Logs": {
       "path": "Logs",
       "purpose": null,
-      "fileCount": 75,
-      "lastAccessed": 1782408021117,
+      "fileCount": 9,
+      "lastAccessed": 1783687376714,
       "keyFiles": [
         "AssetImportWorker0-prev.log",
         "AssetImportWorker0.log",
         "AssetImportWorker1-prev.log",
         "AssetImportWorker1.log",
-        "AssetImportWorker10.log"
+        "shadercompiler-AssetImportWorker0-0.log"
       ]
     },
     "obj": {
       "path": "obj",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782408021117,
+      "lastAccessed": 1783687376715,
       "keyFiles": []
     },
     "Packages": {
       "path": "Packages",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1782408021118,
+      "lastAccessed": 1783687376715,
       "keyFiles": [
         "manifest.json",
         "packages-lock.json"
@@ -144,14 +144,14 @@
       "path": "project-ai",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782408021118,
+      "lastAccessed": 1783687376715,
       "keyFiles": []
     },
     "ProjectSettings": {
       "path": "ProjectSettings",
       "purpose": null,
-      "fileCount": 28,
-      "lastAccessed": 1782408021119,
+      "fileCount": 29,
+      "lastAccessed": 1783687376716,
       "keyFiles": [
         "AudioManager.asset",
         "ClusterInputManager.asset",
@@ -163,8 +163,8 @@
     "Recordings": {
       "path": "Recordings",
       "purpose": null,
-      "fileCount": 74,
-      "lastAccessed": 1782408021119,
+      "fileCount": 6,
+      "lastAccessed": 1783687376716,
       "keyFiles": [
         "Movie_001.mp4",
         "Movie_002.mp4",
@@ -177,7 +177,7 @@
       "path": "Screenshots",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782408021120,
+      "lastAccessed": 1783687376717,
       "keyFiles": [
         "screenshot.png"
       ]
@@ -185,28 +185,27 @@
     "Temp": {
       "path": "Temp",
       "purpose": null,
-      "fileCount": 64,
-      "lastAccessed": 1782408021121,
+      "fileCount": 4,
+      "lastAccessed": 1783687376717,
       "keyFiles": [
-        "08c943921e38e19117c40b716f5d41de.res",
-        "08c943921e38e19117c40b716f5d41de.resG",
-        "08c943921e38e19117c40b716f5d41de.resS",
-        "2314d6b549a0900136f23c5b7b38a9e9.res",
-        "2314d6b549a0900136f23c5b7b38a9e9.resG"
+        "FSTimeGet-17a4f1c8c55975b42a2eb5c289f89f34",
+        "FSTimeGet-4785d870199a7774db23663d493a63f5",
+        "FSTimeGet-589763500f196c04ebaa9bd544e2238e",
+        "UnityLockfile"
       ]
     },
     "tmp": {
       "path": "tmp",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782408021121,
+      "lastAccessed": 1783687376718,
       "keyFiles": []
     },
     "tools": {
       "path": "tools",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782408021122,
+      "lastAccessed": 1783687376718,
       "keyFiles": [
         "generate_travel_redesign_xlsx.ps1"
       ]
@@ -214,11 +213,10 @@
     "UserSettings": {
       "path": "UserSettings",
       "purpose": null,
-      "fileCount": 4,
-      "lastAccessed": 1782408021122,
+      "fileCount": 3,
+      "lastAccessed": 1783687376719,
       "keyFiles": [
         "EditorUserSettings.asset",
-        "PlayModeUserSettings.asset",
         "Search.index",
         "Search.settings"
       ]
@@ -227,7 +225,7 @@
       "path": "Want",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1782408021123,
+      "lastAccessed": 1783687376720,
       "keyFiles": [
         "2D Lit URP SSU.shader",
         "UI_TravelPopup_설명서.md"
@@ -236,21 +234,21 @@
     "_tools": {
       "path": "_tools",
       "purpose": null,
-      "fileCount": 67,
-      "lastAccessed": 1782408021123,
+      "fileCount": 64,
+      "lastAccessed": 1783687376721,
       "keyFiles": [
         "abil_40_51.txt",
         "abil_v3_38_52.txt",
         "diff_quest_xlsx_vs_json.py",
         "enum_dump.txt",
-        "err1.log"
+        "extract_enums.py"
       ]
     },
     "기획 ppt": {
       "path": "기획 ppt",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1782408021124,
+      "lastAccessed": 1783687376722,
       "keyFiles": [
         "구현현황_미니몬퀘스트.md",
         "기획서v2_05.15.pptx",
@@ -258,43 +256,230 @@
         "미니몬퀘스트_기획서_part1.pptx",
         "미니몬퀘스트_기획서_part2(06.05).pptx"
       ]
+    },
+    "Temp\\bin": {
+      "path": "Temp\\bin",
+      "purpose": "Executable scripts",
+      "fileCount": 0,
+      "lastAccessed": 1783687376726,
+      "keyFiles": []
     }
   },
   "hotPaths": [
     {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_BestiaryPopup.cs",
-      "accessCount": 17,
-      "lastAccessed": 1782433832478,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Scene\\UI_GameScene.cs",
-      "accessCount": 17,
-      "lastAccessed": 1782476932905,
-      "type": "file"
-    },
-    {
       "path": "Assets\\@Scripts",
-      "accessCount": 14,
-      "lastAccessed": 1782476872944,
+      "accessCount": 236,
+      "lastAccessed": 1783689041062,
       "type": "directory"
     },
     {
+      "path": "Assets\\@Scripts\\UI\\Scene\\UI_GameScene.cs",
+      "accessCount": 103,
+      "lastAccessed": 1783687078370,
+      "type": "file"
+    },
+    {
       "path": "Assets\\@Scripts\\Managers\\Contents\\GameManager.cs",
-      "accessCount": 10,
-      "lastAccessed": 1782476171500,
+      "accessCount": 59,
+      "lastAccessed": 1783689089057,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Village1BtnGroup.cs",
+      "accessCount": 54,
+      "lastAccessed": 1783688029328,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BattleBtnGroup.cs",
+      "accessCount": 40,
+      "lastAccessed": 1783688035151,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_TravelPopup.cs",
+      "accessCount": 35,
+      "lastAccessed": 1783520745087,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Utils\\Define.cs",
+      "accessCount": 31,
+      "lastAccessed": 1783687030338,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\Creature\\PlayerController.cs",
+      "accessCount": 31,
+      "lastAccessed": 1783687085648,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_BestiaryPopup.cs",
+      "accessCount": 29,
+      "lastAccessed": 1783520678891,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_SkillDetailPopup.cs",
+      "accessCount": 28,
+      "lastAccessed": 1783520459402,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Editor\\DataTransformer.cs",
+      "accessCount": 28,
+      "lastAccessed": 1783521301304,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Data\\Data.Contents.cs",
+      "accessCount": 27,
+      "lastAccessed": 1783687877915,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\Managers\\Contents\\ComboManager.cs",
+      "accessCount": 25,
+      "lastAccessed": 1783688048708,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\Creature\\CreatureController.cs",
+      "accessCount": 23,
+      "lastAccessed": 1783688140002,
       "type": "file"
     },
     {
       "path": "Assets\\@Scripts\\UI\\Popup\\UI_TamePopup.cs",
-      "accessCount": 7,
-      "lastAccessed": 1782434607921,
+      "accessCount": 20,
+      "lastAccessed": 1783552442956,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_ItemPopup.cs",
+      "accessCount": 15,
+      "lastAccessed": 1783520192024,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_MonsterDetailPopup.cs",
+      "accessCount": 15,
+      "lastAccessed": 1783520546249,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_InventoryPopup.cs",
+      "accessCount": 14,
+      "lastAccessed": 1783520588205,
       "type": "file"
     },
     {
       "path": "Assets\\@Scripts\\Managers\\Contents\\MinMonManager.cs",
-      "accessCount": 4,
-      "lastAccessed": 1782433440330,
+      "accessCount": 14,
+      "lastAccessed": 1783552521373,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Managers\\Contents\\QuestManager.cs",
+      "accessCount": 14,
+      "lastAccessed": 1783687043777,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Managers\\Core\\DataManager.cs",
+      "accessCount": 13,
+      "lastAccessed": 1783688256165,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Managers\\Contents\\AbilityManager.cs",
+      "accessCount": 11,
+      "lastAccessed": 1783520482556,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_MinionInfoPopup.cs",
+      "accessCount": 11,
+      "lastAccessed": 1783520918002,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BestiaryBox.cs",
+      "accessCount": 11,
+      "lastAccessed": 1783551756405,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_TownSelectButton.cs",
+      "accessCount": 10,
+      "lastAccessed": 1783521323636,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Resources\\Data\\JsonData\\ComboData.json",
+      "accessCount": 9,
+      "lastAccessed": 1783233379435,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_MapSelectButton.cs",
+      "accessCount": 9,
+      "lastAccessed": 1783520419205,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_FieldSelectButton.cs",
+      "accessCount": 9,
+      "lastAccessed": 1783521290845,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_SkillBookPopup.cs",
+      "accessCount": 8,
+      "lastAccessed": 1783519396767,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Resources\\Data\\JsonData\\CreatureData.json",
+      "accessCount": 7,
+      "lastAccessed": 1783438921605,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Data",
+      "accessCount": 7,
+      "lastAccessed": 1783686854418,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Resources",
+      "accessCount": 5,
+      "lastAccessed": 1783519398097,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Resources\\Data",
+      "accessCount": 5,
+      "lastAccessed": 1783519399893,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\Creature\\AbilityRunner.cs",
+      "accessCount": 5,
+      "lastAccessed": 1783520391288,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Buff.cs",
+      "accessCount": 5,
+      "lastAccessed": 1783520514432,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_WarningPopup.cs",
+      "accessCount": 5,
+      "lastAccessed": 1783552979039,
       "type": "file"
     },
     {
@@ -304,129 +489,81 @@
       "type": "file"
     },
     {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_ItemPopup.cs",
-      "accessCount": 3,
-      "lastAccessed": 1782475544765,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_SkillDetailPopup.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782433132994,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Data\\Data.Contents.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782433152062,
-      "type": "directory"
-    },
-    {
-      "path": "Assets\\@Scripts\\Controllers\\Creature\\PlayerController.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782433158449,
-      "type": "directory"
-    },
-    {
-      "path": "Assets\\@Scripts\\Managers\\Contents\\AbilityManager.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782433171506,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Controllers\\Creature\\AbilityRunner.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782433440354,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_BestiaryBox.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782433508038,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_MonsterDetailPopup.cs",
-      "accessCount": 2,
-      "lastAccessed": 1782434469139,
-      "type": "file"
-    },
-    {
       "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Bestiary.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433061015,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\Editor\\BestiaryTestMenu.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433068422,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_MinionInfoPopup.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433070055,
+      "accessCount": 4,
+      "lastAccessed": 1783518968469,
       "type": "file"
     },
     {
       "path": "Assets\\@Resources\\Data\\JsonData\\MinMonData.json",
-      "accessCount": 1,
-      "lastAccessed": 1782433072963,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Resources\\Data\\JsonData\\CreatureData.json",
-      "accessCount": 1,
-      "lastAccessed": 1782433073408,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_AttactedPopup.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433094431,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_WarningPopup.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433094505,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_SkillBookPopup.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433120267,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_SkillBookSkill.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433120730,
-      "type": "file"
-    },
-    {
-      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_Buff.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433121055,
+      "accessCount": 4,
+      "lastAccessed": 1783520291059,
       "type": "file"
     },
     {
       "path": "Assets\\@Scripts\\Controllers\\Creature",
-      "accessCount": 1,
-      "lastAccessed": 1782433150355,
+      "accessCount": 4,
+      "lastAccessed": 1783521346000,
       "type": "directory"
     },
     {
-      "path": "Assets\\@Scripts\\Controllers\\Creature\\CreatureController.cs",
-      "accessCount": 1,
-      "lastAccessed": 1782433159106,
+      "path": "Assets\\@Resources\\Data\\JsonData\\QuestData.json",
+      "accessCount": 3,
+      "lastAccessed": 1783437751431,
       "type": "file"
     },
     {
-      "path": "Assets\\@Scripts\\UI\\Popup\\UI_InventoryPopup.cs",
+      "path": "Assets\\@Scripts\\UI\\Popup\\UI_AttactedPopup.cs",
+      "accessCount": 3,
+      "lastAccessed": 1783519322228,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem\\UI_SkillBookSkill.cs",
+      "accessCount": 3,
+      "lastAccessed": 1783519435449,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\BackgroundScroller.cs",
+      "accessCount": 3,
+      "lastAccessed": 1783520444615,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Editor\\BestiaryTestMenu.cs",
+      "accessCount": 2,
+      "lastAccessed": 1783232188247,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\BattleSpawner.cs",
+      "accessCount": 2,
+      "lastAccessed": 1783520392237,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\CameraController.cs",
+      "accessCount": 2,
+      "lastAccessed": 1783686797122,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Resources\\Data\\JsonData\\TravelNodeData.json",
       "accessCount": 1,
-      "lastAccessed": 1782475727505,
+      "lastAccessed": 1782919405368,
+      "type": "file"
+    },
+    {
+      "path": "Assets\\@Scripts\\UI\\SubItem",
+      "accessCount": 1,
+      "lastAccessed": 1782919406846,
+      "type": "directory"
+    },
+    {
+      "path": "Assets\\@Scripts\\Controllers\\BaseController.cs",
+      "accessCount": 1,
+      "lastAccessed": 1783232038141,
       "type": "file"
     }
   ],

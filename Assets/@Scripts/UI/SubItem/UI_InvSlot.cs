@@ -64,8 +64,8 @@ public class UI_InvSlot : UI_Base
     void RefreshTexts()
     {
         var amount = GetText((int)Texts.AmountTxt);
-        if (amount != null) ApplyFont(amount, Define.FontType.UI);
         /* 성우
+        if (amount != null) ApplyFont(amount, Define.FontType.UI);
         var newTxt = GetText((int)Texts.InvSlotNewTxt);
         if (newTxt != null)
         {

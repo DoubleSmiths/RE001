@@ -316,6 +316,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         if (Managers.SubQuest != null)
             Managers.SubQuest.OnSubQuestChanged -= OnSubQuestChanged;
         if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
+        if (Managers.UI != null) Managers.UI.OnPopupClosed -= OnPopupClosedForUnlock;
     }
 
     // enum Texts 모든 entry — 폰트(UI) + 한영 일괄 처리.
@@ -419,6 +420,10 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // (서브퀘스트가 발행하는 UNLOCK_POTION_BUTTON 등은 여기서 무시 — UI_GameScene이 처리)
         if (!IsUnlockAnimTarget(btnId))
             return;
+
+        // 해금 이벤트 수신 즉시 느낌표/NEW 억제 시작.
+        // (연출 시작은 0.5s 지연되므로, 여기서 걸지 않으면 그 사이 [!]가 잠깐 표시됨)
+        BeginUnlockNotifySuppression();
 
         _pendingUnlockBtnId = btnId;
 
@@ -539,6 +544,25 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         if (string.IsNullOrEmpty(prefabKey)) return;
         Managers.Resource.Instantiate(prefabKey);
+
+        ApplyPlayerBuildingScale(prefabKey);
+    }
+
+    // 기획 수정안(2026-07-05): 건물 내부(길드/연금 등)에서는 플레이어를 확대해 '건물에 들어간 느낌'을 준다.
+    // (NPC 스프라이트를 플레이어 크기로 줄이면 도트가 뭉개져서, 반대로 플레이어를 키우는 방식)
+    // SwitchBG가 진입/퇴장/복원 모든 경로의 단일 지점이라 여기서 일괄 처리 — 암전(Fade) 중에 호출되므로 팝 없음.
+    const float PLAYER_BUILDING_SCALE = 1.5f;   // 건물 내부 확대 배율 (기획 튜닝값)
+    Vector3? _playerBaseScale;
+
+    void ApplyPlayerBuildingScale(string bgKey)
+    {
+        var player = Managers.Game.Player;
+        if (player == null) return;
+
+        if (_playerBaseScale == null) _playerBaseScale = player.transform.localScale;
+
+        bool insideBuilding = bgKey != "Village1_Main_BG";
+        player.transform.localScale = _playerBaseScale.Value * (insideBuilding ? PLAYER_BUILDING_SCALE : 1f);
     }
 
     void HideAllGroup()
@@ -591,11 +615,33 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendCallback(TryPlayPendingUnlock);
     }
 
+    // ── Unlock 연출 동안 느낌표/NEW 억제 ──
+    //  기획 수정안(2026-07-05): 해금 연출·팝업 중에는 [!] Quest Mark를 표시하지 않고,
+    //  해금 팝업이 닫힌 뒤 [NEW] Text와 함께 일괄 표시한다.
+    bool _suppressNotifyForUnlock;
+
+    void BeginUnlockNotifySuppression()
+    {
+        if (_suppressNotifyForUnlock) return;   // 이미 억제 중 (중복 구독 방지)
+        _suppressNotifyForUnlock = true;
+        RefreshNotify();   // 이미 켜져 있는 느낌표/NEW도 끔
+        Managers.UI.OnPopupClosed += OnPopupClosedForUnlock;
+    }
+
+    void OnPopupClosedForUnlock(System.Type popupType)
+    {
+        if (popupType != typeof(UI_UnlockButtonPopup)) return;
+        Managers.UI.OnPopupClosed -= OnPopupClosedForUnlock;
+        _suppressNotifyForUnlock = false;
+        RefreshNotify();   // 팝업 닫힘 → [!] Quest Mark + [NEW] Text 동시 표시
+    }
+
     void TryPlayUnlockAnim(string btnId)
     {
         switch (btnId)
         {
             case UNLOCK_TRAVEL_BUTTON:
+                BeginUnlockNotifySuppression();
                 UnlockButtonAnim(
                     GetButton((int)Buttons.TravelButton).gameObject,
                     GetImage((int)Images.TravelButtonIcon),
@@ -605,6 +651,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 break;
 
             case UNLOCK_ALCHEMY_BUTTON:
+                BeginUnlockNotifySuppression();
                 UnlockButtonAnim(
                     GetButton((int)Buttons.AlchemyButton).gameObject,
                     GetImage((int)Images.AlchemyButtonIcon),
@@ -843,98 +890,114 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             speakerName: "접수원 아가씨",
             portrait: null,
             onFinished: isReportQuest
-                ? (System.Action)(() => Managers.Quest.CheckButtonClick(BTN_GUILD_QUEST))
+                ? (System.Action)(() =>
+                {
+                    Managers.Quest.CheckButtonClick(BTN_GUILD_QUEST);
+                    // 기획 수정안(2026-07-05): 완료 보고 대화 종료 → 랭크업 연출 (Player Rank Up Ef, 프리팹 저작 속도 그대로)
+                    if (Managers.Game.Player != null)
+                        Managers.Object?.ShowRankUpEffectOn(Managers.Game.Player.transform);
+                    // 랭크업 토스트 배너 (지역명 토스트와 동일 경로)
+                    Managers.UI.ShowToast("RANK UP");
+                })
                 : null,
             randomSingleLine: !isReportQuest);
     }
 
+    // BtnID -> notify 대상 매핑 테이블(s_notifyBindings) 기반으로 일괄 갱신.
+    // 버튼이 늘어나면 s_notifyBindings에 항목만 추가하면 된다. (기존: 그룹별 if문 나열)
     void RefreshNotify()
     {
-        // TODO : UI_Village1BtnGroup에 있는 느낌표 오브젝트 다 연결하기. -> test1, test2는 임시로 만들어둔 것. 제거 예정. 데이터 시트에 아직 없음.
+        // Unlock 연출~해금 팝업 종료까지는 느낌표/NEW 전부 끔 (팝업 닫힌 뒤 일괄 표시)
+        if (_suppressNotifyForUnlock)
+        {
+            foreach (NotifyBinding binding in s_notifyBindings)
+                SetNotifyActive(binding, false);
+            return;
+        }
 
-        // TODO : 퀘스트 알림이 필요한 버튼이 늘어날 때마다 if문 추가해야하는데, 이 부분은 어떻게 개선할 수 있을지 고민해보기.
-
-        RefreshVillage1MainButtonGroupNotify();
-        RefreshVillage1GuildButtonGroupNotify();
-        RefreshVillage1AlchemyBtnGroupNotiry();
-        RefreshVillage1MonasteryBtnGroupNotify();
-
-    }
-
-    void RefreshVillage1MainButtonGroupNotify()
-    {
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
-        // TODO Define으로 만들어서 오타 확률 줄이자.
-        bool village1GuildNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_VFX || n.BtnID == "BTN_GUILD");
-        bool alchemyButtonNewNotify = list.Exists(n => n.BtnID == ALCHEMY_BUTTON_NEW_TXT);
-        bool village1AlchemyVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_VFX_SUB1 || n.BtnID == BTN_ALCHEMY);
-        bool monasteryButtonNewNotify = list.Exists(n => n.BtnID == MONASTERY_BUTTON_NEW_TXT);
-        bool monasteryVfxNotify = list.Exists(n => n.BtnID == MONASTERY_VFX_SUB1);
-        bool TravelButtonNewNotify = list.Exists(n => n.BtnID == TRAVEL_BUTTON_NEW_TXT);
-        bool village1TravelQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_TRAVEL_QUEST_VFX);
-        //bool village1TravelQuestVfxNotify = list.Exists(n => n.BtnID == BTN_EXIT);
 
-        #region Village1MainBtnGroup
-        GetObject((int)GameObjects.Village1GuildVFX)?.SetActive(village1GuildNotify);
-        GetText((int)Texts.AlchemyButtonNewTxt)?.gameObject?.SetActive(alchemyButtonNewNotify);
-        GetObject((int)GameObjects.Village1AlchemyVFX_Sub1)?.SetActive(village1AlchemyVfxNotify);
-        GetText((int)Texts.MonasteryButtonNewTxt)?.gameObject?.SetActive(monasteryButtonNewNotify);
-        GetObject((int)GameObjects.MonasteryVFX_Sub1)?.SetActive(monasteryVfxNotify);
-        GetText((int)Texts.TravelButtonNewTxt)?.gameObject?.SetActive(TravelButtonNewNotify);
-        GetObject((int)GameObjects.Village1TravelQuestVFX)?.SetActive(village1TravelQuestVfxNotify);
-        #endregion
+        HashSet<string> activeIds = new HashSet<string>();
+        foreach (Data.QuestNotifyData n in list)
+            activeIds.Add(n.BtnID);
+
+        foreach (NotifyBinding binding in s_notifyBindings)
+        {
+            bool on = false;
+            foreach (string id in binding.BtnIds)
+            {
+                if (activeIds.Contains(id))
+                {
+                    on = true;
+                    break;
+                }
+            }
+            SetNotifyActive(binding, on);
+        }
     }
 
-    void RefreshVillage1GuildButtonGroupNotify()
+    // notify 대상 하나(느낌표 VFX 오브젝트 또는 New 텍스트)를 켜고/끈다.
+    void SetNotifyActive(NotifyBinding binding, bool on)
     {
-        List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
-        bool village1GGuildTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_TALK_VFX);
-        bool village1GuildQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_GUILD_QUEST_VFX || n.BtnID == BTN_GUILD_QUEST);
-        bool guildExitQuestVfxNotify = list.Exists(n => n.BtnID == GUILD_EXIT_QUEST_VFX);
-
-        #region Village1GuildBtnGroup
-        GetObject((int)GameObjects.Village1GuildTalkVFX)?.SetActive(village1GGuildTalkVfxNotify);
-        GetObject((int)GameObjects.Village1GuildQuestVFX)?.SetActive(village1GuildQuestVfxNotify);
-        GetObject((int)GameObjects.GuildExitQuestVFX)?.SetActive(guildExitQuestVfxNotify);
-        #endregion
+        switch (binding.Kind)
+        {
+            case NotifyTargetKind.Object:
+                GetObject(binding.Index)?.SetActive(on);
+                break;
+            case NotifyTargetKind.Text:
+                GetText(binding.Index)?.gameObject?.SetActive(on);
+                break;
+        }
     }
 
-    void RefreshVillage1AlchemyBtnGroupNotiry()
+    enum NotifyTargetKind { Object, Text }
+
+    // BtnIds 중 하나라도 현재 notify 리스트에 있으면 (Kind, Index) 대상이 켜진다.
+    struct NotifyBinding
     {
-        List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
-        // 서브퀘스트 notify는 _Sub1 VFX로 (메인퀘스트 notify는 plain VFX)
-        bool village1AlchemyTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX);
-        bool village1AlchemyTalkVfxSub1Notify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_TALK_VFX_SUB1 || n.BtnID == BTN_ALCHEMY_TALK);
-        bool village1AlchemyCustomOrderButtonNewTxtNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT);
-        bool village1AlchemyQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_ALCHEMY_QUEST_VFX);
-        bool alchemyExitQuestVfxNotify = list.Exists(n => n.BtnID == ALCHEMY_EXIT_QUEST_VFX);
+        public readonly NotifyTargetKind Kind;
+        public readonly int Index;
+        public readonly string[] BtnIds;
 
-
-        #region Village1AlchemyBtnGroup
-        GetObject((int)GameObjects.Village1AlchemyTalkVFX)?.SetActive(village1AlchemyTalkVfxNotify);
-        GetObject((int)GameObjects.Village1AlchemyTalkVFX_Sub1)?.SetActive(village1AlchemyTalkVfxSub1Notify);
-        GetText((int)Texts.AlchemyCustomOrderButtonNewTxt)?.gameObject?.SetActive(village1AlchemyCustomOrderButtonNewTxtNotify);
-        GetObject((int)GameObjects.Village1AlchemyQuestVFX)?.SetActive(village1AlchemyQuestVfxNotify);
-        GetObject((int)GameObjects.AlchemyExitQuestVFX)?.SetActive(alchemyExitQuestVfxNotify);
-        #endregion
+        public NotifyBinding(NotifyTargetKind kind, int index, params string[] btnIds)
+        {
+            Kind = kind;
+            Index = index;
+            BtnIds = btnIds;
+        }
     }
 
-    void RefreshVillage1MonasteryBtnGroupNotify()
+    // 각 notify 대상과 이를 켜는 BtnID 목록. (오타/누락 방지를 위해 여기 한 곳에 모아둠)
+    static readonly NotifyBinding[] s_notifyBindings =
     {
-        List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
-        bool village1MonasteryTalkVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_MONASTERY_TALK_VFX);
-        bool village1MonasteryTalkVfxSub1Notify = list.Exists(n => n.BtnID == VILLAGE1_MONASTERY_TALK_VFX_SUB1);
-        bool village1MonasteryCustomOrderButtonNewTxtNotify = list.Exists(n => n.BtnID == VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT);
-        bool village1MonasteryQuestVfxNotify = list.Exists(n => n.BtnID == VILLAGE1_MONASTERY_QUEST_VFX);
-        bool monasteryExitQuestVfxNotify = list.Exists(n => n.BtnID == MONASTERY_EXIT_QUEST_VFX);
+        // ---- Village1MainBtnGroup ----
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1GuildVFX,        VILLAGE1_GUILD_VFX, "BTN_GUILD"),
+        new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.AlchemyButtonNewTxt,           ALCHEMY_BUTTON_NEW_TXT),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyVFX_Sub1, VILLAGE1_ALCHEMY_VFX_SUB1, BTN_ALCHEMY),
+        new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.MonasteryButtonNewTxt,         MONASTERY_BUTTON_NEW_TXT),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.MonasteryVFX_Sub1,       MONASTERY_VFX_SUB1),
+        new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.TravelButtonNewTxt,            TRAVEL_BUTTON_NEW_TXT),
+        // 여정 버튼: VFX 이름(VILLAGE1_TRAVEL_QUEST_VFX)과 BTN_JOURNEY 액션 ID 둘 다 인정.
+        // (Quest3=VFX명 사용, Quest6=BTN_JOURNEY 사용 → 둘 다 표시되도록. 길드/연금과 동일 패턴)
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1TravelQuestVFX,  VILLAGE1_TRAVEL_QUEST_VFX, BTN_JOURNEY),
 
-        #region Village1MonasteryBtnGroup
-        GetObject((int)GameObjects.Village1MonasteryTalkVFX)?.SetActive(village1MonasteryTalkVfxNotify);
-        GetObject((int)GameObjects.Village1MonasteryTalkVFX_Sub1)?.SetActive(village1MonasteryTalkVfxSub1Notify);
-        GetText((int)Texts.MonasteryCustomOrderButtonNewTxt)?.gameObject?.SetActive(village1MonasteryCustomOrderButtonNewTxtNotify);
-        GetObject((int)GameObjects.Village1MonasteryQuestVFX)?.SetActive(village1MonasteryQuestVfxNotify);
-        GetObject((int)GameObjects.MonasteryExitQuestVFX)?.SetActive(monasteryExitQuestVfxNotify);
-        #endregion
+        // ---- Village1GuildBtnGroup ----
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1GuildTalkVFX,    VILLAGE1_GUILD_TALK_VFX),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1GuildQuestVFX,   VILLAGE1_GUILD_QUEST_VFX, BTN_GUILD_QUEST),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.GuildExitQuestVFX,       GUILD_EXIT_QUEST_VFX),
 
-    }
+        // ---- Village1AlchemyBtnGroup ---- (서브퀘스트 notify는 _Sub1 VFX)
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyTalkVFX,      VILLAGE1_ALCHEMY_TALK_VFX),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyTalkVFX_Sub1, VILLAGE1_ALCHEMY_TALK_VFX_SUB1, BTN_ALCHEMY_TALK),
+        new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.AlchemyCustomOrderButtonNewTxt,    VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyQuestVFX,     VILLAGE1_ALCHEMY_QUEST_VFX),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.AlchemyExitQuestVFX,         ALCHEMY_EXIT_QUEST_VFX),
+
+        // ---- Village1MonasteryBtnGroup ----
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryTalkVFX,      VILLAGE1_MONASTERY_TALK_VFX),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryTalkVFX_Sub1, VILLAGE1_MONASTERY_TALK_VFX_SUB1),
+        new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.MonasteryCustomOrderButtonNewTxt,    VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryQuestVFX,     VILLAGE1_MONASTERY_QUEST_VFX),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.MonasteryExitQuestVFX,         MONASTERY_EXIT_QUEST_VFX),
+    };
 }

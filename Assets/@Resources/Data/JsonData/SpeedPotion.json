@@ -3,7 +3,7 @@
     {
       "DataId": 40001,
       "Name": "SPDPotion1NameText",
-      "Grade": "Basic",
+      "Grade": 0,
       "Description": "SPDPotion1DescText",
       "SpriteName": "Speed_Potion1",
       "WhereTo": "AlchemyText",
@@ -21,7 +21,7 @@
     {
       "DataId": 40002,
       "Name": "SPDPotion1NameText",
-      "Grade": "Basic",
+      "Grade": 0,
       "Description": "SPDPotion1DescText",
       "SpriteName": "Speed_Potion1",
       "WhereTo": "AlchemyText",
@@ -39,7 +39,7 @@
     {
       "DataId": 40003,
       "Name": "SPDPotion1NameText",
-      "Grade": "Basic",
+      "Grade": 0,
       "Description": "SPDPotion1DescText",
       "SpriteName": "Speed_Potion1",
       "WhereTo": "AlchemyText",
@@ -57,7 +57,7 @@
     {
       "DataId": 40004,
       "Name": "SPDPotion2NameText",
-      "Grade": "Abnormal",
+      "Grade": 1,
       "Description": "SPDPotion2DescText",
       "SpriteName": "Speed_Potion2",
       "WhereTo": "AlchemyText",

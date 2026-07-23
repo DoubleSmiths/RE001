@@ -258,7 +258,7 @@ public class QuestManager
                     if (int.TryParse(unlock.TargetID, out int itemId))
                     {
                         Managers.Game.AddItem(itemId);
-                        Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(itemId);
+                        Managers.UI.ShowPopupUI<UI_ItemPopup>().SetInfo(itemId, showGlow: true);
                     }
                     break;
 
