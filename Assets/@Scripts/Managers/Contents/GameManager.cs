@@ -639,6 +639,39 @@ public class GameManager
         return existing?.Count ?? 0;
     }
 
+    // 여정 노드 해금 판정 (기획서 p1-s47) — TravelConditionData의 조건을 전부 만족해야 해금.
+    // 조건 행이 없는 노드는 항시 해금 (소분류 첫 장소 등). 통행증은 승급 시 회수·교체되므로
+    // 지역 게이트는 ITEM_REQUIRED가 아닌 QUEST_CLEAR(승급 보고 퀘 완료)로 거는 것을 원칙으로 한다.
+    public bool IsTravelNodeUnlocked(int nodeId)
+    {
+        if (Managers.Data.TravelConditionDic == null ||
+            !Managers.Data.TravelConditionDic.TryGetValue(nodeId, out var conditions))
+            return true;
+
+        foreach (var cond in conditions)
+        {
+            switch (cond.Type)
+            {
+                case "QUEST_CLEAR":     // Target 퀘스트 완료 = 현재 퀘가 그 이후
+                    if (int.TryParse(cond.Target, out int questId) && CurrentQuestID <= questId) return false;
+                    break;
+                case "BTN_UNLOCKED":
+                    if (!UnlockedBtnIds.Contains(cond.Target)) return false;
+                    break;
+                case "ITEM_REQUIRED":
+                    if (int.TryParse(cond.Target, out int itemId) && GetItemCount(itemId) < Mathf.Max(1, cond.Value)) return false;
+                    break;
+                case "LEVEL_REQUIRED":
+                    if (Level < cond.Value) return false;
+                    break;
+                default:    // 데이터 오타 등 알 수 없는 타입은 개방이 아니라 잠금 유지 (fail-closed)
+                    Debug.LogWarning($"[GameManager] 알 수 없는 TravelCondition Type: '{cond.Type}' (NodeId {nodeId})");
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public int GetPlayerMaxHp()
     {
         if (Player != null && Player.MaxHp > 0f)

@@ -497,6 +497,7 @@ public class UI_TravelPopup : UI_Popup
 
         var fieldNodes = _allNode
             .Where(n => n.Category == EXPLORE_CATEGORY && n.ParentId == 0)
+            .Where(n => Managers.Game.IsTravelNodeUnlocked(n.Id))   // 기획서 p1-s47: 해금 안 된 장소는 표시하지 않음
             .ToList();
 
         foreach (var node in fieldNodes)
@@ -536,6 +537,7 @@ public class UI_TravelPopup : UI_Popup
 
         var mapNodes = _allNode
             .Where(n => n.ParentId == _selectedFieldId)
+            .Where(n => Managers.Game.IsTravelNodeUnlocked(n.Id))   // 기획서 p1-s47: 해금 안 된 장소는 표시하지 않음
             .OrderBy(n => n.Id)
             .ToList();
 

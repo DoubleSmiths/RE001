@@ -1,3 +1,18 @@
 ﻿{
-  "conditions": []
+  "conditions": [
+    {
+      "NodeId": 22000,
+      "Type": "QUEST_CLEAR",
+      "Target": "7",
+      "Value": 0,
+      "FailMessage": "2급 모험가 승급 후 개방됩니다."
+    },
+    {
+      "NodeId": 23000,
+      "Type": "QUEST_CLEAR",
+      "Target": "999",
+      "Value": 0,
+      "FailMessage": "아직 개방되지 않은 지역입니다."
+    }
+  ]
 }

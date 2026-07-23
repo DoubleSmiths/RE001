@@ -413,7 +413,8 @@ public class PlayerController : CreatureController
             int regen = Mathf.Max(0, Mathf.RoundToInt(MaxHp - prevHp));
 
             OnLevelUp?.Invoke(Managers.Game.Level, regen);
-            _expRequired *= 1.2f;   // 단순 성장 곡선 (LevelData 없을 때 fallback)
+            // _expRequired는 위 RefreshStats()가 LevelData(없으면 fallback 식)로 이미 갱신함.
+            // 여기서 또 ×1.2 하면 세션 내 연속 레벨업과 재접속 시 요구 경험치가 달라지는 버그가 있었음.
         }
     }
 
