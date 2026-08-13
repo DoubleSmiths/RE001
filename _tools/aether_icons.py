@@ -40,6 +40,7 @@ UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 ICON_SIZE = 64
 OUT_EQUIP = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Equipment", "Generated")
 OUT_SKILL = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Skill", "Generated")
+OUT_MONSTER = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Generated")
 
 # 전 아이콘 공통 스타일 — 한 세트로 보이게 하는 핵심. 바꾸면 기존 아이콘과 톤이 어긋난다.
 STYLE = ("16-bit pixel art game inventory icon, single centered object, "
@@ -70,7 +71,7 @@ def get(path, key):
         return json.loads(r.read().decode())
 
 
-def postprocess(raw_bytes, out_path):
+def postprocess(raw_bytes, out_path, size=None):
     """회색 배경 제거 → 크롭 → 64x64 축소."""
     im = Image.open(io.BytesIO(raw_bytes)).convert("RGBA")
     px = im.load()
@@ -95,13 +96,14 @@ def postprocess(raw_bytes, out_path):
     side = max(im.size)
     canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     canvas.paste(im, ((side - im.size[0]) // 2, (side - im.size[1]) // 2))
-    canvas = canvas.resize((ICON_SIZE, ICON_SIZE), Image.NEAREST)
+    px_size = size or ICON_SIZE
+    canvas = canvas.resize((px_size, px_size), Image.NEAREST)
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     canvas.save(out_path)
 
 
-def run(items, out_dir, limit=None):
+def run(items, out_dir, limit=None, size=None):
     """items: [(파일명, 프롬프트본문)] — 파일이 이미 있으면 건너뜀."""
     key = api_key()
     todo = [(n, p) for n, p in items
@@ -144,7 +146,7 @@ def run(items, out_dir, limit=None):
                     continue
                 dl = urllib.request.Request(urls[0], headers={"User-Agent": UA})
                 with urllib.request.urlopen(dl, timeout=120) as resp:
-                    postprocess(resp.read(), os.path.join(out_dir, name + ".png"))
+                    postprocess(resp.read(), os.path.join(out_dir, name + ".png"), size)
                 done += 1
                 print(f"  완료 {name} ({done}/{len(jobs)})")
             elif st in ("Failed", "Error"):
@@ -175,18 +177,63 @@ def equipment_items():
     return out
 
 
+# 능력은 StatType/Effect 조합으로 형상을 나눈다. 같은 프롬프트를 쓰면 아이콘이 전부 똑같아진다.
+STAT_LOOK = {
+    "PhysicalAtk":           "a burning greatsword",
+    "MagicAtk":              "a swirling arcane orb",
+    "CritRate":              "a pierced target with a dagger",
+    "AtkSpeed":              "a winged blade in motion",
+    "Accuracy":              "a glowing archer's eye sigil",
+    "MaxHp":                 "a radiant heart shield",
+    "Def":                   "a fortified tower shield",
+    "Evasion":               "a swirling wind cloak",
+    "ExpGain":               "an open glowing tome with rising sparks",
+    "GuaranteedCatchReduce": "a glowing capture chain and ring",
+}
+EFFECT_LOOK = {
+    "Heal": "surrounded by green healing motes",
+    "Buff": "surrounded by rising golden runes",
+    "BonusDamage": "cracking with red impact sparks",
+}
+
+
 def skill_items():
-    """SkillData.json 의 능력 아이콘. IconLabel 이 비어 있어도 DataId로 파일을 만든다."""
+    """아이콘이 없는(IconLabel 공백) 능력만 생성 대상. 파일명 = Skill{DataId}."""
     path = os.path.join(BASE, "Assets", "@Resources", "Data", "JsonData", "SkillData.json")
     with io.open(path, encoding="utf-8-sig") as f:
         skills = json.load(f)["skills"]
-    themes = {"Talent": "a glowing arcane rune emblem", "Combat": "a crossed blades emblem",
-              "Utility": "a mystical eye emblem", "Convenience": "a gear and potion emblem"}
     out = []
     for s in skills:
-        cat = s.get("Category", "")
-        base = themes.get(cat, "a magical emblem")
-        out.append((f"Skill{s['DataId']}", f"{base} for a fantasy RPG skill"))
+        if (s.get("IconLabel") or "").strip():
+            continue                     # 이미 아이콘이 있는 능력은 건너뜀
+        shape = STAT_LOOK.get(s.get("StatType", ""), "an ornate magical sigil")
+        extra = EFFECT_LOOK.get(s.get("Effect", ""), "")
+        prompt = f"{shape} {extra}, framed in a circular medallion, fantasy RPG skill icon".replace("  ", " ")
+        out.append((f"Skill{s['DataId']}", prompt))
+    return out
+
+
+# 지역별 몬스터 원형 30종. 500종 각각을 생성하는 대신 원형 + 티어 색변주로 구분한다
+# (색 변주는 애니메이션 클립의 SpriteRenderer 색 커브로 준다 — 텍스처를 늘리지 않는다).
+MONSTER_ARCHETYPES = [
+    ("BreezingWindForest", ["slime blob", "forest spider", "wild wolf", "toadstool mushroom creature",
+                            "wind sprite", "wild boar", "black crow", "animated vine creeper",
+                            "red fox", "giant hornet"]),
+    ("WhisperingCave", ["cave bat", "giant mole", "miner wraith ghost", "crystal golem",
+                        "giant centipede", "moss horror", "stone sentry statue", "shadow figure",
+                        "cave salamander", "glowing worm"]),
+    ("RuinedSanctum", ["skeletal revenant", "stone knight", "fallen priest", "chimera beast",
+                       "gargoyle", "armored warden", "ghostly phantasm", "tainted spirit",
+                       "altar guardian construct", "void creature"]),
+]
+
+
+def monster_items():
+    out = []
+    for region, bases in MONSTER_ARCHETYPES:
+        for i, b in enumerate(bases):
+            out.append((f"Mon_{region}_{i}",
+                        f"a fantasy RPG monster, {b}, full body side view facing right, standing pose"))
     return out
 
 
@@ -199,8 +246,10 @@ def main():
         run(equipment_items(), OUT_EQUIP, limit)
     elif what == "skill":
         run(skill_items(), OUT_SKILL, limit)
+    elif what == "monster":
+        run(monster_items(), OUT_MONSTER, limit, size=128)  # 인게임 캐릭터라 아이콘보다 크게
     else:
-        raise SystemExit("사용법: python _tools/aether_icons.py [equipment|skill] [--limit N]")
+        raise SystemExit("사용법: python _tools/aether_icons.py [equipment|skill|monster] [--limit N]")
 
 
 if __name__ == "__main__":
