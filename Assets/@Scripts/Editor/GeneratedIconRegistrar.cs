@@ -17,6 +17,8 @@ public static class GeneratedIconRegistrar
     {
         "Assets/@Resources/Sprite/Icon/Equipment/Generated",
         "Assets/@Resources/Sprite/Icon/Skill/Generated",
+        // 몬스터 원형(128px). 기존 몬스터가 PPU 32에 64px(=2유닛)이므로 PPU 64면 크기가 맞는다.
+        "Assets/@Resources/Sprite/Monster/Generated",
     };
 
     [MenuItem("Tools/Register Generated Icons (아이콘 임포트+어드레서블)")]
@@ -81,8 +83,29 @@ public static class GeneratedIconRegistrar
             }
         }
 
+        // 몬스터 애니메이터 컨트롤러 — MonsterController가 Load<RuntimeAnimatorController>(AnimController)로
+        // 주소 조회한다. 스프라이트가 아니므로 ".sprite" 접미사는 붙이지 않는다(붙이면 Sprite로 적재 시도).
+        int ctrlCount = 0;
+        const string ANIM_ROOT = "Assets/@Resources/Animation/Monster/Generated";
+        if (Directory.Exists(ANIM_ROOT))
+        {
+            foreach (string path in Directory.GetFiles(ANIM_ROOT, "*.controller", SearchOption.AllDirectories))
+            {
+                string assetPath = path.Replace('\\', '/');
+                string guid = AssetDatabase.AssetPathToGUID(assetPath);
+                if (string.IsNullOrEmpty(guid)) continue;
+
+                var entry = settings.CreateOrMoveEntry(guid, group, false, false);
+                if (entry == null) continue;
+                entry.address = Path.GetFileNameWithoutExtension(assetPath);
+                settings.AddLabel(PRELOAD_LABEL, false);
+                entry.SetLabel(PRELOAD_LABEL, true, false, false);
+                ctrlCount++;
+            }
+        }
+
         AssetDatabase.SaveAssets();
         EditorUtility.SetDirty(settings);
-        Debug.Log($"[IconReg] 임포트 설정 {imported}개 갱신, 어드레서블 {registered}개 등록 (그룹 {group.Name})");
+        Debug.Log($"[IconReg] 임포트 설정 {imported}개 갱신, 스프라이트 {registered}개 + 애니메이터 {ctrlCount}개 등록 (그룹 {group.Name})");
     }
 }
