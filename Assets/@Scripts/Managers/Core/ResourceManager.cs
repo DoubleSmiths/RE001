@@ -78,9 +78,16 @@ public class ResourceManager
         var asyncOperation = Addressables.LoadAssetAsync<T>(loadKey);
         asyncOperation.Completed += (op) =>
         {
-            // 잘못 등록된 엔트리(타입 불일치 / 존재하지 않는 서브스프라이트 등)는 조용히 스킵.
+            // 잘못 등록된 엔트리(타입 불일치 / 존재하지 않는 서브스프라이트 등)는 캐시에 넣지 않는다.
+            // 단 콜백은 반드시 호출한다 — LoadAllAsync가 콜백 횟수로 진행도를 세고,
+            // count == totalCount 시점에 Managers.Data.Init()이 돌기 때문. 여기서 return해버리면
+            // 실패한 에셋 하나 때문에 카운터가 영영 안 차고 **모든 데이터 딕셔너리가 빈 채로** 게임이 시작된다.
             if (op.Status != AsyncOperationStatus.Succeeded || op.Result == null)
+            {
+                Debug.LogWarning($"[ResourceManager] 로드 실패 — 캐시 제외: '{key}' (주소/타입 등록 확인 필요)");
+                callback?.Invoke(null);
                 return;
+            }
 
             // 캐시 확인.
             if (_resources.TryGetValue(key, out Object resource))
