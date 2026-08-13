@@ -78,9 +78,13 @@ def build():
             crit = round(1.5 * t, 1) if slot == "Accessory" else (round(1.0 * t, 1) if slot == "Gloves" else 0)
             matk = round(atk * 0.5) if slot == "Accessory" else (round(atk * 0.3) if slot == "Helmet" else 0)
             tk, te = TIER_NAME[t - 1]
+            # 아이콘: AetherForge 생성분(Equip{DataId})이 있으면 그것을, 없으면 기존 에셋을 쓴다.
+            gen = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon",
+                               "Equipment", "Generated", f"Equip{did}.png")
+            sprite = f"Equip{did}" if os.path.exists(gen) else icons[(t - 1) % len(icons)]
             items.append(dict(
                 id=did, slot=slot, grade=GRADE_BY_TIER[t - 1],
-                sprite=icons[(t - 1) % len(icons)], dur=100 + t * 10,
+                sprite=sprite, dur=100 + t * 10,
                 atk=atk, crit=crit, matk=matk,
                 kor=f"{tk} {kor}", eng=f"{te} {eng}", tier=t, lv=lv))
             for l in range(1, ENH_MAX + 1):
