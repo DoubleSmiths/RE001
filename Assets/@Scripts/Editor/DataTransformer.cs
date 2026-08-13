@@ -766,6 +766,7 @@ public class DataTransformer : EditorWindow
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
         ParseComboDataSheet      (ReadXlsx($"{baseDir}/ComboData.xlsx"));
         ParseBuffDataSheet       (ReadXlsx($"{baseDir}/BuffData.xlsx"));
+        ParseLevelDataSheet      (ReadXlsx($"{baseDir}/LevelData.xlsx"));
         AssetDatabase.Refresh();
         Debug.Log("[DataTransformer] ParseExtraData (로컬) 완료");
     }
@@ -969,6 +970,23 @@ public class DataTransformer : EditorWindow
             loader.stages.Add(d);
         }
         WriteJsonStr("ComboData", loader);
+    }
+
+    // 플레이어 1~300레벨 요구 경험치. 시트 생성기: _tools/gen_level_curve.py
+    // (Lv1~40은 기존 등비 ×1.2 곡선 보존, 이후 밴드별로 배율을 낮춰 도달 가능하게 함)
+    static void ParseLevelDataSheet(List<List<string>> rows)
+    {
+        var loader = new LevelDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new LevelData();
+            d.Level       = ConvertValue<int>(C(row, 0));
+            d.RequiredExp = ConvertValue<float>(C(row, 1));
+            loader.levels.Add(d);
+        }
+        WriteJson("LevelData", loader);
     }
 
     static void ParseBuffDataSheet(List<List<string>> rows)

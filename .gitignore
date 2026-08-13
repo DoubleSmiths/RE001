@@ -100,3 +100,8 @@ InitTestScene*.unity*
 
 # OMC 세션/상태 파일 (운영 아티팩트)
 .omc/
+
+# 로컬 시크릿 (AetherForge API 키 등) — 절대 커밋 금지
+.env.local
+.env
+*.env.local
