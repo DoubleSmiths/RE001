@@ -659,5 +659,8 @@ public class PlayerController : CreatureController
         {
             _abilityRunner?.Notify(Define.AbilityCondition.OnMiss);       // 순수 빗나감
         }
+
+        // 슬39: [공격 후] — 명중/회피/빗나감 판정이 모두 끝난 뒤 발동 (결과와 무관)
+        _abilityRunner?.Notify(Define.AbilityCondition.AfterAttack);
     }
 }

@@ -519,6 +519,7 @@ public class UI_SkillDetailPopup : UI_Popup
         {
             case Define.AbilityCondition.BattleStart: return "전투 시작 시";
             case Define.AbilityCondition.OnAttack:    return "공격 시";
+            case Define.AbilityCondition.AfterAttack: return "공격 후";
             case Define.AbilityCondition.OnHit:       return "타격 시";
             case Define.AbilityCondition.OnCrit:      return "치명타 시";
             case Define.AbilityCondition.OnMiss:      return "공격이 빗나갈 시";
@@ -685,29 +686,62 @@ public class UI_SkillDetailPopup : UI_Popup
         string gauge = equipped ? $"<color={col}>{used}</color>/{max}" : $"<color={col}>{used}(-{cap})</color>/{max}";
         SetText(Texts.Txt_MemoryDisplayGroup_02, gauge);
 
-        // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:- 기억중 - / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
-        string btnLabel = !owned ? "습득 필요"
-                        : talent ? "항시 적용"
-                        : equipped ? $"- {Util.Localize(Define.LocalizeKey.Memorized_Text_Full)} -"   // 기억중 → "- 기억중 -" (mockup image152)
-                        : canAfford ? Util.Localize(Define.LocalizeKey.MemorizeBtnText)
-                        : Util.Localize(Define.LocalizeKey.Lack_Memory_Text);
+        // 출처별 버튼3 분기 — 장비부여(무점유) / NPC 습득 / 축성(전직)
+        var src = Managers.Ability.GetSource(SkillId);
+        bool equipGranted = Managers.Ability.IsEquipGranted(SkillId);
+
+        string btnLabel;
+        bool interactable;
+        if (equipGranted)
+        {
+            // 장비 착용 부여(무점유) — 망각 불가 → "기억중" 표기 + 비활성.
+            //  (게이지 점유 표기는 UsedMemory 기반이라 무점유가 자동 반영됨)
+            btnLabel = Util.Localize(Define.LocalizeKey.Memorized_Text_Full);
+            interactable = false;
+        }
+        else if (!owned && src == Define.AbilitySource.Npc)
+        {
+            // NPC 출처 미보유 → "습득"(재료 소모). 재료 부족이면 비활성 — 재료색은 RefreshItemReq가 담당.
+            btnLabel = Util.Localize("Ability_Learn_Text");
+            interactable = Managers.Ability.CanLearnFromNpc(SkillId);
+        }
+        else if (!owned && src == Define.AbilitySource.Class)
+        {
+            // Class 출처 미보유 → "축성"(숙련도 100 소진 습득). 숙련도 부족이면 비활성.
+            btnLabel = Util.Localize(Define.LocalizeKey.AnointmentText);
+            interactable = Managers.Ability.CanAnoint(SkillId);
+        }
+        else
+        {
+            // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:- 기억중 - / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
+            btnLabel = !owned ? "습득 필요"
+                     : talent ? "항시 적용"
+                     : equipped ? $"- {Util.Localize(Define.LocalizeKey.Memorized_Text_Full)} -"   // 기억중 → "- 기억중 -" (mockup image152)
+                     : canAfford ? Util.Localize(Define.LocalizeKey.MemorizeBtnText)
+                     : Util.Localize(Define.LocalizeKey.Lack_Memory_Text);
+            // 슬52: Interactive — 보유&비재능 & (기억중 or 여유>=점유). 부족 시 X.
+            interactable = owned && !talent && (equipped || canAfford);
+        }
         SetText(Texts.Txt_MemorizeBtn_01, btnLabel);
         var btn = GetButton((int)Buttons.MemorizeBtn);
-        // 슬52: Interactive — 보유&비재능 & (기억중 or 여유>=점유). 부족 시 X.
-        if (btn != null) btn.interactable = owned && !talent && (equipped || canAfford);
+        if (btn != null) btn.interactable = interactable;
 
         // 슬52: 부족 표시(LackMemoryImg) — 미기억 & 기억력 부족 시
         SetActive(GetImageGo((int)Images.LackMemoryImg), owned && !talent && !equipped && !canAfford);
 
-        // 슬52: 버튼3 글로우색 — 기억하기/기억중(상호작용 가능)=0036A6(파랑), 부족/미보유/재능=000000.
-        bool memBlue = owned && !talent && (equipped || canAfford);
-        SetButtonGlow(Images.Img_Item_12, memBlue ? "0036A6" : "000000");
+        // 슬52: 버튼3 글로우색 — 상호작용 가능(기억/잊기/습득/축성)=0036A6(파랑), 그 외(부족/장비부여/재능)=000000.
+        SetButtonGlow(Images.Img_Item_12, interactable ? "0036A6" : "000000");
     }
 
-    // 슬43/41/52: 기억/망각 토글 (정보창에서). 재능/미보유/기억력 부족은 불가.
+    // 슬43/41/52: 기억/망각 토글 + 미보유 습득(NPC 재료/축성) (정보창에서). 재능/장비부여/기억력 부족은 불가.
     void OnClickMemorize()
     {
-        if (!Managers.Ability.IsLearned(SkillId) || Managers.Ability.IsTalent(SkillId)) return;
+        // 장비 착용 부여(무점유)는 망각 불가 (BindEvent는 Button.interactable을 무시하므로 코드 가드)
+        if (Managers.Ability.IsEquipGranted(SkillId)) return;
+
+        // 미보유 → 출처별 습득 시도 (NPC 재료 소모 / 축성)
+        if (!Managers.Ability.IsLearned(SkillId)) { TryAcquire(); return; }
+        if (Managers.Ability.IsTalent(SkillId)) return;
 
         bool wasEquipped = Managers.Ability.IsEquipped(SkillId);
         if (wasEquipped) Managers.Ability.Forget(SkillId);                               // 버튼3-2: 잊기
@@ -728,6 +762,40 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshMemorizeState();
         RefreshMidState();      // 슬52: Active_Ef(아이콘 배경 빛) 추가/제거 반영
         ApplyEquipMaterial();   // 슬52: 능력 이름 Frame Sprite에 Material_Equip 추가/제거
+    }
+
+    // 미보유 능력 습득 — NPC 출처: 재료 소모(TryLearnFromNpc) / Class 출처: 축성(TryAnoint, 숙련도 100 소진).
+    //  성공 시 정보창 전면 갱신(재료 박스 수량 포함) + 기억하기와 동일 연출.
+    void TryAcquire()
+    {
+        var src = Managers.Ability.GetSource(SkillId);
+        bool ok = src == Define.AbilitySource.Npc   ? Managers.Ability.TryLearnFromNpc(SkillId)
+                : src == Define.AbilitySource.Class ? Managers.Ability.TryAnoint(SkillId)
+                : false;
+        if (!ok) return;
+
+        // 습득 연출 — 기억하기와 동일 (버튼 Punch + 흰색 플래시)
+        PlayMemorizeButtonPunch();
+        PlayMemorizeFlash();
+
+        // 스탯 재적용(재능=점유0은 습득 즉시 적용) + 열려있는 능력 목록 갱신. 직업창은 OnAbilityChanged 구독으로 자동 갱신.
+        Managers.Game?.Player?.RefreshStats(fullHeal: false);
+        FindAnyObjectByType<UI_SkillBookPopup>()?.RefreshUI();
+
+        RefreshAllStates();
+    }
+
+    // 습득/축성 후 정보창 전면 갱신 — 상태 배지/설명/출처(재료 수량·색)/버튼/사이즈까지 SetInfo와 동일 순서(애니 제외).
+    void RefreshAllStates()
+    {
+        RefreshMemorizeState();
+        RefreshMidState();
+        RefreshDescLayout();     // 미보유 "- 습득 필요 -" → 설명 표시 전환
+        RefreshSourceUI();       // 슬50: 재료 박스 보유 수량/색 갱신
+        RefreshBottomButtons();
+        ApplyEquipMaterial();
+        RefreshAutoSize();
+        ApplyBottomMargin();
     }
 
     // 슬52: 기억/망각 버튼 Punch (양쪽 공통).
@@ -1056,8 +1124,8 @@ public class UI_SkillDetailPopup : UI_Popup
         bool has = owned != null;
         bool atMaxEnh = has && owned.EnhanceLevel >= maxEnh;
         bool atMaxDur = has && owned.Durability >= ed.MaxDurability;
-        //  (슬49 표: 보유 시 +1, 강화최대/내구최대 각 +1, 상한 +2 = 능력단계. 실제 능력 레벨 적용은
-        //   장비→능력 단계 통합 영역으로 후속. 여기선 강화/내구 상태 표시만.)
+        //  (슬49 표: 보유 시 1단계, 강화최대/내구최대 각 +1. 능력 레벨은 AbilityManager.GetLevel이 장비 상태에서
+        //   동적 산출(1+최대강화+최대내구)하므로 【LEVEL: lv/max】표기는 자동 반영. 여기선 강화/내구 상태 표시만.)
 
         // 장비 아이콘
         var icon = GetImage((int)Images.Img_ReqItemBox1_1_04);

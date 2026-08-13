@@ -78,18 +78,26 @@ public class Define
         Time,         // 시간 발동: ActiveContext 충족 시 Cooldown마다 발동 (쿨타임 스킬)
     }
 
-    // 확률 발동 조건 (슬39 — 연속 n회/사망조건 등 stateful 조건은 후속).
+    // 확률 발동 조건 (슬39).
     public enum AbilityCondition
     {
-        BattleStart,  // 전투 시작 시
-        OnAttack,     // 공격 시
-        OnHit,        // 타격(명중) 시
-        OnCrit,       // 치명타 시
-        OnMiss,       // 타격이 빗나갈 시
-        SelfEvade,    // 자신이 회피 시
-        OnDamaged,    // 피격 시
-        OnHeal,       // 체력 회복 시
-        LowHp,        // 본인 HP가 ConditionValue% 이하가 될 시 (전투당 1회)
+        BattleStart,      // 전투 시작 시
+        OnAttack,         // 공격 시
+        AfterAttack,      // 공격 후 (명중/빗나감 판정이 끝난 뒤)
+        OnHit,            // 타격(명중) 시
+        OnCrit,           // 치명타 시
+        OnMiss,           // 타격이 빗나갈 시 (순수 빗나감 — 상대 회피 제외)
+        SelfEvade,        // 자신이 회피 시
+        OnDamaged,        // 피격 시
+        OnHeal,           // 체력 회복 시
+        LowHp,            // 본인 HP가 ConditionValue% 이하가 될 시 (전투당 1회)
+        // ── 슬39 stateful 조건 (AbilityRunner가 카운터/1회 추적) ──
+        EnemyLowHp,       // 상대 HP가 ConditionValue% 이하가 될 시 (전투당 1회)
+        FatalDamage,      // 사망에 이르는 공격을 받은 경우 (HP 차감 직전 통지 — Heal 효과면 생존 가능)
+        ConsecutiveCrit,  // 연속 n번(ConditionValue) 타격이 치명타일 시
+        ConsecutiveEvade, // 연속 n번(ConditionValue) 회피할 시
+        EnemyEvade,       // 상대방이 회피할 시
+        AfterAbilityUse,  // 특정 능력(ConditionValue=DataId, 0=아무 능력) 발동 후
     }
 
     // 시간 발동 맥락 (슬39).
@@ -614,6 +622,42 @@ public class Define
     public const int POTION_ID_MIN = 30000;
     public const int SPEED_POTION_ID_MIN = 40000;
     public const int IMPORTANT_ITEM_ID_MIN = 20000;
+
+    #region Forge (대장간/장비 강화 — VS 원작 Enhance Chance Cal 발굴 수치)
+    // 강화 최대 단계 (+9). 도달 시 장비 능력 영구화(슬38).
+    public const int ENHANCE_MAX_LEVEL = 9;
+
+    // 강화 성공확률(%) — 인덱스 = 현재 강화도(+0..+8). Low=잠재력 0 / High=잠재력 만충.
+    public static readonly float[] ENHANCE_CHANCE_LOW  = { 90f, 75f, 50f, 25f, 10f, 6f, 4f, 2f, 1f };
+    public static readonly float[] ENHANCE_CHANCE_HIGH = { 99f, 90f, 75f, 50f, 35f, 25f, 15f, 10f, 5f };
+
+    // 강화 성공 시 잠재력 증가량 — 인덱스 = EquipGrade(Basic~Mystic). REQUISITE는 Mystic 취급.
+    public static readonly int[] ENHANCE_POTEN_BY_GRADE = { 4, 10, 20, 40, 80, 150 };
+
+    // ponytail: 원작 잠재력→확률 보간 수식 미해독 — 만충 기준 100, 초과분은 +0.2%/포인트로 근사.
+    public const float ENHANCE_POTEN_FULL = 100f;            // Low→High 만충 기준 잠재력
+    public const float ENHANCE_POTEN_OVER_BONUS = 0.2f;      // 만충 초과 잠재력 1당 확률 +%
+
+    // 강화 주문서 4종 (ItemData DataId) — 값 = 실패 시 내구도 감소량 (VS 원작 Amount).
+    //  10014(이그누스의 인정)는 확정 강화 + 감소 0.
+    public const int SCROLL_BASIC_ID    = 10011;   // 장비 강화 주문서 (실패 시 내구도 -20)
+    public const int SCROLL_ADVANCED_ID = 10012;   // 고급 장비 강화 주문서 (-10)
+    public const int SCROLL_ANCIENT_ID  = 10013;   // 고대 장비 강화 주문서 (-5)
+    public const int SCROLL_IGNUS_ID    = 10014;   // 이그누스의 인정 (확정 강화, -0)
+    public static readonly int[] ENHANCE_SCROLL_IDS       = { SCROLL_BASIC_ID, SCROLL_ADVANCED_ID, SCROLL_ANCIENT_ID, SCROLL_IGNUS_ID };
+    public static readonly int[] ENHANCE_SCROLL_DURI_LOSS = { 20, 10, 5, 0 };
+
+    // 복원의 거울(MOR) — 내구도 +25 복구 소비 아이템.
+    public const int MOR_ITEM_ID = 10015;
+    public const int MOR_RESTORE_AMOUNT = 25;
+    // 재료 복구(거울 없이): 젤리퐁 5개당 +25. ponytail: 원작 재료 규칙 미해독 — 시드값, 엑셀화 후속.
+    public const int RESTORE_MATERIAL_ID = 10001;
+    public const int RESTORE_MATERIAL_COUNT = 5;
+    public const int RESTORE_MATERIAL_AMOUNT = 25;
+    #endregion
+
+    // 전직(Class): 직업 숙련도 최대치 — 도달 시 수도원 [축성]으로 직업 능력 습득 가능.
+    public const int CLASS_PROFICIENCY_MAX = 100;
 
     // COLOR
     public const string DEFAULT_COLOR = "FFFFFF";
