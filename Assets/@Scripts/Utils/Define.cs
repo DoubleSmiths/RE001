@@ -56,10 +56,15 @@ public class Define
         REQUISITE,
     }
 
+    // 슬38 능력 종류. Talent(재능=점유량0) / Memory(기억) 는 기존 값이라 순서를 유지하고,
+    // 기획서가 정의한 3분류(전투·유틸리티·편의성)를 뒤에 추가한다.
     public enum SkillCategory
     {
         Talent,
         Memory,
+        Combat,        // 전투: 전투 능력치·기술
+        Utility,       // 유틸리티: 포획 확률, 경험치 획득량 등
+        Convenience,   // 편의성: 자동물약, 관심 최대 수 등
     }
 
     public enum SkillActiveType

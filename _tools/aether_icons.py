@@ -204,12 +204,23 @@ def skill_items():
         skills = json.load(f)["skills"]
     out = []
     for s in skills:
-        if (s.get("IconLabel") or "").strip():
-            continue                     # 이미 아이콘이 있는 능력은 건너뜀
-        shape = STAT_LOOK.get(s.get("StatType", ""), "an ornate magical sigil")
+        label = (s.get("IconLabel") or "").strip()
+        # 생성 대상 = 아이콘이 아예 없거나, IconLabel이 Skill{id}인데 파일이 아직 없는 경우.
+        # (IconLabel을 미리 채워둔 신규 능력도 잡히도록 파일 존재 여부로 판단한다)
+        if label and not label.startswith("Skill"):
+            continue
+        name = f"Skill{s['DataId']}"
+        if os.path.exists(os.path.join(OUT_SKILL, name + ".png")):
+            continue
+        shape = STAT_LOOK.get(s.get("StatType", ""), None)
+        if shape is None:
+            eff = s.get("Effect", "")
+            shape = {"Heal": "a radiant healing chalice",
+                     "Buff": "a rising banner of power",
+                     "BonusDamage": "a shattering impact rune"}.get(eff, "an ornate magical sigil")
         extra = EFFECT_LOOK.get(s.get("Effect", ""), "")
         prompt = f"{shape} {extra}, framed in a circular medallion, fantasy RPG skill icon".replace("  ", " ")
-        out.append((f"Skill{s['DataId']}", prompt))
+        out.append((name, prompt))
     return out
 
 

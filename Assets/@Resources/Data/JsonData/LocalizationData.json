@@ -4424,6 +4424,456 @@
       "TextKey": "Equip30060NameText",
       "Kor": "신화 부적",
       "Eng": "Mythic Amulet"
+    },
+    {
+      "TextKey": "Skill5100NameText",
+      "Kor": "선제의 감각",
+      "Eng": "선제의 감각"
+    },
+    {
+      "TextKey": "Skill5100DescText",
+      "Kor": "전투 시작 시 60% 확률로 공격력이 잠시 오른다",
+      "Eng": "전투 시작 시 60% 확률로 공격력이 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5101NameText",
+      "Kor": "연격의 습관",
+      "Eng": "연격의 습관"
+    },
+    {
+      "TextKey": "Skill5101DescText",
+      "Kor": "공격 시 25% 확률로 추가 피해를 준다",
+      "Eng": "공격 시 25% 확률로 추가 피해를 준다"
+    },
+    {
+      "TextKey": "Skill5102NameText",
+      "Kor": "잔심",
+      "Eng": "잔심"
+    },
+    {
+      "TextKey": "Skill5102DescText",
+      "Kor": "공격 후 30% 확률로 다음 일격이 날카로워진다",
+      "Eng": "공격 후 30% 확률로 다음 일격이 날카로워진다"
+    },
+    {
+      "TextKey": "Skill5103NameText",
+      "Kor": "타격 감각",
+      "Eng": "타격 감각"
+    },
+    {
+      "TextKey": "Skill5103DescText",
+      "Kor": "타격 시 20% 확률로 체력을 조금 회복한다",
+      "Eng": "타격 시 20% 확률로 체력을 조금 회복한다"
+    },
+    {
+      "TextKey": "Skill5104NameText",
+      "Kor": "치명의 흐름",
+      "Eng": "치명의 흐름"
+    },
+    {
+      "TextKey": "Skill5104DescText",
+      "Kor": "치명타 시 45% 확률로 공격속도가 오른다",
+      "Eng": "치명타 시 45% 확률로 공격속도가 오른다"
+    },
+    {
+      "TextKey": "Skill5105NameText",
+      "Kor": "연쇄 각성",
+      "Eng": "연쇄 각성"
+    },
+    {
+      "TextKey": "Skill5105DescText",
+      "Kor": "연속 3회 치명타 시 큰 피해를 추가한다",
+      "Eng": "연속 3회 치명타 시 큰 피해를 추가한다"
+    },
+    {
+      "TextKey": "Skill5106NameText",
+      "Kor": "빗나감의 교훈",
+      "Eng": "빗나감의 교훈"
+    },
+    {
+      "TextKey": "Skill5106DescText",
+      "Kor": "빗나갈 때 70% 확률로 명중이 오른다",
+      "Eng": "빗나갈 때 70% 확률로 명중이 오른다"
+    },
+    {
+      "TextKey": "Skill5107NameText",
+      "Kor": "간파",
+      "Eng": "간파"
+    },
+    {
+      "TextKey": "Skill5107DescText",
+      "Kor": "상대가 회피하면 50% 확률로 치명타율이 오른다",
+      "Eng": "상대가 회피하면 50% 확률로 치명타율이 오른다"
+    },
+    {
+      "TextKey": "Skill5108NameText",
+      "Kor": "흘리기",
+      "Eng": "흘리기"
+    },
+    {
+      "TextKey": "Skill5108DescText",
+      "Kor": "회피에 성공하면 55% 확률로 반격 피해를 준다",
+      "Eng": "회피에 성공하면 55% 확률로 반격 피해를 준다"
+    },
+    {
+      "TextKey": "Skill5109NameText",
+      "Kor": "그림자 걸음",
+      "Eng": "그림자 걸음"
+    },
+    {
+      "TextKey": "Skill5109DescText",
+      "Kor": "연속 3회 회피 시 회피율이 크게 오른다",
+      "Eng": "연속 3회 회피 시 회피율이 크게 오른다"
+    },
+    {
+      "TextKey": "Skill5110NameText",
+      "Kor": "굳은 살",
+      "Eng": "굳은 살"
+    },
+    {
+      "TextKey": "Skill5110DescText",
+      "Kor": "피격 시 35% 확률로 방어가 단단해진다",
+      "Eng": "피격 시 35% 확률로 방어가 단단해진다"
+    },
+    {
+      "TextKey": "Skill5111NameText",
+      "Kor": "벼랑 끝",
+      "Eng": "벼랑 끝"
+    },
+    {
+      "TextKey": "Skill5111DescText",
+      "Kor": "체력이 30% 이하가 되면 공격력이 크게 오른다",
+      "Eng": "체력이 30% 이하가 되면 공격력이 크게 오른다"
+    },
+    {
+      "TextKey": "Skill5112NameText",
+      "Kor": "숨통",
+      "Eng": "숨통"
+    },
+    {
+      "TextKey": "Skill5112DescText",
+      "Kor": "상대 체력이 30% 이하일 때 추가 피해를 준다",
+      "Eng": "상대 체력이 30% 이하일 때 추가 피해를 준다"
+    },
+    {
+      "TextKey": "Skill5113NameText",
+      "Kor": "불굴",
+      "Eng": "불굴"
+    },
+    {
+      "TextKey": "Skill5113DescText",
+      "Kor": "치명상을 입을 때 40% 확률로 체력을 회복하며 버틴다",
+      "Eng": "치명상을 입을 때 40% 확률로 체력을 회복하며 버틴다"
+    },
+    {
+      "TextKey": "Skill5114NameText",
+      "Kor": "회복의 여운",
+      "Eng": "회복의 여운"
+    },
+    {
+      "TextKey": "Skill5114DescText",
+      "Kor": "회복할 때 50% 확률로 방어가 오른다",
+      "Eng": "회복할 때 50% 확률로 방어가 오른다"
+    },
+    {
+      "TextKey": "Skill5115NameText",
+      "Kor": "전투 호흡",
+      "Eng": "전투 호흡"
+    },
+    {
+      "TextKey": "Skill5115DescText",
+      "Kor": "12초마다 체력을 회복한다",
+      "Eng": "12초마다 체력을 회복한다"
+    },
+    {
+      "TextKey": "Skill5116NameText",
+      "Kor": "각성",
+      "Eng": "각성"
+    },
+    {
+      "TextKey": "Skill5116DescText",
+      "Kor": "18초마다 공격력이 잠시 오른다",
+      "Eng": "18초마다 공격력이 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5117NameText",
+      "Kor": "집중",
+      "Eng": "집중"
+    },
+    {
+      "TextKey": "Skill5117DescText",
+      "Kor": "16초마다 치명타율이 잠시 오른다",
+      "Eng": "16초마다 치명타율이 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5118NameText",
+      "Kor": "가속",
+      "Eng": "가속"
+    },
+    {
+      "TextKey": "Skill5118DescText",
+      "Kor": "15초마다 공격속도가 잠시 오른다",
+      "Eng": "15초마다 공격속도가 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5119NameText",
+      "Kor": "철벽",
+      "Eng": "철벽"
+    },
+    {
+      "TextKey": "Skill5119DescText",
+      "Kor": "20초마다 방어가 잠시 오른다",
+      "Eng": "20초마다 방어가 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5120NameText",
+      "Kor": "예리함",
+      "Eng": "예리함"
+    },
+    {
+      "TextKey": "Skill5120DescText",
+      "Kor": "14초마다 명중이 잠시 오른다",
+      "Eng": "14초마다 명중이 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5121NameText",
+      "Kor": "잔상",
+      "Eng": "잔상"
+    },
+    {
+      "TextKey": "Skill5121DescText",
+      "Kor": "17초마다 회피율이 잠시 오른다",
+      "Eng": "17초마다 회피율이 잠시 오른다"
+    },
+    {
+      "TextKey": "Skill5122NameText",
+      "Kor": "파쇄",
+      "Eng": "파쇄"
+    },
+    {
+      "TextKey": "Skill5122DescText",
+      "Kor": "22초마다 강한 추가 피해를 준다",
+      "Eng": "22초마다 강한 추가 피해를 준다"
+    },
+    {
+      "TextKey": "Skill5123NameText",
+      "Kor": "완력",
+      "Eng": "완력"
+    },
+    {
+      "TextKey": "Skill5123DescText",
+      "Kor": "물리 공격력이 오른다",
+      "Eng": "물리 공격력이 오른다"
+    },
+    {
+      "TextKey": "Skill5124NameText",
+      "Kor": "마력 회로",
+      "Eng": "마력 회로"
+    },
+    {
+      "TextKey": "Skill5124DescText",
+      "Kor": "마법 공격력이 오른다",
+      "Eng": "마법 공격력이 오른다"
+    },
+    {
+      "TextKey": "Skill5125NameText",
+      "Kor": "강인함",
+      "Eng": "강인함"
+    },
+    {
+      "TextKey": "Skill5125DescText",
+      "Kor": "최대 체력이 오른다",
+      "Eng": "최대 체력이 오른다"
+    },
+    {
+      "TextKey": "Skill5126NameText",
+      "Kor": "단련",
+      "Eng": "단련"
+    },
+    {
+      "TextKey": "Skill5126DescText",
+      "Kor": "방어력이 오른다",
+      "Eng": "방어력이 오른다"
+    },
+    {
+      "TextKey": "Skill5127NameText",
+      "Kor": "급소 감각",
+      "Eng": "급소 감각"
+    },
+    {
+      "TextKey": "Skill5127DescText",
+      "Kor": "치명타 확률이 오른다",
+      "Eng": "치명타 확률이 오른다"
+    },
+    {
+      "TextKey": "Skill5128NameText",
+      "Kor": "일격필살",
+      "Eng": "일격필살"
+    },
+    {
+      "TextKey": "Skill5128DescText",
+      "Kor": "치명타 피해가 오른다",
+      "Eng": "치명타 피해가 오른다"
+    },
+    {
+      "TextKey": "Skill5129NameText",
+      "Kor": "정확",
+      "Eng": "정확"
+    },
+    {
+      "TextKey": "Skill5129DescText",
+      "Kor": "명중률이 오른다",
+      "Eng": "명중률이 오른다"
+    },
+    {
+      "TextKey": "Skill5130NameText",
+      "Kor": "속공",
+      "Eng": "속공"
+    },
+    {
+      "TextKey": "Skill5130DescText",
+      "Kor": "공격속도가 오른다",
+      "Eng": "공격속도가 오른다"
+    },
+    {
+      "TextKey": "Skill5131NameText",
+      "Kor": "민첩",
+      "Eng": "민첩"
+    },
+    {
+      "TextKey": "Skill5131DescText",
+      "Kor": "회피율이 오른다",
+      "Eng": "회피율이 오른다"
+    },
+    {
+      "TextKey": "Skill5132NameText",
+      "Kor": "치유 친화",
+      "Eng": "치유 친화"
+    },
+    {
+      "TextKey": "Skill5132DescText",
+      "Kor": "회복량이 오른다",
+      "Eng": "회복량이 오른다"
+    },
+    {
+      "TextKey": "Skill5133NameText",
+      "Kor": "기억의 그릇",
+      "Eng": "기억의 그릇"
+    },
+    {
+      "TextKey": "Skill5133DescText",
+      "Kor": "최대 기억력이 오른다",
+      "Eng": "최대 기억력이 오른다"
+    },
+    {
+      "TextKey": "Skill5134NameText",
+      "Kor": "감내",
+      "Eng": "감내"
+    },
+    {
+      "TextKey": "Skill5134DescText",
+      "Kor": "물리 저항이 오른다",
+      "Eng": "물리 저항이 오른다"
+    },
+    {
+      "TextKey": "Skill5135NameText",
+      "Kor": "탐구심",
+      "Eng": "탐구심"
+    },
+    {
+      "TextKey": "Skill5135DescText",
+      "Kor": "경험치 획득량이 늘어난다",
+      "Eng": "경험치 획득량이 늘어난다"
+    },
+    {
+      "TextKey": "Skill5136NameText",
+      "Kor": "장사 수완",
+      "Eng": "장사 수완"
+    },
+    {
+      "TextKey": "Skill5136DescText",
+      "Kor": "골드 획득량이 늘어난다",
+      "Eng": "골드 획득량이 늘어난다"
+    },
+    {
+      "TextKey": "Skill5137NameText",
+      "Kor": "행운",
+      "Eng": "행운"
+    },
+    {
+      "TextKey": "Skill5137DescText",
+      "Kor": "아이템 드롭률이 오른다",
+      "Eng": "아이템 드롭률이 오른다"
+    },
+    {
+      "TextKey": "Skill5138NameText",
+      "Kor": "교감",
+      "Eng": "교감"
+    },
+    {
+      "TextKey": "Skill5138DescText",
+      "Kor": "미니몬 잡기 성공률이 오른다",
+      "Eng": "미니몬 잡기 성공률이 오른다"
+    },
+    {
+      "TextKey": "Skill5139NameText",
+      "Kor": "각인",
+      "Eng": "각인"
+    },
+    {
+      "TextKey": "Skill5139DescText",
+      "Kor": "확정 포획에 필요한 횟수가 줄어든다",
+      "Eng": "확정 포획에 필요한 횟수가 줄어든다"
+    },
+    {
+      "TextKey": "Skill5140NameText",
+      "Kor": "친화의 향기",
+      "Eng": "친화의 향기"
+    },
+    {
+      "TextKey": "Skill5140DescText",
+      "Kor": "관심 미니몬 보관 수가 늘어난다",
+      "Eng": "관심 미니몬 보관 수가 늘어난다"
+    },
+    {
+      "TextKey": "Skill5141NameText",
+      "Kor": "약초 지식",
+      "Eng": "약초 지식"
+    },
+    {
+      "TextKey": "Skill5141DescText",
+      "Kor": "물약 재사용 대기시간이 줄어든다",
+      "Eng": "물약 재사용 대기시간이 줄어든다"
+    },
+    {
+      "TextKey": "Skill5142NameText",
+      "Kor": "연계 감각",
+      "Eng": "연계 감각"
+    },
+    {
+      "TextKey": "Skill5142DescText",
+      "Kor": "콤보 게이지가 더 오래 유지된다",
+      "Eng": "콤보 게이지가 더 오래 유지된다"
+    },
+    {
+      "TextKey": "Skill5143NameText",
+      "Kor": "대장장이의 눈",
+      "Eng": "대장장이의 눈"
+    },
+    {
+      "TextKey": "Skill5143DescText",
+      "Kor": "장비 강화 성공률이 오른다",
+      "Eng": "장비 강화 성공률이 오른다"
+    },
+    {
+      "TextKey": "Skill5144NameText",
+      "Kor": "발걸음",
+      "Eng": "발걸음"
+    },
+    {
+      "TextKey": "Skill5144DescText",
+      "Kor": "이동 속도가 오른다",
+      "Eng": "이동 속도가 오른다"
     }
   ]
 }

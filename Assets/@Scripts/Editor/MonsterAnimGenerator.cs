@@ -38,9 +38,11 @@ public static class MonsterAnimGenerator
         Directory.CreateDirectory(OUT_ROOT);
         int made = 0, skipped = 0;
 
+        // ⚠️ AssetDatabase.StartAssetEditing()으로 감싸면 CreateAnimatorControllerAtPath가
+        //    레이어를 온전히 만들지 못해 "Statemachine for layer 'Base Layer' is missing" 컨트롤러가 나온다.
+        //    배치 편집으로 묶지 않는다(느려도 정확).
         try
         {
-            AssetDatabase.StartAssetEditing();
             for (int i = 0; i < creatures.Count; i++)
             {
                 var c = creatures[i];
@@ -53,10 +55,16 @@ public static class MonsterAnimGenerator
                 if (sprite == null) { skipped++; continue; }
 
                 string dir = $"{OUT_ROOT}/{c.name}";
-                if (AssetDatabase.LoadAssetAtPath<AnimatorController>($"{dir}/{c.name}.controller") != null)
+                string ctrlPath = $"{dir}/{c.name}.controller";
+                var existing = AssetDatabase.LoadAssetAtPath<AnimatorController>(ctrlPath);
+                if (existing != null)
                 {
-                    skipped++;
-                    continue;   // 이미 생성됨 — 재실행 시 건너뜀
+                    // 상태머신이 온전한 것만 건너뛴다. 비어 있으면 삭제 후 다시 만든다(복구).
+                    bool healthy = existing.layers.Length > 0
+                                   && existing.layers[0].stateMachine != null
+                                   && existing.layers[0].stateMachine.states.Length >= 5;
+                    if (healthy) { skipped++; continue; }
+                    AssetDatabase.DeleteAsset(ctrlPath);
                 }
                 Directory.CreateDirectory(dir);
 
@@ -91,7 +99,6 @@ public static class MonsterAnimGenerator
         }
         finally
         {
-            AssetDatabase.StopAssetEditing();
             EditorUtility.ClearProgressBar();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
