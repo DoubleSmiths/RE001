@@ -238,6 +238,7 @@ public class DataTransformer : EditorWindow
             data.StartRecoveryRate   = i < row.Count ? ConvertValue<float>(row[i++]) : 0f;
             data.StartGrowthRate     = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
             data.StartDropRate       = i < row.Count ? ConvertValue<float>(row[i++]) : 100f;
+            data.StartDef            = i < row.Count ? ConvertValue<int>(row[i++])   : 0;
 
             loader.playerStatuses.Add(data);
         }

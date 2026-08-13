@@ -152,6 +152,9 @@ namespace Data
         public SkillActiveType SkillActiveType;
         public string StatType;        // 버프 대상: PhysicalAtk/MagicAtk/CritRate/MaxHp/AtkSpeed/Accuracy/Def/MaxMemory
         public float StatBonus;        // 버프 수치
+        // 다중 스탯(병렬 리스트) — 비어있으면 StatType/StatBonus 단일 fallback (RoleTypes와 동일 하위호환 패턴)
+        public List<string> StatTypes  = new List<string>();
+        public List<float>  StatBonuses = new List<float>();
         public int MaxLevel;
         public int MemoryCapacity;     // 슬38: 기억력 점유량. 0이면 [재능](항시 적용, 점유 없음)
 
@@ -179,8 +182,9 @@ namespace Data
         // 발동 효과
         public AbilityEffect Effect;                                             // Heal / BonusDamage / Buff
         public string EffectStat;                                                // Buff 대상 스탯(PhysicalAtk 등)
-        public float EffectValue;                                                // 효과 수치
+        public float EffectValue;                                                // 효과 수치 (발동 시 능력 단계 × 배율 적용)
         public float EffectDuration;                                             // Buff 지속(초), 0=전투 종료까지
+        public string EffectVfxLabel;                                            // 발동 VFX 프리팹 주소. 비면 효과별 기본 매핑
     }
 
     [Serializable]
@@ -537,6 +541,7 @@ namespace Data
         public float StartRecoveryRate  = 0f;
         public float StartGrowthRate    = 100f;
         public float StartDropRate      = 100f;
+        public int   StartDef           = 0;    // 레벨별 방어력 (StartDropRate 뒤 신규 컬럼)
         public List<string> StartSkills;
         public List<int> StartSkillLevels;
     }

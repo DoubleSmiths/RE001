@@ -117,9 +117,15 @@ public class PlayerController : CreatureController
             _companion = Managers.Object?.SpawnCompanion(id, this);
     }
 
+    // 슬39 stateful 조건 카운터 — 연속 치명타/연속 회피. 전투 시작 시 리셋.
+    int _critStreak;
+    int _evadeStreak;
+
     public void StartBattle()
     {
         _inBattle = true;
+        _critStreak = 0;
+        _evadeStreak = 0;
         _abilityRunner?.OnBattleStart();   // 슬39: 전투 시작 발동조건
     }
 
@@ -365,15 +371,33 @@ public class PlayerController : CreatureController
     public override void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
         bool wasHit = result.Hit;
+
+        // 슬39: 사망에 이르는 공격 — HP 차감 직전 통지 (Heal 효과가 발동하면 생존 가능)
+        if (wasHit && result.FinalDamage >= Hp)
+            _abilityRunner?.Notify(Define.AbilityCondition.FatalDamage);
+
         float before = Hp;
         base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
 
         // 슬39: 피격/회피/저체력 발동조건
         if (State == Define.State.Dead) return;
-        if (!wasHit) { _abilityRunner?.Notify(Define.AbilityCondition.SelfEvade); return; }
+        if (!wasHit)
+        {
+            if (result.Evaded)   // 회피 기여분만 회피로 취급 (순수 빗나감은 상대 실수)
+            {
+                _evadeStreak++;
+                _abilityRunner?.Notify(Define.AbilityCondition.SelfEvade);
+                _abilityRunner?.Notify(Define.AbilityCondition.ConsecutiveEvade, _evadeStreak);
+            }
+            return;
+        }
         float taken = before - Hp;
-        if (taken > 0f) _abilityRunner?.Notify(Define.AbilityCondition.OnDamaged);
+        if (taken > 0f)
+        {
+            _evadeStreak = 0;   // 피격 시 연속 회피 끊김
+            _abilityRunner?.Notify(Define.AbilityCondition.OnDamaged);
+        }
         if (MaxHp > 0f) _abilityRunner?.Notify(Define.AbilityCondition.LowHp, Hp / MaxHp * 100f);
     }
 
@@ -435,7 +459,8 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     // PlayerStatusData(Level==DataId)를 우선 참조. 데이터 누락 시에만 fallback 식 사용.
     // GameManager.GetPlayerMaxHp가 동일 lookup 키(Level)를 쓰므로 정합성 유지.
-    public void RefreshStats()
+    // fullHeal=false: 장비 착탈/강화 등 스탯만 재계산하는 경로 — 현재 HP 유지(전투 중 무한회복 악용 방지).
+    public void RefreshStats(bool fullHeal = true)
     {
         int lv = Managers.Game.Level;
 
@@ -471,11 +496,12 @@ public class PlayerController : CreatureController
             RecoveryRate   = status.StartRecoveryRate;
             GrowthRate     = status.StartGrowthRate;
             DropRate       = status.StartDropRate;
-            Def            = 0; // PlayerStatusData에 Def 컬럼이 아직 없음 — 데이터 추가되면 매핑
+            Def            = status.StartDef;   // StartDef 컬럼(레벨별 방어력) 매핑
         }
         else
         {
-            // PlayerStatusDic이 (DataId 키라) 레벨 조회에 안 잡혀 실질적으로 항상 이 경로 사용.
+            // PlayerStatusData(DataId=Level, 1~300행)가 정상 로드되면 위 데이터 경로를 타고,
+            // 데이터 누락 시에만 이 공식으로 떨어진다. 값은 Lv1~40 구간 데이터와 동일하게 맞춰둠.
             // 기본 밸런스: Lv1에 슬라임을 무난히 잡되 레벨업으로 점진 강해지도록.
             MaxHp       = 100 + (lv - 1) * 20;
             PhysicalAtk = 15  + (lv - 1) * 3;
@@ -494,12 +520,15 @@ public class PlayerController : CreatureController
             MagicAtk    += inv[3] * STAT_PER_POINT[3];
         }
 
+        // 대장간: 장착 장비의 기본 스탯 + 강화 보너스 가산
+        Managers.Game?.ApplyEquipmentStats(this);
+
         // 슬38: 장착(기억)된 능력의 스탯 보너스 가산
         Managers.Ability?.ApplyTo(this);
         // 슬39: 스탯이 base+패시브로 리셋됐으니 런너의 임시 버프 추적도 비움(중복 환불 방지)
         _abilityRunner?.OnStatsReset();
 
-        Hp = MaxHp;
+        Hp = fullHeal ? MaxHp : Mathf.Min(Hp, MaxHp);
         OnHpChanged?.Invoke(Hp, MaxHp);
         // _expRequired가 갱신됐으니 EXP 슬라이더도 같은 시점에 신호 발화.
         // (BindPlayer가 늦게 구독한 경우엔 BindPlayer 안에서 초기 1회를 별도로 호출.)
@@ -607,11 +636,28 @@ public class PlayerController : CreatureController
             OnHitLanded?.Invoke(result.FinalDamage);
             // 슬39: 타격/치명타 발동조건
             _abilityRunner?.Notify(Define.AbilityCondition.OnHit);
-            if (result.IsCrit) _abilityRunner?.Notify(Define.AbilityCondition.OnCrit);
+            if (result.IsCrit)
+            {
+                _critStreak++;
+                _abilityRunner?.Notify(Define.AbilityCondition.OnCrit);
+                _abilityRunner?.Notify(Define.AbilityCondition.ConsecutiveCrit, _critStreak);
+            }
+            else
+            {
+                _critStreak = 0;   // 비치명 타격 — 연속 치명타 끊김
+            }
+
+            // 슬39: 상대 HP가 임계% 이하로 내려간 순간 (전투당 1회는 러너가 추적)
+            if (_attackTarget != null && _attackTarget.State != Define.State.Dead && _attackTarget.MaxHp > 0f)
+                _abilityRunner?.Notify(Define.AbilityCondition.EnemyLowHp, _attackTarget.Hp / _attackTarget.MaxHp * 100f);
+        }
+        else if (result.Evaded)
+        {
+            _abilityRunner?.Notify(Define.AbilityCondition.EnemyEvade);   // 상대방 회피
         }
         else
         {
-            _abilityRunner?.Notify(Define.AbilityCondition.OnMiss);   // 타격 빗나감
+            _abilityRunner?.Notify(Define.AbilityCondition.OnMiss);       // 순수 빗나감
         }
     }
 }
