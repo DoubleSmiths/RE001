@@ -491,6 +491,16 @@
       "Eng": "NEED MORE\nMEMORY"
     },
     {
+      "TextKey": "Ability_Learn_Text",
+      "Kor": "습득",
+      "Eng": "LEARN"
+    },
+    {
+      "TextKey": "Lack_Proficiency_Text",
+      "Kor": "숙련도 부족",
+      "Eng": "LACK PROFICIENCY"
+    },
+    {
       "TextKey": "NextLevelInfoBtnText",
       "Kor": "다음등급 정보 ",
       "Eng": "NEXT GRADE "
@@ -856,6 +866,11 @@
       "Eng": "IGNUS' BOON"
     },
     {
+      "TextKey": "ItemMORNameText",
+      "Kor": "복원의 거울",
+      "Eng": "MIRROR OF RESTORATION"
+    },
+    {
       "TextKey": "ItemMastersSigil1NameText",
       "Kor": "장인의 인장 : 1단계",
       "Eng": "MASTER'S SIGIL I"
@@ -934,6 +949,11 @@
       "TextKey": "ItemScrollOfENH4DescText",
       "Kor": "설화 속에 등장하는 궁극의 주문서.\n확정적으로 장비를 강화시켜 준다.\n\n'운을 거스르는 것, 그것이야말로\n진정한 실력 아니겠나.'\n- 이그누스",
       "Eng": "This scroll appears in folk tales,\nand is said to enhance any weapon\nwithout fail.\n\n'Overcoming the odds,\nisn't that true skill?'\n-Ignus"
+    },
+    {
+      "TextKey": "ItemMORDescText",
+      "Kor": "장비를 비추면 부서진 부분을\n되돌려 주는 신비한 거울.\n\n사용 시 장비의 내구도를 복원한다.",
+      "Eng": "A mysterious mirror that reflects\nequipment as it once was.\n\nRestores durability when used."
     },
     {
       "TextKey": "ItemMastersSigil1DescText",
@@ -1459,6 +1479,2656 @@
       "TextKey": "ItemRank2PermitDescText",
       "Kor": "2급 모험가에게 발급되는 통행증.\n\n일반 통행증과 다르게\n제대로 된 양식에 인장까지 찍혀있다.\n접수원의 정성이…\n느껴지는 것 같기도 하다.",
       "Eng": "A permit issued to rank-2 adventurers.\n\nUnlike the regular permit, it's written\non a proper form with an official seal.\nYou can almost feel the receptionist's\nsincerity... almost."
+    },
+    {
+      "TextKey": "Monster2101NameText",
+      "Kor": "어린 슬라임",
+      "Eng": "Young Slime"
+    },
+    {
+      "TextKey": "Monster2102NameText",
+      "Kor": "어린 숲거미",
+      "Eng": "Young Forest Spider"
+    },
+    {
+      "TextKey": "Monster2103NameText",
+      "Kor": "어린 들늑대",
+      "Eng": "Young Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2104NameText",
+      "Kor": "어린 독버섯",
+      "Eng": "Young Toadstool"
+    },
+    {
+      "TextKey": "Monster2105NameText",
+      "Kor": "어린 바람정령",
+      "Eng": "Young Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2106NameText",
+      "Kor": "어린 멧돼지",
+      "Eng": "Young Boar"
+    },
+    {
+      "TextKey": "Monster2107NameText",
+      "Kor": "어린 까마귀",
+      "Eng": "Young Crow"
+    },
+    {
+      "TextKey": "Monster2108NameText",
+      "Kor": "어린 덩굴손",
+      "Eng": "Young Creeper"
+    },
+    {
+      "TextKey": "Monster2109NameText",
+      "Kor": "어린 여우",
+      "Eng": "Young Fox"
+    },
+    {
+      "TextKey": "Monster2110NameText",
+      "Kor": "어린 말벌",
+      "Eng": "Young Hornet"
+    },
+    {
+      "TextKey": "Monster2111NameText",
+      "Kor": "어린 슬라임",
+      "Eng": "Young Slime"
+    },
+    {
+      "TextKey": "Monster2112NameText",
+      "Kor": "어린 숲거미",
+      "Eng": "Young Forest Spider"
+    },
+    {
+      "TextKey": "Monster2113NameText",
+      "Kor": "어린 들늑대",
+      "Eng": "Young Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2114NameText",
+      "Kor": "어린 독버섯",
+      "Eng": "Young Toadstool"
+    },
+    {
+      "TextKey": "Monster2115NameText",
+      "Kor": "어린 바람정령",
+      "Eng": "Young Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2116NameText",
+      "Kor": "어린 멧돼지",
+      "Eng": "Young Boar"
+    },
+    {
+      "TextKey": "Monster2117NameText",
+      "Kor": "어린 까마귀",
+      "Eng": "Young Crow"
+    },
+    {
+      "TextKey": "Monster2118NameText",
+      "Kor": "거친 슬라임",
+      "Eng": "Feral Slime"
+    },
+    {
+      "TextKey": "Monster2119NameText",
+      "Kor": "거친 숲거미",
+      "Eng": "Feral Forest Spider"
+    },
+    {
+      "TextKey": "Monster2120NameText",
+      "Kor": "거친 들늑대",
+      "Eng": "Feral Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2121NameText",
+      "Kor": "거친 독버섯",
+      "Eng": "Feral Toadstool"
+    },
+    {
+      "TextKey": "Monster2122NameText",
+      "Kor": "거친 바람정령",
+      "Eng": "Feral Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2123NameText",
+      "Kor": "거친 멧돼지",
+      "Eng": "Feral Boar"
+    },
+    {
+      "TextKey": "Monster2124NameText",
+      "Kor": "거친 까마귀",
+      "Eng": "Feral Crow"
+    },
+    {
+      "TextKey": "Monster2125NameText",
+      "Kor": "거친 덩굴손",
+      "Eng": "Feral Creeper"
+    },
+    {
+      "TextKey": "Monster2126NameText",
+      "Kor": "거친 여우",
+      "Eng": "Feral Fox"
+    },
+    {
+      "TextKey": "Monster2127NameText",
+      "Kor": "거친 말벌",
+      "Eng": "Feral Hornet"
+    },
+    {
+      "TextKey": "Monster2128NameText",
+      "Kor": "거친 슬라임",
+      "Eng": "Feral Slime"
+    },
+    {
+      "TextKey": "Monster2129NameText",
+      "Kor": "거친 숲거미",
+      "Eng": "Feral Forest Spider"
+    },
+    {
+      "TextKey": "Monster2130NameText",
+      "Kor": "거친 들늑대",
+      "Eng": "Feral Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2131NameText",
+      "Kor": "거친 독버섯",
+      "Eng": "Feral Toadstool"
+    },
+    {
+      "TextKey": "Monster2132NameText",
+      "Kor": "거친 바람정령",
+      "Eng": "Feral Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2133NameText",
+      "Kor": "거친 멧돼지",
+      "Eng": "Feral Boar"
+    },
+    {
+      "TextKey": "Monster2134NameText",
+      "Kor": "거친 까마귀",
+      "Eng": "Feral Crow"
+    },
+    {
+      "TextKey": "Monster2135NameText",
+      "Kor": "굶주린 슬라임",
+      "Eng": "Starving Slime"
+    },
+    {
+      "TextKey": "Monster2136NameText",
+      "Kor": "굶주린 숲거미",
+      "Eng": "Starving Forest Spider"
+    },
+    {
+      "TextKey": "Monster2137NameText",
+      "Kor": "굶주린 들늑대",
+      "Eng": "Starving Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2138NameText",
+      "Kor": "굶주린 독버섯",
+      "Eng": "Starving Toadstool"
+    },
+    {
+      "TextKey": "Monster2139NameText",
+      "Kor": "굶주린 바람정령",
+      "Eng": "Starving Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2140NameText",
+      "Kor": "굶주린 멧돼지",
+      "Eng": "Starving Boar"
+    },
+    {
+      "TextKey": "Monster2141NameText",
+      "Kor": "굶주린 까마귀",
+      "Eng": "Starving Crow"
+    },
+    {
+      "TextKey": "Monster2142NameText",
+      "Kor": "굶주린 덩굴손",
+      "Eng": "Starving Creeper"
+    },
+    {
+      "TextKey": "Monster2143NameText",
+      "Kor": "굶주린 여우",
+      "Eng": "Starving Fox"
+    },
+    {
+      "TextKey": "Monster2144NameText",
+      "Kor": "굶주린 말벌",
+      "Eng": "Starving Hornet"
+    },
+    {
+      "TextKey": "Monster2145NameText",
+      "Kor": "굶주린 슬라임",
+      "Eng": "Starving Slime"
+    },
+    {
+      "TextKey": "Monster2146NameText",
+      "Kor": "굶주린 숲거미",
+      "Eng": "Starving Forest Spider"
+    },
+    {
+      "TextKey": "Monster2147NameText",
+      "Kor": "굶주린 들늑대",
+      "Eng": "Starving Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2148NameText",
+      "Kor": "굶주린 독버섯",
+      "Eng": "Starving Toadstool"
+    },
+    {
+      "TextKey": "Monster2149NameText",
+      "Kor": "굶주린 바람정령",
+      "Eng": "Starving Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2150NameText",
+      "Kor": "굶주린 멧돼지",
+      "Eng": "Starving Boar"
+    },
+    {
+      "TextKey": "Monster2151NameText",
+      "Kor": "굶주린 까마귀",
+      "Eng": "Starving Crow"
+    },
+    {
+      "TextKey": "Monster2152NameText",
+      "Kor": "성난 슬라임",
+      "Eng": "Enraged Slime"
+    },
+    {
+      "TextKey": "Monster2153NameText",
+      "Kor": "성난 숲거미",
+      "Eng": "Enraged Forest Spider"
+    },
+    {
+      "TextKey": "Monster2154NameText",
+      "Kor": "성난 들늑대",
+      "Eng": "Enraged Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2155NameText",
+      "Kor": "성난 독버섯",
+      "Eng": "Enraged Toadstool"
+    },
+    {
+      "TextKey": "Monster2156NameText",
+      "Kor": "성난 바람정령",
+      "Eng": "Enraged Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2157NameText",
+      "Kor": "성난 멧돼지",
+      "Eng": "Enraged Boar"
+    },
+    {
+      "TextKey": "Monster2158NameText",
+      "Kor": "성난 까마귀",
+      "Eng": "Enraged Crow"
+    },
+    {
+      "TextKey": "Monster2159NameText",
+      "Kor": "성난 덩굴손",
+      "Eng": "Enraged Creeper"
+    },
+    {
+      "TextKey": "Monster2160NameText",
+      "Kor": "성난 여우",
+      "Eng": "Enraged Fox"
+    },
+    {
+      "TextKey": "Monster2161NameText",
+      "Kor": "성난 말벌",
+      "Eng": "Enraged Hornet"
+    },
+    {
+      "TextKey": "Monster2162NameText",
+      "Kor": "성난 슬라임",
+      "Eng": "Enraged Slime"
+    },
+    {
+      "TextKey": "Monster2163NameText",
+      "Kor": "성난 숲거미",
+      "Eng": "Enraged Forest Spider"
+    },
+    {
+      "TextKey": "Monster2164NameText",
+      "Kor": "성난 들늑대",
+      "Eng": "Enraged Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2165NameText",
+      "Kor": "성난 독버섯",
+      "Eng": "Enraged Toadstool"
+    },
+    {
+      "TextKey": "Monster2166NameText",
+      "Kor": "성난 바람정령",
+      "Eng": "Enraged Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2167NameText",
+      "Kor": "성난 멧돼지",
+      "Eng": "Enraged Boar"
+    },
+    {
+      "TextKey": "Monster2168NameText",
+      "Kor": "성난 까마귀",
+      "Eng": "Enraged Crow"
+    },
+    {
+      "TextKey": "Monster2169NameText",
+      "Kor": "사나운 슬라임",
+      "Eng": "Savage Slime"
+    },
+    {
+      "TextKey": "Monster2170NameText",
+      "Kor": "사나운 숲거미",
+      "Eng": "Savage Forest Spider"
+    },
+    {
+      "TextKey": "Monster2171NameText",
+      "Kor": "사나운 들늑대",
+      "Eng": "Savage Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2172NameText",
+      "Kor": "사나운 독버섯",
+      "Eng": "Savage Toadstool"
+    },
+    {
+      "TextKey": "Monster2173NameText",
+      "Kor": "사나운 바람정령",
+      "Eng": "Savage Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2174NameText",
+      "Kor": "사나운 멧돼지",
+      "Eng": "Savage Boar"
+    },
+    {
+      "TextKey": "Monster2175NameText",
+      "Kor": "사나운 까마귀",
+      "Eng": "Savage Crow"
+    },
+    {
+      "TextKey": "Monster2176NameText",
+      "Kor": "사나운 덩굴손",
+      "Eng": "Savage Creeper"
+    },
+    {
+      "TextKey": "Monster2177NameText",
+      "Kor": "사나운 여우",
+      "Eng": "Savage Fox"
+    },
+    {
+      "TextKey": "Monster2178NameText",
+      "Kor": "사나운 말벌",
+      "Eng": "Savage Hornet"
+    },
+    {
+      "TextKey": "Monster2179NameText",
+      "Kor": "사나운 슬라임",
+      "Eng": "Savage Slime"
+    },
+    {
+      "TextKey": "Monster2180NameText",
+      "Kor": "사나운 숲거미",
+      "Eng": "Savage Forest Spider"
+    },
+    {
+      "TextKey": "Monster2181NameText",
+      "Kor": "사나운 들늑대",
+      "Eng": "Savage Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2182NameText",
+      "Kor": "사나운 독버섯",
+      "Eng": "Savage Toadstool"
+    },
+    {
+      "TextKey": "Monster2183NameText",
+      "Kor": "사나운 바람정령",
+      "Eng": "Savage Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2184NameText",
+      "Kor": "사나운 멧돼지",
+      "Eng": "Savage Boar"
+    },
+    {
+      "TextKey": "Monster2185NameText",
+      "Kor": "사나운 까마귀",
+      "Eng": "Savage Crow"
+    },
+    {
+      "TextKey": "Monster2186NameText",
+      "Kor": "오래된 슬라임",
+      "Eng": "Ancient Slime"
+    },
+    {
+      "TextKey": "Monster2187NameText",
+      "Kor": "오래된 숲거미",
+      "Eng": "Ancient Forest Spider"
+    },
+    {
+      "TextKey": "Monster2188NameText",
+      "Kor": "오래된 들늑대",
+      "Eng": "Ancient Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2189NameText",
+      "Kor": "오래된 독버섯",
+      "Eng": "Ancient Toadstool"
+    },
+    {
+      "TextKey": "Monster2190NameText",
+      "Kor": "오래된 바람정령",
+      "Eng": "Ancient Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2191NameText",
+      "Kor": "오래된 멧돼지",
+      "Eng": "Ancient Boar"
+    },
+    {
+      "TextKey": "Monster2192NameText",
+      "Kor": "오래된 까마귀",
+      "Eng": "Ancient Crow"
+    },
+    {
+      "TextKey": "Monster2193NameText",
+      "Kor": "오래된 덩굴손",
+      "Eng": "Ancient Creeper"
+    },
+    {
+      "TextKey": "Monster2194NameText",
+      "Kor": "오래된 여우",
+      "Eng": "Ancient Fox"
+    },
+    {
+      "TextKey": "Monster2195NameText",
+      "Kor": "오래된 말벌",
+      "Eng": "Ancient Hornet"
+    },
+    {
+      "TextKey": "Monster2196NameText",
+      "Kor": "오래된 슬라임",
+      "Eng": "Ancient Slime"
+    },
+    {
+      "TextKey": "Monster2197NameText",
+      "Kor": "오래된 숲거미",
+      "Eng": "Ancient Forest Spider"
+    },
+    {
+      "TextKey": "Monster2198NameText",
+      "Kor": "오래된 들늑대",
+      "Eng": "Ancient Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2199NameText",
+      "Kor": "오래된 독버섯",
+      "Eng": "Ancient Toadstool"
+    },
+    {
+      "TextKey": "Monster2200NameText",
+      "Kor": "오래된 바람정령",
+      "Eng": "Ancient Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2201NameText",
+      "Kor": "오래된 멧돼지",
+      "Eng": "Ancient Boar"
+    },
+    {
+      "TextKey": "Monster2202NameText",
+      "Kor": "오래된 까마귀",
+      "Eng": "Ancient Crow"
+    },
+    {
+      "TextKey": "Monster2203NameText",
+      "Kor": "타락한 슬라임",
+      "Eng": "Corrupted Slime"
+    },
+    {
+      "TextKey": "Monster2204NameText",
+      "Kor": "타락한 숲거미",
+      "Eng": "Corrupted Forest Spider"
+    },
+    {
+      "TextKey": "Monster2205NameText",
+      "Kor": "타락한 들늑대",
+      "Eng": "Corrupted Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2206NameText",
+      "Kor": "타락한 독버섯",
+      "Eng": "Corrupted Toadstool"
+    },
+    {
+      "TextKey": "Monster2207NameText",
+      "Kor": "타락한 바람정령",
+      "Eng": "Corrupted Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2208NameText",
+      "Kor": "타락한 멧돼지",
+      "Eng": "Corrupted Boar"
+    },
+    {
+      "TextKey": "Monster2209NameText",
+      "Kor": "타락한 까마귀",
+      "Eng": "Corrupted Crow"
+    },
+    {
+      "TextKey": "Monster2210NameText",
+      "Kor": "타락한 덩굴손",
+      "Eng": "Corrupted Creeper"
+    },
+    {
+      "TextKey": "Monster2211NameText",
+      "Kor": "타락한 여우",
+      "Eng": "Corrupted Fox"
+    },
+    {
+      "TextKey": "Monster2212NameText",
+      "Kor": "타락한 말벌",
+      "Eng": "Corrupted Hornet"
+    },
+    {
+      "TextKey": "Monster2213NameText",
+      "Kor": "타락한 슬라임",
+      "Eng": "Corrupted Slime"
+    },
+    {
+      "TextKey": "Monster2214NameText",
+      "Kor": "타락한 숲거미",
+      "Eng": "Corrupted Forest Spider"
+    },
+    {
+      "TextKey": "Monster2215NameText",
+      "Kor": "타락한 들늑대",
+      "Eng": "Corrupted Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2216NameText",
+      "Kor": "타락한 독버섯",
+      "Eng": "Corrupted Toadstool"
+    },
+    {
+      "TextKey": "Monster2217NameText",
+      "Kor": "타락한 바람정령",
+      "Eng": "Corrupted Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2218NameText",
+      "Kor": "타락한 멧돼지",
+      "Eng": "Corrupted Boar"
+    },
+    {
+      "TextKey": "Monster2219NameText",
+      "Kor": "타락한 까마귀",
+      "Eng": "Corrupted Crow"
+    },
+    {
+      "TextKey": "Monster2220NameText",
+      "Kor": "심연의 슬라임",
+      "Eng": "Abyssal Slime"
+    },
+    {
+      "TextKey": "Monster2221NameText",
+      "Kor": "심연의 숲거미",
+      "Eng": "Abyssal Forest Spider"
+    },
+    {
+      "TextKey": "Monster2222NameText",
+      "Kor": "심연의 들늑대",
+      "Eng": "Abyssal Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2223NameText",
+      "Kor": "심연의 독버섯",
+      "Eng": "Abyssal Toadstool"
+    },
+    {
+      "TextKey": "Monster2224NameText",
+      "Kor": "심연의 바람정령",
+      "Eng": "Abyssal Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2225NameText",
+      "Kor": "심연의 멧돼지",
+      "Eng": "Abyssal Boar"
+    },
+    {
+      "TextKey": "Monster2226NameText",
+      "Kor": "심연의 까마귀",
+      "Eng": "Abyssal Crow"
+    },
+    {
+      "TextKey": "Monster2227NameText",
+      "Kor": "심연의 덩굴손",
+      "Eng": "Abyssal Creeper"
+    },
+    {
+      "TextKey": "Monster2228NameText",
+      "Kor": "심연의 여우",
+      "Eng": "Abyssal Fox"
+    },
+    {
+      "TextKey": "Monster2229NameText",
+      "Kor": "심연의 말벌",
+      "Eng": "Abyssal Hornet"
+    },
+    {
+      "TextKey": "Monster2230NameText",
+      "Kor": "심연의 슬라임",
+      "Eng": "Abyssal Slime"
+    },
+    {
+      "TextKey": "Monster2231NameText",
+      "Kor": "심연의 숲거미",
+      "Eng": "Abyssal Forest Spider"
+    },
+    {
+      "TextKey": "Monster2232NameText",
+      "Kor": "심연의 들늑대",
+      "Eng": "Abyssal Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2233NameText",
+      "Kor": "심연의 독버섯",
+      "Eng": "Abyssal Toadstool"
+    },
+    {
+      "TextKey": "Monster2234NameText",
+      "Kor": "심연의 바람정령",
+      "Eng": "Abyssal Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2235NameText",
+      "Kor": "심연의 멧돼지",
+      "Eng": "Abyssal Boar"
+    },
+    {
+      "TextKey": "Monster2236NameText",
+      "Kor": "심연의 까마귀",
+      "Eng": "Abyssal Crow"
+    },
+    {
+      "TextKey": "Monster2237NameText",
+      "Kor": "왕관을 쓴 슬라임",
+      "Eng": "Crowned Slime"
+    },
+    {
+      "TextKey": "Monster2238NameText",
+      "Kor": "왕관을 쓴 숲거미",
+      "Eng": "Crowned Forest Spider"
+    },
+    {
+      "TextKey": "Monster2239NameText",
+      "Kor": "왕관을 쓴 들늑대",
+      "Eng": "Crowned Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2240NameText",
+      "Kor": "왕관을 쓴 독버섯",
+      "Eng": "Crowned Toadstool"
+    },
+    {
+      "TextKey": "Monster2241NameText",
+      "Kor": "왕관을 쓴 바람정령",
+      "Eng": "Crowned Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2242NameText",
+      "Kor": "왕관을 쓴 멧돼지",
+      "Eng": "Crowned Boar"
+    },
+    {
+      "TextKey": "Monster2243NameText",
+      "Kor": "왕관을 쓴 까마귀",
+      "Eng": "Crowned Crow"
+    },
+    {
+      "TextKey": "Monster2244NameText",
+      "Kor": "왕관을 쓴 덩굴손",
+      "Eng": "Crowned Creeper"
+    },
+    {
+      "TextKey": "Monster2245NameText",
+      "Kor": "왕관을 쓴 여우",
+      "Eng": "Crowned Fox"
+    },
+    {
+      "TextKey": "Monster2246NameText",
+      "Kor": "왕관을 쓴 말벌",
+      "Eng": "Crowned Hornet"
+    },
+    {
+      "TextKey": "Monster2247NameText",
+      "Kor": "왕관을 쓴 슬라임",
+      "Eng": "Crowned Slime"
+    },
+    {
+      "TextKey": "Monster2248NameText",
+      "Kor": "왕관을 쓴 숲거미",
+      "Eng": "Crowned Forest Spider"
+    },
+    {
+      "TextKey": "Monster2249NameText",
+      "Kor": "왕관을 쓴 들늑대",
+      "Eng": "Crowned Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2250NameText",
+      "Kor": "왕관을 쓴 독버섯",
+      "Eng": "Crowned Toadstool"
+    },
+    {
+      "TextKey": "Monster2251NameText",
+      "Kor": "왕관을 쓴 바람정령",
+      "Eng": "Crowned Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2252NameText",
+      "Kor": "왕관을 쓴 멧돼지",
+      "Eng": "Crowned Boar"
+    },
+    {
+      "TextKey": "Monster2253NameText",
+      "Kor": "왕관을 쓴 까마귀",
+      "Eng": "Crowned Crow"
+    },
+    {
+      "TextKey": "Monster2254NameText",
+      "Kor": "전설의 슬라임",
+      "Eng": "Legendary Slime"
+    },
+    {
+      "TextKey": "Monster2255NameText",
+      "Kor": "전설의 숲거미",
+      "Eng": "Legendary Forest Spider"
+    },
+    {
+      "TextKey": "Monster2256NameText",
+      "Kor": "전설의 들늑대",
+      "Eng": "Legendary Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2257NameText",
+      "Kor": "전설의 독버섯",
+      "Eng": "Legendary Toadstool"
+    },
+    {
+      "TextKey": "Monster2258NameText",
+      "Kor": "전설의 바람정령",
+      "Eng": "Legendary Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2259NameText",
+      "Kor": "전설의 멧돼지",
+      "Eng": "Legendary Boar"
+    },
+    {
+      "TextKey": "Monster2260NameText",
+      "Kor": "전설의 까마귀",
+      "Eng": "Legendary Crow"
+    },
+    {
+      "TextKey": "Monster2261NameText",
+      "Kor": "전설의 덩굴손",
+      "Eng": "Legendary Creeper"
+    },
+    {
+      "TextKey": "Monster2262NameText",
+      "Kor": "전설의 여우",
+      "Eng": "Legendary Fox"
+    },
+    {
+      "TextKey": "Monster2263NameText",
+      "Kor": "전설의 말벌",
+      "Eng": "Legendary Hornet"
+    },
+    {
+      "TextKey": "Monster2264NameText",
+      "Kor": "전설의 슬라임",
+      "Eng": "Legendary Slime"
+    },
+    {
+      "TextKey": "Monster2265NameText",
+      "Kor": "전설의 숲거미",
+      "Eng": "Legendary Forest Spider"
+    },
+    {
+      "TextKey": "Monster2266NameText",
+      "Kor": "전설의 들늑대",
+      "Eng": "Legendary Wild Wolf"
+    },
+    {
+      "TextKey": "Monster2267NameText",
+      "Kor": "전설의 독버섯",
+      "Eng": "Legendary Toadstool"
+    },
+    {
+      "TextKey": "Monster2268NameText",
+      "Kor": "전설의 바람정령",
+      "Eng": "Legendary Wind Sprite"
+    },
+    {
+      "TextKey": "Monster2269NameText",
+      "Kor": "전설의 멧돼지",
+      "Eng": "Legendary Boar"
+    },
+    {
+      "TextKey": "Monster2270NameText",
+      "Kor": "전설의 까마귀",
+      "Eng": "Legendary Crow"
+    },
+    {
+      "TextKey": "Monster2271NameText",
+      "Kor": "어린 동굴박쥐",
+      "Eng": "Young Cave Bat"
+    },
+    {
+      "TextKey": "Monster2272NameText",
+      "Kor": "어린 두더지",
+      "Eng": "Young Mole"
+    },
+    {
+      "TextKey": "Monster2273NameText",
+      "Kor": "어린 광부망령",
+      "Eng": "Young Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2274NameText",
+      "Kor": "어린 수정골렘",
+      "Eng": "Young Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2275NameText",
+      "Kor": "어린 지네",
+      "Eng": "Young Centipede"
+    },
+    {
+      "TextKey": "Monster2276NameText",
+      "Kor": "어린 이끼괴물",
+      "Eng": "Young Moss Horror"
+    },
+    {
+      "TextKey": "Monster2277NameText",
+      "Kor": "어린 석상병",
+      "Eng": "Young Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2278NameText",
+      "Kor": "어린 그림자",
+      "Eng": "Young Shade"
+    },
+    {
+      "TextKey": "Monster2279NameText",
+      "Kor": "어린 도롱뇽",
+      "Eng": "Young Salamander"
+    },
+    {
+      "TextKey": "Monster2280NameText",
+      "Kor": "어린 광충",
+      "Eng": "Young Glow Worm"
+    },
+    {
+      "TextKey": "Monster2281NameText",
+      "Kor": "어린 동굴박쥐",
+      "Eng": "Young Cave Bat"
+    },
+    {
+      "TextKey": "Monster2282NameText",
+      "Kor": "어린 두더지",
+      "Eng": "Young Mole"
+    },
+    {
+      "TextKey": "Monster2283NameText",
+      "Kor": "어린 광부망령",
+      "Eng": "Young Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2284NameText",
+      "Kor": "어린 수정골렘",
+      "Eng": "Young Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2285NameText",
+      "Kor": "어린 지네",
+      "Eng": "Young Centipede"
+    },
+    {
+      "TextKey": "Monster2286NameText",
+      "Kor": "어린 이끼괴물",
+      "Eng": "Young Moss Horror"
+    },
+    {
+      "TextKey": "Monster2287NameText",
+      "Kor": "어린 석상병",
+      "Eng": "Young Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2288NameText",
+      "Kor": "거친 동굴박쥐",
+      "Eng": "Feral Cave Bat"
+    },
+    {
+      "TextKey": "Monster2289NameText",
+      "Kor": "거친 두더지",
+      "Eng": "Feral Mole"
+    },
+    {
+      "TextKey": "Monster2290NameText",
+      "Kor": "거친 광부망령",
+      "Eng": "Feral Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2291NameText",
+      "Kor": "거친 수정골렘",
+      "Eng": "Feral Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2292NameText",
+      "Kor": "거친 지네",
+      "Eng": "Feral Centipede"
+    },
+    {
+      "TextKey": "Monster2293NameText",
+      "Kor": "거친 이끼괴물",
+      "Eng": "Feral Moss Horror"
+    },
+    {
+      "TextKey": "Monster2294NameText",
+      "Kor": "거친 석상병",
+      "Eng": "Feral Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2295NameText",
+      "Kor": "거친 그림자",
+      "Eng": "Feral Shade"
+    },
+    {
+      "TextKey": "Monster2296NameText",
+      "Kor": "거친 도롱뇽",
+      "Eng": "Feral Salamander"
+    },
+    {
+      "TextKey": "Monster2297NameText",
+      "Kor": "거친 광충",
+      "Eng": "Feral Glow Worm"
+    },
+    {
+      "TextKey": "Monster2298NameText",
+      "Kor": "거친 동굴박쥐",
+      "Eng": "Feral Cave Bat"
+    },
+    {
+      "TextKey": "Monster2299NameText",
+      "Kor": "거친 두더지",
+      "Eng": "Feral Mole"
+    },
+    {
+      "TextKey": "Monster2300NameText",
+      "Kor": "거친 광부망령",
+      "Eng": "Feral Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2301NameText",
+      "Kor": "거친 수정골렘",
+      "Eng": "Feral Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2302NameText",
+      "Kor": "거친 지네",
+      "Eng": "Feral Centipede"
+    },
+    {
+      "TextKey": "Monster2303NameText",
+      "Kor": "거친 이끼괴물",
+      "Eng": "Feral Moss Horror"
+    },
+    {
+      "TextKey": "Monster2304NameText",
+      "Kor": "거친 석상병",
+      "Eng": "Feral Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2305NameText",
+      "Kor": "굶주린 동굴박쥐",
+      "Eng": "Starving Cave Bat"
+    },
+    {
+      "TextKey": "Monster2306NameText",
+      "Kor": "굶주린 두더지",
+      "Eng": "Starving Mole"
+    },
+    {
+      "TextKey": "Monster2307NameText",
+      "Kor": "굶주린 광부망령",
+      "Eng": "Starving Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2308NameText",
+      "Kor": "굶주린 수정골렘",
+      "Eng": "Starving Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2309NameText",
+      "Kor": "굶주린 지네",
+      "Eng": "Starving Centipede"
+    },
+    {
+      "TextKey": "Monster2310NameText",
+      "Kor": "굶주린 이끼괴물",
+      "Eng": "Starving Moss Horror"
+    },
+    {
+      "TextKey": "Monster2311NameText",
+      "Kor": "굶주린 석상병",
+      "Eng": "Starving Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2312NameText",
+      "Kor": "굶주린 그림자",
+      "Eng": "Starving Shade"
+    },
+    {
+      "TextKey": "Monster2313NameText",
+      "Kor": "굶주린 도롱뇽",
+      "Eng": "Starving Salamander"
+    },
+    {
+      "TextKey": "Monster2314NameText",
+      "Kor": "굶주린 광충",
+      "Eng": "Starving Glow Worm"
+    },
+    {
+      "TextKey": "Monster2315NameText",
+      "Kor": "굶주린 동굴박쥐",
+      "Eng": "Starving Cave Bat"
+    },
+    {
+      "TextKey": "Monster2316NameText",
+      "Kor": "굶주린 두더지",
+      "Eng": "Starving Mole"
+    },
+    {
+      "TextKey": "Monster2317NameText",
+      "Kor": "굶주린 광부망령",
+      "Eng": "Starving Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2318NameText",
+      "Kor": "굶주린 수정골렘",
+      "Eng": "Starving Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2319NameText",
+      "Kor": "굶주린 지네",
+      "Eng": "Starving Centipede"
+    },
+    {
+      "TextKey": "Monster2320NameText",
+      "Kor": "굶주린 이끼괴물",
+      "Eng": "Starving Moss Horror"
+    },
+    {
+      "TextKey": "Monster2321NameText",
+      "Kor": "굶주린 석상병",
+      "Eng": "Starving Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2322NameText",
+      "Kor": "성난 동굴박쥐",
+      "Eng": "Enraged Cave Bat"
+    },
+    {
+      "TextKey": "Monster2323NameText",
+      "Kor": "성난 두더지",
+      "Eng": "Enraged Mole"
+    },
+    {
+      "TextKey": "Monster2324NameText",
+      "Kor": "성난 광부망령",
+      "Eng": "Enraged Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2325NameText",
+      "Kor": "성난 수정골렘",
+      "Eng": "Enraged Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2326NameText",
+      "Kor": "성난 지네",
+      "Eng": "Enraged Centipede"
+    },
+    {
+      "TextKey": "Monster2327NameText",
+      "Kor": "성난 이끼괴물",
+      "Eng": "Enraged Moss Horror"
+    },
+    {
+      "TextKey": "Monster2328NameText",
+      "Kor": "성난 석상병",
+      "Eng": "Enraged Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2329NameText",
+      "Kor": "성난 그림자",
+      "Eng": "Enraged Shade"
+    },
+    {
+      "TextKey": "Monster2330NameText",
+      "Kor": "성난 도롱뇽",
+      "Eng": "Enraged Salamander"
+    },
+    {
+      "TextKey": "Monster2331NameText",
+      "Kor": "성난 광충",
+      "Eng": "Enraged Glow Worm"
+    },
+    {
+      "TextKey": "Monster2332NameText",
+      "Kor": "성난 동굴박쥐",
+      "Eng": "Enraged Cave Bat"
+    },
+    {
+      "TextKey": "Monster2333NameText",
+      "Kor": "성난 두더지",
+      "Eng": "Enraged Mole"
+    },
+    {
+      "TextKey": "Monster2334NameText",
+      "Kor": "성난 광부망령",
+      "Eng": "Enraged Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2335NameText",
+      "Kor": "성난 수정골렘",
+      "Eng": "Enraged Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2336NameText",
+      "Kor": "성난 지네",
+      "Eng": "Enraged Centipede"
+    },
+    {
+      "TextKey": "Monster2337NameText",
+      "Kor": "성난 이끼괴물",
+      "Eng": "Enraged Moss Horror"
+    },
+    {
+      "TextKey": "Monster2338NameText",
+      "Kor": "성난 석상병",
+      "Eng": "Enraged Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2339NameText",
+      "Kor": "사나운 동굴박쥐",
+      "Eng": "Savage Cave Bat"
+    },
+    {
+      "TextKey": "Monster2340NameText",
+      "Kor": "사나운 두더지",
+      "Eng": "Savage Mole"
+    },
+    {
+      "TextKey": "Monster2341NameText",
+      "Kor": "사나운 광부망령",
+      "Eng": "Savage Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2342NameText",
+      "Kor": "사나운 수정골렘",
+      "Eng": "Savage Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2343NameText",
+      "Kor": "사나운 지네",
+      "Eng": "Savage Centipede"
+    },
+    {
+      "TextKey": "Monster2344NameText",
+      "Kor": "사나운 이끼괴물",
+      "Eng": "Savage Moss Horror"
+    },
+    {
+      "TextKey": "Monster2345NameText",
+      "Kor": "사나운 석상병",
+      "Eng": "Savage Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2346NameText",
+      "Kor": "사나운 그림자",
+      "Eng": "Savage Shade"
+    },
+    {
+      "TextKey": "Monster2347NameText",
+      "Kor": "사나운 도롱뇽",
+      "Eng": "Savage Salamander"
+    },
+    {
+      "TextKey": "Monster2348NameText",
+      "Kor": "사나운 광충",
+      "Eng": "Savage Glow Worm"
+    },
+    {
+      "TextKey": "Monster2349NameText",
+      "Kor": "사나운 동굴박쥐",
+      "Eng": "Savage Cave Bat"
+    },
+    {
+      "TextKey": "Monster2350NameText",
+      "Kor": "사나운 두더지",
+      "Eng": "Savage Mole"
+    },
+    {
+      "TextKey": "Monster2351NameText",
+      "Kor": "사나운 광부망령",
+      "Eng": "Savage Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2352NameText",
+      "Kor": "사나운 수정골렘",
+      "Eng": "Savage Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2353NameText",
+      "Kor": "사나운 지네",
+      "Eng": "Savage Centipede"
+    },
+    {
+      "TextKey": "Monster2354NameText",
+      "Kor": "사나운 이끼괴물",
+      "Eng": "Savage Moss Horror"
+    },
+    {
+      "TextKey": "Monster2355NameText",
+      "Kor": "사나운 석상병",
+      "Eng": "Savage Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2356NameText",
+      "Kor": "오래된 동굴박쥐",
+      "Eng": "Ancient Cave Bat"
+    },
+    {
+      "TextKey": "Monster2357NameText",
+      "Kor": "오래된 두더지",
+      "Eng": "Ancient Mole"
+    },
+    {
+      "TextKey": "Monster2358NameText",
+      "Kor": "오래된 광부망령",
+      "Eng": "Ancient Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2359NameText",
+      "Kor": "오래된 수정골렘",
+      "Eng": "Ancient Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2360NameText",
+      "Kor": "오래된 지네",
+      "Eng": "Ancient Centipede"
+    },
+    {
+      "TextKey": "Monster2361NameText",
+      "Kor": "오래된 이끼괴물",
+      "Eng": "Ancient Moss Horror"
+    },
+    {
+      "TextKey": "Monster2362NameText",
+      "Kor": "오래된 석상병",
+      "Eng": "Ancient Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2363NameText",
+      "Kor": "오래된 그림자",
+      "Eng": "Ancient Shade"
+    },
+    {
+      "TextKey": "Monster2364NameText",
+      "Kor": "오래된 도롱뇽",
+      "Eng": "Ancient Salamander"
+    },
+    {
+      "TextKey": "Monster2365NameText",
+      "Kor": "오래된 광충",
+      "Eng": "Ancient Glow Worm"
+    },
+    {
+      "TextKey": "Monster2366NameText",
+      "Kor": "오래된 동굴박쥐",
+      "Eng": "Ancient Cave Bat"
+    },
+    {
+      "TextKey": "Monster2367NameText",
+      "Kor": "오래된 두더지",
+      "Eng": "Ancient Mole"
+    },
+    {
+      "TextKey": "Monster2368NameText",
+      "Kor": "오래된 광부망령",
+      "Eng": "Ancient Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2369NameText",
+      "Kor": "오래된 수정골렘",
+      "Eng": "Ancient Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2370NameText",
+      "Kor": "오래된 지네",
+      "Eng": "Ancient Centipede"
+    },
+    {
+      "TextKey": "Monster2371NameText",
+      "Kor": "오래된 이끼괴물",
+      "Eng": "Ancient Moss Horror"
+    },
+    {
+      "TextKey": "Monster2372NameText",
+      "Kor": "오래된 석상병",
+      "Eng": "Ancient Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2373NameText",
+      "Kor": "타락한 동굴박쥐",
+      "Eng": "Corrupted Cave Bat"
+    },
+    {
+      "TextKey": "Monster2374NameText",
+      "Kor": "타락한 두더지",
+      "Eng": "Corrupted Mole"
+    },
+    {
+      "TextKey": "Monster2375NameText",
+      "Kor": "타락한 광부망령",
+      "Eng": "Corrupted Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2376NameText",
+      "Kor": "타락한 수정골렘",
+      "Eng": "Corrupted Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2377NameText",
+      "Kor": "타락한 지네",
+      "Eng": "Corrupted Centipede"
+    },
+    {
+      "TextKey": "Monster2378NameText",
+      "Kor": "타락한 이끼괴물",
+      "Eng": "Corrupted Moss Horror"
+    },
+    {
+      "TextKey": "Monster2379NameText",
+      "Kor": "타락한 석상병",
+      "Eng": "Corrupted Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2380NameText",
+      "Kor": "타락한 그림자",
+      "Eng": "Corrupted Shade"
+    },
+    {
+      "TextKey": "Monster2381NameText",
+      "Kor": "타락한 도롱뇽",
+      "Eng": "Corrupted Salamander"
+    },
+    {
+      "TextKey": "Monster2382NameText",
+      "Kor": "타락한 광충",
+      "Eng": "Corrupted Glow Worm"
+    },
+    {
+      "TextKey": "Monster2383NameText",
+      "Kor": "타락한 동굴박쥐",
+      "Eng": "Corrupted Cave Bat"
+    },
+    {
+      "TextKey": "Monster2384NameText",
+      "Kor": "타락한 두더지",
+      "Eng": "Corrupted Mole"
+    },
+    {
+      "TextKey": "Monster2385NameText",
+      "Kor": "타락한 광부망령",
+      "Eng": "Corrupted Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2386NameText",
+      "Kor": "타락한 수정골렘",
+      "Eng": "Corrupted Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2387NameText",
+      "Kor": "타락한 지네",
+      "Eng": "Corrupted Centipede"
+    },
+    {
+      "TextKey": "Monster2388NameText",
+      "Kor": "타락한 이끼괴물",
+      "Eng": "Corrupted Moss Horror"
+    },
+    {
+      "TextKey": "Monster2389NameText",
+      "Kor": "타락한 석상병",
+      "Eng": "Corrupted Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2390NameText",
+      "Kor": "심연의 동굴박쥐",
+      "Eng": "Abyssal Cave Bat"
+    },
+    {
+      "TextKey": "Monster2391NameText",
+      "Kor": "심연의 두더지",
+      "Eng": "Abyssal Mole"
+    },
+    {
+      "TextKey": "Monster2392NameText",
+      "Kor": "심연의 광부망령",
+      "Eng": "Abyssal Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2393NameText",
+      "Kor": "심연의 수정골렘",
+      "Eng": "Abyssal Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2394NameText",
+      "Kor": "심연의 지네",
+      "Eng": "Abyssal Centipede"
+    },
+    {
+      "TextKey": "Monster2395NameText",
+      "Kor": "심연의 이끼괴물",
+      "Eng": "Abyssal Moss Horror"
+    },
+    {
+      "TextKey": "Monster2396NameText",
+      "Kor": "심연의 석상병",
+      "Eng": "Abyssal Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2397NameText",
+      "Kor": "심연의 그림자",
+      "Eng": "Abyssal Shade"
+    },
+    {
+      "TextKey": "Monster2398NameText",
+      "Kor": "심연의 도롱뇽",
+      "Eng": "Abyssal Salamander"
+    },
+    {
+      "TextKey": "Monster2399NameText",
+      "Kor": "심연의 광충",
+      "Eng": "Abyssal Glow Worm"
+    },
+    {
+      "TextKey": "Monster2400NameText",
+      "Kor": "심연의 동굴박쥐",
+      "Eng": "Abyssal Cave Bat"
+    },
+    {
+      "TextKey": "Monster2401NameText",
+      "Kor": "심연의 두더지",
+      "Eng": "Abyssal Mole"
+    },
+    {
+      "TextKey": "Monster2402NameText",
+      "Kor": "심연의 광부망령",
+      "Eng": "Abyssal Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2403NameText",
+      "Kor": "심연의 수정골렘",
+      "Eng": "Abyssal Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2404NameText",
+      "Kor": "심연의 지네",
+      "Eng": "Abyssal Centipede"
+    },
+    {
+      "TextKey": "Monster2405NameText",
+      "Kor": "심연의 이끼괴물",
+      "Eng": "Abyssal Moss Horror"
+    },
+    {
+      "TextKey": "Monster2406NameText",
+      "Kor": "심연의 석상병",
+      "Eng": "Abyssal Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2407NameText",
+      "Kor": "왕관을 쓴 동굴박쥐",
+      "Eng": "Crowned Cave Bat"
+    },
+    {
+      "TextKey": "Monster2408NameText",
+      "Kor": "왕관을 쓴 두더지",
+      "Eng": "Crowned Mole"
+    },
+    {
+      "TextKey": "Monster2409NameText",
+      "Kor": "왕관을 쓴 광부망령",
+      "Eng": "Crowned Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2410NameText",
+      "Kor": "왕관을 쓴 수정골렘",
+      "Eng": "Crowned Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2411NameText",
+      "Kor": "왕관을 쓴 지네",
+      "Eng": "Crowned Centipede"
+    },
+    {
+      "TextKey": "Monster2412NameText",
+      "Kor": "왕관을 쓴 이끼괴물",
+      "Eng": "Crowned Moss Horror"
+    },
+    {
+      "TextKey": "Monster2413NameText",
+      "Kor": "왕관을 쓴 석상병",
+      "Eng": "Crowned Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2414NameText",
+      "Kor": "왕관을 쓴 그림자",
+      "Eng": "Crowned Shade"
+    },
+    {
+      "TextKey": "Monster2415NameText",
+      "Kor": "왕관을 쓴 도롱뇽",
+      "Eng": "Crowned Salamander"
+    },
+    {
+      "TextKey": "Monster2416NameText",
+      "Kor": "왕관을 쓴 광충",
+      "Eng": "Crowned Glow Worm"
+    },
+    {
+      "TextKey": "Monster2417NameText",
+      "Kor": "왕관을 쓴 동굴박쥐",
+      "Eng": "Crowned Cave Bat"
+    },
+    {
+      "TextKey": "Monster2418NameText",
+      "Kor": "왕관을 쓴 두더지",
+      "Eng": "Crowned Mole"
+    },
+    {
+      "TextKey": "Monster2419NameText",
+      "Kor": "왕관을 쓴 광부망령",
+      "Eng": "Crowned Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2420NameText",
+      "Kor": "왕관을 쓴 수정골렘",
+      "Eng": "Crowned Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2421NameText",
+      "Kor": "왕관을 쓴 지네",
+      "Eng": "Crowned Centipede"
+    },
+    {
+      "TextKey": "Monster2422NameText",
+      "Kor": "왕관을 쓴 이끼괴물",
+      "Eng": "Crowned Moss Horror"
+    },
+    {
+      "TextKey": "Monster2423NameText",
+      "Kor": "왕관을 쓴 석상병",
+      "Eng": "Crowned Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2424NameText",
+      "Kor": "전설의 동굴박쥐",
+      "Eng": "Legendary Cave Bat"
+    },
+    {
+      "TextKey": "Monster2425NameText",
+      "Kor": "전설의 두더지",
+      "Eng": "Legendary Mole"
+    },
+    {
+      "TextKey": "Monster2426NameText",
+      "Kor": "전설의 광부망령",
+      "Eng": "Legendary Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2427NameText",
+      "Kor": "전설의 수정골렘",
+      "Eng": "Legendary Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2428NameText",
+      "Kor": "전설의 지네",
+      "Eng": "Legendary Centipede"
+    },
+    {
+      "TextKey": "Monster2429NameText",
+      "Kor": "전설의 이끼괴물",
+      "Eng": "Legendary Moss Horror"
+    },
+    {
+      "TextKey": "Monster2430NameText",
+      "Kor": "전설의 석상병",
+      "Eng": "Legendary Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2431NameText",
+      "Kor": "전설의 그림자",
+      "Eng": "Legendary Shade"
+    },
+    {
+      "TextKey": "Monster2432NameText",
+      "Kor": "전설의 도롱뇽",
+      "Eng": "Legendary Salamander"
+    },
+    {
+      "TextKey": "Monster2433NameText",
+      "Kor": "전설의 광충",
+      "Eng": "Legendary Glow Worm"
+    },
+    {
+      "TextKey": "Monster2434NameText",
+      "Kor": "전설의 동굴박쥐",
+      "Eng": "Legendary Cave Bat"
+    },
+    {
+      "TextKey": "Monster2435NameText",
+      "Kor": "전설의 두더지",
+      "Eng": "Legendary Mole"
+    },
+    {
+      "TextKey": "Monster2436NameText",
+      "Kor": "전설의 광부망령",
+      "Eng": "Legendary Miner Wraith"
+    },
+    {
+      "TextKey": "Monster2437NameText",
+      "Kor": "전설의 수정골렘",
+      "Eng": "Legendary Crystal Golem"
+    },
+    {
+      "TextKey": "Monster2438NameText",
+      "Kor": "전설의 지네",
+      "Eng": "Legendary Centipede"
+    },
+    {
+      "TextKey": "Monster2439NameText",
+      "Kor": "전설의 이끼괴물",
+      "Eng": "Legendary Moss Horror"
+    },
+    {
+      "TextKey": "Monster2440NameText",
+      "Kor": "전설의 석상병",
+      "Eng": "Legendary Stone Sentry"
+    },
+    {
+      "TextKey": "Monster2441NameText",
+      "Kor": "어린 망령",
+      "Eng": "Young Revenant"
+    },
+    {
+      "TextKey": "Monster2442NameText",
+      "Kor": "어린 석상기사",
+      "Eng": "Young Stone Knight"
+    },
+    {
+      "TextKey": "Monster2443NameText",
+      "Kor": "어린 타락사제",
+      "Eng": "Young Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2444NameText",
+      "Kor": "어린 키메라",
+      "Eng": "Young Chimera"
+    },
+    {
+      "TextKey": "Monster2445NameText",
+      "Kor": "어린 가고일",
+      "Eng": "Young Gargoyle"
+    },
+    {
+      "TextKey": "Monster2446NameText",
+      "Kor": "어린 수호자",
+      "Eng": "Young Warden"
+    },
+    {
+      "TextKey": "Monster2447NameText",
+      "Kor": "어린 환영",
+      "Eng": "Young Phantasm"
+    },
+    {
+      "TextKey": "Monster2448NameText",
+      "Kor": "어린 타락정령",
+      "Eng": "Young Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2449NameText",
+      "Kor": "어린 제단수호물",
+      "Eng": "Young Altar Ward"
+    },
+    {
+      "TextKey": "Monster2450NameText",
+      "Kor": "어린 공허체",
+      "Eng": "Young Void Thing"
+    },
+    {
+      "TextKey": "Monster2451NameText",
+      "Kor": "어린 망령",
+      "Eng": "Young Revenant"
+    },
+    {
+      "TextKey": "Monster2452NameText",
+      "Kor": "어린 석상기사",
+      "Eng": "Young Stone Knight"
+    },
+    {
+      "TextKey": "Monster2453NameText",
+      "Kor": "어린 타락사제",
+      "Eng": "Young Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2454NameText",
+      "Kor": "어린 키메라",
+      "Eng": "Young Chimera"
+    },
+    {
+      "TextKey": "Monster2455NameText",
+      "Kor": "어린 가고일",
+      "Eng": "Young Gargoyle"
+    },
+    {
+      "TextKey": "Monster2456NameText",
+      "Kor": "어린 수호자",
+      "Eng": "Young Warden"
+    },
+    {
+      "TextKey": "Monster2457NameText",
+      "Kor": "거친 망령",
+      "Eng": "Feral Revenant"
+    },
+    {
+      "TextKey": "Monster2458NameText",
+      "Kor": "거친 석상기사",
+      "Eng": "Feral Stone Knight"
+    },
+    {
+      "TextKey": "Monster2459NameText",
+      "Kor": "거친 타락사제",
+      "Eng": "Feral Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2460NameText",
+      "Kor": "거친 키메라",
+      "Eng": "Feral Chimera"
+    },
+    {
+      "TextKey": "Monster2461NameText",
+      "Kor": "거친 가고일",
+      "Eng": "Feral Gargoyle"
+    },
+    {
+      "TextKey": "Monster2462NameText",
+      "Kor": "거친 수호자",
+      "Eng": "Feral Warden"
+    },
+    {
+      "TextKey": "Monster2463NameText",
+      "Kor": "거친 환영",
+      "Eng": "Feral Phantasm"
+    },
+    {
+      "TextKey": "Monster2464NameText",
+      "Kor": "거친 타락정령",
+      "Eng": "Feral Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2465NameText",
+      "Kor": "거친 제단수호물",
+      "Eng": "Feral Altar Ward"
+    },
+    {
+      "TextKey": "Monster2466NameText",
+      "Kor": "거친 공허체",
+      "Eng": "Feral Void Thing"
+    },
+    {
+      "TextKey": "Monster2467NameText",
+      "Kor": "거친 망령",
+      "Eng": "Feral Revenant"
+    },
+    {
+      "TextKey": "Monster2468NameText",
+      "Kor": "거친 석상기사",
+      "Eng": "Feral Stone Knight"
+    },
+    {
+      "TextKey": "Monster2469NameText",
+      "Kor": "거친 타락사제",
+      "Eng": "Feral Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2470NameText",
+      "Kor": "거친 키메라",
+      "Eng": "Feral Chimera"
+    },
+    {
+      "TextKey": "Monster2471NameText",
+      "Kor": "거친 가고일",
+      "Eng": "Feral Gargoyle"
+    },
+    {
+      "TextKey": "Monster2472NameText",
+      "Kor": "거친 수호자",
+      "Eng": "Feral Warden"
+    },
+    {
+      "TextKey": "Monster2473NameText",
+      "Kor": "굶주린 망령",
+      "Eng": "Starving Revenant"
+    },
+    {
+      "TextKey": "Monster2474NameText",
+      "Kor": "굶주린 석상기사",
+      "Eng": "Starving Stone Knight"
+    },
+    {
+      "TextKey": "Monster2475NameText",
+      "Kor": "굶주린 타락사제",
+      "Eng": "Starving Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2476NameText",
+      "Kor": "굶주린 키메라",
+      "Eng": "Starving Chimera"
+    },
+    {
+      "TextKey": "Monster2477NameText",
+      "Kor": "굶주린 가고일",
+      "Eng": "Starving Gargoyle"
+    },
+    {
+      "TextKey": "Monster2478NameText",
+      "Kor": "굶주린 수호자",
+      "Eng": "Starving Warden"
+    },
+    {
+      "TextKey": "Monster2479NameText",
+      "Kor": "굶주린 환영",
+      "Eng": "Starving Phantasm"
+    },
+    {
+      "TextKey": "Monster2480NameText",
+      "Kor": "굶주린 타락정령",
+      "Eng": "Starving Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2481NameText",
+      "Kor": "굶주린 제단수호물",
+      "Eng": "Starving Altar Ward"
+    },
+    {
+      "TextKey": "Monster2482NameText",
+      "Kor": "굶주린 공허체",
+      "Eng": "Starving Void Thing"
+    },
+    {
+      "TextKey": "Monster2483NameText",
+      "Kor": "굶주린 망령",
+      "Eng": "Starving Revenant"
+    },
+    {
+      "TextKey": "Monster2484NameText",
+      "Kor": "굶주린 석상기사",
+      "Eng": "Starving Stone Knight"
+    },
+    {
+      "TextKey": "Monster2485NameText",
+      "Kor": "굶주린 타락사제",
+      "Eng": "Starving Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2486NameText",
+      "Kor": "굶주린 키메라",
+      "Eng": "Starving Chimera"
+    },
+    {
+      "TextKey": "Monster2487NameText",
+      "Kor": "굶주린 가고일",
+      "Eng": "Starving Gargoyle"
+    },
+    {
+      "TextKey": "Monster2488NameText",
+      "Kor": "굶주린 수호자",
+      "Eng": "Starving Warden"
+    },
+    {
+      "TextKey": "Monster2489NameText",
+      "Kor": "성난 망령",
+      "Eng": "Enraged Revenant"
+    },
+    {
+      "TextKey": "Monster2490NameText",
+      "Kor": "성난 석상기사",
+      "Eng": "Enraged Stone Knight"
+    },
+    {
+      "TextKey": "Monster2491NameText",
+      "Kor": "성난 타락사제",
+      "Eng": "Enraged Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2492NameText",
+      "Kor": "성난 키메라",
+      "Eng": "Enraged Chimera"
+    },
+    {
+      "TextKey": "Monster2493NameText",
+      "Kor": "성난 가고일",
+      "Eng": "Enraged Gargoyle"
+    },
+    {
+      "TextKey": "Monster2494NameText",
+      "Kor": "성난 수호자",
+      "Eng": "Enraged Warden"
+    },
+    {
+      "TextKey": "Monster2495NameText",
+      "Kor": "성난 환영",
+      "Eng": "Enraged Phantasm"
+    },
+    {
+      "TextKey": "Monster2496NameText",
+      "Kor": "성난 타락정령",
+      "Eng": "Enraged Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2497NameText",
+      "Kor": "성난 제단수호물",
+      "Eng": "Enraged Altar Ward"
+    },
+    {
+      "TextKey": "Monster2498NameText",
+      "Kor": "성난 공허체",
+      "Eng": "Enraged Void Thing"
+    },
+    {
+      "TextKey": "Monster2499NameText",
+      "Kor": "성난 망령",
+      "Eng": "Enraged Revenant"
+    },
+    {
+      "TextKey": "Monster2500NameText",
+      "Kor": "성난 석상기사",
+      "Eng": "Enraged Stone Knight"
+    },
+    {
+      "TextKey": "Monster2501NameText",
+      "Kor": "성난 타락사제",
+      "Eng": "Enraged Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2502NameText",
+      "Kor": "성난 키메라",
+      "Eng": "Enraged Chimera"
+    },
+    {
+      "TextKey": "Monster2503NameText",
+      "Kor": "성난 가고일",
+      "Eng": "Enraged Gargoyle"
+    },
+    {
+      "TextKey": "Monster2504NameText",
+      "Kor": "성난 수호자",
+      "Eng": "Enraged Warden"
+    },
+    {
+      "TextKey": "Monster2505NameText",
+      "Kor": "사나운 망령",
+      "Eng": "Savage Revenant"
+    },
+    {
+      "TextKey": "Monster2506NameText",
+      "Kor": "사나운 석상기사",
+      "Eng": "Savage Stone Knight"
+    },
+    {
+      "TextKey": "Monster2507NameText",
+      "Kor": "사나운 타락사제",
+      "Eng": "Savage Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2508NameText",
+      "Kor": "사나운 키메라",
+      "Eng": "Savage Chimera"
+    },
+    {
+      "TextKey": "Monster2509NameText",
+      "Kor": "사나운 가고일",
+      "Eng": "Savage Gargoyle"
+    },
+    {
+      "TextKey": "Monster2510NameText",
+      "Kor": "사나운 수호자",
+      "Eng": "Savage Warden"
+    },
+    {
+      "TextKey": "Monster2511NameText",
+      "Kor": "사나운 환영",
+      "Eng": "Savage Phantasm"
+    },
+    {
+      "TextKey": "Monster2512NameText",
+      "Kor": "사나운 타락정령",
+      "Eng": "Savage Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2513NameText",
+      "Kor": "사나운 제단수호물",
+      "Eng": "Savage Altar Ward"
+    },
+    {
+      "TextKey": "Monster2514NameText",
+      "Kor": "사나운 공허체",
+      "Eng": "Savage Void Thing"
+    },
+    {
+      "TextKey": "Monster2515NameText",
+      "Kor": "사나운 망령",
+      "Eng": "Savage Revenant"
+    },
+    {
+      "TextKey": "Monster2516NameText",
+      "Kor": "사나운 석상기사",
+      "Eng": "Savage Stone Knight"
+    },
+    {
+      "TextKey": "Monster2517NameText",
+      "Kor": "사나운 타락사제",
+      "Eng": "Savage Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2518NameText",
+      "Kor": "사나운 키메라",
+      "Eng": "Savage Chimera"
+    },
+    {
+      "TextKey": "Monster2519NameText",
+      "Kor": "사나운 가고일",
+      "Eng": "Savage Gargoyle"
+    },
+    {
+      "TextKey": "Monster2520NameText",
+      "Kor": "사나운 수호자",
+      "Eng": "Savage Warden"
+    },
+    {
+      "TextKey": "Monster2521NameText",
+      "Kor": "오래된 망령",
+      "Eng": "Ancient Revenant"
+    },
+    {
+      "TextKey": "Monster2522NameText",
+      "Kor": "오래된 석상기사",
+      "Eng": "Ancient Stone Knight"
+    },
+    {
+      "TextKey": "Monster2523NameText",
+      "Kor": "오래된 타락사제",
+      "Eng": "Ancient Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2524NameText",
+      "Kor": "오래된 키메라",
+      "Eng": "Ancient Chimera"
+    },
+    {
+      "TextKey": "Monster2525NameText",
+      "Kor": "오래된 가고일",
+      "Eng": "Ancient Gargoyle"
+    },
+    {
+      "TextKey": "Monster2526NameText",
+      "Kor": "오래된 수호자",
+      "Eng": "Ancient Warden"
+    },
+    {
+      "TextKey": "Monster2527NameText",
+      "Kor": "오래된 환영",
+      "Eng": "Ancient Phantasm"
+    },
+    {
+      "TextKey": "Monster2528NameText",
+      "Kor": "오래된 타락정령",
+      "Eng": "Ancient Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2529NameText",
+      "Kor": "오래된 제단수호물",
+      "Eng": "Ancient Altar Ward"
+    },
+    {
+      "TextKey": "Monster2530NameText",
+      "Kor": "오래된 공허체",
+      "Eng": "Ancient Void Thing"
+    },
+    {
+      "TextKey": "Monster2531NameText",
+      "Kor": "오래된 망령",
+      "Eng": "Ancient Revenant"
+    },
+    {
+      "TextKey": "Monster2532NameText",
+      "Kor": "오래된 석상기사",
+      "Eng": "Ancient Stone Knight"
+    },
+    {
+      "TextKey": "Monster2533NameText",
+      "Kor": "오래된 타락사제",
+      "Eng": "Ancient Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2534NameText",
+      "Kor": "오래된 키메라",
+      "Eng": "Ancient Chimera"
+    },
+    {
+      "TextKey": "Monster2535NameText",
+      "Kor": "오래된 가고일",
+      "Eng": "Ancient Gargoyle"
+    },
+    {
+      "TextKey": "Monster2536NameText",
+      "Kor": "오래된 수호자",
+      "Eng": "Ancient Warden"
+    },
+    {
+      "TextKey": "Monster2537NameText",
+      "Kor": "타락한 망령",
+      "Eng": "Corrupted Revenant"
+    },
+    {
+      "TextKey": "Monster2538NameText",
+      "Kor": "타락한 석상기사",
+      "Eng": "Corrupted Stone Knight"
+    },
+    {
+      "TextKey": "Monster2539NameText",
+      "Kor": "타락한 타락사제",
+      "Eng": "Corrupted Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2540NameText",
+      "Kor": "타락한 키메라",
+      "Eng": "Corrupted Chimera"
+    },
+    {
+      "TextKey": "Monster2541NameText",
+      "Kor": "타락한 가고일",
+      "Eng": "Corrupted Gargoyle"
+    },
+    {
+      "TextKey": "Monster2542NameText",
+      "Kor": "타락한 수호자",
+      "Eng": "Corrupted Warden"
+    },
+    {
+      "TextKey": "Monster2543NameText",
+      "Kor": "타락한 환영",
+      "Eng": "Corrupted Phantasm"
+    },
+    {
+      "TextKey": "Monster2544NameText",
+      "Kor": "타락한 타락정령",
+      "Eng": "Corrupted Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2545NameText",
+      "Kor": "타락한 제단수호물",
+      "Eng": "Corrupted Altar Ward"
+    },
+    {
+      "TextKey": "Monster2546NameText",
+      "Kor": "타락한 공허체",
+      "Eng": "Corrupted Void Thing"
+    },
+    {
+      "TextKey": "Monster2547NameText",
+      "Kor": "타락한 망령",
+      "Eng": "Corrupted Revenant"
+    },
+    {
+      "TextKey": "Monster2548NameText",
+      "Kor": "타락한 석상기사",
+      "Eng": "Corrupted Stone Knight"
+    },
+    {
+      "TextKey": "Monster2549NameText",
+      "Kor": "타락한 타락사제",
+      "Eng": "Corrupted Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2550NameText",
+      "Kor": "타락한 키메라",
+      "Eng": "Corrupted Chimera"
+    },
+    {
+      "TextKey": "Monster2551NameText",
+      "Kor": "타락한 가고일",
+      "Eng": "Corrupted Gargoyle"
+    },
+    {
+      "TextKey": "Monster2552NameText",
+      "Kor": "타락한 수호자",
+      "Eng": "Corrupted Warden"
+    },
+    {
+      "TextKey": "Monster2553NameText",
+      "Kor": "심연의 망령",
+      "Eng": "Abyssal Revenant"
+    },
+    {
+      "TextKey": "Monster2554NameText",
+      "Kor": "심연의 석상기사",
+      "Eng": "Abyssal Stone Knight"
+    },
+    {
+      "TextKey": "Monster2555NameText",
+      "Kor": "심연의 타락사제",
+      "Eng": "Abyssal Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2556NameText",
+      "Kor": "심연의 키메라",
+      "Eng": "Abyssal Chimera"
+    },
+    {
+      "TextKey": "Monster2557NameText",
+      "Kor": "심연의 가고일",
+      "Eng": "Abyssal Gargoyle"
+    },
+    {
+      "TextKey": "Monster2558NameText",
+      "Kor": "심연의 수호자",
+      "Eng": "Abyssal Warden"
+    },
+    {
+      "TextKey": "Monster2559NameText",
+      "Kor": "심연의 환영",
+      "Eng": "Abyssal Phantasm"
+    },
+    {
+      "TextKey": "Monster2560NameText",
+      "Kor": "심연의 타락정령",
+      "Eng": "Abyssal Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2561NameText",
+      "Kor": "심연의 제단수호물",
+      "Eng": "Abyssal Altar Ward"
+    },
+    {
+      "TextKey": "Monster2562NameText",
+      "Kor": "심연의 공허체",
+      "Eng": "Abyssal Void Thing"
+    },
+    {
+      "TextKey": "Monster2563NameText",
+      "Kor": "심연의 망령",
+      "Eng": "Abyssal Revenant"
+    },
+    {
+      "TextKey": "Monster2564NameText",
+      "Kor": "심연의 석상기사",
+      "Eng": "Abyssal Stone Knight"
+    },
+    {
+      "TextKey": "Monster2565NameText",
+      "Kor": "심연의 타락사제",
+      "Eng": "Abyssal Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2566NameText",
+      "Kor": "심연의 키메라",
+      "Eng": "Abyssal Chimera"
+    },
+    {
+      "TextKey": "Monster2567NameText",
+      "Kor": "심연의 가고일",
+      "Eng": "Abyssal Gargoyle"
+    },
+    {
+      "TextKey": "Monster2568NameText",
+      "Kor": "심연의 수호자",
+      "Eng": "Abyssal Warden"
+    },
+    {
+      "TextKey": "Monster2569NameText",
+      "Kor": "왕관을 쓴 망령",
+      "Eng": "Crowned Revenant"
+    },
+    {
+      "TextKey": "Monster2570NameText",
+      "Kor": "왕관을 쓴 석상기사",
+      "Eng": "Crowned Stone Knight"
+    },
+    {
+      "TextKey": "Monster2571NameText",
+      "Kor": "왕관을 쓴 타락사제",
+      "Eng": "Crowned Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2572NameText",
+      "Kor": "왕관을 쓴 키메라",
+      "Eng": "Crowned Chimera"
+    },
+    {
+      "TextKey": "Monster2573NameText",
+      "Kor": "왕관을 쓴 가고일",
+      "Eng": "Crowned Gargoyle"
+    },
+    {
+      "TextKey": "Monster2574NameText",
+      "Kor": "왕관을 쓴 수호자",
+      "Eng": "Crowned Warden"
+    },
+    {
+      "TextKey": "Monster2575NameText",
+      "Kor": "왕관을 쓴 환영",
+      "Eng": "Crowned Phantasm"
+    },
+    {
+      "TextKey": "Monster2576NameText",
+      "Kor": "왕관을 쓴 타락정령",
+      "Eng": "Crowned Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2577NameText",
+      "Kor": "왕관을 쓴 제단수호물",
+      "Eng": "Crowned Altar Ward"
+    },
+    {
+      "TextKey": "Monster2578NameText",
+      "Kor": "왕관을 쓴 공허체",
+      "Eng": "Crowned Void Thing"
+    },
+    {
+      "TextKey": "Monster2579NameText",
+      "Kor": "왕관을 쓴 망령",
+      "Eng": "Crowned Revenant"
+    },
+    {
+      "TextKey": "Monster2580NameText",
+      "Kor": "왕관을 쓴 석상기사",
+      "Eng": "Crowned Stone Knight"
+    },
+    {
+      "TextKey": "Monster2581NameText",
+      "Kor": "왕관을 쓴 타락사제",
+      "Eng": "Crowned Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2582NameText",
+      "Kor": "왕관을 쓴 키메라",
+      "Eng": "Crowned Chimera"
+    },
+    {
+      "TextKey": "Monster2583NameText",
+      "Kor": "왕관을 쓴 가고일",
+      "Eng": "Crowned Gargoyle"
+    },
+    {
+      "TextKey": "Monster2584NameText",
+      "Kor": "왕관을 쓴 수호자",
+      "Eng": "Crowned Warden"
+    },
+    {
+      "TextKey": "Monster2585NameText",
+      "Kor": "전설의 망령",
+      "Eng": "Legendary Revenant"
+    },
+    {
+      "TextKey": "Monster2586NameText",
+      "Kor": "전설의 석상기사",
+      "Eng": "Legendary Stone Knight"
+    },
+    {
+      "TextKey": "Monster2587NameText",
+      "Kor": "전설의 타락사제",
+      "Eng": "Legendary Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2588NameText",
+      "Kor": "전설의 키메라",
+      "Eng": "Legendary Chimera"
+    },
+    {
+      "TextKey": "Monster2589NameText",
+      "Kor": "전설의 가고일",
+      "Eng": "Legendary Gargoyle"
+    },
+    {
+      "TextKey": "Monster2590NameText",
+      "Kor": "전설의 수호자",
+      "Eng": "Legendary Warden"
+    },
+    {
+      "TextKey": "Monster2591NameText",
+      "Kor": "전설의 환영",
+      "Eng": "Legendary Phantasm"
+    },
+    {
+      "TextKey": "Monster2592NameText",
+      "Kor": "전설의 타락정령",
+      "Eng": "Legendary Tainted Spirit"
+    },
+    {
+      "TextKey": "Monster2593NameText",
+      "Kor": "전설의 제단수호물",
+      "Eng": "Legendary Altar Ward"
+    },
+    {
+      "TextKey": "Monster2594NameText",
+      "Kor": "전설의 공허체",
+      "Eng": "Legendary Void Thing"
+    },
+    {
+      "TextKey": "Monster2595NameText",
+      "Kor": "전설의 망령",
+      "Eng": "Legendary Revenant"
+    },
+    {
+      "TextKey": "Monster2596NameText",
+      "Kor": "전설의 석상기사",
+      "Eng": "Legendary Stone Knight"
+    },
+    {
+      "TextKey": "Monster2597NameText",
+      "Kor": "전설의 타락사제",
+      "Eng": "Legendary Fallen Priest"
+    },
+    {
+      "TextKey": "Monster2598NameText",
+      "Kor": "전설의 키메라",
+      "Eng": "Legendary Chimera"
+    },
+    {
+      "TextKey": "Monster2599NameText",
+      "Kor": "전설의 가고일",
+      "Eng": "Legendary Gargoyle"
+    },
+    {
+      "TextKey": "Monster2600NameText",
+      "Kor": "전설의 수호자",
+      "Eng": "Legendary Warden"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth1Text",
+      "Kor": "신들바람 숲 입구",
+      "Eng": "Breezing Wind Forest Entrance"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth2Text",
+      "Kor": "신들바람 숲 2층",
+      "Eng": "Breezing Wind Forest F2"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth3Text",
+      "Kor": "신들바람 숲 3층",
+      "Eng": "Breezing Wind Forest F3"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth4Text",
+      "Kor": "신들바람 숲 4층",
+      "Eng": "Breezing Wind Forest F4"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth5Text",
+      "Kor": "신들바람 숲 5층",
+      "Eng": "Breezing Wind Forest F5"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth6Text",
+      "Kor": "신들바람 숲 6층",
+      "Eng": "Breezing Wind Forest F6"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth7Text",
+      "Kor": "신들바람 숲 7층",
+      "Eng": "Breezing Wind Forest F7"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth8Text",
+      "Kor": "신들바람 숲 8층",
+      "Eng": "Breezing Wind Forest F8"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth9Text",
+      "Kor": "신들바람 숲 9층",
+      "Eng": "Breezing Wind Forest F9"
+    },
+    {
+      "TextKey": "BreezingWindForestDepth10Text",
+      "Kor": "신들바람 숲 10층",
+      "Eng": "Breezing Wind Forest F10"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth1Text",
+      "Kor": "속삭이는 동굴 입구",
+      "Eng": "Whispering Cave Entrance"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth2Text",
+      "Kor": "속삭이는 동굴 2층",
+      "Eng": "Whispering Cave F2"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth3Text",
+      "Kor": "속삭이는 동굴 3층",
+      "Eng": "Whispering Cave F3"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth4Text",
+      "Kor": "속삭이는 동굴 4층",
+      "Eng": "Whispering Cave F4"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth5Text",
+      "Kor": "속삭이는 동굴 5층",
+      "Eng": "Whispering Cave F5"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth6Text",
+      "Kor": "속삭이는 동굴 6층",
+      "Eng": "Whispering Cave F6"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth7Text",
+      "Kor": "속삭이는 동굴 7층",
+      "Eng": "Whispering Cave F7"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth8Text",
+      "Kor": "속삭이는 동굴 8층",
+      "Eng": "Whispering Cave F8"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth9Text",
+      "Kor": "속삭이는 동굴 9층",
+      "Eng": "Whispering Cave F9"
+    },
+    {
+      "TextKey": "WhisperingCaveDepth10Text",
+      "Kor": "속삭이는 동굴 10층",
+      "Eng": "Whispering Cave F10"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth1Text",
+      "Kor": "폐허가 된 성소 입구",
+      "Eng": "Ruined Sanctum Entrance"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth2Text",
+      "Kor": "폐허가 된 성소 2층",
+      "Eng": "Ruined Sanctum F2"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth3Text",
+      "Kor": "폐허가 된 성소 3층",
+      "Eng": "Ruined Sanctum F3"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth4Text",
+      "Kor": "폐허가 된 성소 4층",
+      "Eng": "Ruined Sanctum F4"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth5Text",
+      "Kor": "폐허가 된 성소 5층",
+      "Eng": "Ruined Sanctum F5"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth6Text",
+      "Kor": "폐허가 된 성소 6층",
+      "Eng": "Ruined Sanctum F6"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth7Text",
+      "Kor": "폐허가 된 성소 7층",
+      "Eng": "Ruined Sanctum F7"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth8Text",
+      "Kor": "폐허가 된 성소 8층",
+      "Eng": "Ruined Sanctum F8"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth9Text",
+      "Kor": "폐허가 된 성소 9층",
+      "Eng": "Ruined Sanctum F9"
+    },
+    {
+      "TextKey": "RuinedSanctumDepth10Text",
+      "Kor": "폐허가 된 성소 10층",
+      "Eng": "Ruined Sanctum F10"
     }
   ]
 }

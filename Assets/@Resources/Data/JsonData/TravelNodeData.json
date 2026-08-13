@@ -24,7 +24,7 @@
       "Id": 21100,
       "ParentId": 21000,
       "Category": "EXPLORE",
-      "Name": "BreezingWindForestEntranceText",
+      "Name": "BreezingWindForestDepth1Text",
       "Sprite": "BreezingWindForest_Entry_Img",
       "AreaType": "Battle",
       "ClickBtnId": "BTN_MAP_BREEZING_WIND_FOREST_ENTRANCE",
@@ -44,7 +44,7 @@
       "Id": 22100,
       "ParentId": 22000,
       "Category": "EXPLORE",
-      "Name": "WhisperingCaveEntranceText",
+      "Name": "WhisperingCaveDepth1Text",
       "Sprite": "WhisperingCave_Entry_Img",
       "AreaType": "Battle",
       "ClickBtnId": "BTN_MAP_WHISPERING_CAVE_ENTRANCE",
@@ -64,11 +64,281 @@
       "Id": 23100,
       "ParentId": 23000,
       "Category": "EXPLORE",
-      "Name": "RuinedSanctumEntranceText",
+      "Name": "RuinedSanctumDepth1Text",
       "Sprite": "RuinedSanctum_Entry_Img",
       "AreaType": "Battle",
       "ClickBtnId": "BTN_MAP_RUINED_SANCTUM_ENTRANCE",
       "EnterBtnId": "BTN_STAGE_RUINED_SANCTUM_ENTRANCE"
+    },
+    {
+      "Id": 21110,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth2Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D2",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D2"
+    },
+    {
+      "Id": 21120,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth3Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D3",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D3"
+    },
+    {
+      "Id": 21130,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth4Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D4",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D4"
+    },
+    {
+      "Id": 21140,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth5Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D5",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D5"
+    },
+    {
+      "Id": 21150,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth6Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D6",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D6"
+    },
+    {
+      "Id": 21160,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth7Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D7",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D7"
+    },
+    {
+      "Id": 21170,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth8Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D8",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D8"
+    },
+    {
+      "Id": 21180,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth9Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D9",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D9"
+    },
+    {
+      "Id": 21190,
+      "ParentId": 21000,
+      "Category": "EXPLORE",
+      "Name": "BreezingWindForestDepth10Text",
+      "Sprite": "BreezingWindForest_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_BREEZINGWINDFOREST_D10",
+      "EnterBtnId": "BTN_STAGE_BREEZINGWINDFOREST_D10"
+    },
+    {
+      "Id": 22110,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth2Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D2",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D2"
+    },
+    {
+      "Id": 22120,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth3Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D3",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D3"
+    },
+    {
+      "Id": 22130,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth4Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D4",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D4"
+    },
+    {
+      "Id": 22140,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth5Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D5",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D5"
+    },
+    {
+      "Id": 22150,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth6Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D6",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D6"
+    },
+    {
+      "Id": 22160,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth7Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D7",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D7"
+    },
+    {
+      "Id": 22170,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth8Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D8",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D8"
+    },
+    {
+      "Id": 22180,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth9Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D9",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D9"
+    },
+    {
+      "Id": 22190,
+      "ParentId": 22000,
+      "Category": "EXPLORE",
+      "Name": "WhisperingCaveDepth10Text",
+      "Sprite": "WhisperingCave_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_WHISPERINGCAVE_D10",
+      "EnterBtnId": "BTN_STAGE_WHISPERINGCAVE_D10"
+    },
+    {
+      "Id": 23110,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth2Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D2",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D2"
+    },
+    {
+      "Id": 23120,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth3Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D3",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D3"
+    },
+    {
+      "Id": 23130,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth4Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D4",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D4"
+    },
+    {
+      "Id": 23140,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth5Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D5",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D5"
+    },
+    {
+      "Id": 23150,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth6Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D6",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D6"
+    },
+    {
+      "Id": 23160,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth7Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D7",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D7"
+    },
+    {
+      "Id": 23170,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth8Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D8",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D8"
+    },
+    {
+      "Id": 23180,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth9Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D9",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D9"
+    },
+    {
+      "Id": 23190,
+      "ParentId": 23000,
+      "Category": "EXPLORE",
+      "Name": "RuinedSanctumDepth10Text",
+      "Sprite": "RuinedSanctum_Entry_Img",
+      "AreaType": "Battle",
+      "ClickBtnId": "BTN_MAP_RUINEDSANCTUM_D10",
+      "EnterBtnId": "BTN_STAGE_RUINEDSANCTUM_D10"
     }
   ]
 }

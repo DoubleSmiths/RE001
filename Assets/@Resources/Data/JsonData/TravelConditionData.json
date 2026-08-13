@@ -13,6 +13,195 @@
       "Target": "999",
       "Value": 0,
       "FailMessage": "아직 개방되지 않은 지역입니다."
+    },
+    {
+      "NodeId": 21110,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "11",
+      "Value": 11,
+      "FailMessage": "레벨 11 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21120,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "21",
+      "Value": 21,
+      "FailMessage": "레벨 21 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21130,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "31",
+      "Value": 31,
+      "FailMessage": "레벨 31 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21140,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "41",
+      "Value": 41,
+      "FailMessage": "레벨 41 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21150,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "51",
+      "Value": 51,
+      "FailMessage": "레벨 51 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21160,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "61",
+      "Value": 61,
+      "FailMessage": "레벨 61 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21170,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "71",
+      "Value": 71,
+      "FailMessage": "레벨 71 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21180,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "81",
+      "Value": 81,
+      "FailMessage": "레벨 81 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 21190,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "91",
+      "Value": 91,
+      "FailMessage": "레벨 91 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22110,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "111",
+      "Value": 111,
+      "FailMessage": "레벨 111 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22120,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "121",
+      "Value": 121,
+      "FailMessage": "레벨 121 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22130,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "131",
+      "Value": 131,
+      "FailMessage": "레벨 131 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22140,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "141",
+      "Value": 141,
+      "FailMessage": "레벨 141 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22150,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "151",
+      "Value": 151,
+      "FailMessage": "레벨 151 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22160,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "161",
+      "Value": 161,
+      "FailMessage": "레벨 161 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22170,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "171",
+      "Value": 171,
+      "FailMessage": "레벨 171 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22180,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "181",
+      "Value": 181,
+      "FailMessage": "레벨 181 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 22190,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "191",
+      "Value": 191,
+      "FailMessage": "레벨 191 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23110,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "211",
+      "Value": 211,
+      "FailMessage": "레벨 211 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23120,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "221",
+      "Value": 221,
+      "FailMessage": "레벨 221 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23130,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "231",
+      "Value": 231,
+      "FailMessage": "레벨 231 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23140,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "241",
+      "Value": 241,
+      "FailMessage": "레벨 241 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23150,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "251",
+      "Value": 251,
+      "FailMessage": "레벨 251 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23160,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "261",
+      "Value": 261,
+      "FailMessage": "레벨 261 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23170,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "271",
+      "Value": 271,
+      "FailMessage": "레벨 271 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23180,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "281",
+      "Value": 281,
+      "FailMessage": "레벨 281 이상이어야 들어갈 수 있습니다."
+    },
+    {
+      "NodeId": 23190,
+      "Type": "LEVEL_REQUIRED",
+      "Target": "291",
+      "Value": 291,
+      "FailMessage": "레벨 291 이상이어야 들어갈 수 있습니다."
     }
   ]
 }
