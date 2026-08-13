@@ -86,30 +86,19 @@ public static class ShowcaseRecorder
             var player = Managers.Game.Player;
             origLevel = Managers.Game.Level;
 
-            // 1) 지역별 몬스터 시연 — 숲 / 동굴 / 성소 순으로 3체씩, 심층이 깊을수록 짙은 색조
-            int[][] waves =
+            // 1) 실제 전투 시연 — 지역을 바꿔가며 전투 진입.
+            //    마을 씬에 강제 스폰한 몬스터는 게임 카메라에 잡히지 않으므로
+            //    BattleSpawner가 정상 스폰하는 전투 지역으로 들어가 실제 전투 화면을 담는다.
+            var scene = Managers.UI.SceneUI as UI_GameScene;
+            int[] battleNodes = { 21100, 22100, 23100 };   // 숲 입구 / 동굴 입구 / 성소 입구
+            foreach (int node in battleNodes)
             {
-                new[] { 2101, 2110, 2120 },     // 신들바람 숲 (얕은 심층)
-                new[] { 2280, 2300, 2320 },     // 속삭이는 동굴
-                new[] { 2540, 2570, 2599 },     // 폐허가 된 성소 (최심층)
-            };
-            foreach (int[] wave in waves)
-            {
-                // 마을 씬에는 스폰 포인트가 없으므로 플레이어 기준 상대 좌표로 배치해야 화면에 잡힌다.
-                Vector3 origin = player.transform.position;
-                float x = 1.2f;
-                foreach (int id in wave)
-                {
-                    if (!Managers.Data.CreatureDic.ContainsKey(id)) continue;
-                    Managers.Object.SpawnMonster(id, origin + new Vector3(x, 0f, 0f));
-                    x += 1.6f;
-                    await Task.Delay(700);
-                }
-                await Task.Delay(2200);
-                foreach (var m in GameObject.FindObjectsByType<MonsterController>(FindObjectsSortMode.None))
-                    Managers.Resource.Destroy(m.gameObject);
-                await Task.Delay(600);
+                Managers.Game.CurrentTravelAreaId = node;
+                scene?.EnterAreaWithFade(Define.AreaType.Battle);
+                await Task.Delay(6500);      // 페이드 + 스폰 + 교전 구간
             }
+            scene?.EnterAreaWithFade(Define.AreaType.Village1);
+            await Task.Delay(2000);
 
             // 2) 성장 시연 — 레벨 구간을 올리며 스탯이 따라 오르는 것을 보여준다
             foreach (int lv in new[] { 1, 50, 150, 300 })

@@ -98,8 +98,9 @@ public static class GeneratedIconRegistrar
                 var entry = settings.CreateOrMoveEntry(guid, group, false, false);
                 if (entry == null) continue;
                 entry.address = Path.GetFileNameWithoutExtension(assetPath);
-                settings.AddLabel(PRELOAD_LABEL, false);
-                entry.SetLabel(PRELOAD_LABEL, true, false, false);
+                // PreLoad에 넣지 않는다. 503개(클립 2,515개 동반)를 시작 시 전부 받으면 로딩이 30초를 넘긴다.
+                // ResourceManager.Load가 캐시에 없을 때 동기 로드하므로 몬스터가 처음 스폰될 때 받아온다.
+                entry.SetLabel(PRELOAD_LABEL, false, false, false);
                 ctrlCount++;
             }
         }

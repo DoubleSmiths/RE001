@@ -31,7 +31,42 @@ public class ResourceManager
             }
         }
 
-        return null;
+        // 캐시에 없으면 즉시 로드(동기) 후 캐싱.
+        //  PreLoad에 전부 밀어넣으면 시작 로딩이 에셋 수에 비례해 길어진다(몬스터 애니메이터 503개를
+        //  넣었을 때 30초 이상). 자주 안 쓰는 대형 에셋은 PreLoad에서 빼고 여기서 필요할 때 받는다.
+        return LoadSync<T>(key);
+    }
+
+    // 주소가 없거나 타입이 안 맞으면 null. 실패도 캐싱해 매 프레임 재시도하지 않는다.
+    HashSet<string> _missing = new HashSet<string>();
+
+    T LoadSync<T>(string key) where T : Object
+    {
+        if (string.IsNullOrEmpty(key) || _missing.Contains(key))
+            return null;
+
+        try
+        {
+            string loadKey = key;
+            if (typeof(T) == typeof(Sprite) && key.Contains(".sprite"))
+                loadKey = $"{key}[{key.Replace(".sprite", "")}]";
+
+            var op = Addressables.LoadAssetAsync<T>(loadKey);
+            T result = op.WaitForCompletion();
+            if (result == null)
+            {
+                _missing.Add(key);
+                return null;
+            }
+            if (!_resources.ContainsKey(key))
+                _resources.Add(key, result);
+            return result;
+        }
+        catch (Exception)
+        {
+            _missing.Add(key);   // 미등록 주소 — 조용히 실패(호출부가 null 처리)
+            return null;
+        }
     }
 
     public GameObject Instantiate(string key, Transform parent = null, bool pooling = false)
