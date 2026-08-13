@@ -1,648 +1,151 @@
+# CLAUDE.md
 
-스크립트 위치
-Assets/@Scripts
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# SlimeMaster - Unity 방치형 게임 코딩 가이드
-
-이 문서는 SlimeMaster 프로젝트에서 사용된 코딩 패턴과 아키텍처를 정리한 것으로,
-다른 방치형 게임 개발 시에도 동일하게 적용할 수 있는 기술 가이드입니다.
+RE001 — Unity 2D 사이드뷰 액션 RPG (모바일 세로 화면, 픽셀 아트). 스크립트는 전부 `Assets/@Scripts` 아래.
 
 ---
 
-## 1. 전체 아키텍처: Manager Pattern + MVC
+## 1. 빌드 / 검증
 
-### 폴더 구조 원칙
-```
-Assets/@Scripts/
-├── Managers/       ← 싱글톤 서비스 레이어 (Core + Contents 분리)
-├── Controllers/    ← 엔티티 동작 (상속 계층 구성)
-├── Contents/       ← 게임 로직 (Skill, Character, Map 등)
-├── UI/             ← UI 팝업 스택 시스템
-├── Data/           ← 데이터 직렬화 클래스
-└── Utils/          ← Define(상수/열거형), 공용 유틸
-```
+**자동화 테스트 스위트가 없다.** 검증은 Unity Editor + `unity-cli`로 한다.
 
-### 핵심 원칙
-- 모든 시스템은 **Managers.cs** 하나를 통해서만 접근
-- `DontDestroyOnLoad`는 Managers 루트 오브젝트 하나에만 적용
-- 매니저는 **Core**(범용 프레임워크)와 **Contents**(게임 로직)로 구분
+### unity-cli (켜져 있는 에디터에 붙어서 조종)
+`C:\Users\Mycom\AppData\Local\unity-cli\unity-cli.exe` (v0.3.10, 비공식 도구)
 
----
-
-## 2. Managers 싱글톤 패턴
-
-```csharp
-// Managers.cs - 모든 매니저의 진입점
-public class Managers : MonoBehaviour
-{
-    static Managers s_instance;
-    public static Managers Instance { get { Init(); return s_instance; } }
-
-    // Core (재사용 가능한 범용 시스템)
-    DataManager _data = new DataManager();
-    PoolManager _pool = new PoolManager();
-    ResourceManager _resource = new ResourceManager();
-    SceneManagerEx _scene = new SceneManagerEx();
-    SoundManager _sound = new SoundManager();
-    UIManager _ui = new UIManager();
-
-    // Contents (게임 로직 전용)
-    GameManager _game = new GameManager();
-    ObjectManager _object = new ObjectManager();
-    TimeManager _time = new TimeManager();
-
-    // 외부 접근은 static property로만
-    public static DataManager Data { get { return Instance._data; } }
-    public static UIManager UI { get { return Instance._ui; } }
-    public static GameManager Game { get { return Instance._game; } }
-    // ...
-}
+```bash
+unity-cli editor refresh --compile          # 스크립트 재컴파일, 완료까지 대기
+unity-cli console --type error --lines 30   # 컴파일/런타임 에러 확인  ← 컴파일 검증의 기본 경로
+unity-cli menu "Tools/ParseAllLocal (로컬 전체 파싱)"   # 에디터 메뉴 실행
+unity-cli exec "return Managers.Data.SkillDic.Count;"  # C# 즉시 실행 (top-level 문)
+unity-cli editor play --wait                # 플레이 모드 진입
+unity-cli screenshot --view game            # 게임뷰 캡처
 ```
 
-**규칙:**
-- 매니저 내부 접근은 `_data`, 외부 접근은 `Managers.Data`
-- 매니저 간 의존성은 항상 `Managers.XXX`를 통해 참조
-- 매니저 인스턴스를 직접 new 하지 않음 (Managers가 소유)
+- **Unity Editor가 켜져 있어야 한다.** 꺼져 있으면 `Error: no Unity instances running` → 사용자에게 에디터 실행을 요청한다. 임의로 batchmode를 돌리지 않는다(에디터를 닫아야 해서 작업 흐름이 깨진다).
+- 코드 수정 후에는 `editor refresh --compile` → `console --type error` 순으로 반드시 확인. 정독만으로 완료를 주장하지 않는다.
+- 참고: 공식 경로는 `"C:\Program Files\Unity\Hub\Editor\6000.3.10f1\Editor\Unity.exe" -batchmode -quit -projectPath . -logFile -` 이지만, Library 락 때문에 **에디터를 닫아야만** 실행된다. 이 프로젝트의 기본 경로는 unity-cli다.
 
----
+### Editor 메뉴 (`Assets/@Scripts/Editor/`)
 
-## 3. 데이터 드리븐 설계 (JSON + ILoader)
-
-### 데이터 클래스 구조
-```csharp
-// Data.Contents.cs - 데이터 직렬화 클래스
-[Serializable]
-public class SkillData
-{
-    public int DataId;
-    public string Name;
-    public float CoolTime;
-    public float Damage;
-    // ...
-}
-
-// ILoader 인터페이스로 딕셔너리 변환
-public class SkillDataLoader : ILoader<int, SkillData>
-{
-    public List<SkillData> Skills = new List<SkillData>();
-    public Dictionary<int, SkillData> MakeDict()
-    {
-        return Skills.ToDictionary(x => x.DataId);
-    }
-}
-```
-
-### DataManager 로딩 패턴
-```csharp
-public class DataManager
-{
-    public Dictionary<int, SkillData> SkillDic { get; private set; }
-
-    public void Init()
-    {
-        // 게임 시작 시 한 번만 로드, 이후 딕셔너리로 캐싱
-        SkillDic = LoadJson<SkillDataLoader, int, SkillData>("SkillData").MakeDict();
-    }
-
-    T LoadJson<T>(string path) where T : class
-    {
-        TextAsset textAsset = Managers.Resource.Load<TextAsset>(path);
-        return JsonConvert.DeserializeObject<T>(textAsset.text);
-    }
-}
-```
-
-**규칙:**
-- 게임 수치(데미지, 쿨타임, 확률 등)는 코드에 하드코딩하지 않고 JSON으로 관리
-- 모든 데이터는 `DataId`(int)를 기본 키로 사용
-- 로드 후에는 딕셔너리로 O(1) 접근
-
----
-
-## 4. 세이브/로드 시스템
-
-```csharp
-// GameData - 전체 계정 상태를 하나의 클래스로 직렬화
-[Serializable]
-public class GameData
-{
-    public int UserLevel;
-    public int Gold;
-    public int Dia;
-    public List<Equipment> OwnedEquipments = new List<Equipment>();
-    public Dictionary<int, StageClearInfo> DicStageClearInfo;
-    public ContinueData ContinueInfo;  // 전투 중 상태 스냅샷
-    // ...
-}
-
-public class GameManager
-{
-    const string SAVE_PATH = "/SaveData.json";
-
-    public void SaveGame()
-    {
-        string json = JsonConvert.SerializeObject(_gameData);
-        File.WriteAllText(Application.persistentDataPath + SAVE_PATH, json);
-    }
-
-    public void LoadGame()
-    {
-        string path = Application.persistentDataPath + SAVE_PATH;
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            _gameData = JsonConvert.DeserializeObject<GameData>(json);
-        }
-    }
-}
-```
-
-**규칙:**
-- 세이브 데이터는 하나의 `GameData` 클래스에 집중
-- 배틀 도중 상태는 `ContinueData`로 별도 스냅샷 관리 (이어하기 지원)
-- 시간 기반 데이터(오프라인 보상 등)는 `PlayerPrefs`에 timestamp만 저장
-
----
-
-## 5. UI 팝업 스택 시스템
-
-```csharp
-public class UIManager
-{
-    Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
-
-    public T ShowPopupUI<T>(string name = null) where T : UI_Popup
-    {
-        GameObject go = Managers.Resource.Instantiate(name ?? typeof(T).Name);
-        T popup = go.GetOrAddComponent<T>();
-        _popupStack.Push(popup);
-        // 팝업이 열리면 게임 일시정지
-        Time.timeScale = 0f;
-        return popup;
-    }
-
-    public void ClosePopupUI()
-    {
-        if (_popupStack.Count == 0) return;
-        UI_Popup popup = _popupStack.Pop();
-        Managers.Resource.Destroy(popup.gameObject);
-        // 모든 팝업이 닫히면 재개
-        if (_popupStack.Count == 0)
-            Time.timeScale = 1f;
-    }
-}
-```
-
-**UI 클래스 계층:**
-```
-UI_Base
-  ├─ UI_Scene      ← 씬 고정 HUD (배틀/로비/타이틀)
-  ├─ UI_Popup      ← 모달 팝업 (스택 관리)
-  └─ UI_SubItem    ← 리스트 아이템 템플릿
-```
-
-**규칙:**
-- 팝업은 반드시 UIManager를 통해서만 열고 닫음 (직접 SetActive 금지)
-- UI_SubItem은 데이터를 받아 자신을 갱신하는 `SetInfo()` 메서드를 가짐
-- Canvas SortingOrder는 UIManager가 팝업마다 자동으로 증가시킴
-
----
-
-## 6. 오브젝트 풀링
-
-```csharp
-// PoolManager - Unity IObjectPool<T> 래핑
-public class PoolManager
-{
-    Dictionary<string, IObjectPool<GameObject>> _pools = new();
-
-    public GameObject Pop(GameObject prefab)
-    {
-        string key = prefab.name;
-        if (!_pools.ContainsKey(key))
-            CreatePool(prefab);
-        return _pools[key].Get();
-    }
-
-    public void Push(GameObject obj)
-    {
-        string key = obj.name;
-        _pools[key].Release(obj);
-    }
-}
-
-// ResourceManager에서 풀링 여부를 선택적으로 사용
-public GameObject Instantiate(string path, bool pooling = false)
-{
-    if (pooling)
-        return Managers.Pool.Pop(prefab);
-    return Object.Instantiate(prefab);
-}
-```
-
-**규칙:**
-- 자주 생성/삭제되는 오브젝트(총알, 몬스터, 데미지 폰트 등)는 반드시 풀링
-- `Destroy()` 대신 `Managers.Resource.Destroy(go)` 사용 (풀 반환 처리 포함)
-- 풀 키는 prefab 이름(string)으로 관리
-
----
-
-## 7. 크리처 상속 계층
-
-```
-BaseController (GetOrAddComponent 헬퍼 등 공용 유틸)
-  └─ CreatureController (체력/공격/스탯/상태머신 - abstract)
-      ├─ PlayerController   (레벨업, 경험치, 스킬 장착)
-      ├─ MonsterController  (AI 이동, 공격, 드롭)
-      ├─ EliteController    (MonsterController 확장)
-      └─ BossController     (MonsterController 확장)
-```
-
-### 상태 머신 패턴
-```csharp
-public enum CreatureState { Idle, Moving, Skill, OnDamaged, Dead }
-
-public CreatureState CreatureState
-{
-    get { return _creatureState; }
-    set
-    {
-        _creatureState = value;
-        UpdateAnimation();   // 상태 변경 시 애니메이션 자동 전환
-    }
-}
-
-// Update에서 상태별 함수 호출
-void Update()
-{
-    switch (CreatureState)
-    {
-        case CreatureState.Idle:    UpdateIdle(); break;
-        case CreatureState.Moving:  UpdateMoving(); break;
-        case CreatureState.Skill:   UpdateSkill(); break;
-    }
-}
-```
-
-**규칙:**
-- 상태 전환은 항상 property setter를 통해서만 (직접 필드 변경 금지)
-- abstract 메서드(`OnDead`, `UpdateAnimation`)로 자식 클래스 구현 강제
-
----
-
-## 8. 스킬 시스템 (Sequence / Repeat 이분법)
-
-```
-SkillBase (데이터 로드, 데미지 계산)
-  ├─ SequenceSkill  ← 순서대로 실행, 콜백으로 체이닝
-  │   └─ BasicAttack, ComboShot, Charging, CircleShot, SpinShot
-  └─ RepeatSkill    ← 쿨타임마다 자동 반복 (코루틴)
-      └─ ArrowShot, PoisonField, Meteor, ChainLightning...
-```
-
-```csharp
-// RepeatSkill - 코루틴 기반 자동 반복
-public abstract class RepeatSkill : SkillBase
-{
-    protected override void ActivateSkill()
-    {
-        StartCoroutine(CoActivateSkill());
-    }
-
-    IEnumerator CoActivateSkill()
-    {
-        while (true)
-        {
-            DoSkillJob();
-            yield return new WaitForSeconds(SkillData.CoolTime);
-        }
-    }
-
-    protected abstract void DoSkillJob();
-}
-
-// SequenceSkill - 콜백 체이닝
-public abstract class SequenceSkill : SkillBase
-{
-    public abstract void DoSkill(Action callback);
-}
-```
-
-### SkillBook - 스킬 관리 컴포넌트
-```csharp
-// CreatureController에 조합으로 부착
-public class SkillBook : MonoBehaviour
-{
-    public List<SkillBase> SkillList = new();
-    public List<SequenceSkill> SequenceSkills = new();
-    public List<RepeatSkill> RepeatSkills = new();
-
-    public void AddSkill(SkillType skillType, int level)
-    {
-        // prefab 인스턴스화 또는 컴포넌트 추가 후 레벨 세팅
-    }
-}
-```
-
-**규칙:**
-- 스킬 데이터(데미지, 쿨타임, 범위)는 JSON에서 로드
-- 스킬 오브젝트는 풀링으로 관리
-- `SupportSkill`: 스탯 버프 전용 별도 분류, 스킬 로직 없이 수치만 가짐
-
----
-
-## 9. 이벤트(Observer) 패턴
-
-```csharp
-// C# Action으로 느슨한 결합
-public class PlayerController : CreatureController
-{
-    public Action OnPlayerLevelUp;
-    public Action OnPlayerDead;
-    public Action OnPlayerDataUpdated;
-    public Action OnPlayerMove;
-}
-
-// 구독 예시
-void Start()
-{
-    player.OnPlayerLevelUp += HandleLevelUp;
-    player.OnPlayerDead    += HandleGameOver;
-}
-
-// 호출 예시
-void LevelUp()
-{
-    Level++;
-    OnPlayerLevelUp?.Invoke();
-}
-```
-
-**규칙:**
-- UI 갱신, 사운드, 이펙트 트리거는 이벤트로 연결 (컨트롤러가 UI를 직접 참조하지 않음)
-- 이벤트 구독 해제는 `OnDestroy()`에서 반드시 처리
-
----
-
-## 10. 방치형 게임 핵심 시스템
-
-### 오프라인 보상
-```csharp
-// TimeManager
-DateTime lastRewardTime = DateTime.Parse(PlayerPrefs.GetString("LastRewardTime"));
-TimeSpan elapsed = DateTime.Now - lastRewardTime;
-int offlineMinutes = (int)elapsed.TotalMinutes;
-int reward = CalculateGoldPerMinute() * offlineMinutes;
-```
-
-### 스태미나 (시간 회복)
-```csharp
-// 5분마다 1 회복, 최대 50
-const int MAX_STAMINA = 50;
-const int REGEN_MINUTES = 5;
-
-int GetCurrentStamina()
-{
-    DateTime last = DateTime.Parse(PlayerPrefs.GetString("LastStaminaTime"));
-    int recovered = (int)(DateTime.Now - last).TotalMinutes / REGEN_MINUTES;
-    return Mathf.Min(savedStamina + recovered, MAX_STAMINA);
-}
-```
-
-### 웨이브 기반 배틀
-- 스테이지 = N개의 웨이브 + 보스
-- 웨이브 = 고정 시간(60초) + 몬스터 스폰 테이블 JSON 정의
-- 각 웨이브 HP 배율(`HpIncreaseRate`)로 난이도 스케일링
-
-### 이어하기 (ContinueData)
-```csharp
-// 전투 중 상태를 스냅샷으로 저장
-[Serializable]
-public class ContinueData
-{
-    public int PlayerDataId;
-    public float Hp;
-    public float MaxHp;
-    public int Level;
-    public int WaveIndex;
-    public List<SkillSaveInfo> Skills;
-    // ...
-}
-```
-
----
-
-## 11. 제네릭 패턴 모음
-
-### GetOrAddComponent
-```csharp
-public static T GetOrAddComponent<T>(this GameObject go) where T : Component
-{
-    T component = go.GetComponent<T>();
-    if (component == null)
-        component = go.AddComponent<T>();
-    return component;
-}
-```
-
-### 제네릭 팩토리 스폰
-```csharp
-public T Spawn<T>(Vector3 position) where T : BaseController
-{
-    GameObject go = Managers.Resource.Instantiate(typeof(T).Name, pooling: true);
-    T controller = go.GetOrAddComponent<T>();
-    controller.transform.position = position;
-    return controller;
-}
-```
-
-### ILoader 인터페이스
-```csharp
-public interface ILoader<Key, Value>
-{
-    Dictionary<Key, Value> MakeDict();
-}
-```
-
----
-
-## 12. 코딩 규칙 요약
-
-| 항목 | 규칙 |
+| 메뉴 | 용도 |
 |------|------|
-| 매니저 접근 | `Managers.XX` static property 통해서만 |
-| 오브젝트 생성 | `Managers.Resource.Instantiate()` 사용 |
-| 오브젝트 삭제 | `Managers.Resource.Destroy()` 사용 (풀 반환 포함) |
-| 팝업 열기/닫기 | `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()` |
-| 게임 수치 | JSON 데이터로 관리, 코드 하드코딩 금지 |
-| 상태 전환 | 반드시 property setter 통해서만 |
-| 이벤트 구독 | `OnDestroy()`에서 반드시 해제 |
-| 인코딩 | 모든 C# 스크립트는 UTF-8 (BOM 없음) |
-| 스킬 데이터 | DataId로 JSON 참조, 스킬 클래스에 하드코딩 금지 |
-
-# RE001 게임 분석 문서
-
-## 1. 장르 및 개요
-
-- **장르**: 2D 사이드뷰 액션 RPG (모바일 세로 화면)
-- **시점**: 2D 횡스크롤
-- **화면 구성**: 상단 게임 뷰 + 하단 UI 패널 분리 구조
-- **아트 스타일**: 픽셀 아트 배경 + 픽셀 캐릭터
+| `Tools/ParseAllLocal (로컬 전체 파싱)` | **xlsx → JSON 전체 재생성. 데이터 수정 후 필수** |
+| `Tools/DeleteGameData` | PlayerPrefs + SaveData.json 삭제 (초기 상태 재현) |
+| `Tools/GenerateLocalizeKeys` | 로컬라이즈 시트 → `Define.LocalizeKey` 자동 생성 |
+| `Test/Integration/Diagnose - 전체 진단 %#d` | 데이터 무결성 등 통합 진단 |
+| `Test/Battle/*` | 데미지 팝업, 치명타, 레벨업 등 전투 연출 시연 |
+| `Test/Bestiary/*` | 도감/미니몬/포획/공명도 상태 시드 및 시연 |
+| `QuestVerifyMenu` | 기획서 슬라이드별 퀘스트/연출 시연 |
 
 ---
 
-## 2. 화면 레이아웃
+## 2. 데이터 파이프라인 (가장 자주 틀리는 부분)
 
 ```
-┌─────────────────────────┐
-│  [골드] [재화]    [메뉴]  │  ← 최상단 HUD (상시 표시)
-│  [퀘스트 진행도]          │  ← 우측 상단 (예: 젤리 풍 0/1)
-├─────────────────────────┤
-│                         │
-│      게임 뷰 영역        │  ← 배경 + 캐릭터 + 전투
-│   (픽셀 아트 배경)        │
-│                         │
-├─────────────────────────┤
-│  [초상화] 캐릭터명 : Lv.  │
-│  ████████ HP / HP       │  ← 캐릭터 상태창
-│  ████ EXP%              │
-├─────────────────────────┤
-│  [슬롯][슬롯][슬롯]       │
-│  [슬롯][슬롯][슬롯]       │  ← 퀵슬롯 (6칸, NPC/퀘스트 아이콘)
-├─────────────────────────┤
-│ [상태][가방][물약][장비][기술][도감] │  ← 하단 탭 메뉴
-└─────────────────────────┘
+Assets/@Resources/Data/Excel/*.xlsx   ← 단일 원천(Source of Truth)
+        │  Tools/ParseAllLocal  (DataTransformer.cs)
+        ▼
+Assets/@Resources/Data/JsonData/*.json  ← 런타임이 읽는 유일한 대상
+        │  Addressables (PreLoad 그룹)
+        ▼
+DataManager.Init() → Dictionary<int, XxxData>  (Managers.Data.XxxDic)
 ```
+
+- **게임은 JSON만 읽는다.** xlsx만 고치고 파싱을 안 하면 인게임에 반영되지 않는다.
+- 구글 시트 경로는 **폐기**됨 (`DataTransformer.s_useGoogleSheets = false`). 되살리면 최신 로컬 데이터가 옛 시트로 덮어써진다.
+- 신규 JSON을 추가하면 **Addressable PreLoad 그룹 등록**이 필요하다. 누락 시 `[DataManager] JSON load 실패` 로그.
+- 게임 수치(데미지/쿨타임/확률/가격)는 코드 하드코딩 금지. 기본 키는 항상 `DataId`(int).
+- ⚠️ 시트를 외부에서 재생성하면 코드에서 추가한 로컬라이즈 키가 소실될 수 있다 — 기존 키 재사용 우선.
 
 ---
 
-## 3. 씬 구성
+## 3. 아키텍처
 
-| 씬 | 설명 |
+### Managers 싱글턴 (`Managers/Managers.cs`)
+모든 시스템 접근은 `Managers.XX` static property 경유. 매니저를 직접 `new` 하지 않는다.
+
+- **Core** (범용): `Data` `Font` `Pool` `Resource` `Scene` `Sound` `UI`
+- **Contents** (게임 로직): `Game` `Object` `MinMon` `Ability` `Quest` `SubQuest` `Combo`
+
+`Managers.Awake()`는 씬에 배치된 중복 `@Managers`를 파괴한다 (씬 재진입 시 콤보 Tick이 죽던 버그 대응). `Update()`에서 `_combo.Tick()`만 돌린다.
+
+### 리소스 / 풀링
+`Managers.Resource`는 **Addressables 기반**. 생성 `Managers.Resource.Instantiate(key, parent, pooling)`, 삭제 `Managers.Resource.Destroy(go)` (풀 반환 포함). `Object.Destroy` 직접 호출 금지.
+
+### UI (`UI/`)
+```
+UI_Base ─┬─ UI_Scene    (씬 HUD: UI_GameScene, UI_BattleScene …)
+         ├─ UI_Popup    (UIManager 스택 관리)
+         └─ UI_SubItem  (리스트 아이템, SetInfo()로 갱신)
+```
+- 프리팹 자식 이름 ↔ `enum Images/Buttons/Texts` 이름이 **1:1**로 자동 바인딩된다 (`Bind<T>(typeof(...))` → `GetImage((int)Images.BG)`). 프리팹 자식 이름을 바꾸면 바인딩이 깨진다. 같은 프리팹 안에서 이름 중복 금지, 언리얼식 prefix(`Img_` `Btn_` `Txt_`) 사용.
+- 팝업은 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`로만 열고 닫는다 (직접 SetActive 금지).
+- **팝업은 게임을 멈추지 않는다** — `RefreshTimeScale()`은 현재 전부 주석 처리된 no-op다. `Time.timeScale` 관련 코드를 쓰기 전에 실제 구현을 확인할 것.
+- Toast / 관심 알림(`ShowAttractedPopup`)·경고는 팝업 스택을 쓰지 않고 자체 코루틴으로 소멸한다.
+- **UI 캔버스 위 파티클**: 월드 ParticleSystem은 Screen Space Camera 캔버스 위에 렌더되지 않는다 → 반드시 `UIFx.PlayParticle()` (UIParticle 래퍼) 경유.
+
+### 컨트롤러 (`Controllers/`)
+```
+BaseController ─┬─ ProjectileController
+                └─ CreatureController (abstract) ─┬─ PlayerController
+                                                  ├─ MonsterController
+                                                  └─ CompanionController (동행 미니몬)
+```
+부가: `AbilityRunner`(능력 발동), `BattleSpawner`, `BackgroundScroller`, `FixedResolution`.
+상태 전환은 반드시 property setter 경유 (setter가 애니메이션 전환을 담당). 데미지/명중/치명타 계산은 `Utils/BattleMath.cs`에 모여 있다.
+
+### 세이브
+`GameData` 하나를 `Application.persistentDataPath + "/SaveData.json"`에 직렬화. **세이브가 필요한 값은 전부 `GameData`(GameManager)에 넣는다.** GameManager의 프로퍼티 setter들이 값 변경 시 자동으로 `SaveGame()`을 호출하는 패턴이므로, 새 저장 값도 같은 패턴을 따를 것. (`Language`처럼 일부만 PlayerPrefs)
+
+### 이벤트
+컨트롤러 ↔ UI는 C# `Action`으로 느슨하게 연결 (컨트롤러가 UI를 직접 참조하지 않음). 구독은 `OnDestroy()`에서 반드시 해제.
+
+### 로컬라이즈
+표시 문자열은 키값으로 두고 `Util.Localize(key)`로 조회. 키 상수는 `Define.LocalizeKey` (자동 생성).
+
+---
+
+## 4. 코드 규칙
+
+- 인코딩: **UTF-8 (BOM 없음)**. `.meta` 파일을 직접 생성하지 않는다 (Unity가 생성).
+- private/public 필드 `_camelCase`, 프로퍼티/메서드 `PascalCase`, 상수 `UPPER_SNAKE_CASE`, 코루틴 `Co` 접두사, 핸들러 `On` 접두사.
+- 4 스페이스, Allman 중괄호, 단일 statement면 중괄호 생략 허용. `#region`으로 섹션 구분.
+- 주석은 한국어. 의도/연출 흐름 위주. 기존 주석 처리된 디버그 코드는 함부로 지우지 않는다.
+- 모든 enum/상수/매직넘버/스프라이트 이름은 `Utils/Define.cs`에 모은다. `using static Define;`.
+- **기존 식별자의 오타는 그대로 유지** (`_isEquiptWeapon` 등 — 다른 곳에서 참조 중).
+- 애니메이션은 **프리팹에 저작된 DOTweenAnimation 컴포넌트 우선**, 코드 Sequence는 지양.
+- 새 UI/시스템을 만들기 전에 **기존 프리팹을 먼저 검색**한다 — 기획 스펙이 이미 자산화돼 있는 경우가 잦다.
+- `Library/` `Temp/` `obj/` `Logs/`는 Unity 생성물 — 수정/커밋 금지.
+
+---
+
+## 5. 스펙 출처
+
+게임 스펙의 원전은 구글 슬라이드 기획서 2종 — **기획서1**(70장: UI/연출/전투), **기획서2**(54장: 도감/미니몬/능력) + 수정안. 코드 주석의 `슬N` / `슬라이드 N` 표기가 이 슬라이드 번호다.
+
+- `Documents/` — 기획·QA 문서, 변경 기록(`Battle_Phase_Log.md`, `Part2_Gap_Backlog.md`, `VS_Macro_Port_Gap.md`), 버그 스크린샷/GIF
+- `Documents/RE001_Share-main` — 이식 원본(VS/브라운에픽) 스펙 참조본
+- `_tools/` — xlsx 검증/수정 Python 스크립트, enum 바인딩 검증(`verify_enum_bindings.py`), 프리팹 중복 스캔
+
+폴더별 상세 규칙과 파일↔슬라이드 매핑은 각 디렉터리의 **`AGENTS.md`** 에 있다 (`Assets/@Scripts/AGENTS.md`, `Managers/AGENTS.md`, `UI/AGENTS.md` 등). 해당 폴더 작업 전 먼저 읽을 것.
+
+---
+
+## 6. 게임 구조 요약
+
+**씬**: `TitleScene` / `GameScene` (마을·필드·전투 모두 GameScene 안에서 전환)
+
+**화면**: 상단 재화 HUD + 퀘스트 진행도 → 게임 뷰 → 캐릭터 상태창(HP/EXP) → 퀵슬롯 6칸 → 하단 탭(상태/가방/물약/장비/기술/도감)
+
+**주요 시스템**
+| 시스템 | 진입점 |
 |---|---|
-| 마을 (시작 마을) | 픽셀 마을 배경, 캐릭터 대기 상태, 모험가협회 등 NPC 이동 가능 |
-| 신들바람 숲 | 전투 스테이지, 슬라임 등 몬스터 등장 |
-| 시들어가는 사막 | 마물 도감에 등장하는 다음 구역 (잠금 상태) |
-| 도서관 (모험가협회) | NPC 대화 공간, 퀘스트 수주 |
-| 연금공방 | 물약/아이템 제작 NPC |
-| 대장간 | 장비 강화 연출 씬 |
-
----
-
-## 4. 핵심 게임플레이
-
-### 4-1. 이동 및 탐험
-- 캐릭터가 마을/던전을 횡스크롤로 이동
-- **여정(부츠 아이콘)** : 통행증 소지 여부에 따라 이동 가능 지역 해금
-- 퀵슬롯 우측 하단에 **여정** 버튼으로 장소 이동
-
-### 4-2. 전투 시스템
-- 2D 횡스크롤 실시간 전투
-- 플레이어 공격 시 흰색 검기(슬래시) 이펙트 발생
-- 몬스터 HP 바가 화면 상단에 표시 (이름: 풍 등)
-- 몬스터가 플레이어를 공격하면 플레이어 HP 감소
-- 데미지 숫자가 몬스터 위에 팝업으로 표시 (흰색 숫자)
-- 치명타 별도 표시 가능
-
-### 4-3. 캐릭터 성장
-- **레벨업**: 경험치(EXP%) 게이지 → 100% 도달 시 레벨업
-- **기본 직업**: 여행자 (Lv.1 시작)
-- **스탯**: 공격력, 공격속도, 치명타 (등급: E, D, C 표기)
-
-### 4-4. 미니언(펫) 시스템
-- 미니언 탭에서 포획한 몬스터를 동반자로 등록
-- 미니언 정보: NO.001 하수인 (슬라임 계열)
-- **동기화 수치** 표시 (예: 16%)
-- 미니언 스탯: 공격력(E), 공격속도(D), 치명타(C)
-- 최대 성장 조건 표시 (예: 9번 더 길들일 시)
-- "풍에게는 효과가 없는 듯 하다" → 몬스터별 미니언 효과 유무 존재
-
----
-
-## 5. UI 시스템
-
-### 5-1. 하단 탭 메뉴
-| 탭 | 아이콘 | 기능 |
-|---|---|---|
-| 상태 | 캐릭터 | 캐릭터 스탯/정보 |
-| 가방 | 가방 | 소지품 인벤토리 |
-| 물약 | 물약병 | 물약 관리 |
-| 장비 | 검+방패 | 장착 장비 관리 |
-| 기술 | 검 교차 | 스킬 목록 |
-| 도감 | 날개(새) | 마물 도감 |
-
-### 5-2. 소지품 (인벤토리)
-- 그리드 형태 (3열 다중행)
-- 아이템 클릭 시 상세 팝업 표시
-- 아이템 정보: 이름, 등급(색상 테두리), 발견장소, 설명
-
-### 5-3. 장비 시스템 (EQUIPMENT)
-- 장비 슬롯: 무기, 투구, 갑옷, 장갑, 신발, 기타
-- 등급: E(보라) → G(초록) → B(파랑) → ? 순 업그레이드
-- 장비 정보: 내구도, 고유능력, 능력치(물리공격+, 치명타%, 마법공격+)
-- 장착 / 대장간(강화) 버튼
-- 강화 UI (T1 → T2 → T3 티어 업그레이드 트리 표시)
-- 강화 연출: 대장간 씬에서 망치로 두드리는 애니메이션
-
-### 5-4. 퀵슬롯 패널 (메인 화면 중단)
-- 6칸 슬롯에 NPC/장소/아이템 단축 아이콘 배치
-- 아이콘에 `!` 뱃지 → 새 알림/퀘스트 있음을 표시
-
----
-
-## 6. NPC 및 대화 시스템
-
-| NPC | 장소 | 역할 |
-|---|---|---|
-| 접수원 아가씨 | 모험가협회(도서관) | 퀘스트 수주, 신규 등록 |
-| 연금공방 아가씨 | 연금공방 | 물약/기술 제작 의뢰 (CUSTOM ORDER) |
-
-- NPC 대화 시 하단 절반이 대화창으로 전환
-- 대화창 구성: `| NPC이름`, 대사, 선택지 버튼들
-
-### CUSTOM ORDER (연금공방)
-- 제작 카테고리: 물약, 기술 (추가 슬롯 잠금)
-- 제작의뢰 버튼으로 접근
-
----
-
-## 7. 퀘스트 시스템
-
-- 모험가협회에서 퀘스트 수주
-- 퀘스트 아이콘 목록 (퀵슬롯 패널에 표시)
-- 우측 상단 HUD에 현재 퀘스트 진행도 표시 (예: `젤리 풍 0/1`, `품직 젤리 00/5`)
-
----
-
-## 8. 마물 도감
-
-- 지역별 몬스터 목록 (신들바람 숲, 시들어가는 사막 등)
-- 포획 여부에 따라 슬롯 잠금/해제
-- 완성도 게이지 및 등급별 보상 잠금 표시
-- 몬스터 번호 표기 (001, 002...)
-
----
-
-## 9. 재화 시스템
-
-| 재화 | 아이콘 | 용도 |
-|---|---|---|
-| 골드 | 황금 동전 | 기본 화폐 |
-| 젬(보석) | 파란 보석 | 프리미엄 화폐 |
-
-- 최상단 HUD 좌측에 항상 표시
-
----
-
-## 10. 구현 우선순위 제안
-
-1. **씬 구조**: 마을 씬, 전투 씬, NPC 대화 씬
-2. **핵심 UI**: HUD(HP/EXP/재화), 하단 탭 메뉴, 퀵슬롯 패널
-3. **전투**: 횡스크롤 이동 + 근접 공격 + 데미지 팝업
-4. **캐릭터 시스템**: HP, EXP, 레벨, 장비 슬롯
-5. **NPC 대화**: 대화창 + 선택지 UI
-6. **인벤토리 & 장비**: 그리드 인벤토리, 장비 팝업
-7. **퀘스트**: 수주 → 진행도 HUD 표시 → 완료
-8. **미니언**: 포획 → 도감 등록 → 전투 동반
-9. **제작 시스템**: 연금공방 CUSTOM ORDER
-10. **강화 시스템**: 대장간 T1→T2→T3 강화 트리
+| 전투 (횡스크롤 실시간, 콤보/치명타) | `CreatureController`, `BattleMath`, `ComboManager` |
+| 퀘스트 / 서브퀘스트 | `QuestManager`, `SubQuestManager` |
+| 마물 도감 · 미니몬 포획/관심/공명도 | `MinMonManager`, `UI_BestiaryPopup`, `UI_TamePopup` |
+| 능력 / 기억력 (기억·망각, 발동 조건) | `AbilityManager`, `AbilityRunner`, `UI_SkillBookPopup` |
+| 장비 / 강화 / 대장간 | `UI_EquipmentPopup`, `UI_ForgePopup`, `UI_EnhacePopup` |
+| 물약 (HP 회복, 신속 버프, 자동물약) | `UI_PotionPopup`, `PlayerController` |
+| 여정(지역 이동 해금) | `UI_TravelPopup` + `TravelNodeData` / `TravelConditionData` |
+| NPC 대화 | `DialogueAnimator`, `UI_DialoguePopup` |
