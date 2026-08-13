@@ -90,13 +90,11 @@ public static class ShowcaseRecorder
             //    마을 씬에 강제 스폰한 몬스터는 게임 카메라에 잡히지 않으므로
             //    BattleSpawner가 정상 스폰하는 전투 지역으로 들어가 실제 전투 화면을 담는다.
             var scene = Managers.UI.SceneUI as UI_GameScene;
-            int[] battleNodes = { 21100, 22100, 23100 };   // 숲 입구 / 동굴 입구 / 성소 입구
-            foreach (int node in battleNodes)
-            {
-                Managers.Game.CurrentTravelAreaId = node;
-                scene?.EnterAreaWithFade(Define.AreaType.Battle);
-                await Task.Delay(6500);      // 페이드 + 스폰 + 교전 구간
-            }
+            // 신들바람 숲만 사용한다. 동굴/성소 전투 구역은 배경 아트가 아직 없어 검은 화면이 나온다.
+            Managers.Game.CurrentTravelAreaId = 21100;
+            scene?.EnterAreaWithFade(Define.AreaType.Battle);
+            // 페이드(약 1s) + 첫 몬스터 스폰(2s) + 우측 x+12에서 걸어오는 시간 + 교전 반복
+            await Task.Delay(22000);
             scene?.EnterAreaWithFade(Define.AreaType.Village1);
             await Task.Delay(2000);
 
