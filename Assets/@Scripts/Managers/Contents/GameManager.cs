@@ -589,23 +589,11 @@ public class GameManager
 
         // 마지막으로 있던 전투 지역의 몬스터 평균으로 정산.
         //  지역 정보가 없으면(전투를 한 번도 안 했으면) 지급 대상이 없다.
-        float avgExp = 0f, avgGold = 0f;
-        int n = 0;
-        var node = _gameData.LastBattleAreaId;
-        if (Managers.Data?.TravelNodeDic != null && Managers.Data.TravelNodeDic.TryGetValue(node, out var tn))
-        {
-            foreach (var c in Managers.Data.CreatureDic.Values)
-            {
-                if (c == null || c.Habitat != tn.Name || c.EncounterRate <= 0f) continue;
-                avgExp += c.TotalExp; avgGold += c.RewardGold; n++;
-            }
-        }
-        if (n == 0)
+        if (!TryGetAreaAverage(_gameData.LastBattleAreaId, out float avgExp, out float avgGold))
         {
             MarkSeen();
             return result;
         }
-        avgExp /= n; avgGold /= n;
 
         result.Kills = Mathf.FloorToInt((float)(capped / OFFLINE_KILL_INTERVAL) * OFFLINE_RATE);
         if (result.Kills <= 0)
@@ -623,6 +611,63 @@ public class GameManager
         LastOfflineReward = result;
         Debug.Log($"[방치보상] {capped / 3600.0:F1}시간 → {result.Kills}처치, EXP {result.Exp:N0}, 골드 {result.Gold:N0}");
         return result;
+    }
+
+    // ── 방치 누적 (게임을 켜둔 채 전투 구역 밖에 있을 때) ──
+    //  전투 구역을 벗어나면 CoBattleLoop이 멈춰 진행이 완전히 정지한다.
+    //  방치형에서 이건 결함이다 — 마을에 있든 메뉴를 보든 사냥은 계속돼야 한다.
+    //  그래서 전투 밖에서는 오프라인과 같은 효율로 누적하고, 1마리분이 찰 때마다 지급한다.
+    //  (전투 중에는 실제 전투가 100% 효율로 보상하므로 누적하지 않는다 — 이중 지급 방지)
+    bool  _inBattleArea = false;
+    float _idleKillProgress = 0f;
+
+    /// <summary>전투 구역 안/밖 전환. UI_GameScene.EnterArea에서 호출.</summary>
+    public void SetInBattleArea(bool inBattle)
+    {
+        _inBattleArea = inBattle;
+        _idleKillProgress = 0f;
+    }
+
+    /// <summary>Managers.Update에서 매 프레임 호출. 전투 밖일 때만 누적한다.</summary>
+    public void TickIdle(float deltaTime)
+    {
+        if (_inBattleArea || Player == null || _gameData == null) return;
+        if (_gameData.LastBattleAreaId <= 0) return;      // 전투 경험이 없으면 누적 대상 없음
+
+        _idleKillProgress += deltaTime / OFFLINE_KILL_INTERVAL * OFFLINE_RATE;
+        if (_idleKillProgress < 1f) return;
+
+        int kills = Mathf.FloorToInt(_idleKillProgress);
+        _idleKillProgress -= kills;
+
+        if (!TryGetAreaAverage(_gameData.LastBattleAreaId, out float avgExp, out float avgGold)) return;
+
+        Gold += Mathf.RoundToInt(avgGold * kills);
+        Player.GainExp(avgExp * kills);
+        IdleKillCount += kills;
+        OnIdleAccrued?.Invoke(kills);
+    }
+
+    /// <summary>이번 세션에서 방치로 처치한 누적 수 (HUD 표기용).</summary>
+    public int IdleKillCount { get; private set; }
+    public event System.Action<int> OnIdleAccrued;
+
+    /// <summary>해당 전투 노드에 출현하는 몬스터의 평균 경험치·골드.</summary>
+    bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)
+    {
+        avgExp = 0f; avgGold = 0f;
+        if (Managers.Data?.TravelNodeDic == null) return false;
+        if (!Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn)) return false;
+
+        int n = 0;
+        foreach (var c in Managers.Data.CreatureDic.Values)
+        {
+            if (c == null || c.Habitat != tn.Name || c.EncounterRate <= 0f) continue;
+            avgExp += c.TotalExp; avgGold += c.RewardGold; n++;
+        }
+        if (n == 0) return false;
+        avgExp /= n; avgGold /= n;
+        return true;
     }
 
     /// <summary>지금을 '마지막으로 본 시각'으로 기록. 일시정지/종료/지역이동 시 호출.</summary>

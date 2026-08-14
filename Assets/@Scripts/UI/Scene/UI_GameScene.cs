@@ -286,6 +286,9 @@ public class UI_GameScene : UI_Scene
         if (area == AreaType.Battle)
             Managers.Game?.MarkBattleArea(Managers.Game.CurrentTravelAreaId);
 
+        // 전투 밖에서는 방치 누적이 돌아간다(GameManager.TickIdle). 전투 중엔 실제 전투가 보상하므로 끈다.
+        Managers.Game?.SetInBattleArea(area == AreaType.Battle);
+
         SwapAreaBtnGroup(area);
     }
 
