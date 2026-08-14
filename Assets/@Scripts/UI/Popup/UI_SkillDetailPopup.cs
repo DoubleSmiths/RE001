@@ -1002,6 +1002,15 @@ public class UI_SkillDetailPopup : UI_Popup
         if (_autoDescTmp == null) _autoDescTmp = GetText((int)Texts.LvEffectTxt_Real);
         if (_autoFrame == null || _autoDescTmp == null) return;
 
+        // 설명 프레임의 **가로 폭** 보정.
+        //  프레임은 stretch(0~1) 앵커인데 부모(LvEffectTxt_Size)의 폭이 0이라
+        //  프레임 40 → SubFrame 32 → 본문 14픽셀까지 좁아졌다. 한 글자도 안 들어가
+        //  설명이 "물리 / 공격 / 력을 / 증가 / 시킨 / 다." 처럼 **세로로 쪼개져** 보였다.
+        //  팝업 기준 폭(FIXED = 180)에서 좌우 여백을 뺀 값으로 고정한다.
+        const float DESC_WIDTH = 150f;
+        if (!Mathf.Approximately(_autoFrame.sizeDelta.x, DESC_WIDTH))
+            _autoFrame.sizeDelta = new Vector2(DESC_WIDTH, _autoFrame.sizeDelta.y);
+
         if (!_autoSizeCached)
         {
             _autoFrameBaseSize = _autoFrame.sizeDelta.y;
