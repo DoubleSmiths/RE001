@@ -49,7 +49,7 @@ def main():
     print(f"전투 노드 {len(battle)}개 / 몬스터 없는 노드 {len(empty)}개")
     if empty:
         fail = True
-        print("  ❌", [e[1] for e in empty[:10]])
+        print("  [FAIL]", [e[1] for e in empty[:10]])
 
     gaps = []
     for lv in range(1, 301):
