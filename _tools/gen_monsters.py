@@ -6,7 +6,7 @@
 지역 아트(배경 스프라이트)는 기존 3개 지역분만 존재하므로 **새 지역을 만들지 않고**
 각 지역에 심층(depth) 전투 노드를 추가해 레벨 구간을 나눈다. 스프라이트는 지역 것을 재사용.
 
-  신들바람 숲   depth 1~10 → Lv   1~100
+  산들바람 숲   depth 1~10 → Lv   1~100
   속삭이는 동굴 depth 1~10 → Lv 101~200
   폐허된 성소   depth 1~10 → Lv 201~300
 
@@ -37,7 +37,7 @@ NEW_START_ID = 2101
 
 # ── 지역 정의 ────────────────────────────────────────────────────────────────
 REGIONS = [
-    dict(node=21000, key="BreezingWindForest", kor="신들바람 숲",   eng="Breezing Wind Forest",
+    dict(node=21000, key="BreezingWindForest", kor="산들바람 숲",   eng="Breezing Wind Forest",
          sprite="BreezingWindForest_Entry_Img", lv0=1,   lv1=100,
          bases=[("슬라임","Slime"),("숲거미","Forest Spider"),("들늑대","Wild Wolf"),
                 ("독버섯","Toadstool"),("바람정령","Wind Sprite"),("멧돼지","Boar"),
