@@ -41,6 +41,11 @@ public class UIManager
         {
             cs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             cs.referenceResolution = new Vector2(180, 440);
+            // 세로 화면 게임이라 **높이 기준**으로 맞춘다. 기본값(0=너비 기준)이면
+            // 기준 해상도보다 가로가 넓게 저작된 팝업(예: 장비 208x440)이 화면에 안 들어맞아
+            // 일부만 보이거나 HUD에 가려진다.
+            cs.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            cs.matchWidthOrHeight = 1f;
         }
 
         go.GetOrAddComponent<GraphicRaycaster>();
