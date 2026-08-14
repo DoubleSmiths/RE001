@@ -87,7 +87,24 @@ public class UI_SkillBookSkill : UI_Base
         if (icon != null && d != null && !string.IsNullOrEmpty(d.IconLabel))
         {
             var sp = Managers.Resource.Load<Sprite>(d.IconLabel);
-            if (sp != null) { icon.sprite = sp; icon.preserveAspect = true; }
+            if (sp != null)
+            {
+                icon.sprite = sp;
+                icon.preserveAspect = true;
+                // 프리팹에 저작된 tint가 검정(alpha 0.94)이라 넣은 아이콘이 새까맣게 칠해졌다.
+                //  아래 깔린 버튼의 placeholder 그림만 비쳐서 "능력 아이콘이 전부 똑같다"로 보였다.
+                icon.color = Color.white;
+            }
+        }
+
+        // 클릭 판정용 버튼에 placeholder 아이콘(AutoPotion Cooltime Skill Icon)이 저작돼 있다.
+        //  아이콘의 투명한 부분으로 그게 비쳐 능력마다 같은 그림이 겹쳐 보인다 → 그림만 지운다.
+        //  (Image 컴포넌트는 남겨야 클릭이 먹는다. sprite=null + alpha 0 이면 레이캐스트는 유지된다)
+        var btnImg = GetButton((int)Buttons.Btn_SkillBookSkill_0_07)?.GetComponent<Image>();
+        if (btnImg != null)
+        {
+            btnImg.sprite = null;
+            btnImg.color = new Color(0f, 0f, 0f, 0f);
         }
 
         // 슬41: 레벨(단계)은 항상 표시 — 기억중/재능이어도 함께 보인다(image105 목업: 기억중 아이콘도 "5등급" 표시).
