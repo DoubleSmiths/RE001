@@ -421,6 +421,7 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshDescLayout();   // #4 이야기/등급/설명 레이아웃
         RefreshSourceUI();     // #5/#6 하단 출처별 UI (#7 장비/#8 재료 포함)
         RefreshBottomButtons();// 슬51 최하단 3버튼(버튼1 NPC장소 / 버튼2 다음등급 / 버튼3 기억)
+        ApplySkillIcon();      // 능력별 아이콘 반영(없으면 프리팹 기본 유지)
         ApplyEquipMaterial();  // 슬52: 기억중/재능이면 이름 Frame Sprite에 Material_Equip
         RefreshAutoSize();     // 슬46: 설명 길이에 따라 정보창 세로 사이즈 자동 변화
         ApplyBottomMargin();   // 슬51 피드백: 하단 UI를 SubFrame 밑으로 정렬
@@ -848,6 +849,20 @@ public class UI_SkillDetailPopup : UI_Popup
     {
         if (img == null) return;
         var c = img.color; c.a = a; img.color = c;
+    }
+
+    // 능력 아이콘(WIcon)을 SkillData.IconLabel로 교체.
+    //  이 처리가 없어서 상세정보창은 어떤 능력을 열든 **프리팹에 저작된 아이콘 하나**만 보여줬다
+    //  (능력 65종이 각자 다른 아이콘을 갖고 있는데도 전부 같아 보이던 원인).
+    void ApplySkillIcon()
+    {
+        var icon = GetImage((int)Images.WIcon);
+        if (icon == null) return;
+        if (!Managers.Data.SkillDic.TryGetValue(SkillId, out var d)) return;
+        if (string.IsNullOrEmpty(d.IconLabel)) return;
+
+        var sp = Managers.Resource.Load<Sprite>(d.IconLabel);
+        if (sp != null) icon.sprite = sp;   // 로드 실패 시 프리팹 기본 아이콘 유지
     }
 
     static Material _equipMat;   // 슬52: Material_Equip 캐시(IMPORTS → Addressable 등록 필요. 미로드 시 no-op)
