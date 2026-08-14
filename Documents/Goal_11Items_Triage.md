@@ -183,6 +183,18 @@ Idle/Run/Attack/OnHit/Die 5종 모두 위치 커브가 있어, `SpawnMonster`가
   비교(renderMode, referenceResolution, matchWidthOrHeight, Canvas override 여부).
   다른 팝업은 SetCanvas가 일괄 설정하므로, 상세창만 프리팹에 다른 값이 박혀 있을 가능성.
 
+  **추가 확인(2026-08-14 최종)** — 아래는 모두 배제됨:
+  - 프리팹 CanvasScaler 설정: 상세창·장비 팝업이 **완전히 동일**
+    (referenceResolution 180x440 / screenMatchMode 1(Expand) / uiScaleMode 1 / renderMode 1)
+  - 루트 앵커: 둘 다 (0,0)~(0,0)로 동일. **sizeDelta만 다르다**(상세창 208x440 / 장비 180x380)
+  - 프리팹 파일에 208이라는 값은 **존재하지 않는다** → 런타임에 Canvas가 만든 값
+  - Canvas가 붙은 오브젝트는 Canvas가 RectTransform 크기를 직접 결정하므로
+    코드로 sizeDelta를 써도 다음 프레임에 되돌아간다(시도 후 롤백 완료)
+
+  → 남은 확인 대상: Canvas의 런타임 파라미터(planeDistance, worldCamera, sortingOrder에 따른
+    렌더 평면 차이)와 팝업별 카메라 설정. 두 팝업이 같은 설정인데 결과가 다르므로
+    **Canvas 외부 요인**(부모 캔버스 중첩, 열리는 시점의 카메라 상태 등)을 의심해야 한다.
+
 **(참고) 스킬북 목록 팝업**은 장비 팝업과 완전히 동일함을 두 방식으로 확인
 - RectTransform: 루트 (180,380) / FIXED (180,440) / In_Frame (174,433) — 두 팝업 동일
 - 실제 렌더 픽셀: 스크린샷에서 팝업 프레임 x 범위 **둘 다 10~389 (폭 379)**
