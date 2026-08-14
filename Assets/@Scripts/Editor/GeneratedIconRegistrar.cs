@@ -60,6 +60,21 @@ public static class GeneratedIconRegistrar
                     if (ti.textureCompression != TextureImporterCompression.Uncompressed) { ti.textureCompression = TextureImporterCompression.Uncompressed; dirty = true; }
                     if (ti.mipmapEnabled) { ti.mipmapEnabled = false; dirty = true; }
                     if (ti.spritePixelsPerUnit != 64f) { ti.spritePixelsPerUnit = 64f; dirty = true; }
+
+                    // 몬스터는 pivot을 **bottom-middle**로 둔다. center(기본값)면 스프라이트 절반이
+                    // 지면 아래로 내려가 "땅에 박힌" 것처럼 보인다. 발밑이 기준점이어야
+                    // 스폰 Y를 지면 높이로만 주면 정확히 서 있게 된다.
+                    bool isMonster = folder.Contains("/Monster/");
+                    var wanted = isMonster ? SpriteAlignment.BottomCenter : SpriteAlignment.Center;
+                    var st = new TextureImporterSettings();
+                    ti.ReadTextureSettings(st);
+                    if (st.spriteAlignment != (int)wanted)
+                    {
+                        st.spriteAlignment = (int)wanted;
+                        st.spritePivot = isMonster ? new Vector2(0.5f, 0f) : new Vector2(0.5f, 0.5f);
+                        ti.SetTextureSettings(st);
+                        dirty = true;
+                    }
                     if (dirty)
                     {
                         ti.SaveAndReimport();
