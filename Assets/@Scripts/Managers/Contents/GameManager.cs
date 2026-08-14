@@ -922,12 +922,25 @@ public class GameManager
     // 시작 장비 지급 — 장비가 하나도 없으면 여행자의 검(30001) 지급 + 자동 장착. (기존 세이브 마이그레이션 겸용)
     void EnsureStarterEquipment()
     {
-        if (_gameData.OwnedEquipments.Count == 0 &&
-            Managers.Data?.EquipmentDic != null && Managers.Data.EquipmentDic.ContainsKey(30001))
+        // 시작 장비는 **6슬롯 T1 한 벌**을 지급한다.
+        //  검 하나만 주면 장비창의 다른 슬롯·티어 목록이 전부 비어 있어
+        //  "장비 팝업이 아무 동작도 안 한다"로 보인다(누를 대상 자체가 없다).
+        //  장비 60종을 만들었지만 드롭·상점 같은 정식 획득 경로가 아직 없으므로
+        //  최소한 한 벌은 손에 쥐고 시작하게 한다. ponytail: 정식 획득처는 후속.
+        if (_gameData.OwnedEquipments.Count == 0 && Managers.Data?.EquipmentDic != null)
         {
-            var sword = new Equipment(30001) { IsEquipped = true };
-            _gameData.OwnedEquipments.Add(sword);
-            _gameData.EquippedEquipments[sword.SlotType] = sword;
+            for (int id = 30001; id <= 30006; id++)     // T1 6슬롯(무기/투구/갑옷/장갑/각반/부적)
+            {
+                if (!Managers.Data.EquipmentDic.ContainsKey(id)) continue;
+
+                var eq = new Equipment(id);
+                _gameData.OwnedEquipments.Add(eq);
+                if (!_gameData.EquippedEquipments.ContainsKey(eq.SlotType))
+                {
+                    eq.IsEquipped = true;
+                    _gameData.EquippedEquipments[eq.SlotType] = eq;
+                }
+            }
             SaveGame();
         }
 
