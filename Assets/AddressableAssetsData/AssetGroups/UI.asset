@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: fbfc6295f69858f4fb9ea7ab09ba20d9
   m_SerializeEntries:
+  - m_GUID: 0161ba6839de7e9489a8fdadbfc5d830
+    m_Address: Mon_BreezingWindForest_8
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0298348b722928146887a48f7c066e3c
     m_Address: UI_EquipDetailPopup
     m_ReadOnly: 0
@@ -249,6 +254,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2b0c46de8845474c80326c4f9e7ea5a
+    m_Address: Mon_BreezingWindForest_7
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d672fdbdcb74c1f48863ccf14b6d0fb3
     m_Address: UI_CharacterPopup
