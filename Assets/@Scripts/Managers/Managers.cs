@@ -48,6 +48,17 @@ public class Managers : MonoBehaviour
         _combo?.Tick(Time.deltaTime);
     }
 
+    // 방치 보상 기준 시각 기록. 모바일은 종료 대신 일시정지로 빠지는 경우가 많아 둘 다 건다.
+    void OnApplicationPause(bool paused)
+    {
+        if (paused && s_instance == this) _game?.MarkSeen();
+    }
+
+    void OnApplicationQuit()
+    {
+        if (s_instance == this) _game?.MarkSeen();
+    }
+
     #region Core
     DataManager     _data     = new DataManager();
     FontManager     _font     = new FontManager();

@@ -37,6 +37,7 @@ public class Equipment
     public int EnhanceLevel;
     public int Durability;
     public bool IsEquipped;
+    public int Potential;   // 잠재력 — 강화 성공마다 등급별 증가, 쌓일수록 성공확률 Low→High 보간(VS 원작)
 
     public Equipment() { }
     public Equipment(int dataId)
@@ -91,9 +92,22 @@ public class GameData
     public bool _isCreateAtkTextOn    = true;
     public bool _isShakeOn          = true;
 
-    // 장비
+    // 장비 — EquippedEquipments는 직렬화 제외. 로드 후 OwnedEquipments의 IsEquipped로 재구성
+    //  (Json 역직렬화 시 두 컬렉션의 Equipment가 서로 다른 참조가 되어 강화가 한쪽만 갱신되는 버그 방지)
     public List<Equipment>                    OwnedEquipments    = new List<Equipment>();
+    [JsonIgnore]
     public Dictionary<EquipSlotType, Equipment> EquippedEquipments = new Dictionary<EquipSlotType, Equipment>();
+
+    // 전직(Class): 직업 숙련도 0~100. 몬스터 처치로 누적, 100 도달 시 수도원 [축성]으로 직업 능력 습득.
+    public int ClassProficiency = 0;
+
+    // 방치 보상: 마지막으로 게임을 본 시각(UTC Ticks)과 그때 머물던 전투 지역.
+    //  0이면 최초 실행 — 보상을 주지 않는다(첫 실행에 1970년부터의 보상이 쏟아지는 것 방지).
+    public long LastSeenTicks = 0;
+    public int  LastBattleAreaId = 0;
+
+    // 대장간 시드 아이템(주문서/거울) 최초 1회 지급 여부. ponytail: 정식 획득처(드롭/상점)는 후속.
+    public bool ForgeItemsGranted = false;
 
     // 소지품
     public List<InventoryItem> Inventory = new List<InventoryItem>();
@@ -237,6 +251,18 @@ public class GameManager
     {
         get => _gameData.AdventurerRank;
         set { _gameData.AdventurerRank = Mathf.Clamp(value, 0, 99); SaveGame(); }
+    }
+
+    // 전직: 직업 숙련도 (0~CLASS_PROFICIENCY_MAX). 몬스터 처치 시 AddClassProficiency로 누적.
+    public int ClassProficiency => _gameData.ClassProficiency;
+    public event Action OnClassProficiencyChanged;
+    public void AddClassProficiency(int amount)
+    {
+        int next = Mathf.Clamp(_gameData.ClassProficiency + amount, 0, CLASS_PROFICIENCY_MAX);
+        if (next == _gameData.ClassProficiency) return;
+        _gameData.ClassProficiency = next;
+        SaveGame();
+        OnClassProficiencyChanged?.Invoke();
     }
 
     public int Level
@@ -506,12 +532,111 @@ public class GameManager
         if (LoadGame())
         {
             EnsurePotionState();
+            EnsureStarterEquipment();   // 기존 세이브 마이그레이션(장비 없으면 시작 검 지급)
             return;
         }
 
         // 할때마다 처음상태로 하고싶으면 1로 바꿔야하는 것.
         PlayerPrefs.SetInt("ISFIRST", 0);
         EnsurePotionState();
+        EnsureStarterEquipment();
+        SaveGame();
+    }
+
+    // ────────────────────────────────────────
+    //  방치 보상 (오프라인 수익)
+    // ────────────────────────────────────────
+    //  방치형의 핵심 축. 껐다 켜는 사이에도 마지막으로 사냥하던 지역에서 계속 싸운 것으로 치고
+    //  경험치·골드를 정산한다. 실제 전투보다 효율을 낮춰(OFFLINE_RATE) 직접 플레이할 이유를 남긴다.
+    public const float OFFLINE_MAX_HOURS = 8f;    // 상한 — 하루 종일 켜둬야 이득인 구조를 피한다
+    public const float OFFLINE_RATE      = 0.5f;  // 실제 사냥 대비 효율
+    const float OFFLINE_KILL_INTERVAL    = 4f;    // 처치 1회당 초 (스폰 2s + 접근·교전)
+    const float OFFLINE_MIN_MINUTES      = 1f;    // 이 미만이면 정산하지 않는다
+
+    /// <summary>정산 결과. 아무것도 못 받으면 Seconds == 0.</summary>
+    public struct OfflineReward
+    {
+        public double Seconds;
+        public int    Kills;
+        public float  Exp;
+        public int    Gold;
+        public bool   Capped;      // 상한에 걸렸는가 (UI에서 안내용)
+    }
+
+    public OfflineReward LastOfflineReward { get; private set; }
+
+    /// <summary>마지막 접속 이후 경과분을 정산해 지급한다. Init에서 1회 호출.</summary>
+    public OfflineReward ClaimOfflineReward()
+    {
+        var result = new OfflineReward();
+        if (_gameData.LastSeenTicks <= 0)
+        {
+            MarkSeen();                       // 최초 실행 — 기준 시각만 남긴다
+            return result;
+        }
+
+        var last = new System.DateTime(_gameData.LastSeenTicks, System.DateTimeKind.Utc);
+        double seconds = (System.DateTime.UtcNow - last).TotalSeconds;
+        if (seconds < OFFLINE_MIN_MINUTES * 60.0)
+        {
+            MarkSeen();
+            return result;
+        }
+
+        double capped = System.Math.Min(seconds, OFFLINE_MAX_HOURS * 3600.0);
+        result.Capped  = seconds > capped;
+        result.Seconds = capped;
+
+        // 마지막으로 있던 전투 지역의 몬스터 평균으로 정산.
+        //  지역 정보가 없으면(전투를 한 번도 안 했으면) 지급 대상이 없다.
+        float avgExp = 0f, avgGold = 0f;
+        int n = 0;
+        var node = _gameData.LastBattleAreaId;
+        if (Managers.Data?.TravelNodeDic != null && Managers.Data.TravelNodeDic.TryGetValue(node, out var tn))
+        {
+            foreach (var c in Managers.Data.CreatureDic.Values)
+            {
+                if (c == null || c.Habitat != tn.Name || c.EncounterRate <= 0f) continue;
+                avgExp += c.TotalExp; avgGold += c.RewardGold; n++;
+            }
+        }
+        if (n == 0)
+        {
+            MarkSeen();
+            return result;
+        }
+        avgExp /= n; avgGold /= n;
+
+        result.Kills = Mathf.FloorToInt((float)(capped / OFFLINE_KILL_INTERVAL) * OFFLINE_RATE);
+        if (result.Kills <= 0)
+        {
+            MarkSeen();
+            return result;
+        }
+        result.Exp  = avgExp * result.Kills;
+        result.Gold = Mathf.RoundToInt(avgGold * result.Kills);
+
+        Gold += result.Gold;                       // setter가 저장까지 처리
+        Player?.GainExp(result.Exp);
+        MarkSeen();
+
+        LastOfflineReward = result;
+        Debug.Log($"[방치보상] {capped / 3600.0:F1}시간 → {result.Kills}처치, EXP {result.Exp:N0}, 골드 {result.Gold:N0}");
+        return result;
+    }
+
+    /// <summary>지금을 '마지막으로 본 시각'으로 기록. 일시정지/종료/지역이동 시 호출.</summary>
+    public void MarkSeen()
+    {
+        _gameData.LastSeenTicks = System.DateTime.UtcNow.Ticks;
+        SaveGame();
+    }
+
+    /// <summary>전투 지역 진입 시 호출 — 방치 보상 정산 기준이 된다.</summary>
+    public void MarkBattleArea(int travelNodeId)
+    {
+        if (travelNodeId <= 0 || _gameData.LastBattleAreaId == travelNodeId) return;
+        _gameData.LastBattleAreaId = travelNodeId;
         SaveGame();
     }
 
@@ -524,12 +649,15 @@ public class GameManager
         {
             old.IsEquipped = false;
             EquippedEquipments.Remove(equipment.SlotType);
+            Managers.Ability?.OnEquipChanged(old, false);     // 슬38: 이전 장비 능력 기억 정리
         }
 
         EquippedEquipments[equipment.SlotType] = equipment;
         equipment.IsEquipped = true;
+        Managers.Ability?.OnEquipChanged(equipment, true);    // 슬38: 착용 = 장비 능력 무점유 자동 기억(점유 환불)
         EquipInfoChanged?.Invoke();
         SaveGame();
+        Player?.RefreshStats(fullHeal: false);                               // 장비 기본/강화 스탯 반영
     }
 
     public void UnEquipItem(Equipment equipment)
@@ -538,40 +666,183 @@ public class GameManager
         {
             EquippedEquipments[equipment.SlotType].IsEquipped = false;
             EquippedEquipments.Remove(equipment.SlotType);
+            Managers.Ability?.OnEquipChanged(equipment, false);   // 슬38: 해제 = 장비 능력 소멸(+9는 잔존, 기억만 해제)
             EquipInfoChanged?.Invoke();
             SaveGame();
+            Player?.RefreshStats(fullHeal: false);
         }
     }
 
-    public bool ForgeEquipment(Equipment equip)
+    // 장비 획득 — 유일한 런타임 추가 경로. (퀘스트 보상/드롭 연결은 후속)
+    public Equipment AddEquipment(int dataId)
     {
-        int nextLevel = equip.EnhanceLevel + 1;
-        Data.ForgeRecipeData recipe = null;
+        var equip = new Equipment(dataId);
+        OwnedEquipments.Add(equip);
+        SetTabNew(TabType.Equipment, true);
+        EquipInfoChanged?.Invoke();
+        SaveGame();
+        return equip;
+    }
 
-        foreach (var r in Managers.Data.ForgeRecipeDic.Values)
+    // ── 대장간: 강화 (VS 원작 Enhance Chance Cal 이식) ──
+    public class EnhanceResult
+    {
+        public bool  Success;
+        public int   DuriLoss;      // 실패 시 내구도 감소량 (성공 시 0)
+        public int   PotenGain;     // 성공 시 잠재력 증가량 (실패 시 0)
+        public float ChancePct;     // 굴림에 사용된 성공확률(%)
+        public int   PrevLevel;     // 연출용 before
+        public int   PrevDurability;
+    }
+
+    // 현재 강화도/잠재력 기준 성공확률(%). Low→High 보간 = 잠재력/만충, 만충 초과분은 +0.2%/pt.
+    public float GetEnhanceChance(Equipment equip)
+    {
+        int lv = Mathf.Clamp(equip.EnhanceLevel, 0, ENHANCE_MAX_LEVEL - 1);
+        float t = Mathf.Clamp01(equip.Potential / ENHANCE_POTEN_FULL);
+        float chance = Mathf.Lerp(ENHANCE_CHANCE_LOW[lv], ENHANCE_CHANCE_HIGH[lv], t);
+        float over = Mathf.Max(0f, equip.Potential - ENHANCE_POTEN_FULL);
+        return Mathf.Min(100f, chance + over * ENHANCE_POTEN_OVER_BONUS);
+    }
+
+    public bool CanEnhance(Equipment equip, int scrollId)
+        => equip != null
+        && equip.EnhanceLevel < ENHANCE_MAX_LEVEL
+        && equip.Durability > 0
+        && HasItem(scrollId);
+
+    // 강화 실행: 주문서 1장 소모 → 확률 굴림 → 성공 시 +1단계/잠재력 증가, 실패 시 내구도 감소(주문서별).
+    //  +9 도달 시 장비 능력 영구화(슬38). 결과는 UI 연출용으로 반환.
+    public EnhanceResult EnhanceEquipment(Equipment equip, int scrollId)
+    {
+        if (!CanEnhance(equip, scrollId)) return null;
+
+        var r = new EnhanceResult
         {
-            if (r.EquipDataId == equip.DataId && r.Level == nextLevel)
-            {
-                recipe = r;
-                break;
-            }
+            ChancePct      = GetEnhanceChance(equip),
+            PrevLevel      = equip.EnhanceLevel,
+            PrevDurability = equip.Durability,
+        };
+
+        RemoveItem(scrollId, 1);
+
+        bool guaranteed = scrollId == SCROLL_IGNUS_ID;   // 이그누스의 인정 = 확정 강화
+        r.Success = guaranteed || UnityEngine.Random.value * 100f < r.ChancePct;
+
+        if (r.Success)
+        {
+            equip.EnhanceLevel++;
+            int gradeIdx = equip.EquipmentData != null
+                ? Mathf.Clamp((int)equip.EquipmentData.Grade, 0, ENHANCE_POTEN_BY_GRADE.Length - 1)
+                : 0;
+            r.PotenGain = ENHANCE_POTEN_BY_GRADE[gradeIdx];
+            equip.Potential += r.PotenGain;
+
+            // +9 도달: 장비 능력 영구화 (기술창 잔존 — 슬38)
+            if (equip.EnhanceLevel >= ENHANCE_MAX_LEVEL)
+                Managers.Ability?.NotifyEquipMaxEnhanced(equip);
+        }
+        else
+        {
+            int idx = System.Array.IndexOf(ENHANCE_SCROLL_IDS, scrollId);
+            r.DuriLoss = idx >= 0 ? ENHANCE_SCROLL_DURI_LOSS[idx] : ENHANCE_SCROLL_DURI_LOSS[0];
+            equip.Durability = Mathf.Max(0, equip.Durability - r.DuriLoss);
         }
 
-        if (recipe == null)
-            return false;
-
-        if (!HasItem(recipe.RequiredMaterialId, recipe.RequiredMaterialCount))
-            return false;
-
-        RemoveItem(recipe.RequiredMaterialId, recipe.RequiredMaterialCount);
-        equip.EnhanceLevel++;
-        if (equip.EquipmentData != null)
-            equip.Durability = equip.EquipmentData.MaxDurability;
-
-        Managers.Sound?.PlaySFX("SFX_EnhanceHammer");   // 장비 강화 성공
         SaveGame();
-        OnEquipmentForged?.Invoke(equip);
+        if (r.Success) OnEquipmentForged?.Invoke(equip);
+        EquipInfoChanged?.Invoke();
+        if (equip.IsEquipped) Player?.RefreshStats(fullHeal: false);   // 강화/내구도 변화 → 스탯·능력단계 갱신
+        return r;
+    }
+
+    // ── 대장간: 내구도 복구 — 거울(MOR) 또는 재료 소모로 +25. ──
+    public bool RestoreDurability(Equipment equip, bool useMirror)
+    {
+        if (equip == null || equip.EquipmentData == null) return false;
+        int max = equip.EquipmentData.MaxDurability;
+        if (equip.Durability >= max) return false;
+
+        if (useMirror)
+        {
+            if (!HasItem(MOR_ITEM_ID)) return false;
+            RemoveItem(MOR_ITEM_ID, 1);
+            equip.Durability = Mathf.Min(max, equip.Durability + MOR_RESTORE_AMOUNT);
+        }
+        else
+        {
+            if (!HasItem(RESTORE_MATERIAL_ID, RESTORE_MATERIAL_COUNT)) return false;
+            RemoveItem(RESTORE_MATERIAL_ID, RESTORE_MATERIAL_COUNT);
+            equip.Durability = Mathf.Min(max, equip.Durability + RESTORE_MATERIAL_AMOUNT);
+        }
+
+        SaveGame();
+        EquipInfoChanged?.Invoke();
+        if (equip.IsEquipped) Player?.RefreshStats(fullHeal: false);   // 최대 내구도 도달 → 능력단계 +1 반영(슬49)
         return true;
+    }
+
+    // 장착 장비의 기본 스탯 + 강화 보너스(EquipEnhanceData 단계별 증가분 누적) 가산.
+    //  PlayerController.RefreshStats에서 호출.
+    public void ApplyEquipmentStats(CreatureController c)
+    {
+        if (c == null || Managers.Data?.EquipmentDic == null) return;
+        foreach (var equip in EquippedEquipments.Values)
+        {
+            var data = equip.EquipmentData;
+            if (data == null) continue;
+            c.PhysicalAtk += data.BaseAtk;
+            c.CritRate    += data.BaseCritRate;
+            c.MagicAtk    += data.BaseMagicAtk;
+
+            if (Managers.Data.EquipEnhanceDic == null) continue;
+            foreach (var enh in Managers.Data.EquipEnhanceDic.Values)
+            {
+                if (enh.EquipDataId != equip.DataId || enh.Level > equip.EnhanceLevel) continue;
+                c.PhysicalAtk += enh.AtkBonus;
+                c.CritRate    += enh.CritBonus;
+                c.MagicAtk    += enh.MagicAtkBonus;
+            }
+        }
+    }
+
+    // 로드 후 EquippedEquipments를 OwnedEquipments의 IsEquipped 플래그로 재구성 (참조 일원화).
+    void RebuildEquippedFromOwned()
+    {
+        _gameData.EquippedEquipments.Clear();
+        foreach (var equip in _gameData.OwnedEquipments)
+        {
+            if (!equip.IsEquipped) continue;
+            if (_gameData.EquippedEquipments.ContainsKey(equip.SlotType))
+            {
+                equip.IsEquipped = false;   // 슬롯 중복(구세이브) — 첫 항목만 유지
+                continue;
+            }
+            _gameData.EquippedEquipments[equip.SlotType] = equip;
+        }
+    }
+
+    // 시작 장비 지급 — 장비가 하나도 없으면 여행자의 검(30001) 지급 + 자동 장착. (기존 세이브 마이그레이션 겸용)
+    void EnsureStarterEquipment()
+    {
+        if (_gameData.OwnedEquipments.Count == 0 &&
+            Managers.Data?.EquipmentDic != null && Managers.Data.EquipmentDic.ContainsKey(30001))
+        {
+            var sword = new Equipment(30001) { IsEquipped = true };
+            _gameData.OwnedEquipments.Add(sword);
+            _gameData.EquippedEquipments[sword.SlotType] = sword;
+            SaveGame();
+        }
+
+        // 대장간 시드 아이템 최초 1회 지급 — 주문서(기본10/고급3)와 복원의 거울(3).
+        // ponytail: 정식 획득처(몬스터 드롭/제작)는 후속 — 지급량은 테스트 밸런스 시드.
+        if (!_gameData.ForgeItemsGranted && Managers.Data?.ItemDic != null && Managers.Data.ItemDic.ContainsKey(SCROLL_BASIC_ID))
+        {
+            _gameData.ForgeItemsGranted = true;
+            AddItem(SCROLL_BASIC_ID, 10);
+            AddItem(SCROLL_ADVANCED_ID, 3);
+            AddItem(MOR_ITEM_ID, 3);
+        }
     }
 
     // ────────────────────────────────────────
@@ -836,6 +1107,7 @@ public class GameManager
             _gameData = data;
 
         EnsurePotionState();
+        RebuildEquippedFromOwned();   // 장착 딕셔너리를 보유 리스트 참조로 재구성
 
         return true;
     }
