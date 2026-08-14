@@ -216,3 +216,24 @@ Idle/Run/Attack/OnHit/Die 5종 모두 위치 커브가 있어, `SpawnMonster`가
 - 슬롯 6칸·T1~T3 탭·장착 장비(목검 E등급) 모두 정상 표시
 → **어느 버튼을 눌러 무엇을 기대했는지** 알면 좁힐 수 있다.
   (예: 무기 목록이 열려야 하는데 안 열림 / 장착 버튼이 반응 없음 등)
+
+
+## 능력 상세창 폭 — 최종 측정 (2026-08-14)
+
+화면 1080x2640에서 두 팝업의 **캔버스 런타임 파라미터가 완전히 동일**한데 rect만 다르다.
+
+    상세창  rect=(208, 440)  match=1  MatchWidthOrHeight  planeDistance=10
+    장비    rect=(180, 380)  match=1  MatchWidthOrHeight  planeDistance=10
+
+CanvasScaler(referenceResolution 180x440, 높이 기준)로 계산하면
+스케일 = 2640/440 = 6, 폭 = 1080/6 = **180** — 두 팝업 다 (180,440)이어야 한다.
+그런데 상세창은 폭이, 장비는 높이가 어긋난다. **즉 rect가 CanvasScaler 계산 결과가 아니다.**
+
+앵커가 (0,0)~(0,0)이므로 rect = sizeDelta인데, 코드로 sizeDelta를 써도 rect.size가 안 바뀐다
+(SetInfo·LateUpdate 둘 다 실패, 롤백 완료).
+
+**다음 세션 착수 순서**
+1. Unity 에디터에서 UI_SkillDetailPopup 프리팹을 열어 **루트 RectTransform의 Width를 직접 확인**
+   (텍스트 grep으로는 루트를 특정하지 못했다 — 첫 RectTransform이 루트가 아니다)
+2. 208이면 인스펙터에서 180으로 수정 — 이게 가장 확실하고 안전한 경로
+3. 코드 보정은 시도하지 말 것 (위 실패 기록 참조)
