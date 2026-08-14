@@ -738,6 +738,7 @@ public class GameManager
         public float ChancePct;     // 굴림에 사용된 성공확률(%)
         public int   PrevLevel;     // 연출용 before
         public int   PrevDurability;
+        public int   GoldCost;      // 이번 시도에 소모한 골드
     }
 
     // 현재 강화도/잠재력 기준 성공확률(%). Low→High 보간 = 잠재력/만충, 만충 초과분은 +0.2%/pt.
@@ -750,11 +751,26 @@ public class GameManager
         return Mathf.Min(100f, chance + over * ENHANCE_POTEN_OVER_BONUS);
     }
 
+    // 강화 골드 비용. 방치로 쌓인 골드의 유일한 소비처다 —
+    //  이게 없으면 골드가 순수 누적치가 되어 "방치 → 성장" 순환이 끊긴다.
+    //  다음 단계일수록 가파르게(단계^1.8) 올려 후반 골드가 남아돌지 않게 한다.
+    public const int ENHANCE_GOLD_BASE = 120;
+
+    public int GetEnhanceCost(Equipment equip)
+    {
+        if (equip == null) return 0;
+        int next = equip.EnhanceLevel + 1;                       // 다음 강화 단계 (1~9)
+        int gradeIdx = equip.EquipmentData != null ? (int)equip.EquipmentData.Grade : 0;
+        float gradeMul = 1f + gradeIdx * 0.6f;                   // 상위 등급일수록 비싸게
+        return Mathf.RoundToInt(ENHANCE_GOLD_BASE * Mathf.Pow(next, 1.8f) * gradeMul);
+    }
+
     public bool CanEnhance(Equipment equip, int scrollId)
         => equip != null
         && equip.EnhanceLevel < ENHANCE_MAX_LEVEL
         && equip.Durability > 0
-        && HasItem(scrollId);
+        && HasItem(scrollId)
+        && Gold >= GetEnhanceCost(equip);
 
     // 강화 실행: 주문서 1장 소모 → 확률 굴림 → 성공 시 +1단계/잠재력 증가, 실패 시 내구도 감소(주문서별).
     //  +9 도달 시 장비 능력 영구화(슬38). 결과는 UI 연출용으로 반환.
@@ -769,6 +785,8 @@ public class GameManager
             PrevDurability = equip.Durability,
         };
 
+        r.GoldCost = GetEnhanceCost(equip);
+        Gold -= r.GoldCost;          // CanEnhance에서 잔액을 이미 확인함
         RemoveItem(scrollId, 1);
 
         bool guaranteed = scrollId == SCROLL_IGNUS_ID;   // 이그누스의 인정 = 확정 강화
