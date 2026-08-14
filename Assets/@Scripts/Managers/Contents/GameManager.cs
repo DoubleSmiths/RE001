@@ -635,22 +635,56 @@ public class GameManager
         if (_gameData.LastBattleAreaId <= 0) return;      // 전투 경험이 없으면 누적 대상 없음
 
         _idleKillProgress += deltaTime / OFFLINE_KILL_INTERVAL * OFFLINE_RATE;
-        if (_idleKillProgress < 1f) return;
+        _idleNotifyTimer += deltaTime;
+        if (_idleKillProgress < 1f) { FlushIdleBatch(); return; }
 
         int kills = Mathf.FloorToInt(_idleKillProgress);
         _idleKillProgress -= kills;
 
         if (!TryGetAreaAverage(_gameData.LastBattleAreaId, out float avgExp, out float avgGold)) return;
 
-        Gold += Mathf.RoundToInt(avgGold * kills);
-        Player.GainExp(avgExp * kills);
+        int gold = Mathf.RoundToInt(avgGold * kills);
+        float exp = avgExp * kills;
+
+        Gold += gold;                 // setter가 OnResourceChanged를 쏴 HUD 골드가 실시간으로 오른다
+        Player.GainExp(exp);          // OnExpChanged로 EXP 바도 함께 오른다
         IdleKillCount += kills;
         OnIdleAccrued?.Invoke(kills);
+
+        // 숫자만 오르면 왜 오르는지 알 수 없다 — 일정 주기마다 묶어서 알린다(매번 띄우면 스팸).
+        _batchKills += kills; _batchGold += gold; _batchExp += exp;
+        FlushIdleBatch();
+    }
+
+    const float IDLE_NOTIFY_INTERVAL = 60f;   // 방치 요약 알림 주기(초)
+    float _idleNotifyTimer;
+    int   _batchKills, _batchGold;
+    float _batchExp;
+
+    void FlushIdleBatch()
+    {
+        if (_idleNotifyTimer < IDLE_NOTIFY_INTERVAL) return;
+        _idleNotifyTimer = 0f;
+        if (_batchKills <= 0) return;
+
+        string area = "";
+        if (Managers.Data?.TravelNodeDic != null &&
+            Managers.Data.TravelNodeDic.TryGetValue(_gameData.LastBattleAreaId, out var node))
+            area = Util.Localize(node.Name);
+
+        OnIdleBatch?.Invoke(new OfflineReward
+        {
+            Kills = _batchKills, Gold = _batchGold, Exp = _batchExp, Seconds = IDLE_NOTIFY_INTERVAL,
+        }, area);
+
+        _batchKills = 0; _batchGold = 0; _batchExp = 0f;
     }
 
     /// <summary>이번 세션에서 방치로 처치한 누적 수 (HUD 표기용).</summary>
     public int IdleKillCount { get; private set; }
     public event System.Action<int> OnIdleAccrued;
+    /// <summary>방치 요약 알림 (주기적). 인자: 이번 구간 성과, 지역 이름.</summary>
+    public event System.Action<OfflineReward, string> OnIdleBatch;
 
     /// <summary>해당 전투 노드에 출현하는 몬스터의 평균 경험치·골드.</summary>
     bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)

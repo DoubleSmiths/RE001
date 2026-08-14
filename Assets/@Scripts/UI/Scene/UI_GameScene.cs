@@ -213,6 +213,7 @@ public class UI_GameScene : UI_Scene
         if (Managers.Game != null)
         {
             Managers.Game.OnResourceChanged -= RefreshCurrency;
+            Managers.Game.OnIdleBatch -= ShowIdleBatch;
             Managers.Game.OnLanguageChanged -= RefreshTexts;
             Managers.Game.OnInventoryNewChanged -= RefreshBTMButtonGroup;
             Managers.Game.OnItemChanged -= OnFollowItemChanged;
@@ -267,6 +268,14 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
 
     /// <summary>페이드 없이 즉시 구역 전환 (씬 초기 로드용)</summary>
+    /// <summary>방치 진행 알림(주기적). 골드·EXP 숫자는 이미 실시간으로 오르지만
+    /// 무엇 때문에 오르는지 알 수 없어, 어디서 몇 마리를 잡고 있는지 묶어서 알린다.</summary>
+    void ShowIdleBatch(GameManager.OfflineReward r, string area)
+    {
+        string where = string.IsNullOrEmpty(area) ? "" : $"{area}에서 ";
+        Managers.UI.ShowToast($"방치 사냥 중 — {where}{r.Kills}마리\n경험치 {r.Exp:N0} · 골드 {r.Gold:N0}");
+    }
+
     /// <summary>방치 보상 정산 결과 안내. 전용 팝업 대신 토스트를 재사용한다
     /// (ponytail: 전용 프리팹은 연출 스펙이 정해지면 그때).</summary>
     public void ShowOfflineReward(GameManager.OfflineReward r)
@@ -498,6 +507,7 @@ public class UI_GameScene : UI_Scene
         RefreshBTMButtonGroup();
 
         Managers.Game.OnResourceChanged += RefreshCurrency;
+        Managers.Game.OnIdleBatch += ShowIdleBatch;
         Managers.Game.OnLanguageChanged += RefreshTexts;
         Managers.Game.OnInventoryNewChanged += RefreshBTMButtonGroup;
         Managers.Game.OnItemChanged += OnFollowItemChanged;

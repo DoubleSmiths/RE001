@@ -44,6 +44,19 @@
   두 경로의 수익이 달라지면 안 된다.
 - `Time.unscaledDeltaTime`을 쓴다. 팝업으로 `timeScale`이 0이 되어도 방치는 멈추면 안 된다.
 
+## 보강: 진행을 화면에 알린다 (2026-08-14 추가)
+
+방치로 골드·EXP가 오르는 것 자체는 HUD에 이미 실시간 반영된다
+(`Gold` setter → `OnResourceChanged`, `GainExp` → `OnExpChanged`).
+문제는 **왜 오르는지 알 수 없다**는 것이었다.
+
+`GameManager.OnIdleBatch` 이벤트로 **60초마다 묶어서** 알린다.
+매 처치마다 띄우면 스팸이 되고, 알림이 없으면 숫자만 혼자 움직인다.
+안내에는 지역 이름을 넣어 "어디서 사냥 중인지"를 드러낸다.
+
+  > 방치 사냥 중 — 신들바람 숲 입구에서 7마리
+  > 경험치 315 · 골드 147
+
 ## 결과
 
 - 새 전투 지역을 추가하면 `UI_GameScene.EnterArea`가 자동으로 `MarkBattleArea`를 남긴다.
