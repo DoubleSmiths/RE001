@@ -363,12 +363,23 @@ public class UI_GameScene : UI_Scene
             string areaName = area.ToString();
             if (Managers.Data?.TravelNodeDic != null)
             {
-                foreach (var node in Managers.Data.TravelNodeDic.Values)
+                // 이미 CurrentTravelAreaId가 이 AreaType의 노드를 가리키고 있으면 그대로 둔다.
+                //  마을이 여러 개인데 전부 AreaType이 Village1이라, 아래 "첫 번째 매칭 노드"
+                //  탐색이 무조건 첫 마을(아스달)을 집어 **다른 마을로 이동해도 아스달로 튕겨나갔다.**
+                //  (Travel popup은 이미 정확한 노드 id를 설정해 두므로 덮어쓸 이유가 없다)
+                int cur = Managers.Game.CurrentTravelAreaId;
+                bool curMatches = Managers.Data.TravelNodeDic.TryGetValue(cur, out var curNode)
+                                  && curNode.AreaType == areaName;
+
+                if (!curMatches)
                 {
-                    if (node.AreaType == areaName)
+                    foreach (var node in Managers.Data.TravelNodeDic.Values)
                     {
-                        Managers.Game.CurrentTravelAreaId = node.Id;
-                        break;
+                        if (node.AreaType == areaName)
+                        {
+                            Managers.Game.CurrentTravelAreaId = node.Id;
+                            break;
+                        }
                     }
                 }
             }
