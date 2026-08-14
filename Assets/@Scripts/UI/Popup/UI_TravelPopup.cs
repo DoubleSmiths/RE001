@@ -418,11 +418,14 @@ public class UI_TravelPopup : UI_Popup
         if (!string.IsNullOrEmpty(node.EnterBtnId))
             Managers.Quest.CheckButtonClick(node.EnterBtnId);
 
+        // 현재 위치를 **먼저** 갱신한다.
+        //  전투 진입은 BattleBtnGroup.Init() → CoBattleLoop을 바로 돌리고,
+        //  ObjectManager.PickFieldMonsterId가 CurrentTravelAreaId로 서식지를 찾는다.
+        //  순서가 반대면 첫 몬스터가 이전 지역 기준(또는 fallback 슬라임)으로 스폰된다.
+        Managers.Game.CurrentTravelAreaId = nodeId;
+
         // 씬(area) 전환 — UI_GameScene 안의 BtnGroup prefab 교체 + 페이드
         gameScene.EnterAreaWithFade(areaType);
-
-        // 현재 위치 갱신 (저장됨)
-        Managers.Game.CurrentTravelAreaId = nodeId;
 
         // 모든 팝업 닫기 (Travel popup도 같이 닫힘)
         Managers.UI.CloseAllPopupUI();
