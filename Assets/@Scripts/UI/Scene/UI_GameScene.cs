@@ -267,8 +267,25 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
 
     /// <summary>페이드 없이 즉시 구역 전환 (씬 초기 로드용)</summary>
+    /// <summary>방치 보상 정산 결과 안내. 전용 팝업 대신 토스트를 재사용한다
+    /// (ponytail: 전용 프리팹은 연출 스펙이 정해지면 그때).</summary>
+    public void ShowOfflineReward(GameManager.OfflineReward r)
+    {
+        double h = r.Seconds / 3600.0;
+        string time = h >= 1.0 ? $"{h:F1}시간" : $"{r.Seconds / 60.0:F0}분";
+        string msg = $"자리를 비운 {time} 동안 {r.Kills}마리를 처치했습니다\n" +
+                     $"경험치 {r.Exp:N0} · 골드 {r.Gold:N0}";
+        if (r.Capped)
+            msg += $"\n(최대 {GameManager.OFFLINE_MAX_HOURS:F0}시간까지 정산됩니다)";
+        Managers.UI.ShowToast(msg);
+    }
+
     public void EnterArea(AreaType area)
     {
+        // 방치 보상은 "마지막으로 사냥하던 지역" 기준으로 정산한다(GameManager.ClaimOfflineReward).
+        if (area == AreaType.Battle)
+            Managers.Game?.MarkBattleArea(Managers.Game.CurrentTravelAreaId);
+
         SwapAreaBtnGroup(area);
     }
 

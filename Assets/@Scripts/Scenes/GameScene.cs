@@ -38,6 +38,12 @@ public class GameScene : BaseScene
                     // Data.Init + Game.Init(LoadGame) 완료된 지금 다시 호출해 실제 값으로 덮어쓴다.
                     _player.RefreshStats();
                     _ui.BindPlayer(_player);
+
+                    // 방치 보상 정산 — 데이터·플레이어가 모두 준비된 뒤여야 한다
+                    // (GainExp가 Player를, 지역 평균 계산이 CreatureDic을 쓴다).
+                    var reward = Managers.Game.ClaimOfflineReward();
+                    if (reward.Kills > 0)
+                        _ui.ShowOfflineReward(reward);
                 }
                 //StartAnimation();
             }
