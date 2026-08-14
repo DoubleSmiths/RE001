@@ -191,9 +191,18 @@ Idle/Run/Attack/OnHit/Die 5종 모두 위치 커브가 있어, `SpawnMonster`가
   - Canvas가 붙은 오브젝트는 Canvas가 RectTransform 크기를 직접 결정하므로
     코드로 sizeDelta를 써도 다음 프레임에 되돌아간다(시도 후 롤백 완료)
 
-  → 남은 확인 대상: Canvas의 런타임 파라미터(planeDistance, worldCamera, sortingOrder에 따른
-    렌더 평면 차이)와 팝업별 카메라 설정. 두 팝업이 같은 설정인데 결과가 다르므로
-    **Canvas 외부 요인**(부모 캔버스 중첩, 열리는 시점의 카메라 상태 등)을 의심해야 한다.
+  → **코드로 폭을 바꾸는 접근은 전부 실패했다.** Canvas가 붙은 오브젝트의 RectTransform은
+    Canvas가 렌더 영역으로 rect를 결정하며, `sizeDelta`를 써도 `rect.size`가 바뀌지 않는다.
+    시도하고 롤백한 것:
+      · SetInfo에서 sizeDelta 보정 → 다음 프레임 원복
+      · LateUpdate에서 매 프레임 보정 → rect.size는 여전히 208 (sizeDelta 자체가 무시됨)
+
+  → **남은 유일한 방향**: 상세창에서 Canvas 컴포넌트를 떼고 부모 캔버스를 쓰게 하는 구조 변경.
+    (현재는 `UIManager.SetCanvas`가 모든 팝업에 Canvas를 붙인다 — 팝업별 sortingOrder 때문)
+    단 이 변경은 렌더 순서·레이캐스트에 영향이 크므로 **한 팝업만 예외 처리**하거나
+    상세창 프리팹의 내용(FIXED, 180)을 208 폭 안에서 중앙 정렬하는 편이 안전할 수 있다.
+    참고: 상세창의 자식 `FIXED`는 180으로 정상이므로 **실제 보이는 내용 폭은 180**이다.
+    사용자가 체감한 넓이가 프레임(배경 이미지)인지 내용인지 재확인 필요.
 
 **(참고) 스킬북 목록 팝업**은 장비 팝업과 완전히 동일함을 두 방식으로 확인
 - RectTransform: 루트 (180,380) / FIXED (180,440) / In_Frame (174,433) — 두 팝업 동일
