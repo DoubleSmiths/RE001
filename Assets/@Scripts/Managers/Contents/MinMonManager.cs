@@ -131,7 +131,7 @@ public class MinMonManager
         }
 
         save.CaughtCount++;
-        save.TameCount++;
+        save.TameCount = 0;   // D1: 포획 성공 시 확정 천장 카운터 리셋 — 재포획은 다시 처음부터 누적
         // 포획 성공 시 포획 가능 창고에서 제거 (슬23: 창고의 미니몬을 잡은 것)
         Managers.Game.InterestedMinMons.Remove(dataId);
         Managers.Game.SaveGame();

@@ -191,6 +191,10 @@ public class MonsterController : CreatureController
         // 슬9: 사냥 성공 시 Kill Count 증가 (기록도/분석률 = KillCount/MaxKillCount)
         Managers.MinMon.AddKill(DataId);
 
+        // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
+        // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.
+        Managers.Game.AddClassProficiency(1);
+
         // 슬23~25: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장 + Side UI 알림
         if (_data != null)
         {
@@ -201,7 +205,7 @@ public class MonsterController : CreatureController
                 if (interest == MinMonManager.InterestResult.Added)
                     Managers.UI.ShowAttractedPopup(DataId, false);      // 슬24: 창고 여유 → Side UI 알림
                 else
-                    Managers.UI.ShowWarningPopup(DataId);               // 슬23/25: 창고 가득 → 경고 popup
+                    Managers.UI.ShowAttractedPopup(DataId, true);       // 슬23/25 D3: 창고 가득 → 같은 팝업 빨강 버전(UI_WarningPopup 폐기)
             }
         }
 

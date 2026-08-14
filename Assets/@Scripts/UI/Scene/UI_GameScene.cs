@@ -298,6 +298,15 @@ public class UI_GameScene : UI_Scene
         // 전투 밖에서는 방치 누적이 돌아간다(GameManager.TickIdle). 전투 중엔 실제 전투가 보상하므로 끈다.
         Managers.Game?.SetInBattleArea(area == AreaType.Battle);
 
+        // 구역이 바뀔 때마다 플레이어를 지면에 다시 세운다.
+        //  Idle/Move 클립에는 위치 커브가 있고 Run/Attack에는 없다 → 마을에선 클립이 y를 잡아주지만
+        //  전투(Run)에선 잡아주는 게 없어 씬에 저작된 옛 y가 그대로 남아 **공중을 걷고 있었다**.
+        if (Managers.Game?.Player != null)
+        {
+            Vector3 p = Managers.Game.Player.transform.position;
+            Managers.Game.Player.transform.position = new Vector3(p.x, GROUND_Y, p.z);
+        }
+
         SwapAreaBtnGroup(area);
     }
 

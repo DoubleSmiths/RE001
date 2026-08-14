@@ -12,6 +12,7 @@ public static class BattleMath
     public struct DamageResult
     {
         public bool Hit;          // false면 빗나감 (Miss)
+        public bool Evaded;       // Hit=false 중 피격자 회피 기여분 (슬39 회피 조건 구분 — 총 실패 확률은 동일)
         public bool IsCrit;       // 치명타 여부
         public int  FinalDamage;  // FINAL DMG (Miss면 0)
         public AttackType AttackType;  // 속성(물리/마법) — 데미지 텍스트 색 분기용
@@ -32,10 +33,15 @@ public static class BattleMath
         DamageResult r = default;
         r.AttackType = attackType;   // 속성 보존(miss/hit 공통)
 
-        // 1. 명중 주사위
+        // 1. 명중 주사위 — 실패 구간 [hitChance, 100) 중 [hitChance, Accuracy)는 회피 기여분(Evaded),
+        //    [Accuracy, 100)는 순수 빗나감. 총 실패 확률은 기존과 동일(단일 주사위 유지).
         float hitChance = Mathf.Clamp(attacker.Accuracy - defender.Evasion, 0f, 100f);
-        if (Random.value * 100f >= hitChance)
+        float roll = Random.value * 100f;
+        if (roll >= hitChance)
+        {
+            r.Evaded = roll < attacker.Accuracy;
             return r; // Hit=false, FinalDamage=0
+        }
         r.Hit = true;
 
         // 2-a. BASE

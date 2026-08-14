@@ -799,7 +799,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     // Y는 monster prefab 별 sprite pivot에 따라 다르므로 CreatureData.SpawnY로 분리.
     const float MONSTER_SPAWN_DELAY = 2f;
     const float MONSTER_SPAWN_OFFSET_X = 12f;
-    const float MONSTER_SPAWN_Y_FALLBACK = 2.3f;   // CreatureData 조회 실패 시 기본값
 
     // 전투 배경은 프리팹 하나(CH1BG)를 모든 지역이 공유한다. 지역마다 다른 배경 아트를 만들려면
     // 무한 스크롤용 이음매 없는 패럴랙스 레이어 5장이 필요해 AI 생성으로는 신뢰하기 어렵다.
@@ -854,18 +853,12 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
             // 데이터 드리븐: 현재 지역의 Habitat/EncounterRate로 슬라임/고블린 등 가중 랜덤 선택.
             int dataId = Managers.Object.PickFieldMonsterId(2001);
-            float spawnY = MONSTER_SPAWN_Y_FALLBACK;
-            if (Managers.Data.CreatureDic.TryGetValue(dataId, out var creatureData))
-                spawnY = creatureData.SpawnY;
 
-            // Y는 **플레이어와 같은 지면 높이**로 둔다.
-            //  스프라이트 pivot을 플레이어·몬스터 모두 bottom-middle로 통일했으므로
-            //  같은 y면 같은 바닥에 선다. CreatureData.SpawnY에 의존하면 데이터가 0이거나
-            //  지면 높이와 어긋날 때 몬스터가 화면 밖(지면 아래)에 스폰돼
-            //  "여정을 가도 몬스터가 나오지 않는다"로 보인다.
+            // Y는 지면 상수 하나. 플레이어 y를 따라가게 두면 플레이어가 어긋난 순간
+            //  몬스터까지 같이 떠오른다(실제로 그렇게 둘 다 공중에 떠 있었다).
             Vector3 spawnPos = new Vector3(
                 player.transform.position.x + MONSTER_SPAWN_OFFSET_X,
-                player.transform.position.y,
+                Define.GROUND_Y,
                 0f);
 
             MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);

@@ -178,8 +178,8 @@ TextureImporter:
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 9
+  spritePivot: {x: 0.5, y: 0}
   spritePixelsToUnits: 35
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -288,7 +288,7 @@ TextureImporter:
         y: 480
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -310,7 +310,7 @@ TextureImporter:
         y: 480
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -332,7 +332,7 @@ TextureImporter:
         y: 480
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -354,7 +354,7 @@ TextureImporter:
         y: 480
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -376,7 +376,7 @@ TextureImporter:
         y: 480
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -398,7 +398,7 @@ TextureImporter:
         y: 480
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -420,7 +420,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -442,7 +442,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -464,7 +464,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -486,7 +486,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -508,7 +508,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -530,7 +530,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -552,7 +552,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -574,7 +574,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -596,7 +596,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -618,7 +618,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -640,7 +640,7 @@ TextureImporter:
         y: 360
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -662,7 +662,7 @@ TextureImporter:
         y: 240
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -684,7 +684,7 @@ TextureImporter:
         y: 240
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -706,7 +706,7 @@ TextureImporter:
         y: 240
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -728,7 +728,7 @@ TextureImporter:
         y: 240
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -750,7 +750,7 @@ TextureImporter:
         y: 240
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -772,7 +772,7 @@ TextureImporter:
         y: 120
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -794,7 +794,7 @@ TextureImporter:
         y: 120
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -816,7 +816,7 @@ TextureImporter:
         y: 120
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -838,7 +838,7 @@ TextureImporter:
         y: 120
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -860,7 +860,7 @@ TextureImporter:
         y: 120
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -882,7 +882,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -904,7 +904,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -926,7 +926,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -948,7 +948,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -970,7 +970,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -992,7 +992,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -1014,7 +1014,7 @@ TextureImporter:
         y: 0
         width: 304
         height: 120
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -1036,7 +1036,7 @@ TextureImporter:
         y: 0
         width: 3344
         height: 600
-      alignment: 7
+      alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 

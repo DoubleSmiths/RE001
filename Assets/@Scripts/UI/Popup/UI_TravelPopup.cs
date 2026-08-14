@@ -288,7 +288,39 @@ public class UI_TravelPopup : UI_Popup
             btn.SetSelected(btn.NodeId == _selectedMapId);
         }
 
+        // 잠금 표시는 마지막에 (버튼들이 RefreshLanguage로 라벨을 되돌리므로 항상 여기서 다시 덧붙인다)
+        foreach (GameObject go in _spawnedFieldButtons)
+            ApplyLockVisual(go, go?.GetComponent<UI_FieldSelectButton>()?.NodeId ?? 0);
+        foreach (GameObject go in _spawnedMapButtons)
+            ApplyLockVisual(go, go?.GetComponent<UI_MapSelectButton>()?.NodeId ?? 0);
+
         RefreshQuestNotify();
+    }
+
+    // 잠긴 노드는 회색 + 해금 조건 문구로 표시하고 클릭만 막는다.
+    //  (숨기면 세상이 텅 빈 것처럼 보이고, 무엇을 하면 열리는지도 알 수 없다)
+    void ApplyLockVisual(GameObject go, int nodeId)
+    {
+        if (go == null || nodeId == 0) return;
+        if (!Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var node)) return;
+
+        string reason = Managers.Game.GetTravelLockReason(nodeId);
+        bool locked = !string.IsNullOrEmpty(reason);
+
+        Button button = go.GetComponent<Button>();
+        if (button != null && locked) button.interactable = false;
+
+        foreach (Image img in go.GetComponentsInChildren<Image>(true))
+            img.color = locked ? COLOR_DISABLED : COLOR_DEFAULT;
+
+        TMP_Text label = go.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            // 매번 원본 이름부터 다시 조립 — 덧붙인 문구가 중복 누적되지 않는다.
+            label.text = locked
+                ? $"{Util.Localize(node.Name)}\n<size=60%>{reason}</size>"
+                : Util.Localize(node.Name);
+        }
     }
 
     // 현재 퀘스트 notify 목록 기준으로 여정 팝업의 퀘스트 VFX를 일괄 갱신.
@@ -515,9 +547,11 @@ public class UI_TravelPopup : UI_Popup
         int currentNodeId = Managers.Game.CurrentTravelAreaId;
         Managers.Data.TravelNodeDic.TryGetValue(currentNodeId, out var currentNode);
 
+        // 잠긴 지역도 **표시한다**. 예전엔 해금된 것만 남겼는데, 레벨 게이트가 12레벨 간격이라
+        //  레벨 1에서는 지역이 딱 1개만 보여 "던전이 산들바람 숲 하나뿐"으로 보였다.
+        //  세상이 얼마나 넓은지 + 무엇을 달성해야 열리는지를 보여주고, 이동만 막는다.
         var fieldNodes = _allNode
             .Where(n => n.Category == EXPLORE_CATEGORY && n.ParentId == 0)
-            .Where(n => Managers.Game.IsTravelNodeUnlocked(n.Id))   // 기획서 p1-s47: 해금 안 된 장소는 표시하지 않음
             .ToList();
 
         foreach (var node in fieldNodes)
@@ -555,9 +589,9 @@ public class UI_TravelPopup : UI_Popup
 
         int currentNodeId = Managers.Game.CurrentTravelAreaId;
 
+        // 잠긴 던전도 표시한다 (BuildFieldButtons와 같은 이유).
         var mapNodes = _allNode
             .Where(n => n.ParentId == _selectedFieldId)
-            .Where(n => Managers.Game.IsTravelNodeUnlocked(n.Id))   // 기획서 p1-s47: 해금 안 된 장소는 표시하지 않음
             .OrderBy(n => n.Id)
             .ToList();
 

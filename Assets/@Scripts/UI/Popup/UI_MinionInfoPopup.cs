@@ -268,6 +268,7 @@ public class UI_MinionInfoPopup : UI_Popup
         RefreshStat(Texts.ASNumberText,     Images.ASRankImage,     Images.MinionInfoPopupASFrameMask,   MMStat.AtkSpeed);
         RefreshStat(Texts.CritNumberText,   Images.CritRankImage,   Images.MinionInfoPopupCritFrameMask, MMStat.Crit);
         RefreshWeaponIcon();   // 슬16: 공격력에 무기 아이콘(물리=Sword01 / 마법=Staff01)
+        RefreshLearnedLabel(); // D5: 고유기술 부분/완벽획득 라벨 (미니몬 기록과 동일 표기)
 
         // 슬17/86: FullGrowthInText(=GuranteedText) "(완전 성장까지: <color=#FF0000>N</color>회)"
         //  N = 완전 성장(능력치 최대치)까지 남은 포획 횟수 = MaxTameCount - CaughtCount(0 이상).
@@ -323,9 +324,14 @@ public class UI_MinionInfoPopup : UI_Popup
         ApplyFont(tmp, Define.FontType.UI);
         ApplyGradeOutline(tmp, g);
 
-        // 슬18: 5등급(SS)은 Text_ShineGold 머티리얼 스펙이나, 현재 Text_ShineGold.mat에 폰트 아틀라스가
-        //  없어(=PF_Stardust SDF의 TMP 머티리얼 프리셋이 아님) fontSharedMaterial로 적용 시 글리프가 깨짐.
-        //  → 머티리얼 미적용(등급5 outline 000000 0.7,0.7만 적용). 폰트 프리셋으로 재제작 시 연결 가능.
+        // 슬18: 5등급(SS) 골드 표기 — PF_Stardust_Gold(TMP SDF 프리셋)로 적용.
+        //  (원기획 Text_ShineGold는 SSU 셰이더라 폰트 아틀라스가 없어 글리프가 깨짐 → SDF 골드 프리셋으로 대체.
+        //   등급은 하락하지 않으므로 미만 등급 복원은 불필요)
+        if (g >= 5)
+        {
+            var gold = Managers.Resource.Load<Material>("PF_Stardust_Gold");
+            if (gold != null) tmp.fontSharedMaterial = gold;
+        }
 
         // 슬18: 등급 letter 스프라이트(E/D/C/B/A/SS)를 RankImage에 표기
         var img = GetImage((int)rankImg);
@@ -406,6 +412,41 @@ public class UI_MinionInfoPopup : UI_Popup
         }
         _weaponIcon.sprite = sp;
         _weaponIcon.gameObject.SetActive(true);
+    }
+
+    // D5: 고유기술 부분/완벽획득 라벨 — 고유기술명(SkillNameText) 바로 아래 소형 표기.
+    //  판정/문구/색은 UI_MonsterDetailPopup.RefreshLearned와 동일:
+    //  learned=IsUniqueSkillLearned / perfect=IsAllSS, 부분획득(ParticalGetText)=36FF00 / 완벽획득(CompleteGetText)=FF0000.
+    //  prefab에 전용 노드가 없어 런타임 생성 (RefreshWeaponIcon 패턴).
+    TMP_Text _learnedLabel;
+    void RefreshLearnedLabel()
+    {
+        bool learned = IsUniqueSkillLearned(_dataId);
+        bool perfect = learned && IsAllSS(_dataId);
+
+        if (_learnedLabel == null)
+        {
+            var skillName = GetText((int)Texts.SkillNameText);
+            if (skillName == null) return;
+            var go = new GameObject("LearnedLabel", typeof(RectTransform), typeof(CanvasRenderer));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(skillName.rectTransform, false);
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0f);   // 기술명 rect 바로 아래 중앙
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = new Vector2(0f, -0.5f);
+            rt.sizeDelta = new Vector2(40f, 6f);
+            _learnedLabel = go.AddComponent<TextMeshProUGUI>();
+            _learnedLabel.fontSize = 5f;
+            _learnedLabel.alignment = TextAlignmentOptions.Center;
+            _learnedLabel.raycastTarget = false;
+            _learnedLabel.enableWordWrapping = false;
+        }
+
+        _learnedLabel.gameObject.SetActive(learned);
+        if (!learned) return;
+        _learnedLabel.text = Util.Localize(perfect ? Define.LocalizeKey.CompleteGetText : Define.LocalizeKey.ParticalGetText);
+        _learnedLabel.color = perfect ? Util.HexToColor("FF0000") : Util.HexToColor("36FF00");
+        ApplyFont(_learnedLabel, Define.FontType.UI);
     }
 
     // 슬라이드 87: 능력치 등급별 outline 색/거리 (0~5등급)

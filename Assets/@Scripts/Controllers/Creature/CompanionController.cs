@@ -44,7 +44,9 @@ public class CompanionController : CreatureController
 
         if (_player != null)
         {
-            transform.position = _player.transform.position + FOLLOW_OFFSET;
+            Vector3 p = _player.transform.position + FOLLOW_OFFSET;
+            p.y = Define.GROUND_Y;
+            transform.position = p;
             ApplySorting();
         }
         // 플레이어와 같이 오른쪽(적 방향)을 보게. 슬라임 아트는 flipX=false가 좌향 → 우향은 true.
@@ -111,7 +113,11 @@ public class CompanionController : CreatureController
     void LateUpdate()
     {
         if (_player == null || State == Define.State.Dead) return;
+
+        // X만 플레이어를 따라가고 **Y는 항상 지면**. 플레이어 Y를 그대로 물려받으면
+        //  플레이어가 뜨거나 가라앉을 때 미니몬도 같이 어긋난다(땅속에 박혀 보이던 원인).
         Vector3 desired = _player.transform.position + FOLLOW_OFFSET;
+        desired.y = Define.GROUND_Y;
         if ((transform.position - desired).sqrMagnitude < 0.0025f)   // ≈0.05 unit 이내면 스냅(떨림 제거)
             transform.position = desired;
         else

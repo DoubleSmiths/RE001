@@ -9,13 +9,16 @@ using static Define;
 //                            Conditions에 그 조건이 있으면 ProcChance% 굴려 Effect 적용.
 //  - 시간 발동(Time): ActiveContext(InBattle/OutOfBattle/Always) 충족 시 Cooldown마다 Effect 적용.
 //  - 효과(Effect): Heal(본인 회복) / BonusDamage(현재 타겟 추가피해) / Buff(본인 스탯 일시 증가).
-//  ※ 발동조건 데이터는 SkillData(시드 JSON). 연속 n회/사망조건 등 stateful 조건은 후속.
+//  - stateful 조건(연속n치명타/연속n회피 등)의 카운터는 PlayerController가 세고 param으로 전달.
+//  ※ 발동조건 데이터는 SkillData(시드 JSON).
 public class AbilityRunner : MonoBehaviour
 {
     PlayerController _player;
 
     readonly Dictionary<int, float> _cooldowns = new();   // 시간발동 능력별 남은 쿨타임
     readonly HashSet<int> _firedLowHp = new();            // LowHp: 전투당 1회 발동 추적
+    readonly HashSet<int> _firedEnemyLowHp = new();       // EnemyLowHp: 전투당 1회 발동 추적
+    bool _inAfterNotify;                                  // AfterAbilityUse 재귀(능력→능력 무한 연쇄) 가드 — 1단만 허용
 
     class TempBuff { public int id; public string stat; public float value; public float expire; }
     readonly List<TempBuff> _buffs = new();               // 활성 임시 버프
@@ -29,6 +32,7 @@ public class AbilityRunner : MonoBehaviour
     {
         _inBattle = true;
         _firedLowHp.Clear();
+        _firedEnemyLowHp.Clear();
         _cooldowns.Clear();   // 전투 시작 시 쿨 초기화(즉시 발동 가능)
         Notify(AbilityCondition.BattleStart);
     }
@@ -49,25 +53,43 @@ public class AbilityRunner : MonoBehaviour
     }
 
     // ── 확률 발동 조건 통지 (PlayerController 훅에서 호출) ──
+    //  param 의미: LowHp/EnemyLowHp=HP% / ConsecutiveCrit·Evade=현재 연속 횟수 / AfterAbilityUse=발동한 능력 DataId
     public void Notify(AbilityCondition cond, float param = 0f)
     {
         if (Managers.Ability == null || Managers.Game == null || _player == null) return;
 
-        foreach (int id in Managers.Game.EquippedAbilities)
+        foreach (int id in Managers.Ability.ActiveAbilityIds)
         {
             if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) continue;
             if (d.TriggerType != AbilityTrigger.Probability) continue;
             if (d.Conditions == null || !d.Conditions.Contains(cond)) continue;
 
-            if (cond == AbilityCondition.LowHp)
+            switch (cond)
             {
-                if (param > d.ConditionValue) continue;     // HP% 임계 초과면 미발동
-                if (_firedLowHp.Contains(id)) continue;     // 전투당 1회
+                case AbilityCondition.LowHp:
+                    if (param > d.ConditionValue) continue;     // HP% 임계 초과면 미발동
+                    if (_firedLowHp.Contains(id)) continue;     // 전투당 1회
+                    break;
+                case AbilityCondition.EnemyLowHp:
+                    if (param > d.ConditionValue) continue;
+                    if (_firedEnemyLowHp.Contains(id)) continue; // 전투당 1회
+                    break;
+                case AbilityCondition.ConsecutiveCrit:
+                case AbilityCondition.ConsecutiveEvade:
+                    // 연속 횟수가 정확히 n(ConditionValue)이 되는 순간 1회 발동 — 끊기면 카운터 리셋 후 재무장
+                    if (Mathf.RoundToInt(param) != Mathf.Max(1, Mathf.RoundToInt(d.ConditionValue))) continue;
+                    break;
+                case AbilityCondition.AfterAbilityUse:
+                    // ConditionValue = 대상 능력 DataId (0이면 아무 능력 발동 후)
+                    if (d.ConditionValue > 0f && Mathf.RoundToInt(param) != Mathf.RoundToInt(d.ConditionValue)) continue;
+                    if (Mathf.RoundToInt(param) == d.DataId) continue;   // 자기 자신 발동에는 미반응
+                    break;
             }
 
             if (Random.value * 100f > Mathf.Max(0f, d.ProcChance)) continue;   // n% 굴림
 
-            if (cond == AbilityCondition.LowHp) _firedLowHp.Add(id);
+            if (cond == AbilityCondition.LowHp)      _firedLowHp.Add(id);
+            if (cond == AbilityCondition.EnemyLowHp) _firedEnemyLowHp.Add(id);
             ApplyEffect(d);
         }
     }
@@ -88,7 +110,7 @@ public class AbilityRunner : MonoBehaviour
         if (Managers.Ability == null || Managers.Game == null || _player == null) return;
         if (_player.State == State.Dead) return;
 
-        foreach (int id in Managers.Game.EquippedAbilities)
+        foreach (int id in Managers.Ability.ActiveAbilityIds)
         {
             if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) continue;
             if (d.TriggerType != AbilityTrigger.Time) continue;
@@ -110,31 +132,68 @@ public class AbilityRunner : MonoBehaviour
         || (ctx == AbilityContext.InBattle && _inBattle)
         || (ctx == AbilityContext.OutOfBattle && !_inBattle);
 
-    // ── 효과 적용 ──
+    // ── 효과 적용 ── EffectValue는 능력 단계(Level)만큼 곱산.
+    //  ponytail: ProcChance/EffectDuration은 단계 미반영(확률 스케일은 밸런스 급변 — per-level 컬럼 엑셀화 후속).
     void ApplyEffect(SkillData d)
     {
+        int lv = Mathf.Max(1, Managers.Ability != null ? Managers.Ability.GetLevel(d.DataId) : 1);
+        float value = d.EffectValue * lv;
+
         switch (d.Effect)
         {
             case AbilityEffect.Heal:
-                _player.Heal(d.EffectValue);
+                _player.Heal(value);
+                SpawnEffectVfx(d, _player.transform);
                 break;
 
             case AbilityEffect.BonusDamage:
                 var tgt = _player.CurrentTarget;
                 if (tgt != null && tgt.State != State.Dead)
-                    tgt.TakeHit(BattleMath.FromRawDamage(Mathf.RoundToInt(d.EffectValue)), _player);
+                {
+                    tgt.TakeHit(BattleMath.FromRawDamage(Mathf.RoundToInt(value)), _player);
+                    SpawnEffectVfx(d, tgt.transform);
+                }
                 break;
 
             case AbilityEffect.Buff:
-                ApplyBuff(d);
+                ApplyBuff(d, value);
+                SpawnEffectVfx(d, _player.transform);
                 break;
         }
-        Debug.Log($"[Ability] 발동: {d.Name} ({d.TriggerType}) → {d.Effect} {d.EffectValue}");
+        Debug.Log($"[Ability] 발동: {d.Name} Lv.{lv} ({d.TriggerType}) → {d.Effect} {value}");
+
+        // 슬39: [특정 능력 사용 후] 조건 통지 — 능력→능력 연쇄는 1단만(무한 루프 가드)
+        if (!_inAfterNotify)
+        {
+            _inAfterNotify = true;
+            Notify(AbilityCondition.AfterAbilityUse, d.DataId);
+            _inAfterNotify = false;
+        }
     }
 
-    void ApplyBuff(SkillData d)
+    // 슬39/능력#4: 발동 VFX — EffectVfxLabel 지정 시 그 프리팹, 비면 효과별 기본 매핑(기등록 어드레서블).
+    static string DefaultVfx(AbilityEffect effect) => effect switch
     {
-        if (string.IsNullOrEmpty(d.EffectStat) || d.EffectValue == 0f) return;
+        AbilityEffect.Heal        => "HP Potion Ef",
+        AbilityEffect.BonusDamage => "FX_hit_10",
+        AbilityEffect.Buff        => "Star_01_Anim_13_a",
+        _ => null,
+    };
+
+    void SpawnEffectVfx(SkillData d, Transform at)
+    {
+        if (at == null) return;
+        string label = string.IsNullOrEmpty(d.EffectVfxLabel) ? DefaultVfx(d.Effect) : d.EffectVfxLabel;
+        if (string.IsNullOrEmpty(label)) return;
+        var go = Managers.Resource?.Instantiate(label);
+        if (go == null) return;
+        go.transform.position = at.position;
+        Destroy(go, 1.5f);   // 짧은 원샷 연출 — 풀링 미사용 프리팹이라 일반 Destroy
+    }
+
+    void ApplyBuff(SkillData d, float value)
+    {
+        if (string.IsNullOrEmpty(d.EffectStat) || value == 0f) return;
 
         bool timed = d.EffectDuration > 0f;   // ③지속시간형 / false=②인게임지속(전투끝까지)
         float expire = timed ? Time.time + d.EffectDuration : float.MaxValue;
@@ -147,9 +206,9 @@ public class AbilityRunner : MonoBehaviour
         }
         else
         {
-            AddStat(d.EffectStat, d.EffectValue);
+            AddStat(d.EffectStat, value);
             // EffectDuration 0 = 전투 종료까지 유지(OnBattleEnd에서 ClearBuffs로 환불)
-            _buffs.Add(new TempBuff { id = d.DataId, stat = d.EffectStat, value = d.EffectValue, expire = expire });
+            _buffs.Add(new TempBuff { id = d.DataId, stat = d.EffectStat, value = value, expire = expire });
         }
         // 슬40: 좌측상단 버프 아이콘 표시(②인게임지속=정적, ③지속시간형=게이지+점멸+FadeOut)
         _player.RaiseBuffApplied(new PlayerController.BuffInfo(d.DataId, d.IconLabel, d.EffectDuration, timed));

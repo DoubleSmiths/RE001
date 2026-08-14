@@ -628,6 +628,14 @@ public class Define
     public const int SPEED_POTION_ID_MIN = 40000;
     public const int IMPORTANT_ITEM_ID_MIN = 20000;
 
+    #region Ground (접지)
+    // 캐릭터의 **발이 닿는** 월드 Y. 지면 타일(JungleTileset) 윗면 높이다.
+    //  플레이어·몬스터·동행 미니몬 전부 이 값 하나를 쓴다. 아트마다 다르던 바닥 여백은
+    //  스프라이트 pivot이 흡수한다(Tools/Ground Pivot 정렬). 여백을 코드에서 보정하지 말 것 —
+    //  아트가 바뀔 때마다 상수가 늘어나고, 그러다 "누구는 뜨고 누구는 파묻히는" 상태로 돌아간다.
+    public const float GROUND_Y = 2.33f;
+    #endregion
+
     #region Forge (대장간/장비 강화 — VS 원작 Enhance Chance Cal 발굴 수치)
     // 강화 최대 단계 (+9). 도달 시 장비 능력 영구화(슬38).
     public const int ENHANCE_MAX_LEVEL = 9;
