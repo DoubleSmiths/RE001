@@ -61,7 +61,12 @@ class Pool
 
     void OnDestroy(GameObject go)
     {
-        GameObject.Destroy(go);
+        // 플레이 모드를 나갈 때 풀이 정리되는데, 그 시점은 이미 에디트 모드다.
+        //  거기서 Destroy를 부르면 "Destroy may not be called from edit mode!"가 콘솔을 빨갛게 채운다.
+        if (Application.isPlaying)
+            GameObject.Destroy(go);
+        else
+            GameObject.DestroyImmediate(go);
     }
     #endregion
 }

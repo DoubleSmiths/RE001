@@ -50,7 +50,8 @@ public class UI_InventoryPopup : UI_Popup
     #endregion
 
     // 번호에 따라 장비, 소비, 퀘스트, 기타로 구분 (지금은 테스트로 9000 이상은 중요 아이템으로 간주)
-    private const int IMPORTANT_ITEM_ID_MIN = 9000;
+    // (귀중품 하한은 Define.IMPORTANT_ITEM_ID_MIN을 쓴다. 여기 있던 9000짜리 동명 상수는
+    //  Define 값(20000)을 가리기만 하고 아무도 안 써서 제거했다 — 읽는 사람만 헷갈린다)
     private const int IMPORTANT_SLOT_COUNT = 5;
     private const int NORMAL_SLOT_COUNT = 25;
     private const int OPEN_SLOT_COUNT = 16;
@@ -107,9 +108,11 @@ public class UI_InventoryPopup : UI_Popup
 
         foreach (InventoryItem item in Managers.Game.Inventory)
         {
-            Debug.Log($"Inventory Item: DataId={item.DataId}, Count={item.Count}");
-
-            if (item.DataId > Define.ITEM_ID_MIN && item.DataId < Define.ITEM_ID_MIN + 1000)
+            // 일반 아이템 = ITEM_ID_MIN(10000) 이상, 귀중품(20000) 미만.
+            //  예전엔 `< ITEM_ID_MIN + 1000` 이라 **10001~10999만** 받았다.
+            //  몬스터 재료가 11001~11030이라 통째로 걸러져,
+            //  사냥해서 얻은 재료가 인벤토리에는 쌓이는데 가방에는 안 보였다.
+            if (item.DataId >= Define.ITEM_ID_MIN && item.DataId < Define.IMPORTANT_ITEM_ID_MIN)
                 normalItems.Add(item);
 
             // TODO : 아이템을 클릭하면 아이템 정보 팝업이 뜨고, NEW 안나오게 설정하기.
