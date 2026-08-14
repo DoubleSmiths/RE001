@@ -237,3 +237,24 @@ CanvasScaler(referenceResolution 180x440, 높이 기준)로 계산하면
    (텍스트 grep으로는 루트를 특정하지 못했다 — 첫 RectTransform이 루트가 아니다)
 2. 208이면 인스펙터에서 180으로 수정 — 이게 가장 확실하고 안전한 경로
 3. 코드 보정은 시도하지 말 것 (위 실패 기록 참조)
+
+### 프리팹 루트 확인 결과 (최종)
+
+`m_Father: {fileID: 0}` 인 진짜 루트 RectTransform을 두 프리팹에서 찾아 비교했다.
+
+    UI_SkillDetailPopup  루트 sizeDelta = (0, 0)  anchorMin = (0, 0)
+    UI_EquipmentPopup    루트 sizeDelta = (0, 0)  anchorMin = (0, 0)
+
+**프리팹에는 차이가 없다.** 즉 208은 런타임에 Canvas가 만든 값이 확정이며,
+프리팹 인스펙터에서 Width를 고치는 접근도 대상이 없다(둘 다 0).
+
+정리하면 이 문제는
+- 프리팹 값 차이 아님 (루트 sizeDelta 동일)
+- CanvasScaler 설정 차이 아님 (referenceResolution·match·mode 동일)
+- Canvas 파라미터 차이 아님 (planeDistance·renderMode 동일)
+- 코드로 sizeDelta 보정 불가 (Canvas가 rect를 결정)
+
+**남은 유일한 가설**: 팝업이 열리는 **시점/순서**에 따라 Canvas가 다른 pixelRect를 잡는다.
+(상세창은 보통 스킬북 위에 겹쳐 열리므로 중첩 캔버스 상태가 다를 수 있다)
+→ 다음 세션은 스킬북을 거치지 않고 상세창만 단독으로 연 경우와
+   스킬북 → 아이콘 클릭으로 연 경우의 rect를 **비교**하는 것부터 시작할 것.
