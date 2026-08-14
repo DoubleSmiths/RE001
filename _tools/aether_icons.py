@@ -38,6 +38,7 @@ MODEL = "GPT Image 1.5"
 # 기본 urllib UA는 403으로 막힌다(curl은 통과) — 브라우저 UA로 위장
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 ICON_SIZE = 64
+SUBMIT_GAP = 3.0   # 제출 간격(초). 0.4로 몰아넣었다가 100장 넘기며 429를 맞았다
 OUT_EQUIP = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Equipment", "Generated")
 OUT_SKILL = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Skill", "Generated")
 OUT_MONSTER = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Generated")
@@ -117,13 +118,23 @@ def run(items, out_dir, limit=None, size=None):
     print(f"생성 대상 {len(todo)}개 / 전체 {len(items)}개")
     jobs = []
     for name, prompt in todo:
-        try:
-            r = post("/generate/image", {"prompt": f"{prompt}. {STYLE}", "ai_model": MODEL}, key)
-            jobs.append((name, r["job_id"]))
-            print(f"  제출 {name} → {r['job_id'][:8]}")
-        except Exception as e:
-            print(f"  !제출실패 {name}: {e}")
-        time.sleep(0.4)          # 과도한 연속 호출 방지
+        # 429(Too Many Requests)는 잠시 쉬면 풀린다. 지수 백오프로 최대 4회 재시도.
+        delay = SUBMIT_GAP
+        for attempt in range(4):
+            try:
+                r = post("/generate/image", {"prompt": f"{prompt}. {STYLE}", "ai_model": MODEL}, key)
+                jobs.append((name, r["job_id"]))
+                print(f"  제출 {name} → {r['job_id'][:8]}")
+                break
+            except Exception as e:
+                if "429" in str(e) and attempt < 3:
+                    wait = 20 * (attempt + 1)
+                    print(f"  …429, {wait}s 대기 후 재시도 ({name})")
+                    time.sleep(wait)
+                    continue
+                print(f"  !제출실패 {name}: {e}")
+                break
+        time.sleep(delay)        # 연속 호출 간격 — 좁으면 429가 난다
 
     done, failed = 0, []
     pending = list(jobs)
