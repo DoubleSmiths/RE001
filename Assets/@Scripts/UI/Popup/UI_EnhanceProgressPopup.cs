@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using static Define;
 
@@ -133,13 +134,18 @@ public class UI_EnhanceProgressPopup : UI_Popup
             SetRevealText(Texts.Txt_SuccessTxtGroup_03, nmEnh);
             SetRevealText(Texts._4, nmEnh);
 
-            // 잠재력 변화
-            RevealText(Texts.Txt_PotenGroup_01);
-            SetRevealText(Texts.MainPotenText, _equip.Potential.ToString());
+            // 잠재력 변화.
+            //  "잠재력 변화" 라벨이 "능력치 변화" 라벨과 **같은 좌표**에 놓여 있어 두 글자가 겹쳐 찍혔다.
+            //  라벨은 끄고 수치 쪽에 이름을 붙인다(내구도와 같은 처리). 라벨의 원래 자리는
+            //  자기 수치(아래쪽)와도 멀어서 어차피 제 위치가 아니었다.
+            var potenLabel = GetText((int)Texts.Txt_PotenGroup_01);
+            if (potenLabel != null) potenLabel.gameObject.SetActive(false);
+            SetRevealText(Texts.MainPotenText, $"잠재력 {_equip.Potential}");
             SetRevealText(Texts.IncPotenText, $"+{_result.PotenGain}");
 
             // 능력치 변화 — 현재 데이터는 공격력 단일(단계당 +5). 다중 스탯 데이터화 시 열 확장.
             SetGroupActive(GameObjects.AttRealText, true);
+            RevealText(Texts.AttText);   // "능력치 변화" 라벨도 색을 되살려야 보인다
             int before = SumAtkBonus(_result.PrevLevel);
             int after  = SumAtkBonus(_equip.EnhanceLevel);
             SetRevealText(Texts.Text, Util.Localize(LocalizeKey.PhysicalAttackText));
@@ -152,18 +158,32 @@ public class UI_EnhanceProgressPopup : UI_Popup
             Managers.Sound?.PlaySFX("SFX_Fail");   // 강화 실패음 (클립 미등록이면 경고만)
 
             RevealText(Texts.Txt_FailTxtGroup_02);
-            RevealText(Texts.Txt_FailTxtGroup_01);
-            SetRevealText(Texts._2_B4_Variable, _result.PrevDurability.ToString());
-            SetRevealText(Texts.Txt_FailTxtGroup_04, $"/{data.MaxDurability}");
-            SetRevealText(Texts._4_After_Variable, $"<color=red>{_equip.Durability}</color>");
+
+            // before / "/max" / after 가 프리팹에서 거의 같은 x에 겹쳐 놓여 있어
+            //  "내구도 /900" 처럼 숫자들이 서로를 덮어썼다 → 한 줄로 합쳐 라벨에 싣고 나머지는 끈다.
+            SetRevealText(Texts.Txt_FailTxtGroup_01,
+                $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_result.PrevDurability} ▶ " +
+                $"<color=red>{_equip.Durability}</color>/{data.MaxDurability}");
+            HideText(Texts._2_B4_Variable);
+            HideText(Texts.Txt_FailTxtGroup_04);
+            HideText(Texts._4_After_Variable);
 
             SetGroupActive(GameObjects.PotenGroup, false);   // 실패 — 잠재력 변화 없음
         }
 
-        // 공통: EnhAttDetail 내구도 현황
+        // EnhAttDetail 내구도 현황.
+        //  라벨과 수치가 프리팹에서 거의 같은 자리에 놓여 "내구도110/110"처럼 겹쳐 보였다 →
+        //  라벨을 수치 안으로 합치고 원래 라벨은 끈다(대장간 팝업과 같은 처리).
+        //  실패 연출에는 FailTxtGroup이 before▶after 내구도를 따로 보여주므로 여기선 통째로 숨긴다
+        //  (둘 다 켜져서 "내구도"가 두 번 겹쳐 찍혔다).
         var duriLabel = GetText((int)Texts.DurabilityText);
-        if (duriLabel != null) duriLabel.gameObject.SetActive(true);
-        SetRevealText(Texts.DurabilityRealText, $"{_equip.Durability}/{data.MaxDurability}");
+        if (duriLabel != null) duriLabel.gameObject.SetActive(false);
+
+        var duriValue = GetText((int)Texts.DurabilityRealText);
+        if (duriValue != null) duriValue.gameObject.SetActive(_result.Success);
+        if (_result.Success)
+            SetRevealText(Texts.DurabilityRealText,
+                $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_equip.Durability}/{data.MaxDurability}");
     }
 
     // 단계별 증가분(EquipEnhanceData) 누적 합 — 표시용
@@ -190,6 +210,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
     {
         var txt = GetText((int)t);
         if (txt == null) return;
+        MakeVisible(txt);
         txt.gameObject.SetActive(false);
         txt.gameObject.SetActive(true);
     }
@@ -200,8 +221,26 @@ public class UI_EnhanceProgressPopup : UI_Popup
         if (txt == null) return;
         txt.text = value;
         ApplyFont(txt, FontType.UI);
+        MakeVisible(txt);
         txt.gameObject.SetActive(false);
         txt.gameObject.SetActive(true);
+    }
+
+    void HideText(Texts t)
+    {
+        var txt = GetText((int)t);
+        if (txt != null) txt.gameObject.SetActive(false);
+    }
+
+    // 프리팹에 저작된 색이 화면에서 안 보이는 값이라 [능력치 변화]/[잠재력 변화] 패널이
+    //  통째로 비어 보였다 — 능력치 쪽은 **alpha 0**, 잠재력 쪽은 검은 배경 위 **검은 글자**.
+    //  값은 정상적으로 들어가 있었으니 색만 되살린다. 의도된 색(초록 증가치 등)은 유지.
+    static void MakeVisible(TMP_Text txt)
+    {
+        Color c = txt.color;
+        if (c.r + c.g + c.b < 0.15f) c = Color.white;   // 사실상 검정 → 흰색
+        c.a = 1f;
+        txt.color = c;
     }
 
     void SetGroupActive(GameObjects go, bool on)

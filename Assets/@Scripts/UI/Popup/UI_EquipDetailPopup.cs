@@ -137,7 +137,17 @@ public class UI_EquipDetailPopup : UI_Popup
         if (icon != null && string.IsNullOrEmpty(data.SpriteName) == false)
         {
             var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
-            if (sp != null) { icon.sprite = sp; icon.preserveAspect = true; }
+            if (sp != null)
+            {
+                // WIcon에는 EquipIcon Animator가 붙어 있고, 그 클립이 sprite를 **매 프레임 덮어쓴다**.
+                //  그래서 여기서 올바른 스프라이트를 넣어도 다음 프레임에 클립 것으로 되돌아가,
+                //  장비창에서 고른 장비와 상세 팝업의 그림이 서로 달랐다.
+                //  (UI_ForgePopup은 이미 같은 이유로 애니메이터를 끄고 있다)
+                var animator = icon.GetComponent<Animator>();
+                if (animator != null) animator.enabled = false;
+                icon.sprite = sp;
+                icon.preserveAspect = true;
+            }
         }
 
         SetActive(GetObject((int)GameObjects.EquipedEf), _equip.IsEquipped);   // 'E' 뱃지

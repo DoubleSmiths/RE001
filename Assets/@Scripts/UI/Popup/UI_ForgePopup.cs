@@ -200,7 +200,17 @@ public class UI_ForgePopup : UI_Popup
 
         // ── RestorePart: 내구도 / 재료 / 거울 ──
         int maxDuri = data.MaxDurability;
-        GetText((int)Texts.DuriText).text = $"{_equip.Durability}/{maxDuri}";
+        // 프리팹에 "내구도" 라벨과 수치가 **따로** 놓여 있는데 간격이 10px밖에 안 돼 서로 겹쳐 있었다
+        //  ("내구도110/110"처럼 뭉개져 보임). 라벨을 수치 텍스트 안으로 합치고 원래 라벨은 끈다.
+        //  원본 화면처럼 현재 수치만 초록으로 준다.
+        var duriLabel = Util.FindChild<TMPro.TMP_Text>(gameObject, "Text_2", true);
+        if (duriLabel != null) duriLabel.gameObject.SetActive(false);
+        GetText((int)Texts.DuriText).text =
+            $"{Util.Localize(Define.LocalizeKey.ForgeDurabilityText)} <color=#4CFF4C>{_equip.Durability}</color>/{maxDuri}";
+
+        // 프리팹에 영문 placeholder("CANT RECOV"/"CANT ENHANCE")가 박혀 있어 한글 화면에 그대로 노출됐다.
+        SetOverlayText("Txt_CantEnhaceCraft_13", Util.Localize(Define.LocalizeKey.ForgeCantRecoverText));
+        SetOverlayText("Txt_CantEnhaceCraft_09", Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText));
 
         int matCount = Managers.Game.GetItemCount(RESTORE_MATERIAL_ID);
         bool matOk   = matCount >= RESTORE_MATERIAL_COUNT;
@@ -218,6 +228,12 @@ public class UI_ForgePopup : UI_Popup
 
         bool canRestore = _equip.Durability < maxDuri && (matOk || morCount > 0);
         GetObject((int)GameObjects.Img_BtnGroup_01)?.SetActive(!canRestore);
+        if (!canRestore)
+        {
+            // 강화쪽과 같은 이유 — "복구불가"만 떠 있으면 왜 안 되는지 알 수 없다.
+            SetOverlayText("Txt_CantEnhaceCraft_13",
+                _equip.Durability >= maxDuri ? "내구도 가득" : "재료 부족");
+        }
 
         // ── EnhancePart: 주문서 4종 ──
         for (int i = 0; i < 4; i++)
@@ -235,9 +251,37 @@ public class UI_ForgePopup : UI_Popup
         bool canEnhance = _selectedScroll >= 0
             && Managers.Game.CanEnhance(_equip, ENHANCE_SCROLL_IDS[_selectedScroll]);
         GetObject((int)GameObjects.Img_BtnGroup_02)?.SetActive(!canEnhance);
+
+        // 막혔으면 **왜** 막혔는지 버튼에 쓴다.
+        //  갓 시작한 플레이어는 골드가 0인데 강화 비용이 120이라 항상 막히는데,
+        //  화면엔 "강화불가"만 떠서 대장간이 통째로 고장 난 것처럼 보였다.
+        if (!canEnhance)
+            SetOverlayText("Txt_CantEnhaceCraft_09", BlockReason());
+    }
+
+    // 강화가 막힌 이유 (표시 우선순위 = 플레이어가 먼저 해결해야 하는 순서)
+    string BlockReason()
+    {
+        if (_equip == null) return Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText);
+        if (_equip.EnhanceLevel >= ENHANCE_MAX_LEVEL) return "최대 강화";
+        if (_equip.Durability <= 0) return "내구도 0";
+        if (_selectedScroll < 0) return "주문서 없음";
+
+        int cost = Managers.Game.GetEnhanceCost(_equip);
+        if (Managers.Game.Gold < cost) return $"골드 {cost:N0} 필요";
+        return Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText);
     }
 
     // 아이템 박스 공용 세팅 — 아이콘(ItemDic 스프라이트, 없으면 authored 유지) + 수량 + dim
+    // 프리팹 안 이름으로 찾아 문자열을 넣는다 (enum Texts에 없는 오버레이 라벨용).
+    //  로컬라이즈가 필요한 값은 호출부에서 Util.Localize 해서 넘긴다 —
+    //  여기서 무조건 Localize 하면 사유 문구처럼 조립된 문자열이 키로 취급돼 사라진다.
+    void SetOverlayText(string childName, string text)
+    {
+        var t = Util.FindChild<TMP_Text>(gameObject, childName, true);
+        if (t != null) t.text = text;
+    }
+
     void SetItemBox(Image icon, TMP_Text countTxt, int itemId, string countStr, bool enough)
     {
         if (icon != null)
