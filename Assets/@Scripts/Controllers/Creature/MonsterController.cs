@@ -100,8 +100,12 @@ public class MonsterController : CreatureController
     {
         if (State == Define.State.Attack) return;
         _rb.linearVelocity = new Vector2(-GROUND_SCROLL_SPEED, _rb.linearVelocity.y);
-        if (State != Define.State.Idle)
-            State = Define.State.Idle;
+        // 다가오는 동안은 이동 모션. 예전엔 Idle로 고정했는데, 그건 슬라임 애니메이터에
+        //  "Run"이 없어서 어쩔 수 없었던 것이다. 아키타입 애니메이터에는 Run이 있으므로
+        //  실제로 걸어오는 게 보인다. (Run이 없는 레거시 애니메이터는 CrossFade가 무시되고
+        //  직전 클립이 유지되므로 예전과 같이 보인다 — 깨지지 않는다)
+        if (State != Define.State.Moving)
+            State = Define.State.Moving;
     }
 
     void TryAttack()
@@ -114,32 +118,41 @@ public class MonsterController : CreatureController
         State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
 
-        // 슬라이드 61 — 데미지 적용은 AttackTrigger() (Animation Event 키프레임 시점).
-        // 몬스터 Attack anim에 키프레임이 아직 없으면 TryAttack이 fallback으로 즉시 호출.
-        // 자산에 키프레임 추가되면 이 inline 호출은 제거.
-        //AttackTrigger();
-
-        StartCoroutine(CoResetStateAfterAttack(0.4f));
+        // 슬라이드 61 — 타격 판정은 Attack 모션 중간(ATTACK_HIT_DELAY)에.
+        //  예전엔 Animation Event가 붙기를 기다리며 호출을 주석 처리해 뒀는데,
+        //  이벤트가 끝내 안 붙어서 **몬스터가 공격 자세만 취하고 데미지를 전혀 안 줬다**.
+        //  이벤트에 의존하지 말고 코루틴 하나로 처리한다 — 레거시/생성 애니메이터 모두에서 동작한다.
+        //  (혹시 클립에 이벤트가 붙어 있어도 _attackHitDone 가드로 두 번 맞지 않는다)
+        StartCoroutine(CoAttack());
     }
 
-    // 슬라이드 61 — 공격판정 순간. Animation Event에서 호출되어야 함.
-    // 자산에 이벤트 추가되기 전까지는 TryAttack이 inline으로 호출 (시각 동기화 X).
+    const float ATTACK_HIT_DELAY = 0.25f;   // Attack 모션에서 타격이 닿는 시점
+    const float ATTACK_RECOVER   = 0.15f;   // 타격 후 Idle 복귀까지
+    bool _attackHitDone;
+
+    IEnumerator CoAttack()
+    {
+        _attackHitDone = false;
+        yield return new WaitForSeconds(ATTACK_HIT_DELAY);
+        AttackTrigger();
+        yield return new WaitForSeconds(ATTACK_RECOVER);
+        if (State != Define.State.Dead && State != Define.State.OnDamaged)
+            State = Define.State.Idle;
+    }
+
+    // 슬라이드 61 — 공격판정 순간. CoAttack이 호출하며, 클립에 Animation Event가 붙어 있어도
+    //  같은 함수로 들어온다. 한 번의 공격에 한 번만 맞도록 _attackHitDone으로 막는다.
     public void AttackTrigger()
     {
+        if (_attackHitDone) return;
         if (_target == null) return;
         if (_target.State == Define.State.Dead) return;
         if (State != Define.State.Attack) return;
+        _attackHitDone = true;
 
         Managers.Sound?.PlaySFX(_data != null ? _data.AttackSfx : "Slime_Attack");   // 몬스터 공격 (데이터 드리븐)
         BattleMath.DamageResult result = BattleMath.Resolve(this, _target, AttackType.Physical);
         _target.TakeHit(result, this);
-    }
-
-    IEnumerator CoResetStateAfterAttack(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (State != Define.State.Dead)
-            State = Define.State.Idle;   // Slime Animator에 "Run" 없음 — Idle로 복귀
     }
 
     // ────────────────────────────────────────
