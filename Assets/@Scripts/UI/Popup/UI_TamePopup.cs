@@ -376,6 +376,12 @@ public class UI_TamePopup : UI_Popup
         else success = Managers.MinMon.TryCatch(_dataId);
         DebugForceCatch = 0;
 
+        // 시도 직후 버튼 라벨(시도횟수/확정횟수)을 즉시 갱신한다.
+        //  TryCatch는 실패 시 TameCount를 올리지만, 여기서 다시 그리지 않으면 화면 숫자가 그대로라
+        //  **기회가 차감되지 않는 것처럼 보인다.** 예전에 같은 증상을 한 번 고쳤는데(303행 주석)
+        //  갱신 지점이 Init/등장 시점뿐이라 시도 후에는 다시 낡은 값이 남아 있었다.
+        RefreshLureButton();
+
         // "..." Emoj_Dots(생각하는 텀)를 먼저 충분히(약 3초) 보여준 뒤 결과/효과 텍스트를 낸다.
         Managers.Sound?.PlaySFX("SFX_MinimonThink");   // 생각하는 텀
         PlayEmoj(Images.MonsterEmoj, "Emoj_Dots");
