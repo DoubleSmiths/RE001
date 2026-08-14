@@ -61,6 +61,13 @@ public class ObjectManager
         }
 
         GameObject go = Managers.Resource.Instantiate(data.PrefabLabel, MonsterTransform);
+
+        // Y는 **데이터(SpawnY)를 기준**으로 맞춘다.
+        //  호출자가 y를 0으로 넘기는 경로가 있어 몬스터가 지면 아래(화면 밖)에 스폰됐고,
+        //  "여정을 가도 몬스터가 나오지 않는다"로 보였다. 스프라이트 pivot이 bottom-middle이므로
+        //  SpawnY가 곧 발이 닿는 높이다.
+        if (pos.y <= 0.01f && data.SpawnY > 0.01f)
+            pos.y = data.SpawnY;
         go.transform.position = pos;
 
         MonsterController mc = go.GetOrAddComponent<MonsterController>();
