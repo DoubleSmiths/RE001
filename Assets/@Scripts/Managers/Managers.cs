@@ -46,6 +46,10 @@ public class Managers : MonoBehaviour
     {
         // 콤보 타이머 감소 — Time.timeScale 영향 받음 (슬로우 모션 중엔 느려짐)
         _combo?.Tick(Time.deltaTime);
+
+        // 방치 누적 — 전투 구역 밖에서도 사냥이 계속되게. 팝업으로 timeScale이 0이 되어도
+        // 멈추면 안 되므로 unscaledDeltaTime을 쓴다.
+        _game?.TickIdle(Time.unscaledDeltaTime);
     }
 
     // 방치 보상 기준 시각 기록. 모바일은 종료 대신 일시정지로 빠지는 경우가 많아 둘 다 건다.
