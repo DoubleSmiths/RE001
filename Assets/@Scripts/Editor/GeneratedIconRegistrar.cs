@@ -19,6 +19,8 @@ public static class GeneratedIconRegistrar
         "Assets/@Resources/Sprite/Icon/Skill/Generated",
         // 몬스터 원형(128px). 기존 몬스터가 PPU 32에 64px(=2유닛)이므로 PPU 64면 크기가 맞는다.
         "Assets/@Resources/Sprite/Monster/Generated",
+        // 드롭 재료 아이콘 — 몬스터 원형 30종과 1:1 대응(ADR 참조)
+        "Assets/@Resources/Sprite/Icon/Material/Generated",
     };
 
     [MenuItem("Tools/Register Generated Icons (아이콘 임포트+어드레서블)")]
