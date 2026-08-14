@@ -258,18 +258,30 @@ public static class MonsterAnimGenerator
             // 서식지 키(BreezingWindForestDepth3Text)에서 지역명과 심도를 뽑아
             // 원형 스프라이트와 티어 색조를 정한다.
             string hab = c.Habitat ?? "";
+            // 서식지 키 형식: "{지역}D{층}Text" (예: BreezingWindForestD3Text).
+            //  예전엔 "...Depth3Text"였고 세계 재구성(gen_world.py)에서 "...D3Text"로 바뀌었다.
+            //  두 형식을 모두 받아들인다 — 한쪽만 보면 전 종이 걸러져 생성기가 통째로 실패한다.
             int di = hab.IndexOf("Depth");
+            int tokenLen = 5;                       // "Depth"
+            if (di < 0)
+            {
+                di = hab.LastIndexOf('D');          // "...D3Text"
+                tokenLen = 1;
+            }
             if (di < 0) continue;
             string region = hab.Substring(0, di);
             int depth = 1;
             int end = hab.IndexOf("Text", di);
-            if (end > di) int.TryParse(hab.Substring(di + 5, end - di - 5), out depth);
+            if (end > di) int.TryParse(hab.Substring(di + tokenLen, end - di - tokenLen), out depth);
 
+            // 원형 스프라이트는 CreatureData.IconLabel이 이미 정확한 값을 갖고 있다.
+            //  지역명으로 유추하면(Mon_{region}_{n}) 신규 지역(SunkenGrove 등)에는 대응 스프라이트가
+            //  없어 443종이 통째로 건너뛰어진다.
             int archIdx = Mathf.Abs(c.DataId) % 10;
             rows.Add(new Row
             {
                 name = $"Mon_{c.DataId}",
-                archetype = $"Mon_{region}_{archIdx}",
+                archetype = !string.IsNullOrEmpty(c.IconLabel) ? c.IconLabel : $"Mon_{region}_{archIdx}",
                 tint = TierTint(depth, c.Rarity),
                 speed = 1f + (depth - 1) * 0.05f,
             });
