@@ -42,6 +42,7 @@ SUBMIT_GAP = 3.0   # 제출 간격(초). 0.4로 몰아넣었다가 100장 넘기
 OUT_EQUIP = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Equipment", "Generated")
 OUT_SKILL = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Skill", "Generated")
 OUT_MONSTER = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Generated")
+OUT_MATERIAL = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Material", "Generated")
 
 # 전 아이콘 공통 스타일 — 한 세트로 보이게 하는 핵심. 바꾸면 기존 아이콘과 톤이 어긋난다.
 STYLE = ("16-bit pixel art game inventory icon, single centered object, "
@@ -259,6 +260,32 @@ def monster_items():
     return out
 
 
+# 몬스터 원형 30종에 1:1 대응하는 재료 아이콘 (gen_world.py의 MATERIALS와 순서 동일)
+MATERIAL_LOOK = [
+    "a translucent green slime jelly blob", "a coil of spider silk thread", "a curved wolf fang",
+    "a red toadstool mushroom cap", "a swirling wind essence orb", "a rolled boar hide",
+    "a black crow feather", "a coil of tough vine", "a tuft of orange fox fur",
+    "a barbed hornet stinger",
+    "a leathery bat wing membrane", "a thick mole claw", "an old miner's lantern relic",
+    "a glowing crystal shard", "a segmented centipede shell plate", "a clump of damp glowing moss",
+    "a broken stone statue fragment", "a wisp of condensed shadow", "an iridescent salamander scale",
+    "a jar of luminous glowing slime",
+    "a pile of grey revenant ash", "an engraved knight's crest badge", "a tainted golden relic",
+    "a tuft of chimera mane hair", "a chipped gargoyle stone piece", "a glowing warden core orb",
+    "a translucent phantom sliver", "a corrupted purple essence vial", "a carved altar fragment",
+    "a dark void crystal",
+]
+FAMILIES = ["BreezingWindForest", "WhisperingCave", "RuinedSanctum"]
+
+
+def material_items():
+    out = []
+    for i, look in enumerate(MATERIAL_LOOK):
+        fam = FAMILIES[i // 10]
+        out.append((f"Mat_{fam}_{i % 10}", f"{look}, single crafting material item"))
+    return out
+
+
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "equipment"
     limit = None
@@ -268,6 +295,8 @@ def main():
         run(equipment_items(), OUT_EQUIP, limit)
     elif what == "skill":
         run(skill_items(), OUT_SKILL, limit)
+    elif what == "material":
+        run(material_items(), OUT_MATERIAL, limit)
     elif what == "monster":
         run(monster_items(), OUT_MONSTER, limit, size=128)  # 인게임 캐릭터라 아이콘보다 크게
     else:
