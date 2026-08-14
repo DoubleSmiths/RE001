@@ -166,7 +166,24 @@ Idle/Run/Attack/OnHit/Die 5종 모두 위치 커브가 있어, `SpawnMonster`가
 
 ### 남은 2건 — 측정 근거 (2026-08-14 최종)
 
-**능력 팝업 가로 폭** — 장비 팝업과 **완전히 동일**함을 두 방식으로 확인
+**능력 팝업 가로 폭** — ✅ **대상 특정 완료**
+
+사용자 표현 "아이콘을 누르면 나오는 팝업"은 스킬북 목록이 아니라 **상세정보창
+(UI_SkillDetailPopup)** 이다. 측정 결과:
+
+    UI_SkillDetailPopup  루트 = (208, 440)   ← 28 넓다
+    UI_EquipmentPopup    루트 = (180, 380)
+    UI_SkillBookPopup    루트 = (180, 380)
+    (상세창의 FIXED는 180으로 정상 — 루트만 어긋난다)
+
+- 프리팹에는 208이 **없다**. 런타임에 Canvas/CanvasScaler가 만들어내는 값이다.
+- 런타임에 `rt.sizeDelta.x = 180`을 넣으면 그 순간엔 180이 되지만
+  **다음 프레임에 Canvas가 208로 되돌린다** → SetInfo에서 보정하는 방식은 무효(롤백함).
+- 다음 착수점: 상세창 프리팹의 **Canvas/CanvasScaler 설정**이 다른 팝업과 무엇이 다른지
+  비교(renderMode, referenceResolution, matchWidthOrHeight, Canvas override 여부).
+  다른 팝업은 SetCanvas가 일괄 설정하므로, 상세창만 프리팹에 다른 값이 박혀 있을 가능성.
+
+**(참고) 스킬북 목록 팝업**은 장비 팝업과 완전히 동일함을 두 방식으로 확인
 - RectTransform: 루트 (180,380) / FIXED (180,440) / In_Frame (174,433) — 두 팝업 동일
 - 실제 렌더 픽셀: 스크린샷에서 팝업 프레임 x 범위 **둘 다 10~389 (폭 379)**
 → 팝업 프레임 크기 문제가 아니다. 체감된 "넓음"은 내부 요소(리스트 항목의 가로 확장,
