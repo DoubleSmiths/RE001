@@ -143,3 +143,23 @@ CreatureData의 `SpawnY`는 503종 전부 2.3으로 정상이고, `MonsterContro
    (`player.transform.position.x + 12f, spawnY, 0f` — spawnY가 2.3이어야 함)
 2. 스폰 직후 y를 덮어쓰는 코드 탐색 (물리 컴포넌트/Rigidbody2D 중력, 부모 스케일 등)
 3. `@Monster` 루트의 transform이 y를 상쇄하는지 확인
+
+### ✅ 여정 몬스터 미출몰 — **근본 원인 확정**
+
+몬스터는 정상 스폰되지만 부모(@Monster) **원점(0,0)** 에 붙어 화면 밖에 있었다.
+
+    플레이어 y=2.31 / 몬스터 localPos=(0,0,0)
+
+원인: 생성한 애니메이션 클립이 **`m_LocalPosition` 커브**를 갖고 있었다.
+Unity 애니메이션은 해당 프로퍼티를 **절대값으로 매 프레임 덮어쓴다.**
+Idle/Run/Attack/OnHit/Die 5종 모두 위치 커브가 있어, `SpawnMonster`가 어떤 좌표를 줘도
+재생 즉시 (0,0)으로 끌려갔다. `SpawnY` 데이터도, 스폰 코드 수정도 소용없던 이유.
+
+**수정 완료**: `MonsterAnimGenerator`에서 위치 커브 5곳 제거.
+움직임은 스케일(스쿼시)·회전·색상으로만 표현한다.
+
+**남은 절차**: `Tools/Generate Monster Animations` 재실행으로 503종 교체.
+(이번 세션에서 시도했으나 폴더 삭제 직후 Unity 재임포트 중이라 실패 → git으로 즉시 복구함.
+ 재실행 시에는 **폴더를 지우지 말고** 생성기의 복구 로직(상태머신 검사)에 맡길 것.
+ 단 위치 커브 제거는 상태머신이 온전하면 건너뛰므로, 교체하려면 컨트롤러만 지우거나
+ healthy 판정에 "위치 커브 없음"을 추가해야 한다)

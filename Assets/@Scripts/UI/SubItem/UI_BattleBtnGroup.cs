@@ -858,9 +858,14 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             if (Managers.Data.CreatureDic.TryGetValue(dataId, out var creatureData))
                 spawnY = creatureData.SpawnY;
 
+            // Y는 **플레이어와 같은 지면 높이**로 둔다.
+            //  스프라이트 pivot을 플레이어·몬스터 모두 bottom-middle로 통일했으므로
+            //  같은 y면 같은 바닥에 선다. CreatureData.SpawnY에 의존하면 데이터가 0이거나
+            //  지면 높이와 어긋날 때 몬스터가 화면 밖(지면 아래)에 스폰돼
+            //  "여정을 가도 몬스터가 나오지 않는다"로 보인다.
             Vector3 spawnPos = new Vector3(
                 player.transform.position.x + MONSTER_SPAWN_OFFSET_X,
-                spawnY,
+                player.transform.position.y,
                 0f);
 
             MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);

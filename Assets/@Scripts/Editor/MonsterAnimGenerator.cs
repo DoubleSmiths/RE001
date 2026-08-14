@@ -143,13 +143,15 @@ public static class MonsterAnimGenerator
         => AnimationUtility.SetEditorCurve(clip,
                EditorCurveBinding.FloatCurve("", typeof(Transform), prop), curve);
 
+    // ⚠️ 위치(m_LocalPosition) 커브는 쓰지 않는다.
+    //  애니메이션이 localPosition을 **절대값으로 덮어써** 스폰 좌표가 무시되고
+    //  몬스터가 부모 원점(0,0)으로 끌려간다 → 화면 밖이라 "몬스터가 안 나온다"로 보였다.
+    //  움직임은 스케일(스쿼시)·회전·색상으로만 표현한다.
     static AnimationClip BuildIdle(Sprite sp, Color tint, float speed)
     {
         float len = Mathf.Clamp(1.4f / speed, 0.7f, 2.2f);
         var clip = NewClip(sp, tint, true, len);
         // 호흡: 위로 살짝 떴다 내려오며 가로/세로 스쿼시
-        TransformCurve(clip, "m_LocalPosition.y", new AnimationCurve(
-            new Keyframe(0f, 0f), new Keyframe(len * 0.5f, 0.06f), new Keyframe(len, 0f)));
         TransformCurve(clip, "m_LocalScale.y", new AnimationCurve(
             new Keyframe(0f, 1f), new Keyframe(len * 0.5f, 1.05f), new Keyframe(len, 1f)));
         TransformCurve(clip, "m_LocalScale.x", new AnimationCurve(
@@ -161,9 +163,6 @@ public static class MonsterAnimGenerator
     {
         float len = Mathf.Clamp(0.55f / speed, 0.3f, 0.9f);
         var clip = NewClip(sp, tint, true, len);
-        TransformCurve(clip, "m_LocalPosition.y", new AnimationCurve(
-            new Keyframe(0f, 0f), new Keyframe(len * 0.25f, 0.14f),
-            new Keyframe(len * 0.5f, 0f), new Keyframe(len * 0.75f, 0.14f), new Keyframe(len, 0f)));
         TransformCurve(clip, "m_LocalEulerAngles.z", new AnimationCurve(
             new Keyframe(0f, -4f), new Keyframe(len * 0.5f, 4f), new Keyframe(len, -4f)));
         return clip;
@@ -174,9 +173,6 @@ public static class MonsterAnimGenerator
         const float len = 0.42f;
         var clip = NewClip(sp, tint, false, len);
         // 뒤로 살짝 당겼다가 앞으로 튀어나감
-        TransformCurve(clip, "m_LocalPosition.x", new AnimationCurve(
-            new Keyframe(0f, 0f), new Keyframe(0.12f, 0.18f),
-            new Keyframe(0.24f, -0.42f), new Keyframe(len, 0f)));
         TransformCurve(clip, "m_LocalScale.x", new AnimationCurve(
             new Keyframe(0f, 1f), new Keyframe(0.12f, 0.9f),
             new Keyframe(0.24f, 1.12f), new Keyframe(len, 1f)));
@@ -200,8 +196,6 @@ public static class MonsterAnimGenerator
             new Keyframe(0f, 0.25f), new Keyframe(0.08f, 0.35f), new Keyframe(len, tint.b)));
         Curve(clip, "m_Color.a", Flat(1f, len));
         // 뒤로 밀림
-        TransformCurve(clip, "m_LocalPosition.x", new AnimationCurve(
-            new Keyframe(0f, 0f), new Keyframe(0.08f, 0.22f), new Keyframe(len, 0f)));
 
         var s = AnimationUtility.GetAnimationClipSettings(clip);
         s.loopTime = false;
@@ -227,8 +221,6 @@ public static class MonsterAnimGenerator
             new Keyframe(0f, 1f), new Keyframe(len, 0.35f)));
         TransformCurve(clip, "m_LocalScale.x", new AnimationCurve(
             new Keyframe(0f, 1f), new Keyframe(len, 1.15f)));
-        TransformCurve(clip, "m_LocalPosition.y", new AnimationCurve(
-            new Keyframe(0f, 0f), new Keyframe(len, -0.18f)));
 
         var s = AnimationUtility.GetAnimationClipSettings(clip);
         s.loopTime = false;
