@@ -20,8 +20,14 @@
 - 스크린샷: 장비 팝업이 화면 상단 일부만 차지하고 **아래쪽이 전투 HUD에 가려짐**
 - ⚠️ Overlay로 바꿔보니 **팝업이 아예 사라짐**. `UIManager.SetCanvas` 주석
   ("Overlay로 강제하면 레이아웃이 깨짐")이 옳다. → **렌더모드는 원인이 아니다**
-- 남은 가설: 팝업 루트 RectTransform의 anchor/sizeDelta가 세로 해상도(2640)에 안 맞음.
-  `CanvasScaler.referenceResolution = (180, 440)` 기준과 프리팹 저작 크기의 불일치
+- 프리팹 조사: 루트 RectTransform의 앵커가 제각각이다. stretch(0,0)-(1,1)인 것과
+  고정 앵커 + 픽셀 크기(예: 인벤 14x14, 기술책 23x20)인 것이 섞여 있다
+- ❌ **시도했다가 실패한 접근**: `UI_Popup.Init()`에서 루트를 stretch로 강제 → **size가 (0,0)이 됐다.**
+  팝업 루트에는 **Canvas가 붙어 있어** Canvas가 RectTransform 크기를 직접 제어한다.
+  앵커를 stretch로 주면 부모(@UI_Root) 기준이 되는데 그 부모는 크기가 없다.
+  → **팝업 루트의 RectTransform은 코드로 건드리면 안 된다.** (롤백함)
+- 남은 방향: 루트가 아니라 **팝업 내부 콘텐츠 컨테이너**를 화면에 맞추거나,
+  `CanvasScaler`의 매칭 설정(match width/height)을 세로 화면에 맞게 조정하는 쪽
 
 ### ⑥ 여정으로 던전 입장 시 몬스터 미출몰 → **부분 재현**
 - 여정 팝업의 실제 경로(`TravelToNode(21120)`)로 진입 → **몬스터 2체 스폰됨**
