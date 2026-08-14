@@ -281,6 +281,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.Village1GuildQuestButton).gameObject.BindEvent(OnClickVillage1GuildQuestButton);
         GetButton((int)Buttons.Village1AlchemyTalkButton).gameObject.BindEvent(OnClickVillage1AlchemyTalkButton);
         GetButton((int)Buttons.CustomOrderButton).gameObject.BindEvent(OnClickCustomOrder);
+        GetButton((int)Buttons.MonasteryClassButton).gameObject.BindEvent(OnClickMonasteryClass);
         GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
@@ -543,9 +544,34 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         if (oldFloor != null) Destroy(oldFloor);
 
         if (string.IsNullOrEmpty(prefabKey)) return;
-        Managers.Resource.Instantiate(prefabKey);
+        var bg = Managers.Resource.Instantiate(prefabKey);
+        ApplyTownTint(bg);
 
         ApplyPlayerBuildingScale(prefabKey);
+    }
+
+    // 마을 배경 프리팹은 하나(Village1_*)를 5개 마을이 공유한다. 마을별 배경 아트가 없어
+    //  어디를 가도 아스달처럼 보였다. 전투 지역과 같은 방식(ADR 0008)으로 **색조로 구분**한다.
+    //  마을 노드 Id(11000 + 1000n)에서 순번을 뽑아 팔레트를 고른다.
+    static readonly Color[] TOWN_TINTS =
+    {
+        Color.white,                          // 아스달 — 원본
+        new Color(0.72f, 0.86f, 0.95f),       // 바람서린 항구 — 해풍의 서늘함
+        new Color(0.86f, 0.74f, 0.62f),       // 잿빛 광산촌 — 흙먼지
+        new Color(0.78f, 0.84f, 0.95f),       // 서리안개 요새 — 창백한 한기
+        new Color(0.98f, 0.88f, 0.72f),       // 여명의 성도 — 금빛
+    };
+
+    void ApplyTownTint(GameObject bg)
+    {
+        if (bg == null) return;
+        int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        int idx = (nodeId - 11000) / 1000;
+        if (idx <= 0 || idx >= TOWN_TINTS.Length) return;   // 아스달이거나 범위 밖이면 원본 유지
+
+        Color tint = TOWN_TINTS[idx];
+        foreach (var sr in bg.GetComponentsInChildren<SpriteRenderer>(true))
+            sr.color = tint;
     }
 
     // 기획 수정안(2026-07-05): 건물 내부(길드/연금 등)에서는 플레이어를 확대해 '건물에 들어간 느낌'을 준다.
@@ -808,6 +834,13 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             return;
 
         Managers.UI.ShowPopupUI<UI_CustomOrderPopup>().SetInfo();
+    }
+
+    void OnClickMonasteryClass()
+    {
+        // 수도원 [축성] 버튼 — 직업(전직) 능력 전용 창.
+        // (수도원 그룹 '진입' 연출은 미구현 — MonasteryButtonIcon 클릭 바인딩 없음. 현재는 RestoreLastGroup 경로로만 그룹 표시됨)
+        Managers.UI.ShowPopupUI<UI_ClassPopup>().SetInfo();
     }
 
     void OnClickVillage1GuildTalkButton()
