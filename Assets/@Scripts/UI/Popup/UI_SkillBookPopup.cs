@@ -242,7 +242,14 @@ public class UI_SkillBookPopup : UI_Popup
         // Content 비우고 능력 아이콘 동적 생성
         var content = GetObject((int)GameObjects.Content).transform;
         for (int i = content.childCount - 1; i >= 0; i--)
-            Managers.Resource.Destroy(content.GetChild(i).gameObject);
+        {
+            var child = content.GetChild(i).gameObject;
+            // Destroy는 프레임 끝까지 지연된다. 아래에서 곧바로 항목을 다시 만들기 때문에
+            // 프리팹에 저작된 샘플 항목이 그대로 남아 **아이콘 없는 빈 칸**으로 목록 맨 앞에 보였다.
+            // 부모에서 즉시 떼어내 이번 갱신에서 확실히 빠지게 한다.
+            child.transform.SetParent(null, false);
+            Managers.Resource.Destroy(child);
+        }
 
         foreach (int id in _shown)
         {
