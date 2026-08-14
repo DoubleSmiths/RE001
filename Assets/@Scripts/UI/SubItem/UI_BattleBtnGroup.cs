@@ -883,7 +883,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     void EndBattle()
     {
-        Managers.Game.Player?.StopBattle();
+        // ⚠️ `Player?.` 를 쓰면 안 된다. Unity에서 파괴된 오브젝트는 C# null이 아니라
+        //  "fake null"이라 널 조건 연산자를 그대로 통과하고, 그 뒤 접근에서
+        //  MissingReferenceException이 난다(씬 전환·플레이 종료 시 실제로 발생했다).
+        //  Unity가 오버로드한 == 비교만이 파괴 여부까지 판정한다.
+        var player = Managers.Game.Player;
+        if (player != null)
+            player.StopBattle();
 
         if (_battleCoroutine != null)
         {

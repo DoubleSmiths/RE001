@@ -51,6 +51,20 @@ public class ResourceManager
             if (typeof(T) == typeof(Sprite) && key.Contains(".sprite"))
                 loadKey = $"{key}[{key.Replace(".sprite", "")}]";
 
+            // 주소가 없으면 **로드를 시도하지 않는다.**
+            //  Addressables는 미등록 키를 로드하면 InvalidKeyException을 콘솔에 빨간 로그로 찍은 뒤 던진다.
+            //  try/catch로 삼켜도 로그는 이미 출력된 뒤라 플레이 중 빨간 오류가 계속 쌓인다.
+            //  (실제로 item_rabijelly / FX_Combo_Break / Active Ef 등에서 반복 발생했다)
+            var locOp = Addressables.LoadResourceLocationsAsync(loadKey, typeof(T));
+            var locs = locOp.WaitForCompletion();
+            bool exists = locs != null && locs.Count > 0;
+            Addressables.Release(locOp);
+            if (!exists)
+            {
+                _missing.Add(key);
+                return null;
+            }
+
             var op = Addressables.LoadAssetAsync<T>(loadKey);
             T result = op.WaitForCompletion();
             if (result == null)
