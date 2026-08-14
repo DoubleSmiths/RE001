@@ -801,6 +801,45 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     const float MONSTER_SPAWN_OFFSET_X = 12f;
     const float MONSTER_SPAWN_Y_FALLBACK = 2.3f;   // CreatureData 조회 실패 시 기본값
 
+    // 전투 배경은 프리팹 하나(CH1BG)를 모든 지역이 공유한다. 지역마다 다른 배경 아트를 만들려면
+    // 무한 스크롤용 이음매 없는 패럴랙스 레이어 5장이 필요해 AI 생성으로는 신뢰하기 어렵다.
+    // 대신 **지역별 색조**로 구분한다 — 몬스터 심층 색조(0003)와 같은 아트 디렉션이라 톤이 일관된다.
+    //  깊이감을 위해 뒤쪽 레이어일수록 색조를 강하게 먹인다.
+    // 이 그룹이 만든 전투 배경. 이름으로 지우면 새 그룹이 만든 배경까지 날아가므로 참조로 소유권을 잡는다.
+    GameObject _battleBG;
+
+    static readonly (string key, Color tint)[] REGION_TINTS =
+    {
+        ("BreezingWindForest", Color.white),                       // 숲 — 원본 그대로
+        ("WhisperingCave",     new Color(0.42f, 0.55f, 0.78f)),    // 동굴 — 서늘한 푸른빛
+        ("RuinedSanctum",      new Color(0.62f, 0.45f, 0.72f)),    // 성소 — 스산한 보랏빛
+    };
+
+    void ApplyRegionTint(GameObject bg)
+    {
+        if (bg == null) return;
+
+        Color tint = Color.white;
+        int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        if (Managers.Data?.TravelNodeDic != null && Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var node))
+        {
+            string name = node.Name ?? "";
+            foreach (var (key, c) in REGION_TINTS)
+            {
+                if (name.StartsWith(key)) { tint = c; break; }
+            }
+        }
+        if (tint == Color.white) return;
+
+        var renderers = bg.GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            // 레이어 번호가 작을수록(뒤쪽) 색조를 진하게 — 앞쪽은 살려 캐릭터 대비를 유지
+            float depth = renderers.Length > 1 ? 1f - (float)i / (renderers.Length - 1) : 1f;
+            renderers[i].color = Color.Lerp(Color.white, tint, Mathf.Lerp(0.45f, 1f, depth));
+        }
+    }
+
     System.Collections.IEnumerator CoBattleLoop()
     {
         Transform monsterRoot = Managers.Object.MonsterTransform;
@@ -868,10 +907,16 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         // 전투 배경(CH1BG)만 정리. Village1_*_BG는 UI_Village1BtnGroup.SwitchBG가 자체 cleanup 하므로 건드리지 않음.
         // (Phase J 이후 EnterAreaWithFade가 Village1BtnGroup을 먼저 spawn한 뒤 BattleBtnGroup OnDestroy가 발화 →
         //  여기서 Village1_*_BG를 destroy하면 방금 스폰된 마을 BG가 같이 죽는 deferred-destroy 버그 발생함)
-        foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+        //
+        // 전투 → 전투 이동(지역 변경)에서도 같은 순서 문제가 난다.
+        //  새 BattleBtnGroup.Init()이 ChangeMap()으로 배경을 만든 뒤 이전 그룹의 OnDestroy가 발화하는데,
+        //  이름으로 싹 지우면 **방금 만든 새 배경까지 지워져 전투 화면이 검게 남는다.**
+        //  그래서 자기가 만든 인스턴스만 정리한다(소유권). 새 그룹의 ChangeMap이 이미 stray를 치우므로
+        //  여기서 이름 검색으로 훑을 필요가 없다.
+        if (_battleBG != null)
         {
-            if (go.name == "CH1BG" || go.name == "CH1BG(Clone)")
-                Destroy(go);
+            Destroy(_battleBG);
+            _battleBG = null;
         }
     }
 
@@ -893,7 +938,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             }
         }
 
-        Managers.Resource.Instantiate("CH1BG");
+        _battleBG = Managers.Resource.Instantiate("CH1BG");
+        ApplyRegionTint(_battleBG);
 
         var villageBG = Managers.Resource.Instantiate("Village1_Main_BG");
         if (villageBG != null)
