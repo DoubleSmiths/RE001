@@ -552,12 +552,26 @@ public class UI_TamePopup : UI_Popup
     // ─────────────────────────────────────────────
     void ApplyMonsterImage()
     {
-        string iconLabel = _mm != null && !string.IsNullOrEmpty(_mm.IconLabel) ? _mm.IconLabel
-                          : _creature != null ? _creature.IconLabel : null;
-        if (string.IsNullOrEmpty(iconLabel) || _slimeImg == null) return;
+        if (_slimeImg == null) return;
 
-        Sprite sprite = Managers.Resource.Load<Sprite>(iconLabel);
-        if (sprite != null) { _slimeImg.sprite = sprite; _slimeImg.preserveAspect = true; }
+        // MinMonData 아이콘 → 없거나 로드 실패면 CreatureData 아이콘.
+        //  폴백이 없으면 프리팹에 저작된 **초록 슬라임이 그대로 남아** 광부망령을 잡는데
+        //  슬라임이 나오는 이름-그림 불일치가 된다. (한쪽만 보고 return 하던 게 원인)
+        Sprite sprite = null;
+        foreach (string label in new[] { _mm?.IconLabel, _creature?.IconLabel })
+        {
+            if (string.IsNullOrEmpty(label)) continue;
+            sprite = Managers.Resource.Load<Sprite>(label);
+            if (sprite != null) break;
+        }
+        if (sprite == null) return;
+
+        // 이 프로젝트의 단골 함정 — Animator가 매 프레임 sprite를 덮어써 방금 넣은 그림을 지운다.
+        var anim = _slimeImg.GetComponent<Animator>();
+        if (anim != null) anim.enabled = false;
+
+        _slimeImg.sprite = sprite;
+        _slimeImg.preserveAspect = true;
     }
 
     // 버튼 그룹(라벨)의 표시는 SetButtonsActive가 담당하므로 여기선 확인팝업만 언어 토글.

@@ -1267,9 +1267,11 @@ public class GameManager
         _gameData.SpdPotionRevealed       = true;
         _gameData.AutoPotionMemorized     = true;
 
-        // 10. 재화 — 강화/제작 비용이 막지 않을 만큼
-        _gameData.Gold    = Mathf.Max(_gameData.Gold, 9_999_999);
-        _gameData.Crystal = Mathf.Max(_gameData.Crystal, 99_999);
+        // 10. 재화 — 강화/제작 비용이 막지 않을 만큼.
+        //     만드라고라(확정 포획 소비품)는 인벤이 아니라 GameData 필드라 위 6번 루프가 못 채운다.
+        _gameData.Gold     = Mathf.Max(_gameData.Gold, 9_999_999);
+        _gameData.Crystal  = Mathf.Max(_gameData.Crystal, 99_999);
+        _gameData.Mandrake = Mathf.Max(_gameData.Mandrake, 999);
 
         // 11. 퀘스트 — 마지막 번호로. (퀘스트가 하단 버튼/마을 UI 해금을 들고 있다)
         if (Managers.Quest != null && data.QuestDic != null && data.QuestDic.Count > 0)
