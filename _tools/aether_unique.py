@@ -30,7 +30,7 @@ import time
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from aether_icons import BASE, MODEL, SUBMIT_GAP, api_key, get, post, UA  # noqa: E402
+from aether_icons import BASE, MODEL, api_key, get, post, UA  # noqa: E402
 from aether_anim import with_retry  # noqa: E402
 import urllib.error    # noqa: E402
 import urllib.request  # noqa: E402
@@ -39,7 +39,10 @@ JSON_DIR = os.path.join(BASE, "Assets", "@Resources", "Data", "JsonData")
 OUT_BG = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Map", "Region")
 OUT_MON = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Card")
 
-WORKERS = 4
+# 4로 돌렸더니 완료 51건에 429가 43건 — 거절당한 뒤 백오프로 기다리는 시간이 더 컸다.
+# 동시 수를 낮추고 제출 간격을 벌리는 편이 결과적으로 빠르다.
+WORKERS = 2
+SUBMIT_GAP = 6.0
 BG_SIZE = 256      # 지역 배경(세로 화면 상단 뷰) — 원본 1024를 축소
 MON_SIZE = 96      # 도감 카드 아이콘
 
