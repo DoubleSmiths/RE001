@@ -43,7 +43,12 @@ public static class FullPlaythroughTest
         var game = Managers.Game;
         var data = Managers.Data;
 
-        // 전 컨텐츠 해금 — 잠금 때문에 못 들어가는 노드가 생기면 검증이 아니라 관문 테스트가 된다.
+        // ① 메인 퀘스트를 **조건을 실제로 만족시키며** 끝까지 진행한다.
+        //    치트로 마지막 번호로 점프하기 전에 먼저 돌려야 의미가 있다.
+        var questFail = new List<string>();
+        yield return CoWalkQuestChain(questFail);
+
+        // ② 전 컨텐츠 해금 — 잠금 때문에 못 들어가는 노드가 생기면 검증이 아니라 관문 테스트가 된다.
         game.UnlockEverything();
 
         var nodes = new List<TravelNodeData>();
@@ -145,8 +150,11 @@ public static class FullPlaythroughTest
         foreach (var id in data.CreatureDic.Keys)
             if (!seenMonsters.Contains(id)) unreachable.Add(id);
 
+        fail.InsertRange(0, questFail);
+
         var sb = new StringBuilder();
         sb.AppendLine("═══ 전 구간 플레이스루 결과 ═══");
+        sb.AppendLine($"메인 퀘스트    : {(questFail.Count == 0 ? "1→마지막 전부 통과" : $"막힘 {questFail.Count}건")}");
         sb.AppendLine($"전투 노드      : {nodes.Count}");
         sb.AppendLine($"스폰/처치      : {spawned} / {killed}");
         sb.AppendLine($"드롭 확인      : {dropped}");
@@ -159,6 +167,80 @@ public static class FullPlaythroughTest
 
         if (fail.Count == 0) Debug.Log(sb.ToString());
         else Debug.LogError(sb.ToString());
+    }
+
+    /// <summary>
+    /// 메인 퀘스트를 1번부터 마지막까지 **조건을 실제로 만족시키며** 걸어간다.
+    ///  퀘스트 번호를 강제로 밀어넣지 않는다 — 그러면 "진행 가능한가"를 검증하지 못한다.
+    ///  각 완료 타입에 맞는 실제 API(CheckButtonClick / AddItem)를 호출해 자연스럽게 넘어가는지 본다.
+    /// </summary>
+    static IEnumerator CoWalkQuestChain(List<string> fail)
+    {
+        var game = Managers.Game;
+        var data = Managers.Data;
+        if (Managers.Quest == null || data.QuestDic == null || data.QuestDic.Count == 0)
+        {
+            fail.Add("퀘스트 데이터 없음");
+            yield break;
+        }
+
+        int last = 0;
+        foreach (int q in data.QuestDic.Keys) if (q > last) last = q;
+
+        int guard = 0;
+        while (game.CurrentQuestID <= last && guard++ < 60)
+        {
+            int cur = game.CurrentQuestID;
+            if (!data.QuestDic.TryGetValue(cur, out var quest))
+            {
+                fail.Add($"퀘스트 {cur} 데이터 없음");
+                yield break;
+            }
+
+            switch (quest.CompleteType)
+            {
+                case Define.QuestCompleteType.ITEM_ACQUIRE:
+                case Define.QuestCompleteType.ITEM_COUNT:
+                    if (int.TryParse(quest.CompleteTarget, out int itemId))
+                    {
+                        game.AddItem(itemId, Mathf.Max(1, quest.CompleteCount));
+                        Managers.Quest.CheckItemAcquire(itemId);
+                    }
+                    break;
+
+                case Define.QuestCompleteType.BTN_CLICK:
+                    Managers.Quest.CheckButtonClick(quest.CompleteTarget);
+                    break;
+
+                case Define.QuestCompleteType.ANIM_END:
+                    Managers.Quest.CheckAnimationEnd(quest.AnimationID);
+                    break;
+
+                case Define.QuestCompleteType.MULTI:
+                    // 조건 목록을 순서대로 전부 만족시킨다
+                    if (data.QuestConditionDic != null &&
+                        data.QuestConditionDic.TryGetValue(cur, out var conds))
+                    {
+                        foreach (var c in conds)
+                        {
+                            if (int.TryParse(c.Target, out int cid)) { game.AddItem(cid, Mathf.Max(1, c.Count)); Managers.Quest.CheckItemAcquire(cid); }
+                            else Managers.Quest.CheckButtonClick(c.Target);
+                        }
+                    }
+                    break;
+            }
+
+            yield return null;
+
+            if (game.CurrentQuestID == cur)
+            {
+                fail.Add($"퀘스트 {cur} '{quest.QuestName}'에서 진행이 막힘 " +
+                         $"(CompleteType={quest.CompleteType} Target='{quest.CompleteTarget}')");
+                yield break;
+            }
+        }
+
+        Debug.Log($"[플레이스루] 메인 퀘스트 1→{last} 전부 통과 (현재 {game.CurrentQuestID})");
     }
 
     // 그림/접지/이름-그림 정합
