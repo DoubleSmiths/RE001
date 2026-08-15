@@ -97,11 +97,10 @@ public class UI_BestiaryPopup : UI_Popup
 
     #endregion
 
-    // 어떤것이 데이터가 필요한지, 엑셀화 해야됨, 근데 기존에 있는 데이터랑 잘 엮어야하는 지 아니면 새로운 데이터 테이블을 만들어야하는지 고민 필요.
-    // 지금도 REGGION_STUB도 데이터에서 가져와야함.
+    // (해결됨) "REGION_STUB도 데이터에서 가져와야 한다"던 숙제 → BuildRegionSections()가 처리한다.
+    //  새 테이블은 필요 없었다. CreatureData.Habitat ↔ TravelNodeData 부모 관계로 엮인다.
 
-
-    // ── 지역→몬스터 스텁 매핑 ──────────────────────────────
+    // ── 지역→몬스터 매핑 (데이터 실패 시 폴백) ──────────────────────────────
     // 정식 BestiaryData JSON 도입 전까지 사용. region 표시명 + 그 지역 몬스터 DataId 목록.
     // DataId가 CreatureDic에 없거나 0이면 data=null로 "?" 잠금 슬롯 처리된다.
     // region 필드는 LocalizationData TextKey (슬3: PlaceName 한/영 전환). 표시 시 Util.Localize.
