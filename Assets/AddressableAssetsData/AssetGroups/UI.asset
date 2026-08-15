@@ -38,8 +38,23 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12bbf9cb05ff832428420f72f9327e5a
+    m_Address: Mon_WhisperingCave_3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 131bed2b13c5a244794a3902ca1754df
     m_Address: Mon_BreezingWindForest_4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 137f0ae2d25993e49b3914ee698ad4a3
+    m_Address: Mon_WhisperingCave_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 190131edbebd0a347a4278f1452b7528
+    m_Address: Mon_WhisperingCave_0
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -115,6 +130,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c991b1c9c19aa94fa671105859d593f
+    m_Address: Mon_WhisperingCave_5
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 722283148e1d1fc4a8b1462466b0712e
     m_Address: UI_SkillBookPopup
     m_ReadOnly: 0
@@ -189,6 +209,16 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d00adf0e0caf73419fb7af170a536ca
+    m_Address: Mon_WhisperingCave_2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d2b3f6c09c72cf44b4bb60b89be92b9
+    m_Address: Mon_BreezingWindForest_9
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7c37953d793659409cd1df65f369a36
     m_Address: UI_SettingPopup
     m_ReadOnly: 0
@@ -248,6 +278,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c25e53e1f236fed449c28587b6ac31a2
+    m_Address: Mon_WhisperingCave_4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce935eb8a4c100140acd862a97bca16e
     m_Address: UI_InventoryPopup
