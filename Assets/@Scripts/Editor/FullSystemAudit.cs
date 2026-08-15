@@ -45,6 +45,7 @@ public static class FullSystemAudit
         yield return CoAuditWorldObjects(fail, note);
         yield return CoAuditEquipmentUI(fail, note);
         yield return CoAuditPopupInput(fail, note);
+        yield return CoAuditMinMonAndSkills(fail, note);
 
         var sb = new StringBuilder();
         sb.AppendLine("═══ 종합 시스템 검증 ═══");
@@ -522,6 +523,109 @@ public static class FullSystemAudit
 
         if (fullScreen && invisible)
             fail.Add($"[입력] {label}: 보이지 않는 전체화면 차단막 '{top.name}'이 클릭을 가로챈다");
+    }
+
+    // ── G. 미니몬 잡기 / 액티브 스킬 / 지역 배경 ────────────────────
+    //  이 셋은 "데이터가 비어 있어서 기능이 통째로 죽어 있던" 사례라 존재 여부가 곧 검증이다.
+    //  (몬스터 503종 중 3종만 MinMonData에 있어 500종이 영영 안 잡혔다.)
+    static IEnumerator CoAuditMinMonAndSkills(List<string> fail, List<string> note)
+    {
+        var data = Managers.Data;
+
+        // 1) 전 몬스터가 잡히는가 + 난이도가 실제로 벌어져 있는가
+        int noEntry = 0;
+        float minChance = 1f, maxChance = 0f;
+        int minCeil = int.MaxValue, maxCeil = 0;
+        foreach (var c in data.CreatureDic.Values)
+        {
+            if (!data.MinMonDic.ContainsKey(c.DataId)) { noEntry++; continue; }
+            float ch = Managers.MinMon.GetCatchChance(c.DataId);
+            int ceil = Managers.MinMon.GetCatchCeil(c.DataId);
+            minChance = Mathf.Min(minChance, ch); maxChance = Mathf.Max(maxChance, ch);
+            minCeil = Mathf.Min(minCeil, ceil);   maxCeil = Mathf.Max(maxCeil, ceil);
+        }
+        if (noEntry > 0)
+            fail.Add($"[미니몬] {noEntry}종이 MinMonData에 없어 절대 잡히지 않는다");
+        else
+            note.Add($"미니몬 잡기: {data.CreatureDic.Count}종 전부 포획 가능 " +
+                     $"(확률 {minChance:P0}~{maxChance:P0}, 천장 {minCeil}~{maxCeil}회)");
+
+        // 2) 실제로 잡히는지 — 천장까지 두드리면 반드시 성공해야 한다
+        int probe = 0;
+        foreach (var id in new[] { 2001, 2300, 2600 })
+        {
+            if (!data.MinMonDic.ContainsKey(id)) continue;
+            var save = Managers.MinMon.GetSaveData(id);
+            save.CaughtCount = 0; save.TameCount = 0;
+            int ceil = Managers.MinMon.GetCatchCeil(id);
+            for (int i = 0; i <= ceil && !Managers.MinMon.IsOwned(id); i++) Managers.MinMon.TryCatch(id);
+            if (!Managers.MinMon.IsOwned(id)) fail.Add($"[미니몬] {id}: 천장({ceil}회)을 넘겨도 포획 실패");
+            else probe++;
+        }
+        if (probe > 0) note.Add($"포획 천장: {probe}종 확정 성공 확인");
+        yield return null;
+
+        // 3) 액티브 스킬 — 데이터 + 실제 발동 + 쿨 차단
+        var runner = Managers.Game.Player != null ? Managers.Game.Player.AbilityRunner : null;
+        int activeCount = 0;
+        foreach (var d in data.SkillDic.Values)
+            if (d.TriggerType == Define.AbilityTrigger.Active) activeCount++;
+
+        if (activeCount == 0) fail.Add("[액티브] 플레이어가 직접 쓸 능력이 하나도 없다");
+        else if (runner == null) fail.Add("[액티브] AbilityRunner 없음");
+        else
+        {
+            foreach (var d in data.SkillDic.Values)
+                if (d.TriggerType == Define.AbilityTrigger.Active
+                    && !Managers.Game.EquippedAbilities.Contains(d.DataId))
+                    Managers.Game.EquippedAbilities.Add(d.DataId);
+
+            var ids = runner.ActiveSkillIds;
+            if (ids.Count == 0) fail.Add("[액티브] 장착했는데 스킬바 슬롯이 비어 있다");
+            else
+            {
+                Managers.Game.Player.StartBattle();
+                int id = ids[0];
+                if (!runner.UseSkill(id)) fail.Add($"[액티브] {id} 발동 실패(전투 중·쿨 0인데)");
+                else if (runner.GetCooldownRemain(id) <= 0f) fail.Add($"[액티브] {id} 발동 후 쿨이 안 걸린다");
+                else if (runner.UseSkill(id)) fail.Add($"[액티브] {id} 쿨 중인데 재발동된다");
+                else note.Add($"액티브 스킬: {activeCount}종 / 슬롯 {ids.Count}칸 / 발동·쿨 차단 확인");
+                Managers.Game.Player.StopBattle();
+            }
+        }
+        yield return null;
+
+        // 4) 전투 배경 — 던전마다 그림이 붙는가 (전 던전이 CH1BG 한 장을 쓰던 회귀 방지)
+        int noBg = 0, dungeons = 0;
+        var bgSeen = new HashSet<string>();
+        foreach (var kv in data.TravelNodeDic)
+        {
+            var tn = kv.Value;
+            if (tn.Category != "EXPLORE" || tn.ParentId == 0) continue;
+            dungeons++;
+            var sp = Managers.Resource.Load<Sprite>($"Region_{kv.Key}")
+                  ?? Managers.Resource.Load<Sprite>($"Region_{tn.ParentId}");
+            if (sp == null) noBg++;
+            else bgSeen.Add(sp.name);
+        }
+        if (noBg > 0) fail.Add($"[배경] 던전 {noBg}곳에 지역 배경이 없다");
+        else note.Add($"전투 배경: 던전 {dungeons}곳 / 서로 다른 배경 {bgSeen.Count}종");
+
+        // 5) 도감 그림 중복 — 카드가 붙은 종은 서로 겹치면 안 된다
+        var iconOwner = new Dictionary<string, int>();
+        int dup = 0, carded = 0;
+        foreach (var c in data.CreatureDic.Values)
+        {
+            if (string.IsNullOrEmpty(c.IconLabel)) continue;
+            if (c.IconLabel != $"Mon_{c.DataId}") continue;   // 아직 카드 미생성 종은 원형 공유가 정상
+            carded++;
+            if (iconOwner.TryGetValue(c.IconLabel, out int other)) { dup++; fail.Add($"[도감] {c.DataId}와 {other}가 같은 그림"); }
+            else iconOwner[c.IconLabel] = c.DataId;
+            if (Managers.Resource.Load<Sprite>(c.IconLabel) == null)
+                fail.Add($"[도감] {c.DataId} 카드 {c.IconLabel} 로드 실패");
+        }
+        note.Add($"도감 고유 그림: {carded}/{data.CreatureDic.Count}종 적용 (중복 {dup})");
+        yield return null;
     }
 
     // ── 공용 ──
