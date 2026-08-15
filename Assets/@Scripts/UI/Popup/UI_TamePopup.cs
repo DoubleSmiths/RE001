@@ -254,7 +254,8 @@ public class UI_TamePopup : UI_Popup
         SetEmojActive(Images.MonsterEmoj, false);
 
         // 슬32 순서1: CatchMinimonStartText1 + CreatureName + CatchMinimonStartText2 (로컬라이즈, 한/영)
-        yield return CoType(Util.Localize(LocalizeKey.CatchMinimonStartText1) + _cName + Util.Localize(LocalizeKey.CatchMinimonStartText2));
+        yield return CoType(Util.ApplyJosa(
+            Util.Localize(LocalizeKey.CatchMinimonStartText1) + _cName + Util.Localize(LocalizeKey.CatchMinimonStartText2)));
         ShowButton(Buttons.LureBtn);
         RefreshLureButton();   // 슬31: 등장 직전 최신 시도횟수/천장 반영 (언어/카운트)
         yield return new WaitForSecondsRealtime(0.5f);

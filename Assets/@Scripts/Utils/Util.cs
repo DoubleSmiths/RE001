@@ -78,6 +78,42 @@ public static class Util
         return Managers.Game.Language == Define.Language.Korean ? entry.Kor : entry.Eng;
     }
 
+    // 한국어 조사 자동 선택.
+    //  이름을 문장 앞에 붙이는 구조라(예: "{몬스터명}" + "이(가) 나타났다!") 화면에
+    //  "여우이(가) 나타났다!" 처럼 조사 두 개가 그대로 찍혀 나왔다.
+    //  로컬라이즈 원문은 "이(가)" 형태를 유지하고(번역자가 쓰기 편하다) 표시 직전에 여기서 고른다.
+    //
+    //  받침 판정: 한글 음절 U+AC00~U+D7A3 에서 (코드-0xAC00) % 28 != 0 이면 받침 있음.
+    //  영문/숫자로 끝나면 판정이 불가능하므로 원문("이(가)")을 그대로 둔다.
+    static readonly (string pair, string withJong, string withoutJong)[] JOSA =
+    {
+        ("이(가)", "이", "가"),
+        ("은(는)", "은", "는"),
+        ("을(를)", "을", "를"),
+        ("와(과)", "과", "와"),   // 받침 있으면 '과'
+        ("과(와)", "과", "와"),
+    };
+
+    public static string ApplyJosa(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        if (Managers.Game != null && Managers.Game.Language != Define.Language.Korean) return text;
+
+        foreach (var (pair, withJong, withoutJong) in JOSA)
+        {
+            int at;
+            while ((at = text.IndexOf(pair, System.StringComparison.Ordinal)) >= 0)
+            {
+                if (at == 0) break;                      // 앞 글자가 없으면 판정 불가 — 그대로 둔다
+                char prev = text[at - 1];
+                if (prev < 0xAC00 || prev > 0xD7A3) break;
+                string josa = ((prev - 0xAC00) % 28 != 0) ? withJong : withoutJong;
+                text = text.Substring(0, at) + josa + text.Substring(at + pair.Length);
+            }
+        }
+        return text;
+    }
+
     public static Color HexToColor(string color)
     {
         Color parsedColor;

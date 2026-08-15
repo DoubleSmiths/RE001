@@ -68,7 +68,7 @@ public class UI_WarningPopup : UI_Popup
         if (txt != null)
         {
             // 슬25: CreatureData.Name + MinimonInterestFullText (로컬라이즈)
-            txt.text = cname + Util.Localize(LocalizeKey.MinimonInterestFullText);
+            txt.text = Util.ApplyJosa(cname + Util.Localize(LocalizeKey.MinimonInterestFullText));
             ApplyFont(txt, FontType.UI);
         }
 

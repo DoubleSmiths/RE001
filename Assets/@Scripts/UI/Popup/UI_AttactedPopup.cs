@@ -73,9 +73,10 @@ public class UI_AttactedPopup : UI_Popup
         if (txt != null)
         {
             // 슬24/25: {CreatureData.Name} + MinimonInterestSuccessText/FullText (로컬라이즈)
-            txt.text = cname + Util.Localize(storageFull
+            //  ApplyJosa — 이름 받침에 따라 "이(가)"를 골라준다("여우이(가)" → "여우가")
+            txt.text = Util.ApplyJosa(cname + Util.Localize(storageFull
                 ? LocalizeKey.MinimonInterestFullText
-                : LocalizeKey.MinimonInterestSuccessText);
+                : LocalizeKey.MinimonInterestSuccessText));
             ApplyFont(txt, FontType.UI);
         }
 
