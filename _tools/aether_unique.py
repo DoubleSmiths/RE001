@@ -31,7 +31,6 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from aether_icons import BASE, MODEL, api_key, get, post, UA  # noqa: E402
-from aether_anim import with_retry  # noqa: E402
 import urllib.error    # noqa: E402
 import urllib.request  # noqa: E402
 
@@ -158,16 +157,78 @@ def postprocess(raw, out_path, size):
     im.save(out_path)
 
 
+# ── 공용 스로틀 게이트 ────────────────────────────────────────────
+#  429는 이 계정의 **롤링 쿼터**다. 항목별로 각자 백오프하면 워커들이 번갈아 계속 두드려
+#  한도가 열리지 않고, 재시도 6회를 다 태우고 실패로 떨어진다(완료 0 / 429 36건을 그렇게 봤다).
+#  제출뿐 아니라 **작업 조회(GET)도 한도를 먹는다** — 4초마다 90번씩 도니 그쪽이 오히려 많다.
+#  그래서 429를 보면 한 워커가 아니라 **전원이 같이 쉰다**. 성공하면 쿨다운을 되돌린다.
+class Gate:
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.until = 0.0
+        self.cool = 60.0     # 다음 429에 쉴 시간
+        self.hits = 0
+
+    def wait(self):
+        while True:
+            with self.lock:
+                remain = self.until - time.monotonic()
+            if remain <= 0:
+                return
+            time.sleep(min(remain, 5.0))
+
+    def trip(self, what):
+        with self.lock:
+            self.hits += 1
+            self.until = max(self.until, time.monotonic() + self.cool)
+            cool = self.cool
+            self.cool = min(self.cool * 2, 900.0)   # 최대 15분
+        print(f"  ~~ 429 — 전 작업 {cool:.0f}s 정지 ({what})", flush=True)
+
+    def ok(self):
+        with self.lock:
+            if self.cool > 60.0:
+                self.cool = max(60.0, self.cool / 2)
+
+
+GATE = Gate()
+
+
+def call(fn, what, tries=40):
+    """429는 실패가 아니라 '기다려라'다. 한도가 열릴 때까지 버틴다(항목을 버리지 않는다)."""
+    for _ in range(tries):
+        GATE.wait()
+        try:
+            r = fn()
+            GATE.ok()
+            return r
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                GATE.trip(what)
+                continue
+            if e.code in (500, 502, 503, 504):
+                time.sleep(10)
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError, OSError):
+            time.sleep(10)
+    print(f"  !! {what}: 재시도 소진", flush=True)
+    return None
+
+
+POLL_GAP = 10   # 조회도 한도를 먹는다 — 4초는 너무 잦았다
+
+
 def generate(name, prompt, key):
-    job = with_retry(lambda: post("/generate/image", {"prompt": prompt, "ai_model": MODEL}, key), f"{name} 제출")
+    job = call(lambda: post("/generate/image", {"prompt": prompt, "ai_model": MODEL}, key), f"{name} 제출")
     if not job:
         return None
     jid = job.get("job_id")
     if not jid:
         return None
-    for _ in range(90):
-        time.sleep(4)
-        st = with_retry(lambda: get(f"/job/{jid}", key), f"{name} 조회", tries=3)
+    for _ in range(60):
+        time.sleep(POLL_GAP)
+        st = call(lambda: get(f"/job/{jid}", key), f"{name} 조회", tries=10)
         if st is None:
             continue
         if st.get("status") == "Succeed":
@@ -179,7 +240,7 @@ def generate(name, prompt, key):
                 req = urllib.request.Request(urls[0], headers={"User-Agent": UA})
                 with urllib.request.urlopen(req, timeout=180) as r:
                     return r.read()
-            return with_retry(fetch, f"{name} 다운로드")
+            return call(fetch, f"{name} 다운로드", tries=10)
         if st.get("status") in ("Failed", "Error"):
             return None
     return None
