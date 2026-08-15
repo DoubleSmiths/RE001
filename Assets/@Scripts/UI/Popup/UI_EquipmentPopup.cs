@@ -119,6 +119,7 @@ public class UI_EquipmentPopup : UI_Popup
 
         // 아이템 슬롯 구성 + 장비 정보 표시
         BuildSlotViews();
+        BindTierTabs();
         if (Managers.Game != null)
             Managers.Game.EquipInfoChanged += RefreshUI;
         RefreshUI();
@@ -132,6 +133,73 @@ public class UI_EquipmentPopup : UI_Popup
         base.OnDestroy();
         if (Managers.Game != null)
             Managers.Game.EquipInfoChanged -= RefreshUI;
+    }
+
+    // T1/T2/T3 탭 — 프리팹에 버튼은 있는데 코드가 없어 눌러도 아무 일도 안 났다.
+    //  부위마다 자기 TierFrame을 갖고 있고 이름 규칙이 두 갈래다:
+    //    Btn_HelmetTierFrame_01 / _03 / _02   (숫자가 티어 순서와 무관)
+    //    ArmorT1Btn / ArmorT2Btn / ArmorT3Btn (이름에 티어가 있음)
+    //  이름에 T1/T2/T3가 있으면 그걸 쓰고, 없으면 x좌표 순으로 본다.
+    //  (비활성 프레임은 레이아웃이 아직 계산되지 않아 x가 전부 0이라 좌표만으로는 불안정하다)
+    static List<RectTransform> TierTabsOf(RectTransform frame)
+    {
+        var tabs = new List<RectTransform>();
+        foreach (Transform c in frame)
+            if (c.GetComponent<Button>() != null) tabs.Add(c as RectTransform);
+        if (tabs.Count == 0) return tabs;
+
+        bool named = tabs.TrueForAll(t => TierFromName(t.name) >= 0);
+        if (named) tabs.Sort((a, b) => TierFromName(a.name).CompareTo(TierFromName(b.name)));
+        else       tabs.Sort((a, b) => a.anchoredPosition.x.CompareTo(b.anchoredPosition.x));
+        return tabs;
+    }
+
+    static int TierFromName(string n)
+    {
+        int i = n.IndexOf("T1", System.StringComparison.Ordinal); if (i >= 0) return 0;
+        i = n.IndexOf("T2", System.StringComparison.Ordinal);     if (i >= 0) return 1;
+        i = n.IndexOf("T3", System.StringComparison.Ordinal);     if (i >= 0) return 2;
+        return -1;
+    }
+
+    void BindTierTabs()
+    {
+        foreach (var frame in GetComponentsInChildren<RectTransform>(true))
+        {
+            if (!frame.name.Contains("TierFrame")) continue;
+
+            var tabs = TierTabsOf(frame);
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                int tier = i;
+                tabs[i].gameObject.BindEvent(() => SelectTier(tier));
+            }
+        }
+        RefreshTierTabs();
+    }
+
+    void SelectTier(int tier)
+    {
+        if (_tier == tier) return;
+        _tier = tier;
+        RefreshTierTabs();
+        RefreshUI();
+    }
+
+    // 선택된 탭만 밝게 (프리팹에 선택 상태 스프라이트가 따로 없어 색으로 구분)
+    void RefreshTierTabs()
+    {
+        foreach (var frame in GetComponentsInChildren<RectTransform>(true))
+        {
+            if (!frame.name.Contains("TierFrame")) continue;
+
+            var tabs = TierTabsOf(frame);
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                var img = tabs[i].GetComponent<Image>();
+                if (img != null) img.color = (i == _tier) ? Color.white : new Color(0.45f, 0.45f, 0.45f, 1f);
+            }
+        }
     }
 
     // 지정 슬롯 리스트만 켜고 나머지는 끔.
@@ -185,37 +253,135 @@ public class UI_EquipmentPopup : UI_Popup
         }
     }
 
-    // 보유 장비를 부위별 슬롯에 배치 — 무기는 T1 리스트 4칸(W00/W01/W02/W44)에 보유 순서대로, 그 외 부위는 1칸.
+    // ── 목록 배치 규칙 (프리팹 저작 좌표에서 역산) ──
+    //  첫 칸 (18, -22), 가로 40 / 세로 45 간격, 2열. 뷰포트 폭 83이라 2열이 한계.
+    const float GRID_X0 = 18f, GRID_Y0 = -22f, GRID_DX = 40f, GRID_DY = 45f;
+    const int   GRID_COLS = 2;
+
+    // T1/T2/T3 = 등급 2개씩 묶음 (Basic·Abnormal / Rare·Exceptional / Legendary·Mystic)
+    static int TierOf(EquipGrade g) => Mathf.Clamp((int)g / 2, 0, 2);
+    int _tier = 0;
+
+    // 이 팝업이 만들어낸 칸들 — 갱신할 때마다 지우고 다시 만든다(저작 노드는 건드리지 않는다).
+    readonly List<GameObject> _spawnedSlots = new List<GameObject>();
+
+    /// <summary>
+    /// 보유 장비를 부위별 목록에 배치.
+    ///
+    /// 예전엔 프리팹에 저작된 칸(s_slotNodes)에만 꽂았다 — 무기 4칸, 나머지 부위는 **1칸**.
+    /// 그래서 투구를 10개 갖고 있어도 목록엔 1개만 보였고, 장비창이 비어 보였다.
+    /// 이제 보유 수만큼 칸을 **복제해서** 채우고, ScrollRect content 높이도 함께 늘린다.
+    /// T1/T2/T3 탭은 아예 구현이 없어 눌러도 아무 일이 없었다 — 등급 대역으로 필터링한다.
+    /// </summary>
     public override void RefreshUI()
     {
         if (Managers.Game == null || _slotViews.Count == 0) return;
 
-        // 부위별 보유 리스트
+        // 이전 복제분 정리
+        foreach (var go in _spawnedSlots)
+            if (go != null) Destroy(go);
+        _spawnedSlots.Clear();
+
+        // 부위별 보유 리스트 (선택 티어만)
         var bySlot = new Dictionary<int, List<Equipment>>();
         foreach (var e in Managers.Game.OwnedEquipments)
         {
+            var d = e?.EquipmentData;
+            if (d == null || TierOf(d.Grade) != _tier) continue;
             int key = (int)e.SlotType;
             if (bySlot.TryGetValue(key, out var list) == false)
                 bySlot[key] = list = new List<Equipment>();
             list.Add(e);
         }
+        foreach (var list in bySlot.Values)
+            list.Sort((a, b) => a.DataId.CompareTo(b.DataId));
 
-        var used = new Dictionary<int, int>();   // slotType → 이미 배치한 개수 (무기 4칸 순차 배치용)
-        foreach (var view in _slotViews)
+        // 부위별 **대표 칸**(저작 노드 중 첫 번째)을 템플릿으로 삼는다.
+        var template = new Dictionary<int, SlotView>();
+        foreach (var v in _slotViews)
+            if (v.Slot >= 0 && !template.ContainsKey(v.Slot)) template[v.Slot] = v;
+
+        // 템플릿이 아닌 저작 칸(W01/W02/W44 등)은 숨긴다 — 복제분이 자리를 대신한다.
+        foreach (var v in _slotViews)
+            if (v.Slot < 0 || template[v.Slot] != v) v.Btn.SetActive(false);
+
+        foreach (var kv in template)
         {
-            Equipment equip = null;
-            if (view.Slot >= 0 && bySlot.TryGetValue(view.Slot, out var list))
+            int slot = kv.Key;
+            SlotView head = kv.Value;
+            bySlot.TryGetValue(slot, out var list);
+            int count = list?.Count ?? 0;
+
+            head.Btn.SetActive(true);
+            Place(head.Btn, 0);
+            ApplySlot(head, count > 0 ? list[0] : null);
+
+            for (int i = 1; i < count; i++)
             {
-                used.TryGetValue(view.Slot, out int idx);
-                if (idx < list.Count)
-                {
-                    equip = list[idx];
-                    used[view.Slot] = idx + 1;
-                }
+                GameObject clone = Instantiate(head.Btn, head.Btn.transform.parent);
+                clone.name = $"{head.Btn.name}_gen{i}";
+                clone.SetActive(true);
+                Place(clone, i);
+                _spawnedSlots.Add(clone);
+
+                // 복제본은 이름이 같은 자식 구조를 그대로 갖고 있으므로 같은 규칙으로 다시 찾는다.
+                var view = CloneView(head, clone);
+                SlotView captured = view;
+                clone.BindEvent(() => OnClickSlot(captured));
+                ApplySlot(view, list[i]);
             }
-            ApplySlot(view, equip);
+
+            ResizeContent(head.Btn.transform.parent as RectTransform, count);
         }
     }
+
+    static void Place(GameObject go, int index)
+    {
+        var rt = go.transform as RectTransform;
+        if (rt == null) return;
+        rt.anchoredPosition = new Vector2(
+            GRID_X0 + (index % GRID_COLS) * GRID_DX,
+            GRID_Y0 - (index / GRID_COLS) * GRID_DY);
+    }
+
+    // 칸이 늘어난 만큼 ScrollRect content를 키워야 아래쪽 칸에 스크롤이 닿는다.
+    //
+    //  ⚠️ content가 stretch 앵커 + pivot 0.5로 저작돼 있다. 이 상태에서 높이만 늘리면
+    //     **위아래로 똑같이** 커져서 윗변이 마스크 밖으로 올라가고 첫 행이 잘린다
+    //     (실제로 그래서 4칸 중 2행만 보였다 — 보이던 게 1행이 아니라 2행이었다).
+    //     늘린 만큼 절반을 아래로 내려 **윗변을 제자리에 고정**한다.
+    //  재갱신 때 누적되지 않도록 저작 원본값을 기억해 두고 매번 원본에서 계산한다.
+    readonly Dictionary<RectTransform, (Vector2 size, Vector2 pos)> _contentBase = new();
+
+    void ResizeContent(RectTransform content, int count)
+    {
+        if (content == null) return;
+        if (!_contentBase.TryGetValue(content, out var basis))
+            _contentBase[content] = basis = (content.sizeDelta, content.anchoredPosition);
+
+        int rows = Mathf.Max(1, Mathf.CeilToInt(count / (float)GRID_COLS));
+        float need = -GRID_Y0 + rows * GRID_DY;
+        float grow = Mathf.Max(0f, need - basis.size.y);
+
+        content.sizeDelta        = new Vector2(basis.size.x, basis.size.y + grow);
+        content.anchoredPosition = new Vector2(basis.pos.x, basis.pos.y - grow * 0.5f);
+    }
+
+    SlotView CloneView(SlotView src, GameObject clone) => new SlotView
+    {
+        Slot    = src.Slot,
+        Btn     = clone,
+        Icon    = FindLike(src.Icon,    clone),
+        LvTxt   = FindLike(src.LvTxt,   clone),
+        LowDuri = FindLike(src.LowDuri, clone),
+        Dim     = FindLike(src.Dim,     clone),
+        Badge   = FindLike(src.Badge,   clone),
+    };
+
+    static T FindLike<T>(T src, GameObject clone) where T : Component
+        => src == null ? null : Util.FindChild<T>(clone, src.gameObject.name, true);
+    static GameObject FindLike(GameObject src, GameObject clone)
+        => src == null ? null : Util.FindChild(clone, src.name, true);
 
     // 슬롯 하나 갱신: 아이콘/강화수치/LowDuri/E뱃지/빈 슬롯 dim.
     void ApplySlot(SlotView view, Equipment equip)
