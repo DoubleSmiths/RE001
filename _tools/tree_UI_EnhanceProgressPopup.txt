@@ -1,0 +1,236 @@
+=== UI_EnhanceProgressPopup (Assets/@Resources/Prefab/UI/Popup/UI_EnhanceProgressPopup.prefab) ===
+- UI_EnhanceProgressPopup [active]
+    * Canvas
+    * CanvasScaler [Script ns=UnityEngine.UI]
+    * GraphicRaycaster [Script ns=UnityEngine.UI]
+  - FIXED [active]
+    - In_Frame [active]
+      - EnhanceProgressPopup [active]
+        - Img_EnhanceProgressPopup_01 [active]
+            * Image sprite=(none) color=(0,0,0,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Color autoPlay=True id= dur=0.25
+        - Bg [active]
+            * Image sprite=(none) color=(0,0,0,1)
+            * DOTweenAnimation animType=Color autoPlay=False id=51 dur=1.4
+            * DOTweenAnimation animType=Color autoPlay=False id=52 dur=0.15
+            * DOTweenAnimation animType=Color autoPlay=False id=53 dur=1.8
+            * DOTweenAnimation animType=Color autoPlay=False id=54 dur=0.3
+        - Sun_Shines_03 [active]
+            * ParticleSystem
+            * ParticleSystemRenderer
+            * DOTweenAnimation animType=Scale autoPlay=True id= dur=0.15
+        - God_ray_02 [active]
+            * ParticleSystem
+            * ParticleSystemRenderer
+          - Dust_01 [active]
+              * ParticleSystem
+              * ParticleSystemRenderer
+        - Floor [active]
+            * Image sprite=Hell_obj_png_0 color=(0.77,0.81,0.84,1)
+            * DOTweenAnimation animType=PunchPosition autoPlay=False id= dur=0.3
+        - gradient [active]
+            * Image sprite=gradient_3-2 color=(1,1,1,1)
+        - Icon [active]
+            * DOTweenAnimation animType=ShakePosition autoPlay=False id=1 dur=0.25
+            * DOTweenAnimation animType=LocalMove autoPlay=False id=2 dur=0.3
+            * DOTweenAnimation animType=ShakePosition autoPlay=False id=3 dur=1.4
+            * DOTweenAnimation animType=PunchScale autoPlay=False id=4 dur=0.3
+            * DOTweenAnimation animType=LocalMove autoPlay=False id=5 dur=1.4
+            * DOTweenAnimation animType=Scale autoPlay=False id=5 dur=1.4
+            * DOTweenAnimation animType=LocalMove autoPlay=False id=6 dur=0.3
+            * DOTweenAnimation animType=LocalMove autoPlay=False id=7 dur=1.2
+            * DOTweenAnimation animType=Scale autoPlay=False id=7 dur=1
+            * DOTweenAnimation animType=LocalMove autoPlay=False id=8 dur=0.1
+            * DOTweenAnimation animType=Scale autoPlay=False id=8 dur=1
+            * DOTweenAnimation animType=LocalMove autoPlay=False id=9 dur=0.5
+          - forAnim [active]
+              * DOTweenAnimation animType=ShakePosition autoPlay=False id= dur=1.7
+            - Frame [active]
+                * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+            - Background [active]
+                * Image sprite=(none) color=(0,0,0,1)
+            - Glow [active]
+                * Image sprite=UIMask color=(1,1,1,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Image_2 [active]
+                  * Image sprite=white color=(0,0,0,1)
+              - Image_1 [active]
+                  * Image sprite=shop_frame_glow color=(0.6,0.02,0.02,1)
+            - WIcon [active]
+                * Image sprite=Sword 32 (5) color=(1,1,1,1)
+                * Animator controller=EquipIcon
+            - SuccessFlash [active]
+                * Image sprite=(none) color=(1,1,1,0)
+                * DOTweenAnimation animType=Color autoPlay=False id=1 dur=1.4
+                * DOTweenAnimation animType=Color autoPlay=False id=2 dur=0.3
+                * DOTweenAnimation animType=Color autoPlay=False id=3 dur=0.5
+                * DOTweenAnimation animType=Fade autoPlay=False id=4 dur=1
+            - Flash [INACTIVE]
+                * Image sprite=white color=(1,1,1,0.71)
+                * DOTweenVisualManager [Script ns=DG.Tweening]
+                * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.25
+            - Flash_USETHIS [active]
+                * Image sprite=(none) color=(1,1,1,0)
+                * Animator controller=Flash
+        - Hammer_IncludeAnim [active]
+            * Image sprite=Loop_0 color=(0.86,0.86,0.86,1)
+            * Animator controller=Forge Smith
+            * DOTweenAnimation animType=ShakePosition autoPlay=False id= dur=0.25
+        - SuccessTxtGroup [active]
+          - Txt_SuccessTxtGroup_01 [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=Scale autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="ENHACE SUCCEEDED" fontSize=30
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - Img_SuccessTxtGroup_02 [INACTIVE]
+              * Image sprite=message_popup_line_default color=(1,1,1,1)
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.4
+          - _2 [INACTIVE]
+              * Image sprite=message_popup_line_default color=(1,1,1,1)
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.4
+          - Txt_SuccessTxtGroup_03 [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenAnimation animType=LocalMove autoPlay=False id=1 dur=0.3
+              * DOTweenAnimation animType=Fade autoPlay=False id=1 dur=0.3
+              * TextMeshProUGUI text="광기의 칠흑 대검" fontSize=22
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - _4 [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.3
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenAnimation animType=PunchScale autoPlay=True id= dur=0.3
+              * TextMeshProUGUI text="광기의 칠흑 대검" fontSize=22
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - FailTxtGroup [active]
+          - Txt_FailTxtGroup_02 [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=2
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="ENHACE FAILED" fontSize=40
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - Txt_FailTxtGroup_01 [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenAnimation animType=Fade autoPlay=False id=1 dur=0.3
+              * DOTweenAnimation animType=LocalMove autoPlay=False id=1 dur=0.3
+              * TextMeshProUGUI text="내구도" fontSize=16
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - _2_B4_Variable [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenAnimation animType=Fade autoPlay=False id=1 dur=0.3
+              * DOTweenAnimation animType=LocalMove autoPlay=False id=1 dur=0.3
+              * TextMeshProUGUI text="100" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - Txt_FailTxtGroup_04 [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenAnimation animType=Fade autoPlay=False id=1 dur=0.3
+              * DOTweenAnimation animType=LocalMove autoPlay=False id=1 dur=0.3
+              * TextMeshProUGUI text="/100" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - _4_After_Variable [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.3
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.6
+              * TextMeshProUGUI text="100" fontSize=9
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - EnhAttDetail [active]
+          - DurabilityText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="내구도" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - DurabilityRealText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="100/100" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - EquipSkillText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="고유능력" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - EquipSkillRealText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="고유능력1" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - AttText [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="능력치 변화" fontSize=24
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - AttRealText [INACTIVE]
+            - Text [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id= dur=0.3
+                * DOTweenAnimation animType=Color autoPlay=False id= dur=0.15
+                * TextMeshProUGUI text="공격력 명중률 치명타 공격속도 재사용감소 힘 체력 민첩" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Txt_AttRealText_02 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                * DOTweenAnimation animType=Color autoPlay=False id=1 dur=0.1
+                * DOTweenAnimation animType=Fade autoPlay=False id=2 dur=0.15
+                * TextMeshProUGUI text="+9 +2 +99% +999% +99% +999 +999 +999" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - Img_Text_1_02 [active]
+                  * Image sprite=(none) color=(0,0,0,1)
+                  * DOTweenVisualManager [Script ns=DG.Tweening]
+                  * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.35
+            - Text_2 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                * DOTweenAnimation animType=Color autoPlay=False id=1 dur=0.1
+                * DOTweenAnimation animType=Fade autoPlay=False id=2 dur=0.05
+                * TextMeshProUGUI text="▶ ▶ ▶ ▶ ▶ ▶ ▶ ▶" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Text_3 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                * DOTweenAnimation animType=Color autoPlay=False id=1 dur=0.3
+                * DOTweenAnimation animType=Move autoPlay=False id=2 dur=0.5
+                * DOTweenAnimation animType=PunchScale autoPlay=False id=2 dur=0.3
+                * TextMeshProUGUI text="+999 +999 +99% +999% +99% +999 +999 +999" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - PotenGroup [active]
+          - FlameImg [INACTIVE]
+              * Image sprite=flame17 color=(1,1,1,1)
+              * Animator controller=Flame Img
+          - Txt_PotenGroup_01 [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="잠재력 변화" fontSize=24
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - MainPotenText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=PunchScale autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="25" fontSize=36
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - IncPotenText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.5
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.8
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=1
+              * TextMeshProUGUI text="+4" fontSize=24
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - ExitBtn [active]
+            * Image sprite=(none) color=(1,1,1,0)
+            * Button interactable=True

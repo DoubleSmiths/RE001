@@ -1,0 +1,500 @@
+=== UI_EnhacePopup (Assets/@Resources/Prefab/UI/Popup/UI_EnhacePopup.prefab) ===
+- UI_EnhacePopup [active]
+    * Canvas
+    * CanvasScaler [Script ns=UnityEngine.UI]
+    * GraphicRaycaster [Script ns=UnityEngine.UI]
+  - FIXED [active]
+    - In_Frame [active]
+      - EnhacePopup [active]
+        - Img_EnhacePopup_01 [active]
+            * Image sprite=white color=(0,0,0,0.98)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.25
+        - God_ray_01 [active]
+            * ParticleSystem
+            * ParticleSystemRenderer
+          - VFX_God_ray_01_01 [active]
+              * ParticleSystem
+              * ParticleSystemRenderer
+        - BtnLight [active]
+          - BtnLight1 [INACTIVE]
+              * Image sprite=Window_Header_RedGlow color=(1,0,0,1)
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=1.5
+            - BtmLight2 [INACTIVE]
+                * Image sprite=Window_Header_RedGlow color=(0.58,0.58,0.58,1)
+                * DOTweenVisualManager [Script ns=DG.Tweening]
+                * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.25
+            - BtnEmbers [INACTIVE]
+                * ParticleSystem
+                * ParticleSystemRenderer
+              - VFX_BtnEmbers_04 [active]
+                  * ParticleSystem
+                  * ParticleSystemRenderer
+              - GlowDot_02 [active]
+                  * ParticleSystem
+                  * ParticleSystemRenderer
+                - GlowDot_02_Light [active]
+                    * ParticleSystem
+                    * ParticleSystemRenderer
+        - gradient_1 [active]
+            * Image sprite=gradient_3-2 color=(1,1,1,1)
+        - Floor [active]
+            * Image sprite=Hell_obj_png_0 color=(0.77,0.81,0.84,1)
+          - 1 [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=ShakeRotation autoPlay=True id= dur=0.8
+          - 2 [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.8
+        - God_ray_02 [active]
+            * ParticleSystem
+            * ParticleSystemRenderer
+          - VFX_God_ray_02_02 [active]
+              * ParticleSystem
+              * ParticleSystemRenderer
+        - gradient [active]
+            * Image sprite=gradient_3-2 color=(1,1,1,1)
+        - CraftEquipIcon [active]
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+          - Img_CraftEquipIcon_01 [active]
+              * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+          - Img_CraftEquipIcon_02 [active]
+              * Image sprite=(none) color=(0,0,0,1)
+          - Glow [active]
+              * Image sprite=UIMask color=(1,1,1,1)
+              * Mask [Script ns=UnityEngine.UI]
+            - Image_2 [active]
+                * Image sprite=white color=(0,0,0,1)
+            - Img_Glow_01 [active]
+                * Image sprite=shop_frame_glow color=(0.6,0.02,0.02,1)
+          - WIcon [active]
+              * Image sprite=Sword 32 (5) color=(1,1,1,1)
+              * Animator controller=EquipIcon
+          - ENumber [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="+9" fontSize=7
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - Flash [INACTIVE]
+              * Image sprite=white color=(1,1,1,0.63)
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.25
+        - PotenForceBarGroup [active]
+            * Slider value=0 range=[0,1]
+          - Fixed [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+            - Img_Fixed_04 [active]
+                * Image sprite=SlideBG color=(0.71,0.71,0.71,0)
+                * DOTweenVisualManager [Script ns=DG.Tweening]
+                * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            - Image [active]
+                * Image sprite=SlideDec color=(0.71,0.71,0.71,0)
+                * DOTweenVisualManager [Script ns=DG.Tweening]
+                * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            - Img_Fixed_02 [active]
+                * Image sprite=SlideDec color=(0.71,0.71,0.71,0)
+                * DOTweenVisualManager [Script ns=DG.Tweening]
+                * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+          - Holder [INACTIVE]
+            - FillArea [active]
+              - Fill [active]
+                  * Image sprite=SlideFill2 color=(1,1,1,1)
+                - PotenBarFlash [active]
+                    * Image sprite=(none) color=(1,1,1,0.71)
+                    * DOTweenVisualManager [Script ns=DG.Tweening]
+                    * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+                - Handle [active]
+                    * Image sprite=Glow color=(1,0.77,0.32,1)
+                  - ParticleImage [active]
+                      * ParticleImage [Script ns=AssetKits.ParticleImage]
+                  - Txt_Handle_08 [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * DOTweenAnimation animType=ShakePosition autoPlay=False id= dur=1
+                      * TextMeshProUGUI text="99" fontSize=20
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - PotenForceBarBarText [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="56" fontSize=25
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - SOMGroup [active]
+          - SOMBox1 [INACTIVE]
+              * Image sprite=(none) color=(0.2,0.2,0.2,0)
+              * Button interactable=True
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.3
+            - Img_SOMBox1_06 [active]
+                * Image sprite=Icon_inventory color=(1,1,1,1)
+            - Mask_SOMBox1_03 [active]
+                * Image sprite=(none) color=(0,0,0,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Img_GlowMask_04 [active]
+                  * Image sprite=shop_frame_glow color=(1,1,1,1)
+            - Img_SOMBox1_05 [active]
+                * Image sprite=Scroll_3 color=(1,1,1,1)
+            - Img_SOMBox1_02 [active]
+                * Image sprite=white color=(0,0,0,0.71)
+            - Txt_SOMBox1_02 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="999" fontSize=18
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - SOMBox2 [INACTIVE]
+              * Image sprite=(none) color=(0.2,0.2,0.2,0)
+              * Button interactable=True
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.3
+            - Img_SOMBox2_05 [active]
+                * Image sprite=Icon_inventory color=(1,1,1,1)
+            - Mask_SOMBox2_05 [active]
+                * Image sprite=(none) color=(0,0,0,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Img_GlowMask_05 [active]
+                  * Image sprite=shop_frame_glow color=(1,1,1,1)
+            - Img_SOMBox2_03 [active]
+                * Image sprite=Scroll_3 color=(1,1,1,1)
+            - Img_SOMBox2_01 [active]
+                * Image sprite=white color=(0,0,0,0.71)
+            - Txt_SOMBox2_03 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="999" fontSize=18
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - SOMBox3 [INACTIVE]
+              * Image sprite=(none) color=(0.2,0.2,0.2,0)
+              * Button interactable=True
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.3
+            - Img_SOMBox3_04 [active]
+                * Image sprite=Icon_inventory color=(1,1,1,1)
+            - Mask_SOMBox3_04 [active]
+                * Image sprite=(none) color=(0,0,0,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Img_GlowMask_03 [active]
+                  * Image sprite=shop_frame_glow color=(1,1,1,1)
+            - Img_SOMBox3_06 [active]
+                * Image sprite=Scroll_3 color=(1,1,1,1)
+            - Img_SOMBox3_03 [active]
+                * Image sprite=white color=(0,0,0,0.71)
+            - Txt_SOMBox3_01 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="999" fontSize=18
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - EnhAttDetail [active]
+            * Image sprite=Background color=(1,1,1,0)
+          - EnhEquipNameText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="+9 광기의 칠흑 대검" fontSize=22
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - DurabilityText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="내구도" fontSize=16
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - DurabilityRealText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="100/100" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - EquipSkillText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="고유능력" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - EquipSkillRealText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="고유능력1" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - AttText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+              * TextMeshProUGUI text="강화 성공 시 능력치 변화" fontSize=8
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - AttText_Kor [active]
+                * TextMeshProUGUI text="강화 성공 시 능력치 변화" fontSize=14
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - AttText_Eng [active]
+                * TextMeshProUGUI text="ATTRIBUTE IMPROVEMENT" fontSize=14
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - AttRealText [INACTIVE]
+              * Image sprite=Background color=(1,1,1,0)
+            - Txt_AttRealText_03 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id= dur=0.5
+                * DOTweenAnimation animType=Color autoPlay=False id= dur=0.25
+                * TextMeshProUGUI text="공격력 명중률 치명타 공격속도 재사용감소 힘 체력 민첩" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Text_1 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id= dur=0.5
+                * DOTweenAnimation animType=Color autoPlay=False id= dur=0.25
+                * TextMeshProUGUI text="+9 +2 +99% +999% +99% +999 +999 +999" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Text_2 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id= dur=0.5
+                * DOTweenAnimation animType=Color autoPlay=False id= dur=0.25
+                * TextMeshProUGUI text="▶ ▶ ▶ ▶ ▶ ▶ ▶ ▶" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Text_3 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * DOTweenAnimation animType=Move autoPlay=False id= dur=0.5
+                * DOTweenAnimation animType=Color autoPlay=False id= dur=0.25
+                * TextMeshProUGUI text="+999 +999 +99% +999% +99% +999 +999 +999" fontSize=8
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - HammerNormalAnim [active]
+            * Image sprite=Loop_0 color=(0.86,0.86,0.86,0)
+            * Animator controller=Forge Smith
+          - HammerMove [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+          - HammerFade [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.4
+          - HammerShake [INACTIVE]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=ShakePosition autoPlay=True id= dur=0.2
+          - GlowDot_01_1 [INACTIVE]
+              * ParticleSystem
+              * ParticleSystemRenderer
+            - VFX_GlowDot_01_1_03 [active]
+                * ParticleSystem
+                * ParticleSystemRenderer
+            - Ring_01 [active]
+                * ParticleSystem
+                * ParticleSystemRenderer
+        - PotenSelectPopup [active]
+            * Image sprite=white color=(0,0,0,0.94)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Scale autoPlay=True id= dur=0.3
+          - Img_PotenSelectPopup_01 [active]
+              * Image sprite=Inventory_Slot_IconFrame color=(0.7,0.06,0,1)
+              * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+            - PotenBox [active]
+                * Image sprite=General_Container_A color=(0,0,0,1)
+                * Button interactable=True
+              - Img_PotenBox_11 [active]
+                  * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                - Txt_Frame_07 [INACTIVE]
+                    * Outline [Script ns=UnityEngine.UI]
+                    * TextMeshProUGUI text="9999" fontSize=11
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - Img_Frame_01 [active]
+                    * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+            - PotenBox_1 [active]
+                * Image sprite=General_Container_A color=(0,0,0,1)
+                * Button interactable=True
+              - Img_PotenBox_1_12 [active]
+                  * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                - Txt_Frame_04 [INACTIVE]
+                    * Outline [Script ns=UnityEngine.UI]
+                    * TextMeshProUGUI text="9999" fontSize=11
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - Img_Frame_04 [active]
+                    * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+            - PotenBox_2 [active]
+                * Image sprite=General_Container_A color=(0,0,0,1)
+                * Button interactable=True
+              - Img_PotenBox_2_14 [active]
+                  * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                - Txt_Frame_05 [INACTIVE]
+                    * Outline [Script ns=UnityEngine.UI]
+                    * TextMeshProUGUI text="9999" fontSize=11
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - Img_Frame_03 [active]
+                    * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+            - PotenBox_3 [active]
+                * Image sprite=General_Container_A color=(0,0,0,1)
+                * Button interactable=True
+              - Img_PotenBox_3_09 [active]
+                  * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                - Txt_Frame_06 [INACTIVE]
+                    * Outline [Script ns=UnityEngine.UI]
+                    * TextMeshProUGUI text="9999" fontSize=11
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - Img_Frame_02 [active]
+                    * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+        - PotentialBox [active]
+            * Image sprite=General_Container_A color=(0,0,0,1)
+            * Button interactable=True
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+          - Panel_PotentialBox_02 [INACTIVE]
+            - Img_FrameEf_02 [active]
+                * Image sprite=UIMask color=(1,1,1,1)
+          - Mask_PotentialBox_01 [INACTIVE]
+              * Image sprite=UIMask color=(1,1,1,1)
+              * Mask [Script ns=UnityEngine.UI]
+            - Img_GlowMask_01 [active]
+                * Image sprite=shop_frame_glow color=(1,1,1,1)
+          - Img_PotentialBox_01 [INACTIVE]
+              * Image sprite=Scroll_3 color=(1,1,1,1)
+          - Img_PotentialBox_02 [active]
+              * Image sprite=frames_0002_frame-7 color=(1,1,1,1)
+          - FlameImg [INACTIVE]
+              * Image sprite=flame17 color=(1,1,1,1)
+              * Animator controller=Flame Img
+          - Txt_PotentialBox_02 [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="+" fontSize=13
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - EnhScrollSelectPopup [active]
+            * Image sprite=white color=(0,0,0,0.94)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Scale autoPlay=True id= dur=0.3
+          - Img_EnhScrollSelectPopup_02 [active]
+              * Image sprite=Inventory_Slot_IconFrame color=(0.54,0.34,0,1)
+              * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+            - Btn_Layout_02 [active]
+                * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                * Button interactable=True
+              - Img_EnhScrollBox_07 [active]
+                  * Image sprite=Icon_inventory color=(1,1,1,1)
+              - Mask_EnhScrollBox_07 [active]
+                  * Image sprite=(none) color=(0,0,0,1)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_GlowMask_09 [active]
+                    * Image sprite=shop_frame_glow color=(1,1,1,1)
+              - Img_EnhScrollBox_09 [active]
+                  * Image sprite=Scroll_3 color=(1,1,1,1)
+              - Img_EnhScrollBox_06 [active]
+                  * Image sprite=white color=(0,0,0,0.71)
+              - Txt_EnhScrollBox_04 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="999" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - EnhScrollBox2 [active]
+                * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                * Button interactable=True
+              - Img_EnhScrollBox2_13 [active]
+                  * Image sprite=Icon_inventory color=(1,1,1,1)
+              - Mask_EnhScrollBox2_09 [active]
+                  * Image sprite=(none) color=(0,0,0,1)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_GlowMask_08 [active]
+                    * Image sprite=shop_frame_glow color=(1,1,1,1)
+              - Img_EnhScrollBox2_06 [active]
+                  * Image sprite=Scroll_3 color=(1,1,1,1)
+              - Img_EnhScrollBox2_05 [active]
+                  * Image sprite=white color=(0,0,0,0.71)
+              - Txt_EnhScrollBox2_07 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="999" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - EnhScrollBox3 [active]
+                * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                * Button interactable=True
+              - Img_EnhScrollBox3_08 [active]
+                  * Image sprite=Icon_inventory color=(1,1,1,1)
+              - Mask_EnhScrollBox3_08 [active]
+                  * Image sprite=(none) color=(0,0,0,1)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_GlowMask_06 [active]
+                    * Image sprite=shop_frame_glow color=(1,1,1,1)
+              - Img_EnhScrollBox3_09 [active]
+                  * Image sprite=Scroll_3 color=(1,1,1,1)
+              - Img_EnhScrollBox3_07 [active]
+                  * Image sprite=white color=(0,0,0,0.71)
+              - Txt_EnhScrollBox3_06 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="999" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - EnhScrollBox4 [active]
+                * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                * Button interactable=True
+              - Img_EnhScrollBox4_10 [active]
+                  * Image sprite=Icon_inventory color=(1,1,1,1)
+              - Mask_EnhScrollBox4_06 [active]
+                  * Image sprite=(none) color=(0,0,0,1)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_GlowMask_07 [active]
+                    * Image sprite=shop_frame_glow color=(1,1,1,1)
+              - Img_EnhScrollBox4_08 [active]
+                  * Image sprite=Scroll_3 color=(1,1,1,1)
+              - Img_EnhScrollBox4_04 [active]
+                  * Image sprite=white color=(0,0,0,0.71)
+              - Txt_EnhScrollBox4_05 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="999" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - Btn_EnhacePopup_01 [active]
+            * Image sprite=General_Container_A color=(0,0,0,1)
+            * Button interactable=True
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.5
+          - Panel_EnhScrollBox_01 [INACTIVE]
+            - Img_FrameEf_01 [active]
+                * Image sprite=UIMask color=(1,1,1,1)
+          - Mask_EnhScrollBox_02 [INACTIVE]
+              * Image sprite=UIMask color=(1,1,1,1)
+              * Mask [Script ns=UnityEngine.UI]
+            - Img_GlowMask_02 [active]
+                * Image sprite=shop_frame_glow color=(1,1,1,1)
+          - Img_EnhScrollBox_02 [INACTIVE]
+              * Image sprite=Scroll_3 color=(1,1,1,1)
+          - Img_EnhScrollBox_03 [active]
+              * Image sprite=frames_0002_frame-4 color=(1,1,1,1)
+          - PlusText [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="+" fontSize=12
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - AmountText [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="99" fontSize=10
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - isSkipBtn [active]
+            * Toggle [Script ns=UnityEngine.UI]
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+          - Img_isSkipBtn_03 [active]
+              * Image sprite=2_options_off color=(1,1,1,1)
+            - Checkmark [active]
+                * Image sprite=2_options_on color=(1,1,1,1)
+          - Text_Legacy [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="영상 건너뛰기" fontSize=6
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - Text_Legacy_1 [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="SKIP ANIAMTION" fontSize=6
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - RiskGroup [active]
+          - RiskNum [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+              * TextMeshProUGUI text="20" fontSize=37
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - text [INACTIVE]
+              * Outline [Script ns=UnityEngine.UI]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=PunchScale autoPlay=True id= dur=0.3
+              * TextMeshProUGUI text="필요/실패 시 내구도 감소량" fontSize=15
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - ChanceTxt [active]
+            * Outline [Script ns=UnityEngine.UI]
+            * DOTweenAnimation animType=LocalMove autoPlay=False id= dur=0.5
+            * TextMeshProUGUI text="100.000%" fontSize=15
+            * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - Enhance_Btn [active]
+            * Image sprite=1_orange_button_s color=(0.9,0.9,0.9,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Scale autoPlay=True id= dur=0.3
+            * DOTweenAnimation animType=ShakePosition autoPlay=True id= dur=1
+            * Button interactable=True
+          - Txt_Enhance_Btn_01 [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="강화" fontSize=23
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - EnhancePopupCloseBtn [active]
+            * Image sprite=white color=(0,0,0,0)
+            * Button interactable=False
+        - SkipFlashGroup [active]
+          - Flash_Success [INACTIVE]
+              * Image sprite=(none) color=(1,1,1,0)
+              * Animator controller=Flash
+          - Flash_Fail [INACTIVE]
+              * Image sprite=(none) color=(0,0,0,0)
+              * Animator controller=Flash

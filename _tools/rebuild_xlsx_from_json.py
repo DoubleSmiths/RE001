@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # JSON(현재 진실) → 로컬 .xlsx 재생성 — 구글시트 폐기(2026-07), 로컬 엑셀 원천 전환용.
-# 대상: PlayerStatus/Creature/Item(3시트)/Localization/Dialogue/Travel/Buff
-# (추가 7종 Skill~Combo는 AI/gen_data_sheets.py 사용, QuestData.xlsx는 이미 동기화됨)
+# 대상: PlayerStatus/Creature/Item(3시트)/Localization/Dialogue/Travel/Buff/Skill/EquipEnhance/MinMon
+# (나머지 추가 시트 Equipment/HPPotion/SpeedPotion/Combo는 AI/gen_data_sheets.py 사용, QuestData.xlsx는 이미 동기화됨)
 # 컬럼 순서는 DataTransformer.cs의 각 로컬 파서와 1:1 — 파서를 바꾸면 여기도 같이 바꿀 것.
 import json, os
 from openpyxl import Workbook, load_workbook
@@ -99,6 +99,8 @@ def build_dialogue():
         for line in g["Lines"]:
             ws.append([line["TextKey"], line.get("Kor",""), line.get("Eng","")])
     for name, rows in keep.items():
+        if name in wb.sheetnames:   # JSON에 이미 정식 포함된 그룹(퀘7에서 GuildOnQuestText 추가됨) — 중복 시트 증식 방지
+            continue
         ws = wb.create_sheet(name); ws.append(["TextKey","Kor","Eng"])
         for r in rows: ws.append(list(r[:3]))
     save(wb, "DialogueData.xlsx")
@@ -126,7 +128,59 @@ def build_buff():
         ws.append([cell(e.get(c)) for c in ["DataId","Name","Description","IconLabel","Timed","Duration"]])
     save(wb, "BuffData.xlsx")
 
+# ── SkillData.xlsx (3행 헤더 — ParseSkillDataSheet 컬럼 인덱스 0~30 순서) ──
+#  주의: 신규 3컬럼(StatTypes/StatBonuses/EffectVfxLabel)은 파서가 뒤(28~30)에서 읽음 — JSON 필드 순서와 다름.
+COLS_SK = ["DataId","Name","Description","IconLabel","Category","SkillActiveType","StatType","StatBonus",
+           "MaxLevel","MemoryCapacity","Story","Source","RequiredMinionId","RequiredEquipId",
+           "RequiredItemId","RequiredItemCount","NpcLocation","RoleTypes","TriggerType","Conditions",
+           "ProcChance","Cooldown","ActiveContext","ConditionValue","Effect","EffectStat",
+           "EffectValue","EffectDuration","StatTypes","StatBonuses","EffectVfxLabel"]
+def build_skill():
+    wb = Workbook(); ws = wb.active; ws.title = "SkillData"
+    ws.append(COLS_SK)
+    ws.append(["int","string","string","string","enum","enum","string","float","int","int","string","enum",
+               "int","int","int","int","string","list","enum","list","float","float","enum","float","enum",
+               "string","float","float","list","list","string"])
+    ws.append(["ID","이름(로컬키)","설명(로컬키)","아이콘","분류","Active/Passive","버프 대상 스탯","레벨당 수치",
+               "최대 등급","기억력 점유(0=재능)","이야기(로컬키)","출처","요구 미니몬ID","요구 장비ID",
+               "요구 재료ID","요구 재료수","학습 NPC 장소","종류(콤마)","발동","발동조건(콤마)",
+               "확률%","쿨(초)","맥락","조건 파라미터","효과","효과 스탯","효과 수치","지속(초)",
+               "다중 스탯(콤마)","다중 수치(콤마)","발동 VFX"])
+    for e in j("SkillData.json")["skills"]:
+        ws.append([cell(e.get(c)) for c in COLS_SK])
+    save(wb, "SkillData.xlsx")
+
+# ── EquipEnhanceData.xlsx (3행 헤더 — ParseEquipEnhanceDataSheet 순서) ──
+COLS_EE = ["DataId","EquipDataId","Level","AtkBonus","CritBonus","MagicAtkBonus",
+           "RequiredMaterialId","RequiredMaterialCount"]
+def build_equipenhance():
+    wb = Workbook(); ws = wb.active; ws.title = "EquipEnhanceData"
+    ws.append(COLS_EE)
+    ws.append(["int","int","int","int","float","int","int","int"])
+    ws.append(["ID","대상 장비ID","강화 레벨","물공 보너스(단계별)","치명 보너스","마공 보너스",
+               "요구 재료ID(0=주문서 강화)","요구 재료수"])
+    for e in j("EquipEnhanceData.json")["enhances"]:
+        ws.append([cell(e.get(c)) for c in COLS_EE])
+    save(wb, "EquipEnhanceData.xlsx")
+
+# ── MinMonData.xlsx (3행 헤더 — ParseMinMonDataSheet 순서) ──
+COLS_MM = ["DataId","Name","IconLabel","PrefabLabel","PetAnimLabel","MonsterDataId",
+           "BaseAtk","BaseAtkSpeed","BaseCritRate","AtkGrade","AtkSpeedGrade","CritGrade",
+           "MaxTameCount","CatchChance"]
+def build_minmon():
+    wb = Workbook(); ws = wb.active; ws.title = "MinMonData"
+    ws.append(COLS_MM)
+    ws.append(["int","string","string","string","string","int","float","float","float",
+               "enum","enum","enum","int","float"])
+    ws.append(["ID","이름(로컬키)","아이콘","프리팹","펫 애니","원본 몬스터ID",
+               "기본 공격력","기본 공속","기본 치명%","공격 등급","공속 등급","치명 등급",
+               "최대 길들이기","포획 확률(0~1)"])
+    for e in j("MinMonData.json")["minMons"]:
+        ws.append([cell(e.get(c)) for c in COLS_MM])
+    save(wb, "MinMonData.xlsx")
+
 if __name__ == "__main__":
     build_playerstatus(); build_creature(); build_item()
     build_localization(); build_dialogue(); build_travel(); build_buff()
-    print("완료 — 이후 Unity: Tools/ParseAllLocal 실행 후 JsonData diff로 검증할 것")
+    build_skill(); build_equipenhance(); build_minmon()
+    print("완료 — 이후 Unity: Tools/ParseAllLocal + Tools/ParseExtraData 실행 후 JsonData diff로 검증할 것")

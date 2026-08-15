@@ -1,0 +1,240 @@
+=== UI_EquipDetailPopup (Assets/@Resources/Prefab/UI/Popup/UI_EquipDetailPopup.prefab) ===
+- UI_EquipDetailPopup [active]
+    * Canvas
+    * CanvasScaler [Script ns=UnityEngine.UI]
+    * GraphicRaycaster [Script ns=UnityEngine.UI]
+  - FIXED [active]
+    - In_Frame [active]
+      - EquipDetailPopup [active]
+        - EquipPopupBackground [active]
+            * Image sprite=(none) color=(0,0,0,0.47)
+            * Button interactable=True
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+        - EquipPopupFrame [active]
+            * Image sprite=Frame_square_256_vert color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+          - TopFrame [active]
+              * Image sprite=General_Container_A color=(0.18,0.13,0,1)
+            - Img_TopFrame_04 [active]
+                * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+            - Img_TopFrame_01 [active]
+                * Image sprite=Window_Header_RedGlow color=(1,1,1,1)
+            - EquipPopupIcon [active]
+              - Img_EquipPopupIcon_04 [active]
+                  * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+              - Background [active]
+                  * Image sprite=General_Container_A color=(0,0,0,1)
+              - Mask_EquipPopupIcon_03 [active]
+                  * Image sprite=UIMask color=(1,1,1,1)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Image_2 [active]
+                    * Image sprite=white color=(0,0,0,1)
+                - Image_1 [active]
+                    * Image sprite=shop_frame_glow color=(0.6,0.02,0.02,1)
+              - WIcon [active]
+                  * Image sprite=Sword 32 (5) color=(1,1,1,1)
+                  * Animator controller=EquipIcon
+              - ENumber [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="+9" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - Img_EquipPopupIcon_02 [active]
+                  * Image sprite=white color=(1,1,1,0.86)
+                  * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+              - BlockImg [active]
+                  * Image sprite=white color=(0,0,0,0.47)
+              - EquipedEf [active]
+                - FrameEf [active]
+                  - EFrame [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                  - EFrame_1 [INACTIVE]
+                      * Image sprite=(none) color=(1,1,1,1)
+                - EIcon [active]
+                    * Image sprite=General_Container_A color=(0.58,0,0,1)
+                  - Icon_2 [active]
+                      * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                  - Txt_EIcon_06 [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * TextMeshProUGUI text="E" fontSize=6
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Txt_TopFrame_01 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="+9 광기의 칠흙 대검" fontSize=13
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Img_TopFrame_03 [active]
+                * Image sprite=UISprite color=(1,1,1,0.68)
+                * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+          - Img_EquipPopupFrame_01 [active]
+              * Image sprite=Decor_Title_options color=(1,1,1,1)
+          - BtmFrame [active]
+            - Headline [active]
+              - Img_Headline_02 [active]
+                  * Image sprite=fx_glow color=(1,0,0,0.71)
+              - Txt_Headline_04 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="|" fontSize=7
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - EquipTypeTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="무기" fontSize=7
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - Deco [active]
+                  * Image sprite=message_popup_bg_default color=(1,1,1,0.2)
+            - EquipDuriTxtGroup [active]
+              - Txt_EquipDuriTxtGroup_07 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="내구도" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - EquipDuriInfoTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="100/100" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - EquipSkillTxtGroup [active]
+              - Txt_EquipSkillTxtGroup_05 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="고유능력" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - EquipSkillInfoTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="고유능력1" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - EquipStatTxtGroup [active]
+              - EquipAmountDetailBtn [active]
+                  * Image sprite=1_plus color=(0.84,0.84,0.84,1)
+                  * Button interactable=True
+                - Img_EquipAmountDetailBtn_02 [active]
+                    * Image sprite=UISprite color=(1,1,1,0)
+              - Txt_EquipStatTxtGroup_02 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="능력치" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - ScrollView [active]
+                  * Image sprite=Background color=(1,1,1,0)
+                  * ScrollRect horiz=False vert=True
+                - Viewport [active]
+                    * Image sprite=UIMask color=(1,1,1,1)
+                    * Mask [Script ns=UnityEngine.UI]
+                  - Content [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+                      * TextMeshProUGUI text="공격력 +1 명중률 +1 치명타 +1 공격속도 +1% 재사용 감소 +10" fontSize=6
+                    - Enter [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text=" " fontSize=5
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - DoubleEnter [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="  " fontSize=5
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - BtmGroup [active]
+              * Image sprite=UISprite color=(0.08,0.06,0,0.71)
+              * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+            - EquipBtn [active]
+                * Image sprite=UIMask color=(1,1,1,0.04)
+                * Button interactable=True
+              - Img_EquipBtn_04 [active]
+                  * Image sprite=T_gray_button_s color=(0.39,0.39,0.39,1)
+              - mask [active]
+                  * Image sprite=UIMask color=(1,1,1,0.04)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_mask_05 [active]
+                    * Image sprite=shop_frame_glow color=(0,0.45,0.06,1)
+              - Txt_EquipBtn_04 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="장착" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - OnEquipBtn [active]
+                * Image sprite=UIMask color=(1,1,1,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Img_OnEquipBtn_03 [active]
+                  * Image sprite=T_gray_button_s color=(0.39,0.39,0.39,1)
+              - Mask_OnEquipBtn_02 [active]
+                  * Image sprite=UIMask color=(1,1,1,0.04)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_mask_1_07 [active]
+                    * Image sprite=shop_frame_glow color=(0.44,0.22,0,1)
+              - Txt_OnEquipBtn_02 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="장착중" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - DontHaveBtn [active]
+                * Image sprite=UIMask color=(1,1,1,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Img_DontHaveBtn_01 [active]
+                  * Image sprite=T_gray_button_s color=(0.39,0.39,0.39,1)
+              - Txt_DontHaveBtn_03 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="미보유" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - EnhaceBtn [active]
+                * Image sprite=UIMask color=(1,1,1,1)
+                * Mask [Script ns=UnityEngine.UI]
+                * Button interactable=True
+              - Img_EnhaceBtn_02 [active]
+                  * Image sprite=T_gray_button_s color=(0.39,0.39,0.39,1)
+              - Mask_EnhaceBtn_01 [active]
+                  * Image sprite=UIMask color=(1,1,1,0.04)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Img_mask_1_06 [active]
+                    * Image sprite=shop_frame_glow color=(0.8,0.06,0,1)
+              - Txt_EnhaceBtn_05 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="대장간" fontSize=6
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - EquipAmountDetailPopup [active]
+              * Image sprite=UISprite color=(1,1,1,0)
+            - Btn_EquipAmountDetailPopup_01 [active]
+                * Image sprite=white color=(1,1,1,0)
+                * Button interactable=True
+            - Btn_EquipAmountDetailPopup_03 [active]
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                * Button interactable=True
+                * TextMeshProUGUI text="  공격력                       명중률         " fontSize=4
+              - Img_X_1_06 [active]
+                  * Image sprite=General_Container_A color=(0.12,0.09,0,1)
+              - Img_X_1_03 [active]
+                  * Image sprite=Inventory_Slot_IconFrame color=(0.32,0.32,0.32,1)
+              - Txt_X_1_08 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="기본" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - __3 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="상세정보" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - Txt_X_1_02 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="강화" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - Txt_X_1_04 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="내구도" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - StatNameTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="  공격력                       명중률         " fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - BaseTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="+3 +3 +3 +3 +3 +3 +3 +3" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - EnTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="+10 +10 +10 +10 +10 +10 +10 +10" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - DurTxt [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="+10 +10 +10 +10 +10 +10 +10 +10" fontSize=5
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - Xbutton [active]
+            * Image sprite=1_orange_button_xs color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            * DOTweenAnimation animType=PunchScale autoPlay=False id=xButtonClick dur=0.3
+          - Txt_Xbutton_01 [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+              * TextMeshProUGUI text="X" fontSize=11
+              * ContentSizeFitter [Script ns=UnityEngine.UI]

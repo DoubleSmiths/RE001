@@ -27,11 +27,85 @@ public class BackgroundScroller : MonoBehaviour
     float _camLeftEdge;
     public bool IsScrolling { get; set; } = false;
 
+    // ── 지역별 배경 ──
+    // 전 던전이 CH1BG(여름 숲) 하나를 그대로 썼다. 125개 던전이 전부 같은 그림이었다는 뜻이다.
+    // 노드마다 생성해 둔 Region_{nodeId} 스프라이트가 있으면 그걸로 갈아끼운다.
+    // 생성 이미지는 그 자체가 원경~근경을 품은 한 장이라 레이어를 나누지 않고 한 장으로 스크롤한다
+    // (없으면 저작된 5겹 패럴랙스를 그대로 둔다 — 폴백).
+    GameObject _regionLayer;
+    int _appliedNodeId = int.MinValue;
+
+    void ApplyRegionBackground()
+    {
+        int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        if (nodeId == _appliedNodeId) return;
+        _appliedNodeId = nodeId;
+
+        // 던전 노드 전용 그림 → 없으면 소속 지역 그림. 전투는 던전에서 일어나므로 이 폴백이 실사용 경로다.
+        Sprite sp = Managers.Resource?.Load<Sprite>($"Region_{nodeId}");
+        if (sp == null && Managers.Data?.TravelNodeDic != null
+            && Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn) && tn.ParentId != 0)
+            sp = Managers.Resource?.Load<Sprite>($"Region_{tn.ParentId}");
+
+        if (sp == null)
+        {
+            // 전용 그림이 없는 지역 — 저작 패럴랙스로 되돌린다.
+            if (_regionLayer != null) _regionLayer.SetActive(false);
+            foreach (Transform c in transform)
+                if (c.gameObject != _regionLayer) c.gameObject.SetActive(true);
+            return;
+        }
+
+        foreach (Transform c in transform)
+            if (c.gameObject != _regionLayer) c.gameObject.SetActive(false);
+
+        if (_regionLayer == null)
+        {
+            _regionLayer = new GameObject("RegionBG");
+            _regionLayer.transform.SetParent(transform, false);
+            var sr = _regionLayer.AddComponent<SpriteRenderer>();
+            sr.sortingOrder = -1;
+        }
+        _regionLayer.SetActive(true);
+
+        var rend = _regionLayer.GetComponent<SpriteRenderer>();
+        rend.sprite = sp;
+        FitToCamera(_regionLayer.transform, rend);
+
+        RebuildLayers();
+    }
+
+    // 생성 배경은 크기가 제각각이라 카메라 세로를 채우도록 스케일을 맞춘다.
+    static void FitToCamera(Transform t, SpriteRenderer sr)
+    {
+        Camera cam = Camera.main;
+        if (cam == null || sr.sprite == null) return;
+
+        t.localScale = Vector3.one;
+        float h = sr.bounds.size.y;
+        if (h <= 0f) return;
+
+        float scale = (cam.orthographicSize * 2f) / h;
+        t.localScale = new Vector3(scale, scale, 1f);
+        t.position = new Vector3(cam.transform.position.x, cam.transform.position.y, t.position.z);
+    }
+
     void Start()
     {
         Camera cam = Camera.main;
         // 카메라 왼쪽 경계 (world 좌표), 카메라가 고정이므로 한 번만 계산
         _camLeftEdge = cam.transform.position.x - cam.orthographicSize * cam.aspect;
+
+        ApplyRegionBackground();   // 내부에서 RebuildLayers까지 한다
+        if (_layers.Count == 0) RebuildLayers();
+    }
+
+    void RebuildLayers()
+    {
+        // 이전 클론 정리 — 배경을 갈아끼울 때마다 복사본이 쌓이면 안 된다.
+        foreach (var l in _layers)
+            if (l.B != null) Destroy(l.B.gameObject);
+        _layers.Clear();
 
         // 자식 목록을 먼저 수집 (Instantiate로 추가되는 클론이 루프에 잡히지 않게)
         List<Transform> children = new List<Transform>();
@@ -42,7 +116,7 @@ public class BackgroundScroller : MonoBehaviour
         foreach (Transform child in children)
         {
             SpriteRenderer sr = child.GetComponent<SpriteRenderer>();
-            if (sr == null)
+            if (sr == null || !child.gameObject.activeSelf)
             {
                 idx++;
                 continue;
@@ -77,6 +151,9 @@ public class BackgroundScroller : MonoBehaviour
 
     void Update()
     {
+        // 지역 이동 감지 — int 비교라 매 프레임 돌려도 부담 없다. 바뀔 때만 실제 교체가 일어난다.
+        ApplyRegionBackground();
+
         if (!IsScrolling) return;
 
         float dt = Time.deltaTime;

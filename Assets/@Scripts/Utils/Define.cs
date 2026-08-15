@@ -81,7 +81,11 @@ public class Define
         None,         // 패시브 (스탯만 가산)
         Probability,  // 확률 발동: 조건 충족 시 ProcChance% 확률로 발동
         Time,         // 시간 발동: ActiveContext 충족 시 Cooldown마다 발동 (쿨타임 스킬)
+        Active,       // 액티브: 플레이어가 스킬바에서 직접 눌러 발동. Cooldown 소모.
     }
+
+    // 액티브 스킬바 슬롯 수 (기획서 퀵슬롯 6칸).
+    public const int ACTIVE_SKILL_SLOTS = 6;
 
     // 확률 발동 조건 (슬39).
     public enum AbilityCondition

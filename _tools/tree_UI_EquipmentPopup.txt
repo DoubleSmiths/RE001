@@ -1,0 +1,1183 @@
+=== UI_EquipmentPopup (Assets/@Resources/Prefab/UI/Popup/UI_EquipmentPopup.prefab) ===
+- UI_EquipmentPopup [active]
+    * Canvas
+    * CanvasScaler [Script ns=UnityEngine.UI]
+    * GraphicRaycaster [Script ns=UnityEngine.UI]
+  - FIXED [active]
+    - In_Frame [active]
+      - EquipmentPopup [active]
+        - EquipmentPopupBackground [active]
+            * Image sprite=(none) color=(0,0,0,0.71)
+            * Button interactable=False
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+        - EquipmentPopupFrame [active]
+            * Image sprite=BAR_Basic color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+          - EquipmentPopupTitle [active]
+            - title [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="EQUIPMENT" fontSize=11
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - List [active]
+            - LeftsideBar [active]
+              - Layout [active]
+                  * VerticalLayoutGroup [Script ns=UnityEngine.UI]
+                - OpenWeaponListBtn [active]
+                    * Image sprite=Icon_Eq_Weapon color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenWeaponListBtn_06 [active]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_02 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenWeaponListBtn_01 [active]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+                - OpenHelemtListBtn [active]
+                    * Image sprite=Icon_Eq_Head color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenHelemtListBtn_03 [INACTIVE]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_06 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenHelemtListBtn_06 [INACTIVE]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+                - OpenCloakListBtn [active]
+                    * Image sprite=Icon_Eq_Shoulder color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenCloakListBtn_04 [INACTIVE]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_05 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenCloakListBtn_05 [INACTIVE]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+                - OpenArmorListBtn [active]
+                    * Image sprite=Icon_Eq_Chest color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenArmorListBtn_07 [INACTIVE]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_03 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenArmorListBtn_02 [INACTIVE]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+                - OpenGloveListBtn [active]
+                    * Image sprite=Icon_Eq_Glowes color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenGloveListBtn_01 [INACTIVE]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_07 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenGloveListBtn_03 [INACTIVE]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+                - OpenBootsListBtn [active]
+                    * Image sprite=Icon_Eq_boots color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenBootsListBtn_02 [INACTIVE]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_01 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenBootsListBtn_07 [INACTIVE]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+                - OpenRingListBtn [active]
+                    * Image sprite=Icon_Eq_Trinket color=(1,1,1,1)
+                    * Button interactable=True
+                  - Mask_OpenRingListBtn_05 [INACTIVE]
+                      * Image sprite=UIMask color=(1,1,1,0.04)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Mask_04 [active]
+                        * Image sprite=shop_frame_glow_left color=(1,0.2,0,0.31)
+                  - Img_OpenRingListBtn_04 [INACTIVE]
+                      * Image sprite=tab_focus_vertical color=(0.6,0.23,0.23,1)
+            - WeaponList [active]
+              - Img_WeaponList_06 [INACTIVE]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_WeaponList_05 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - WeaponTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - Btn_WeaponTierFrame_02 [active]
+                      * Button interactable=True
+                    - Img_WeaponT1Btn_09 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_WeaponT1Btn_11 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_33 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_WeaponT1Btn_17 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_WeaponT1Btn_11 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - Btn_WeaponTierFrame_04 [active]
+                      * Button interactable=True
+                    - Img_WeaponT2Btn_17 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_WeaponT2Btn_28 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_32 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_WeaponT2Btn_20 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_WeaponT2Btn_10 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - Btn_WeaponTierFrame_01 [active]
+                      * Button interactable=True
+                    - Img_WeaponT3Btn_26 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_WeaponT3Btn_27 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_42 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_WeaponT3Btn_19 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_WeaponT3Btn_19 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - WeaponT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_WeaponT1List_07 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_02 [active]
+                      - W00Btn [active]
+                          * Button interactable=True
+                        - Img_W00Btn_17 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_W00Btn_04 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_W00Btn_01 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_14 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_10 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_W00Btn_05 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_W00Btn_04 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_W00Btn_03 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_W00Btn_07 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_W00Btn_01 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_W00Btn_10 [active]
+                          - Panel_EquipedEf_05 [active]
+                            - Img_FrameEf_12 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_09 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_03 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_09 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_25 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                      - W01Btn [active]
+                          * Button interactable=True
+                        - Img_W01Btn_16 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_W01Btn_11 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_W01Btn_08 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_19 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_09 [active]
+                              * Image sprite=shop_frame_glow color=(0.59,0.01,0.01,1)
+                        - Img_W01Btn_08 [active]
+                            * Image sprite=Sword03 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_W01Btn_10 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_W01Btn_03 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_W01Btn_09 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_W01Btn_10 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_W01Btn_09 [active]
+                          - Panel_EquipedEf_06 [active]
+                            - Img_FrameEf_15 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_05 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_05 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_01 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_31 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                      - W02Btn [active]
+                          * Button interactable=True
+                        - Img_W02Btn_13 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_W02Btn_07 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_W02Btn_04 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_16 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_03 [active]
+                              * Image sprite=shop_frame_glow color=(0.59,0.01,0.01,1)
+                        - Img_W02Btn_03 [active]
+                            * Image sprite=Sword03 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_W02Btn_05 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_W02Btn_04 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_W02Btn_06 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_W02Btn_05 [active]
+                            * Image sprite=white color=(0,0,0,0.9)
+                        - Panel_W02Btn_03 [active]
+                          - Panel_EquipedEf_04 [active]
+                            - Img_FrameEf_18 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_03 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_06 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_07 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_28 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                      - W44Btn [active]
+                          * Button interactable=True
+                        - Img_W44Btn_08 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_W44Btn_07 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_W44Btn_03 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_17 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_06 [active]
+                              * Image sprite=shop_frame_glow color=(0.59,0.01,0.01,1)
+                        - Img_W44Btn_10 [active]
+                            * Image sprite=Icon_Sword_2_24 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_W44Btn_09 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_W44Btn_02 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_W44Btn_11 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_W44Btn_05 [active]
+                            * Image sprite=white color=(0,0,0,0.9)
+                        - Panel_W44Btn_01 [active]
+                          - Panel_EquipedEf_08 [active]
+                            - Img_FrameEf_11 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_04 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_07 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_03 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_30 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                      - E_W_Arrow1 [active]
+                          * Image sprite=arrow_down color=(1,1,1,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_E_W_Arrow1_50 [active]
+                            * Image sprite=shop_frame_glow color=(0,0,0,0.71)
+                      - E_W_Arrow2 [active]
+                          * Image sprite=arrow_down color=(0.31,0.31,0.31,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - _ [active]
+                            * Image sprite=shop_frame_glow color=(0,0,0,0.71)
+                  - Sb_WeaponT1List_07 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_05 [active]
+                      - Img_SlidingArea_13 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - WeaponT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_WeaponT2List_20 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_17 [active]
+                  - Sb_WeaponT2List_10 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_12 [active]
+                      - Img_SlidingArea_08 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - WeaponT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_WeaponT3List_18 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_16 [active]
+                  - Sb_WeaponT3List_12 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_06 [active]
+                      - Img_SlidingArea_01 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+            - HelmetList [active]
+              - Img_HelmetList_01 [active]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_HelmetList_06 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - HelmetTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - Btn_HelmetTierFrame_01 [active]
+                      * Button interactable=True
+                    - Img_WeaponT1Btn_24 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_WeaponT1Btn_26 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_47 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_WeaponT1Btn_10 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_WeaponT1Btn_13 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - Btn_HelmetTierFrame_03 [active]
+                      * Button interactable=True
+                    - Img_WeaponT2Btn_20 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_WeaponT2Btn_24 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_46 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_WeaponT2Btn_15 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_WeaponT2Btn_02 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - Btn_HelmetTierFrame_02 [active]
+                      * Button interactable=True
+                    - Img_WeaponT3Btn_27 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_WeaponT3Btn_10 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_39 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_WeaponT3Btn_05 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_WeaponT3Btn_07 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - HelmetT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_HelmetT1List_01 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_19 [active]
+                      - H00Btn [active]
+                          * Button interactable=True
+                        - Img_H00Btn_14 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_H00Btn_02 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_H00Btn_02 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_11 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_02 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_H00Btn_09 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_H00Btn_06 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_H00Btn_01 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_H00Btn_10 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_H00Btn_04 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_H00Btn_02 [active]
+                          - Panel_EquipedEf_10 [active]
+                            - Img_FrameEf_14 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_06 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_08 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_05 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_26 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Sb_HelmetT1List_01 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_16 [active]
+                      - Img_SlidingArea_16 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - HelmetT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_HelmetT2List_21 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_07 [active]
+                  - Sb_HelmetT2List_11 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_11 [active]
+                      - Img_SlidingArea_07 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - HelmetT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_HelmetT3List_08 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_03 [active]
+                  - Sb_HelmetT3List_14 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_03 [active]
+                      - Img_SlidingArea_05 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+            - CloakList [active]
+              - Img_CloakList_04 [active]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_CloakList_02 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - CloakTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - CloakT1Btn [active]
+                      * Button interactable=True
+                    - Img_CloakT1Btn_10 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_CloakT1Btn_16 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_29 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_CloakT1Btn_01 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_CloakT1Btn_16 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - CloakT2Btn [active]
+                      * Button interactable=True
+                    - Img_CloakT2Btn_08 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_CloakT2Btn_22 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_45 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_CloakT2Btn_12 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_CloakT2Btn_12 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - CloakT3Btn [active]
+                      * Button interactable=True
+                    - Img_CloakT3Btn_23 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_CloakT3Btn_20 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_43 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_CloakT3Btn_16 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_CloakT3Btn_06 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - CloakT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_CloakT1List_19 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_13 [active]
+                      - C00Btn [active]
+                          * Button interactable=True
+                        - Img_C00Btn_09 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_C00Btn_10 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_C00Btn_07 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_13 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_04 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_C00Btn_02 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_C00Btn_01 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_C00Btn_05 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_C00Btn_07 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_C00Btn_04 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_C00Btn_08 [active]
+                          - Panel_EquipedEf_09 [active]
+                            - Img_FrameEf_20 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_07 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_04 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_02 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_29 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Sb_CloakT1List_20 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_20 [active]
+                      - Img_SlidingArea_14 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - CloakT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_CloakT2List_05 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_05 [active]
+                  - Sb_CloakT2List_13 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_10 [active]
+                      - Img_SlidingArea_09 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - CloakT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_CloakT3List_11 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_12 [active]
+                  - Sb_CloakT3List_05 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_21 [active]
+                      - Img_SlidingArea_10 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+            - ArmorList [active]
+              - Img_ArmorList_02 [active]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_ArmorList_01 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - ArmorTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - ArmorT1Btn [active]
+                      * Button interactable=True
+                    - Img_ArmorT1Btn_11 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_ArmorT1Btn_09 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_48 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_ArmorT1Btn_02 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_ArmorT1Btn_01 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - ArmorT2Btn [active]
+                      * Button interactable=True
+                    - Img_ArmorT2Btn_18 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_ArmorT2Btn_25 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_37 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_ArmorT2Btn_11 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_ArmorT2Btn_03 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - ArmorT3Btn [active]
+                      * Button interactable=True
+                    - Img_ArmorT3Btn_22 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_ArmorT3Btn_12 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_34 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_ArmorT3Btn_04 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_ArmorT3Btn_21 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - ArmorT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_ArmorT1List_04 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_04 [active]
+                      - A00Btn [active]
+                          * Button interactable=True
+                        - Img_A00Btn_10 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_A00Btn_08 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_A00Btn_05 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_12 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_05 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_A00Btn_04 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_A00Btn_02 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Icon_LowDuri_2 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_A00Btn_06 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_A00Btn_12 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_A00Btn_05 [active]
+                          - Panel_EquipedEf_02 [active]
+                            - Img_FrameEf_13 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_10 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_09 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_06 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_24 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Sb_ArmorT1List_08 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_17 [active]
+                      - Img_SlidingArea_11 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - ArmorT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_ArmorT2List_17 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_06 [active]
+                  - Sb_ArmorT2List_15 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_13 [active]
+                      - Img_SlidingArea_06 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - ArmorT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_ArmorT3List_10 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_09 [active]
+                  - Sb_ArmorT3List_21 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_09 [active]
+                      - Img_SlidingArea_21 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+            - GloveList [active]
+              - Img_GloveList_05 [active]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_GloveList_04 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - GloveTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - GloveT1Btn [active]
+                      * Button interactable=True
+                    - Img_GloveT1Btn_16 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_GloveT1Btn_21 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_31 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_GloveT1Btn_21 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_GloveT1Btn_20 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - GloveT2Btn [active]
+                      * Button interactable=True
+                    - Img_GloveT2Btn_12 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_GloveT2Btn_08 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_38 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_GloveT2Btn_07 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_GloveT2Btn_04 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - GloveT3Btn [active]
+                      * Button interactable=True
+                    - Img_GloveT3Btn_28 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_GloveT3Btn_14 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_41 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_GloveT3Btn_14 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_GloveT3Btn_13 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - GloveT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_GloveT1List_06 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_14 [active]
+                      - G00Btn [active]
+                          * Button interactable=True
+                        - Img_G00Btn_12 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_G00Btn_06 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_G00Btn_06 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_15 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_08 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_G00Btn_01 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_G00Btn_07 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Icon_LowDuri_3 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_G00Btn_02 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_G00Btn_09 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_G00Btn_07 [active]
+                          - Panel_EquipedEf_03 [active]
+                            - Img_FrameEf_17 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_02 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_10 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_04 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_27 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Sb_GloveT1List_06 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_04 [active]
+                      - Img_SlidingArea_20 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - GloveT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_GloveT2List_09 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_01 [active]
+                  - Sb_GloveT2List_19 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_02 [active]
+                      - Img_SlidingArea_04 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - GloveT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_GloveT3List_12 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_18 [active]
+                  - Sb_GloveT3List_04 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_07 [active]
+                      - Img_SlidingArea_15 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+            - BootsList [active]
+              - Img_BootsList_07 [active]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_BootsList_03 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - BootsTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - BootsT1Btn [active]
+                      * Button interactable=True
+                    - Img_BootsT1Btn_21 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_BootsT1Btn_18 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_30 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_BootsT1Btn_18 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_BootsT1Btn_05 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - BootsT2Btn [active]
+                      * Button interactable=True
+                    - Img_BootsT2Btn_25 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_BootsT2Btn_15 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_35 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_BootsT2Btn_13 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_BootsT2Btn_08 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - BootsT3Btn [active]
+                      * Button interactable=True
+                    - Img_BootsT3Btn_19 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_BootsT3Btn_17 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_36 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_BootsT3Btn_09 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_BootsT3Btn_18 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - BootsT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_BootsT1List_03 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_15 [active]
+                      - B00Btn [active]
+                          * Button interactable=True
+                        - Img_B00Btn_15 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_B00Btn_01 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_B00Btn_10 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_18 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_07 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_B00Btn_07 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_B00Btn_03 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Icon_LowDuri_4 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_B00Btn_06 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_B00Btn_09 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_B00Btn_04 [active]
+                          - Panel_EquipedEf_07 [active]
+                            - Img_FrameEf_19 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_01 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_02 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_10 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_23 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Sb_BootsT1List_16 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_15 [active]
+                      - Img_SlidingArea_03 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - BootsT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_BootsT2List_14 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_11 [active]
+                  - Sb_BootsT2List_09 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_14 [active]
+                      - Img_SlidingArea_17 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - BootsT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_BootsT3List_15 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_10 [active]
+                  - Sb_BootsT3List_18 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_18 [active]
+                      - Img_SlidingArea_12 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+            - RingList [active]
+              - Img_RingList_03 [active]
+                  * Image sprite=white color=(0.12,0.1,0.04,1)
+              - Img_RingList_07 [active]
+                  * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - RingTierFrame [active]
+                    * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                  - RingT1Btn [active]
+                      * Button interactable=True
+                    - Img_RingT1Btn_15 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_RingT1Btn_19 [active]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_44 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_RingT1Btn_03 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T1" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_RingT1Btn_17 [active]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - RingT2Btn [active]
+                      * Button interactable=True
+                    - Img_RingT2Btn_13 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_RingT2Btn_13 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_40 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_RingT2Btn_06 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T2" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_RingT2Btn_17 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                  - RingT3Btn [active]
+                      * Button interactable=True
+                    - Img_RingT3Btn_14 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_RingT3Btn_23 [INACTIVE]
+                        * Image sprite=UIMask color=(1,1,1,0.04)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Mask_49 [active]
+                          * Image sprite=shop_frame_glow color=(0.67,0,0,1)
+                    - Txt_RingT3Btn_08 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="T3" fontSize=9
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_RingT3Btn_16 [INACTIVE]
+                        * Image sprite=shop_tab_focus color=(0.72,0.27,0.27,1)
+                - RingT1List [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_RingT1List_13 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Panel_Viewport_08 [active]
+                      - R00Btn [active]
+                          * Button interactable=True
+                        - Img_R00Btn_11 [active]
+                            * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                        - Img_R00Btn_10 [active]
+                            * Image sprite=General_Container_A color=(0,0,0,1)
+                        - Mask_R00Btn_09 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                            * Mask [Script ns=UnityEngine.UI]
+                          - Img_Glow_20 [active]
+                              * Image sprite=white color=(0,0,0,1)
+                          - Img_Glow_01 [active]
+                              * Image sprite=shop_frame_glow color=(0.36,0.36,0.36,1)
+                        - Img_R00Btn_06 [active]
+                            * Image sprite=Sword01 color=(1,1,1,1)
+                            * Animator controller=EquipIcon
+                        - Txt_R00Btn_08 [active]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="+9" fontSize=6
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Icon_LowDuri_5 [active]
+                            * Image sprite=Arrow_down color=(1,0.05,0,1)
+                            * Outline [Script ns=UnityEngine.UI]
+                            * Animator controller=LowDuri
+                        - Img_R00Btn_01 [INACTIVE]
+                            * Image sprite=white color=(1,1,1,0.86)
+                            * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                        - Img_R00Btn_08 [INACTIVE]
+                            * Image sprite=white color=(0,0,0,0.63)
+                        - Panel_R00Btn_06 [active]
+                          - Panel_EquipedEf_01 [active]
+                            - Img_FrameEf_16 [active]
+                                * Image sprite=UIMask color=(1,1,1,1)
+                            - Img_FrameEf_08 [INACTIVE]
+                                * Image sprite=(none) color=(1,1,1,1)
+                          - Img_EquipedEf_01 [active]
+                              * Image sprite=General_Container_A color=(0.58,0,0,1)
+                            - Img_EIcon_08 [active]
+                                * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                            - Txt_EIcon_22 [active]
+                                * Outline [Script ns=UnityEngine.UI]
+                                * TextMeshProUGUI text="E" fontSize=7
+                                * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Sb_RingT1List_17 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_19 [active]
+                      - Img_SlidingArea_19 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - RingT2List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_RingT2List_02 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_21 [active]
+                  - Sb_RingT2List_02 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_08 [active]
+                      - Img_SlidingArea_18 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+                - RingT3List [INACTIVE]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * ScrollRect horiz=False vert=True
+                  - Mask_RingT3List_16 [active]
+                      * Image sprite=UIMask color=(1,1,1,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Obj_Viewport_20 [active]
+                  - Sb_RingT3List_03 [active]
+                      * Image sprite=Background color=(1,1,1,0.2)
+                      * Scrollbar [Script ns=UnityEngine.UI]
+                    - Panel_ScrollbarVertical_01 [active]
+                      - Img_SlidingArea_02 [active]
+                          * Image sprite=UISprite color=(1,1,1,0.31)
+        - Xbutton [active]
+            * Image sprite=1_orange_button_xs color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            * DOTweenAnimation animType=PunchScale autoPlay=False id=xButtonClick dur=0.3
+          - GameObject [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+              * TextMeshProUGUI text="X" fontSize=11
+              * ContentSizeFitter [Script ns=UnityEngine.UI]

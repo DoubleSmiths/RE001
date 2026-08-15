@@ -1194,6 +1194,14 @@ public class GameManager
                 if (!Managers.Ability.IsLearned(id))
                     Managers.Ability.Learn(id);
 
+        // 4-b. 액티브 스킬 — 습득만으론 스킬바에 안 뜬다(점유 능력은 [기억]해야 장착).
+        //      기억력이 모자라면 Memorize가 조용히 실패하므로 스킬바가 빈다 → 직접 채운다.
+        if (data.SkillDic != null && Managers.Ability != null)
+            foreach (var d in data.SkillDic.Values)
+                if (d.TriggerType == Define.AbilityTrigger.Active && !Managers.Ability.IsEquipped(d.DataId))
+                    if (!_gameData.EquippedAbilities.Contains(d.DataId))
+                        _gameData.EquippedAbilities.Add(d.DataId);
+
         // 5. 장비 — 전 종류 1개씩. 빈 슬롯은 자동 착용.
         if (data.EquipmentDic != null)
         {
@@ -1235,17 +1243,22 @@ public class GameManager
             }
         }
 
-        // 8. 미니몬 — 잡을 수 있는 종류는 전부 보유(등급은 최고로)
+        // 8. 미니몬 — 전 종류 보유(등급 최고) + 동행 가능 상태.
+        //    동행 선택(도감 [동행] 버튼)은 보유 여부로 갈리므로 CaughtCount가 곧 동행 해금이다.
+        //    공명도 100%(4회)까지 채워 고유기술까지 열어 둔다.
         if (data.MinMonDic != null && Managers.MinMon != null)
         {
             foreach (int id in data.MinMonDic.Keys)
             {
                 var save = Managers.MinMon.GetSaveData(id);
-                if (save.CaughtCount <= 0) save.CaughtCount = 1;
-                if (save.AtkGrade      < 0) save.AtkGrade      = 5;
-                if (save.AtkSpeedGrade < 0) save.AtkSpeedGrade = 5;
-                if (save.CritGrade     < 0) save.CritGrade     = 5;
+                save.CaughtCount   = Mathf.Max(save.CaughtCount, 4);   // 공명도 100% = 동행 + 고유기술
+                save.AtkGrade      = Mathf.Max(save.AtkGrade,      5);
+                save.AtkSpeedGrade = Mathf.Max(save.AtkSpeedGrade, 5);
+                save.CritGrade     = Mathf.Max(save.CritGrade,     5);
             }
+            // 동행이 비어 있으면 첫 미니몬을 붙여 준다 — "해금됐는데 아무도 안 따라온다"를 막는다.
+            if (_gameData.CompanionMinMonId < 0)
+                foreach (int id in data.MinMonDic.Keys) { Managers.MinMon.SetCompanion(id); break; }
         }
 
         // 9. 도감 스킬 슬롯 / 물약 게이트

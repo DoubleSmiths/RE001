@@ -110,9 +110,22 @@ public class AbilityRunner : MonoBehaviour
         if (Managers.Ability == null || Managers.Game == null || _player == null) return;
         if (_player.State == State.Dead) return;
 
+        bool anyActiveReady = false;
         foreach (int id in Managers.Ability.ActiveAbilityIds)
         {
             if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) continue;
+
+            // 액티브: 쿨만 깎는다. 발동은 UseSkill(플레이어 입력)이 한다.
+            if (d.TriggerType == AbilityTrigger.Active)
+            {
+                float rem = _cooldowns.TryGetValue(id, out var a) ? a : 0f;
+                if (rem <= 0f) continue;
+                rem -= Time.deltaTime;
+                _cooldowns[id] = Mathf.Max(0f, rem);
+                if (rem <= 0f) anyActiveReady = true;   // 방금 쿨이 돌았다 → 스킬바 갱신
+                continue;
+            }
+
             if (d.TriggerType != AbilityTrigger.Time) continue;
             if (!ContextOk(d.ActiveContext)) continue;
 
@@ -125,6 +138,61 @@ public class AbilityRunner : MonoBehaviour
             }
             _cooldowns[id] = cd;
         }
+        if (anyActiveReady) OnActiveSkillChanged?.Invoke();
+    }
+
+    // ── 액티브 스킬 (플레이어가 직접 발동) ──
+    //  확률/시간 발동과 효과 처리(ApplyEffect)를 그대로 공유한다. 다른 점은 발동 주체와
+    //  쿨타임을 **누가 돌리느냐**뿐 — 시간발동은 Update가 자동으로, 액티브는 UseSkill이 찍는다.
+    public event System.Action OnActiveSkillChanged;   // 슬롯 구성/쿨 상태 변동 → 스킬바 갱신
+
+    /// 스킬바에 올라갈 능력들 (장착된 것 중 TriggerType==Active). 슬롯 수만큼만.
+    public List<int> ActiveSkillIds
+    {
+        get
+        {
+            var list = new List<int>();
+            if (Managers.Ability == null || Managers.Data?.SkillDic == null) return list;
+            foreach (int id in Managers.Ability.ActiveAbilityIds)
+            {
+                if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) continue;
+                if (d.TriggerType != AbilityTrigger.Active) continue;
+                list.Add(id);
+                if (list.Count >= ACTIVE_SKILL_SLOTS) break;
+            }
+            return list;
+        }
+    }
+
+    /// 남은 쿨타임(초). 0이면 사용 가능.
+    public float GetCooldownRemain(int id) => _cooldowns.TryGetValue(id, out var v) ? Mathf.Max(0f, v) : 0f;
+
+    /// 쿨 진행률 0~1 (1 = 다 참). 스킬바 필 게이지용.
+    public float GetCooldownRatio(int id)
+    {
+        if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return 1f;
+        float total = Mathf.Max(0.1f, d.Cooldown);
+        return Mathf.Clamp01(1f - GetCooldownRemain(id) / total);
+    }
+
+    public bool CanUse(int id)
+    {
+        if (_player == null || _player.State == State.Dead) return false;
+        if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return false;
+        if (d.TriggerType != AbilityTrigger.Active) return false;
+        if (!ContextOk(d.ActiveContext)) return false;
+        return GetCooldownRemain(id) <= 0f;
+    }
+
+    /// 액티브 스킬 발동. 쓸 수 없는 상태면 false(쿨/사망/전투 밖 등) — 호출부가 사유를 물으면 CanUse로 갈라본다.
+    public bool UseSkill(int id)
+    {
+        if (!CanUse(id)) return false;
+        var d = Managers.Data.SkillDic[id];
+        ApplyEffect(d);
+        _cooldowns[id] = Mathf.Max(0.1f, d.Cooldown);
+        OnActiveSkillChanged?.Invoke();
+        return true;
     }
 
     bool ContextOk(AbilityContext ctx)

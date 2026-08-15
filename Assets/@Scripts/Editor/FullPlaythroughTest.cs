@@ -286,9 +286,10 @@ public static class FullPlaythroughTest
         if (dy > 0.05f)
             fail.Add($"{place}: '{name}' 접지 어긋남 y={mc.transform.position.y:F2} (지면 {Define.GROUND_Y})");
 
-        // 이름과 그림이 같은 아키타입인가 — IconLabel/AnimController가 같은 원형을 가리켜야 한다
-        if (!string.IsNullOrEmpty(cd.IconLabel) && !string.IsNullOrEmpty(cd.AnimController)
-            && cd.IconLabel.StartsWith("Mon_") && cd.AnimController != cd.IconLabel)
-            fail.Add($"{place}: '{name}' 그림({cd.IconLabel}) ≠ 애니메이터({cd.AnimController})");
+        // 도감 그림은 **종별 고유**(Mon_{DataId}), 인게임 애니메이터는 원형 30종 공유가 정상이다.
+        //  둘이 같아야 한다는 옛 규칙은 카드가 생기면서 폐기 — 대신 카드 주소가 실제로 로드되는지 본다.
+        string card = $"Mon_{cd.DataId}";
+        if (cd.IconLabel == card && Managers.Resource.Load<Sprite>(card) == null)
+            fail.Add($"{place}: '{name}' 도감 카드 {card} 로드 실패 (어드레서블 미등록?)");
     }
 }

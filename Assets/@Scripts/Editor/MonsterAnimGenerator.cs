@@ -274,14 +274,13 @@ public static class MonsterAnimGenerator
             int end = hab.IndexOf("Text", di);
             if (end > di) int.TryParse(hab.Substring(di + tokenLen, end - di - tokenLen), out depth);
 
-            // 원형 스프라이트는 CreatureData.IconLabel이 이미 정확한 값을 갖고 있다.
-            //  지역명으로 유추하면(Mon_{region}_{n}) 신규 지역(SunkenGrove 등)에는 대응 스프라이트가
-            //  없어 443종이 통째로 건너뛰어진다.
+            // 원형은 AnimController가 들고 있다. (IconLabel은 종별 고유 도감 카드로 갈라져 나갔으므로
+            //  더는 원형 출처가 아니다 — 여기서 IconLabel을 쓰면 원형이 503개로 쪼개진다.)
             int archIdx = Mathf.Abs(c.DataId) % 10;
             rows.Add(new Row
             {
                 name = $"Mon_{c.DataId}",
-                archetype = !string.IsNullOrEmpty(c.IconLabel) ? c.IconLabel : $"Mon_{region}_{archIdx}",
+                archetype = !string.IsNullOrEmpty(c.AnimController) ? c.AnimController : $"Mon_{region}_{archIdx}",
                 tint = TierTint(depth, c.Rarity),
                 speed = 1f + (depth - 1) * 0.05f,
             });

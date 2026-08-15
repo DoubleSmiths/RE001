@@ -1,0 +1,816 @@
+=== UI_ForgePopup (Assets/@Resources/Prefab/UI/Popup/UI_ForgePopup.prefab) ===
+- UI_ForgePopup [active]
+    * Canvas
+    * CanvasScaler [Script ns=UnityEngine.UI]
+    * GraphicRaycaster [Script ns=UnityEngine.UI]
+  - FIXED [active]
+    - In_Frame [active]
+      - ForgePopup [active]
+        - ForgePopupBackground [active]
+            * Image sprite=(none) color=(0,0,0,0.71)
+            * Button interactable=True
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+        - ClickBlock [active]
+            * Image sprite=white color=(0,0,0,0.12)
+        - ForgePopupFrame [active]
+            * Image sprite=BAR_Basic color=(1,1,1,1)
+            * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.5
+            * DOTweenAnimation animType=PunchScale autoPlay=False id=2 dur=0.15
+          - ForgePopupTitle [active]
+              * Outline [Script ns=UnityEngine.UI]
+              * TextMeshProUGUI text="FORGE" fontSize=12
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - TopUIGroup [active]
+              * Image sprite=Options_bar color=(1,1,1,1)
+            - Mask [active]
+                * Image sprite=(none) color=(0,0,0,1)
+                * Mask [Script ns=UnityEngine.UI]
+              - Img_Mask_03 [active]
+                  * Image sprite=Lobby_CharacterInfo_RedGlow color=(1,1,1,0.38)
+              - Img_Mask_01 [active]
+                  * Image sprite=Lobby_CharacterInfo_RedGlow color=(0,0,0,1)
+              - ForgeIconFlash [INACTIVE]
+                  * Image sprite=(none) color=(1,1,1,0)
+                  * Animator controller=Flash
+              - ForgePopupIcon [active]
+                - Img_ForgePopupIcon_03 [active]
+                    * Image sprite=Icon_inventory_bag color=(1,1,1,1)
+                - Glow [active]
+                    * Image sprite=UIMask color=(1,1,1,1)
+                    * Mask [Script ns=UnityEngine.UI]
+                  - Img_Glow_01 [active]
+                      * Image sprite=white color=(0,0,0,1)
+                  - Img_Glow_02 [active]
+                      * Image sprite=shop_frame_glow color=(0.6,0.02,0.02,1)
+                - WIcon [active]
+                    * Image sprite=Sword 32 (5) color=(1,1,1,1)
+                    * Animator controller=EquipIcon
+                - ENumber [active]
+                    * Outline [Script ns=UnityEngine.UI]
+                    * TextMeshProUGUI text="+9" fontSize=7
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - Flash [INACTIVE]
+                    * Image sprite=white color=(1,1,1,0.86)
+                    * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.3
+                - Img_ForgePopupIcon_01 [INACTIVE]
+                    * Image sprite=white color=(0,0,0,0.47)
+                - EquipedEf [active]
+                  - FrameEf [active]
+                    - EFrame [active]
+                        * Image sprite=UIMask color=(1,1,1,1)
+                    - EFrame_1 [INACTIVE]
+                        * Image sprite=(none) color=(1,1,1,1)
+                  - EIcon [active]
+                      * Image sprite=General_Container_A color=(0.58,0,0,1)
+                    - Icon_2 [active]
+                        * Image sprite=Inventory_Slot_IconFrame color=(1,0,0,1)
+                    - Txt_EIcon_02 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="E" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - ForgeEquipNameText [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="+9 광기의 칠흑 대검" fontSize=15
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - BtmUIGroup [active]
+            - BtmUIGroup_2 [INACTIVE]
+                * Image sprite=Options_bar color=(1,1,1,1)
+            - ChangingPanels [active]
+                * Image sprite=Background color=(1,1,1,0)
+              - CraftingPanel [INACTIVE]
+                  * Image sprite=Background color=(1,1,1,0)
+                - Frame_1 [active]
+                    * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - Panel_CraftingPanel_01 [active]
+                  - Mask_Title_1_04 [active]
+                      * Image sprite=UIMask color=(0,0,0,1)
+                      * Mask [Script ns=UnityEngine.UI]
+                    - Img_Image_07 [active]
+                        * Image sprite=fx_glow color=(0.11,0.31,0.04,1)
+                  - Img_Title_1_03 [active]
+                      * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                  - Txt_Title_1_02 [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * TextMeshProUGUI text="장비 제작" fontSize=7
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_Title_1_01 [active]
+                      * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                - WholePanel [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                    * VerticalLayoutGroup [Script ns=UnityEngine.UI]
+                  - Panel1 [active]
+                      * Image sprite=Background color=(1,1,1,0)
+                      * GridLayoutGroup [Script ns=UnityEngine.UI]
+                    - Btn_Panel1_05 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_ReqItemBox1_14 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox1_11 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_14 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox1_04 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox1_11 [active]
+                          * Image sprite=white color=(0,0,0,0.67)
+                      - Txt_ReqItemBox1_05 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Btn_Panel1_03 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox2_22 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox2_05 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_26 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox2_15 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox2_17 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox2_03 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Btn_Panel1_04 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox5_22 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox5_03 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_15 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox5_17 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox5_08 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox5_13 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Btn_Panel1_01 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox7_20 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox7_13 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_19 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox7_05 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox7_10 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox7_16 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Panel2 [active]
+                      * Image sprite=Background color=(1,1,1,0)
+                      * GridLayoutGroup [Script ns=UnityEngine.UI]
+                    - Btn_Panel2_05 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox3_06 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox3_16 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_21 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox3_03 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox3_09 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox3_11 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Btn_Panel2_01 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox4_12 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox4_15 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_23 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox4_16 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox4_14 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox4_07 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Btn_Panel2_03 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox6_09 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox6_10 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_17 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox6_08 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox6_13 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox6_08 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Btn_Panel2_04 [INACTIVE]
+                        * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                        * Button interactable=True
+                      - Img_ReqItemBox8_07 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_ReqItemBox8_09 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_25 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_ReqItemBox8_10 [active]
+                          * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                      - Img_ReqItemBox8_05 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_ReqItemBox8_15 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999/999" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - BtnPanel [active]
+                    * Image sprite=Background color=(1,1,1,0)
+                  - Img_BtnPanel_02 [active]
+                      * Image sprite=message_popup_bg_default color=(1,1,1,1)
+                  - CraftBtn [active]
+                      * Image sprite=UIMask color=(1,1,1,0)
+                      * Button interactable=True
+                    - BtmImg_1 [active]
+                        * Image sprite=T_gray_button_s color=(1,1,1,1)
+                    - Mask_CraftBtn_03 [active]
+                        * Image sprite=UIMask color=(1,1,1,1)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Item_03 [active]
+                          * Image sprite=(none) color=(0,0,0,0.59)
+                      - Img_Item_02 [active]
+                          * Image sprite=shop_frame_glow color=(0,0.44,0.06,1)
+                    - Txt_CraftBtn_07 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="제작" fontSize=6
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - CantCraft [INACTIVE]
+                      * Image sprite=T_gray_button_s_pick color=(0.41,0.41,0.41,1)
+                    - Txt_CantCraft_06 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="제작불가" fontSize=6
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - ForgePanel [active]
+                  * Image sprite=Background color=(1,1,1,0)
+                - Img_ForgePanel_02 [active]
+                    * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                - RestorePart [active]
+                    * Image sprite=Inventory_bg color=(0.47,0.47,0.47,1)
+                  - Title [active]
+                    - Mask_Title_06 [active]
+                        * Image sprite=UIMask color=(0,0,0,1)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Image_08 [active]
+                          * Image sprite=fx_glow color=(0.01,0.49,0.37,0.65)
+                    - Img_Title_02 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                    - Txt_Title_04 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="장비 복구" fontSize=6
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_Title_03 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                  - Text_2 [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * TextMeshProUGUI text="내구도" fontSize=6
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - DuriText [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * TextMeshProUGUI text="100/100" fontSize=6
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - IngredientBox [active]
+                      * Image sprite=Background color=(1,1,1,0)
+                      * ScrollRect horiz=False vert=True
+                    - Deco_2 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                    - Deco_3 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                    - Viewport [active]
+                        * Image sprite=UIMask color=(1,1,1,0.03)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Content [active]
+                          * GridLayoutGroup [Script ns=UnityEngine.UI]
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_10 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,0)
+                            * Button interactable=True
+                          - Img_ReqItemBox1_27 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox1_20 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_34 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox1_21 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox1_23 [active]
+                              * Image sprite=white color=(0,0,0,0.67)
+                          - Txt_ReqItemBox1_21 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_05 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox2_29 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox2_24 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_35 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox2_20 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox2_23 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox2_19 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_09 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox3_26 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox3_25 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_31 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox3_24 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox3_22 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox3_18 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_04 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox4_25 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox4_21 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_30 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox4_22 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox4_19 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox4_25 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_06 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox5_26 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox5_22 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_36 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox5_23 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox5_20 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox5_24 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_07 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox6_30 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox6_18 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_32 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox6_25 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox6_26 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox6_23 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_02 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox7_31 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox7_23 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_33 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox7_18 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox7_25 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox7_20 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Btn_Content_08 [INACTIVE]
+                            * Image sprite=General_Container_A color=(0.2,0.2,0.2,1)
+                            * Button interactable=True
+                          - Img_ReqItemBox8_28 [active]
+                              * Image sprite=Icon_inventory color=(1,1,1,1)
+                          - Mask_ReqItemBox8_19 [active]
+                              * Image sprite=(none) color=(0,0,0,1)
+                              * Mask [Script ns=UnityEngine.UI]
+                            - Img_GlowMask_29 [active]
+                                * Image sprite=shop_frame_glow color=(1,1,1,1)
+                          - Img_ReqItemBox8_19 [active]
+                              * Image sprite=SlimeDrop2 color=(1,1,1,1)
+                          - Img_ReqItemBox8_24 [active]
+                              * Image sprite=white color=(0,0,0,0.71)
+                          - Txt_ReqItemBox8_22 [active]
+                              * Outline [Script ns=UnityEngine.UI]
+                              * TextMeshProUGUI text="999/999" fontSize=5
+                              * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Text_4 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="+25" fontSize=13
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Text_3 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="OR" fontSize=13
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - BMORBox [active]
+                      * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                      * Button interactable=True
+                    - Img_BMORBox_03 [active]
+                        * Image sprite=Icon_inventory color=(1,1,1,1)
+                    - Mask_BMORBox_01 [active]
+                        * Image sprite=(none) color=(0,0,0,1)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_GlowMask_12 [active]
+                          * Image sprite=shop_frame_glow color=(1,1,1,1)
+                    - Img_BMORBox_01 [active]
+                        * Image sprite=Scroll_3 color=(1,1,1,1)
+                    - Img_BMORBox_02 [active]
+                        * Image sprite=white color=(0,0,0,0.71)
+                    - Txt_BMORBox_01 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="999" fontSize=5
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - MORBox [active]
+                      * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                      * Button interactable=True
+                    - Img_MORBox_04 [active]
+                        * Image sprite=Icon_inventory color=(1,1,1,1)
+                    - Mask_MORBox_02 [active]
+                        * Image sprite=(none) color=(0,0,0,1)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_GlowMask_08 [active]
+                          * Image sprite=shop_frame_glow color=(1,1,1,1)
+                    - Img_MORBox_02 [active]
+                        * Image sprite=Scroll_3 color=(1,1,1,1)
+                    - Img_MORBox_03 [active]
+                        * Image sprite=white color=(0,0,0,0.71)
+                    - Txt_MORBox_02 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="999" fontSize=5
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_RestorePart_02 [active]
+                      * Image sprite=Background color=(1,1,1,0)
+                    - Img_BtnGroup_04 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,1)
+                    - Btn_BtnGroup_01 [active]
+                        * Image sprite=UIMask color=(1,1,1,1)
+                        * Button interactable=True
+                      - Img_DoEnhaceBtn_02 [active]
+                          * Image sprite=T_gray_button_s color=(1,1,1,1)
+                      - Mask_DoEnhaceBtn_02 [active]
+                          * Image sprite=UIMask color=(1,1,1,0.04)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_mask_2_13 [active]
+                            * Image sprite=(none) color=(0,0,0,0.59)
+                        - Img_mask_2_10 [active]
+                            * Image sprite=shop_frame_glow color=(0,0.44,0.43,1)
+                      - Txt_DoEnhaceBtn_11 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="복구" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_BtnGroup_01 [INACTIVE]
+                        * Image sprite=T_gray_button_s_pick color=(0.41,0.41,0.41,1)
+                      - Txt_CantEnhaceCraft_13 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="CANT RECOV" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                - EnhancePart [active]
+                    * Image sprite=Inventory_bg color=(0.47,0.47,0.47,1)
+                  - Panel_EnhancePart_02 [active]
+                    - Mask_Title_1_05 [active]
+                        * Image sprite=UIMask color=(0,0,0,1)
+                        * Mask [Script ns=UnityEngine.UI]
+                      - Img_Image_09 [active]
+                          * Image sprite=fx_glow color=(0.49,0.27,0.01,0.65)
+                    - Img_Title_1_06 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                    - Txt_Title_1_05 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="장비 강화" fontSize=6
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_Title_1_05 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,0.71)
+                  - ScrollBox [active]
+                      * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                    - Scroll1Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_Scroll1Box_17 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_Scroll1Box_08 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_22 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_Scroll1Box_06 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_Scroll1Box_07 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_Scroll1Box_04 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Scroll2Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_Scroll2Box_10 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_Scroll2Box_06 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_20 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_Scroll2Box_14 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_Scroll2Box_16 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_Scroll2Box_17 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Scroll3Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_Scroll3Box_15 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_Scroll3Box_07 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_16 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_Scroll3Box_11 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_Scroll3Box_12 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_Scroll3Box_09 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Scroll4Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_Scroll4Box_11 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_Scroll4Box_14 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_27 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_Scroll4Box_07 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_Scroll4Box_06 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_Scroll4Box_14 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SOMGroup [active]
+                      * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+                    - SOM1Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_SOM1Box_19 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_SOM1Box_04 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_24 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_SOM1Box_12 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_SOM1Box_04 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_SOM1Box_10 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - SOM2Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_SOM2Box_13 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_SOM2Box_12 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_28 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_SOM2Box_09 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_SOM2Box_18 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_SOM2Box_12 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - SOM3Box [active]
+                        * Image sprite=(none) color=(0.2,0.2,0.2,0)
+                        * Button interactable=True
+                      - Img_SOM3Box_08 [active]
+                          * Image sprite=Icon_inventory color=(1,1,1,1)
+                      - Mask_SOM3Box_17 [active]
+                          * Image sprite=(none) color=(0,0,0,1)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_GlowMask_18 [active]
+                            * Image sprite=shop_frame_glow color=(1,1,1,1)
+                      - Img_SOM3Box_13 [active]
+                          * Image sprite=Scroll_3 color=(1,1,1,1)
+                      - Img_SOM3Box_17 [active]
+                          * Image sprite=white color=(0,0,0,0.71)
+                      - Txt_SOM3Box_06 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="999" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - PotenGroup [active]
+                      * GridLayoutGroup [Script ns=UnityEngine.UI]
+                    - PotenBox_4 [active]
+                        * Image sprite=General_Container_A color=(0,0,0,1)
+                        * Button interactable=True
+                      - Img_PotenBox_4_21 [active]
+                          * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                        - Txt_Frame_05 [INACTIVE]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="9999" fontSize=20
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_Frame_03 [active]
+                            * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+                    - PotenBox_5 [active]
+                        * Image sprite=General_Container_A color=(0,0,0,1)
+                        * Button interactable=True
+                      - Img_PotenBox_5_16 [active]
+                          * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                        - Txt_Frame_03 [INACTIVE]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="9999" fontSize=20
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_Frame_01 [active]
+                            * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+                    - PotenBox_6 [active]
+                        * Image sprite=General_Container_A color=(0,0,0,1)
+                        * Button interactable=True
+                      - Img_PotenBox_6_05 [active]
+                          * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                        - Txt_Frame_04 [INACTIVE]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="9999" fontSize=20
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_Frame_02 [active]
+                            * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+                    - PotenBox_7 [active]
+                        * Image sprite=General_Container_A color=(0,0,0,1)
+                        * Button interactable=True
+                      - Img_PotenBox_7_23 [active]
+                          * Image sprite=frames_0002_frame-7 color=(0.61,0.61,0.61,1)
+                        - Txt_Frame_06 [INACTIVE]
+                            * Outline [Script ns=UnityEngine.UI]
+                            * TextMeshProUGUI text="9999" fontSize=20
+                            * ContentSizeFitter [Script ns=UnityEngine.UI]
+                        - Img_Frame_04 [active]
+                            * Image sprite=Chat_Icon_Lock color=(0.6,0.14,0.14,1)
+                  - Txt_EnhancePart_02 [active]
+                      * Outline [Script ns=UnityEngine.UI]
+                      * TextMeshProUGUI text="POTENCIALS" fontSize=6
+                      * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - ForceEnhTxtGroup [active]
+                      * Image sprite=Shop_cost_bg color=(1,0.56,0,1)
+                    - Txt_ForceEnhTxtGroup_04 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="/FORCE ENHANCE/" fontSize=5
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Txt_ForceEnhTxtGroup_02 [active]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * TextMeshProUGUI text="99" fontSize=13
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_EnhancePart_01 [active]
+                      * Image sprite=Background color=(1,1,1,0)
+                    - Img_BtnGroup_06 [active]
+                        * Image sprite=message_popup_bg_default color=(1,1,1,1)
+                    - Btn_BtnGroup_02 [active]
+                        * Image sprite=UIMask color=(1,1,1,1)
+                        * Button interactable=True
+                      - Img_DoEnhaceBtn_01 [active]
+                          * Image sprite=T_gray_button_s color=(1,1,1,1)
+                      - Mask_DoEnhaceBtn_01 [active]
+                          * Image sprite=UIMask color=(1,1,1,0.04)
+                          * Mask [Script ns=UnityEngine.UI]
+                        - Img_mask_2_11 [active]
+                            * Image sprite=(none) color=(0,0,0,0.59)
+                        - Img_mask_2_12 [active]
+                            * Image sprite=shop_frame_glow color=(0.44,0.24,0,1)
+                      - Txt_DoEnhaceBtn_10 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="강화" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_BtnGroup_02 [INACTIVE]
+                        * Image sprite=T_gray_button_s_pick color=(0.41,0.41,0.41,1)
+                      - Txt_CantEnhaceCraft_09 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="CANT ENHANCE" fontSize=6
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - UI_Arrow [active]
+                      * Image sprite=UI_Arrow4 color=(0.47,0.06,0,0.59)
+              - AnimSupport [INACTIVE]
+                  * Image sprite=white color=(0,0,0,0.59)
+                  * DOTweenAnimation animType=Fade autoPlay=False id= dur=0.8
+          - Obj_ForgePopupFrame_01 [INACTIVE]
+        - DuriOverRecovPopup [active]
+            * Image sprite=(none) color=(0,0,0,0.47)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            * Button interactable=False
+          - Img_DuriOverRecovPopup_01 [active]
+              * Image sprite=Frame_square_512 color=(0.71,0.28,0.26,1)
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=LocalMove autoPlay=True id= dur=0.3
+            - Txt_Image_01 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="WARNING" fontSize=25
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Img_Image_02 [active]
+                * Image sprite=Decor_Title_options2 color=(1,0,0,1)
+            - Text_Legacy [INACTIVE]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="재료를 사용하여 복구 시 <b>최대 내구도</b>를 <color=oran" fontSize=11
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Txt_Image_04 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="THIS WILL RECOVER <color=orange>EXCEED</" fontSize=11
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - ForceUseBtn [active]
+                * Image sprite=1_orange_button_s color=(0.63,0.19,0.13,1)
+                * Button interactable=True
+              - Txt_ForceUseBtn_01 [active]
+                  * Outline [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="사용" fontSize=11
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - Txt_Image_03 [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="사용안함" fontSize=16
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - Xbutton [active]
+            * Image sprite=1_orange_button_xs color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            * DOTweenAnimation animType=PunchScale autoPlay=False id=xButtonClick dur=0.3
+          - GameObject [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+              * TextMeshProUGUI text="X" fontSize=11
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
+        - ForgeBlockImg [active]
+            * Image sprite=(none) color=(1,1,1,0)

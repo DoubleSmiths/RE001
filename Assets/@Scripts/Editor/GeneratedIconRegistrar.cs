@@ -21,11 +21,19 @@ public static class GeneratedIconRegistrar
         "Assets/@Resources/Sprite/Monster/Generated",
         // 드롭 재료 아이콘 — 몬스터 원형 30종과 1:1 대응(ADR 참조)
         "Assets/@Resources/Sprite/Icon/Material/Generated",
+        // 몬스터 도감 카드 503종 — 원형 30종을 돌려쓰던 것을 종별 고유 그림으로 교체
+        "Assets/@Resources/Sprite/Monster/Card",
+        // 탐험 지역 배경 25종 — 6종을 돌려쓰던 것을 지역별 고유 그림으로 교체
+        "Assets/@Resources/Sprite/Map/Region",
     };
 
     [MenuItem("Tools/Register Generated Icons (아이콘 임포트+어드레서블)")]
     public static void Register()
     {
+        // 파이썬으로 갓 떨군 PNG는 아직 AssetDatabase에 없다 → AssetPathToGUID가 빈 문자열을 주고
+        // 조용히 건너뛴다(파일은 있는데 어드레서블엔 없는 상태). 먼저 임포트시킨다.
+        AssetDatabase.Refresh();
+
         var settings = AddressableAssetSettingsDefaultObject.Settings;
         if (settings == null)
         {
@@ -64,7 +72,8 @@ public static class GeneratedIconRegistrar
                     // 몬스터는 pivot을 **bottom-middle**로 둔다. center(기본값)면 스프라이트 절반이
                     // 지면 아래로 내려가 "땅에 박힌" 것처럼 보인다. 발밑이 기준점이어야
                     // 스폰 Y를 지면 높이로만 주면 정확히 서 있게 된다.
-                    bool isMonster = folder.Contains("/Monster/");
+                    // 인게임에 서는 몬스터만 발밑 기준. 도감 카드(/Monster/Card)는 UI 아이콘이라 center.
+                    bool isMonster = folder.EndsWith("/Monster/Generated");
                     var wanted = isMonster ? SpriteAlignment.BottomCenter : SpriteAlignment.Center;
                     var st = new TextureImporterSettings();
                     ti.ReadTextureSettings(st);

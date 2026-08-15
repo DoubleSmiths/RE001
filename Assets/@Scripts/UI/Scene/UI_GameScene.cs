@@ -999,7 +999,20 @@ public class UI_GameScene : UI_Scene
         // 슬40(능력#4 강화능력): 강화/물약 버프 → BuffDisplayer 노드에 UI_Buff 추가
         player.OnBuffApplied += OnBuffApplied;
         player.OnBuffCleared += OnBuffCleared;
+
+        // 액티브 스킬바 — 최하단 탭 바로 위. 장착된 액티브 능력이 없으면 슬롯이 전부 꺼져 보이지 않는다.
+        if (_skillBar == null && player.AbilityRunner != null)
+        {
+            var host = GetImage((int)Images.ButtomDisplayer);
+            if (host != null)
+                _skillBar = UI_SkillBar.Create(host.transform, player.AbilityRunner);
+        }
     }
+
+    UI_SkillBar _skillBar;
+
+    /// 능력 장착/해제 후 스킬바 재구성 (능력 팝업이 닫힐 때 호출).
+    public void RefreshSkillBar() => _skillBar?.Refresh();
 
     // ── 슬40: 강화 버프 아이콘 (BuffDisplayer 노드에 UI_Buff 추가/제거) ──
     readonly System.Collections.Generic.Dictionary<int, UI_Buff> _buffItems = new();

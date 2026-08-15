@@ -1,0 +1,466 @@
+=== UI_ClassPopup (Assets/@Resources/Prefab/UI/Popup/UI_ClassPopup.prefab) ===
+- UI_ClassPopup [active]
+    * Canvas
+    * CanvasScaler [Script ns=UnityEngine.UI]
+    * GraphicRaycaster [Script ns=UnityEngine.UI]
+  - FIXED [active]
+    - In_Frame [active]
+      - ClassPopup [active]
+        - ClassPopupBackground [active]
+            * Image sprite=(none) color=(0,0,0,0.71)
+            * Button interactable=False
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+        - ClassPopupFrame [active]
+            * Image sprite=BAR_Basic color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+          - ClassPopupTitle [active]
+            - title [active]
+                * Outline [Script ns=UnityEngine.UI]
+                * TextMeshProUGUI text="직업" fontSize=11
+                * ContentSizeFitter [Script ns=UnityEngine.UI]
+          - ClassPopup_InFrameGroup [active]
+            - SubTitleFrame [active]
+                * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+              - SubtitleText [active]
+                  * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                  * TextMeshProUGUI text="비기억중인 기술" fontSize=9
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - MemoryAmountTxt_1 [active]
+                  * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                  * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  * TextMeshProUGUI text="<color=lime>999</color>/999" fontSize=7
+                - MemoryIcon [active]
+                    * Image sprite=skill_073 color=(1,1,1,1)
+                    * Button interactable=True
+                  - Image [INACTIVE]
+                      * Image sprite=UISprite color=(0,0,0,0.93)
+                      * DOTweenVisualManager [Script ns=DG.Tweening]
+                      * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+                      * DOTweenAnimation animType=Move autoPlay=True id= dur=0.3
+                    - Image_3 [active]
+                        * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                        * DOTweenVisualManager [Script ns=DG.Tweening]
+                        * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+                        * TextMeshProUGUI text="MEMORY" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+            - ScrollView_SkillList [active]
+                * Image sprite=Background color=(1,1,1,0)
+                * ScrollRect horiz=False vert=True
+                * RectMask2D [Script ns=UnityEngine.UI]
+              - Viewport [active]
+                  * Image sprite=UIMask color=(1,1,1,1)
+                  * Mask [Script ns=UnityEngine.UI]
+                - Content [active]
+                    * GridLayoutGroup [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_0 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_0_05 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_03 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_02 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_0_10 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_0_06 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookSkill_0_02 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_02 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_0_08 [active]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_03 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_05 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_0_01 [active]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_02 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_09 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_1 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_1_09 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_07 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_03 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_1_02 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_1_03 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookSkill_1_01 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_04 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_1_06 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_02 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_12 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_1_05 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_09 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_16 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_2 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_2_05 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_05 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_07 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_2_06 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_2_08 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - SkillBookNewTxt_2 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_2_03 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_07 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_2_04 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_01 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_06 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_2_07 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_06 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_03 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_3 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_3_04 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_01 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_01 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_3_07 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_3_05 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookSkill_3_09 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_05 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - SkillBookNewTxt_3 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_3_02 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_06 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_15 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_3_08 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_07 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_14 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_4 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_4_06 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_06 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_08 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_4_07 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_4_07 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookSkill_4_04 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_03 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - SkillBookNewTxt_4 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_4_09 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_08 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_13 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_4_02 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_01 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_10 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_5 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_5_07 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_08 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_04 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_5_05 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_5_04 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookSkill_5_08 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_08 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - SkillBookNewTxt_5 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_5_03 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_04 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_17 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_5_06 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_04 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_04 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - SkillBookSkill_6 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookSkill_6_08 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_09 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_05 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookSkill_6_03 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookSkill_6_09 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookSkill_6_06 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_01 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - Txt_SkillBookSkill_6_01 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_6_01 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_09 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_07 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookSkill_6_09 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_08 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_18 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Obj_Content_01 [INACTIVE]
+                  - SkillBookAttackSkill_0 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookAttackSkill_0_04 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_02 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_06 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookAttackSkill_0_09 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookAttackSkill_0_02 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookAttackSkill_0_05 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_06 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - Txt_SkillBookAttackSkill_0_02 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookAttackSkill_0_07 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_05 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_02 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookAttackSkill_0_06 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_03 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_08 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Obj_Content_02 [INACTIVE]
+                  - SkillBookDefenseSkill_0 [INACTIVE]
+                      * DOTweenAnimation animType=PunchScale autoPlay=False id= dur=0.3
+                    - Img_SkillBookDefenseSkill_0_01 [active]
+                        * Image sprite=Frame_bg_big_2 color=(1,1,1,1)
+                      - Panel_Frame_04 [INACTIVE]
+                        - Img_SkillDetailActiveEf_1_09 [active]
+                            * Image sprite=UIMask color=(1,1,1,1)
+                    - Img_SkillBookDefenseSkill_0_04 [active]
+                        * Image sprite=InputFieldBackground color=(0,0,0,0.53)
+                    - Btn_SkillBookDefenseSkill_0_01 [active]
+                        * Image sprite=AutoPotion Cooltime Skill Icon color=(1,1,1,1)
+                        * Button interactable=True
+                    - Img_SkillBookDefenseSkill_0_07 [INACTIVE]
+                        * Image sprite=(none) color=(0,0,0,0.94)
+                      - Img_LockedIcon_09 [active]
+                          * Image sprite=Chat_Icon_Lock color=(1,1,1,0.39)
+                          * Outline [Script ns=UnityEngine.UI]
+                    - Txt_SkillBookDefenseSkill_0_03 [INACTIVE]
+                        * Outline [Script ns=UnityEngine.UI]
+                        * DOTweenAnimation animType=Move autoPlay=True id= dur=0.5
+                        * TextMeshProUGUI text="NEW" fontSize=7
+                        * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookDefenseSkill_0_05 [INACTIVE]
+                        * Image sprite=white color=(0,0.2,0.62,1)
+                      - Img_MemorizedIcon_07 [active]
+                          * Image sprite=HP_MP_little_frame color=(0.23,0.65,1,1)
+                      - Txt_MemorizedIcon_01 [active]
+                          * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                          * TextMeshProUGUI text="기억중" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+                    - Img_SkillBookDefenseSkill_0_03 [INACTIVE]
+                        * Image sprite=white color=(0,0,0,1)
+                      - Img_LvlIcon_05 [active]
+                          * Image sprite=HP_MP_little_frame color=(1,1,1,1)
+                      - Txt_LvlIcon_11 [active]
+                          * Outline [Script ns=UnityEngine.UI]
+                          * TextMeshProUGUI text="LEVEL.<color=yellow>99</color>" fontSize=5
+                          * ContentSizeFitter [Script ns=UnityEngine.UI]
+              - ScrollbarVertical [active]
+                  * Image sprite=slider01_background color=(1,1,1,1)
+                  * Scrollbar [Script ns=UnityEngine.UI]
+                - SlidingArea [active]
+                  - Handle [active]
+                      * Image sprite=slider_button01 color=(1,1,1,1)
+            - SkillPopup_BtnGroup [active]
+                * Image sprite=pick_hero_frame_2 color=(1,1,1,1)
+                * HorizontalLayoutGroup [Script ns=UnityEngine.UI]
+              - SkillPopup_ShowAll_Btn [active]
+                  * Image sprite=Frame_bg_big color=(0.93,0.71,0.41,1)
+                  * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                  * DOTweenAnimation animType=Scale autoPlay=False id=2 dur=0.05
+                  * Button interactable=True
+                - Txt_SkillPopup_ShowAll_Btn_02 [active]
+                    * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                    * TextMeshProUGUI text="ALL" fontSize=7
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_text_3_05 [active]
+                      * Image sprite=2_options_on color=(1,1,1,1)
+              - SkillPopup_ShowTalent_Btn [active]
+                  * Image sprite=Frame_bg_big color=(1,1,1,0.78)
+                  * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                  * DOTweenAnimation animType=Scale autoPlay=False id=2 dur=0.05
+                  * Button interactable=True
+                - Txt_SkillPopup_ShowTalent_Bt_03 [active]
+                    * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                    * TextMeshProUGUI text="TALENT" fontSize=6
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_text_3_03 [active]
+                      * Image sprite=2_options_off color=(1,1,1,1)
+              - SkillPopup_ShowOnMemory_Btn [active]
+                  * Image sprite=Frame_bg_big color=(1,1,1,0.78)
+                  * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                  * DOTweenAnimation animType=Scale autoPlay=False id=2 dur=0.05
+                  * Button interactable=True
+                - Txt_SkillPopup_ShowOnMemory__05 [active]
+                    * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                    * TextMeshProUGUI text="ON MEMORY" fontSize=6
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_text_3_04 [active]
+                      * Image sprite=2_options_off color=(1,1,1,1)
+              - SkillPopup_ShowNotOnMemory_Btn [active]
+                  * Image sprite=Frame_bg_big color=(1,1,1,0.78)
+                  * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                  * DOTweenAnimation animType=Scale autoPlay=False id=2 dur=0.05
+                  * Button interactable=True
+                - Txt_SkillPopup_ShowNotOnMemo_04 [active]
+                    * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                    * TextMeshProUGUI text="NOT-ON MEMORY" fontSize=6
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_text_3_01 [active]
+                      * Image sprite=2_options_off color=(1,1,1,1)
+              - SkillPopup_ShowLocked_Btn [active]
+                  * Image sprite=Frame_bg_big color=(1,1,1,0.78)
+                  * DOTweenAnimation animType=Move autoPlay=False id=1 dur=0.3
+                  * DOTweenAnimation animType=Scale autoPlay=False id=2 dur=0.05
+                  * Button interactable=True
+                - Txt_SkillPopup_ShowLocked_Bt_01 [active]
+                    * NicerOutline [Script ns=UnityEngine.UI.Extensions]
+                    * TextMeshProUGUI text="LOCKED" fontSize=6
+                    * ContentSizeFitter [Script ns=UnityEngine.UI]
+                  - Img_text_3_02 [active]
+                      * Image sprite=2_options_off color=(1,1,1,1)
+          - ClassPopupBlockImg [active]
+              * Image sprite=(none) color=(1,1,1,0)
+        - Xbutton [active]
+            * Image sprite=1_orange_button_xs color=(1,1,1,1)
+            * DOTweenVisualManager [Script ns=DG.Tweening]
+            * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+            * DOTweenAnimation animType=PunchScale autoPlay=False id=xButtonClick dur=0.3
+          - GameObject [active]
+              * DOTweenVisualManager [Script ns=DG.Tweening]
+              * DOTweenAnimation animType=Fade autoPlay=True id= dur=0.3
+              * TextMeshProUGUI text="X" fontSize=11
+              * ContentSizeFitter [Script ns=UnityEngine.UI]
