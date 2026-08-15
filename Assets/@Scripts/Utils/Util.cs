@@ -104,11 +104,17 @@ public static class Util
             int at;
             while ((at = text.IndexOf(pair, System.StringComparison.Ordinal)) >= 0)
             {
-                if (at == 0) break;                      // 앞 글자가 없으면 판정 불가 — 그대로 둔다
-                char prev = text[at - 1];
+                // 원문이 " 이(가) 나타났다!"처럼 앞에 공백을 달고 있는 경우가 있다.
+                //  공백을 건너뛰고 이름의 마지막 글자를 본 뒤, 조사는 이름에 **붙여서** 쓴다
+                //  (조사 앞 공백은 한국어에서 틀린 표기다).
+                int nameEnd = at;
+                while (nameEnd > 0 && char.IsWhiteSpace(text[nameEnd - 1])) nameEnd--;
+                if (nameEnd == 0) break;                 // 앞 글자가 없으면 판정 불가 — 그대로 둔다
+
+                char prev = text[nameEnd - 1];
                 if (prev < 0xAC00 || prev > 0xD7A3) break;
                 string josa = ((prev - 0xAC00) % 28 != 0) ? withJong : withoutJong;
-                text = text.Substring(0, at) + josa + text.Substring(at + pair.Length);
+                text = text.Substring(0, nameEnd) + josa + text.Substring(at + pair.Length);
             }
         }
         return text;
