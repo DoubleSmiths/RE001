@@ -25,6 +25,7 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from aether_icons import (BASE, MODEL, MONSTER_ARCHETYPES, SUBMIT_GAP, api_key,  # noqa: E402
                           get, post, UA)
+import urllib.error    # noqa: E402
 import urllib.request  # noqa: E402
 
 OUT = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Anim")
@@ -93,22 +94,55 @@ def slice_strip(raw_bytes, out_dir, name):
     return n
 
 
+# 서버가 간헐적으로 504/502/429를 뱉는다. 재시도 없이 그냥 두면 **한 번의 오류가 전체 실행을 죽인다**
+#  (실제로 62/116 지점에서 504 하나로 7시간짜리 작업이 통째로 멈춰 있었다).
+RETRY_STATUS = (429, 500, 502, 503, 504)
+
+
+def with_retry(fn, what, tries=6):
+    """일시적 오류면 백오프 후 재시도. 끝내 실패하면 None."""
+    delay = 5
+    for i in range(tries):
+        try:
+            return fn()
+        except urllib.error.HTTPError as e:
+            if e.code not in RETRY_STATUS:
+                print(f"  !! {what}: HTTP {e.code} (재시도 안 함)", flush=True)
+                return None
+            print(f"  .. {what}: HTTP {e.code} — {delay}s 후 재시도 ({i+1}/{tries})", flush=True)
+        except Exception as e:                       # URLError, 타임아웃, 끊긴 소켓 등
+            print(f"  .. {what}: {type(e).__name__} — {delay}s 후 재시도 ({i+1}/{tries})", flush=True)
+        time.sleep(delay)
+        delay = min(delay * 2, 120)
+    print(f"  !! {what}: 재시도 모두 실패", flush=True)
+    return None
+
+
 def generate(name, prompt, key):
-    job = post("/generate/image", {"prompt": prompt, "ai_model": MODEL}, key)
+    job = with_retry(lambda: post("/generate/image", {"prompt": prompt, "ai_model": MODEL}, key),
+                     f"{name} 제출")
+    if not job:
+        return None
     jid = job.get("job_id")
     if not jid:
         print(f"  !! {name}: job_id 없음 {job}")
         return None
+
     for _ in range(90):
         time.sleep(4)
-        st = get(f"/job/{jid}", key)
+        st = with_retry(lambda: get(f"/job/{jid}", key), f"{name} 조회", tries=3)
+        if st is None:
+            continue                                  # 조회 실패는 다음 폴링에서 다시 본다
         if st.get("status") == "Succeed":
             urls = st.get("image_urls") or []
             if not urls:
                 return None
-            req = urllib.request.Request(urls[0], headers={"User-Agent": UA})
-            with urllib.request.urlopen(req, timeout=180) as r:
-                return r.read()
+
+            def fetch():
+                req = urllib.request.Request(urls[0], headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=180) as r:
+                    return r.read()
+            return with_retry(fetch, f"{name} 다운로드")
         if st.get("status") in ("Failed", "Error"):
             print(f"  !! {name}: {st}")
             return None
@@ -141,19 +175,38 @@ def main():
                 continue
             todo.append((name, base, state, motion))
 
-    print(f"생성 대상 {len(todo)}건 (아키타입 {len(items)}종)")
+    print(f"생성 대상 {len(todo)}건 (아키타입 {len(items)}종)", flush=True)
+    ok = fail = 0
+    failed = []
     for idx, (name, base, state, motion) in enumerate(todo, 1):
         d = os.path.join(OUT, name)
         os.makedirs(d, exist_ok=True)
         print(f"[{idx}/{len(todo)}] {name} {state} ...", flush=True)
-        raw = generate(f"{name}/{state}", build_prompt(base, motion), key)
-        if raw:
-            n = slice_strip(raw, d, state)
-            # 원본 스트립도 남긴다 — 자르기 결과가 이상할 때 눈으로 확인할 근거
-            with open(os.path.join(d, f"_raw_{state}.png"), "wb") as f:
-                f.write(raw)
-            print(f"    -> {n} 프레임", flush=True)
+
+        # 한 건이 어떤 이유로 터지든 **다음 건으로 넘어간다**. 실패분은 재실행하면 다시 시도된다
+        # (완성된 상태는 todo에서 빠지므로 이어받기가 공짜다).
+        try:
+            raw = generate(f"{name}/{state}", build_prompt(base, motion), key)
+            if raw:
+                n = slice_strip(raw, d, state)
+                # 원본 스트립도 남긴다 — 자르기 결과가 이상할 때 눈으로 확인할 근거
+                with open(os.path.join(d, f"_raw_{state}.png"), "wb") as f:
+                    f.write(raw)
+                print(f"    -> {n} 프레임", flush=True)
+                ok += 1
+            else:
+                fail += 1
+                failed.append(f"{name}/{state}")
+        except Exception as e:
+            fail += 1
+            failed.append(f"{name}/{state}")
+            print(f"  !! {name}/{state} 건너뜀: {type(e).__name__}: {e}", flush=True)
+
         time.sleep(SUBMIT_GAP)
+
+    print(f"\n완료 {ok} / 실패 {fail}", flush=True)
+    if failed:
+        print("실패분(재실행하면 다시 시도):", ", ".join(failed[:20]), flush=True)
 
 
 if __name__ == "__main__":
