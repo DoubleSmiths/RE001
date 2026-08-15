@@ -46,6 +46,7 @@ public static class FullSystemAudit
         yield return CoAuditEquipmentUI(fail, note);
         yield return CoAuditPopupInput(fail, note);
         yield return CoAuditMinMonAndSkills(fail, note);
+        yield return CoAuditQuestReachable(fail, note);
 
         var sb = new StringBuilder();
         sb.AppendLine("═══ 종합 시스템 검증 ═══");
@@ -625,6 +626,50 @@ public static class FullSystemAudit
                 fail.Add($"[도감] {c.DataId} 카드 {c.IconLabel} 로드 실패");
         }
         note.Add($"도감 고유 그림: {carded}/{data.CreatureDic.Count}종 적용 (중복 {dup})");
+        yield return null;
+    }
+
+    // ── H. 진행 차단 (퀘스트가 요구하는 걸 실제로 얻을 수 있는가) ─────
+    //  퀘3은 젤리 퐁(10001) 2개, 퀘6은 폴짝 젤리(10002) 5개를 요구하는데 몬스터 드롭 집합이
+    //  11001~11030뿐이라 **어떤 몬스터도 이 둘을 안 떨궈** 퀘3에서 게임이 영구 정지했었다.
+    //  "끝까지 플레이가 안 된다"의 진짜 원인이었으므로 데이터가 바뀔 때마다 다시 본다.
+    static IEnumerator CoAuditQuestReachable(List<string> fail, List<string> note)
+    {
+        var data = Managers.Data;
+        if (data?.QuestDic == null) { note.Add("퀘스트 진행: 데이터 없음(건너뜀)"); yield break; }
+
+        var droppable = new HashSet<int>();
+        foreach (var c in data.CreatureDic.Values)
+            if (c != null && c.DropItemId > 0 && c.DropChance > 0f) droppable.Add(c.DropItemId);
+
+        int checkedCount = 0;
+        foreach (var q in data.QuestDic.Values)
+        {
+            // ITEM_ACQUIRE(최초 1회)도 결국 아이템을 얻어야 넘어간다 — 둘 다 본다.
+            if (q == null || (q.CompleteType != Define.QuestCompleteType.ITEM_COUNT
+                           && q.CompleteType != Define.QuestCompleteType.ITEM_ACQUIRE)) continue;
+            checkedCount++;
+            if (!int.TryParse(q.CompleteTarget, out int itemId) || itemId <= 0) continue;
+
+            if (!droppable.Contains(itemId))
+            {
+                fail.Add($"[진행차단] 퀘{q.QuestID}가 요구하는 아이템 {itemId}를 떨구는 몬스터가 0종 — 여기서 게임이 멈춘다");
+                continue;
+            }
+
+            // 떨구는 몬스터가 **실제로 갈 수 있는 곳**에 사는지도 본다(못 가는 지역이면 없는 것과 같다).
+            bool reachable = false;
+            foreach (var c in data.CreatureDic.Values)
+            {
+                if (c == null || c.DropItemId != itemId) continue;
+                foreach (var n in data.TravelNodeDic.Values)
+                    if (n.Name == c.Habitat) { reachable = true; break; }
+                if (reachable) break;
+            }
+            if (!reachable)
+                fail.Add($"[진행차단] 퀘{q.QuestID} 요구 아이템 {itemId}를 떨구는 몬스터가 어느 여정 노드에도 살지 않는다");
+        }
+        note.Add($"퀘스트 진행: 아이템 요구 {checkedCount}건 모두 인게임 획득 경로 확인");
         yield return null;
     }
 

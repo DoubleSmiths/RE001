@@ -35,8 +35,18 @@ import urllib.error    # noqa: E402
 import urllib.request  # noqa: E402
 
 JSON_DIR = os.path.join(BASE, "Assets", "@Resources", "Data", "JsonData")
-OUT_BG = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Map", "Region")
-OUT_MON = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Card")
+
+# ⚠️ Assets/ 밖에 쌓는다.
+#  PNG를 Assets/에 한 장씩 떨구면 Unity가 매번 자동 임포트를 돌아, 500장을 만드는 동안
+#  에디터가 계속 묶여 unity-cli 리스너까지 죽는다(실제로 그 상태가 됐다).
+#  여기 모아 두었다가 finalize_images.sh가 **한 번에** 옮긴다 → 임포트도 한 번.
+STAGE = os.path.join(BASE, "_generated")
+OUT_BG = os.path.join(STAGE, "Region")
+OUT_MON = os.path.join(STAGE, "MonsterCard")
+
+# 이미 Assets에 들어간 것은 다시 만들지 않는다.
+LIVE_BG = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Map", "Region")
+LIVE_MON = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Card")
 
 # 4로 돌렸더니 완료 51건에 429가 43건 — 거절당한 뒤 백오프로 기다리는 시간이 더 컸다.
 # 동시 수를 낮추고 제출 간격을 벌리는 편이 결과적으로 빠르다.
@@ -249,9 +259,9 @@ def generate(name, prompt, key):
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "bg"
     if what == "bg":
-        items, out_dir, size = bg_items(), OUT_BG, BG_SIZE
+        items, out_dir, live, size = bg_items(), OUT_BG, LIVE_BG, BG_SIZE
     elif what == "moncard":
-        items, out_dir, size = mon_items(), OUT_MON, MON_SIZE
+        items, out_dir, live, size = mon_items(), OUT_MON, LIVE_MON, MON_SIZE
     else:
         raise SystemExit("사용법: python _tools/aether_unique.py [bg|moncard]")
 
@@ -259,7 +269,10 @@ def main():
         items = items[:int(sys.argv[sys.argv.index("--limit") + 1])]
 
     os.makedirs(out_dir, exist_ok=True)
-    todo = [(n, p) for n, p in items if not os.path.exists(os.path.join(out_dir, n + ".png"))]
+    # 대기 폴더든 이미 반영된 Assets든, 있으면 건너뛴다.
+    todo = [(n, p) for n, p in items
+            if not os.path.exists(os.path.join(out_dir, n + ".png"))
+            and not os.path.exists(os.path.join(live, n + ".png"))]
     print(f"[{what}] 전체 {len(items)} / 생성 대상 {len(todo)} — 동시 {WORKERS}", flush=True)
 
     key = api_key()

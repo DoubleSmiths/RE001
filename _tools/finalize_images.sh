@@ -12,6 +12,23 @@ set -e
 cd "$(dirname "$0")/.."
 CLI="C:/Users/Mycom/AppData/Local/unity-cli/unity-cli.exe"
 
+echo "[0/3] 대기 폴더(_generated) → Assets 일괄 이동"
+# 생성 중에는 Assets 밖(_generated)에 쌓는다. 한 장씩 떨구면 Unity가 매번 자동 임포트를 돌아
+# 에디터가 묶이고 unity-cli 리스너까지 죽는다. 여기서 한 번에 옮겨 임포트도 한 번만 돌게 한다.
+moved=0
+for pair in "Region:Assets/@Resources/Sprite/Map/Region" \
+            "MonsterCard:Assets/@Resources/Sprite/Monster/Card"; do
+    src="_generated/${pair%%:*}"
+    dst="${pair##*:}"
+    [ -d "$src" ] || continue
+    mkdir -p "$dst"
+    for f in "$src"/*.png; do
+        [ -e "$f" ] || continue
+        mv "$f" "$dst/" && moved=$((moved+1))
+    done
+done
+echo "  이동 $moved장"
+
 echo "[1/3] IconLabel → 종별 카드"
 python _tools/repoint_monster_icons.py
 

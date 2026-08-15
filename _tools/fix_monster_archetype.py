@@ -58,6 +58,16 @@ OWN_ART = {
     2003: ("goblin_monster_0.sprite", "Mon_2003"),   # (IconLabel, AnimController)
 }
 
+# ⚠️ 메인 퀘스트가 요구하는 드롭. 아키타입 재료(11001~11030)로 덮으면 **게임이 진행 불가**가 된다.
+#  퀘3 = 젤리 퐁(10001) 2개 / 퀘6 = 폴짝 젤리(10002) 5개인데, 드롭 집합이 11001~11030뿐이면
+#  어떤 몬스터도 이 둘을 떨구지 않아 퀘3에서 영구 정지한다(실제로 그 상태였다).
+#  아이템 스프라이트(Slime_Green_Drop / item_rabijelly)가 가리키는 대로 슬라임·라비 슬라임에 둔다.
+#  Quest_Notify도 퀘3에서 산들바람 숲 입구로 유도하므로 설계 의도와 일치한다.
+QUEST_DROPS = {
+    2001: 10001,   # 슬라임      → 젤리 퐁
+    2002: 10002,   # 라비 슬라임 → 폴짝 젤리
+}
+
 
 def load_korean_names():
     """LocalizationData.xlsx: TextKey → 한글 이름"""
@@ -125,7 +135,7 @@ def main():
             fam_name = FAMILIES[fam]
 
         icon = "Mon_%s_%d" % (fam_name, idx)
-        drop = MAT_ID0 + fam * 10 + idx
+        drop = QUEST_DROPS.get(did, MAT_ID0 + fam * 10 + idx)
 
         cur_icon = ws.cell(r, h["IconLabel"]).value
         cur_drop = ws.cell(r, h["DropItemId"]).value if "DropItemId" in h else None

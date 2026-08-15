@@ -105,3 +105,6 @@ InitTestScene*.unity*
 .env.local
 .env
 *.env.local
+
+# 이미지 생성 대기 폴더 (Assets로 옮기기 전 임시 보관)
+_generated/
