@@ -25,6 +25,15 @@ public class ObjectManager
         }
     }
 
+    /// <summary>
+    /// 이미 있을 때만 돌려준다 (없으면 만들지 않고 null).
+    ///
+    /// 정리 경로(OnDestroy 등)에서 위의 lazy 게터를 쓰면 **파괴 중에 @Monster를 새로 만들어**
+    /// 씬을 닫을 때 "Some objects were not cleaned up when closing the scene" 빨간 에러가 난다.
+    /// 치울 대상이 없으면 애초에 만들 필요도 없다.
+    /// </summary>
+    public Transform MonsterRootIfExists => GameObject.Find("@Monster")?.transform;
+
     // 동행 미니몬 루트 — @Monster와 분리(몬스터로 오인되지 않도록).
     public Transform CompanionTransform
     {

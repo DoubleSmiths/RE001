@@ -895,7 +895,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             _battleCoroutine = null;
         }
 
-        Transform monsterRoot = Managers.Object?.MonsterTransform;
+        // 정리 경로에서는 **있을 때만** 가져온다. lazy 게터를 쓰면 씬을 닫는 도중 @Monster를
+        //  새로 만들어 "Some objects were not cleaned up when closing the scene" 에러가 난다.
+        Transform monsterRoot = Managers.Object?.MonsterRootIfExists;
         if (monsterRoot != null)
         {
             for (int i = monsterRoot.childCount - 1; i >= 0; i--)
