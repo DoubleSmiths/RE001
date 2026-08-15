@@ -437,13 +437,18 @@ namespace Data
 
     #region ForgeRecipeData
     [Serializable]
+    // 대장간 장비 제작 레시피 (_tools/gen_forge_recipes.py 생성).
+    //  장비 60종의 유일한 획득 경로 — 재료 3종 + 골드 + 요구 레벨.
+    //  재료를 3종 요구하는 이유: 한 종류만 갈면 나머지 29종이 또 쓸 데 없는 아이템이 된다.
     public class ForgeRecipeData
     {
         public int DataId;
-        public int EquipDataId;
-        public int Level;
-        public int RequiredMaterialId;
-        public int RequiredMaterialCount;
+        public int EquipDataId;     // 결과 장비
+        public int ReqLevel;        // 요구 플레이어 레벨
+        public int Gold;
+        public int Mat1Id, Mat1Count;
+        public int Mat2Id, Mat2Count;
+        public int Mat3Id, Mat3Count;
     }
 
     [Serializable]

@@ -762,6 +762,7 @@ public class DataTransformer : EditorWindow
         ParseSkillDataSheet      (ReadXlsx($"{baseDir}/SkillData.xlsx"));
         ParseEquipmentDataSheet  (ReadXlsx($"{baseDir}/EquipmentData.xlsx"));
         ParseEquipEnhanceDataSheet(ReadXlsx($"{baseDir}/EquipEnhanceData.xlsx"));
+        ParseForgeRecipeDataSheet(ReadXlsx($"{baseDir}/ForgeRecipeData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
@@ -873,6 +874,29 @@ public class DataTransformer : EditorWindow
             loader.enhances.Add(d);
         }
         WriteJsonStr("EquipEnhanceData", loader);
+    }
+
+    static void ParseForgeRecipeDataSheet(List<List<string>> rows)
+    {
+        var loader = new ForgeRecipeDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new ForgeRecipeData();
+            d.DataId      = ConvertValue<int>(C(row, 0));
+            d.EquipDataId = ConvertValue<int>(C(row, 1));
+            d.ReqLevel    = ConvertValue<int>(C(row, 2));
+            d.Gold        = ConvertValue<int>(C(row, 3));
+            d.Mat1Id      = ConvertValue<int>(C(row, 4));
+            d.Mat1Count   = ConvertValue<int>(C(row, 5));
+            d.Mat2Id      = ConvertValue<int>(C(row, 6));
+            d.Mat2Count   = ConvertValue<int>(C(row, 7));
+            d.Mat3Id      = ConvertValue<int>(C(row, 8));
+            d.Mat3Count   = ConvertValue<int>(C(row, 9));
+            loader.recipes.Add(d);
+        }
+        WriteJsonStr("ForgeRecipeData", loader);
     }
 
     static void ParseMinMonDataSheet(List<List<string>> rows)

@@ -99,6 +99,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa1eb234c2688ba46846efa5c4ae6a41
+    m_Address: ForgeRecipeData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b38410b4bd7a8de48832e482c24140d0
     m_Address: TravelConditionData
     m_ReadOnly: 0

@@ -150,8 +150,11 @@ public class UI_EquipDetailPopup : UI_Popup
             }
         }
 
-        SetActive(GetObject((int)GameObjects.EquipedEf), _equip.IsEquipped);   // 'E' 뱃지
-        SetActive(GetImage((int)Images.BlockImg)?.gameObject, false);          // 보유 장비만 진입 → 잠금 dim 해제
+        // 미보유 장비도 상세창에 들어온다(장비창이 60종 전부를 보여준다) → 잠금 dim + 제작 안내.
+        bool owned = Managers.Game.HasEquipment(_equip.DataId);
+
+        SetActive(GetObject((int)GameObjects.EquipedEf), owned && _equip.IsEquipped);   // 'E' 뱃지
+        SetActive(GetImage((int)Images.BlockImg)?.gameObject, !owned);                  // 미보유면 잠금 dim
 
         // ── 중단: 부위/내구도/고유능력/능력치 ──
         SetText(Texts.EquipTypeTxt, SlotKor(data.SlotType));
@@ -165,10 +168,58 @@ public class UI_EquipDetailPopup : UI_Popup
         RefreshStatText(data);
         RefreshAmountDetail(data);
 
-        // ── 하단 버튼 상호배타: 장착 / 장착중(클릭=해제) / 미보유(현재 플로우 미사용) ──
-        SetActive(GetButton((int)Buttons.EquipBtn).gameObject, _equip.IsEquipped == false);
-        SetActive(GetObject((int)GameObjects.OnEquipBtn), _equip.IsEquipped);
-        SetActive(GetObject((int)GameObjects.DontHaveBtn), false);
+        // ── 하단 버튼 상호배타: 제작(미보유) / 장착 / 장착중(클릭=해제) ──
+        SetActive(GetButton((int)Buttons.EquipBtn).gameObject, owned && _equip.IsEquipped == false);
+        SetActive(GetObject((int)GameObjects.OnEquipBtn), owned && _equip.IsEquipped);
+        SetActive(GetObject((int)GameObjects.DontHaveBtn), !owned);
+
+        if (!owned) RefreshCraftButton();
+    }
+
+    // 미보유 장비 — DontHaveBtn을 [제작] 버튼으로 쓴다(프리팹 저작 의도 그대로).
+    //  만들 수 있으면 "제작", 막혔으면 **왜 막혔는지**를 버튼에 그대로 쓴다.
+    //  (대장간에서 "강화불가"만 뜨고 이유를 안 알려줘 고장으로 보였던 전례를 반복하지 않는다)
+    void RefreshCraftButton()
+    {
+        var go = GetObject((int)GameObjects.DontHaveBtn);
+        if (go == null) return;
+
+        string reason = Managers.Game.GetCraftBlockReason(_equip.DataId);
+        bool can = string.IsNullOrEmpty(reason);
+
+        var label = go.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            label.text = can ? "제작" : reason;
+            ApplyFont(label, FontType.UI);
+        }
+
+        if (!_craftBound)
+        {
+            _craftBound = true;
+            go.BindEvent(OnClickCraft);
+        }
+    }
+
+    bool _craftBound;
+
+    void OnClickCraft()
+    {
+        if (_equip == null) return;
+
+        string reason = Managers.Game.GetCraftBlockReason(_equip.DataId);
+        if (!string.IsNullOrEmpty(reason))
+        {
+            Managers.UI.ShowToast(reason);
+            return;
+        }
+
+        if (!Managers.Game.CraftEquipment(_equip.DataId)) return;
+
+        Managers.Sound?.PlaySFX("SFX_Upgrade");
+        // 방금 만든 실제 인스턴스로 갈아끼워 강화도·내구도가 상세창에 반영되게 한다
+        var made = Managers.Game.OwnedEquipments.Find(e => e.DataId == _equip.DataId);
+        SetInfo(made ?? _equip);
     }
 
     // ── 표시 빌더 ──
@@ -220,8 +271,41 @@ public class UI_EquipDetailPopup : UI_Popup
         AppendStat(sb, "물리공격", data.BaseAtk + enAtk, enAtk, false);
         AppendStat(sb, "치명타", data.BaseCritRate + enCrit, enCrit, true);
         AppendStat(sb, "마법공격", data.BaseMagicAtk + enMagic, enMagic, false);
+
+        // 미보유면 능력치 아래에 **필요 재료**를 같이 보여준다.
+        //  버튼에는 첫 번째로 막힌 사유만 뜨므로, 전체 목록은 여기서 확인한다.
+        //  모자란 항목은 빨강, 충족은 초록 (기획서 p1-18 사용/필요 아이템 표기 규칙).
+        if (!Managers.Game.HasEquipment(_equip.DataId))
+        {
+            var recipe = Managers.Game.GetRecipeFor(_equip.DataId);
+            if (recipe != null)
+            {
+                // 한 줄에 몰아넣으면 폭이 좁아 뒷자리가 잘리고("골드 4,200/1"),
+                //  기본 크기로는 5줄이 표시 영역을 넘어 마지막 재료가 잘린다. 줄을 나누고 조금 작게.
+                if (sb.Length > 0) sb.Append("\n");
+                sb.Append("\n<size=85%><color=#FFD000>[제작 재료]</color>");
+                sb.Append($"\n레벨 {Colored(Managers.Game.Level, recipe.ReqLevel)}");
+                sb.Append($"\n골드 {Colored(Managers.Game.Gold, recipe.Gold)}");
+
+                foreach (var (id, need) in GameManager.RecipeMaterials(recipe))
+                {
+                    if (id <= 0 || need <= 0) continue;
+                    string nm = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(id, out var it)
+                        ? Util.Localize(it.Name) : id.ToString();
+                    sb.Append($"\n{nm} ").Append(Colored(Managers.Game.GetItemCount(id), need));
+                }
+                sb.Append("</size>");
+            }
+        }
+
         SetText(Texts.Content, sb.Length > 0 ? sb.ToString() : "-");
     }
+
+    // 보유/필요 — 충족 초록 / 부족 빨강 (기획서 p1-18)
+    static string Colored(int have, int need)
+        => have >= need
+            ? $"<color=#00FF00>{have:N0}</color>/{need:N0}"
+            : $"<color=#FF0000>{have:N0}</color>/{need:N0}";
 
     static void AppendStat(StringBuilder sb, string label, float total, float enhance, bool percent)
     {

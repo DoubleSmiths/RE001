@@ -1065,6 +1065,82 @@ public class GameManager
     }
 
     // ────────────────────────────────────────
+    //  대장간 제작 — 장비의 유일한 획득 경로
+    // ────────────────────────────────────────
+    //  장비 60종을 만들어 놓고 얻을 방법이 없었다(시작 지급 6종이 전부).
+    //  드롭으로 주려면 CreatureData.DropItemId가 이미 재료에 쓰여 컬럼을 늘려야 하고,
+    //  확률 드롭은 방치형에서 스트레스가 된다. 반면 재료는 쌓이기만 하고 쓸 데가 없었다.
+    //  → 재료 3종 + 골드 + 요구 레벨로 제작한다 (ForgeRecipeData).
+
+    public Data.ForgeRecipeData GetRecipeFor(int equipDataId)
+    {
+        if (Managers.Data.ForgeRecipeDic == null) return null;
+        foreach (var r in Managers.Data.ForgeRecipeDic.Values)
+            if (r.EquipDataId == equipDataId) return r;
+        return null;
+    }
+
+    public bool HasEquipment(int equipDataId)
+        => _gameData.OwnedEquipments.Exists(e => e.DataId == equipDataId);
+
+    /// <summary>제작이 막힌 이유. 만들 수 있으면 빈 문자열.</summary>
+    public string GetCraftBlockReason(int equipDataId)
+    {
+        if (HasEquipment(equipDataId)) return "이미 보유";
+
+        var r = GetRecipeFor(equipDataId);
+        if (r == null) return "제작 불가";
+        if (Level < r.ReqLevel) return $"Lv.{r.ReqLevel} 필요";
+        if (Gold < r.Gold) return $"골드 {r.Gold:N0} 필요";
+
+        foreach (var (id, need) in RecipeMaterials(r))
+        {
+            if (id <= 0 || need <= 0) continue;
+            int have = GetItemCount(id);
+            if (have < need) return $"{Util.Localize(MaterialName(id))} {have}/{need}";
+        }
+        return string.Empty;
+    }
+
+    public bool CanCraft(int equipDataId) => string.IsNullOrEmpty(GetCraftBlockReason(equipDataId));
+
+    public static IEnumerable<(int id, int count)> RecipeMaterials(Data.ForgeRecipeData r)
+    {
+        yield return (r.Mat1Id, r.Mat1Count);
+        yield return (r.Mat2Id, r.Mat2Count);
+        yield return (r.Mat3Id, r.Mat3Count);
+    }
+
+    static string MaterialName(int itemId)
+        => Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(itemId, out var it) && !string.IsNullOrEmpty(it.Name)
+            ? it.Name : itemId.ToString();
+
+    /// <summary>제작 실행. 성공하면 장비를 보유 목록에 넣고 빈 슬롯이면 자동 착용.</summary>
+    public bool CraftEquipment(int equipDataId)
+    {
+        if (!CanCraft(equipDataId)) return false;
+        var r = GetRecipeFor(equipDataId);
+        if (r == null) return false;
+
+        foreach (var (id, need) in RecipeMaterials(r))
+            if (id > 0 && need > 0) RemoveItem(id, need);
+        Gold -= r.Gold;
+
+        var eq = new Equipment(equipDataId);
+        _gameData.OwnedEquipments.Add(eq);
+        if (!_gameData.EquippedEquipments.ContainsKey(eq.SlotType))
+        {
+            eq.IsEquipped = true;
+            _gameData.EquippedEquipments[eq.SlotType] = eq;
+            Player?.RefreshStats(fullHeal: false);
+        }
+
+        SaveGame();
+        EquipInfoChanged?.Invoke();
+        return true;
+    }
+
+    // ────────────────────────────────────────
     //  [치트] 만능 키 — 모든 컨텐츠 해금
     // ────────────────────────────────────────
     public bool AllUnlocked

@@ -58,6 +58,7 @@ public static class FullPlaythroughTest
 
         var fail = new List<string>();
         var seenMonsters = new HashSet<int>();
+        var droppedMaterials = new HashSet<int>();   // 실제로 몬스터가 떨구는 재료 (제작 검사용)
         int spawned = 0, killed = 0, dropped = 0;
 
         Debug.Log($"[플레이스루] 시작 — 전투 노드 {nodes.Count}개");
@@ -108,6 +109,7 @@ public static class FullPlaythroughTest
                     continue;
                 }
                 seenMonsters.Add(monId);
+                if (cd.DropItemId > 0) droppedMaterials.Add(cd.DropItemId);
 
                 var mc = Managers.Object.SpawnMonster(monId, new Vector3(3f, Define.GROUND_Y, 0f));
                 if (mc == null) { fail.Add($"{place}: 스폰 실패 {monId}"); continue; }
@@ -145,6 +147,26 @@ public static class FullPlaythroughTest
             }
         }
 
+        // ③ 장비 60종이 **전부 제작 가능한가** — 레시피 존재 + 재료가 실제로 얻을 수 있는 것인가.
+        //    획득 경로가 없으면 "만들어만 두고 못 쓰는 장비"가 다시 생긴다.
+        int craftable = 0;
+        foreach (var eq in data.EquipmentDic)
+        {
+            var r = game.GetRecipeFor(eq.Key);
+            if (r == null) { fail.Add($"장비 {eq.Key} 레시피 없음"); continue; }
+            if (r.ReqLevel < 1 || r.ReqLevel > 300) fail.Add($"장비 {eq.Key} 요구레벨 이상 {r.ReqLevel}");
+
+            foreach (var (mid, need) in GameManager.RecipeMaterials(r))
+            {
+                if (mid <= 0 || need <= 0) continue;
+                if (data.ItemDic == null || !data.ItemDic.ContainsKey(mid))
+                { fail.Add($"장비 {eq.Key} 재료 {mid} 아이템 데이터 없음"); continue; }
+                if (!droppedMaterials.Contains(mid))
+                    fail.Add($"장비 {eq.Key} 재료 {mid}는 어떤 몬스터도 드롭하지 않음");
+            }
+            craftable++;
+        }
+
         // 몬스터 커버리지 — 503종 중 실제로 어느 노드에서도 안 뽑히는 종이 있는지
         var unreachable = new List<int>();
         foreach (var id in data.CreatureDic.Keys)
@@ -155,6 +177,7 @@ public static class FullPlaythroughTest
         var sb = new StringBuilder();
         sb.AppendLine("═══ 전 구간 플레이스루 결과 ═══");
         sb.AppendLine($"메인 퀘스트    : {(questFail.Count == 0 ? "1→마지막 전부 통과" : $"막힘 {questFail.Count}건")}");
+        sb.AppendLine($"장비 제작      : {craftable} / {data.EquipmentDic.Count} 레시피 확인");
         sb.AppendLine($"전투 노드      : {nodes.Count}");
         sb.AppendLine($"스폰/처치      : {spawned} / {killed}");
         sb.AppendLine($"드롭 확인      : {dropped}");

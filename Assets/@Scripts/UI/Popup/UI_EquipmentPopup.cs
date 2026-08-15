@@ -282,13 +282,24 @@ public class UI_EquipmentPopup : UI_Popup
             if (go != null) Destroy(go);
         _spawnedSlots.Clear();
 
-        // 부위별 보유 리스트 (선택 티어만)
+        // 부위별 목록 — **미보유 장비도 넣는다**.
+        //  보유한 것만 보여주면 60종 중 6종만 존재하는 것처럼 보이고, 무엇을 만들 수 있는지도 알 수 없다.
+        //  미보유는 회색 + 자물쇠로 표시하고, 눌러서 상세창의 [제작]으로 들어간다.
         var bySlot = new Dictionary<int, List<Equipment>>();
-        foreach (var e in Managers.Game.OwnedEquipments)
+        var ownedIds = new HashSet<int>();
+        foreach (var e in Managers.Game.OwnedEquipments) ownedIds.Add(e.DataId);
+
+        foreach (var kv in Managers.Data.EquipmentDic)
         {
-            var d = e?.EquipmentData;
+            var d = kv.Value;
             if (d == null || TierOf(d.Grade) != _tier) continue;
-            int key = (int)e.SlotType;
+
+            // 보유분은 실제 인스턴스를(강화도/내구도가 있다), 미보유분은 표시용 임시 인스턴스를 쓴다.
+            Equipment e = ownedIds.Contains(kv.Key)
+                ? Managers.Game.OwnedEquipments.Find(x => x.DataId == kv.Key)
+                : new Equipment(kv.Key);
+
+            int key = (int)d.SlotType;
             if (bySlot.TryGetValue(key, out var list) == false)
                 bySlot[key] = list = new List<Equipment>();
             list.Add(e);
@@ -393,6 +404,9 @@ public class UI_EquipmentPopup : UI_Popup
         var btn = view.Btn.GetComponent<Button>();
         if (btn != null) btn.interactable = has;
 
+        // 미보유는 회색으로 — 있다는 건 보여주되 가진 것과 구분한다.
+        bool owned = has && Managers.Game.HasEquipment(equip.DataId);
+
         // 장비 아이콘 (EquipmentData.SpriteName)
         if (view.Icon != null)
         {
@@ -400,8 +414,19 @@ public class UI_EquipmentPopup : UI_Popup
             if (has && string.IsNullOrEmpty(data.SpriteName) == false)
             {
                 var sp = Managers.Resource.Load<Sprite>(data.SpriteName);
-                if (sp != null) { view.Icon.sprite = sp; view.Icon.preserveAspect = true; }
+                if (sp != null)
+                {
+                    // 이 아이콘에도 EquipIcon Animator가 붙어 있어 클립이 sprite와 color를
+                    //  **매 프레임 덮어쓴다**. 끄지 않으면 모든 칸이 같은 그림으로 보이고
+                    //  미보유 회색 처리도 무효가 된다(상세 팝업에서 겪은 것과 같은 함정).
+                    var animator = view.Icon.GetComponent<Animator>();
+                    if (animator != null) animator.enabled = false;
+
+                    view.Icon.sprite = sp;
+                    view.Icon.preserveAspect = true;
+                }
             }
+            view.Icon.color = owned ? Color.white : new Color(0.32f, 0.32f, 0.32f, 1f);
         }
 
         // 강화수치 "+N" (0이면 숨김)
@@ -416,11 +441,15 @@ public class UI_EquipmentPopup : UI_Popup
         bool lowDuri = has && equip.Durability <= data.MaxDurability * LOW_DURI_RATE;
         if (view.LowDuri != null) view.LowDuri.SetActive(lowDuri);
 
-        // 'E' 장착 뱃지
-        if (view.Badge != null) view.Badge.SetActive(has && equip.IsEquipped);
+        // 'E' 장착 뱃지 — 보유분만
+        if (view.Badge != null) view.Badge.SetActive(owned && equip.IsEquipped);
 
-        // 빈 슬롯 dim
+        // 빈 슬롯 dim (미보유는 아이콘 회색으로 구분하므로 dim은 빈 칸에만)
         if (view.Dim != null) view.Dim.SetActive(has == false);
+
+        // 내구도 경고는 보유분에만 의미가 있다
+        if (view.LowDuri != null && !owned) view.LowDuri.SetActive(false);
+        if (view.LvTxt != null && !owned) view.LvTxt.gameObject.SetActive(false);
     }
 
     // 슬롯 클릭 → 장비 상세 팝업
