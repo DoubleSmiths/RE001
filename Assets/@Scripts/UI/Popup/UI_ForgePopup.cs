@@ -98,6 +98,14 @@ public class UI_ForgePopup : UI_Popup
         GetObject((int)GameObjects.ForceEnhTxtGroup)?.SetActive(false);
         GetObject((int)GameObjects.Btn_Content_10)?.SetActive(true);
 
+        // ⚠️ 프리팹에 **화면 전체를 덮는 투명 차단막**이 켜진 채 저작돼 있다.
+        //  ForgeBlockImg는 렌더 순서상 콘텐츠(ForgePopupFrame)보다 뒤라 위에 그려지고,
+        //  alpha 0이라 보이지도 않으면서 raycastTarget=true로 **모든 클릭을 삼킨다**.
+        //  → 대장간이 열리긴 하는데 아무것도 눌리지 않고 X로 닫지도 못했다("게임이 멈춤").
+        //  진행 중 입력을 막을 용도로 만들어진 것 같은데 켜고 끄는 코드가 없다. 열 때 꺼둔다.
+        BlockRaycast("ForgeBlockImg", false);
+        BlockRaycast("ClickBlock", false);
+
         // 버튼
         GetButton((int)Buttons.Btn_BtnGroup_01).onClick.AddListener(OnClickRestore);
         GetButton((int)Buttons.Btn_BtnGroup_02).onClick.AddListener(OnClickEnhance);
@@ -273,6 +281,13 @@ public class UI_ForgePopup : UI_Popup
     }
 
     // 아이템 박스 공용 세팅 — 아이콘(ItemDic 스프라이트, 없으면 authored 유지) + 수량 + dim
+    // 전체 화면 차단막의 클릭 가로채기만 끈다(오브젝트는 남겨둔다 — 나중에 켤 수 있게).
+    void BlockRaycast(string childName, bool on)
+    {
+        var img = Util.FindChild<Image>(gameObject, childName, true);
+        if (img != null) img.raycastTarget = on;
+    }
+
     // 프리팹 안 이름으로 찾아 문자열을 넣는다 (enum Texts에 없는 오버레이 라벨용).
     //  로컬라이즈가 필요한 값은 호출부에서 Util.Localize 해서 넘긴다 —
     //  여기서 무조건 Localize 하면 사유 문구처럼 조립된 문자열이 키로 취급돼 사라진다.

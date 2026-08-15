@@ -70,6 +70,9 @@ public abstract class UI_Base : MonoBehaviour
         if (font != null) text.font = font;
     }
 
+    // 이미 알린 바인딩 실패 이름 (중복 로그 억제용). 플레이 세션 단위로 유지.
+    static readonly System.Collections.Generic.HashSet<string> s_reportedBindFailures = new();
+
     protected void Bind<T>(Type type) where T : UnityEngine.Object
     {
         string[] names = Enum.GetNames(type);
@@ -83,7 +86,10 @@ public abstract class UI_Base : MonoBehaviour
             else
                 objects[i] = Util.FindChild<T>(gameObject, names[i], true);
 
-            if (objects[i] == null)
+            // 바인딩 실패는 개발 중 실수를 잡는 유용한 신호지만, 같은 SubItem을 수백 개 만드는 화면
+            // (도감 529칸)에서는 **같은 줄이 수백 번** 찍혀 콘솔이 통째로 밀린다.
+            // 같은 이름은 한 번만 알린다 — 신호는 남기고 잡음만 없앤다.
+            if (objects[i] == null && s_reportedBindFailures.Add(names[i]))
                 Debug.Log($"Failed to bind({names[i]})");
         }
     }

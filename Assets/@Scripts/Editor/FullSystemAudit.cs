@@ -44,6 +44,7 @@ public static class FullSystemAudit
         yield return CoAuditStats(fail, note);
         yield return CoAuditWorldObjects(fail, note);
         yield return CoAuditEquipmentUI(fail, note);
+        yield return CoAuditPopupInput(fail, note);
 
         var sb = new StringBuilder();
         sb.AppendLine("═══ 종합 시스템 검증 ═══");
@@ -51,6 +52,11 @@ public static class FullSystemAudit
         sb.AppendLine($"실패 : {fail.Count}   소요 : {Time.realtimeSinceStartup - t0:F1}s");
         for (int i = 0; i < fail.Count && i < 40; i++) sb.AppendLine("  ✗ " + fail[i]);
         if (fail.Count > 40) sb.AppendLine($"  … 외 {fail.Count - 40}건");
+
+        // 콘솔은 도감이 뿜는 바인딩 로그(수백 줄)에 밀려 결과가 사라진다 → 파일로도 남긴다.
+        string outPath = Path.Combine(Application.persistentDataPath, "audit_result.txt");
+        try { File.WriteAllText(outPath, sb.ToString()); } catch { }
+        sb.AppendLine($"(결과 파일: {outPath})");
 
         if (fail.Count == 0) Debug.Log(sb.ToString());
         else Debug.LogError(sb.ToString());
@@ -434,6 +440,88 @@ public static class FullSystemAudit
 
         note.Add("장비 팝업: 상세 아이콘 일치 / 장착 / 해제 / (+)상세 확인");
         Managers.UI.CloseAllPopupUI();
+    }
+
+    // ── F. 팝업 입력 (보이지 않는 차단막) ────────────────────────
+    static IEnumerator CoAuditPopupInput(List<string> fail, List<string> note)
+    {
+        var g = Managers.Game;
+        int checkedCount = 0;
+
+        // 대장간은 장비를 받아야 하므로 따로, 나머지는 인자 없는 SetInfo로 연다.
+        Managers.UI.CloseAllPopupUI();
+        var eq = g.OwnedEquipments.Count > 0 ? g.OwnedEquipments[0] : null;
+        if (eq != null)
+        {
+            var det = Managers.UI.ShowPopupUI<UI_EquipDetailPopup>(); det.SetInfo(eq);
+            yield return null;
+            AuditInputBlockers(det, "장비상세", fail); checkedCount++;
+
+            var fp = Managers.UI.ShowPopupUI<UI_ForgePopup>(); fp.SetInfo(eq);
+            yield return null;
+            AuditInputBlockers(fp, "대장간", fail); checkedCount++;
+        }
+        Managers.UI.CloseAllPopupUI();
+        yield return null;
+
+        foreach (var t in new[] { typeof(UI_EquipmentPopup), typeof(UI_InventoryPopup), typeof(UI_SkillBookPopup),
+                                  typeof(UI_BestiaryPopup), typeof(UI_TravelPopup), typeof(UI_PotionPopup),
+                                  typeof(UI_CharacterPopup), typeof(UI_SettingPopup) })
+        {
+            Managers.UI.CloseAllPopupUI();
+            // ShowPopupUI는 제네릭만 있어서 리플렉션으로 T를 채워 부른다.
+            var open = typeof(UIManager).GetMethod("ShowPopupUI").MakeGenericMethod(t);
+            var pop = open.Invoke(Managers.UI, new object[] { null }) as UI_Popup;
+            if (pop == null) { fail.Add($"[입력] {t.Name} 열리지 않음"); continue; }
+            var m = t.GetMethod("SetInfo", new System.Type[0]);
+            if (m != null) m.Invoke(pop, null);
+            yield return null;
+            AuditInputBlockers(pop, t.Name, fail);
+            checkedCount++;
+        }
+        Managers.UI.CloseAllPopupUI();
+        note.Add($"팝업 입력: {checkedCount}종 레이캐스트 검사(보이지 않는 전체화면 차단막)");
+    }
+
+    /// <summary>
+    /// 팝업 위에 **보이지 않는 전체화면 클릭 차단막**이 있는지 검사한다.
+    ///
+    /// 대장간이 "열리는데 아무것도 안 눌리고 X로 닫지도 못하는" 상태였던 원인이 이것이다.
+    /// alpha 0 + raycastTarget=true 이미지가 콘텐츠보다 위에 그려지면 화면은 멀쩡한데 입력만 죽는다.
+    ///
+    /// ExecuteEvents로 대상에 직접 쏘는 방식은 **레이캐스트를 건너뛰어** 이 버그를 못 잡는다.
+    /// 그래서 여기서는 화면 좌표로 GraphicRaycaster를 돌려 "실제로 무엇이 먼저 맞는지"를 본다.
+    /// </summary>
+    static void AuditInputBlockers(UI_Popup pop, string label, List<string> fail)
+    {
+        var self = pop.transform as RectTransform;
+        if (self == null) return;
+
+        var canvas = pop.GetComponent<Canvas>();
+        var caster = pop.GetComponent<UnityEngine.UI.GraphicRaycaster>();
+        if (caster == null || canvas == null) { fail.Add($"[입력] {label}: GraphicRaycaster 없음"); return; }
+
+        // **콘텐츠 프레임의 중심**에 레이캐스트한다.
+        //  팝업 루트 중심으로 쏘면, 프레임이 화면 아래쪽에 있는 팝업(물약창 등)에서
+        //  정상적인 배경(클릭하면 닫히는 layer)에 맞아 오탐이 난다.
+        //  우리가 잡으려는 건 "콘텐츠 위를 덮은 투명 차단막"이다.
+        var frame = pop._frameRT != null ? pop._frameRT : self;
+        var cam = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+        Vector2 screen = RectTransformUtility.WorldToScreenPoint(cam, frame.position);
+
+        var ptr = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { position = screen };
+        var hits = new List<UnityEngine.EventSystems.RaycastResult>();
+        caster.Raycast(ptr, hits);
+        if (hits.Count == 0) return;
+
+        var top = hits[0].gameObject;
+        var img = top.GetComponent<UnityEngine.UI.Image>();
+        var rt = top.transform as RectTransform;
+        bool fullScreen = rt != null && rt.rect.width >= self.rect.width * 0.8f && rt.rect.height >= self.rect.height * 0.8f;
+        bool invisible = img != null && img.color.a < 0.05f;
+
+        if (fullScreen && invisible)
+            fail.Add($"[입력] {label}: 보이지 않는 전체화면 차단막 '{top.name}'이 클릭을 가로챈다");
     }
 
     // ── 공용 ──
