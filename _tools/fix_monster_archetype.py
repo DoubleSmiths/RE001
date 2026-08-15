@@ -129,7 +129,12 @@ def main():
 
         cur_icon = ws.cell(r, h["IconLabel"]).value
         cur_drop = ws.cell(r, h["DropItemId"]).value if "DropItemId" in h else None
-        if cur_icon == icon and cur_drop == drop:
+        cur_anim = ws.cell(r, h["AnimController"]).value if "AnimController" in h else icon
+
+        # ⚠️ AnimController 도 함께 봐야 한다. 아이콘·드롭만 비교하면
+        #    "그림은 맞는데 애니메이터만 옛 이름(Mon_2220)"인 행을 통째로 건너뛴다.
+        #    실제로 17행이 그렇게 남아 전 구간 검증에서 잡혔다.
+        if cur_icon == icon and cur_drop == drop and cur_anim == icon:
             same += 1
             continue
 
