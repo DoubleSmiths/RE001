@@ -39,7 +39,27 @@ public class Managers : MonoBehaviour
         }
         // 첫 인스턴스를 싱글턴으로 확정 (lazy Init보다 Awake가 먼저 와도 안전)
         s_instance = this;
+        s_shuttingDown = false;   // 새 플레이 세션 — 종료 플래그 초기화(static은 도메인 리로드를 넘어 살아남는다)
         DontDestroyOnLoad(gameObject);
+    }
+
+    // 종료 중에는 lazy Init이 @Managers를 **되살리지 않도록** 막는 플래그.
+    //  이걸 안 걸면 씬을 닫는 도중 누군가 Managers.X를 건드릴 때마다 @Managers가 새로 생기고,
+    //  "Some objects were not cleaned up when closing the scene" 빨간 에러로 이어진다.
+    static bool s_shuttingDown;
+
+    // ⚠️ static은 플레이 세션을 넘어 살아남는다. Managers.Awake에서 초기화하면 늦다 —
+    //    PlayerController.Awake가 먼저 돌면 Init이 막힌 채 Managers.Data가 null이 되어
+    //    RefreshStats에서 NullReference가 난다(실제로 그렇게 터뜨렸다).
+    //    어떤 Awake보다 먼저 도는 지점에서 푼다.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void ResetShutdownFlag() => s_shuttingDown = false;
+
+    void OnDestroy()
+    {
+        if (s_instance != this) return;
+        s_instance = null;
+        s_shuttingDown = true;
     }
 
     void Update()
@@ -84,6 +104,8 @@ public class Managers : MonoBehaviour
     public static void Init()
     {
         if (s_instance != null)
+            return;
+        if (s_shuttingDown)     // 종료 중이면 되살리지 않는다 (씬 정리 에러 방지)
             return;
 
         GameObject go = GameObject.Find("@Managers");
