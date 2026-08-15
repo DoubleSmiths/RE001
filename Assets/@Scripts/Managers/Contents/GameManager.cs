@@ -177,6 +177,10 @@ public class GameData
     public bool LuckPotionUnlocked       = false;
     public bool LuckPotionRevealed       = false;
     public bool AutoPotionSkillRevealed  = false;
+
+    // [치트] 만능 키 — 모든 잠금 게이트를 무시한다. 세이브에 남겨 재시작해도 유지된다.
+    //  (여정 노드 조건처럼 "데이터를 채우는" 게 아니라 "판정을 건너뛰는" 종류의 해금은 이 플래그로 처리)
+    public bool AllUnlocked = false;
 }
 
 // ──────────────────────────────────────────────
@@ -1030,6 +1034,8 @@ public class GameManager
     //  판정 로직을 여기 한 곳에만 두고 IsTravelNodeUnlocked는 이걸 감싼다.
     public string GetTravelLockReason(int nodeId)
     {
+        if (AllUnlocked) return string.Empty;   // [치트] 만능 키
+
         if (Managers.Data.TravelConditionDic == null ||
             !Managers.Data.TravelConditionDic.TryGetValue(nodeId, out var conditions))
             return string.Empty;
@@ -1056,6 +1062,140 @@ public class GameManager
             }
         }
         return string.Empty;
+    }
+
+    // ────────────────────────────────────────
+    //  [치트] 만능 키 — 모든 컨텐츠 해금
+    // ────────────────────────────────────────
+    public bool AllUnlocked
+    {
+        get => _gameData.AllUnlocked;
+        set { _gameData.AllUnlocked = value; SaveGame(); }
+    }
+
+    /// <summary>
+    /// 잠겨 있는 모든 컨텐츠를 연다. 개발/검수용 치트.
+    ///
+    /// 해금에는 두 종류가 있어서 둘 다 처리한다.
+    ///   · 판정을 건너뛰면 되는 것 (여정 노드 조건) → AllUnlocked 플래그
+    ///   · 데이터를 실제로 채워야 하는 것 (장비 보유, 능력 습득, 도감 기록) → 여기서 직접 넣는다
+    ///
+    /// **레벨과 스탯은 건드리지 않는다.** 레벨업 자체가 컨텐츠이기도 하고,
+    /// 올려버리면 되돌릴 수단이 없다. 고레벨 지역이 필요하면 EXP 치트(숫자 7)를 쓰면 된다.
+    /// </summary>
+    public void UnlockEverything()
+    {
+        var data = Managers.Data;
+
+        // 1. 잠금 판정 전역 무시 (여정 25지역 x 5던전)
+        _gameData.AllUnlocked = true;
+
+        // 2. 최하단 탭 전부
+        foreach (Define.TabType tab in System.Enum.GetValues(typeof(Define.TabType)))
+            UnlockBtmButton(tab);
+
+        // 3. 버튼 ID — 상수로 박힌 것 + 데이터가 요구하는 것 전부.
+        //    데이터에서 긁어오므로 나중에 조건이 늘어도 치트가 따라간다.
+        foreach (string id in new[] { UNLOCK_TRAVEL_BUTTON, UNLOCK_ALCHEMY_BUTTON,
+                                      UNLOCK_INVENTORY_BUTTON, UNLOCK_POTION_BUTTON, BTN_COMMISION })
+            AddUnlockedBtn(id);
+
+        if (data.QuestUnlockDic != null)
+            foreach (var list in data.QuestUnlockDic.Values)
+                foreach (var u in list)
+                    if (!string.IsNullOrEmpty(u.TargetID) && !int.TryParse(u.TargetID, out _))
+                        AddUnlockedBtn(u.TargetID);
+
+        if (data.TravelConditionDic != null)
+            foreach (var list in data.TravelConditionDic.Values)
+                foreach (var c in list)
+                    if (c.Type == "BTN_UNLOCKED" && !string.IsNullOrEmpty(c.Target))
+                        AddUnlockedBtn(c.Target);
+
+        // 4. 능력 — 전부 습득
+        if (data.SkillDic != null && Managers.Ability != null)
+            foreach (int id in data.SkillDic.Keys)
+                if (!Managers.Ability.IsLearned(id))
+                    Managers.Ability.Learn(id);
+
+        // 5. 장비 — 전 종류 1개씩. 빈 슬롯은 자동 착용.
+        if (data.EquipmentDic != null)
+        {
+            foreach (int id in data.EquipmentDic.Keys)
+            {
+                if (_gameData.OwnedEquipments.Exists(e => e.DataId == id)) continue;
+                var eq = new Equipment(id);
+                _gameData.OwnedEquipments.Add(eq);
+                if (!_gameData.EquippedEquipments.ContainsKey(eq.SlotType))
+                {
+                    eq.IsEquipped = true;
+                    _gameData.EquippedEquipments[eq.SlotType] = eq;
+                }
+            }
+        }
+
+        // 6. 아이템 — 재료/주문서/귀중품 전부 넉넉히 (강화·제작이 재료 부족으로 막히지 않게)
+        const int CHEAT_ITEM_COUNT = 999;
+        foreach (var dic in new[] { data.ItemDic, data.RequisiteItemDic })
+        {
+            if (dic == null) continue;
+            foreach (int id in dic.Keys)
+            {
+                var have = Inventory.Find(i => i.DataId == id);
+                if (have == null) Inventory.Add(new InventoryItem { DataId = id, Count = CHEAT_ITEM_COUNT });
+                else if (have.Count < CHEAT_ITEM_COUNT) have.Count = CHEAT_ITEM_COUNT;
+            }
+        }
+
+        // 7. 도감 — 전 몬스터 발견 + 기록도 만충(고유능력 해금 조건)
+        if (data.CreatureDic != null)
+        {
+            foreach (var kv in data.CreatureDic)
+            {
+                if (!DiscoveredMonsterIds.Contains(kv.Key)) DiscoveredMonsterIds.Add(kv.Key);
+                if (Managers.MinMon == null) continue;
+                var save = Managers.MinMon.GetSaveData(kv.Key);
+                save.KillCount = Mathf.Max(save.KillCount, Mathf.Max(1, kv.Value.MaxKillCount));
+            }
+        }
+
+        // 8. 미니몬 — 잡을 수 있는 종류는 전부 보유(등급은 최고로)
+        if (data.MinMonDic != null && Managers.MinMon != null)
+        {
+            foreach (int id in data.MinMonDic.Keys)
+            {
+                var save = Managers.MinMon.GetSaveData(id);
+                if (save.CaughtCount <= 0) save.CaughtCount = 1;
+                if (save.AtkGrade      < 0) save.AtkGrade      = 5;
+                if (save.AtkSpeedGrade < 0) save.AtkSpeedGrade = 5;
+                if (save.CritGrade     < 0) save.CritGrade     = 5;
+            }
+        }
+
+        // 9. 도감 스킬 슬롯 / 물약 게이트
+        for (int i = 0; i < BestiarySkillUnlocked.Length; i++) BestiarySkillUnlocked[i] = true;
+        _gameData.LuckPotionUnlocked      = true;
+        _gameData.SpdPotionRevealed       = true;
+        _gameData.AutoPotionMemorized     = true;
+
+        // 10. 재화 — 강화/제작 비용이 막지 않을 만큼
+        _gameData.Gold    = Mathf.Max(_gameData.Gold, 9_999_999);
+        _gameData.Crystal = Mathf.Max(_gameData.Crystal, 99_999);
+
+        // 11. 퀘스트 — 마지막 번호로. (퀘스트가 하단 버튼/마을 UI 해금을 들고 있다)
+        if (Managers.Quest != null && data.QuestDic != null && data.QuestDic.Count > 0)
+        {
+            int last = 0;
+            foreach (int q in data.QuestDic.Keys) if (q > last) last = q;
+            Managers.Quest.JumpToQuest(last);
+        }
+
+        SaveGame();
+        Player?.RefreshStats(fullHeal: true);   // 장비/능력이 한꺼번에 붙었으니 스탯 재계산 + 만피
+
+        Debug.Log($"[치트] 만능 키 — 여정 전체 해금 / 장비 {_gameData.OwnedEquipments.Count}종 / " +
+                  $"능력 {LearnedAbilities.Count}종 / 도감 {DiscoveredMonsterIds.Count}종 / " +
+                  $"미니몬 {_gameData.OwnedMinMons.Count}종 / 골드 {_gameData.Gold:N0}");
     }
 
     // FailMessage가 비어 있어도 잠금 사유는 반드시 비어있지 않은 문자열이어야 한다

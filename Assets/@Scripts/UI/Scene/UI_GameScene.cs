@@ -1303,6 +1303,10 @@ public class UI_GameScene : UI_Scene
 
         if (Input.GetKeyDown(KeyCode.U)) TestUnlockAll();
 
+        // [치트] K = 만능 키. 모든 컨텐츠 해금 (여정/장비/능력/도감/미니몬/재화/퀘스트).
+        //  U(TestUnlockAll)는 하단 탭과 마을 버튼만 여는 반쪽짜리라 그대로 두고 따로 뒀다.
+        if (Input.GetKeyDown(KeyCode.K)) CheatUnlockEverything();
+
         if (Input.GetKeyDown(KeyCode.T))
         {
             Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>().SetInfo("Travel_Icon", LocalizeKey.GuildText, LocalizeKey.TestKey);
@@ -1368,6 +1372,21 @@ public class UI_GameScene : UI_Scene
     }
 
     [ContextMenu("Test/Unlock All")]
+    // [치트] 만능 키 — 실제 해금은 GameManager.UnlockEverything이 하고,
+    //  여기서는 열린 내용이 **화면에 바로 보이도록** UI를 다시 그린다.
+    //  (하단 탭 잠금, 마을 버튼 구성, 열려 있던 팝업 모두 갱신하지 않으면 다시 들어가야 보인다)
+    [ContextMenu("Cheat/모든 컨텐츠 해금")]
+    public void CheatUnlockEverything()
+    {
+        Managers.Game.UnlockEverything();
+
+        RefreshBtmButtonsLockState();
+        Managers.UI.CloseAllPopupUI();
+        EnterArea(AreaType.Village1);   // 마을 버튼 그룹 재생성(연금공방/여정 반영)
+
+        Managers.UI.ShowToast("[치트] 모든 컨텐츠 해금");
+    }
+
     public void TestUnlockAll()
     {
         // 하단 탭 버튼 전체 해금
