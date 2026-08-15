@@ -32,7 +32,9 @@ public static class ArchetypeAnimGenerator
         ("Idle",   "Idle",   0.80f, true),
         ("Run",    "Move",   0.50f, true),
         ("Attack", "Attack", 0.50f, false),
-        ("Die",    "Die",    0.70f, false),
+        // Die는 0.5초. MonsterController가 사망 0.5초 뒤 풀에 반환하므로(HP Bar 역재생과 동기)
+        //  더 길게 잡으면 마지막 프레임(쓰러진 자세)을 못 보고 사라진다.
+        ("Die",    "Die",    0.50f, false),
     };
 
     [MenuItem("Tools/몬스터 아키타입 애니메이터 생성")]
@@ -64,10 +66,13 @@ public static class ArchetypeAnimGenerator
                 string dir = $"{OUT_ROOT}/{name}";
                 string ctrlPath = $"{dir}/{name}.controller";
 
-                // 이미 정상(상태 5개)이면 건너뛴다 — 재실행 가능하게.
+                // 이미 정상이면 건너뛴다 — 재실행 가능하게.
+                //  상태 개수뿐 아니라 **클립 길이까지** 본다. 길이 상수를 바꿨는데 개수만 보고 건너뛰면
+                //  옛 길이의 클립이 그대로 남는다(Die를 0.7→0.5로 줄였을 때 실제로 그랬다).
                 var existing = AssetDatabase.LoadAssetAtPath<AnimatorController>(ctrlPath);
                 if (existing != null && existing.layers.Length > 0 &&
-                    existing.layers[0].stateMachine.states.Length >= CLIPS.Length + 1)
+                    existing.layers[0].stateMachine.states.Length >= CLIPS.Length + 1 &&
+                    LengthsMatch(dir))
                 {
                     skipped++;
                     continue;
@@ -103,6 +108,24 @@ public static class ArchetypeAnimGenerator
 
         int reg = RegisterAddressables();
         Debug.Log($"[ArchAnim] 생성 {made} / 건너뜀 {skipped} / 프레임부족 {incomplete} · Addressable 등록 {reg}");
+    }
+
+    // 이미 구워진 클립들이 현재 길이 상수와 일치하는지.
+    //  AnimationClip.length는 **마지막 키 시각 + 1프레임**이라 우리가 준 총 길이와 다르다.
+    //  (총 0.5s / 4프레임이면 키는 0·0.125·0.25·0.375 → length = 0.375 + 1/12 ≈ 0.46)
+    //  그 계산을 그대로 재현해 비교한다. 이걸 안 맞추면 매번 전부 다시 굽는다.
+    static float ExpectedLength(float total)
+        => total * (FRAMES - 1) / FRAMES + 1f / 12f;   // frameRate 12
+
+    static bool LengthsMatch(string dir)
+    {
+        foreach (var (state, _, len, _) in CLIPS)
+        {
+            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{dir}/{state}.anim");
+            if (clip == null) return false;
+            if (Mathf.Abs(clip.length - ExpectedLength(len)) > 0.02f) return false;
+        }
+        return true;
     }
 
     // 폴더 하나 → 클립 5종. 프레임이 하나라도 없으면 null (생성이 아직 안 끝난 것).
