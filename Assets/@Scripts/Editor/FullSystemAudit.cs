@@ -25,7 +25,10 @@ public static class FullSystemAudit
     {
         if (!Application.isPlaying)
         {
-            EditorUtility.DisplayDialog("종합 검증", "플레이 모드에서 실행하세요.", "확인");
+            // ⚠️ 여기서 DisplayDialog를 띄우면 안 된다. unity-cli로 메뉴를 실행하는 세션에서는
+            //  아무도 [확인]을 누르지 않아 **에디터가 통째로 멈춘다**(모달이 메인 루프를 잡는다).
+            //  실제로 26분간 CPU 0.01코어로 얼어 CLI 접속이 전부 끊겼다. 로그로만 알린다.
+            Debug.LogError("[종합 검증] 플레이 모드에서 실행하세요.");
             return;
         }
         Managers.Game.Player.StartCoroutine(CoRun());
@@ -670,6 +673,62 @@ public static class FullSystemAudit
                 fail.Add($"[진행차단] 퀘{q.QuestID} 요구 아이템 {itemId}를 떨구는 몬스터가 어느 여정 노드에도 살지 않는다");
         }
         note.Add($"퀘스트 진행: 아이템 요구 {checkedCount}건 모두 인게임 획득 경로 확인");
+        yield return null;
+
+        // 데이터만 맞는 게 아니라 **실제로 사냥해서 퀘스트가 넘어가는지**까지 본다.
+        //  드롭 코드(MonsterController)와 퀘스트 감시(OnItemChanged)가 이어져 있어야 통과한다.
+        yield return CoHuntForQuest(fail, note);
+    }
+
+    /// 산들바람 숲 입구에서 슬라임을 실제로 잡아 퀘3이 넘어가는지 — 무치트 진행의 첫 관문.
+    static IEnumerator CoHuntForQuest(List<string> fail, List<string> note)
+    {
+        var g = Managers.Game;
+        var data = Managers.Data;
+        if (g?.Player == null || Managers.Quest == null) yield break;
+
+        const int QUEST = 3, ITEM = 10001, MONSTER = 2001, NODE = 21010;
+        if (!data.QuestDic.ContainsKey(QUEST) || !data.CreatureDic.ContainsKey(MONSTER)) yield break;
+
+        // 검증이 세이브를 오염시키지 않도록 되돌릴 값을 잡아둔다.
+        int savedQuest = g.CurrentQuestID;
+        int savedNode = g.CurrentTravelAreaId;
+        int savedItem = g.GetItemCount(ITEM);
+
+        Managers.Quest.JumpToQuest(QUEST);
+        g.CurrentTravelAreaId = NODE;
+        g.Player.RefreshStats(fullHeal: true);
+
+        int before = g.GetItemCount(ITEM);
+        int kills = 0;
+        for (int i = 0; i < 6 && g.CurrentQuestID == QUEST; i++)
+        {
+            var mc = Managers.Object.SpawnMonster(MONSTER, new Vector3(3f, Define.GROUND_Y, 0f));
+            if (mc == null) { fail.Add("[무치트] 산들바람 숲 슬라임 스폰 실패"); break; }
+
+            int guard = 0;
+            while (mc != null && mc.Hp > 0f && guard++ < 200)
+                mc.TakeHit(BattleMath.Resolve(g.Player, mc, Define.AttackType.Physical), g.Player);
+
+            if (guard >= 200) { fail.Add("[무치트] Lv1 플레이어가 슬라임을 200타 안에 못 잡는다"); break; }
+            kills++;
+            if (mc != null) Managers.Resource.Destroy(mc.gameObject);
+            yield return null;   // 드롭 통지/퀘스트 감시가 한 프레임 돌게 둔다
+        }
+
+        int gained = g.GetItemCount(ITEM) - before;
+        if (gained <= 0)
+            fail.Add($"[무치트] 슬라임 {kills}마리를 잡아도 젤리 퐁이 안 떨어진다 — CreatureData {MONSTER}의 DropItemId 확인");
+        else if (g.CurrentQuestID == QUEST)
+            fail.Add($"[무치트] 젤리 퐁 {gained}개를 얻었는데 퀘{QUEST}가 안 넘어간다 — 아이템 획득→퀘스트 감시 연결 끊김");
+        else
+            note.Add($"무치트 진행: 슬라임 {kills}마리 사냥 → 젤리 퐁 {gained}개 → 퀘{QUEST}→{g.CurrentQuestID} 통과");
+
+        // 원상복구
+        Managers.Quest.JumpToQuest(savedQuest);
+        g.CurrentTravelAreaId = savedNode;
+        var inv = g.Inventory.Find(x => x.DataId == ITEM);
+        if (inv != null) inv.Count = savedItem;
         yield return null;
     }
 

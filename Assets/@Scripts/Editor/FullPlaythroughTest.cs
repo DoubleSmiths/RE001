@@ -31,7 +31,8 @@ public static class FullPlaythroughTest
     {
         if (!Application.isPlaying)
         {
-            EditorUtility.DisplayDialog("플레이스루 검증", "플레이 모드에서 실행하세요.", "확인");
+            // 모달 금지 — unity-cli 세션에선 [확인]을 누를 사람이 없어 에디터가 얼어붙는다.
+            Debug.LogError("[플레이스루 검증] 플레이 모드에서 실행하세요.");
             return;
         }
         Managers.Game.Player.StartCoroutine(CoRun());
