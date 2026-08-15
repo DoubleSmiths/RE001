@@ -15,9 +15,11 @@ aether_icons.py 가 정적 아이콘 1장을 만든다면, 이쪽은 **한 줄�
   python _tools/aether_anim.py --only slime      # 이름 부분일치로 일부만
 이미 파일이 있으면 건너뛴다(중단 후 재실행 가능).
 """
+import concurrent.futures
 import io
 import os
 import sys
+import threading
 import time
 
 from PIL import Image
@@ -31,6 +33,10 @@ import urllib.request  # noqa: E402
 OUT = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Monster", "Anim")
 FRAMES = 4
 FRAME_H = 128           # 최종 프레임 높이(px). 폭은 비율 유지.
+
+# 동시 실행 수. 이미지 한 장 렌더에 2~4분씩 걸려 직렬로 돌리면 53건에 2.6시간이 든다.
+#  제출은 SUBMIT_GAP으로 직렬화하고 **대기만 겹친다** — 429를 피하면서 전체 시간을 줄이는 지점.
+WORKERS = 4
 
 # 상태별 연출 지시. 4프레임 안에서 동작이 읽혀야 하므로 "무엇이 변하는지"를 명시한다.
 STATES = {
@@ -175,13 +181,23 @@ def main():
                 continue
             todo.append((name, base, state, motion))
 
-    print(f"생성 대상 {len(todo)}건 (아키타입 {len(items)}종)", flush=True)
-    ok = fail = 0
+    print(f"생성 대상 {len(todo)}건 (아키타입 {len(items)}종) — 동시 {WORKERS}개", flush=True)
+
+    done = {"ok": 0, "fail": 0}
     failed = []
-    for idx, (name, base, state, motion) in enumerate(todo, 1):
+    lock = threading.Lock()
+    submit_lock = threading.Lock()
+
+    def work(job):
+        idx, name, base, state, motion = job
         d = os.path.join(OUT, name)
         os.makedirs(d, exist_ok=True)
-        print(f"[{idx}/{len(todo)}] {name} {state} ...", flush=True)
+
+        # 제출만 직렬화한다 — 한꺼번에 몰아넣으면 429가 난다(아이콘 생성 때 겪었다).
+        #  렌더링 대기는 병렬로 겹쳐야 전체 시간이 준다.
+        with submit_lock:
+            time.sleep(SUBMIT_GAP)
+            print(f"[{idx}/{len(todo)}] {name} {state} 제출", flush=True)
 
         # 한 건이 어떤 이유로 터지든 **다음 건으로 넘어간다**. 실패분은 재실행하면 다시 시도된다
         # (완성된 상태는 todo에서 빠지므로 이어받기가 공짜다).
@@ -192,19 +208,24 @@ def main():
                 # 원본 스트립도 남긴다 — 자르기 결과가 이상할 때 눈으로 확인할 근거
                 with open(os.path.join(d, f"_raw_{state}.png"), "wb") as f:
                     f.write(raw)
-                print(f"    -> {n} 프레임", flush=True)
-                ok += 1
-            else:
-                fail += 1
-                failed.append(f"{name}/{state}")
+                with lock:
+                    done["ok"] += 1
+                    print(f"    -> {name} {state} {n}프레임  (완료 {done['ok']}/{len(todo)})", flush=True)
+                return
+            reason = "결과 없음"
         except Exception as e:
-            fail += 1
+            reason = f"{type(e).__name__}: {e}"
+
+        with lock:
+            done["fail"] += 1
             failed.append(f"{name}/{state}")
-            print(f"  !! {name}/{state} 건너뜀: {type(e).__name__}: {e}", flush=True)
+            print(f"  !! {name}/{state} 건너뜀: {reason}", flush=True)
 
-        time.sleep(SUBMIT_GAP)
+    jobs = [(i, n, b, s, m) for i, (n, b, s, m) in enumerate(todo, 1)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        list(pool.map(work, jobs))
 
-    print(f"\n완료 {ok} / 실패 {fail}", flush=True)
+    print(f"\n완료 {done['ok']} / 실패 {done['fail']}", flush=True)
     if failed:
         print("실패분(재실행하면 다시 시도):", ", ".join(failed[:20]), flush=True)
 
