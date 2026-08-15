@@ -111,6 +111,67 @@ public class UI_BestiaryPopup : UI_Popup
         //("PlaceNameDesertText", new[] { 0, 0, 0, 0 }), // 미구현 지역: 잠금 슬롯 프리뷰
     };
 
+    // 지역 구획을 **데이터로** 만든다.
+    //  예전엔 위 REGION_STUB(1지역·3마리)이 전부라, 몬스터가 503종·지역이 25곳이 된 뒤에도
+    //  도감엔 산들바람 숲 3마리만 나왔다.
+    //
+    //  연결 고리: CreatureData.Habitat = 던전 노드의 Name → 던전의 ParentId = 지역 노드.
+    //  즉 서식지만 제대로 박혀 있으면 지역별 목록이 저절로 나온다. 별도 BestiaryData JSON 불필요.
+    //  데이터가 없거나 매칭이 하나도 안 되면 예전 스텁으로 떨어진다(도감이 통째로 비지 않도록).
+    static List<(string region, int[] monsterIds)> BuildRegionSections()
+    {
+        var data = Managers.Data;
+        if (data?.TravelNodeDic == null || data.CreatureDic == null)
+            return REGION_STUB;
+
+        // 던전 Name → 지역 Name
+        var habitatToRegion = new Dictionary<string, string>();
+        foreach (var node in data.TravelNodeDic.Values)
+        {
+            if (node.ParentId == 0 || string.IsNullOrEmpty(node.Name)) continue;
+            if (!data.TravelNodeDic.TryGetValue(node.ParentId, out var parent)) continue;
+            if (string.IsNullOrEmpty(parent.Name)) continue;
+            habitatToRegion[node.Name] = parent.Name;
+        }
+        if (habitatToRegion.Count == 0) return REGION_STUB;
+
+        // 지역 등장 순서는 노드 Id 순 — 여정 목록과 같은 순서로 보이게.
+        var order = new List<string>();
+        var byRegion = new Dictionary<string, List<int>>();
+        foreach (var kv in data.CreatureDic)
+        {
+            string habitat = kv.Value?.Habitat;
+            if (string.IsNullOrEmpty(habitat)) continue;
+            if (!habitatToRegion.TryGetValue(habitat, out string region)) continue;
+
+            if (!byRegion.TryGetValue(region, out var list))
+            {
+                list = new List<int>();
+                byRegion[region] = list;
+                order.Add(region);
+            }
+            list.Add(kv.Key);
+        }
+        if (byRegion.Count == 0) return REGION_STUB;
+
+        // 지역 노드 Id 순으로 정렬
+        var regionOrder = new Dictionary<string, int>();
+        foreach (var node in data.TravelNodeDic.Values)
+            if (node.ParentId == 0 && !string.IsNullOrEmpty(node.Name) && !regionOrder.ContainsKey(node.Name))
+                regionOrder[node.Name] = node.Id;
+        order.Sort((a, b) => regionOrder.GetValueOrDefault(a, int.MaxValue)
+                            .CompareTo(regionOrder.GetValueOrDefault(b, int.MaxValue)));
+
+        var result = new List<(string, int[])>();
+        foreach (string region in order)
+        {
+            var ids = byRegion[region];
+            ids.Sort();
+            result.Add((region, ids.ToArray()));
+        }
+        return result;
+    }
+
     // ── 도감 표시 데이터 (MinMonManager 이관) ──
     // 기록도(분석률): 0=미발견("?"/Interactive X), 0~10미만=실루엣, 10이상=풀컬러.
     // 기록도/공명도/별/학습/AllSS/등급은 MinMonManager(실 데이터)로 이관됨.
@@ -401,7 +462,7 @@ public class UI_BestiaryPopup : UI_Popup
             Managers.Resource.Destroy(content.GetChild(i).gameObject);
         //ClearChildren(content);
         
-        foreach (var (region, monsterIds) in REGION_STUB)
+        foreach (var (region, monsterIds) in BuildRegionSections())
         {
             var monsters = new List<CreatureData>();
 
