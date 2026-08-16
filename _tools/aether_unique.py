@@ -172,27 +172,42 @@ def postprocess(raw, out_path, size):
 #  한도가 열리지 않고, 재시도 6회를 다 태우고 실패로 떨어진다(완료 0 / 429 36건을 그렇게 봤다).
 #  제출뿐 아니라 **작업 조회(GET)도 한도를 먹는다** — 4초마다 90번씩 도니 그쪽이 오히려 많다.
 #  그래서 429를 보면 한 워커가 아니라 **전원이 같이 쉰다**. 성공하면 쿨다운을 되돌린다.
+#  ⚠️ 정지만으로는 부족했다. 게이트가 풀리는 순간 **두 워커가 같은 밀리초에 함께 쏘고**,
+#     그중 하나가 다시 429를 맞아 정지를 재무장한다. 쿨다운이 900초까지 올라가 242장에서
+#     완전히 멈춰버렸다(같은 두 항목만 무한 반복). 실제로는 한도가 닫힌 게 아니어서
+#     수동 단발 제출은 그때도 즉시 성공했다 — 문제는 순전히 **동시 발사**였다.
+#     그래서 정지와 별개로 **모든 요청 사이 최소 간격**을 전역으로 강제한다.
 class Gate:
-    def __init__(self):
+    def __init__(self, min_gap):
         self.lock = threading.Lock()
         self.until = 0.0
         self.cool = 60.0     # 다음 429에 쉴 시간
+        self.min_gap = min_gap
+        self.next_slot = 0.0
         self.hits = 0
 
     def wait(self):
+        """정지 해제를 기다린 뒤, 직전 요청과 min_gap 이상 벌어지도록 자기 순번을 잡는다."""
         while True:
             with self.lock:
-                remain = self.until - time.monotonic()
-            if remain <= 0:
-                return
+                now = time.monotonic()
+                if now >= self.until:
+                    slot = max(now, self.next_slot)
+                    self.next_slot = slot + self.min_gap   # 다음 호출자는 그만큼 뒤로
+                    delay = slot - now
+                    break
+                remain = self.until - now
             time.sleep(min(remain, 5.0))
+        if delay > 0:
+            time.sleep(delay)
 
     def trip(self, what):
         with self.lock:
             self.hits += 1
             self.until = max(self.until, time.monotonic() + self.cool)
+            self.next_slot = self.until      # 재개도 순번을 지켜 한꺼번에 몰리지 않게
             cool = self.cool
-            self.cool = min(self.cool * 2, 900.0)   # 최대 15분
+            self.cool = min(self.cool * 2, 300.0)   # 최대 5분 — 900초는 회복을 막았다
         print(f"  ~~ 429 — 전 작업 {cool:.0f}s 정지 ({what})", flush=True)
 
     def ok(self):
@@ -201,7 +216,9 @@ class Gate:
                 self.cool = max(60.0, self.cool / 2)
 
 
-GATE = Gate()
+# 제출과 조회를 통틀어 요청 하나당 최소 간격(초). 워커 수와 무관하게 이게 실제 발사율을 정한다.
+REQ_GAP = 4.0
+GATE = Gate(REQ_GAP)
 
 
 def call(fn, what, tries=40):
