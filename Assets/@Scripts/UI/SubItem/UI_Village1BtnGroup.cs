@@ -910,9 +910,17 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickVillage1GuildQuestButton()
     {
-        // 메인 퀘스트 [4] (1급 모험가 완료 보고) 진행 시: 퀘스트 전용 대사 + 종료 시 퀘스트 진행 트리거.
-        // 그 외 상태에서는 잡담 대사(GuildNormalText) 한 줄 랜덤 표시.
-        bool isReportQuest = Managers.Quest.CurrentQuestID == 4;
+        // 완료 보고 퀘스트 진행 중이면 퀘스트 전용 대사 + 종료 시 진행 트리거,
+        // 그 외에는 잡담 대사(GuildNormalText) 한 줄 랜덤.
+        //
+        // ⚠️ 예전엔 `CurrentQuestID == 4`로 박아 뒀다. 그래서 같은 [임무] 버튼으로 보고하는
+        //    퀘7(2급 승급 보고)에서는 잡담만 나오고 CheckButtonClick이 불리지 않아
+        //    **마지막 퀘스트를 인게임에서 영영 끝낼 수 없었다**. 번호가 아니라 데이터로 판정한다 —
+        //    "이 버튼으로 완료되는 퀘스트인가"가 진짜 조건이고, 보고 퀘스트가 늘어도 따라간다.
+        bool isReportQuest =
+            Managers.Data.QuestDic.TryGetValue(Managers.Quest.CurrentQuestID, out var curQuest)
+            && curQuest.CompleteType == Define.QuestCompleteType.BTN_CLICK
+            && curQuest.CompleteTarget == BTN_GUILD_QUEST;
 
         string groupKey = isReportQuest
             ? Managers.Quest.GetCurrentDialogueID()   // QuestData.DialogueID = "GuildQuest2Text"
