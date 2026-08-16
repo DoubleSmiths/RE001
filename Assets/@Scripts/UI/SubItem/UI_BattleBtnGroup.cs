@@ -800,10 +800,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     const float MONSTER_SPAWN_DELAY = 2f;
     const float MONSTER_SPAWN_OFFSET_X = 12f;
 
-    // 전투 배경은 프리팹 하나(CH1BG)를 모든 지역이 공유한다. 지역마다 다른 배경 아트를 만들려면
-    // 무한 스크롤용 이음매 없는 패럴랙스 레이어 5장이 필요해 AI 생성으로는 신뢰하기 어렵다.
-    // 대신 **지역별 색조**로 구분한다 — 몬스터 심층 색조(0003)와 같은 아트 디렉션이라 톤이 일관된다.
-    //  깊이감을 위해 뒤쪽 레이어일수록 색조를 강하게 먹인다.
+    // (구) 전투 배경은 CH1BG 하나를 전 지역이 공유해서, 지역별 **색조**로만 구분했다.
+    //  이제 던전 125곳마다 고유 배경(Region_{nodeId})이 생겨 BackgroundScroller가 갈아끼운다.
+    //  진짜 아트 위에 보라·파랑을 덧씌우면 애써 만든 그림이 뭉개지므로, 고유 배경이 붙은
+    //  지역에서는 색조를 적용하지 않는다. 배경이 없는 지역에만 예전 폴백으로 남는다.
     // 이 그룹이 만든 전투 배경. 이름으로 지우면 새 그룹이 만든 배경까지 날아가므로 참조로 소유권을 잡는다.
     GameObject _battleBG;
 
@@ -820,6 +820,16 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         Color tint = Color.white;
         int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+
+        // 이 지역에 전용 배경이 있으면 색조를 건드리지 않는다 (그림 자체가 이미 지역색을 갖고 있다).
+        if (Managers.Resource != null && Managers.Data?.TravelNodeDic != null
+            && Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn))
+        {
+            if (Managers.Resource.Load<Sprite>($"Region_{nodeId}") != null
+                || (tn.ParentId != 0 && Managers.Resource.Load<Sprite>($"Region_{tn.ParentId}") != null))
+                return;
+        }
+
         if (Managers.Data?.TravelNodeDic != null && Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var node))
         {
             string name = node.Name ?? "";

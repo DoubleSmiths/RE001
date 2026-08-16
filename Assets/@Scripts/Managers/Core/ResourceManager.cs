@@ -15,9 +15,13 @@ public class ResourceManager
     #region 리소스 로드
     public T Load<T>(string key) where T : Object
     {
-        if (_resources.TryGetValue(key, out Object resource))
+        // ⚠️ 타입이 맞을 때만 반환한다. 같은 주소에 **종류가 다른 에셋**이 있을 수 있다 —
+        //  고블린은 애니메이터 주소도 "Mon_2003"이라, 캐시에서 애니메이터가 먼저 잡히고
+        //  as Sprite가 null이 된 채 반환돼 아래 ".sprite" 조회로 넘어가지 못했다(도감 카드 로드 실패).
+        //  타입이 안 맞으면 못 찾은 셈 치고 계속 찾는다.
+        if (_resources.TryGetValue(key, out Object resource) && resource is T typed)
         {
-            return resource as T;
+            return typed;
         }
 
         //스프라이트 로드할때 항상 .sprite가 붙어 있어야하는데 데이터시트에 .sprite가 붙어있지 않은 데이터가 많음

@@ -70,24 +70,60 @@ public class BackgroundScroller : MonoBehaviour
 
         var rend = _regionLayer.GetComponent<SpriteRenderer>();
         rend.sprite = sp;
-        FitToCamera(_regionLayer.transform, rend);
+        FitToAuthored(_regionLayer.transform, rend);
 
         RebuildLayers();
     }
 
-    // 생성 배경은 크기가 제각각이라 카메라 세로를 채우도록 스케일을 맞춘다.
-    static void FitToCamera(Transform t, SpriteRenderer sr)
+    // 저작된 배경 레이어가 차지하던 **그 자리**에 맞춘다.
+    //  카메라 기준으로 맞췄더니 화면 밖까지 번졌다 — 카메라 뷰는 세로 21.8유닛인데
+    //  실제 플레이 영역(저작 배경)은 위쪽 6.75유닛뿐이고 아래는 UI 패널이 덮는다.
+    //  그래서 "카메라를 채운다"가 아니라 "원본과 같은 높이·같은 위치"가 정답이다.
+    void FitToAuthored(Transform t, SpriteRenderer sr)
     {
-        Camera cam = Camera.main;
-        if (cam == null || sr.sprite == null) return;
+        if (sr.sprite == null) return;
+
+        // 자기 자신과 자기 복사본은 건너뛴다 — 지역을 옮기면 이전 복사본이 남아 있어 그걸 기준으로
+        // 삼으면 크기가 대물림되며 계속 줄어든다.
+        SpriteRenderer model = null;
+        foreach (Transform c in transform)
+        {
+            if (c == t || c.name.StartsWith(_regionLayer.name)) continue;
+            var s = c.GetComponent<SpriteRenderer>();
+            if (s != null && s.sprite != null) { model = s; break; }
+        }
 
         t.localScale = Vector3.one;
-        float h = sr.bounds.size.y;
+        // bounds는 렌더러가 꺼져 있으면 못 믿는다(이 시점엔 원본 레이어가 이미 비활성) →
+        // 스프라이트 크기 × 스케일로 직접 계산한다.
+        float h = sr.sprite.bounds.size.y;
         if (h <= 0f) return;
 
-        float scale = (cam.orthographicSize * 2f) / h;
+        // 저작 레이어가 없으면(프리팹이 바뀐 경우) 카메라 세로의 옛 비율로 폴백.
+        float targetH = model != null
+            ? model.sprite.bounds.size.y * Mathf.Abs(model.transform.lossyScale.y)
+            : (Camera.main != null ? Camera.main.orthographicSize * 0.62f : h);
+        float scale = targetH / h;
+
+        // 폭도 원본이 차지하던 만큼 확보한다. 높이만 맞추면 생성 배경은 비율이 달라 좁아지고,
+        //  그러면 두 복사본의 이음매가 화면 한복판에 들어온다.
+        float w = sr.sprite.bounds.size.x;
+        if (w > 0f)
+        {
+            float targetW = model != null
+                ? model.sprite.bounds.size.x * Mathf.Abs(model.transform.lossyScale.x)
+                : (Camera.main != null ? Camera.main.orthographicSize * Camera.main.aspect * 2f * 1.1f : w);
+            scale = Mathf.Max(scale, targetW / w);
+        }
+
         t.localScale = new Vector3(scale, scale, 1f);
-        t.position = new Vector3(cam.transform.position.x, cam.transform.position.y, t.position.z);
+
+        // 커진 만큼은 **아래로** 흘린다 — 위쪽이 플레이 영역이고 아래는 UI 패널이 덮는다.
+        //  중심을 맞추면 늘어난 높이의 절반이 위로 삐져나와 상단 HUD를 침범한다.
+        Vector3 at = model != null ? model.transform.position : t.position;
+        float top = at.y + targetH * 0.5f;
+        float newH = h * scale;
+        t.position = new Vector3(at.x, top - newH * 0.5f, t.position.z);
     }
 
     void Start()
@@ -129,6 +165,15 @@ public class BackgroundScroller : MonoBehaviour
             GameObject cloneGo = Instantiate(child.gameObject, transform);
             cloneGo.name = child.name + "_Clone";
             cloneGo.transform.position = child.position + Vector3.right * width;
+
+            // 지역 배경은 **좌우가 이어지도록 그려진 그림이 아니다**(저작 패럴랙스는 이음매가 맞게
+            //  만들어져 있지만 생성 배경은 아니다). 복사본을 좌우 반전하면 맞닿는 변이 같은 픽셀이
+            //  되어 이음매가 사라진다 — 풍경이라 거울상이어도 티가 나지 않는다.
+            if (_regionLayer != null && child.gameObject == _regionLayer)
+            {
+                Vector3 s = cloneGo.transform.localScale;
+                cloneGo.transform.localScale = new Vector3(-s.x, s.y, s.z);
+            }
 
             _layers.Add(new LayerData
             {
