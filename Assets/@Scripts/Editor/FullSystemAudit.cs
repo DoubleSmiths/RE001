@@ -235,14 +235,22 @@ public static class FullSystemAudit
             g.EquippedEquipments[eq.SlotType] = eq;
             p.RefreshStats(fullHeal: false);
 
+            // 강화 보너스도 기대치에 넣는다. 안 넣으면 **플레이 중 강화한 장비가 전부 불일치로 잡힌다**
+            //  (대장간 검증하며 30001을 +2로 올렸더니 그 자리에서 실패로 떴다 — 게임이 아니라 검사가 틀린 것).
+            float enhAtk = 0f;
+            if (Managers.Data.EquipEnhanceDic != null)
+                foreach (var enh in Managers.Data.EquipEnhanceDic.Values)
+                    if (enh.EquipDataId == eq.DataId && enh.Level <= eq.EnhanceLevel)
+                        enhAtk += enh.AtkBonus;
+
             float delta = p.PhysicalAtk - bare;
-            float expect = data.BaseAtk + EquipGrantedAtk(eq.DataId);
+            float expect = data.BaseAtk + EquipGrantedAtk(eq.DataId) + enhAtk;
             if (Mathf.Abs(delta - expect) > 0.01f)
             {
                 mismatch++;
                 if (mismatch <= 3)
                     fail.Add($"[스탯] 장비 {eq.DataId} 물공 기여 {delta:F0} ≠ 기대 {expect:F0} " +
-                             $"(BaseAtk {data.BaseAtk} + 고유능력 {EquipGrantedAtk(eq.DataId):F0})");
+                             $"(BaseAtk {data.BaseAtk} + 고유능력 {EquipGrantedAtk(eq.DataId):F0} + 강화 +{eq.EnhanceLevel} {enhAtk:F0})");
             }
             checkedCount++;
             yield return null;
