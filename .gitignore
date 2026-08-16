@@ -108,3 +108,16 @@ InitTestScene*.unity*
 
 # 이미지 생성 대기 폴더 (Assets로 옮기기 전 임시 보관)
 _generated/
+
+# ── 커밋 대상이 아닌 것들 (2026-08-16 정리) ──
+# 파이썬 바이트코드 — 재생성물
+__pycache__/
+*.pyc
+# unity-cli 디버그 캡처 — 매 검증마다 덮어써진다
+Screenshots/
+# Unity 크래시 복구 사본
+Assets/_Recovery/
+# 개인 에디터 설정
+.vscode/
+# 이식 원본 참조본(126MB). 한 번도 추적된 적 없다 — 로컬 참조로만 둔다.
+Documents/RE001_Share-main/
