@@ -207,6 +207,16 @@ public class AbilityRunner : MonoBehaviour
         int lv = Mathf.Max(1, Managers.Ability != null ? Managers.Ability.GetLevel(d.DataId) : 1);
         float value = d.EffectValue * lv;
 
+        // 액티브 스킬은 전용 모션을 탄다. 효과 종류로 고른다 —
+        //  때리는 스킬은 크게 휘두르고(Skill_Slash), 버프·회복은 자세를 잡는다(Skill_Cast).
+        //  쿨이 긴 스킬일수록 느리고 묵직하게 재생해 체감 무게를 다르게 준다.
+        if (d.TriggerType == AbilityTrigger.Active && _player != null)
+        {
+            string motion = d.Effect == AbilityEffect.BonusDamage ? "Skill_Slash" : "Skill_Cast";
+            float speed = d.Cooldown >= 40f ? 0.7f : (d.Cooldown <= 10f ? 1.3f : 1f);
+            _player.PlayMotion(motion, speed);
+        }
+
         switch (d.Effect)
         {
             case AbilityEffect.Heal:

@@ -104,6 +104,37 @@ public abstract class CreatureController : BaseController
     /// </summary>
     public void ReplayStateAnimation() => State = _state;
 
+    Coroutine _motionCo;
+
+    /// <summary>
+    /// State와 무관한 일회성 모션(액티브 스킬 등)을 재생하고, 끝나면 원래 상태 모션으로 되돌린다.
+    /// 컨트롤러에 그 상태가 없으면 CrossFade가 조용히 무시되므로 아무 일도 일어나지 않는다(안전).
+    /// </summary>
+    public void PlayMotion(string stateName, float speed = 1f)
+    {
+        if (_anim == null || State == Define.State.Dead) return;
+
+        float len = 0.4f;
+        var rc = _anim.runtimeAnimatorController;
+        if (rc != null)
+            foreach (var c in rc.animationClips)
+                if (c != null && c.name == stateName) { len = c.length; break; }
+
+        _anim.speed = Mathf.Max(0.1f, speed);
+        _anim.CrossFade(stateName, 0.05f, -1, 0f);
+
+        if (_motionCo != null) StopCoroutine(_motionCo);
+        _motionCo = StartCoroutine(CoEndMotion(len / Mathf.Max(0.1f, speed)));
+    }
+
+    IEnumerator CoEndMotion(float wait)
+    {
+        yield return new WaitForSeconds(wait);
+        _motionCo = null;
+        _anim.speed = 1f;
+        if (State != Define.State.Dead) ReplayStateAnimation();
+    }
+
     public override bool Init()
     {
         if (!base.Init()) return false;

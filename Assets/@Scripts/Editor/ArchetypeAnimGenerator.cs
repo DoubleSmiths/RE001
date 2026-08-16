@@ -125,6 +125,14 @@ public static class ArchetypeAnimGenerator
             if (clip == null) return false;
             if (Mathf.Abs(clip.length - ExpectedLength(len)) > 0.02f) return false;
         }
+
+        // OnHit 아틀라스가 생겼는데 컨트롤러엔 아직 1프레임 폴백이 남아 있으면 다시 만들어야 한다.
+        //  (CLIPS 루프엔 OnHit이 없어서 위 검사만으로는 옛 폴백이 그대로 살아남는다)
+        string src = dir.Replace(OUT_ROOT, SRC_ROOT);
+        bool hasHitAtlas = AssetDatabase.LoadAssetAtPath<Sprite>($"{src}/OnHit_{FRAMES - 1}.png") != null;
+        var onHit = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{dir}/OnHit.anim");
+        if (hasHitAtlas && (onHit == null || onHit.length < 0.3f)) return false;
+
         return true;
     }
 
@@ -144,10 +152,23 @@ public static class ArchetypeAnimGenerator
             result[state] = SpriteClip(sprites, len, loop);
         }
 
-        // OnHit — 전용 아틀라스는 없다. Idle 첫 프레임을 짧게 붉게 물들여 피격을 표시한다.
-        //  상태가 아예 없으면 CrossFade("OnHit")가 무시되고 피격이 안 보인다.
-        var idle0 = AssetDatabase.LoadAssetAtPath<Sprite>($"{srcDir}/Idle_0.png");
-        result["OnHit"] = HitClip(idle0);
+        // OnHit — 전용 아틀라스가 있으면 그걸 쓴다.
+        //  예전엔 아틀라스가 없어 Idle 첫 프레임 한 장으로 때웠는데, 그러면 **달려오던 몬스터가
+        //  맞는 순간 정지한 아이들 포즈로 스냅**해서 애니메이션이 고장난 것처럼 보였다.
+        //  (아직 생성 전인 아키타입은 예전 폴백을 그대로 써서 깨지지 않게 둔다)
+        var hitFrames = new Sprite[FRAMES];
+        bool hasHitAtlas = true;
+        for (int f = 0; f < FRAMES; f++)
+        {
+            hitFrames[f] = AssetDatabase.LoadAssetAtPath<Sprite>($"{srcDir}/OnHit_{f}.png");
+            if (hitFrames[f] == null) { hasHitAtlas = false; break; }
+        }
+
+        if (hasHitAtlas)
+            result["OnHit"] = SpriteClip(hitFrames, 0.35f, false);
+        else
+            result["OnHit"] = HitClip(AssetDatabase.LoadAssetAtPath<Sprite>($"{srcDir}/Idle_0.png"));
+
         return result;
     }
 
