@@ -78,6 +78,13 @@ public abstract class CreatureController : BaseController
         {
             _state = value;
 
+            // 일회성 모션(액티브 스킬 등)이 도는 동안에는 애니메이터를 건드리지 않는다.
+            //  전투 중에는 교전 여부에 따라 State가 Idle↔Moving으로 계속 오가는데, 그때마다
+            //  CrossFade가 걸려 **스킬 모션이 시작하자마자 덮여 사라졌다**(마을에선 멀쩡한데
+            //  전투에서만 안 나오던 이유). 상태 값은 그대로 기록해 두고, 모션이 끝나면
+            //  CoEndMotion이 그 상태 모션으로 되돌린다.
+            if (_motionCo != null) return;
+
             Animator anim = GetComponent<Animator>();
             switch (_state)
             {

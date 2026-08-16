@@ -341,7 +341,16 @@ public class UI_ForgePopup : UI_Popup
 
     void OnClickEnhance()
     {
-        if (_equip == null || _selectedScroll < 0 || _isClosing) return;   // 닫기 지연 창 중 새 팝업 push 차단
+        if (_equip == null || _isClosing) return;   // 닫기 지연 창 중 새 팝업 push 차단
+
+        // 주문서를 안 고른 채 누르면 예전엔 **아무 반응도 없었다** — 대장간이 고장난 것처럼 보이는
+        //  전형적인 지점이다. 왜 안 되는지 말해 준다.
+        if (_selectedScroll < 0)
+        {
+            Managers.UI.ShowToast("강화에 쓸 주문서를 먼저 선택하세요");
+            return;
+        }
+
         int scrollId = ENHANCE_SCROLL_IDS[_selectedScroll];
 
         // 골드 부족은 버튼만 막으면 이유를 알 수 없다 — 필요 금액을 알려준다.
