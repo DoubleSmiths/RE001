@@ -8,6 +8,7 @@ public class MinMonManager
     public event Action<int> OnMinMonAdded;
     public event Action      OnInterestChanged;   // 슬23: 포획 가능 창고 변동
     public event Action<int> OnMaxStarReached;     // 슬2: 몬스터가 보라별(3단계) 최초 달성 (완성도 등급 상승 트리거)
+    public event Action<int> OnDiscovered;         // 몬스터 최초 처치 = 도감 등록 (하단 도감 탭 개방 트리거)
 
     // ── 미니몬 관심 / 포획 가능 창고 (슬23~27) ──
     public const int INTEREST_CAPACITY = 2;       // 창고 기본 슬롯 수 (슬23)
@@ -240,6 +241,16 @@ public class MinMonManager
         var save = GetSaveData(dataId);
         int max = Mathf.Max(1, cd.MaxKillCount);
         save.KillCount = Mathf.Min(save.KillCount + 1, max);
+
+        // 잡았으면 도감에 오른다. 예전엔 **포획(TryCatch) 성공에만** 등록해서, 몬스터를 수백 마리
+        // 잡아도 도감이 통째로 "?"였다(기록도는 쌓이는데 미발견 취급). 처치가 곧 발견이다.
+        if (!Managers.Game.DiscoveredMonsterIds.Contains(dataId))
+        {
+            Managers.Game.DiscoveredMonsterIds.Add(dataId);
+            Managers.Game.RefreshEarnedTabUnlocks();   // 첫 발견 → 도감 탭 개방
+            OnDiscovered?.Invoke(dataId);
+        }
+
         Managers.Game.SaveGame();
         CheckMaxStar(dataId);   // 슬2: 사냥으로 기록도 상승 → 보라별 달성 시 완성도 트리거
     }

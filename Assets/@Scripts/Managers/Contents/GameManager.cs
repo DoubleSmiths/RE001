@@ -489,6 +489,27 @@ public class GameManager
         SaveGame();
     }
 
+    /// <summary>
+    /// 이미 손에 넣은 것에 해당하는 탭을 연다.
+    ///
+    /// 가방·물약은 퀘스트가 열어 주지만 **장비·능력·도감은 프로덕션에 여는 경로가 아예 없었다**.
+    /// 메인 퀘스트를 끝까지 깨도 그 셋은 영영 잠겨 있었다(치트와 에디터 메뉴만 열 수 있었다).
+    /// 소유 사실 자체를 조건으로 삼으면 별도 퀘스트 행 없이도 자연스럽게 열리고,
+    /// 이미 진행한 세이브도 다음 갱신 때 스스로 복구된다.
+    /// </summary>
+    /// <returns>이번에 새로 열린 탭이 있으면 true</returns>
+    public bool RefreshEarnedTabUnlocks()
+    {
+        int before = _gameData.UnlockedBtmButtons;
+
+        if (_gameData.OwnedEquipments.Count > 0)      UnlockBtmButton(Define.TabType.Equipment);
+        if (LearnedAbilities.Count > 0
+            || _gameData.EquippedAbilities.Count > 0) UnlockBtmButton(Define.TabType.Skill);
+        if (DiscoveredMonsterIds.Count > 0)           UnlockBtmButton(Define.TabType.Bestiary);
+
+        return before != _gameData.UnlockedBtmButtons;
+    }
+
     // 최하단 탭 NEW 뱃지 저장 조회/설정(Potion/Equipment/Skill). Bag/Bestiary/Status는 보유 데이터에서 파생.
     public bool IsTabNew(Define.TabType tab)
     {

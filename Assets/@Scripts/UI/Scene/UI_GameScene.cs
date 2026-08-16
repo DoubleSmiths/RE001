@@ -198,6 +198,8 @@ public class UI_GameScene : UI_Scene
         RefreshTabLocks();
         RefreshBTMButtonGroup();
         RestoreTabNewBadges();   // 저장된 Potion/Equipment/Skill NEW 뱃지 복원
+        // 이미 가진 것(장비/능력/발견 몬스터)에 해당하는 탭을 연다. 진행 중인 세이브도 여기서 복구된다.
+        Managers.Game.RefreshEarnedTabUnlocks();
         RefreshBtmButtonsLockState();
 
         // TODO : 플레이어의 현재 구역에 따라 EnterArea 호출
@@ -224,6 +226,7 @@ public class UI_GameScene : UI_Scene
         {
             Managers.MinMon.OnInterestChanged -= RefreshBestiaryNewIcon;
             Managers.MinMon.OnMaxStarReached -= OnMonsterMaxStar;
+            Managers.MinMon.OnDiscovered -= OnMonsterDiscovered;
         }
 
         if (Managers.Quest != null)
@@ -996,6 +999,9 @@ public class UI_GameScene : UI_Scene
         // 슬2: 몬스터 보라별 달성 → 완성도 스킬 등급 상승(도감 열려있으면 연출)
         Managers.MinMon.OnMaxStarReached += OnMonsterMaxStar;
 
+        // 첫 몬스터 처치 → 도감 탭이 그 자리에서 열린다(다시 들어와야 보이지 않게).
+        Managers.MinMon.OnDiscovered += OnMonsterDiscovered;
+
         // 슬40(능력#4 강화능력): 강화/물약 버프 → BuffDisplayer 노드에 UI_Buff 추가
         player.OnBuffApplied += OnBuffApplied;
         player.OnBuffCleared += OnBuffCleared;
@@ -1046,6 +1052,16 @@ public class UI_GameScene : UI_Scene
 
     // 슬2: 몬스터가 보라별 최초 달성 시 — 도감 완성도 등급 상승 + (열려있으면)연출.
     void OnMonsterMaxStar(int dataId) => UI_BestiaryPopup.GrantMaxStarCompletion(dataId);
+
+    // 몬스터를 처음 잡았을 때 — 도감 탭 개방 + NEW 뱃지.
+    //  해금 자체는 AddKill이 이벤트 **전에** 끝내 두므로 여기서 반환값으로 가르면 안 된다
+    //  (false가 돌아와 UI 갱신을 건너뛰면 탭 비트만 서고 버튼은 계속 숨어 있다).
+    void OnMonsterDiscovered(int dataId)
+    {
+        Managers.Game.RefreshEarnedTabUnlocks();
+        RefreshBtmButtonsLockState();
+        ShowNewBadge(TabType.Bestiary);
+    }
 
     // ────────────────────────────────────────
     //  버튼 핸들러
