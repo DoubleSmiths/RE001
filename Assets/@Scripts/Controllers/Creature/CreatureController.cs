@@ -97,6 +97,13 @@ public abstract class CreatureController : BaseController
         }
     }
 
+    /// <summary>
+    /// 지금 State에 해당하는 클립을 다시 재생한다(State 값은 그대로).
+    /// 아키타입 애니메이터에는 트랜지션이 없어서, 비반복 클립(OnHit 등)이 끝난 뒤
+    /// 원래 모션으로 돌아오려면 누군가 다시 CrossFade를 걸어 줘야 한다.
+    /// </summary>
+    public void ReplayStateAnimation() => State = _state;
+
     public override bool Init()
     {
         if (!base.Init()) return false;

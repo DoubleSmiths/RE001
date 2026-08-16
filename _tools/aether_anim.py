@@ -36,7 +36,7 @@ FRAME_H = 128           # 최종 프레임 높이(px). 폭은 비율 유지.
 
 # 동시 실행 수. 이미지 한 장 렌더에 2~4분씩 걸려 직렬로 돌리면 53건에 2.6시간이 든다.
 #  제출은 SUBMIT_GAP으로 직렬화하고 **대기만 겹친다** — 429를 피하면서 전체 시간을 줄이는 지점.
-WORKERS = 4
+WORKERS = 2   # 게이트가 실제 발사율을 정하므로 워커는 적게
 
 # 상태별 연출 지시. 4프레임 안에서 동작이 읽혀야 하므로 "무엇이 변하는지"를 명시한다.
 STATES = {
@@ -44,6 +44,10 @@ STATES = {
     "Move":   "walking forward in a side-scrolling walk cycle, legs alternating",
     "Attack": "winding up and lunging forward in an attack, striking at the end",
     "Die":    "being defeated: staggering, collapsing, and lying dead on the last frame",
+    # 피격. 전용 아틀라스가 없던 시절엔 Idle 첫 프레임 한 장으로 때웠는데, 그러면 달려오던
+    # 몬스터가 맞는 순간 **정지한 아이들 포즈로 굳어** 애니메이션이 고장난 것처럼 보였다.
+    "OnHit":  "recoiling from a hit: head snapping back, body flinching backward, "
+              "then starting to recover on the last frame",
 }
 
 STYLE = ("16-bit pixel art game sprite sheet, {n} animation frames in a single horizontal row, "
@@ -124,8 +128,15 @@ def with_retry(fn, what, tries=6):
     return None
 
 
+# 페이싱은 aether_unique의 공용 게이트를 그대로 쓴다.
+#  항목별 백오프만으로는 정지가 풀리는 순간 워커들이 함께 쏴서 서로를 429로 밀어내고,
+#  쿨다운이 최대치까지 올라 통째로 멈춘다(실제로 그렇게 242장에서 멎었다).
+#  조회(GET)도 한도를 먹으므로 폴링 간격도 늘린다.
+from aether_unique import call as gated_call, POLL_GAP  # noqa: E402
+
+
 def generate(name, prompt, key):
-    job = with_retry(lambda: post("/generate/image", {"prompt": prompt, "ai_model": MODEL}, key),
+    job = gated_call(lambda: post("/generate/image", {"prompt": prompt, "ai_model": MODEL}, key),
                      f"{name} 제출")
     if not job:
         return None
@@ -134,9 +145,9 @@ def generate(name, prompt, key):
         print(f"  !! {name}: job_id 없음 {job}")
         return None
 
-    for _ in range(90):
-        time.sleep(4)
-        st = with_retry(lambda: get(f"/job/{jid}", key), f"{name} 조회", tries=3)
+    for _ in range(60):
+        time.sleep(POLL_GAP)
+        st = gated_call(lambda: get(f"/job/{jid}", key), f"{name} 조회", tries=10)
         if st is None:
             continue                                  # 조회 실패는 다음 폴링에서 다시 본다
         if st.get("status") == "Succeed":
@@ -148,7 +159,7 @@ def generate(name, prompt, key):
                 req = urllib.request.Request(urls[0], headers={"User-Agent": UA})
                 with urllib.request.urlopen(req, timeout=180) as r:
                     return r.read()
-            return with_retry(fetch, f"{name} 다운로드")
+            return gated_call(fetch, f"{name} 다운로드", tries=10)
         if st.get("status") in ("Failed", "Error"):
             print(f"  !! {name}: {st}")
             return None

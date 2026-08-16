@@ -55,7 +55,13 @@ MANUAL = {
 #  고블린은 goblin_monster.png + Goblin.controller 가 따로 있다. 아키타입에 억지로 끼우면
 #  이름은 고블린인데 그림은 독버섯이 된다(실제로 그 상태였다).
 OWN_ART = {
-    2003: ("goblin_monster_0.sprite", "Mon_2003"),   # (IconLabel, AnimController)
+    # (IconLabel, AnimController)
+    #  ⚠️ AnimController를 Mon_2003(레거시 개별 컨트롤러)로 두면 안 된다. 그 컨트롤러의 클립 5종은
+    #     전부 **키프레임 1개**이고 그마저 Mon_BreezingWindForest_3(엉뚱한 아키타입 그림)을 가리켜,
+    #     고블린이 전혀 움직이지 않는 정지 이미지로 나왔다.
+    #     Goblin.controller에는 실제 다중 프레임 클립(공격 9키·사망 10키)과 진짜 고블린 아트가 있다.
+    #     Run 상태만 없는데, 그건 CrossFade가 무시되고 직전 클립이 유지되므로 깨지지 않는다.
+    2003: ("goblin_monster_0.sprite", "Goblin"),
 }
 
 # ⚠️ 메인 퀘스트가 요구하는 드롭. 아키타입 재료(11001~11030)로 덮으면 **게임이 진행 불가**가 된다.

@@ -127,7 +127,7 @@ public class MonsterController : CreatureController
     }
 
     const float ATTACK_HIT_DELAY = 0.25f;   // Attack 모션에서 타격이 닿는 시점
-    const float ATTACK_RECOVER   = 0.15f;   // 타격 후 Idle 복귀까지
+    const float ATTACK_RECOVER   = 0.15f;   // 타격 후 Idle 복귀까지(클립이 더 길면 클립을 따른다)
     bool _attackHitDone;
 
     IEnumerator CoAttack()
@@ -135,9 +135,26 @@ public class MonsterController : CreatureController
         _attackHitDone = false;
         yield return new WaitForSeconds(ATTACK_HIT_DELAY);
         AttackTrigger();
-        yield return new WaitForSeconds(ATTACK_RECOVER);
+
+        // ⚠️ 0.25+0.15=0.40초 뒤에 Idle로 넘기는데 아키타입 Attack 클립은 0.46초다.
+        //    상수만 믿으면 **공격 모션 마지막 프레임이 안 보이고 중간에 잘린다**(휘두르다 만 것처럼).
+        //    클립이 더 길면 클립이 끝날 때까지 기다린다.
+        float rest = Mathf.Max(ATTACK_RECOVER, ClipLength("Attack") - ATTACK_HIT_DELAY);
+        yield return new WaitForSeconds(rest);
+
         if (State != Define.State.Dead && State != Define.State.OnDamaged)
             State = Define.State.Idle;
+    }
+
+    /// 아키타입마다 클립 길이가 달라 상수로 박지 않고 컨트롤러에서 읽는다.
+    float ClipLength(string clipName, float fallback = 0.4f)
+    {
+        var ctrl = _anim != null ? _anim.runtimeAnimatorController : null;
+        if (ctrl != null)
+            foreach (var clip in ctrl.animationClips)
+                if (clip != null && clip.name == clipName)
+                    return Mathf.Max(0.05f, clip.length);
+        return fallback;
     }
 
     // 슬라이드 61 — 공격판정 순간. CoAttack이 호출하며, 클립에 Animation Event가 붙어 있어도
@@ -172,8 +189,35 @@ public class MonsterController : CreatureController
         if (State == Define.State.Attack) return;
         Managers.Sound?.PlaySFX(_data != null ? _data.OnHitSfx : "Slime_OnHit");   // 몬스터 피격 (데이터 드리븐)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
+
+        if (_onHitAnimCo != null) StopCoroutine(_onHitAnimCo);
+        _onHitAnimCo = StartCoroutine(CoReturnAfterOnHit());
+
         base.PlayHitFeedback();
     }
+
+    Coroutine _onHitAnimCo;
+
+    /// <summary>
+    /// OnHit 클립이 끝나면 원래 상태 모션으로 되돌린다.
+    ///
+    /// ⚠️ 아키타입 애니메이터에는 **트랜지션이 하나도 없다**(코드가 CrossFade로 직접 몬다).
+    ///    OnHit은 비반복 클립이라 끝나도 그 자리에 멈춰 서는데, State는 여전히 Moving이라
+    ///    ScrollLeft의 `State != Moving` 가드에 걸려 아무도 되돌려 주지 않는다.
+    ///    결과: **한 대 맞은 몬스터는 그때부터 애니메이션이 완전히 멈춘 채 미끄러져 온다.**
+    ///    (플레이어 쪽엔 같은 복귀 코루틴이 이미 있었는데 몬스터만 빠져 있었다.)
+    /// </summary>
+    IEnumerator CoReturnAfterOnHit()
+    {
+        yield return new WaitForSeconds(OnHitClipLength());
+        _onHitAnimCo = null;
+
+        // 맞는 사이 죽었거나 공격에 들어갔으면 그쪽 모션이 우선.
+        if (State == Define.State.Dead || State == Define.State.Attack) yield break;
+        ReplayStateAnimation();
+    }
+
+    float OnHitClipLength() => ClipLength("OnHit", 0.2f);
 
     // 슬라이드 66 — 몬스터 사망 처리.
     //   1. Die Clip 재생 (base.OnDead가 State=Dead로 set → CrossFade("Die"))
@@ -224,7 +268,9 @@ public class MonsterController : CreatureController
 
         // Die clip 종료 후 풀 반환. Slime Die clip은 0.17s지만, HP Bar Playbackwards(0.5s)와
         // 동기화하기 위해 0.5s 대기.
-        StartCoroutine(CoDestroyAfterDie(0.5f));
+        // 사망 모션이 끝나고 나서 사라지게 한다. 0.5초로 박아 두면 Die 클립이 더 긴 아키타입에서
+        //  **쓰러지다 만 채로 증발**한다. 여유 0.1초를 둬 마지막 프레임이 보이게 한다.
+        StartCoroutine(CoDestroyAfterDie(Mathf.Max(0.5f, ClipLength("Die", 0.5f) + 0.1f)));
     }
 
     IEnumerator CoDestroyAfterDie(float delay)
