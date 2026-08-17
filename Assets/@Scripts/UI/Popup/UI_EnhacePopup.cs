@@ -164,10 +164,76 @@ public class UI_EnhacePopup : UI_Popup
         if (slider != null) slider.value = Mathf.Clamp01(_equip.Potential / ENHANCE_POTEN_FULL);
         GetText((int)Texts.PotenForceBarBarText).text = _equip.Potential.ToString();
 
+        RefreshPreview(data);
+
         // 강화 가능 여부
         GetButton((int)Buttons.Enhance_Btn).interactable =
             !_resolving && Managers.Game.CanEnhance(_equip, _scrollId);
     }
+
+    // ────────────────────────────────────────
+    //  강화 성공 시 능력치 변화 (미리보기)
+    // ────────────────────────────────────────
+    //  영상에는 강화를 누르기 **전에** "강화 성공 시 / 능력치 변화" 블록이 떠서, 무엇이 얼마나
+    //  오르는지 보고 결정할 수 있다. 우리 강화창엔 이 화면이 통째로 없었다 —
+    //  확률과 내구도 손실만 보이고 정작 얻는 것이 안 보였다.
+    //  영상처럼 **변하는 스탯에만** 화살표를 붙이고, 안 변하는 것은 현재 값만 적는다.
+    TMPro.TMP_Text _previewTxt;
+
+    void RefreshPreview(Data.EquipmentData data)
+    {
+        if (_previewTxt == null)
+        {
+            // 확률 텍스트를 복제해 서식을 물려받되, 자리는 **강화 버튼 아래** 빈 공간에 잡는다.
+            //  확률 아래에 두었더니 버튼과 [영상 건너뛰기] 토글 위에 겹쳐 찍혔다.
+            var anchor = GetText((int)Texts.ChanceTxt);
+            if (anchor == null) return;
+            var go = Instantiate(anchor.gameObject, anchor.transform.parent);
+            go.name = "Txt_EnhancePreview";
+            _previewTxt = go.GetComponent<TMPro.TMP_Text>();
+
+            var rt = _previewTxt.rectTransform;
+            var btn = GetButton((int)Buttons.Enhance_Btn);
+            var btnRt = btn != null ? btn.transform as RectTransform : null;
+            if (btnRt != null && btnRt.parent == rt.parent)
+                rt.anchoredPosition = btnRt.anchoredPosition + new Vector2(0f, -34f);
+            else
+                rt.anchoredPosition = anchor.rectTransform.anchoredPosition + new Vector2(0f, -120f);
+            rt.sizeDelta = new Vector2(120f, 0f);
+            _previewTxt.fontSize = Mathf.Max(5f, anchor.fontSize * 0.62f);
+            _previewTxt.alignment = TMPro.TextAlignmentOptions.Top;
+            _previewTxt.color = Color.white;
+        }
+
+        bool maxed = _equip.EnhanceLevel >= ENHANCE_MAX_LEVEL;
+        if (maxed) { _previewTxt.gameObject.SetActive(false); return; }
+        _previewTxt.gameObject.SetActive(true);
+
+        var cur  = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
+        var next = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel + 1);
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"<color=#F5DD6C>{Util.Localize("EnhancePreviewText")}</color>");
+        sb.AppendLine(Row(Util.Localize(LocalizeKey.EnhanceLevelText),
+                          $"+{_equip.EnhanceLevel}", $"+{_equip.EnhanceLevel + 1}", true));
+        sb.AppendLine(Row(Util.Localize(LocalizeKey.PhysicalAttackText),
+                          $"+{data.BaseAtk + cur.atk}", $"+{data.BaseAtk + next.atk}", next.atk != cur.atk));
+        sb.AppendLine(Row(Util.Localize(LocalizeKey.CriticalText),
+                          $"+{data.BaseCritRate + cur.crit:0.#}%", $"+{data.BaseCritRate + next.crit:0.#}%",
+                          !Mathf.Approximately(next.crit, cur.crit)));
+        sb.Append(Row(Util.Localize(LocalizeKey.MagicAttackText),
+                      $"+{data.BaseMagicAtk + cur.magic}", $"+{data.BaseMagicAtk + next.magic}",
+                      next.magic != cur.magic));
+
+        _previewTxt.text = sb.ToString();
+        ApplyFont(_previewTxt, FontType.UI);
+    }
+
+    // 변하는 줄만 "현재 ▷ 이후", 안 변하면 현재 값만 (영상과 같은 규칙)
+    static string Row(string name, string before, string after, bool changed)
+        => changed
+            ? $"{name}  {before} <color=#FF4C4C>▷</color> <color=#00FF00>{after}</color>"
+            : $"{name}  {before}";
 
     // ────────────────────────────────────────
     //  강화 실행
