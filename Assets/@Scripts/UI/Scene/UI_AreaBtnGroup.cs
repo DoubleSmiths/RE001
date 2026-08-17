@@ -47,9 +47,9 @@ public abstract class UI_AreaBtnGroup : UI_Base
         const float FADE_DURATION  = 2f;
         const float FLASH_DURATION = 1f;   // GlowDot_01 파티클 버스트 시각 길이 (기획 튜닝값)
 
-        // 빛줄기 버스트 — 페이드와 동시 재생.
-        // 주의: 월드 ParticleSystem은 SSC 캔버스 위에 직접 렌더되지 않음(UIFx.cs 참조) → UIParticle 래퍼 경유.
-        UIFx.PlayParticle((RectTransform)go.transform, Vector2.zero, "Star_01_Anim_13_a", 3.0f);
+        // 빛줄기 버스트(Star_01_Anim_13_a)는 **뺐다** — 해금 연출 가운데 뜨는 별 모양을 없애 달라는 요청.
+        //  흔들림 + 확대 + 페이드인은 그대로 두고, 마무리 글로우 플래시(GlowDot_01)로 순간을 잡는다.
+        //  (주의: 월드 ParticleSystem은 SSC 캔버스 위에 직접 렌더되지 않아 UIFx.PlayParticle 경유가 필요했다)
 
         Sequence seq = DOTween.Sequence();
 
