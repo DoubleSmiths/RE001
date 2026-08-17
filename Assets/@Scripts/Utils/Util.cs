@@ -68,6 +68,27 @@ public static class Util
         return point;
     }
 
+    /// <summary>
+    /// 여정 노드(마을·지역·던전)의 그림을 Image에 적용한다.
+    ///
+    /// 데이터의 `Sprite` 열은 마을 5곳이 전부 `Background_Village1`, 던전 125곳이
+    /// `*_Entry_Img` 3장을 돌려쓰고 있어 화면에서 구분이 안 됐다.
+    /// 노드마다 만들어 둔 `Region_{Id}`가 있으면 그걸 우선 쓰고, 없으면 부모 지역 →
+    /// 데이터의 원래 Sprite 순으로 물러난다.
+    /// </summary>
+    public static void ApplyNodeSprite(UnityEngine.UI.Image target, Data.TravelNodeData node)
+    {
+        if (target == null || node == null) return;
+
+        Sprite sp = Managers.Resource?.Load<Sprite>($"Region_{node.Id}");
+        if (sp == null && node.ParentId != 0)
+            sp = Managers.Resource?.Load<Sprite>($"Region_{node.ParentId}");
+        if (sp == null && !string.IsNullOrEmpty(node.Sprite))
+            sp = Managers.Resource?.Load<Sprite>(node.Sprite);
+
+        if (sp != null) target.sprite = sp;
+    }
+
     /// <summary>TextKey로 현재 언어의 텍스트를 반환. 키가 없으면 key 자체를 반환.</summary>
     public static string Localize(string key)
     {

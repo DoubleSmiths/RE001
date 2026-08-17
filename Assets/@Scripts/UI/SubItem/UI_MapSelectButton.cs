@@ -54,7 +54,6 @@ public class UI_MapSelectButton : UI_Base
         BindObject(typeof(GameObjects));
 
         // TODO : 퀘스트 VFX는 퀘스트가 있을 때만 활성화
-        // TODO : 맵 아이콘은 맵에 따라 변경
         gameObject.BindEvent(OnClickMapSelectButton);
         gameObject.BindEvent(() => OnClickButtonAnim(gameObject.GetComponent<Button>()));
 
@@ -89,6 +88,10 @@ public class UI_MapSelectButton : UI_Base
 
         _node = node;
         _nodeId = node.Id;
+
+        // 던전 125곳이 `*_Entry_Img` 3장을 돌려써서 아이콘이 전부 같아 보였다.
+        //  노드마다 생성해 둔 Region_{Id} 그림으로 갈아끼운다.
+        Util.ApplyNodeSprite(GetImage((int)Images.MapSelectButtonIcon), node);
 
         RefreshLanguage();
 

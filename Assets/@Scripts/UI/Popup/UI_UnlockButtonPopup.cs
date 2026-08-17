@@ -64,6 +64,11 @@ public class UI_UnlockButtonPopup : UI_Popup
 
         GetImage((int)Images.Content).gameObject.BindEvent(OnClickContent);
 
+        // 아이콘 뒤 별 모양 광선(GlowRays 2장)은 끈다. 프리팹에서 지우지 않고 여기서 숨기는 이유는
+        //  Images.Image4/Image5 바인딩이 이름으로 걸려 있어, 노드를 지우면 바인딩이 깨지기 때문.
+        var shine = GetObject((int)GameObjects.shineeffect);
+        if (shine != null) shine.SetActive(false);
+
         RefreshTexts();
         if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 

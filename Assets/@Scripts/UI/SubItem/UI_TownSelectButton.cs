@@ -89,6 +89,9 @@ public class UI_TownSelectButton : UI_Base
         _nodeId = node.Id;
         _isCurrent = isCurrentLocation;
 
+        // 마을 5곳이 Background_Village1 한 장을 같이 써서 전부 같은 그림이었다.
+        Util.ApplyNodeSprite(GetImage((int)Images.TownSelectButtonIcon), node);
+
         RefreshLanguage();
 
         SetCurrentLocation(isCurrentLocation);

@@ -205,6 +205,20 @@ public class UI_TravelPopup : UI_Popup
             SetRawText(Texts.MapSelectPopupMapNameText, string.Empty);
     }
 
+    // 큰 지도 그림은 프리팹에 박힌 한 장 그대로였다 — 어느 던전을 골라도 같은 그림이 떴다.
+    //  고른 곳(없으면 지금 있는 곳)의 그림으로 바꾼다.
+    void RefreshMapImage()
+    {
+        int id = _selectedMapId != 0 ? _selectedMapId
+               : _selectedTownId != 0 ? _selectedTownId
+               : Managers.Game.CurrentTravelAreaId;
+
+        if (!Managers.Data.TravelNodeDic.TryGetValue(id, out var node)) return;
+
+        Util.ApplyNodeSprite(GetImage((int)Images.MapSelectPopupMapImage), node);
+        SetText(Texts.MapSelectPopupMapNameText, node.Name);
+    }
+
     void RefreshStaticTexts()
     {
         SetRawText(Texts.XbuttonText, "X");
@@ -287,6 +301,8 @@ public class UI_TravelPopup : UI_Popup
             if (btn == null) continue;
             btn.SetSelected(btn.NodeId == _selectedMapId);
         }
+
+        RefreshMapImage();
 
         // 잠금 표시는 마지막에 (버튼들이 RefreshLanguage로 라벨을 되돌리므로 항상 여기서 다시 덧붙인다)
         foreach (GameObject go in _spawnedFieldButtons)
