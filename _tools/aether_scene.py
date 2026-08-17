@@ -39,8 +39,10 @@ from remaster_anim import flood_mask                                # noqa: E402
 STAGE = os.path.join(BASE, "_generated")
 OUT_TOWN = os.path.join(STAGE, "Region")          # 마을도 Region_{id} 규칙을 그대로 쓴다
 OUT_LAYER = os.path.join(STAGE, "RegionLayer")
+OUT_VILLAGE = os.path.join(STAGE, "VillageBG")
 LIVE_TOWN = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Map", "Region")
 LIVE_LAYER = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Background", "RegionLayer")
+LIVE_VILLAGE = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Background", "Town")
 
 WORKERS = 2
 SUBMIT_GAP = 6.0
@@ -72,6 +74,15 @@ LAYER_SPEC = [
 LAYER_STYLE = ("16-bit pixel art side-scrolling game background layer, wide horizontal composition, "
                "no characters, no UI, no text")
 
+# ── 마을 배경 ──────────────────────────────────────────────
+# 마을 화면의 배경은 Background_Village1(512x512) 한 장을 5개 마을이 그대로 같이 쓴다.
+# 색조만 바꿔 구분해 봤지만 "그 마을 배경이 아니다"라는 지적 그대로였다 — 그림 자체를 만든다.
+# 버튼(모험가협회/연금공방/여정)은 아래 패널의 UI라 그림을 바꿔도 조작에 영향이 없다.
+VILLAGE_SIZE = 512
+VILLAGE_STYLE = ("16-bit pixel art fantasy village background, side view at eye level, "
+                 "buildings on the left and right, an open walking path across the middle, "
+                 "ground along the bottom edge, no characters, no UI, no text")
+
 
 def town_items():
     loc = localized()
@@ -98,6 +109,28 @@ def layer_items():
             out.append((f"RegionL_{tag}_{n['Id']}",
                         f"{LAYER_STYLE}. Region '{kor}'. Draw the {spec}."))
     return out
+
+
+def villagebg_items():
+    loc = localized()
+    nodes = load_json("TravelNodeData.json")
+    out = []
+    for n in nodes:
+        if n["Category"] != "TOWN":
+            continue
+        kor = loc.get(n["Name"], n["Name"])
+        look = TOWN_LOOK.get(n["Id"], "a fantasy village")
+        out.append((f"VillageBG_{n['Id']}", f"{VILLAGE_STYLE}. The village '{kor}' — {look}."))
+    return out
+
+
+def save_villagebg(raw, path):
+    """원본 Background_Village1과 같은 512x512 정사각 — 스프라이트 크기가 바뀌면 배치가 어긋난다."""
+    im = Image.open(io.BytesIO(raw)).convert("RGBA")
+    w, h = im.size
+    side = min(w, h)
+    im = im.crop(((w - side) // 2, (h - side) // 2, (w - side) // 2 + side, (h - side) // 2 + side))
+    im.resize((VILLAGE_SIZE, VILLAGE_SIZE), Image.NEAREST).save(path)
 
 
 def save_town(raw, path):
@@ -131,8 +164,10 @@ def main():
         items, out_dir, live = town_items(), OUT_TOWN, LIVE_TOWN
     elif what == "layer":
         items, out_dir, live = layer_items(), OUT_LAYER, LIVE_LAYER
+    elif what == "villagebg":
+        items, out_dir, live = villagebg_items(), OUT_VILLAGE, LIVE_VILLAGE
     else:
-        raise SystemExit("사용법: python _tools/aether_scene.py [town|layer]")
+        raise SystemExit("사용법: python _tools/aether_scene.py [town|layer|villagebg]")
 
     if "--limit" in sys.argv:
         items = items[:int(sys.argv[sys.argv.index("--limit") + 1])]
@@ -161,6 +196,8 @@ def main():
                 path = os.path.join(out_dir, name + ".png")
                 if what == "town":
                     save_town(raw, path)
+                elif what == "villagebg":
+                    save_villagebg(raw, path)
                 else:
                     save_layer(raw, path, name.split("_")[1])
                 with lock:

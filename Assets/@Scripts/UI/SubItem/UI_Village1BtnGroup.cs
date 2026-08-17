@@ -545,33 +545,39 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         if (string.IsNullOrEmpty(prefabKey)) return;
         var bg = Managers.Resource.Instantiate(prefabKey);
-        ApplyTownTint(bg);
+        ApplyTownBackground(bg, prefabKey);
 
         ApplyPlayerBuildingScale(prefabKey);
     }
 
-    // 마을 배경 프리팹은 하나(Village1_*)를 5개 마을이 공유한다. 마을별 배경 아트가 없어
-    //  어디를 가도 아스달처럼 보였다. 전투 지역과 같은 방식(ADR 0008)으로 **색조로 구분**한다.
-    //  마을 노드 Id(11000 + 1000n)에서 순번을 뽑아 팔레트를 고른다.
-    static readonly Color[] TOWN_TINTS =
-    {
-        Color.white,                          // 아스달 — 원본
-        new Color(0.72f, 0.86f, 0.95f),       // 바람서린 항구 — 해풍의 서늘함
-        new Color(0.86f, 0.74f, 0.62f),       // 잿빛 광산촌 — 흙먼지
-        new Color(0.78f, 0.84f, 0.95f),       // 서리안개 요새 — 창백한 한기
-        new Color(0.98f, 0.88f, 0.72f),       // 여명의 성도 — 금빛
-    };
+    // 마을 배경 프리팹은 하나(Village1_*)를 5개 마을이 공유한다.
+    //  한동안 **색조만** 바꿔 구분했는데, 색만 도는 같은 그림이라 "그 마을 배경이 아니다"는
+    //  지적이 그대로였다. 마을마다 그림 자체(VillageBG_{nodeId})를 만들어 갈아끼운다.
+    //  버튼(모험가협회/연금공방/여정)은 아래 패널의 UI라 그림이 바뀌어도 조작에 영향이 없다.
+    //  전용 그림이 없으면 원본을 그대로 둔다.
+    const string MAIN_BG_KEY = "Village1_Main_BG";
+    static Sprite s_mainBgOriginal;      // 풀에서 재사용된 인스턴스에 남은 그림을 되돌리기 위해
 
-    void ApplyTownTint(GameObject bg)
+    void ApplyTownBackground(GameObject bg, string prefabKey)
     {
         if (bg == null) return;
-        int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
-        int idx = (nodeId - 11000) / 1000;
-        if (idx <= 0 || idx >= TOWN_TINTS.Length) return;   // 아스달이거나 범위 밖이면 원본 유지
+        // 마을 전경만 대상. 길드·연금공방 내부는 실내라 마을 그림으로 바꾸면 안 된다.
+        if (prefabKey != MAIN_BG_KEY) return;
 
-        Color tint = TOWN_TINTS[idx];
+        SpriteRenderer target = null;
         foreach (var sr in bg.GetComponentsInChildren<SpriteRenderer>(true))
-            sr.color = tint;
+            if (sr.name.EndsWith("_BG_Img")) { target = sr; break; }
+        if (target == null) return;
+
+        if (s_mainBgOriginal == null) s_mainBgOriginal = target.sprite;
+
+        int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
+        Sprite sp = Managers.Resource?.Load<Sprite>($"VillageBG_{nodeId}");
+
+        // 배경 판은 풀에서 재사용된다 — 전용 그림이 없는 마을이면 **원본으로 되돌려야**
+        //  직전 마을 그림이 그대로 남지 않는다.
+        target.sprite = sp != null ? sp : s_mainBgOriginal;
+        target.color = Color.white;          // 예전 색조 방식의 잔재가 남으면 새 그림까지 물든다
     }
 
     // 기획 수정안(2026-07-05): 건물 내부(길드/연금 등)에서는 플레이어를 확대해 '건물에 들어간 느낌'을 준다.

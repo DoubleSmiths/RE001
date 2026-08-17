@@ -27,7 +27,16 @@ public static class GeneratedIconRegistrar
         "Assets/@Resources/Sprite/Map/Region",
         // 전투 배경 겹(원경/중경/근경) — 한 장짜리 배경이 평평해 보이던 것을 패럴랙스로 되돌린다
         "Assets/@Resources/Sprite/Background/RegionLayer",
+        // 마을 전경 5종 — 5개 마을이 Background_Village1 한 장을 같이 쓰던 것을 마을별 그림으로.
+        //  ⚠️ 원본이 있는 Background/Town을 통째로 넣으면 안 된다 — 아래 임포트 규칙이 PPU를 64로
+        //     맞추는데 Background_Village1은 PPU 39라 배경 크기가 바뀐다. 새 그림만 따로 둔다.
+        "Assets/@Resources/Sprite/Background/VillageBG",
     };
+
+    // 폴더별 PPU. 기본은 64지만, 저작 배경을 대체하는 그림은 **그 배경과 같은 값**이어야
+    // 화면에서 차지하는 크기가 유지된다.
+    static float PpuFor(string folder)
+        => folder.EndsWith("/Background/VillageBG") ? 39f : 64f;
 
     [MenuItem("Tools/Register Generated Icons (아이콘 임포트+어드레서블)")]
     public static void Register()
@@ -69,7 +78,8 @@ public static class GeneratedIconRegistrar
                     if (ti.filterMode != FilterMode.Point) { ti.filterMode = FilterMode.Point; dirty = true; }
                     if (ti.textureCompression != TextureImporterCompression.Uncompressed) { ti.textureCompression = TextureImporterCompression.Uncompressed; dirty = true; }
                     if (ti.mipmapEnabled) { ti.mipmapEnabled = false; dirty = true; }
-                    if (ti.spritePixelsPerUnit != 64f) { ti.spritePixelsPerUnit = 64f; dirty = true; }
+                    float ppu = PpuFor(folder);
+                    if (ti.spritePixelsPerUnit != ppu) { ti.spritePixelsPerUnit = ppu; dirty = true; }
 
                     // 몬스터는 pivot을 **bottom-middle**로 둔다. center(기본값)면 스프라이트 절반이
                     // 지면 아래로 내려가 "땅에 박힌" 것처럼 보인다. 발밑이 기준점이어야
