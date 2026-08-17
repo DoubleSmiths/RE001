@@ -130,6 +130,9 @@ public class UI_EnhacePopup : UI_Popup
             var animator = wIcon.GetComponent<Animator>();
             if (animator != null) animator.enabled = false;
             wIcon.sprite = sp;
+            // 애니메이터가 먹여 둔 회전/스케일이 그대로 굳는다(대장간에서 아이콘이 z=90으로 누워 있었다).
+            wIcon.rectTransform.localRotation = Quaternion.identity;
+            wIcon.rectTransform.localScale = Vector3.one;
         }
 
         GetText((int)Texts.ENumber).text = _equip.EnhanceLevel > 0 ? $"+{_equip.EnhanceLevel}" : "";

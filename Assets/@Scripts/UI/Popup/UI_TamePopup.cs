@@ -383,6 +383,12 @@ public class UI_TamePopup : UI_Popup
         //  갱신 지점이 Init/등장 시점뿐이라 시도 후에는 다시 낡은 값이 남아 있었다.
         RefreshLureButton();
 
+        // ⚠️ 갱신만으로는 부족했다. 시도 중에는 버튼이 숨겨져 있고 **실패하면 미니몬이 도망가며
+        //    팝업이 곧장 닫힌다** — 바뀐 숫자를 볼 틈이 아예 없어서 여전히 "차감이 안 된다"로 보였다.
+        //    갱신된 라벨을 다시 띄워 두고(누르지는 못하게) 결과 연출 내내 보이게 한다.
+        ShowButton(Buttons.LureBtn);
+        SetButtonInteractable(Buttons.LureBtn, false);
+
         // "..." Emoj_Dots(생각하는 텀)를 먼저 충분히(약 3초) 보여준 뒤 결과/효과 텍스트를 낸다.
         Managers.Sound?.PlaySFX("SFX_MinimonThink");   // 생각하는 텀
         PlayEmoj(Images.MonsterEmoj, "Emoj_Dots");

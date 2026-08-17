@@ -303,6 +303,38 @@
       "Description": "Mat11030DescText",
       "SpriteName": "Mat_RuinedSanctum_9",
       "FoundLocation": "RuinedSanctumNameText"
+    },
+    {
+      "DataId": 10016,
+      "Name": "ItemSOM1NameText",
+      "Grade": 1,
+      "Description": "ItemSOM1DescText",
+      "SpriteName": "SOM1",
+      "FoundLocation": "PlaceNameBWF0Text"
+    },
+    {
+      "DataId": 10017,
+      "Name": "ItemSOM2NameText",
+      "Grade": 2,
+      "Description": "ItemSOM2DescText",
+      "SpriteName": "SOM2",
+      "FoundLocation": "PlaceNameBWF0Text"
+    },
+    {
+      "DataId": 10018,
+      "Name": "ItemSOM3NameText",
+      "Grade": 3,
+      "Description": "ItemSOM3DescText",
+      "SpriteName": "SOM3",
+      "FoundLocation": "PlaceNameBWF0Text"
+    },
+    {
+      "DataId": 10019,
+      "Name": "ItemBMORNameText",
+      "Grade": 2,
+      "Description": "ItemBMORDescText",
+      "SpriteName": "BrokenMOR",
+      "FoundLocation": "PlaceNameBWF0Text"
     }
   ]
 }

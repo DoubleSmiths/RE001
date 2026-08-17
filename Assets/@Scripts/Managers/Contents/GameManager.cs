@@ -910,9 +910,18 @@ public class GameManager
 
         if (useMirror)
         {
-            if (!HasItem(MOR_ITEM_ID)) return false;
-            RemoveItem(MOR_ITEM_ID, 1);
-            equip.Durability = Mathf.Min(max, equip.Durability + MOR_RESTORE_AMOUNT);
+            // 축복의 거울이 있으면 그쪽을 먼저 쓴다 — 완전 회복이라 한 번에 끝난다.
+            if (HasItem(BMOR_ITEM_ID))
+            {
+                RemoveItem(BMOR_ITEM_ID, 1);
+                equip.Durability = max;
+            }
+            else
+            {
+                if (!HasItem(MOR_ITEM_ID)) return false;
+                RemoveItem(MOR_ITEM_ID, 1);
+                equip.Durability = Mathf.Min(max, equip.Durability + MOR_RESTORE_AMOUNT);
+            }
         }
         else
         {

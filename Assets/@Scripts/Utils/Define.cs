@@ -1589,6 +1589,13 @@ public class Define
     // 복원의 거울(MOR) — 내구도 +25 복구 소비 아이템.
     public const int MOR_ITEM_ID = 10015;
     public const int MOR_RESTORE_AMOUNT = 25;
+
+    // 장인의 인장(Sigil Of Master) 3종 + 축복의 거울.
+    //  스프라이트(SOM1~3 / BrokenMOR)는 진작 있었는데 **아이템 데이터가 없어** 대장간 슬롯이
+    //  빈 채로 dim 처리돼 있었다("스코프 제외" 주석). 데이터를 만들고 실제 보유 수를 표시한다.
+    public static readonly int[] SOM_ITEM_IDS = { 10016, 10017, 10018 };
+    public const int BMOR_ITEM_ID = 10019;
+    public const int BMOR_RESTORE_AMOUNT = 999;   // 축복의 거울 = 내구도 완전 회복
     // 재료 복구(거울 없이): 젤리퐁 5개당 +25. ponytail: 원작 재료 규칙 미해독 — 시드값, 엑셀화 후속.
     public const int RESTORE_MATERIAL_ID = 10001;
     public const int RESTORE_MATERIAL_COUNT = 5;

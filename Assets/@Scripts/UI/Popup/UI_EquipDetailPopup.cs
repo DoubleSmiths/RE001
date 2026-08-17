@@ -147,6 +147,9 @@ public class UI_EquipDetailPopup : UI_Popup
                 if (animator != null) animator.enabled = false;
                 icon.sprite = sp;
                 icon.preserveAspect = true;
+                // 애니메이터가 먹여 둔 회전/스케일도 되돌린다 — 안 그러면 아이콘이 누운 채로 남는다.
+                icon.rectTransform.localRotation = Quaternion.identity;
+                icon.rectTransform.localScale = Vector3.one;
             }
         }
 

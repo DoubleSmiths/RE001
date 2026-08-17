@@ -135,15 +135,6 @@ public class UI_ForgePopup : UI_Popup
         // 타이틀 로컬라이즈 (대장간)
         GetText((int)Texts.ForgePopupTitle).text = Util.Localize(LocalizeKey.SmithyText);
 
-        // SOM 박스 — 스코프 제외: dim 처리
-        for (int i = 0; i < 3; i++)
-        {
-            var icon = GetImage((int)Images.Img_SOM1Box_12 + i);
-            if (icon != null) icon.color = DIM_COLOR;
-            var txt = GetText((int)Texts.Txt_SOM1Box_10 + i);
-            if (txt != null) txt.text = "";
-        }
-
         if (Managers.Game != null)
             Managers.Game.EquipInfoChanged += OnEquipInfoChanged;
 
@@ -218,6 +209,13 @@ public class UI_ForgePopup : UI_Popup
             var animator = wIcon.GetComponent<Animator>();
             if (animator != null) animator.enabled = false;
             wIcon.sprite = sp;
+
+            // ⚠️ Animator를 끄기 **전에** 클립이 회전을 먹여 놓으면 그 값이 그대로 굳는다.
+            //  실제로 WIcon이 z=90으로 남아 대장간 장비 아이콘이 옆으로 누워 있었다.
+            //  스프라이트만 바꾸고 자세는 안 되돌려서 생긴 일 — 회전/스케일을 원점으로 되돌린다.
+            var irt = wIcon.rectTransform;
+            irt.localRotation = Quaternion.identity;
+            irt.localScale = Vector3.one;
         }
         GetText((int)Texts.ENumber).text = _equip.EnhanceLevel > 0 ? $"+{_equip.EnhanceLevel}" : "";
         GetText((int)Texts.ForgeEquipNameText).text = GetEquipName(_equip.EnhanceLevel);
@@ -249,10 +247,20 @@ public class UI_ForgePopup : UI_Popup
         SetItemBox(GetImage((int)Images.Img_MORBox_02), GetText((int)Texts.Txt_MORBox_02),
                    MOR_ITEM_ID, morCount.ToString(), morCount > 0);
 
-        // ponytail: BMOR(축복 거울)은 아이템 미정의 — 항상 dim, 아이템 추가 시 연결
-        var bmorIcon = GetImage((int)Images.Img_BMORBox_01);
-        if (bmorIcon != null) bmorIcon.color = DIM_COLOR;
-        GetText((int)Texts.Txt_BMORBox_01).text = "0";
+        // 축복의 거울 — 아이템 데이터를 만들었으므로 실제 보유 수를 쓴다(예전엔 항상 "0" dim).
+        // 장인의 인장 3종 — 스프라이트는 진작 있었는데 아이템 데이터가 없어 빈 칸으로 dim 처리돼 있었다.
+        //  데이터를 만들었으므로 실제 보유 수를 표시한다(돌파 사용은 후속 — 보유 표시까지 연동).
+        //  Init이 아니라 여기(갱신)에 둔다 — 인벤 수량이 바뀌면 따라와야 한다.
+        for (int i = 0; i < SOM_ITEM_IDS.Length; i++)
+        {
+            int somCount = Managers.Game.GetItemCount(SOM_ITEM_IDS[i]);
+            SetItemBox(GetImage((int)Images.Img_SOM1Box_12 + i), GetText((int)Texts.Txt_SOM1Box_10 + i),
+                       SOM_ITEM_IDS[i], somCount.ToString(), somCount > 0);
+        }
+
+        int bmorCount = Managers.Game.GetItemCount(BMOR_ITEM_ID);
+        SetItemBox(GetImage((int)Images.Img_BMORBox_01), GetText((int)Texts.Txt_BMORBox_01),
+                   BMOR_ITEM_ID, bmorCount.ToString(), bmorCount > 0);
 
         bool canRestore = _equip.Durability < maxDuri && (matOk || morCount > 0);
         GetObject((int)GameObjects.Img_BtnGroup_01)?.SetActive(!canRestore);
@@ -388,7 +396,7 @@ public class UI_ForgePopup : UI_Popup
         // 재료 우선, 없으면 거울 — 성공 시 EquipInfoChanged로 자동 갱신
         if (Managers.Game.HasItem(RESTORE_MATERIAL_ID, RESTORE_MATERIAL_COUNT))
             Managers.Game.RestoreDurability(_equip, useMirror: false);
-        else if (Managers.Game.HasItem(MOR_ITEM_ID))
+        else if (Managers.Game.HasItem(BMOR_ITEM_ID) || Managers.Game.HasItem(MOR_ITEM_ID))
             Managers.Game.RestoreDurability(_equip, useMirror: true);
     }
 

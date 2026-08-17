@@ -623,7 +623,20 @@ public class DataTransformer : EditorWindow
             return default(T);
 
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-        return (T)converter.ConvertFromString(value);
+        try
+        {
+            return (T)converter.ConvertFromString(value);
+        }
+        catch (System.Exception)
+        {
+            // ⚠️ 예전엔 여기서 예외가 그대로 올라가 **파싱 체인 전체가 그 지점에서 멈췄다.**
+            //  시트에 enum에 없는 값 하나("Unique")를 넣었더니 ParseItemData가 JSON을 쓰기 전에
+            //  터졌고, 그 뒤 ParseQuestData/CreatureData/TravelData까지 통째로 건너뛰어졌다.
+            //  화면엔 "ParseAllLocal 완료"가 안 뜨는데 사람은 눈치채기 어렵다.
+            //  잘못된 셀 하나는 기본값으로 넘기고 **어디가 잘못됐는지 알린다**.
+            Debug.LogWarning($"[DataTransformer] '{value}' 를 {typeof(T).Name} 로 변환 실패 — 기본값 사용. 시트 값을 확인하세요.");
+            return default(T);
+        }
     }
 
     public static List<T> ConvertList<T>(string value)
