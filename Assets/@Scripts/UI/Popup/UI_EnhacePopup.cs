@@ -195,9 +195,43 @@ public class UI_EnhacePopup : UI_Popup
         }
         else
         {
-            Managers.UI.ShowPopupUI<UI_EnhanceProgressPopup>().SetInfo(result, _equip);
+            // 대장장이 모션(성공/실패)을 보여준 뒤 결과 창으로 넘긴다.
+            //  ⚠️ 프리팹에 Forge Smith 애니메이터(Normal/Success/Fail 3.0~5.0초)가 저작돼 있는데
+            //     **코드가 한 번도 재생하지 않았다** — 강화를 눌러도 망치질 한 번 없이 결과창만 떴다.
+            StartCoroutine(CoSmithMotion(result));
         }
         RefreshUI();   // 주문서 소진/확률/내구도/잠재력 즉시 갱신
+    }
+
+    /// 대장장이 모션 → 결과 창. 모션 도중에는 중복 클릭을 막는다.
+    IEnumerator CoSmithMotion(GameManager.EnhanceResult result)
+    {
+        _resolving = true;
+
+        var smith = GetObject((int)GameObjects.HammerNormalAnim);
+        var anim = smith != null ? smith.GetComponent<Animator>() : null;
+        float wait = 0.4f;
+
+        if (anim != null)
+        {
+            string state = result.Success ? "Success" : "Fail";
+            anim.Play(state, 0, 0f);
+            foreach (var c in anim.runtimeAnimatorController.animationClips)
+                if (c.name == state) { wait = c.length; break; }
+        }
+
+        // 모션 끝머리에 결과 플래시를 겹쳐 타격감을 준다.
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, wait - 0.5f));
+        var flash = GetObject(result.Success ? (int)GameObjects.Flash_Success : (int)GameObjects.Flash_Fail);
+        if (flash != null) { flash.SetActive(false); flash.SetActive(true); }
+        yield return new WaitForSecondsRealtime(0.5f);
+        if (flash != null) flash.SetActive(false);
+
+        if (anim != null) anim.Play("Normal", 0, 0f);   // 대기 자세로 복귀
+        _resolving = false;
+
+        Managers.UI.ShowPopupUI<UI_EnhanceProgressPopup>().SetInfo(result, _equip);
+        RefreshUI();
     }
 
     IEnumerator CoSkipFlash(bool success)

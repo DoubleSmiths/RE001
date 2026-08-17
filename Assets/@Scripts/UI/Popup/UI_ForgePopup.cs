@@ -116,6 +116,22 @@ public class UI_ForgePopup : UI_Popup
         }
         GetObject((int)GameObjects.Xbutton).BindEvent(OnClickClose);
 
+        // 닫는 길을 하나로 두면 그 하나가 막힐 때 갇힌다. 실제로 X만 있고 그마저 차단막에 가려
+        //  "끄는 방법이 없다"는 상태가 됐었다. 바깥 배경을 눌러도 닫히게 한다(다른 팝업과 같은 관례).
+        //  ForgeBlockImg는 위에서 raycast를 껐으므로, 남은 배경 후보에만 붙인다.
+        foreach (string bgName in new[] { "ForgePopupBackground", "ClickBlock" })
+        {
+            var bg = Util.FindChild(gameObject, bgName, true);
+            if (bg == null) continue;
+            var img = bg.GetComponent<Image>();
+            if (img != null) img.raycastTarget = true;   // 배경은 클릭을 받아야 닫을 수 있다
+            bg.BindEvent(OnClickClose);
+        }
+
+        // ClickBlock이 X 버튼보다 위에 그려져 X를 삼킨다(레이캐스트 최상단이 ClickBlock으로 잡혔다).
+        //  배경으로도 닫히긴 하지만 X가 눌리지 않으면 고장으로 보인다 — X를 맨 위로 올린다.
+        GetObject((int)GameObjects.Xbutton)?.transform.SetAsLastSibling();
+
         // 타이틀 로컬라이즈 (대장간)
         GetText((int)Texts.ForgePopupTitle).text = Util.Localize(LocalizeKey.SmithyText);
 
@@ -220,6 +236,10 @@ public class UI_ForgePopup : UI_Popup
         SetOverlayText("Txt_CantEnhaceCraft_13", Util.Localize(Define.LocalizeKey.ForgeCantRecoverText));
         SetOverlayText("Txt_CantEnhaceCraft_09", Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText));
 
+        // 프리팹에 남아 있던 영문 라벨들 — 한글 화면에 "POTENCIALS"(오타까지) / "OR"가 그대로 떴다.
+        SetOverlayText("Txt_EnhancePart_02", Util.Localize("ForgePotentialText"));
+        SetOverlayText("Text_3", Util.Localize("ForgeOrText"));
+
         int matCount = Managers.Game.GetItemCount(RESTORE_MATERIAL_ID);
         bool matOk   = matCount >= RESTORE_MATERIAL_COUNT;
         SetItemBox(GetImage((int)Images.Img_ReqItemBox1_21), GetText((int)Texts.Txt_ReqItemBox1_21),
@@ -256,6 +276,39 @@ public class UI_ForgePopup : UI_Popup
                 boxImg.color = _selectedScroll == i ? SELECT_COLOR : new Color(0.2f, 0.2f, 0.2f, 0f);
         }
 
+        // 다음 단계 요구 재료를 강화 버튼 위에 적는다. 데이터가 비어 있던 시절엔 강화가
+        //  골드·주문서만 먹어서 무엇을 모아야 하는지 화면 어디에도 없었다.
+        var (matId, matNeed) = Managers.Game.GetEnhanceMaterial(_equip);
+        var reqTxt = Util.FindChild<TMPro.TMP_Text>(gameObject, "Txt_EnhanceReqMat", true);
+        if (reqTxt == null && matId > 0)
+        {
+            // 프리팹에 자리가 없어 강화 버튼 라벨 옆에 만들어 붙인다.
+            var anchor = Util.FindChild<TMPro.TMP_Text>(gameObject, "Txt_DoEnhaceBtn_10", true);
+            if (anchor != null)
+            {
+                var go = Object.Instantiate(anchor.gameObject, anchor.transform.parent);
+                go.name = "Txt_EnhanceReqMat";
+                var rt = go.GetComponent<RectTransform>();
+                rt.anchoredPosition = anchor.rectTransform.anchoredPosition + new Vector2(0f, -11f);
+                reqTxt = go.GetComponent<TMPro.TMP_Text>();
+                reqTxt.fontSize = Mathf.Max(6f, anchor.fontSize * 0.7f);
+            }
+        }
+        if (reqTxt != null)
+        {
+            if (matId > 0 && matNeed > 0)
+            {
+                int have = Managers.Game.GetItemCount(matId);
+                string name = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(matId, out var it)
+                            ? Util.Localize(it.Name) : matId.ToString();
+                string color = have >= matNeed ? "#4CFF4C" : "#FF5555";
+                reqTxt.text = $"{name} <color={color}>{have}</color>/{matNeed}";
+                reqTxt.gameObject.SetActive(true);
+                ApplyFont(reqTxt, Define.FontType.UI);
+            }
+            else reqTxt.gameObject.SetActive(false);
+        }
+
         bool canEnhance = _selectedScroll >= 0
             && Managers.Game.CanEnhance(_equip, ENHANCE_SCROLL_IDS[_selectedScroll]);
         GetObject((int)GameObjects.Img_BtnGroup_02)?.SetActive(!canEnhance);
@@ -273,10 +326,18 @@ public class UI_ForgePopup : UI_Popup
         if (_equip == null) return Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText);
         if (_equip.EnhanceLevel >= ENHANCE_MAX_LEVEL) return "최대 강화";
         if (_equip.Durability <= 0) return "내구도 0";
-        if (_selectedScroll < 0) return "주문서 없음";
+        if (_selectedScroll < 0) return "주문서 선택";
 
         int cost = Managers.Game.GetEnhanceCost(_equip);
         if (Managers.Game.Gold < cost) return $"골드 {cost:N0} 필요";
+
+        var (matId, matNeed) = Managers.Game.GetEnhanceMaterial(_equip);
+        if (matId > 0 && matNeed > 0 && Managers.Game.GetItemCount(matId) < matNeed)
+        {
+            string nm = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(matId, out var it)
+                      ? Util.Localize(it.Name) : matId.ToString();
+            return $"{nm} {matNeed}개 필요";
+        }
         return Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText);
     }
 

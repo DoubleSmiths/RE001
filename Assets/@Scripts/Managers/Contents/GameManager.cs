@@ -829,7 +829,25 @@ public class GameManager
         && equip.EnhanceLevel < ENHANCE_MAX_LEVEL
         && equip.Durability > 0
         && HasItem(scrollId)
-        && Gold >= GetEnhanceCost(equip);
+        && Gold >= GetEnhanceCost(equip)
+        && HasEnhanceMaterial(equip);
+
+    /// <summary>다음 단계 강화가 요구하는 재료 (없으면 (0,0) — 재료 없이 주문서만으로 강화).</summary>
+    public (int itemId, int count) GetEnhanceMaterial(Equipment equip)
+    {
+        if (equip == null || Managers.Data?.EquipEnhanceDic == null) return (0, 0);
+        int next = equip.EnhanceLevel + 1;
+        foreach (var enh in Managers.Data.EquipEnhanceDic.Values)
+            if (enh.EquipDataId == equip.DataId && enh.Level == next)
+                return (enh.RequiredMaterialId, enh.RequiredMaterialCount);
+        return (0, 0);
+    }
+
+    public bool HasEnhanceMaterial(Equipment equip)
+    {
+        var (id, need) = GetEnhanceMaterial(equip);
+        return id <= 0 || need <= 0 || GetItemCount(id) >= need;
+    }
 
     // 강화 실행: 주문서 1장 소모 → 확률 굴림 → 성공 시 +1단계/잠재력 증가, 실패 시 내구도 감소(주문서별).
     //  +9 도달 시 장비 능력 영구화(슬38). 결과는 UI 연출용으로 반환.
@@ -847,6 +865,11 @@ public class GameManager
         r.GoldCost = GetEnhanceCost(equip);
         Gold -= r.GoldCost;          // CanEnhance에서 잔액을 이미 확인함
         RemoveItem(scrollId, 1);
+
+        // 요구 재료 소모. 데이터가 비어 있던 시절엔 강화가 골드와 주문서만 먹었다 —
+        //  사냥으로 모은 재료가 강화로 이어지지 않아 성장 순환이 끊겨 있었다.
+        var (matId, matNeed) = GetEnhanceMaterial(equip);
+        if (matId > 0 && matNeed > 0) RemoveItem(matId, matNeed);
 
         bool guaranteed = scrollId == SCROLL_IGNUS_ID;   // 이그누스의 인정 = 확정 강화
         r.Success = guaranteed || UnityEngine.Random.value * 100f < r.ChancePct;
