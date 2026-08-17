@@ -19,7 +19,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
     enum Texts
     {
-        Txt_SuccessTxtGroup_01,  // "ENHACE SUCCEEDED" (prefab authored 오타 유지)
+        Txt_SuccessTxtGroup_01,  // 성공 배너 (프리팹엔 "ENHACE SUCCEEDED" 오타 영문 → 로컬라이즈)
         Txt_SuccessTxtGroup_03,  // 장비명
         _4,                      // 장비명 펀치 연출용 복제 텍스트
         Txt_FailTxtGroup_02,     // "ENHACE FAILED"
@@ -128,7 +128,8 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
             // 플래시 + 성공 텍스트 (INACTIVE 자식들 활성 → authored autoPlay 연출 재생)
             Reveal(GameObjects.Flash_USETHIS);
-            RevealText(Texts.Txt_SuccessTxtGroup_01);
+            // 프리팹에 오타 섞인 영문("ENHACE SUCCEEDED")이 박혀 한글 화면에 그대로 떴다.
+            SetRevealText(Texts.Txt_SuccessTxtGroup_01, Util.Localize("EnhanceSucceededText"));
             Reveal(GameObjects.Img_SuccessTxtGroup_02);
             Reveal(GameObjects._2);
             SetRevealText(Texts.Txt_SuccessTxtGroup_03, nmEnh);
@@ -143,21 +144,53 @@ public class UI_EnhanceProgressPopup : UI_Popup
             SetRevealText(Texts.MainPotenText, $"잠재력 {_equip.Potential}");
             SetRevealText(Texts.IncPotenText, $"+{_result.PotenGain}");
 
-            // 능력치 변화 — 현재 데이터는 공격력 단일(단계당 +5). 다중 스탯 데이터화 시 열 확장.
+            // 능력치 변화.
+            //  ⚠️ 예전엔 **강화 보너스 누적합만** 물공 한 줄로 찍었다(+0 ▶ +6).
+            //     영상은 강화도와 함께 **장비 총합**(기본치 포함)을 보여주고, 같은 프로젝트의
+            //     장비 상세창도 이미 총합으로 찍는다 — 두 창이 서로 다른 숫자를 보여주고 있었다.
+            //     총합 기준으로 맞추고, 실제로 변한 스탯(치명/마공)도 줄을 추가한다.
+            //  프리팹 행이 1줄(라벨/이전/▶/이후 4열)뿐이라 각 열에 개행으로 몰아쓴다(프리팹 무수정).
             SetGroupActive(GameObjects.AttRealText, true);
             RevealText(Texts.AttText);   // "능력치 변화" 라벨도 색을 되살려야 보인다
-            int before = SumAtkBonus(_result.PrevLevel);
-            int after  = SumAtkBonus(_equip.EnhanceLevel);
-            SetRevealText(Texts.Text, Util.Localize(LocalizeKey.PhysicalAttackText));
-            SetRevealText(Texts.Txt_AttRealText_02, $"+{before}");
-            SetRevealText(Texts.Text_2, "▶");
-            SetRevealText(Texts.Text_3, $"<color=#00FF00>+{after}</color>");
+
+            var b = Managers.Game.GetEnhanceBonus(_equip.DataId, _result.PrevLevel);
+            var a = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
+
+            var names = new System.Collections.Generic.List<string>();
+            var befs  = new System.Collections.Generic.List<string>();
+            var afts  = new System.Collections.Generic.List<string>();
+
+            names.Add(Util.Localize(LocalizeKey.EnhanceLevelText));
+            befs.Add($"+{_result.PrevLevel}");
+            afts.Add($"+{_equip.EnhanceLevel}");
+
+            names.Add(Util.Localize(LocalizeKey.PhysicalAttackText));
+            befs.Add($"+{data.BaseAtk + b.atk}");
+            afts.Add($"+{data.BaseAtk + a.atk}");
+
+            if (!Mathf.Approximately(a.crit, b.crit))
+            {
+                names.Add(Util.Localize(LocalizeKey.CriticalText));
+                befs.Add($"+{data.BaseCritRate + b.crit:0.#}%");
+                afts.Add($"+{data.BaseCritRate + a.crit:0.#}%");
+            }
+            if (a.magic != b.magic)
+            {
+                names.Add(Util.Localize(LocalizeKey.MagicAttackText));
+                befs.Add($"+{data.BaseMagicAtk + b.magic}");
+                afts.Add($"+{data.BaseMagicAtk + a.magic}");
+            }
+
+            SetRevealText(Texts.Text, string.Join("\n", names));
+            SetRevealText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
+            SetRevealText(Texts.Text_2, string.Join("\n", afts.ConvertAll(_ => "▶")));
+            SetRevealText(Texts.Text_3, string.Join("\n", afts.ConvertAll(v => $"<color=#00FF00>{v}</color>")));
         }
         else
         {
             Managers.Sound?.PlaySFX("SFX_Fail");   // 강화 실패음 (클립 미등록이면 경고만)
 
-            RevealText(Texts.Txt_FailTxtGroup_02);
+            SetRevealText(Texts.Txt_FailTxtGroup_02, Util.Localize("EnhanceFailedText"));
 
             // before / "/max" / after 가 프리팹에서 거의 같은 x에 겹쳐 놓여 있어
             //  "내구도 /900" 처럼 숫자들이 서로를 덮어썼다 → 한 줄로 합쳐 라벨에 싣고 나머지는 끈다.

@@ -832,6 +832,28 @@ public class GameManager
         && Gold >= GetEnhanceCost(equip)
         && HasEnhanceMaterial(equip);
 
+    /// <summary>
+    /// 강화 누적 보너스(물공/치명/마공). 장착 스탯·상세창·강화 결과창이 **같은 값**을 쓰게 하는 단일 출처.
+    ///
+    /// ⚠️ 예전엔 같은 루프가 세 군데(ApplyEquipmentStats / 상세창 SumEnhanceBonus / 결과창 SumAtkBonus)에
+    ///    복제돼 있었고, 그중 결과창만 규칙이 달라 **같은 장비를 두 창이 다른 숫자로 보여줬다**.
+    /// </summary>
+    public (int atk, float crit, int magic) GetEnhanceBonus(int equipDataId, int level)
+    {
+        int atk = 0, magic = 0;
+        float crit = 0f;
+        if (Managers.Data?.EquipEnhanceDic == null) return (0, 0f, 0);
+
+        foreach (var e in Managers.Data.EquipEnhanceDic.Values)
+        {
+            if (e.EquipDataId != equipDataId || e.Level > level) continue;
+            atk   += e.AtkBonus;
+            crit  += e.CritBonus;
+            magic += e.MagicAtkBonus;
+        }
+        return (atk, crit, magic);
+    }
+
     /// <summary>다음 단계 강화가 요구하는 재료 (없으면 (0,0) — 재료 없이 주문서만으로 강화).</summary>
     public (int itemId, int count) GetEnhanceMaterial(Equipment equip)
     {

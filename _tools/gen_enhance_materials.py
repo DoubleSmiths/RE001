@@ -92,9 +92,17 @@ def main():
 
         # 단계별 보너스가 전부 같았다 — 단계에 비례해 키운다.
         base = ws.cell(row=row, column=col["AtkBonus"]).value or 0
+        atk = int(round(base * (1 + 0.25 * (int(lv) - 1)))) if base else 0
         if base:
-            ws.cell(row=row, column=col["AtkBonus"],
-                    value=int(round(base * (1 + 0.25 * (int(lv) - 1)))))
+            ws.cell(row=row, column=col["AtkBonus"], value=atk)
+
+        # ⚠️ 치명타·마공 보너스가 전 단계 0이었다 — 강화해도 물공 하나만 올랐다.
+        #  영상의 장비 능력치 표기는 "물리공격력 +11 / 치명타 +11% / 마법공격력 +10"으로
+        #  **세 스탯이 함께** 붙는다. 물공을 주축으로 두고 나머지를 같이 올린다.
+        #    치명타 : 단계당 1%p (9강에서 +9%) — 영상의 +11%대와 같은 자릿수
+        #    마공   : 물공의 90% (물리 장비도 마공을 조금 갖는 원작 표기를 따른다)
+        ws.cell(row=row, column=col["CritBonus"], value=round(1.0 * int(lv), 1))
+        ws.cell(row=row, column=col["MagicAtkBonus"], value=int(round(atk * 0.9)))
         changed += 1
 
     wb.save(XL)

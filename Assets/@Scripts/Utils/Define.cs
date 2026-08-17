@@ -1471,6 +1471,31 @@ public class Define
         public const string ForgeCantEnhanceText = "ForgeCantEnhanceText";
         public const string ForgeDurabilityText = "ForgeDurabilityText";
         public const string TestKey = "TestKey";
+        public const string Skill5200NameText = "Skill5200NameText";
+        public const string Skill5200DescText = "Skill5200DescText";
+        public const string Skill5201NameText = "Skill5201NameText";
+        public const string Skill5201DescText = "Skill5201DescText";
+        public const string Skill5202NameText = "Skill5202NameText";
+        public const string Skill5202DescText = "Skill5202DescText";
+        public const string Skill5203NameText = "Skill5203NameText";
+        public const string Skill5203DescText = "Skill5203DescText";
+        public const string Skill5204NameText = "Skill5204NameText";
+        public const string Skill5204DescText = "Skill5204DescText";
+        public const string Skill5205NameText = "Skill5205NameText";
+        public const string Skill5205DescText = "Skill5205DescText";
+        public const string ForgePotentialText = "ForgePotentialText";
+        public const string ForgeOrText = "ForgeOrText";
+        public const string ForgeReqMaterialText = "ForgeReqMaterialText";
+        public const string ItemSOM1NameText = "ItemSOM1NameText";
+        public const string ItemSOM1DescText = "ItemSOM1DescText";
+        public const string ItemSOM2NameText = "ItemSOM2NameText";
+        public const string ItemSOM2DescText = "ItemSOM2DescText";
+        public const string ItemSOM3NameText = "ItemSOM3NameText";
+        public const string ItemSOM3DescText = "ItemSOM3DescText";
+        public const string ItemBMORNameText = "ItemBMORNameText";
+        public const string ItemBMORDescText = "ItemBMORDescText";
+        public const string MagicAttackText = "MagicAttackText";
+        public const string EnhanceLevelText = "EnhanceLevelText";
 
     }
     #endregion
