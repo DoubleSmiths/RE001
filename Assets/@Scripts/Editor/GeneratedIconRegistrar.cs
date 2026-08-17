@@ -25,6 +25,8 @@ public static class GeneratedIconRegistrar
         "Assets/@Resources/Sprite/Monster/Card",
         // 탐험 지역 배경 25종 — 6종을 돌려쓰던 것을 지역별 고유 그림으로 교체
         "Assets/@Resources/Sprite/Map/Region",
+        // 전투 배경 겹(원경/중경/근경) — 한 장짜리 배경이 평평해 보이던 것을 패럴랙스로 되돌린다
+        "Assets/@Resources/Sprite/Background/RegionLayer",
     };
 
     [MenuItem("Tools/Register Generated Icons (아이콘 임포트+어드레서블)")]

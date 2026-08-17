@@ -28,6 +28,7 @@ import sys
 import threading
 import time
 
+import numpy as np
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -109,9 +110,13 @@ def save_town(raw, path):
 def save_layer(raw, path, tag):
     im = Image.open(io.BytesIO(raw)).convert("RGBA")
     if tag != "Far":
-        # 근·중경은 뒤가 비쳐야 겹이 산다. 평평한 배경을 테두리부터 지운다
-        #  (전역 색 매칭이 아니라 flood fill — 실루엣 안쪽 같은 색이 뚫리지 않게).
-        im = flood_mask(im)
+        # 근·중경은 뒤가 비쳐야 겹이 산다. 배경은 우리가 고른 크로마키(자홍)이므로
+        #  연결성을 따지지 않고 **색으로 전부** 지운다.
+        #  ⚠️ flood fill만 쓰면 나무 사이처럼 사방이 막힌 자홍 웅덩이가 남는다(실제로 남았다).
+        a = np.array(im)
+        r, g, b = (a[:, :, i].astype(np.int32) for i in range(3))
+        a[(r > 130) & (b > 130) & (g < 120) & (np.abs(r - b) < 90), 3] = 0
+        im = flood_mask(Image.fromarray(a, "RGBA"))
         box = im.getbbox()
         if box:
             im = im.crop((0, box[1], im.size[0], box[3]))   # 세로 여백만 잘라낸다

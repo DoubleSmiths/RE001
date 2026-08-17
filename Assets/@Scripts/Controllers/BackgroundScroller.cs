@@ -29,11 +29,28 @@ public class BackgroundScroller : MonoBehaviour
 
     // ── 지역별 배경 ──
     // 전 던전이 CH1BG(여름 숲) 하나를 그대로 썼다. 125개 던전이 전부 같은 그림이었다는 뜻이다.
-    // 노드마다 생성해 둔 Region_{nodeId} 스프라이트가 있으면 그걸로 갈아끼운다.
-    // 생성 이미지는 그 자체가 원경~근경을 품은 한 장이라 레이어를 나누지 않고 한 장으로 스크롤한다
-    // (없으면 저작된 5겹 패럴랙스를 그대로 둔다 — 폴백).
-    GameObject _regionLayer;
+    // 노드마다 만들어 둔 그림으로 갈아끼운다. 우선순위는 셋이다.
+    //   1) 겹 배경 RegionL_{Far|Mid|Near}_{id}  ← 원경/중경/근경을 다른 속도로 흘려 입체감을 낸다
+    //   2) 한 장짜리 Region_{id}                ← 겹이 없는 지역 폴백
+    //   3) 저작 5겹 패럴랙스(CH1BG)             ← 생성 그림이 아예 없는 경우
+    //
+    // ⚠️ 한동안 2)만 썼다. 지역마다 그림은 달라졌지만 **한 장을 통째로 같은 속도로** 미니
+    //    원래 있던 깊이감이 사라졌다("배경이 평평해졌다"는 지적이 이것이다).
+    static readonly string[] REGION_TAGS = { "Far", "Mid", "Near" };
+    static readonly float[] REGION_SPEEDS = { 1f, 3f, 5f };   // 슬58의 원경 1 ~ Ground 5 범위 안에 맞춤
+
+    readonly List<GameObject> _regionLayers = new List<GameObject>();
     int _appliedNodeId = int.MinValue;
+
+    Sprite LoadForNode(string prefix, int nodeId)
+    {
+        Sprite sp = Managers.Resource?.Load<Sprite>($"{prefix}{nodeId}");
+        // 던전은 소속 지역 그림으로 물러난다 — 전투는 던전에서 일어나므로 이 폴백이 실사용 경로다.
+        if (sp == null && Managers.Data?.TravelNodeDic != null
+            && Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn) && tn.ParentId != 0)
+            sp = Managers.Resource?.Load<Sprite>($"{prefix}{tn.ParentId}");
+        return sp;
+    }
 
     void ApplyRegionBackground()
     {
@@ -41,38 +58,75 @@ public class BackgroundScroller : MonoBehaviour
         if (nodeId == _appliedNodeId) return;
         _appliedNodeId = nodeId;
 
-        // 던전 노드 전용 그림 → 없으면 소속 지역 그림. 전투는 던전에서 일어나므로 이 폴백이 실사용 경로다.
-        Sprite sp = Managers.Resource?.Load<Sprite>($"Region_{nodeId}");
-        if (sp == null && Managers.Data?.TravelNodeDic != null
-            && Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn) && tn.ParentId != 0)
-            sp = Managers.Resource?.Load<Sprite>($"Region_{tn.ParentId}");
+        var sprites = new List<Sprite>();
+        foreach (string tag in REGION_TAGS)
+            sprites.Add(LoadForNode($"RegionL_{tag}_", nodeId));
 
-        if (sp == null)
+        bool layered = sprites.Exists(s => s != null);
+        if (!layered)
         {
-            // 전용 그림이 없는 지역 — 저작 패럴랙스로 되돌린다.
-            if (_regionLayer != null) _regionLayer.SetActive(false);
+            Sprite single = LoadForNode("Region_", nodeId);
+            sprites.Clear();
+            if (single != null) sprites.Add(single);
+        }
+
+        if (sprites.Count == 0)
+        {
+            // 생성 그림이 없는 지역 — 저작 패럴랙스로 되돌린다.
+            foreach (var l in _regionLayers) l.SetActive(false);
             foreach (Transform c in transform)
-                if (c.gameObject != _regionLayer) c.gameObject.SetActive(true);
+                if (!IsRegionLayer(c.gameObject)) c.gameObject.SetActive(true);
             return;
         }
 
         foreach (Transform c in transform)
-            if (c.gameObject != _regionLayer) c.gameObject.SetActive(false);
+            if (!IsRegionLayer(c.gameObject)) c.gameObject.SetActive(false);
 
-        if (_regionLayer == null)
+        // 겹마다 오브젝트 하나. 원경이 정한 배율·바닥선을 나머지가 그대로 따른다
+        //  (겹마다 따로 맞추면 중경/근경은 위가 비어 있어 엉뚱하게 확대된다).
+        float scale = 0f, bottom = 0f;
+        for (int i = 0; i < sprites.Count; i++)
         {
-            _regionLayer = new GameObject("RegionBG");
-            _regionLayer.transform.SetParent(transform, false);
-            var sr = _regionLayer.AddComponent<SpriteRenderer>();
-            sr.sortingOrder = -1;
-        }
-        _regionLayer.SetActive(true);
+            if (sprites[i] == null) continue;
+            GameObject go = EnsureRegionLayer(i);
+            go.SetActive(true);
 
-        var rend = _regionLayer.GetComponent<SpriteRenderer>();
-        rend.sprite = sp;
-        FitToAuthored(_regionLayer.transform, rend);
+            var rend = go.GetComponent<SpriteRenderer>();
+            rend.sprite = sprites[i];
+            rend.sortingOrder = -REGION_TAGS.Length + i;
+
+            if (scale <= 0f)
+            {
+                FitToAuthored(go.transform, rend);
+                scale = go.transform.localScale.x;
+                bottom = go.transform.position.y - rend.sprite.bounds.size.y * scale * 0.5f;
+            }
+            else
+            {
+                go.transform.localScale = new Vector3(scale, scale, 1f);
+                float h = rend.sprite.bounds.size.y * scale;
+                go.transform.position = new Vector3(go.transform.position.x, bottom + h * 0.5f,
+                                                    go.transform.position.z);
+            }
+        }
+        for (int i = sprites.Count; i < _regionLayers.Count; i++)
+            _regionLayers[i].SetActive(false);
 
         RebuildLayers();
+    }
+
+    bool IsRegionLayer(GameObject go) => _regionLayers.Contains(go);
+
+    GameObject EnsureRegionLayer(int i)
+    {
+        while (_regionLayers.Count <= i)
+        {
+            var go = new GameObject($"RegionBG_{_regionLayers.Count}");
+            go.transform.SetParent(transform, false);
+            go.AddComponent<SpriteRenderer>();
+            _regionLayers.Add(go);
+        }
+        return _regionLayers[i];
     }
 
     // 저작된 배경 레이어가 차지하던 **그 자리**에 맞춘다.
@@ -88,7 +142,7 @@ public class BackgroundScroller : MonoBehaviour
         SpriteRenderer model = null;
         foreach (Transform c in transform)
         {
-            if (c == t || c.name.StartsWith(_regionLayer.name)) continue;
+            if (c == t || c.name.StartsWith("RegionBG")) continue;
             var s = c.GetComponent<SpriteRenderer>();
             if (s != null && s.sprite != null) { model = s; break; }
         }
@@ -159,7 +213,12 @@ public class BackgroundScroller : MonoBehaviour
             }
 
             float width = sr.bounds.size.x;
-            float speed = SpeedForIndex(idx);
+            // 지역 겹 배경은 자식 순서가 아니라 **겹 번호**로 속도를 정한다
+            //  (겹은 나중에 붙는 자식이라 idx로 잡으면 셋 다 마지막 속도를 받는다).
+            int regionIdx = _regionLayers.IndexOf(child.gameObject);
+            float speed = regionIdx >= 0
+                ? REGION_SPEEDS[Mathf.Min(regionIdx, REGION_SPEEDS.Length - 1)]
+                : SpeedForIndex(idx);
 
             // 복사본 생성: A(원본) 바로 오른쪽에 B 배치
             GameObject cloneGo = Instantiate(child.gameObject, transform);
@@ -169,7 +228,7 @@ public class BackgroundScroller : MonoBehaviour
             // 지역 배경은 **좌우가 이어지도록 그려진 그림이 아니다**(저작 패럴랙스는 이음매가 맞게
             //  만들어져 있지만 생성 배경은 아니다). 복사본을 좌우 반전하면 맞닿는 변이 같은 픽셀이
             //  되어 이음매가 사라진다 — 풍경이라 거울상이어도 티가 나지 않는다.
-            if (_regionLayer != null && child.gameObject == _regionLayer)
+            if (regionIdx >= 0)
             {
                 Vector3 s = cloneGo.transform.localScale;
                 cloneGo.transform.localScale = new Vector3(-s.x, s.y, s.z);
