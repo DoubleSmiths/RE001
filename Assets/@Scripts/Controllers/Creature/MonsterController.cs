@@ -74,6 +74,11 @@ public class MonsterController : CreatureController
         if (State == Define.State.Dead) return;
         if (_target == null) return;
 
+        // 플레이어 쪽을 보게 한다. FlipToward는 만들어만 두고 아무 데서도 부르지 않아서
+        //  몬스터가 전부 원본 그림 방향(오른쪽)으로 서 있었다 — 플레이어는 왼쪽에 있으니
+        //  다가오면서도 등을 보이는 상태였다.
+        FlipToward(_target.transform.position.x);
+
         if (_hasEngaged)
             TryAttack();
         else
