@@ -19,15 +19,19 @@ public static class PlayerSkillAnimGenerator
     const string OUT_DIR = "Assets/@Resources/Animation/Player/Player_01/Skill";
 
     const string SHEET_SLASH = "Assets/@Resources/Sprite/Player/Player_02/attack_Sheet2.png";
-    const string SHEET_CAST = "Assets/@Resources/Sprite/Player/Player_02/onhit_Sheet2.png";
+    const string SHEET_CAST = "Assets/@Resources/Sprite/Player/Player_02/attack_Sheet.png";
 
     // (상태 이름, 시트, 프레임 순서, 총 길이, 반복)
     //  프레임 순서를 직접 적는 이유: 시트에 담긴 순서가 곧 좋은 연출 순서는 아니다.
-    //  시전은 "자세 잡고(0) → 버티고(1,2) → 풀기(1)"로 되짚어야 동작이 읽힌다.
+    //
+    //  ⚠️ 시전(Skill_Cast)은 원래 onhit_Sheet2를 썼는데, 그 시트의 1번 프레임은 고개를 젖히는
+    //     **피격 반응**이다. 스킬을 쓰는데 맞는 모션이 나오던 원인이 이것이다.
+    //     검을 치켜들고(2) 버티다가 자세를 푸는(6) 순서로 바꾼다 — 같은 캐릭터의 공격 시트라
+    //     화풍이 어긋나지 않으면서 피격으로 읽히지 않는다.
     static readonly (string state, string sheet, int[] order, float len)[] MOTIONS =
     {
         ("Skill_Slash", SHEET_SLASH, new[] { 0, 1, 2, 3, 4, 5, 6 }, 0.60f),
-        ("Skill_Cast",  SHEET_CAST,  new[] { 1, 0, 0, 2, 1 },       0.55f),
+        ("Skill_Cast",  SHEET_CAST,  new[] { 0, 2, 2, 2, 6 },       0.55f),
     };
 
     [MenuItem("Tools/액티브 스킬 모션 생성 (플레이어)")]

@@ -49,9 +49,11 @@ public class CompanionController : CreatureController
             transform.position = p;
             ApplySorting();
         }
-        // 플레이어와 같이 오른쪽(적 방향)을 보게. 슬라임 아트는 flipX=false가 좌향 → 우향은 true.
-        //  (적은 항상 화면 오른쪽에서 등장하므로 항시 우향 유지)
-        if (_sprite != null) _sprite.flipX = true;
+        // 플레이어와 같은 방향(우향)을 보게 한다. 플레이어는 항상 우향이고 적도 오른쪽에서 온다.
+        //  ⚠️ 예전엔 flipX=true로 못박아 뒀는데, 그건 좌향으로 그려진 슬라임 펫 아트 기준이었다.
+        //  생성 아키타입 아트 500여 종은 **우향**이라 같은 값을 주면 등을 보이고 다닌다.
+        //  아트 기본 방향은 ApplyPetAnimator에서 라벨로 판별한다.
+        if (_sprite != null) _sprite.flipX = _artFacesLeft;
         State = Define.State.Idle;
     }
 
@@ -81,8 +83,20 @@ public class CompanionController : CreatureController
         if (_anim == null) return;
         if (Managers.Data.MinMonDic == null || !Managers.Data.MinMonDic.TryGetValue(minionId, out var md)) return;
         if (string.IsNullOrEmpty(md.PetAnimLabel)) return;
+        _artFacesLeft = IsLeftFacingArt(md.PetAnimLabel);
         var ctrl = Managers.Resource.Load<RuntimeAnimatorController>(md.PetAnimLabel);
         if (ctrl != null) _anim.runtimeAnimatorController = ctrl;
+    }
+
+    // 손으로 그린 레거시 펫 아트만 좌향이다. 생성 아키타입(Mon_*)은 전부 우향.
+    static readonly string[] LEFT_FACING_ART = { "Pet_Slime", "Goblin" };
+    bool _artFacesLeft;
+
+    static bool IsLeftFacingArt(string label)
+    {
+        foreach (var s in LEFT_FACING_ART)
+            if (label.StartsWith(s)) return true;
+        return false;
     }
 
     void ApplySorting()
