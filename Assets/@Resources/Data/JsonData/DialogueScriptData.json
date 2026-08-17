@@ -200,8 +200,8 @@
         },
         {
           "TextKey": 4,
-          "Kor": "<#00B9FF>[<#858585>2</color>]급 모험가</color>로 승급되신 것을 축하드립니다.\n상위 등급의 임무와 새로운 지역 출입 허가는\n협회에서 준비 중입니다.",
-          "Eng": "Congratulations on your promotion to a\n<color=#00B9FF>[<color=#858585>2</color>]-rank Adventurer</color>.\nHigher-rank commissions and access to\nnew regions are being prepared by the guild."
+          "Kor": "<#00B9FF>[<#858585>2</color>]급 모험가</color>로 승급되신 것을 축하드립니다.\n이어서 [<#B0FF06>속삭이는 동굴</color>]로의 출입이 허가되었으며,\n다음 <#00B9FF>[<#858585>3</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>슬라임 젤리</b></color>] <#2DFF00><b>3</b></color>개가 필요합니다.",
+          "Eng": "Congratulations on your promotion to a <color=#00B9FF>[<color=#858585>2</color>]-rank Adventurer</color>.\nAccess to <color=#B0FF06>속삭이는 동굴</color> has been granted.\nTo reach <color=#00B9FF>rank 3</color>, you will need <color=#2DFF00><b>3</b></color> <color=#2DFF00><b>슬라임 젤리</b></color>."
         },
         {
           "TextKey": 5,
@@ -227,6 +227,726 @@
           "TextKey": 3,
           "Kor": "용건이 없으시다면 저는 이만.",
           "Eng": "If that's all, I have work to do."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest4Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>슬라임 젤리</b></color>] <#2DFF00><b>3</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>3</b></color> <color=#2DFF00><b>슬라임 젤리</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>3</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>3</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>3</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>폐허가 된 성소</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>25</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 3 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>폐허가 된 성소</color>.\nRecommended level: <color=#FFFF00>25</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>4</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>독버섯 갓</b></color>] <#2DFF00><b>5</b></color>개가 필요합니다.\n[<#B0FF06>폐허가 된 성소</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 4</color>,\nyou will need <color=#2DFF00><b>5</b></color> <color=#2DFF00><b>독버섯 갓</b></color>.\nThey drop from the creatures of <color=#B0FF06>폐허가 된 성소</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest5Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>독버섯 갓</b></color>] <#2DFF00><b>5</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>5</b></color> <color=#2DFF00><b>독버섯 갓</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>4</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>4</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>4</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>가라앉은 숲</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>37</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 4 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>가라앉은 숲</color>.\nRecommended level: <color=#FFFF00>37</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>5</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>까마귀 깃털</b></color>] <#2DFF00><b>5</b></color>개가 필요합니다.\n[<#B0FF06>가라앉은 숲</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 5</color>,\nyou will need <color=#2DFF00><b>5</b></color> <color=#2DFF00><b>까마귀 깃털</b></color>.\nThey drop from the creatures of <color=#B0FF06>가라앉은 숲</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest6Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>까마귀 깃털</b></color>] <#2DFF00><b>5</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>5</b></color> <color=#2DFF00><b>까마귀 깃털</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>5</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>5</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>5</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>텅 빈 굴</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>49</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 5 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>텅 빈 굴</color>.\nRecommended level: <color=#FFFF00>49</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>6</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>슬라임 젤리</b></color>] <#2DFF00><b>7</b></color>개가 필요합니다.\n[<#B0FF06>텅 빈 굴</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 6</color>,\nyou will need <color=#2DFF00><b>7</b></color> <color=#2DFF00><b>슬라임 젤리</b></color>.\nThey drop from the creatures of <color=#B0FF06>텅 빈 굴</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest7Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>슬라임 젤리</b></color>] <#2DFF00><b>7</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>7</b></color> <color=#2DFF00><b>슬라임 젤리</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>6</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>6</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>6</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>소금 늪지</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>61</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 6 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>소금 늪지</color>.\nRecommended level: <color=#FFFF00>61</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>7</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>늑대 송곳니</b></color>] <#2DFF00><b>9</b></color>개가 필요합니다.\n[<#B0FF06>소금 늪지</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 7</color>,\nyou will need <color=#2DFF00><b>9</b></color> <color=#2DFF00><b>늑대 송곳니</b></color>.\nThey drop from the creatures of <color=#B0FF06>소금 늪지</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest8Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>늑대 송곳니</b></color>] <#2DFF00><b>9</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>9</b></color> <color=#2DFF00><b>늑대 송곳니</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>7</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>7</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>7</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>밀물 동굴</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>73</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 7 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>밀물 동굴</color>.\nRecommended level: <color=#FFFF00>73</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>8</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>멧돼지 가죽</b></color>] <#2DFF00><b>9</b></color>개가 필요합니다.\n[<#B0FF06>밀물 동굴</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 8</color>,\nyou will need <color=#2DFF00><b>9</b></color> <color=#2DFF00><b>멧돼지 가죽</b></color>.\nThey drop from the creatures of <color=#B0FF06>밀물 동굴</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest9Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>멧돼지 가죽</b></color>] <#2DFF00><b>9</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>9</b></color> <color=#2DFF00><b>멧돼지 가죽</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>8</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>8</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>8</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>부서진 잔교</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>85</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 8 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>부서진 잔교</color>.\nRecommended level: <color=#FFFF00>85</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>9</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>거미 실크</b></color>] <#2DFF00><b>11</b></color>개가 필요합니다.\n[<#B0FF06>부서진 잔교</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 9</color>,\nyou will need <color=#2DFF00><b>11</b></color> <color=#2DFF00><b>거미 실크</b></color>.\nThey drop from the creatures of <color=#B0FF06>부서진 잔교</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest10Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>거미 실크</b></color>] <#2DFF00><b>11</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>11</b></color> <color=#2DFF00><b>거미 실크</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>9</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>9</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>9</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>폭풍 절벽</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>97</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 9 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>폭풍 절벽</color>.\nRecommended level: <color=#FFFF00>97</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>10</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>바람 정수</b></color>] <#2DFF00><b>11</b></color>개가 필요합니다.\n[<#B0FF06>폭풍 절벽</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 10</color>,\nyou will need <color=#2DFF00><b>11</b></color> <color=#2DFF00><b>바람 정수</b></color>.\nThey drop from the creatures of <color=#B0FF06>폭풍 절벽</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest11Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>바람 정수</b></color>] <#2DFF00><b>11</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>11</b></color> <color=#2DFF00><b>바람 정수</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>10</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>10</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>10</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>표류목 숲</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>109</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 10 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>표류목 숲</color>.\nRecommended level: <color=#FFFF00>109</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>11</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>그림자 응결물</b></color>] <#2DFF00><b>13</b></color>개가 필요합니다.\n[<#B0FF06>표류목 숲</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 11</color>,\nyou will need <color=#2DFF00><b>13</b></color> <color=#2DFF00><b>그림자 응결물</b></color>.\nThey drop from the creatures of <color=#B0FF06>표류목 숲</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest12Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>그림자 응결물</b></color>] <#2DFF00><b>13</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>13</b></color> <color=#2DFF00><b>그림자 응결물</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>11</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>11</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>11</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>잿불 구덩이</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>121</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 11 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>잿불 구덩이</color>.\nRecommended level: <color=#FFFF00>121</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>12</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>박쥐 날개막</b></color>] <#2DFF00><b>15</b></color>개가 필요합니다.\n[<#B0FF06>잿불 구덩이</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 12</color>,\nyou will need <color=#2DFF00><b>15</b></color> <color=#2DFF00><b>박쥐 날개막</b></color>.\nThey drop from the creatures of <color=#B0FF06>잿불 구덩이</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest13Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>박쥐 날개막</b></color>] <#2DFF00><b>15</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>15</b></color> <color=#2DFF00><b>박쥐 날개막</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>12</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>12</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>12</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>깊은 수직굴</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>133</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 12 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>깊은 수직굴</color>.\nRecommended level: <color=#FFFF00>133</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>13</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>수정 파편</b></color>] <#2DFF00><b>15</b></color>개가 필요합니다.\n[<#B0FF06>깊은 수직굴</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 13</color>,\nyou will need <color=#2DFF00><b>15</b></color> <color=#2DFF00><b>수정 파편</b></color>.\nThey drop from the creatures of <color=#B0FF06>깊은 수직굴</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest14Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>수정 파편</b></color>] <#2DFF00><b>15</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>15</b></color> <color=#2DFF00><b>수정 파편</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>13</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>13</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>13</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>녹슨 회랑</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>145</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 13 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>녹슨 회랑</color>.\nRecommended level: <color=#FFFF00>145</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>14</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>석상 조각</b></color>] <#2DFF00><b>17</b></color>개가 필요합니다.\n[<#B0FF06>녹슨 회랑</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 14</color>,\nyou will need <color=#2DFF00><b>17</b></color> <color=#2DFF00><b>석상 조각</b></color>.\nThey drop from the creatures of <color=#B0FF06>녹슨 회랑</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest15Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>석상 조각</b></color>] <#2DFF00><b>17</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>17</b></color> <color=#2DFF00><b>석상 조각</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>14</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>14</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>14</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>불씨 광맥</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>157</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 14 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>불씨 광맥</color>.\nRecommended level: <color=#FFFF00>157</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>15</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>광부의 유품</b></color>] <#2DFF00><b>17</b></color>개가 필요합니다.\n[<#B0FF06>불씨 광맥</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 15</color>,\nyou will need <color=#2DFF00><b>17</b></color> <color=#2DFF00><b>광부의 유품</b></color>.\nThey drop from the creatures of <color=#B0FF06>불씨 광맥</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest16Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>광부의 유품</b></color>] <#2DFF00><b>17</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>17</b></color> <color=#2DFF00><b>광부의 유품</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>15</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>15</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>15</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>무너진 갱도</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>169</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 15 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>무너진 갱도</color>.\nRecommended level: <color=#FFFF00>169</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>16</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>젖은 이끼</b></color>] <#2DFF00><b>19</b></color>개가 필요합니다.\n[<#B0FF06>무너진 갱도</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 16</color>,\nyou will need <color=#2DFF00><b>19</b></color> <color=#2DFF00><b>젖은 이끼</b></color>.\nThey drop from the creatures of <color=#B0FF06>무너진 갱도</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest17Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>젖은 이끼</b></color>] <#2DFF00><b>19</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>19</b></color> <color=#2DFF00><b>젖은 이끼</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>16</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>16</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>16</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>서리 수림</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>181</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 16 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>서리 수림</color>.\nRecommended level: <color=#FFFF00>181</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>17</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>박쥐 날개막</b></color>] <#2DFF00><b>21</b></color>개가 필요합니다.\n[<#B0FF06>서리 수림</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 17</color>,\nyou will need <color=#2DFF00><b>21</b></color> <color=#2DFF00><b>박쥐 날개막</b></color>.\nThey drop from the creatures of <color=#B0FF06>서리 수림</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest18Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>박쥐 날개막</b></color>] <#2DFF00><b>21</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>21</b></color> <color=#2DFF00><b>박쥐 날개막</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>17</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>17</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>17</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>빙하 동굴</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>193</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 17 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>빙하 동굴</color>.\nRecommended level: <color=#FFFF00>193</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>18</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>두더지 발톱</b></color>] <#2DFF00><b>21</b></color>개가 필요합니다.\n[<#B0FF06>빙하 동굴</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 18</color>,\nyou will need <color=#2DFF00><b>21</b></color> <color=#2DFF00><b>두더지 발톱</b></color>.\nThey drop from the creatures of <color=#B0FF06>빙하 동굴</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest19Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>두더지 발톱</b></color>] <#2DFF00><b>21</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>21</b></color> <color=#2DFF00><b>두더지 발톱</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>18</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>18</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>18</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>고요한 예배당</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>205</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 18 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>고요한 예배당</color>.\nRecommended level: <color=#FFFF00>205</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>19</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>망령의 재</b></color>] <#2DFF00><b>23</b></color>개가 필요합니다.\n[<#B0FF06>고요한 예배당</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 19</color>,\nyou will need <color=#2DFF00><b>23</b></color> <color=#2DFF00><b>망령의 재</b></color>.\nThey drop from the creatures of <color=#B0FF06>고요한 예배당</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest20Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>망령의 재</b></color>] <#2DFF00><b>23</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>23</b></color> <color=#2DFF00><b>망령의 재</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>19</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>19</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>19</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>새하얀 황야</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>217</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 19 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>새하얀 황야</color>.\nRecommended level: <color=#FFFF00>217</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>20</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>기사의 문장</b></color>] <#2DFF00><b>23</b></color>개가 필요합니다.\n[<#B0FF06>새하얀 황야</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 20</color>,\nyou will need <color=#2DFF00><b>23</b></color> <color=#2DFF00><b>기사의 문장</b></color>.\nThey drop from the creatures of <color=#B0FF06>새하얀 황야</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest21Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>기사의 문장</b></color>] <#2DFF00><b>23</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>23</b></color> <color=#2DFF00><b>기사의 문장</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>20</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>20</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>20</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>얼어붙은 금고</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>229</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 20 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>얼어붙은 금고</color>.\nRecommended level: <color=#FFFF00>229</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>21</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>수호자의 핵</b></color>] <#2DFF00><b>25</b></color>개가 필요합니다.\n[<#B0FF06>얼어붙은 금고</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 21</color>,\nyou will need <color=#2DFF00><b>25</b></color> <color=#2DFF00><b>수호자의 핵</b></color>.\nThey drop from the creatures of <color=#B0FF06>얼어붙은 금고</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest22Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>수호자의 핵</b></color>] <#2DFF00><b>25</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>25</b></color> <color=#2DFF00><b>수호자의 핵</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>21</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>21</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>21</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>여명의 정원</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>241</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 21 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>여명의 정원</color>.\nRecommended level: <color=#FFFF00>241</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>22</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>망령의 재</b></color>] <#2DFF00><b>27</b></color>개가 필요합니다.\n[<#B0FF06>여명의 정원</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 22</color>,\nyou will need <color=#2DFF00><b>27</b></color> <color=#2DFF00><b>망령의 재</b></color>.\nThey drop from the creatures of <color=#B0FF06>여명의 정원</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest23Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>망령의 재</b></color>] <#2DFF00><b>27</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>27</b></color> <color=#2DFF00><b>망령의 재</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>22</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>22</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>22</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>공허의 계단</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>253</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 22 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>공허의 계단</color>.\nRecommended level: <color=#FFFF00>253</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>23</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>키메라 갈기</b></color>] <#2DFF00><b>27</b></color>개가 필요합니다.\n[<#B0FF06>공허의 계단</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 23</color>,\nyou will need <color=#2DFF00><b>27</b></color> <color=#2DFF00><b>키메라 갈기</b></color>.\nThey drop from the creatures of <color=#B0FF06>공허의 계단</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest24Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>키메라 갈기</b></color>] <#2DFF00><b>27</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>27</b></color> <color=#2DFF00><b>키메라 갈기</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>23</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>23</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>23</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>별의 성소</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>265</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 23 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>별의 성소</color>.\nRecommended level: <color=#FFFF00>265</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>24</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>기사의 문장</b></color>] <#2DFF00><b>29</b></color>개가 필요합니다.\n[<#B0FF06>별의 성소</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 24</color>,\nyou will need <color=#2DFF00><b>29</b></color> <color=#2DFF00><b>기사의 문장</b></color>.\nThey drop from the creatures of <color=#B0FF06>별의 성소</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest25Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>기사의 문장</b></color>] <#2DFF00><b>29</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>29</b></color> <color=#2DFF00><b>기사의 문장</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>24</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>24</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>24</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>마지막 성벽</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>277</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 24 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>마지막 성벽</color>.\nRecommended level: <color=#FFFF00>277</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>25</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>수호자의 핵</b></color>] <#2DFF00><b>29</b></color>개가 필요합니다.\n[<#B0FF06>마지막 성벽</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 25</color>,\nyou will need <color=#2DFF00><b>29</b></color> <color=#2DFF00><b>수호자의 핵</b></color>.\nThey drop from the creatures of <color=#B0FF06>마지막 성벽</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest26Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>수호자의 핵</b></color>] <#2DFF00><b>29</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>29</b></color> <color=#2DFF00><b>수호자의 핵</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>25</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>25</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>25</color>]급 통행증</color>을 새로 발급해 드렸습니다.\n이제 [<#B0FF06>여명의 왕좌</color>]까지 출입하실 수 있습니다.\n권장 수준은 <#FFFF00>289</color> 이상입니다.",
+          "Eng": "A new <color=#00B9FF>Rank 25 Permit</color> has been issued.\nYou may now enter <color=#B0FF06>여명의 왕좌</color>.\nRecommended level: <color=#FFFF00>289</color> or higher."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다음 <#00B9FF>[<#858585>26</color>]급</color>으로 진급하시려면\n[<#2DFF00><b>망령의 재</b></color>] <#2DFF00><b>31</b></color>개가 필요합니다.\n[<#B0FF06>여명의 왕좌</color>]에 서식하는 마물에게서 얻으실 수 있습니다.",
+          "Eng": "To reach <color=#00B9FF>rank 26</color>,\nyou will need <color=#2DFF00><b>31</b></color> <color=#2DFF00><b>망령의 재</b></color>.\nThey drop from the creatures of <color=#B0FF06>여명의 왕좌</color>."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그럼 다녀오신 뒤에 다시 뵙죠.",
+          "Eng": "Then I’ll see you when you return."
+        }
+      ]
+    },
+    {
+      "GroupKey": "GuildQuest27Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "다시 오셨군요,\n[<#2DFF00><b>망령의 재</b></color>] <#2DFF00><b>31</b></color>개는 구해오셨나요?",
+          "Eng": "Back again.\nDid you bring <color=#2DFF00><b>31</b></color> <color=#2DFF00><b>망령의 재</b></color>?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "….\n확인 되었습니다.\n협회 규정에 따라\n<#00B9FF>[<#858585>26</color>]급 모험가</color> 승급을 진행하겠습니다.",
+          "Eng": "...Confirmed.\nIn accordance with guild regulations,\nyour promotion to a <color=#00B9FF>[<color=#858585>26</color>]-rank Adventurer</color> will now proceed."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "<#00B9FF>[<#858585>26</color>]급 모험가</color> — 협회가 인정하는 최고 등급이십니다.\n모든 지역의 통행이 허가되었습니다.",
+          "Eng": "<color=#00B9FF>[<color=#858585>26</color>]-rank Adventurer</color> — the highest rank the guild recognises.\nPassage to every region has been granted."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "여기까지가 협회가 준비한 마지막 임무입니다.\n그동안 수고 많으셨습니다.",
+          "Eng": "That was the last commission the guild had prepared.\nThank you for your service."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "언제든 다시 들러 주세요.",
+          "Eng": "Do drop by anytime."
         }
       ]
     }

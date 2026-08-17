@@ -703,6 +703,12 @@ public static class FullSystemAudit
         int savedNode = g.CurrentTravelAreaId;
         int savedItem = g.GetItemCount(ITEM);
 
+        // ⚠️ 재료를 이미 들고 있으면 퀘스트로 넘어가는 순간 그 자리에서 통과한다(정상 동작).
+        //  그러면 아래 사냥 루프가 한 번도 안 돌아 "0마리 잡아도 안 떨어진다"는 엉뚱한 실패가 난다.
+        //  **직접 사냥해서 얻는 경로**를 보려는 검사이므로 보유량을 0으로 두고 시작한다.
+        var held = g.Inventory.Find(x => x.DataId == ITEM);
+        if (held != null) held.Count = 0;
+
         Managers.Quest.JumpToQuest(QUEST);
         g.CurrentTravelAreaId = NODE;
         g.Player.RefreshStats(fullHeal: true);

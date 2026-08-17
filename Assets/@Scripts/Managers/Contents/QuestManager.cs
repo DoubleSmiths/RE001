@@ -35,6 +35,9 @@ public class QuestManager
 
         OnNotifyChanged?.Invoke();
         OnFollowUIChanged?.Invoke(CurrentQuestID);
+
+        // 세이브를 불러온 직후에도 이미 조건을 채운 상태일 수 있다.
+        EvaluateItemCountNow();
     }
 
     public void Clear()
@@ -173,6 +176,31 @@ public class QuestManager
         }
     }
 
+    // ITEM_COUNT는 "지금 몇 개 가지고 있는가"가 조건인데, 평가 지점이 인벤토리 변경 이벤트뿐이었다.
+    //  그래서 퀘스트를 **받기 전에 이미 모아 둔** 경우 아무도 다시 세지 않아, 조건을 채우고도
+    //  클리어가 안 됐다("젤리 퐁 2개가 있는데 안 되고, 직접 한 개 더 주워야 됐다").
+    //  퀘스트가 바뀌는 시점과 시작 시점에 현재 보유량으로 한 번 더 판정한다.
+    bool _evaluating;
+
+    void EvaluateItemCountNow()
+    {
+        if (_evaluating) return;               // CompleteQuest → SetCurrentQuest 재진입 차단
+        _evaluating = true;
+        try
+        {
+            // 연달아 충족될 수 있다(모아 둔 재료로 여러 단계가 한 번에 통과). 상한은 폭주 방지용.
+            for (int guard = 0; guard < 64; guard++)
+            {
+                if (!TryGetCurrentQuest(out var quest)) return;
+                if (quest.CompleteType != QuestCompleteType.ITEM_COUNT) return;
+                if (!int.TryParse(quest.CompleteTarget, out int target)) return;
+                if (Managers.Game.GetItemCount(target) < quest.CompleteCount) return;
+                CompleteQuest(CurrentQuestID);
+            }
+        }
+        finally { _evaluating = false; }
+    }
+
     void MarkMultiCondition(QuestConditionType type, string target)
     {
         if (!Managers.Data.QuestConditionDic.TryGetValue(CurrentQuestID, out var conditions))
@@ -226,6 +254,9 @@ public class QuestManager
         OnFollowUIChanged?.Invoke(questId);
 
         PlayQuestAnimation(questId);
+
+        // 새 퀘스트의 요구 아이템을 이미 들고 있으면 그 자리에서 통과시킨다.
+        EvaluateItemCountNow();
     }
 
     // 런타임 _metConditions → GameData(세이브) 동기화. SaveGame 호출은 별도.
@@ -294,15 +325,10 @@ public class QuestManager
     /// <summary>[에디터 전용] 지정한 퀘스트 ID로 즉시 이동 (이벤트 재발행)</summary>
     public void JumpToQuest(int questId)
     {
-        CurrentQuestID = questId;
-        _metConditions.Clear();
-        Managers.Game.CurrentQuestID = questId;
-        SyncMetConditionsToSave();
-        Managers.Game.SaveGame();
-
-        OnQuestChanged?.Invoke(questId);
-        OnNotifyChanged?.Invoke();
-        OnFollowUIChanged?.Invoke(questId);
+        // 예전엔 SetCurrentQuest의 내용을 그대로 베껴 뒀다. 그러다 보니 본체에 처리를 추가해도
+        //  이쪽만 빠져 **검증 도구가 실제 경로와 다르게 움직였다**(보유 아이템 즉시 판정 누락).
+        //  같은 함수를 부른다.
+        SetCurrentQuest(questId);
     }
 #endif
 }
