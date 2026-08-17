@@ -77,29 +77,95 @@ def bg_mask(im, tol=42):
     return im
 
 
-def slice_strip(raw_bytes, out_dir, name):
-    """가로 스트립 → 프레임 4장. 공통 bbox로 잘라 정렬을 유지한다."""
-    im = bg_mask(Image.open(io.BytesIO(raw_bytes)))
+def find_frame_spans(im):
+    """투명 세로 여백으로 실제 프레임 x구간을 찾는다.
+
+    ⚠️ 예전엔 이미지 폭을 그냥 4등분했다. 그런데 생성 결과는 캐릭터 4마리가 **가운데 일부
+       구간에만** 몰려 있고 양옆에 큰 여백이 남는다(실측: 1536px 폭에 내용은 231~1259).
+       4등분 경계(0/384/768/1152)와 실제 프레임(231-484, 513-744, 774-999, 1035-1259)이
+       전부 어긋나 프레임이 반씩 잘리고 옆 프레임 조각이 섞여 들어갔다.
+       → 애니메이션이 덜덜 떨리고 몸이 잘려 보이던 진짜 원인.
+    """
     w, h = im.size
-    cw = w // FRAMES
-    cells = [im.crop((i * cw, 0, (i + 1) * cw, h)) for i in range(FRAMES)]
+    alpha = im.split()[3]
+    # 열마다 불투명 픽셀이 있는지
+    occupied = [alpha.crop((x, 0, x + 1, h)).getextrema()[1] > 0 for x in range(w)]
 
-    # 각 셀의 내용 bbox 합집합 → 모든 프레임을 같은 창으로 잘라낸다(떨림 방지)
-    boxes = [c.getbbox() for c in cells]
-    boxes = [b for b in boxes if b]
-    if not boxes:
+    runs, start = [], None
+    for x, on in enumerate(occupied):
+        if on and start is None:
+            start = x
+        elif not on and start is not None:
+            runs.append((start, x))
+            start = None
+    if start is not None:
+        runs.append((start, w))
+
+    # 아주 얇은 조각(노이즈)은 버린다
+    runs = [r for r in runs if r[1] - r[0] >= max(4, w // 200)]
+    if not runs:
+        return []
+
+    # 한 캐릭터가 내부 여백(벌린 다리 등)으로 쪼개졌으면 다시 붙인다.
+    #  기준: 프레임 사이 진짜 간격보다 확실히 좁은 틈.
+    if len(runs) > FRAMES:
+        gaps = sorted(runs[i + 1][0] - runs[i][1] for i in range(len(runs) - 1))
+        # 프레임이 FRAMES개면 진짜 경계 간격은 큰 쪽 FRAMES-1개다. 그보다 좁으면 같은 캐릭터.
+        thresh = gaps[-(FRAMES - 1)] if len(gaps) >= FRAMES - 1 else 0
+        merged = [list(runs[0])]
+        for a, b in runs[1:]:
+            if a - merged[-1][1] < thresh:
+                merged[-1][1] = b
+            else:
+                merged.append([a, b])
+        runs = [tuple(r) for r in merged]
+
+    # 그래도 개수가 안 맞으면 내용 전체 구간을 균등 분할한다(전체 폭 분할보다 훨씬 낫다).
+    if len(runs) != FRAMES:
+        L, R = runs[0][0], runs[-1][1]
+        step = (R - L) / float(FRAMES)
+        runs = [(int(L + i * step), int(L + (i + 1) * step)) for i in range(FRAMES)]
+
+    return runs
+
+
+def slice_strip(raw_bytes_or_image, out_dir, name):
+    """가로 스트립 → 프레임 4장. 프레임마다 실제 위치를 찾아 자르고, 같은 창 크기로 맞춘다."""
+    im = raw_bytes_or_image
+    if isinstance(im, (bytes, bytearray)):
+        im = Image.open(io.BytesIO(im))
+    im = bg_mask(im)
+
+    spans = find_frame_spans(im)
+    if not spans:
         return 0
-    L = min(b[0] for b in boxes)
-    T = min(b[1] for b in boxes)
-    R = max(b[2] for b in boxes)
-    B = max(b[3] for b in boxes)
 
-    scale = FRAME_H / float(B - T)
-    fw = max(1, int(round((R - L) * scale)))
+    h = im.size[1]
+    cells = [im.crop((a, 0, b, h)) for a, b in spans]
+
+    # 프레임별 내용 bbox → 폭·높이는 최대값으로 통일하고 **아래를 맞춘다**(발끝 정렬).
+    #  가로는 각자 중심을 맞춘다. 이렇게 해야 서 있는 위치가 흔들리지 않는다.
+    boxes = []
+    for c in cells:
+        b = c.getbbox()
+        boxes.append(b if b else (0, 0, c.size[0], h))
+
+    fw_src = max(b[2] - b[0] for b in boxes)
+    fh_src = max(b[3] - b[1] for b in boxes)
+    if fw_src <= 0 or fh_src <= 0:
+        return 0
+
+    scale = FRAME_H / float(fh_src)
+    out_w = max(1, int(round(fw_src * scale)))
+
     n = 0
-    for i, c in enumerate(cells):
-        f = c.crop((L, T, R, B)).resize((fw, FRAME_H), Image.NEAREST)
-        f.save(os.path.join(out_dir, f"{name}_{i}.png"))
+    for i, (c, b) in enumerate(zip(cells, boxes)):
+        content = c.crop(b)
+        canvas = Image.new("RGBA", (fw_src, fh_src), (0, 0, 0, 0))
+        cw, ch = content.size
+        canvas.paste(content, ((fw_src - cw) // 2, fh_src - ch))   # 가로 중앙 / 세로 하단
+        canvas.resize((out_w, FRAME_H), Image.NEAREST).save(
+            os.path.join(out_dir, f"{name}_{i}.png"))
         n += 1
     return n
 

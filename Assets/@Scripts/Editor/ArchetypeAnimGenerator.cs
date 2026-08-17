@@ -133,6 +133,20 @@ public static class ArchetypeAnimGenerator
         var onHit = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{dir}/OnHit.anim");
         if (hasHitAtlas && (onHit == null || onHit.length < 0.3f)) return false;
 
+        // ⚠️ 길이만 보면 **참조가 끊긴 클립을 멀쩡한 것으로 착각한다.**
+        //    프레임 PNG를 다시 자르고 재임포트하면 스프라이트가 새 에셋이 되어 기존 클립의
+        //    키프레임이 전부 null이 된다 — 길이는 그대로라 건너뛰고, 인게임에선 몬스터가
+        //    스프라이트 없이 투명하게 나온다(실제로 그 상태였다). 참조까지 확인한다.
+        foreach (var (state, _, _, _) in CLIPS)
+        {
+            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{dir}/{state}.anim");
+            if (clip == null) return false;
+            var bindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
+            if (bindings.Length == 0) return false;
+            foreach (var kf in AnimationUtility.GetObjectReferenceCurve(clip, bindings[0]))
+                if (kf.value == null) return false;
+        }
+
         return true;
     }
 
