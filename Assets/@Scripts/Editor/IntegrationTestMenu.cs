@@ -78,6 +78,7 @@ public static class IntegrationTestMenu
         sb.AppendLine($"  LevelDic           = {Managers.Data.LevelDic.Count}      ← (주석 처리됨)");
         sb.AppendLine($"  ForgeRecipeDic     = {Managers.Data.ForgeRecipeDic.Count} ← (주석 처리됨)");
         sb.AppendLine($"  CraftRecipeDic     = {Managers.Data.CraftRecipeDic.Count} ← (주석 처리됨)");
+        sb.AppendLine($"  ShopItemDic        = {Managers.Data.ShopItemDic.Count}");
         sb.AppendLine($"  AreaDic            = {Managers.Data.AreaDic.Count}        ← (주석 처리됨, TravelNode로 대체)");
 
         // 플레이어 상태

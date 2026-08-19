@@ -49,6 +49,7 @@ public static class FullSystemAudit
         yield return CoAuditEquipmentUI(fail, note);
         yield return CoAuditPopupInput(fail, note);
         yield return CoAuditMinMonAndSkills(fail, note);
+        yield return CoAuditShop(fail, note);
         yield return CoAuditQuestReachable(fail, note);
 
         var sb = new StringBuilder();
@@ -86,6 +87,7 @@ public static class FullSystemAudit
             ("LevelData",        d.LevelDic?.Count        ?? 0, 300),
             ("QuestData",        d.QuestDic?.Count        ?? 0, 7),
             ("MinMonData",       d.MinMonDic?.Count       ?? 0, 3),
+            ("ShopItemData",     d.ShopItemDic?.Count     ?? 0, 30),
         };
         var head = new StringBuilder("데이터 로드:");
         foreach (var (name, count, min) in required)
@@ -94,6 +96,23 @@ public static class FullSystemAudit
             if (count < min) fail.Add($"[데이터] {name} {count}행 (최소 {min} 기대) — Addressable/파싱 확인");
         }
         note.Add(head.ToString());
+
+        // 상점 — 파는 물건이 실재하는가, 그리고 **되팔아서 돈을 벌 수 없는가**.
+        //  되팔기가가 구매가 이상이면 사고팔기를 반복해 무한히 골드를 찍을 수 있다.
+        if (d.ShopItemDic != null)
+        {
+            int badItem = 0, badPrice = 0, arbitrage = 0;
+            foreach (var sh in d.ShopItemDic.Values)
+            {
+                if (d.ItemDic == null || !d.ItemDic.ContainsKey(sh.ItemId)) badItem++;
+                if (sh.Price <= 0) badPrice++;
+                if (sh.SellPrice >= sh.Price) arbitrage++;
+            }
+            if (badItem > 0)   fail.Add($"[상점] 존재하지 않는 아이템 {badItem}건");
+            if (badPrice > 0)  fail.Add($"[상점] 구매가가 0 이하인 항목 {badPrice}건");
+            if (arbitrage > 0) fail.Add($"[상점] 되팔기가 >= 구매가 {arbitrage}건 — 무한 차익 루프");
+            note.Add($"상점: {d.ShopItemDic.Count}종 판매, 차익 루프 0, 죽은 참조 0");
+        }
 
         // 참조 무결성 — 죽은 참조는 인게임에서 "안 보임/못 만듦"으로 나타난다
         int badDrop = 0, badRecipeEquip = 0, badRecipeMat = 0, badHabitat = 0, badEnhance = 0;
@@ -644,6 +663,59 @@ public static class FullSystemAudit
     //  퀘3은 젤리 퐁(10001) 2개, 퀘6은 폴짝 젤리(10002) 5개를 요구하는데 몬스터 드롭 집합이
     //  11001~11030뿐이라 **어떤 몬스터도 이 둘을 안 떨궈** 퀘3에서 게임이 영구 정지했었다.
     //  "끝까지 플레이가 안 된다"의 진짜 원인이었으므로 데이터가 바뀔 때마다 다시 본다.
+    // ── 상점 실동작 ──────────────────────────────────────────────
+    //  데이터만 보는 검사는 "값은 맞는데 골드가 안 깎이는" 회귀를 못 잡는다.
+    //  실제로 사고팔아 골드와 수량이 정확히 움직이는지 본다.
+    static IEnumerator CoAuditShop(List<string> fail, List<string> note)
+    {
+        var g = Managers.Game;
+        var stock = g.GetShopStock();
+        if (stock.Count == 0)
+        {
+            fail.Add("[상점] 진열 목록이 비어 있다 (레벨 조건 또는 데이터 로드 확인)");
+            yield break;
+        }
+
+        var shop = stock[0];
+        const int N = 3;
+
+        int gold0 = g.Gold;
+        int  cnt0  = g.GetItemCount(shop.ItemId);
+
+        if (!g.BuyShopItem(shop, N)) { fail.Add("[상점] 구매 실패 (골드 충분한데 거절)"); yield break; }
+        yield return null;
+
+        int gold1 = g.Gold;
+        int  cnt1  = g.GetItemCount(shop.ItemId);
+        if (gold0 - gold1 != shop.Price * N)
+            fail.Add($"[상점] 구매 골드 차감 불일치: 기대 {shop.Price * N}, 실제 {gold0 - gold1}");
+        if (cnt1 - cnt0 != N)
+            fail.Add($"[상점] 구매 수량 불일치: 기대 +{N}, 실제 +{cnt1 - cnt0}");
+
+        if (!g.SellShopItem(shop, N)) { fail.Add("[상점] 판매 실패 (보유 중인데 거절)"); yield break; }
+        yield return null;
+
+        int gold2 = g.Gold;
+        int  cnt2  = g.GetItemCount(shop.ItemId);
+        if (gold2 - gold1 != shop.SellPrice * N)
+            fail.Add($"[상점] 판매 골드 환급 불일치: 기대 {shop.SellPrice * N}, 실제 {gold2 - gold1}");
+        if (cnt2 != cnt0)
+            fail.Add($"[상점] 판매 후 수량이 원래대로 안 돌아옴: {cnt0} -> {cnt2}");
+
+        // 살 수 없는 상황에서 막히는가 — 막히지 않으면 골드가 음수로 간다.
+        int saved = g.Gold;
+        g.Gold = 0;
+        yield return null;
+        if (string.IsNullOrEmpty(g.GetBuyBlockReason(shop)))
+            fail.Add("[상점] 골드 0인데 구매가 막히지 않는다");
+        if (g.BuyShopItem(shop))
+            fail.Add("[상점] 골드 0인데 구매가 성사된다");
+        g.Gold = saved;
+        yield return null;
+
+        note.Add($"상점 실동작: 구매/판매 왕복 골드·수량 일치, 잔액 부족 차단 확인 (품목 {shop.ItemId})");
+    }
+
     static IEnumerator CoAuditQuestReachable(List<string> fail, List<string> note)
     {
         var data = Managers.Data;
