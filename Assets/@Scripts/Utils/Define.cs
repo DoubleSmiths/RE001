@@ -163,6 +163,8 @@ public class Define
         Guild,
         Alchemy,
         Monastery,
+        Forge,
+        Shop,
     }
 
     public enum TabType
@@ -1496,6 +1498,32 @@ public class Define
         public const string ItemBMORDescText = "ItemBMORDescText";
         public const string MagicAttackText = "MagicAttackText";
         public const string EnhanceLevelText = "EnhanceLevelText";
+        public const string EnhanceSucceededText = "EnhanceSucceededText";
+        public const string EnhanceFailedText = "EnhanceFailedText";
+        public const string EnhancePreviewText = "EnhancePreviewText";
+        public const string MonasteryUnlockText = "MonasteryUnlockText";
+        public const string MonasteryNothingText = "MonasteryNothingText";
+        public const string ForgeUnlockText = "ForgeUnlockText";
+        public const string ForgeCraftBtnText = "ForgeCraftBtnText";
+        public const string ForgeEnhanceBtnText = "ForgeEnhanceBtnText";
+        public const string ForgeCraftTitleText = "ForgeCraftTitleText";
+        public const string ForgeNoCraftableText = "ForgeNoCraftableText";
+        public const string ForgeCraftedText = "ForgeCraftedText";
+        public const string ForgeOwnedText = "ForgeOwnedText";
+        public const string ForgeNoEquipText = "ForgeNoEquipText";
+        public const string ShopText = "ShopText";
+        public const string ShopUnlockText = "ShopUnlockText";
+        public const string ShopBuyBtnText = "ShopBuyBtnText";
+        public const string ShopSellBtnText = "ShopSellBtnText";
+        public const string ShopBuyTitleText = "ShopBuyTitleText";
+        public const string ShopSellTitleText = "ShopSellTitleText";
+        public const string ShopNotEnoughGoldText = "ShopNotEnoughGoldText";
+        public const string ShopNothingToSellText = "ShopNothingToSellText";
+        public const string ShopLockedItemText = "ShopLockedItemText";
+        public const string ShopPurchasedText = "ShopPurchasedText";
+        public const string ShopSoldText = "ShopSoldText";
+        public const string ShopSellPriceText = "ShopSellPriceText";
+        public const string ShopOwnedCountText = "ShopOwnedCountText";
 
     }
     #endregion
@@ -1553,6 +1581,18 @@ public class Define
     public const string VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT = "VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT";
     public const string VILLAGE1_MONASTERY_QUEST_VFX = "VILLAGE1_MONASTERY_QUEST_VFX";
     public const string MONASTERY_EXIT_QUEST_VFX = "MONASTERY_EXIT_QUEST_VFX";
+
+    // 대장간 / 상점
+    public const string VILLAGE1_FORGE_VFX       = "VILLAGE1_FORGE_VFX";
+    public const string VILLAGE1_FORGE_TALK_VFX  = "VILLAGE1_FORGE_TALK_VFX";
+    public const string FORGE_EXIT_QUEST_VFX     = "FORGE_EXIT_QUEST_VFX";
+    public const string BTN_FORGE_CRAFT          = "BTN_FORGE_CRAFT";
+    public const string BTN_FORGE_ENHANCE        = "BTN_FORGE_ENHANCE";
+    public const string VILLAGE1_SHOP_VFX        = "VILLAGE1_SHOP_VFX";
+    public const string VILLAGE1_SHOP_TALK_VFX   = "VILLAGE1_SHOP_TALK_VFX";
+    public const string SHOP_EXIT_QUEST_VFX      = "SHOP_EXIT_QUEST_VFX";
+    public const string BTN_SHOP_BUY             = "BTN_SHOP_BUY";
+    public const string BTN_SHOP_SELL            = "BTN_SHOP_SELL";
     #endregion
 
     #region UnlockKey
@@ -1566,6 +1606,13 @@ public class Define
 
     // UI_Village1BtnGroup 연금공방 버튼
     public const string UNLOCK_ALCHEMY_BUTTON   = "UNLOCK_ALCHEMY_BUTTON";
+
+    // UI_Village1BtnGroup 마을 건물 — 수도원/대장간/상점.
+    //  수도원은 그룹·[축성]까지 저작돼 있었는데 메인 버튼에 클릭 바인딩이 없어 들어갈 방법이 없었다.
+    //  대장간/상점은 TempButton1/TempButton2 자리를 쓴다.
+    public const string UNLOCK_MONASTERY_BUTTON = "UNLOCK_MONASTERY_BUTTON";
+    public const string UNLOCK_FORGE_BUTTON     = "UNLOCK_FORGE_BUTTON";
+    public const string UNLOCK_SHOP_BUTTON      = "UNLOCK_SHOP_BUTTON";
     #endregion
 
     // Mythic_Button

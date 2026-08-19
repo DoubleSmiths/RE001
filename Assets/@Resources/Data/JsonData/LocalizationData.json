@@ -127,7 +127,7 @@
     },
     {
       "TextKey": "ForgeText",
-      "Kor": "단조",
+      "Kor": "대장간",
       "Eng": "FORGE"
     },
     {
@@ -6094,6 +6094,121 @@
       "TextKey": "EnhancePreviewText",
       "Kor": "강화 성공 시 능력치 변화",
       "Eng": "ON SUCCESS"
+    },
+    {
+      "TextKey": "MonasteryUnlockText",
+      "Kor": "수도원에 출입할 수 있게 되었습니다.\n[축성]으로 직업 능력을 받으세요.",
+      "Eng": "The Monastery is now open to you.\nReceive your class blessings there."
+    },
+    {
+      "TextKey": "MonasteryNothingText",
+      "Kor": "준비 중",
+      "Eng": "LOCKED"
+    },
+    {
+      "TextKey": "ForgeUnlockText",
+      "Kor": "대장간이 문을 열었습니다.\n재료를 모아 장비를 만들 수 있습니다.",
+      "Eng": "The Forge has opened.\nGather materials to craft equipment."
+    },
+    {
+      "TextKey": "ForgeCraftBtnText",
+      "Kor": "제작",
+      "Eng": "CRAFT"
+    },
+    {
+      "TextKey": "ForgeEnhanceBtnText",
+      "Kor": "강화",
+      "Eng": "ENHANCE"
+    },
+    {
+      "TextKey": "ForgeCraftTitleText",
+      "Kor": "장비 제작",
+      "Eng": "CRAFT EQUIPMENT"
+    },
+    {
+      "TextKey": "ForgeNoCraftableText",
+      "Kor": "지금 만들 수 있는 장비가 없습니다.",
+      "Eng": "Nothing can be crafted right now."
+    },
+    {
+      "TextKey": "ForgeCraftedText",
+      "Kor": "제작 완료",
+      "Eng": "CRAFTED"
+    },
+    {
+      "TextKey": "ForgeOwnedText",
+      "Kor": "보유 중",
+      "Eng": "OWNED"
+    },
+    {
+      "TextKey": "ForgeNoEquipText",
+      "Kor": "손질할 장비가 없습니다.",
+      "Eng": "You have no equipment to work on."
+    },
+    {
+      "TextKey": "ShopText",
+      "Kor": "상점",
+      "Eng": "SHOP"
+    },
+    {
+      "TextKey": "ShopUnlockText",
+      "Kor": "상점이 문을 열었습니다.\n물약과 재료를 사고팔 수 있습니다.",
+      "Eng": "The Shop has opened.\nBuy and sell potions and materials."
+    },
+    {
+      "TextKey": "ShopBuyBtnText",
+      "Kor": "구매",
+      "Eng": "BUY"
+    },
+    {
+      "TextKey": "ShopSellBtnText",
+      "Kor": "판매",
+      "Eng": "SELL"
+    },
+    {
+      "TextKey": "ShopBuyTitleText",
+      "Kor": "판매 목록",
+      "Eng": "FOR SALE"
+    },
+    {
+      "TextKey": "ShopSellTitleText",
+      "Kor": "되팔기",
+      "Eng": "SELL BACK"
+    },
+    {
+      "TextKey": "ShopNotEnoughGoldText",
+      "Kor": "골드가 부족합니다.",
+      "Eng": "Not enough gold."
+    },
+    {
+      "TextKey": "ShopNothingToSellText",
+      "Kor": "되팔 물건이 없습니다.",
+      "Eng": "Nothing to sell."
+    },
+    {
+      "TextKey": "ShopLockedItemText",
+      "Kor": "Lv.{0} 부터",
+      "Eng": "From Lv.{0}"
+    },
+    {
+      "TextKey": "ShopPurchasedText",
+      "Kor": "구매했습니다.",
+      "Eng": "Purchased."
+    },
+    {
+      "TextKey": "ShopSoldText",
+      "Kor": "판매했습니다.",
+      "Eng": "Sold."
+    },
+    {
+      "TextKey": "ShopSellPriceText",
+      "Kor": "판매가",
+      "Eng": "SELL PRICE"
+    },
+    {
+      "TextKey": "ShopOwnedCountText",
+      "Kor": "보유",
+      "Eng": "OWNED"
     }
   ]
 }

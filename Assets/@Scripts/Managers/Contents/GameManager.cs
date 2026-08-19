@@ -1087,6 +1087,71 @@ public class GameManager
         OnItemChanged?.Invoke(dataId);
     }
 
+    #region 상점 (Shop)
+    //  골드 소비처가 강화와 주문제작 둘뿐이라 사냥으로 쌓인 골드가 갈 곳이 없었다.
+    //  구매/판매 판정은 여기 한 곳에 둔다 — UI가 각자 검사하면 한쪽만 고쳐지는 일이 생긴다.
+
+    /// <summary>지금 상점에 진열되는 목록. 해금 레벨을 넘긴 것만.</summary>
+    public List<Data.ShopItemData> GetShopStock()
+    {
+        var list = new List<Data.ShopItemData>();
+        if (Managers.Data.ShopItemDic == null) return list;
+
+        foreach (var s in Managers.Data.ShopItemDic.Values)
+            if (Level >= s.UnlockLevel)
+                list.Add(s);
+
+        list.Sort((a, b) => a.DataId.CompareTo(b.DataId));
+        return list;
+    }
+
+    /// <summary>되팔 수 있는 것 중 **실제로 가진 것**만. 목록이 비면 판매 탭이 빈 화면이 된다.</summary>
+    public List<Data.ShopItemData> GetSellableStock()
+    {
+        var list = new List<Data.ShopItemData>();
+        if (Managers.Data.ShopItemDic == null) return list;
+
+        foreach (var s in Managers.Data.ShopItemDic.Values)
+            if (s.SellPrice > 0 && GetItemCount(s.ItemId) > 0)
+                list.Add(s);
+
+        list.Sort((a, b) => a.DataId.CompareTo(b.DataId));
+        return list;
+    }
+
+    /// <summary>구매가 막힌 이유. 살 수 있으면 빈 문자열.</summary>
+    public string GetBuyBlockReason(Data.ShopItemData shop, int count = 1)
+    {
+        if (shop == null) return "판매하지 않는 물건";
+        if (Level < shop.UnlockLevel) return $"Lv.{shop.UnlockLevel} 필요";
+        if (Gold < shop.Price * count) return Util.Localize(Define.LocalizeKey.ShopNotEnoughGoldText);
+        return string.Empty;
+    }
+
+    public bool BuyShopItem(Data.ShopItemData shop, int count = 1)
+    {
+        if (count <= 0) return false;
+        if (!string.IsNullOrEmpty(GetBuyBlockReason(shop, count))) return false;
+
+        Gold -= shop.Price * count;
+        AddItem(shop.ItemId, count);
+        SaveGame();
+        return true;
+    }
+
+    public bool SellShopItem(Data.ShopItemData shop, int count = 1)
+    {
+        if (shop == null || count <= 0) return false;
+        if (shop.SellPrice <= 0) return false;
+        if (GetItemCount(shop.ItemId) < count) return false;
+
+        RemoveItem(shop.ItemId, count);
+        Gold += shop.SellPrice * count;
+        SaveGame();
+        return true;
+    }
+    #endregion
+
     public bool HasItem(int dataId, int count = 1)
     {
         var existing = Inventory.Find(i => i.DataId == dataId);

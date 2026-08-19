@@ -284,6 +284,21 @@
       "QuestID": 55,
       "UnlockType": 2,
       "TargetID": "10013"
+    },
+    {
+      "QuestID": 7,
+      "UnlockType": 0,
+      "TargetID": "UNLOCK_FORGE_BUTTON"
+    },
+    {
+      "QuestID": 9,
+      "UnlockType": 0,
+      "TargetID": "UNLOCK_SHOP_BUTTON"
+    },
+    {
+      "QuestID": 11,
+      "UnlockType": 0,
+      "TargetID": "UNLOCK_MONASTERY_BUTTON"
     }
   ]
 }

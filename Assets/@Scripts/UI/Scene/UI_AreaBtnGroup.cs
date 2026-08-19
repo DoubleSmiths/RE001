@@ -106,6 +106,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
     public void PlaceNameAnim(RectTransform rt)
     {
         rt.DOKill();
+        rt.gameObject.SetActive(true);
 
         Sequence seq = DOTween.Sequence();
 
@@ -123,6 +124,10 @@ public abstract class UI_AreaBtnGroup : UI_Base
         seq.Append(
             rt.DOAnchorPos(new Vector2(150f, 12f), 0.15f)
               .SetEase(Ease.OutQuad));
+
+        // 빠져나간 자리에 그대로 켜 둔 채였다. 마스킹이 없어 폰 프레임 **바깥에** 장소명이
+        //  계속 떠 있었다 — 나갔으면 꺼야 한다. 다음 재생은 위에서 다시 켠다.
+        seq.OnComplete(() => rt.gameObject.SetActive(false));
     }
 
     public void ButtonMoveAnim(RectTransform rt, float fromX, float fromY, float toX, float toY, Ease ease = Ease.OutBack)

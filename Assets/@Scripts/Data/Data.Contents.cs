@@ -465,6 +465,35 @@ namespace Data
     }
     #endregion
 
+    #region ShopItemData
+    [Serializable]
+    // 마을 상점 판매 목록 (_tools/gen_shop_items.py 생성).
+    //  골드 소비처가 강화(GameManager:888)와 주문제작(:1202) 둘뿐이라 사냥으로 쌓인 골드가
+    //  갈 곳이 없었다. 상점은 **장비를 팔지 않는다** — 장비 획득은 대장간 제작으로 몰아야
+    //  재료가 쌓이기만 하는 문제가 풀리고, 두 건물이 서로 역할을 먹지 않는다.
+    public class ShopItemData
+    {
+        public int DataId;
+        public int ItemId;          // 파는 물건 (재료/물약/주문서 — ItemDic 또는 포션 사전 기준)
+        public int Price;           // 구매가(골드)
+        public int SellPrice;       // 되팔기가. 0이면 되팔 수 없다
+        public int UnlockLevel;     // 이 레벨부터 목록에 뜬다
+    }
+
+    [Serializable]
+    public class ShopItemDataLoader : ILoader<int, ShopItemData>
+    {
+        public List<ShopItemData> items = new List<ShopItemData>();
+        public Dictionary<int, ShopItemData> MakeDict()
+        {
+            var dict = new Dictionary<int, ShopItemData>();
+            foreach (var item in items)
+                dict.Add(item.DataId, item);
+            return dict;
+        }
+    }
+    #endregion
+
     #region CraftRecipeData
     [Serializable]
     public class CraftMaterial

@@ -949,6 +949,76 @@
           "Eng": "Do drop by anytime."
         }
       ]
+    },
+    {
+      "GroupKey": "ForgeNormalText",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "불 앞은 뜨거워.\n용건 있으면 빨리 말해.",
+          "Eng": "It's hot by the fire.\nSay your piece quickly."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "재료만 가져와.\n모양은 내가 잡아 줄 테니까.",
+          "Eng": "Just bring me the materials.\nI'll shape them."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "쇠는 정직해.\n두드린 만큼만 단단해지지.",
+          "Eng": "Iron is honest.\nIt hardens exactly as much as you strike it."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "그 무기, 날이 상했는데.\n손봐 줄까?",
+          "Eng": "That blade's gone dull.\nWant me to work on it?"
+        },
+        {
+          "TextKey": 5,
+          "Kor": "강화는 운이야.\n실패해도 나한테 화내지 마.",
+          "Eng": "Enhancement is luck.\nDon't take a failure out on me."
+        },
+        {
+          "TextKey": 6,
+          "Kor": "좋은 장비 하나가\n목숨을 두 번 살려.",
+          "Eng": "One good piece of gear\nsaves your life twice."
+        }
+      ]
+    },
+    {
+      "GroupKey": "ShopNormalText",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "어서 오세요!\n오늘은 뭘 찾으시나요?",
+          "Eng": "Welcome!\nWhat are you looking for today?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "재료는 넉넉히 사 두세요.\n필요할 때는 꼭 모자라거든요.",
+          "Eng": "Buy plenty of materials.\nYou always run short right when you need them."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "안 쓰는 물건은 저한테 파세요.\n값은 후하게 쳐 드릴게요… 조금은요.",
+          "Eng": "Sell me what you don't use.\nI'll pay well... a little well."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "강화 주문서요?\n안쪽 선반에 있습니다.",
+          "Eng": "Enhancement scrolls?\nThey're on the inner shelf."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "골드는 쓰라고 있는 겁니다.\n쌓아두면 그냥 쇳조각이죠.",
+          "Eng": "Gold is meant to be spent.\nPiled up, it's just scrap metal."
+        },
+        {
+          "TextKey": 6,
+          "Kor": "또 오세요!\n다음엔 더 좋은 물건 들여놓을게요.",
+          "Eng": "Come again!\nI'll have better stock next time."
+        }
+      ]
     }
   ]
 }

@@ -40,6 +40,30 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1MonasteryNothingButton2Icon,
         Village1MonasteryNothingButton3Icon,
         Village1MonasteryExitButtonIcon,
+
+        // 대장간
+        ForgeButtonIcon,
+        Village1ForgeTalkButtonImage,
+        Village1ForgeTalkButtonIcon,
+        Village1ForgeTalkButtonImage2,
+        Village1ForgeTalkButtonIcon2,
+        ForgeCraftButtonIcon,
+        ForgeEnhanceButtonIcon,
+        Village1ForgeNothingButton2Icon,
+        Village1ForgeNothingButton3Icon,
+        Village1ForgeExitButtonIcon,
+
+        // 상점
+        ShopButtonIcon,
+        Village1ShopTalkButtonImage,
+        Village1ShopTalkButtonIcon,
+        Village1ShopTalkButtonImage2,
+        Village1ShopTalkButtonIcon2,
+        ShopBuyButtonIcon,
+        ShopSellButtonIcon,
+        Village1ShopNothingButton2Icon,
+        Village1ShopNothingButton3Icon,
+        Village1ShopExitButtonIcon,
     }
 
     enum Texts
@@ -75,6 +99,28 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1MonasteryNothingButton2Text,
         Village1MonasteryNothingButton3Text,
         Village1MonasteryExitButtonText,
+
+        // 대장간
+        ForgeButtonText,
+        Village1ForgeNameText,
+        Village1ForgeTalkButtonText,
+        ForgeCraftButtonText,
+        ForgeCraftButtonNewTxt,
+        ForgeEnhanceButtonText,
+        Village1ForgeNothingButton2Text,
+        Village1ForgeNothingButton3Text,
+        Village1ForgeExitButtonText,
+
+        // 상점
+        ShopButtonText,
+        Village1ShopNameText,
+        Village1ShopTalkButtonText,
+        ShopBuyButtonText,
+        ShopBuyButtonNewTxt,
+        ShopSellButtonText,
+        Village1ShopNothingButton2Text,
+        Village1ShopNothingButton3Text,
+        Village1ShopExitButtonText,
     }
 
     enum Buttons
@@ -82,8 +128,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GuildButton,
         AlchemyButton,
         MonasteryButton,
-        TempButton1,
-        TempButton2,
+        ForgeButton,
+        ShopButton,
         TravelButton,
         Village1GuildTalkButton,
         Village1GuildQuestButton,
@@ -103,6 +149,22 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1MonasteryNothingButton2,
         Village1MonasteryNothingButton3,
         Village1MonasteryExitButton,
+
+        // 대장간
+        Village1ForgeTalkButton,
+        ForgeCraftButton,
+        ForgeEnhanceButton,
+        Village1ForgeNothingButton2,
+        Village1ForgeNothingButton3,
+        Village1ForgeExitButton,
+
+        // 상점
+        Village1ShopTalkButton,
+        ShopBuyButton,
+        ShopSellButton,
+        Village1ShopNothingButton2,
+        Village1ShopNothingButton3,
+        Village1ShopExitButton,
     }
 
     enum GameObjects
@@ -126,6 +188,20 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Village1MonasteryTalkVFX_Sub1,
         Village1MonasteryQuestVFX,
         MonasteryExitQuestVFX,
+
+        // 대장간
+        Village1ForgeBtnGroup,
+        Village1ForgeTalkVFX,
+        Village1ForgeTalkVFX_Sub1,
+        Village1ForgeQuestVFX,
+        ForgeExitQuestVFX,
+
+        // 상점
+        Village1ShopBtnGroup,
+        Village1ShopTalkVFX,
+        Village1ShopTalkVFX_Sub1,
+        Village1ShopQuestVFX,
+        ShopExitQuestVFX,
     }
 
     #endregion
@@ -146,6 +222,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         GetImage((int)Images.GuildButtonIcon).gameObject.BindEvent(OnClickGuild);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.BindEvent(OnClickAlchemy);
+        GetImage((int)Images.MonasteryButtonIcon).gameObject.BindEvent(OnClickMonastery);
+        GetImage((int)Images.ForgeButtonIcon).gameObject.BindEvent(OnClickForge);
+        GetImage((int)Images.ShopButtonIcon).gameObject.BindEvent(OnClickShop);
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
         GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() =>
         {
@@ -178,8 +257,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 GetButton((int)Buttons.GuildButton).gameObject.SetActive(false);
                 GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(false);
                 GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(false);
-                GetButton((int)Buttons.TempButton1).gameObject.SetActive(false);
-                GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
+                GetButton((int)Buttons.ForgeButton).gameObject.SetActive(false);
+                GetButton((int)Buttons.ShopButton).gameObject.SetActive(false);
                 GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
                 SwitchBG("Village1_Main_BG");
@@ -201,9 +280,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             seq.AppendInterval(0.07f);
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 0, 0, 52.5f, 45.5f));
             seq.AppendInterval(0.07f);
-            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.ForgeButton).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
             seq.AppendInterval(0.07f);
-            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.ShopButton).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
             seq.AppendInterval(0.07f);
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
 
@@ -240,8 +319,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 GetButton((int)Buttons.GuildButton).gameObject.SetActive(false);
                 GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(false);
                 GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(false);
-                GetButton((int)Buttons.TempButton1).gameObject.SetActive(false);
-                GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
+                GetButton((int)Buttons.ForgeButton).gameObject.SetActive(false);
+                GetButton((int)Buttons.ShopButton).gameObject.SetActive(false);
                 GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
                 SwitchBG("Village1_Main_BG");
@@ -263,25 +342,31 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             seq.AppendInterval(0.07f);
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 0, 0, 52.5f, 45.5f));
             seq.AppendInterval(0.07f);
-            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.ForgeButton).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
             seq.AppendInterval(0.07f);
-            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.ShopButton).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
             seq.AppendInterval(0.07f);
             seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
 
             seq.AppendCallback(TryPlayPendingUnlock);
         });
-        GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(() =>
-        {
-            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
-            _gameScene.FadeInOut();
-            OnClickMain();
-        });
+        GetButton((int)Buttons.Village1MonasteryExitButton).gameObject.BindEvent(
+            () => ExitBuilding(MONASTERY_EXIT_QUEST_VFX, MONASTERY_SUB_BTNS));
+        GetButton((int)Buttons.Village1ForgeExitButton).gameObject.BindEvent(
+            () => ExitBuilding(FORGE_EXIT_QUEST_VFX, FORGE_SUB_BTNS));
+        GetButton((int)Buttons.Village1ShopExitButton).gameObject.BindEvent(
+            () => ExitBuilding(SHOP_EXIT_QUEST_VFX, SHOP_SUB_BTNS));
         GetButton((int)Buttons.Village1GuildTalkButton).gameObject.BindEvent(OnClickVillage1GuildTalkButton);
         GetButton((int)Buttons.Village1GuildQuestButton).gameObject.BindEvent(OnClickVillage1GuildQuestButton);
         GetButton((int)Buttons.Village1AlchemyTalkButton).gameObject.BindEvent(OnClickVillage1AlchemyTalkButton);
         GetButton((int)Buttons.CustomOrderButton).gameObject.BindEvent(OnClickCustomOrder);
         GetButton((int)Buttons.MonasteryClassButton).gameObject.BindEvent(OnClickMonasteryClass);
+        GetButton((int)Buttons.ForgeCraftButton).gameObject.BindEvent(OnClickForgeCraft);
+        GetButton((int)Buttons.ForgeEnhanceButton).gameObject.BindEvent(OnClickForgeEnhance);
+        GetButton((int)Buttons.ShopBuyButton).gameObject.BindEvent(OnClickShopBuy);
+        GetButton((int)Buttons.ShopSellButton).gameObject.BindEvent(OnClickShopSell);
+        GetButton((int)Buttons.Village1ForgeTalkButton).gameObject.BindEvent(OnClickVillage1ForgeTalkButton);
+        GetButton((int)Buttons.Village1ShopTalkButton).gameObject.BindEvent(OnClickVillage1ShopTalkButton);
         GetButton((int)Buttons.TravelButton).gameObject.BindEvent(OnClickTravel);
 
         Managers.Quest.OnNotifyChanged += RefreshNotify;
@@ -333,6 +418,18 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         SetTextLocalized(Texts.MonasteryButtonText, LocalizeKey.MonasteryText);
         SetTextLocalized(Texts.MonasteryButtonNewTxt, LocalizeKey.MonasteryButtonNewTxt);
         SetTextLocalized(Texts.TravelButtonText, LocalizeKey.TravelBtnText);
+        SetTextLocalized(Texts.ForgeButtonText, LocalizeKey.ForgeText);
+        SetTextLocalized(Texts.ShopButtonText, LocalizeKey.ShopText);
+        SetTextLocalized(Texts.Village1ForgeNameText, LocalizeKey.ForgeText);
+        SetTextLocalized(Texts.Village1ForgeTalkButtonText, LocalizeKey.TalkBtnText);
+        SetTextLocalized(Texts.ForgeCraftButtonText, LocalizeKey.ForgeCraftBtnText);
+        SetTextLocalized(Texts.ForgeEnhanceButtonText, LocalizeKey.ForgeEnhanceBtnText);
+        SetTextLocalized(Texts.Village1ForgeExitButtonText, LocalizeKey.ExitBtnText);
+        SetTextLocalized(Texts.Village1ShopNameText, LocalizeKey.ShopText);
+        SetTextLocalized(Texts.Village1ShopTalkButtonText, LocalizeKey.TalkBtnText);
+        SetTextLocalized(Texts.ShopBuyButtonText, LocalizeKey.ShopBuyBtnText);
+        SetTextLocalized(Texts.ShopSellButtonText, LocalizeKey.ShopSellBtnText);
+        SetTextLocalized(Texts.Village1ShopExitButtonText, LocalizeKey.ExitBtnText);
         SetTextLocalized(Texts.TravelButtonNewTxt, LocalizeKey.TravelButtonNewTxt);
 
         // 길드 그룹
@@ -456,11 +553,15 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         //GetImage((int)Images.GuildButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.AlchemyButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.MonasteryButtonIcon).gameObject.SetActive(false);
+        GetImage((int)Images.ForgeButtonIcon).gameObject.SetActive(false);
+        GetImage((int)Images.ShopButtonIcon).gameObject.SetActive(false);
         GetImage((int)Images.TravelButtonIcon).gameObject.SetActive(false);
         //GetText((int)Texts.GuildButtonText).gameObject.SetActive(false);
         GetText((int)Texts.AlchemyButtonText).gameObject.SetActive(false);
         GetText((int)Texts.AlchemyButtonNewTxt).gameObject.SetActive(false);
         GetText((int)Texts.MonasteryButtonText).gameObject.SetActive(false);
+        GetText((int)Texts.ForgeButtonText).gameObject.SetActive(false);
+        GetText((int)Texts.ShopButtonText).gameObject.SetActive(false);
         GetText((int)Texts.MonasteryButtonNewTxt).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonText).gameObject.SetActive(false);
         GetText((int)Texts.TravelButtonNewTxt).gameObject.SetActive(false);
@@ -469,6 +570,32 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         {
             GetImage((int)Images.AlchemyButtonIcon).gameObject.SetActive(true);
             GetText((int)Texts.AlchemyButtonText).gameObject.SetActive(true);
+        }
+
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_MONASTERY_BUTTON))
+        {
+            GetImage((int)Images.MonasteryButtonIcon).gameObject.SetActive(true);
+            GetText((int)Texts.MonasteryButtonText).gameObject.SetActive(true);
+        }
+
+        // 여정도 여기서 켠다. 예전엔 Init()에서만 복원해서, SetInfo가 한 번 더 불리면
+        //  (그룹 갱신 등) 해금돼 있는데도 여정 칸만 빈 채로 남았다.
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_TRAVEL_BUTTON))
+        {
+            GetImage((int)Images.TravelButtonIcon).gameObject.SetActive(true);
+            GetText((int)Texts.TravelButtonText).gameObject.SetActive(true);
+        }
+
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_FORGE_BUTTON))
+        {
+            GetImage((int)Images.ForgeButtonIcon).gameObject.SetActive(true);
+            GetText((int)Texts.ForgeButtonText).gameObject.SetActive(true);
+        }
+
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_SHOP_BUTTON))
+        {
+            GetImage((int)Images.ShopButtonIcon).gameObject.SetActive(true);
+            GetText((int)Texts.ShopButtonText).gameObject.SetActive(true);
         }
 
         //GetObject((int)GameObjects.Village1GuildVFX).gameObject.SetActive(true);
@@ -501,8 +628,18 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                 break;
             case Village1Group.Monastery:
                 HideAllGroup();
-                SwitchBG("Village1_Main_BG");
+                SwitchBG("Village1_Monastery_BG");
                 ShowGroup(GameObjects.Village1MonasteryBtnGroup);
+                break;
+            case Village1Group.Forge:
+                HideAllGroup();
+                SwitchBG("Village1_Forge_BG");
+                ShowGroup(GameObjects.Village1ForgeBtnGroup);
+                break;
+            case Village1Group.Shop:
+                HideAllGroup();
+                SwitchBG("Village1_Shop_BG");
+                ShowGroup(GameObjects.Village1ShopBtnGroup);
                 break;
             default:
                 OnClickMain();
@@ -516,6 +653,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetObject((int)GameObjects.Village1GuildBtnGroup).SetActive(group == GameObjects.Village1GuildBtnGroup);
         GetObject((int)GameObjects.Village1AlchemyBtnGroup).SetActive(group == GameObjects.Village1AlchemyBtnGroup);
         GetObject((int)GameObjects.Village1MonasteryBtnGroup).SetActive(group == GameObjects.Village1MonasteryBtnGroup);
+        GetObject((int)GameObjects.Village1ForgeBtnGroup).SetActive(group == GameObjects.Village1ForgeBtnGroup);
+        GetObject((int)GameObjects.Village1ShopBtnGroup).SetActive(group == GameObjects.Village1ShopBtnGroup);
     }
 
     /// <summary>
@@ -530,7 +669,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         if (legacyBG != null) legacyBG.SetActive(false);
 
         // 기존 BG prefab 인스턴스 제거 (씬 루트에서 모두 탐색, 중복 스폰도 정리)
-        foreach (var key in new[] { "Village1_Main_BG", "Village1_Guild_BG", "Village1_Alchemy_BG" })
+        foreach (var key in new[] { "Village1_Main_BG", "Village1_Guild_BG", "Village1_Alchemy_BG",
+                                    "Village1_Monastery_BG", "Village1_Forge_BG", "Village1_Shop_BG" })
         {
             foreach (var go in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
             {
@@ -602,7 +742,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetObject((int)GameObjects.Village1MainBtnGroup).gameObject.SetActive(false);
         GetObject((int)GameObjects.Village1GuildBtnGroup).gameObject.SetActive(false);
         GetObject((int)GameObjects.Village1AlchemyBtnGroup).gameObject.SetActive(false);
-        GetObject((int)GameObjects.Village1AlchemyBtnGroup).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Village1MonasteryBtnGroup).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Village1ForgeBtnGroup).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Village1ShopBtnGroup).gameObject.SetActive(false);
     }
 
     void OnClickMain()
@@ -618,8 +760,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.GuildButton).gameObject.SetActive(false);
         GetButton((int)Buttons.AlchemyButton).gameObject.SetActive(false);
         GetButton((int)Buttons.MonasteryButton).gameObject.SetActive(false);
-        GetButton((int)Buttons.TempButton1).gameObject.SetActive(false);
-        GetButton((int)Buttons.TempButton2).gameObject.SetActive(false);
+        GetButton((int)Buttons.ForgeButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.ShopButton).gameObject.SetActive(false);
         GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
         Sequence seq = DOTween.Sequence();
@@ -638,9 +780,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendInterval(0.07f);
         seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 0, 0, 52.5f, 45.5f));
         seq.AppendInterval(0.07f);
-        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.ForgeButton).GetComponent<RectTransform>(), 0, 0, -51.5f, -21.5f));
         seq.AppendInterval(0.07f);
-        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
+        seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.ShopButton).GetComponent<RectTransform>(), 0, 0, 0.5f, -21.5f));
         seq.AppendInterval(0.07f);
         seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
 
@@ -682,6 +824,36 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                         .SetInfo("Travel_Icon", LocalizeKey.TravelBtnText, LocalizeKey.TravelUnlockText)); // 해금 대상 = [여정] 버튼
                 break;
 
+            case UNLOCK_FORGE_BUTTON:
+                BeginUnlockNotifySuppression();
+                UnlockButtonAnim(
+                    GetButton((int)Buttons.ForgeButton).gameObject,
+                    GetImage((int)Images.ForgeButtonIcon),
+                    GetText((int)Texts.ForgeButtonText),
+                    onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
+                        .SetInfo("Forge_Icon", LocalizeKey.ForgeText, LocalizeKey.ForgeUnlockText));
+                break;
+
+            case UNLOCK_SHOP_BUTTON:
+                BeginUnlockNotifySuppression();
+                UnlockButtonAnim(
+                    GetButton((int)Buttons.ShopButton).gameObject,
+                    GetImage((int)Images.ShopButtonIcon),
+                    GetText((int)Texts.ShopButtonText),
+                    onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
+                        .SetInfo("Shop_Icon", LocalizeKey.ShopText, LocalizeKey.ShopUnlockText));
+                break;
+
+            case UNLOCK_MONASTERY_BUTTON:
+                BeginUnlockNotifySuppression();
+                UnlockButtonAnim(
+                    GetButton((int)Buttons.MonasteryButton).gameObject,
+                    GetImage((int)Images.MonasteryButtonIcon),
+                    GetText((int)Texts.MonasteryButtonText),
+                    onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
+                        .SetInfo("Monastery_Icon", LocalizeKey.MonasteryText, LocalizeKey.MonasteryUnlockText));
+                break;
+
             case UNLOCK_ALCHEMY_BUTTON:
                 BeginUnlockNotifySuppression();
                 UnlockButtonAnim(
@@ -694,6 +866,242 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         }
     }
 
+    #region 건물 진입/퇴장 공용 연출
+
+    // 로비(메인) 버튼 6칸은 3x2 고정 배치다. 순서 = 등장 순서.
+    static readonly Buttons[] MAIN_BTNS =
+    {
+        Buttons.GuildButton, Buttons.AlchemyButton, Buttons.MonasteryButton,
+        Buttons.ForgeButton, Buttons.ShopButton, Buttons.TravelButton,
+    };
+    static readonly Vector2[] MAIN_BTN_POS =
+    {
+        new Vector2(-51.5f, 45.5f), new Vector2(0.5f, 45.5f), new Vector2(52.5f, 45.5f),
+        new Vector2(-51.5f, -21.5f), new Vector2(0.5f, -21.5f), new Vector2(52.5f, -21.5f),
+    };
+
+    // 건물 안 버튼 6칸도 협회·연금공방·수도원이 전부 같은 자리를 쓴다 (슬29 레이아웃).
+    //  [대화] / 기능1 / 기능2 / 기능3 / 기능4 / [나가기] 순서.
+    //  FROM은 화면 밖 대기 위치 — 진입은 FROM→POS, 퇴장은 POS→FROM(역재생)이다.
+    static readonly Vector2[] SUB_BTN_POS =
+    {
+        new Vector2(-53f, 113f), new Vector2(0f, 186f), new Vector2(51f, 186f),
+        new Vector2(0f, 133f), new Vector2(51f, 133f), new Vector2(0f, 59f),
+    };
+    static readonly Vector2[] SUB_BTN_FROM =
+    {
+        new Vector2(-100f, 113f), new Vector2(75f, 186f), new Vector2(75f, 186f),
+        new Vector2(75f, 133f), new Vector2(120f, 133f), new Vector2(0f, 0f),
+    };
+
+    // 수도원 하위 버튼 — SUB_BTN_POS와 같은 순서여야 한다.
+    static readonly Buttons[] MONASTERY_SUB_BTNS =
+    {
+        Buttons.Village1MonasteryTalkButton, Buttons.MonasteryClassButton,
+        Buttons.Village1MonasteryNothingButton1, Buttons.Village1MonasteryNothingButton2,
+        Buttons.Village1MonasteryNothingButton3, Buttons.Village1MonasteryExitButton,
+    };
+
+    void RetractMainButtons()
+    {
+        for (int i = 0; i < MAIN_BTNS.Length; i++)
+            ButtonMoveAnim(GetButton((int)MAIN_BTNS[i]).GetComponent<RectTransform>(),
+                MAIN_BTN_POS[i].x, MAIN_BTN_POS[i].y, 0f, 0f, Ease.InBack);
+    }
+
+    void AppendMainButtonEntrance(Sequence seq)
+    {
+        for (int i = 0; i < MAIN_BTNS.Length; i++)
+        {
+            int idx = i;   // 클로저 캡처
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)MAIN_BTNS[idx]).GetComponent<RectTransform>(),
+                0f, 0f, MAIN_BTN_POS[idx].x, MAIN_BTN_POS[idx].y));
+            if (idx < MAIN_BTNS.Length - 1) seq.AppendInterval(0.07f);
+        }
+    }
+
+    /// <summary>마을 로비 → 건물 진입 연출. 협회·연금공방이 각자 복사해 쓰던 흐름을 하나로 모았다.
+    /// subBtns는 SUB_BTN_POS와 같은 순서([대화]…[나가기])여야 한다.</summary>
+    void EnterBuilding(Village1Group group, GameObjects groupObj, string bgKey, Texts nameText,
+                       string enterVfxId, Buttons[] subBtns)
+    {
+        Sequence seq = DOTween.Sequence();
+
+        // t=0 : 로비 버튼 OutBack 역재생
+        seq.AppendCallback(RetractMainButtons);
+
+        seq.AppendInterval(0.3f);
+
+        // t=0.3 : 그룹 전환 + 하위 버튼 숨김 + Player Escape + 페이드 + 장소 텍스트
+        seq.AppendCallback(() =>
+        {
+            HideAllGroup();
+            ShowGroup(groupObj);
+
+            foreach (Buttons b in subBtns) GetButton((int)b).gameObject.SetActive(false);
+
+            if (!string.IsNullOrEmpty(enterVfxId)) Managers.Quest.CheckButtonClick(enterVfxId);
+
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+            _gameScene.FadeInOut();
+            PlaceNameAnim(GetText((int)nameText).GetComponent<RectTransform>());
+        });
+
+        // t=0.8 : 암전 극중에 BG 교체 (시각적 팝 제거)
+        seq.AppendInterval(0.5f);
+        seq.AppendCallback(() =>
+        {
+            Managers.Game.LastVillage1Group = group;
+            SwitchBG(bgKey);
+            Managers.Game.Player?.ReturnHomeIdle();   // 암전 중 원위치+Idle
+        });
+
+        seq.AppendInterval(0.5f);
+
+        // t=1.3 : 하위 버튼 순차 등장
+        for (int i = 0; i < subBtns.Length; i++)
+        {
+            int idx = i;
+            seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)subBtns[idx]).GetComponent<RectTransform>(),
+                SUB_BTN_FROM[idx].x, SUB_BTN_FROM[idx].y, SUB_BTN_POS[idx].x, SUB_BTN_POS[idx].y));
+            if (idx < subBtns.Length - 1) seq.AppendInterval(0.07f);
+        }
+    }
+
+    /// <summary>건물 → 마을 로비 복귀 연출.</summary>
+    void ExitBuilding(string exitVfxId, Buttons[] subBtns)
+    {
+        Sequence seq = DOTween.Sequence();
+
+        // t=0 : 하위 버튼 역재생 + 페이드 시작
+        seq.AppendCallback(() =>
+        {
+            if (!string.IsNullOrEmpty(exitVfxId)) Managers.Quest.CheckButtonClick(exitVfxId);
+            GameObject.Find("Player")?.GetComponent<Animator>().Play("Escape");
+
+            for (int i = 0; i < subBtns.Length; i++)
+                ButtonMoveAnim(GetButton((int)subBtns[i]).GetComponent<RectTransform>(),
+                    SUB_BTN_POS[i].x, SUB_BTN_POS[i].y, SUB_BTN_FROM[i].x, SUB_BTN_FROM[i].y, Ease.InBack);
+
+            _gameScene.FadeInOut();
+        });
+
+        // t=0.4 : 화면이 검게 덮인 순간 BG 교체 + 메인 그룹 전환
+        seq.AppendInterval(0.4f);
+        seq.AppendCallback(() =>
+        {
+            Managers.Game.LastVillage1Group = Village1Group.Main;
+            HideAllGroup();
+            ShowGroup(GameObjects.Village1MainBtnGroup);
+
+            foreach (Buttons b in MAIN_BTNS) GetButton((int)b).gameObject.SetActive(false);
+
+            SwitchBG("Village1_Main_BG");
+            Managers.Game.Player?.ReturnHomeIdle();
+        });
+
+        // t=0.55 : 페이드 인 시작 시점에 장소 텍스트 1회
+        seq.AppendInterval(0.15f);
+        seq.AppendCallback(() => PlaceNameAnim(GetText((int)Texts.Village1NameText).GetComponent<RectTransform>()));
+
+        // t=1.05 : 로비 버튼 순차 등장
+        seq.AppendInterval(0.5f);
+        AppendMainButtonEntrance(seq);
+
+        seq.AppendCallback(TryPlayPendingUnlock);
+    }
+
+    // 대장간 하위 버튼 — SUB_BTN_POS와 같은 순서([대화]/기능1/기능2/빈칸/빈칸/[나가기]).
+    static readonly Buttons[] FORGE_SUB_BTNS =
+    {
+        Buttons.Village1ForgeTalkButton, Buttons.ForgeCraftButton, Buttons.ForgeEnhanceButton,
+        Buttons.Village1ForgeNothingButton2, Buttons.Village1ForgeNothingButton3,
+        Buttons.Village1ForgeExitButton,
+    };
+
+    static readonly Buttons[] SHOP_SUB_BTNS =
+    {
+        Buttons.Village1ShopTalkButton, Buttons.ShopBuyButton, Buttons.ShopSellButton,
+        Buttons.Village1ShopNothingButton2, Buttons.Village1ShopNothingButton3,
+        Buttons.Village1ShopExitButton,
+    };
+
+    void OnClickForge()
+    {
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_FORGE_BUTTON) == false)
+            return;
+
+        EnterBuilding(Village1Group.Forge, GameObjects.Village1ForgeBtnGroup,
+            "Village1_Forge_BG", Texts.Village1ForgeNameText,
+            VILLAGE1_FORGE_VFX, FORGE_SUB_BTNS);
+    }
+
+    void OnClickShop()
+    {
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_SHOP_BUTTON) == false)
+            return;
+
+        EnterBuilding(Village1Group.Shop, GameObjects.Village1ShopBtnGroup,
+            "Village1_Shop_BG", Texts.Village1ShopNameText,
+            VILLAGE1_SHOP_VFX, SHOP_SUB_BTNS);
+    }
+
+    // 대장간 [제작] — 새 목록 UI를 만들지 않는다.
+    //  장비 팝업이 이미 **미보유 장비까지** 회색+자물쇠로 보여주고, 누르면 상세창의 [제작]으로 간다
+    //  (UI_EquipmentPopup.cs:285 / UI_EquipDetailPopup.cs:186). 대장간은 그 경로의 입구다.
+    void OnClickForgeCraft()
+    {
+        Managers.Quest.CheckButtonClick(BTN_FORGE_CRAFT);
+        Managers.UI.ShowPopupUI<UI_EquipmentPopup>();
+    }
+
+    // 대장간 [강화] — 손질할 장비를 하나 정해서 강화창을 연다.
+    //  착용 중인 무기가 1순위(가장 자주 손대는 것), 없으면 아무 보유 장비.
+    void OnClickForgeEnhance()
+    {
+        Managers.Quest.CheckButtonClick(BTN_FORGE_ENHANCE);
+
+        Equipment target = null;
+        if (Managers.Game.EquippedEquipments.TryGetValue(EquipSlotType.Weapon, out var weapon))
+            target = weapon;
+        if (target == null && Managers.Game.OwnedEquipments.Count > 0)
+            target = Managers.Game.OwnedEquipments[0];
+
+        if (target == null)
+        {
+            Managers.UI.ShowToast(Util.Localize(LocalizeKey.ForgeNoEquipText));
+            return;
+        }
+
+        Managers.UI.ShowPopupUI<UI_ForgePopup>().SetInfo(target);
+    }
+
+    void OnClickShopBuy()
+    {
+        Managers.Quest.CheckButtonClick(BTN_SHOP_BUY);
+        Managers.UI.ShowPopupUI<UI_ShopPopup>().SetInfo(sellMode: false);
+    }
+
+    void OnClickShopSell()
+    {
+        Managers.Quest.CheckButtonClick(BTN_SHOP_SELL);
+        Managers.UI.ShowPopupUI<UI_ShopPopup>().SetInfo(sellMode: true);
+    }
+
+    // 수도원 — 그룹·[축성]·나가기까지 저작돼 있었는데 메인 버튼에 클릭 바인딩이 없어
+    //  RestoreLastGroup 경로 말고는 들어갈 방법이 없었다.
+    void OnClickMonastery()
+    {
+        if (Managers.Game.UnlockedBtnIds.Contains(UNLOCK_MONASTERY_BUTTON) == false)
+            return;
+
+        EnterBuilding(Village1Group.Monastery, GameObjects.Village1MonasteryBtnGroup,
+            "Village1_Monastery_BG", Texts.Village1MonasteryNameText,
+            MONASTERY_VFX_SUB1, MONASTERY_SUB_BTNS);
+    }
+
+    #endregion
+
     void OnClickGuild()
     {
         Sequence seq = DOTween.Sequence();
@@ -704,8 +1112,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             ButtonMoveAnim(GetButton((int)Buttons.GuildButton).GetComponent<RectTransform>(), -51.5f, 45.5f, 0, 0, Ease.InBack);
             ButtonMoveAnim(GetButton((int)Buttons.AlchemyButton).GetComponent<RectTransform>(), 0.5f, 45.5f, 0, 0, Ease.InBack);
             ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 52.5f, 45.5f, 0, 0, Ease.InBack);
-            ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), -51.5f, -21.5f, 0, 0, Ease.InBack);
-            ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0.5f, -21.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.ForgeButton).GetComponent<RectTransform>(), -51.5f, -21.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.ShopButton).GetComponent<RectTransform>(), 0.5f, -21.5f, 0, 0, Ease.InBack);
             ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 52.5f, -21.5f, 0, 0, Ease.InBack);
         });
         
@@ -768,8 +1176,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             ButtonMoveAnim(GetButton((int)Buttons.GuildButton).GetComponent<RectTransform>(), -51.5f, 45.5f, 0, 0, Ease.InBack);
             ButtonMoveAnim(GetButton((int)Buttons.AlchemyButton).GetComponent<RectTransform>(), 0.5f, 45.5f, 0, 0, Ease.InBack);
             ButtonMoveAnim(GetButton((int)Buttons.MonasteryButton).GetComponent<RectTransform>(), 52.5f, 45.5f, 0, 0, Ease.InBack);
-            ButtonMoveAnim(GetButton((int)Buttons.TempButton1).GetComponent<RectTransform>(), -51.5f, -21.5f, 0, 0, Ease.InBack);
-            ButtonMoveAnim(GetButton((int)Buttons.TempButton2).GetComponent<RectTransform>(), 0.5f, -21.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.ForgeButton).GetComponent<RectTransform>(), -51.5f, -21.5f, 0, 0, Ease.InBack);
+            ButtonMoveAnim(GetButton((int)Buttons.ShopButton).GetComponent<RectTransform>(), 0.5f, -21.5f, 0, 0, Ease.InBack);
             ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 52.5f, -21.5f, 0, 0, Ease.InBack);
         });
 
@@ -912,6 +1320,30 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
             },
             randomSingleLine: !useFullDialogue,
             portraitAnimState: animState);
+    }
+
+    // 대장간·상점 NPC — 협회/연금공방과 같은 방식(시트-당-그룹). 퀘스트 전용 대사가 없으면
+    //  잡담 시트에서 한 줄만 뽑는다.
+    void OnClickVillage1ForgeTalkButton()
+    {
+        Managers.Quest.CheckButtonClick(VILLAGE1_FORGE_TALK_VFX);
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: "ForgeNormalText",
+            speakerName: "대장장이",
+            portrait: null,
+            onFinished: null,
+            randomSingleLine: true);
+    }
+
+    void OnClickVillage1ShopTalkButton()
+    {
+        Managers.Quest.CheckButtonClick(VILLAGE1_SHOP_TALK_VFX);
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: "ShopNormalText",
+            speakerName: "상점 주인",
+            portrait: null,
+            onFinished: null,
+            randomSingleLine: true);
     }
 
     void OnClickVillage1GuildQuestButton()

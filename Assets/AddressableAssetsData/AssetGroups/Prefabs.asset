@@ -15,6 +15,18 @@ MonoBehaviour:
   m_GroupName: Prefabs
   m_GUID: 1bdb1fe29632760458f6e434c58bb730
   m_SerializeEntries:
+  - m_GUID: 050e2852f5800444a9b9757e7fc154d4
+    m_Address: Village1_Monastery_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0651a6353faa9ef4e99adc62f5c99b26
+    m_Address: Village1_Forge_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0bdce50357013134194bdc12130e5135
     m_Address: Goblin
     m_ReadOnly: 0
@@ -65,6 +77,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a51e9d18a380c2041b4bd8b31eeb0466
     m_Address: Village1_Guild_BG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8d1c33987242e9448ef1c499612f4f5
+    m_Address: Village1_Shop_BG
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

@@ -24,6 +24,7 @@ public class DataManager
     public Dictionary<int, MinMonData>        MinMonDic         { get; private set; } = new Dictionary<int, MinMonData>();
     public Dictionary<int, ForgeRecipeData>   ForgeRecipeDic    { get; private set; } = new Dictionary<int, ForgeRecipeData>();
     public Dictionary<int, CraftRecipeData>   CraftRecipeDic    { get; private set; } = new Dictionary<int, CraftRecipeData>();
+    public Dictionary<int, ShopItemData>      ShopItemDic       { get; private set; } = new Dictionary<int, ShopItemData>();
     public Dictionary<int, LevelData>          LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
     public Dictionary<int, PlayerStatusData>   PlayerStatusDic   { get; private set; } = new Dictionary<int, PlayerStatusData>();
     public Dictionary<string, DialogueScriptGroup>       DialogueScriptDic { get; private set; } = new Dictionary<string, DialogueScriptGroup>();
@@ -53,6 +54,7 @@ public class DataManager
         TravelConditionDic  = LoadJson<TravelConditionDataLoader, int, List<TravelConditionData>>   ("TravelConditionData").MakeDict();
         MinMonDic         = LoadJson<MinMonDataLoader,        int,    MinMonData>         ("MinMonData").MakeDict();
         ForgeRecipeDic    = LoadJson<ForgeRecipeDataLoader,   int,    ForgeRecipeData>    ("ForgeRecipeData").MakeDict();
+        ShopItemDic       = LoadJson<ShopItemDataLoader,      int,    ShopItemData>       ("ShopItemData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
         LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
         PlayerStatusDic   = LoadJson<PlayerStatusDataLoader,  int,    PlayerStatusData>   ("PlayerStatusData").MakeDict();

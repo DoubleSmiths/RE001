@@ -103,6 +103,51 @@ public class UI_InvSlot : UI_Base
             GetImage((int)Images.GameObject).gameObject.BindEvent(() => { OnClickGameObject(inventoryItem); });
     }
 
+    /// <summary>상점용 표시 — 개수 자리에 **가격**을 쓴다.
+    /// 슬롯 프리팹을 하나 더 만들지 않는 대신, 클릭 동작도 여기서 갈아끼운다
+    /// (기본 SetInfo는 아이템 상세창을 열지만 상점에서는 사고파는 게 목적이다).</summary>
+    public void SetShopInfo(ItemData itemData, int price, bool affordable, System.Action onClick)
+    {
+        GetImage((int)Images.BlockImg).gameObject.SetActive(false);
+        GetImage((int)Images.Frame).gameObject.SetActive(true);
+
+        Sprite sprite = itemData != null ? Managers.Resource.Load<Sprite>(itemData.SpriteName) : null;
+        GetImage((int)Images.Img).sprite = sprite;
+        GetImage((int)Images.Img).gameObject.SetActive(sprite != null);
+        // 살 수 없으면 아이콘을 죽여 목록에서 바로 구분되게 한다
+        GetImage((int)Images.Img).color = affordable ? Color.white : new Color(0.45f, 0.45f, 0.45f, 1f);
+
+        var amount = GetText((int)Texts.AmountTxt);
+        amount.gameObject.SetActive(true);
+        amount.text = ShortPrice(price);
+        amount.color = affordable ? Color.white : Util.HexToColor("FF5555");
+
+        var glowImage = GetImage((int)Images.Glow);
+        glowImage.gameObject.SetActive(true);
+        glowImage.color = itemData != null ? Util.GetGradeColor(itemData.Grade) : new Color32(15, 15, 15, 255);
+
+        GetText((int)Texts.InvSlotNewTxt).gameObject.SetActive(false);
+
+        GetImage((int)Images.GameObject).gameObject.BindEvent(() =>
+        {
+            transform.DOKill();
+            transform.localScale = Vector3.one;
+            transform.DOPunchScale(new Vector3(-0.25f, 0.15f, 1f), 0.3f, 10, 1f)
+                     .SetEase(Ease.OutQuad)
+                     .SetUpdate(true);
+            onClick?.Invoke();
+        });
+    }
+
+    // 수량 칸은 원래 한두 자리용이라 30,000 같은 값이 "0,000"으로 잘렸다.
+    //  1000 이상은 k로 줄인다 — 2400 -> 2.4k, 9000 -> 9k, 30000 -> 30k.
+    static string ShortPrice(int price)
+    {
+        if (price < 1000) return price.ToString();
+        float k = price / 1000f;
+        return k < 10f && price % 1000 != 0 ? $"{k:0.#}k" : $"{Mathf.RoundToInt(k)}k";
+    }
+
     public void SetOpenBlock()
     {
         //성우 추가

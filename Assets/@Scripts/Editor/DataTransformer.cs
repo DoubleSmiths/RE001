@@ -776,6 +776,7 @@ public class DataTransformer : EditorWindow
         ParseEquipmentDataSheet  (ReadXlsx($"{baseDir}/EquipmentData.xlsx"));
         ParseEquipEnhanceDataSheet(ReadXlsx($"{baseDir}/EquipEnhanceData.xlsx"));
         ParseForgeRecipeDataSheet(ReadXlsx($"{baseDir}/ForgeRecipeData.xlsx"));
+        ParseShopItemDataSheet   (ReadXlsx($"{baseDir}/ShopItemData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
@@ -910,6 +911,24 @@ public class DataTransformer : EditorWindow
             loader.recipes.Add(d);
         }
         WriteJsonStr("ForgeRecipeData", loader);
+    }
+
+    static void ParseShopItemDataSheet(List<List<string>> rows)
+    {
+        var loader = new ShopItemDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            var d = new ShopItemData();
+            d.DataId      = ConvertValue<int>(C(row, 0));
+            d.ItemId      = ConvertValue<int>(C(row, 1));
+            d.Price       = ConvertValue<int>(C(row, 2));
+            d.SellPrice   = ConvertValue<int>(C(row, 3));
+            d.UnlockLevel = ConvertValue<int>(C(row, 4));
+            loader.items.Add(d);
+        }
+        WriteJsonStr("ShopItemData", loader);
     }
 
     static void ParseMinMonDataSheet(List<List<string>> rows)
