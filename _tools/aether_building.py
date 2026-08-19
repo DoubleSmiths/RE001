@@ -99,6 +99,15 @@ ITEMS = [
     ("shopkeeper_profile", f"{PORTRAIT_STYLE}. A cheerful young shopkeeper girl in a green "
      "apron over a cream blouse, short brown hair, friendly smile.",
      "portrait", os.path.join(LIVE_PORTRAIT, "shopkeeper")),
+
+    # 수도원은 그룹만 저작돼 있고 안에 서 있는 사람은 **연금술사 스프라이트**였다
+    #  (연금공방 프리팹을 복제해 만든 흔적). 수도원에 맞는 사람으로 갈아끼운다.
+    ("Priestess_Standing_Idle", f"{NPC_STYLE}. A calm young priestess in a white and pale-blue "
+     "habit with a hood down, long silver hair, hands folded, a small golden pendant.",
+     "npc", LIVE_NPC),
+    ("priestess_profile", f"{PORTRAIT_STYLE}. A calm young priestess in a white and pale-blue "
+     "habit, long silver hair, gentle serene expression, golden pendant at her collar.",
+     "portrait", os.path.join(LIVE_PORTRAIT, "priestess")),
 ]
 
 # 시트에서 잘라 쓸 것들 — (원본, 프레임수, 쓸 프레임, 결과 경로)

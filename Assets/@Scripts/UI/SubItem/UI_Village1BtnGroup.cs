@@ -361,6 +361,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.Village1AlchemyTalkButton).gameObject.BindEvent(OnClickVillage1AlchemyTalkButton);
         GetButton((int)Buttons.CustomOrderButton).gameObject.BindEvent(OnClickCustomOrder);
         GetButton((int)Buttons.MonasteryClassButton).gameObject.BindEvent(OnClickMonasteryClass);
+        GetButton((int)Buttons.Village1MonasteryTalkButton).gameObject.BindEvent(OnClickVillage1MonasteryTalkButton);
         GetButton((int)Buttons.ForgeCraftButton).gameObject.BindEvent(OnClickForgeCraft);
         GetButton((int)Buttons.ForgeEnhanceButton).gameObject.BindEvent(OnClickForgeEnhance);
         GetButton((int)Buttons.ShopBuyButton).gameObject.BindEvent(OnClickShopBuy);
@@ -430,6 +431,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         SetTextLocalized(Texts.ShopBuyButtonText, LocalizeKey.ShopBuyBtnText);
         SetTextLocalized(Texts.ShopSellButtonText, LocalizeKey.ShopSellBtnText);
         SetTextLocalized(Texts.Village1ShopExitButtonText, LocalizeKey.ExitBtnText);
+        SetTextLocalized(Texts.Village1MonasteryNameText, LocalizeKey.MonasteryText);
+        SetTextLocalized(Texts.Village1MonasteryTalkButtonText, LocalizeKey.TalkBtnText);
+        SetTextLocalized(Texts.Village1MonasteryExitButtonText, LocalizeKey.ExitBtnText);
         SetTextLocalized(Texts.TravelButtonNewTxt, LocalizeKey.TravelButtonNewTxt);
 
         // 길드 그룹
@@ -1330,7 +1334,18 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ForgeNormalText",
             speakerName: "대장장이",
-            portrait: null,
+            portrait: GetImage((int)Images.Village1ForgeTalkButtonIcon)?.sprite,
+            onFinished: null,
+            randomSingleLine: true);
+    }
+
+    void OnClickVillage1MonasteryTalkButton()
+    {
+        Managers.Quest.CheckButtonClick(VILLAGE1_MONASTERY_TALK_VFX);
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: "MonasteryNormalText",
+            speakerName: "수도원 사제",
+            portrait: GetImage((int)Images.Village1MonasteryTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
     }
@@ -1341,7 +1356,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ShopNormalText",
             speakerName: "상점 주인",
-            portrait: null,
+            portrait: GetImage((int)Images.Village1ShopTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
     }

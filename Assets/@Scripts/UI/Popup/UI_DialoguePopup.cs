@@ -140,8 +140,19 @@ public class UI_DialoguePopup : UI_Popup
         dialogueName.text = speakerName;
         dialogueText.text = "";
 
+        // 초상화를 직접 넘기면 그것을 쓴다. 이때 Animator는 꺼야 한다 —
+        //  아래에서 portraitAnimState를 Play하는데, 그 상태가 스프라이트를 덮어써서
+        //  대장간·상점·수도원 대화가 전부 접수원 얼굴로 나왔다(기본값이 "recep_normal").
+        var portraitAnimator = portraitImage.GetComponent<Animator>();
         if (portrait != null)
+        {
+            if (portraitAnimator != null) portraitAnimator.enabled = false;
             portraitImage.sprite = portrait;
+        }
+        else if (portraitAnimator != null)
+        {
+            portraitAnimator.enabled = true;   // 풀에서 재사용된 팝업이 꺼진 채로 오지 않게
+        }
 
         // 초기 상태: Arrow 끔, 텍스트 공백으로 시작 (STEP 3에서 Text Show)
         arrowImage.gameObject.SetActive(false);
@@ -157,7 +168,7 @@ public class UI_DialoguePopup : UI_Popup
             {
                 // STEP 3: 캐릭터 애니메이터 재생 + Text Show
                 var animator = portraitImage.GetComponent<Animator>();
-                if (animator != null && !string.IsNullOrEmpty(portraitAnimState))
+                if (animator != null && animator.enabled && !string.IsNullOrEmpty(portraitAnimState))
                     animator.Play(portraitAnimState, 0, 0f);
                 ShowLine(_lineIndex);
             });

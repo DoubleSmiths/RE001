@@ -64,12 +64,22 @@ public static class VillageBuildingPrefabBuilder
         },
     };
 
+    // 수도원은 그룹·배경이 이미 있어 새로 만들 게 없다. 다만 안에 서 있는 사람이
+    //  **연금술사**였다(연금공방 프리팹을 복제해 만든 흔적) — 사람과 초상화만 갈아끼운다.
+    static readonly Building MONASTERY = new Building
+    {
+        Key = "Monastery",
+        PortraitSprite = "Assets/@Resources/Sprite/UI/Image/NPC/priestess/priestess_profile.png",
+        NpcSprite = "Assets/@Resources/Sprite/NPC/Priestess_Standing_Idle.png",
+    };
+
     [MenuItem("Tools/Build Village Buildings (대장간·상점 프리팹 생성)")]
     static void Build()
     {
         EnsureSingleSprites();
         BuildGroups();
         foreach (var b in BUILDINGS) BuildBackground(b);
+        FixMonasteryNpc();
         BuildShopPopup();
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -250,6 +260,47 @@ public static class VillageBuildingPrefabBuilder
         }
     }
 
+    /// <summary>수도원 안 사람을 연금술사에서 사제로 갈아끼운다.
+    /// 그룹·배경은 이미 있으므로 NPC 노드 이름과 스프라이트, 그리고 [대화] 초상화만 손댄다.</summary>
+    static void FixMonasteryNpc()
+    {
+        const string bgPath = MAP_DIR + "/Village1_Monastery_BG.prefab";
+        if (!File.Exists(bgPath)) { Debug.LogWarning("[VillageBuild] 수도원 배경 프리팹 없음"); return; }
+
+        GameObject root = PrefabUtility.LoadPrefabContents(bgPath);
+        try
+        {
+            // 노드 이름부터 정직하게. 다른 건물과 같은 규칙(Village1_{Key}_{Key}NPC)으로 맞춘다.
+            Transform npc = Find(root.transform, "Village1_Alchemy_Alchemist")
+                            ?? Find(root.transform, "Village1_Monastery_MonasteryNPC");
+            if (npc == null) { Debug.LogWarning("[VillageBuild] 수도원 NPC 노드 없음"); return; }
+            npc.name = "Village1_Monastery_MonasteryNPC";
+
+            SetSpriteRenderer(root.transform, npc.name, MONASTERY.NpcSprite);
+            SetupNpcAnimator(root.transform, MONASTERY);
+
+            PrefabUtility.SaveAsPrefabAsset(root, bgPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        // [대화] 버튼 초상화도 연금술사였다.
+        GameObject grpRoot = PrefabUtility.LoadPrefabContents(GROUP_PREFAB);
+        try
+        {
+            EnsureSingle(MONASTERY.PortraitSprite);
+            SetSprite(grpRoot.transform, "Village1MonasteryTalkButtonIcon", MONASTERY.PortraitSprite);
+            SetSprite(grpRoot.transform, "Village1MonasteryTalkButtonIcon2", MONASTERY.PortraitSprite);
+            PrefabUtility.SaveAsPrefabAsset(grpRoot, GROUP_PREFAB);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(grpRoot);
+        }
+    }
+
     const string ANIM_DIR = "Assets/@Resources/Animation/Town_NPC";
     const float NPC_FPS = 6f;   // 길드 접수원 Idle과 같은 체감 속도
 
@@ -307,24 +358,97 @@ public static class VillageBuildingPrefabBuilder
     /// Multiple(sliced)로 들어오면 예전 크기 기준 rect가 남아 새 텍스처의 **빈 구석**을 가리킨다
     /// — 실제로 대장장이 초상화가 그렇게 빈 칸이 됐다.
     /// SetDirty만으로는 임포트 설정이 저장되지 않아 WriteImportSettingsIfDirty가 필요하다.</summary>
+    // 새로 만든 그림은 PPU 100(유니티 기본)으로 들어온다. 기존 에셋과 안 맞추면
+    //  같은 픽셀 크기인데 화면에서 2~3배 차이가 난다 — 사제가 플레이어 절반 키로 나왔다.
+    const float NPC_PPU = 35f;    // Blacksmith_Standing_Idle 기준(접수원 36, 연금술사 40과 같은 급)
+    const float TOWN_BG_PPU = 40f; // Background_Guild / Background_Monastery와 동일
+
     static void EnsureSingleSprites()
     {
         foreach (var b in BUILDINGS)
         {
-            string path = b.PortraitSprite;
-            if (string.IsNullOrEmpty(path) || !File.Exists(path)) continue;
-
-            var ti = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (ti == null || ti.spriteImportMode == SpriteImportMode.Single) continue;
-
-            ti.spriteImportMode = SpriteImportMode.Single;
-            ti.spritesheet = new SpriteMetaData[0];
-            EditorUtility.SetDirty(ti);
-            ti.SaveAndReimport();
-            AssetDatabase.WriteImportSettingsIfDirty(path);
-            Debug.Log($"[VillageBuild] 초상화를 Single로 재임포트: {Path.GetFileName(path)}");
+            EnsureSingle(b.PortraitSprite);
+            EnsurePpu(b.NpcSprite, NPC_PPU);
+            EnsurePpu(b.BgSprite, TOWN_BG_PPU);
         }
+        EnsureSingle(MONASTERY.PortraitSprite);
+        EnsurePpu(MONASTERY.NpcSprite, NPC_PPU);
         AssetDatabase.Refresh();
+    }
+
+    static void EnsurePpu(string path, float ppu)
+    {
+        if (string.IsNullOrEmpty(path) || !File.Exists(path)) return;
+
+        var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (ti == null) return;
+
+        bool dirty = false;
+
+        if (!Mathf.Approximately(ti.spritePixelsPerUnit, ppu))
+        {
+            ti.spritePixelsPerUnit = ppu;
+            dirty = true;
+            Debug.Log($"[VillageBuild] PPU {ppu}로 맞춤: {Path.GetFileName(path)}");
+        }
+
+        // 마을 NPC는 pivot이 **발끝**이다 — 길드 접수원을 재보니 발끝 Y가 노드 Y와 정확히 같았다.
+        //  기본값(Center)으로 두면 그림 높이가 조금만 달라도 발이 바닥을 뚫고 내려간다(실제로 그랬다).
+        //  시트(Multiple)는 alignment가 슬라이스마다 따로라 양쪽 다 손봐야 한다.
+        if (path.Contains("/NPC/"))
+        {
+            const int BOTTOM = (int)SpriteAlignment.BottomCenter;
+
+            if (ti.spriteImportMode == SpriteImportMode.Single)
+            {
+                // Single의 pivot은 TextureImporter가 아니라 TextureImporterSettings에 있다.
+                var st = new TextureImporterSettings();
+                ti.ReadTextureSettings(st);
+                if (st.spriteAlignment != BOTTOM)
+                {
+                    st.spriteAlignment = BOTTOM;
+                    st.spritePivot = new Vector2(0.5f, 0f);
+                    ti.SetTextureSettings(st);
+                    dirty = true;
+                }
+            }
+            else
+            {
+                var sheet = ti.spritesheet;
+                bool changed = false;
+                for (int i = 0; i < sheet.Length; i++)
+                {
+                    if (sheet[i].alignment == BOTTOM) continue;
+                    sheet[i].alignment = BOTTOM;
+                    sheet[i].pivot = new Vector2(0.5f, 0f);
+                    changed = true;
+                }
+                if (changed) { ti.spritesheet = sheet; dirty = true; }
+            }
+
+            if (dirty) Debug.Log($"[VillageBuild] pivot을 발끝으로: {Path.GetFileName(path)}");
+        }
+
+        if (!dirty) return;
+
+        EditorUtility.SetDirty(ti);
+        ti.SaveAndReimport();
+        AssetDatabase.WriteImportSettingsIfDirty(path);
+    }
+
+    static void EnsureSingle(string path)
+    {
+        if (string.IsNullOrEmpty(path) || !File.Exists(path)) return;
+
+        var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (ti == null || ti.spriteImportMode == SpriteImportMode.Single) return;
+
+        ti.spriteImportMode = SpriteImportMode.Single;
+        ti.spritesheet = new SpriteMetaData[0];
+        EditorUtility.SetDirty(ti);
+        ti.SaveAndReimport();
+        AssetDatabase.WriteImportSettingsIfDirty(path);
+        Debug.Log($"[VillageBuild] 초상화를 Single로 재임포트: {Path.GetFileName(path)}");
     }
 
     // ── 공통 ───────────────────────────────────────────────────────────────
