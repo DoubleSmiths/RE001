@@ -119,33 +119,23 @@ public class UI_ShopPopup : UI_Popup
         }
     }
 
+    // 슬롯을 누르면 **바로 사고팔지 않는다**. 한 번의 오클릭으로 골드가 나가거나 재료가
+    //  사라지면 되돌릴 방법이 없다 — 수량을 정하는 확인창을 거친다.
     void OnClickSlot(ShopItemData shop)
     {
-        if (_sellMode)
+        if (!_sellMode)
         {
-            if (!Managers.Game.SellShopItem(shop))
-            {
-                Managers.UI.ShowToast(Util.Localize(LocalizeKey.ShopNothingToSellText));
-                return;
-            }
-            Managers.Sound?.PlaySFX("SFX_Upgrade");
-            Managers.UI.ShowToast(Util.Localize(LocalizeKey.ShopSoldText));
-        }
-        else
-        {
+            // 한 개도 못 사는 상황이면 확인창을 띄울 이유가 없다. 이유만 말해 준다.
             string reason = Managers.Game.GetBuyBlockReason(shop);
-            if (!string.IsNullOrEmpty(reason))
-            {
-                Managers.UI.ShowToast(reason);
-                return;
-            }
-            if (!Managers.Game.BuyShopItem(shop)) return;
-
-            Managers.Sound?.PlaySFX("SFX_Upgrade");
-            Managers.UI.ShowToast(Util.Localize(LocalizeKey.ShopPurchasedText));
+            if (!string.IsNullOrEmpty(reason)) { Managers.UI.ShowToast(reason); return; }
+        }
+        else if (Managers.Game.GetItemCount(shop.ItemId) <= 0)
+        {
+            Managers.UI.ShowToast(Util.Localize(LocalizeKey.ShopNothingToSellText));
+            return;
         }
 
-        RefreshUI();
+        Managers.UI.ShowPopupUI<UI_ShopConfirmPopup>().SetInfo(shop, _sellMode, RefreshUI);
     }
 
     void OnClickClose() => Managers.UI.ClosePopupUI(this);

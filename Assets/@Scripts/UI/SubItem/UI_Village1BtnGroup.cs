@@ -790,6 +790,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendInterval(0.07f);
         seq.AppendCallback(() => ButtonMoveAnim(GetButton((int)Buttons.TravelButton).GetComponent<RectTransform>(), 0, 0, 52.5f, -21.5f));
 
+        // 로비로 돌아왔을 때도 현재 퀘스트 기준으로 느낌표를 다시 계산한다.
+        //  이게 빠져서 마을로 나오면 길드 느낌표가 사라진 채였다.
+        seq.AppendCallback(RefreshNotify);
         seq.AppendCallback(TryPlayPendingUnlock);
     }
 
@@ -962,6 +965,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         seq.AppendInterval(0.5f);
 
+        seq.AppendCallback(RefreshNotify);   // 방금 켠 그룹의 느낌표를 현재 퀘스트 기준으로 다시 계산
+
         // t=1.3 : 하위 버튼 순차 등장
         for (int i = 0; i < subBtns.Length; i++)
         {
@@ -1012,6 +1017,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         seq.AppendInterval(0.5f);
         AppendMainButtonEntrance(seq);
 
+        seq.AppendCallback(RefreshNotify);
         seq.AppendCallback(TryPlayPendingUnlock);
     }
 
@@ -1411,16 +1417,25 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         List<Data.QuestNotifyData> list = Managers.Quest.GetCurrentNotifyList();
 
-        HashSet<string> activeIds = new HashSet<string>();
+        // 느낌표 색은 **알림이 어디서 왔는가**로 갈린다 — 노랑(FFE300)=메인 퀘스트,
+        //  초록(14FF00)=서브 퀘스트. 같은 BtnID가 양쪽에서 올 수 있으므로 집합을 나눠 둔다.
+        //  (예전엔 하나로 합쳐서, 서브 알림이 메인 색 느낌표를 켜는 것을 막을 수 없었다)
+        HashSet<string> mainIds = new HashSet<string>();
+        HashSet<string> subIds  = new HashSet<string>();
         foreach (Data.QuestNotifyData n in list)
-            activeIds.Add(n.BtnID);
+        {
+            if (n.IsSubQuest) subIds.Add(n.BtnID);
+            else              mainIds.Add(n.BtnID);
+        }
 
         foreach (NotifyBinding binding in s_notifyBindings)
         {
+            HashSet<string> src = binding.IsSubQuestMark ? subIds : mainIds;
+
             bool on = false;
             foreach (string id in binding.BtnIds)
             {
-                if (activeIds.Contains(id))
+                if (src.Contains(id))
                 {
                     on = true;
                     break;
@@ -1453,12 +1468,29 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         public readonly int Index;
         public readonly string[] BtnIds;
 
+        /// <summary>초록(서브퀘스트) 느낌표인가. 프리팹 이름 규약 `*_Sub1`이 곧 초록이다
+        /// — 실제 색을 재 보니 _Sub1만 14FF00이고 나머지는 전부 FFE300이었다.</summary>
+        public readonly bool IsSubQuestMark;
+
         public NotifyBinding(NotifyTargetKind kind, int index, params string[] btnIds)
         {
             Kind = kind;
             Index = index;
+            IsSubQuestMark = false;
             BtnIds = btnIds;
         }
+
+        NotifyBinding(NotifyTargetKind kind, int index, bool isSub, string[] btnIds)
+        {
+            Kind = kind;
+            Index = index;
+            IsSubQuestMark = isSub;
+            BtnIds = btnIds;
+        }
+
+        /// <summary>서브퀘스트(초록) 느낌표 바인딩.</summary>
+        public static NotifyBinding Sub(NotifyTargetKind kind, int index, params string[] btnIds)
+            => new NotifyBinding(kind, index, true, btnIds);
     }
 
     // 각 notify 대상과 이를 켜는 BtnID 목록. (오타/누락 방지를 위해 여기 한 곳에 모아둠)
@@ -1467,9 +1499,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // ---- Village1MainBtnGroup ----
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1GuildVFX,        VILLAGE1_GUILD_VFX, "BTN_GUILD"),
         new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.AlchemyButtonNewTxt,           ALCHEMY_BUTTON_NEW_TXT),
-        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyVFX_Sub1, VILLAGE1_ALCHEMY_VFX_SUB1, BTN_ALCHEMY),
+        NotifyBinding.Sub(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyVFX_Sub1, VILLAGE1_ALCHEMY_VFX_SUB1, BTN_ALCHEMY),
         new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.MonasteryButtonNewTxt,         MONASTERY_BUTTON_NEW_TXT),
-        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.MonasteryVFX_Sub1,       MONASTERY_VFX_SUB1),
+        NotifyBinding.Sub(NotifyTargetKind.Object, (int)GameObjects.MonasteryVFX_Sub1,       MONASTERY_VFX_SUB1),
         new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.TravelButtonNewTxt,            TRAVEL_BUTTON_NEW_TXT),
         // 여정 버튼: VFX 이름(VILLAGE1_TRAVEL_QUEST_VFX)과 BTN_JOURNEY 액션 ID 둘 다 인정.
         // (Quest3=VFX명 사용, Quest6=BTN_JOURNEY 사용 → 둘 다 표시되도록. 길드/연금과 동일 패턴)
@@ -1482,16 +1514,28 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         // ---- Village1AlchemyBtnGroup ---- (서브퀘스트 notify는 _Sub1 VFX)
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyTalkVFX,      VILLAGE1_ALCHEMY_TALK_VFX),
-        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyTalkVFX_Sub1, VILLAGE1_ALCHEMY_TALK_VFX_SUB1, BTN_ALCHEMY_TALK),
+        NotifyBinding.Sub(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyTalkVFX_Sub1, VILLAGE1_ALCHEMY_TALK_VFX_SUB1, BTN_ALCHEMY_TALK),
         new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.AlchemyCustomOrderButtonNewTxt,    VILLAGE1_ALCHEMY_CUSTOM_ORDER_BUTTON_NEX_TXT),
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1AlchemyQuestVFX,     VILLAGE1_ALCHEMY_QUEST_VFX),
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.AlchemyExitQuestVFX,         ALCHEMY_EXIT_QUEST_VFX),
 
         // ---- Village1MonasteryBtnGroup ----
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryTalkVFX,      VILLAGE1_MONASTERY_TALK_VFX),
-        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryTalkVFX_Sub1, VILLAGE1_MONASTERY_TALK_VFX_SUB1),
+        NotifyBinding.Sub(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryTalkVFX_Sub1, VILLAGE1_MONASTERY_TALK_VFX_SUB1),
         new NotifyBinding(NotifyTargetKind.Text,   (int)Texts.MonasteryCustomOrderButtonNewTxt,    VILLAGE1_MONASTERY_CUSTOM_ORDER_BUTTON_NEX_TXT),
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1MonasteryQuestVFX,     VILLAGE1_MONASTERY_QUEST_VFX),
         new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.MonasteryExitQuestVFX,         MONASTERY_EXIT_QUEST_VFX),
+
+        // ---- Village1ForgeBtnGroup ----
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1ForgeTalkVFX,      VILLAGE1_FORGE_TALK_VFX),
+        NotifyBinding.Sub(NotifyTargetKind.Object, (int)GameObjects.Village1ForgeTalkVFX_Sub1, VILLAGE1_FORGE_TALK_VFX_SUB1),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1ForgeQuestVFX,     VILLAGE1_FORGE_VFX, BTN_FORGE_CRAFT, BTN_FORGE_ENHANCE),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.ForgeExitQuestVFX,         FORGE_EXIT_QUEST_VFX),
+
+        // ---- Village1ShopBtnGroup ----
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1ShopTalkVFX,       VILLAGE1_SHOP_TALK_VFX),
+        NotifyBinding.Sub(NotifyTargetKind.Object, (int)GameObjects.Village1ShopTalkVFX_Sub1,  VILLAGE1_SHOP_TALK_VFX_SUB1),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.Village1ShopQuestVFX,      VILLAGE1_SHOP_VFX, BTN_SHOP_BUY, BTN_SHOP_SELL),
+        new NotifyBinding(NotifyTargetKind.Object, (int)GameObjects.ShopExitQuestVFX,          SHOP_EXIT_QUEST_VFX),
     };
 }

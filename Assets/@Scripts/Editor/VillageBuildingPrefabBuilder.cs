@@ -198,6 +198,12 @@ public static class VillageBuildingPrefabBuilder
         // 수도원에서 딸려온 [NEW] 뱃지 — 해금 알림용인데 복제본은 늘 켜진 채였다.
         Transform badge = Find(grp, b.Fn1 + "NewTxt");
         if (badge != null) badge.gameObject.SetActive(false);
+
+        // 느낌표(VFX)도 켜진 채로 복제된다. RefreshNotify가 현재 퀘스트를 보고 켜야 하는데,
+        //  꺼진 상태에서 시작하지 않으면 **버튼 위를 덮은 채** 남아 클릭까지 먹는다
+        //  (실제로 [구매]/[판매]가 안 눌리던 원인이 이것이었다 — VFX Image가 raycastTarget이다).
+        foreach (Transform t in grp.GetComponentsInChildren<Transform>(true))
+            if (t.name.Contains("VFX")) t.gameObject.SetActive(false);
     }
 
     /// <summary>로비 빈칸(TempButtonN)을 이 건물 버튼으로 바꾼다.</summary>
@@ -316,12 +322,15 @@ public static class VillageBuildingPrefabBuilder
         Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(b.NpcSprite).OfType<Sprite>()
             .OrderBy(s => s.name, System.StringComparer.Ordinal).ToArray();
 
-        if (frames.Length <= 1)
+        if (frames.Length == 0)
         {
-            if (anim != null) UnityEngine.Object.DestroyImmediate(anim, true);
-            Debug.Log($"[VillageBuild] {b.Key} NPC는 정지 그림 — Animator 제거");
+            Debug.LogWarning($"[VillageBuild] {b.Key} NPC 스프라이트를 찾지 못했습니다: {b.NpcSprite}");
             return;
         }
+
+        // ⚠ Animator를 **떼면 안 된다**. 이 NPC 노드에는 원본에서 온 ScriptMachine(비주얼 스크립팅)
+        //  그래프가 붙어 있고 그 그래프가 Animator를 전제한다 — 떼었더니 매 프레임
+        //  MissingComponentException이 터졌다. 정지 그림이면 **1프레임 클립**을 만들어 붙인다.
 
         string clipPath = $"{ANIM_DIR}/{b.Key}NPC_Idle.anim";
         var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);

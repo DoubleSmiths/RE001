@@ -1,7 +1,10 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using static Define;
 
 // 마을 건물(수도원·대장간·상점) 검증 메뉴.
@@ -87,6 +90,51 @@ public static class VillageBuildingTestMenu
     static void BackToMain() { if (Require()) Invoke("OnClickMain"); }
 
     // ─────────────────────────────────────────────────────────
+    //  느낌표는 현재 퀘스트를 그대로 비춰야 한다.
+    //  노랑(FFE300) = 메인 퀘스트 / 초록(14FF00) = 서브 퀘스트.
+    [MenuItem("Test/Village/8. 느낌표 검증 (현재 퀘스트 대조)", false, 19)]
+    static void VerifyNotify()
+    {
+        if (!Require()) return;
+
+        var g = Group();
+        if (g == null) return;
+
+        // 지금 켜져 **있어야 할** 것 — 매니저가 주는 알림 목록
+        var main = new HashSet<string>();
+        var sub = new HashSet<string>();
+        foreach (var n in Managers.Quest.GetCurrentNotifyList())
+            (n.IsSubQuest ? sub : main).Add(n.BtnID);
+
+        var sb = new StringBuilder();
+        sb.AppendLine("── 느낌표 검증 ──");
+        sb.AppendLine($"  메인 퀘스트 {Managers.Quest.CurrentQuestID} / 서브 {Managers.SubQuest?.CurrentSubQuestID} (활성 {Managers.SubQuest?.IsActive})");
+        sb.AppendLine($"  기대 — 메인(노랑): {(main.Count == 0 ? "없음" : string.Join(", ", main))}");
+        sb.AppendLine($"  기대 — 서브(초록): {(sub.Count == 0 ? "없음" : string.Join(", ", sub))}");
+
+        int onCount = 0, wrongColor = 0;
+        foreach (var img in g.GetComponentsInChildren<Image>(true))
+        {
+            Transform p = img.transform.parent;
+            if (p == null || !p.name.Contains("VFX")) continue;
+            if (!p.gameObject.activeSelf) continue;
+
+            onCount++;
+            string hex = ColorUtility.ToHtmlStringRGB(img.color);
+            bool isGreen = hex == "14FF00";
+            bool nameSaysSub = p.name.EndsWith("_Sub1");
+
+            // 이름 규약과 실제 색이 어긋나면 데이터가 아니라 프리팹이 잘못된 것이다.
+            if (isGreen != nameSaysSub) { wrongColor++; sb.AppendLine($"  ⚠ 색/이름 불일치: {p.name} = #{hex}"); }
+
+            sb.AppendLine($"  켜짐: {p.name,-40} #{hex} {(isGreen ? "서브" : "메인")}");
+        }
+
+        if (onCount == 0) sb.AppendLine("  켜진 느낌표 없음");
+        sb.AppendLine($"  색/이름 불일치 {wrongColor}건");
+        Debug.Log(sb.ToString());
+    }
+
     [MenuItem("Test/Village/9. 현재 상태 덤프", false, 20)]
     static void Dump()
     {

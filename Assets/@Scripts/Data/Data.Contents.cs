@@ -720,7 +720,12 @@ namespace Data
         public int    QuestID;
         public int    Order;
         public string BtnID;
-    }
+    
+        // 이 알림이 **서브퀘스트**에서 왔는가. 느낌표 색이 여기서 갈린다
+        //  (노랑 FFE300 = 메인 / 초록 14FF00 = 서브). 시트에는 없는 런타임 전용 값이라
+        //  직렬화에서 뺀다 — JSON에 없는 필드를 넣으면 파서가 어긋난다.
+        [NonSerialized] public bool IsSubQuest;
+}
 
     [Serializable]
     public class QuestNotifyLoader : ILoader<int, List<QuestNotifyData>>

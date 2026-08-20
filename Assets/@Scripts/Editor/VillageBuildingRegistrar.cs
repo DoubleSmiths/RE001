@@ -22,6 +22,7 @@ public static class VillageBuildingRegistrar
         ("Assets/@Resources/Prefab/Map/Village1_Forge_BG.prefab",     "Village1_Forge_BG",     "Prefabs"),
         ("Assets/@Resources/Prefab/Map/Village1_Shop_BG.prefab",      "Village1_Shop_BG",      "Prefabs"),
         ("Assets/@Resources/Prefab/UI/Popup/UI_ShopPopup.prefab",     "UI_ShopPopup",          "UI"),
+        ("Assets/@Resources/Prefab/UI/Popup/UI_ShopConfirmPopup.prefab", "UI_ShopConfirmPopup", "UI"),
         // 신규 JSON은 PreLoad 등록이 없으면 `[DataManager] JSON load 실패`로 조용히 빈 사전이 된다.
         ("Assets/@Resources/Data/JsonData/ShopItemData.json",         "ShopItemData",          "Data"),
     };

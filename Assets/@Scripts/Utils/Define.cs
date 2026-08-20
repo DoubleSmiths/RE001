@@ -1524,6 +1524,10 @@ public class Define
         public const string ShopSoldText = "ShopSoldText";
         public const string ShopSellPriceText = "ShopSellPriceText";
         public const string ShopOwnedCountText = "ShopOwnedCountText";
+        public const string ConfirmBtnText = "ConfirmBtnText";
+        public const string CancelBtnText = "CancelBtnText";
+        public const string ShopConfirmBuyTitleText = "ShopConfirmBuyTitleText";
+        public const string ShopConfirmSellTitleText = "ShopConfirmSellTitleText";
 
     }
     #endregion
@@ -1585,11 +1589,14 @@ public class Define
     // 대장간 / 상점
     public const string VILLAGE1_FORGE_VFX       = "VILLAGE1_FORGE_VFX";
     public const string VILLAGE1_FORGE_TALK_VFX  = "VILLAGE1_FORGE_TALK_VFX";
+    // _SUB1 = 서브퀘스트용 **초록** 느낌표. 접미사 없는 쪽이 메인 퀘스트 **노랑**(FFE300/14FF00).
+    public const string VILLAGE1_FORGE_TALK_VFX_SUB1 = "VILLAGE1_FORGE_TALK_VFX_SUB1";
     public const string FORGE_EXIT_QUEST_VFX     = "FORGE_EXIT_QUEST_VFX";
     public const string BTN_FORGE_CRAFT          = "BTN_FORGE_CRAFT";
     public const string BTN_FORGE_ENHANCE        = "BTN_FORGE_ENHANCE";
     public const string VILLAGE1_SHOP_VFX        = "VILLAGE1_SHOP_VFX";
     public const string VILLAGE1_SHOP_TALK_VFX   = "VILLAGE1_SHOP_TALK_VFX";
+    public const string VILLAGE1_SHOP_TALK_VFX_SUB1 = "VILLAGE1_SHOP_TALK_VFX_SUB1";
     public const string SHOP_EXIT_QUEST_VFX      = "SHOP_EXIT_QUEST_VFX";
     public const string BTN_SHOP_BUY             = "BTN_SHOP_BUY";
     public const string BTN_SHOP_SELL            = "BTN_SHOP_SELL";

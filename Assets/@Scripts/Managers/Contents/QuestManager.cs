@@ -115,9 +115,10 @@ public class QuestManager
             {
                 result.Add(new QuestNotifyData
                 {
-                    QuestID = CurrentQuestID,
-                    Order   = int.MaxValue,  // 메인 뒤에 오도록
-                    BtnID   = sn.TargetID,
+                    QuestID    = CurrentQuestID,
+                    Order      = int.MaxValue,  // 메인 뒤에 오도록
+                    BtnID      = sn.TargetID,
+                    IsSubQuest = true,          // 초록 느낌표로 뜬다
                 });
             }
         }
