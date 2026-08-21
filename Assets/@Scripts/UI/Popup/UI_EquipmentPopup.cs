@@ -148,17 +148,34 @@ public class UI_EquipmentPopup : UI_Popup
             if (c.GetComponent<Button>() != null) tabs.Add(c as RectTransform);
         if (tabs.Count == 0) return tabs;
 
-        bool named = tabs.TrueForAll(t => TierFromName(t.name) >= 0);
-        if (named) tabs.Sort((a, b) => TierFromName(a.name).CompareTo(TierFromName(b.name)));
-        else       tabs.Sort((a, b) => a.anchoredPosition.x.CompareTo(b.anchoredPosition.x));
+        // ⚠️ x좌표로는 정렬할 수 없다 — 이 프리팹의 탭은 **전부 anchoredPosition (0,0)**이고
+        //  위치를 부모 레이아웃이 잡는다(실측 확인). 예전 코드는 좌표 정렬로 폴백해서
+        //  순서가 프리팹 자식 순서 그대로였고, 그래서 무엇을 눌러도 T1만 선택돼 보였다.
+        tabs.Sort((a, b) => TierOf(a).CompareTo(TierOf(b)));
         return tabs;
+    }
+
+    /// <summary>이 탭이 T1/T2/T3 중 무엇인가 (0/1/2). 못 찾으면 큰 값을 줘 뒤로 민다.
+    /// 이름 규칙이 두 갈래다 — ArmorT2Btn처럼 자기 이름에 있는 경우와,
+    /// Btn_WeaponTierFrame_01처럼 **자식 라벨**(Txt_WeaponT3Btn_19)에만 있는 경우.</summary>
+    static int TierOf(RectTransform tab)
+    {
+        int t = TierFromName(tab.name);
+        if (t >= 0) return t;
+
+        foreach (Transform c in tab)
+        {
+            t = TierFromName(c.name);
+            if (t >= 0) return t;
+        }
+        return int.MaxValue;
     }
 
     static int TierFromName(string n)
     {
-        int i = n.IndexOf("T1", System.StringComparison.Ordinal); if (i >= 0) return 0;
-        i = n.IndexOf("T2", System.StringComparison.Ordinal);     if (i >= 0) return 1;
-        i = n.IndexOf("T3", System.StringComparison.Ordinal);     if (i >= 0) return 2;
+        if (n.IndexOf("T1", System.StringComparison.Ordinal) >= 0) return 0;
+        if (n.IndexOf("T2", System.StringComparison.Ordinal) >= 0) return 1;
+        if (n.IndexOf("T3", System.StringComparison.Ordinal) >= 0) return 2;
         return -1;
     }
 
@@ -184,6 +201,24 @@ public class UI_EquipmentPopup : UI_Popup
         _tier = tier;
         RefreshTierTabs();
         RefreshUI();
+        PunchTier(tier);
+    }
+
+    /// <summary>누른 탭만 톡 튀게 — 목록이 바뀌었다는 것을 눈으로 알리는 신호.</summary>
+    void PunchTier(int tier)
+    {
+        foreach (var frame in GetComponentsInChildren<RectTransform>(true))
+        {
+            if (!frame.name.Contains("TierFrame") || !frame.gameObject.activeInHierarchy) continue;
+
+            var tabs = TierTabsOf(frame);
+            if (tier < 0 || tier >= tabs.Count) continue;
+
+            tabs[tier].DOKill();
+            tabs[tier].localScale = Vector3.one * 1.08f;
+            tabs[tier].DOPunchScale(new Vector3(0.12f, 0.12f, 0f), 0.22f, 8, 0.6f)
+                      .SetEase(Ease.OutQuad).SetUpdate(true);
+        }
     }
 
     // 선택된 탭만 밝게 (프리팹에 선택 상태 스프라이트가 따로 없어 색으로 구분)
@@ -196,9 +231,33 @@ public class UI_EquipmentPopup : UI_Popup
             var tabs = TierTabsOf(frame);
             for (int i = 0; i < tabs.Count; i++)
             {
-                var img = tabs[i].GetComponent<Image>();
-                if (img != null) img.color = (i == _tier) ? Color.white : new Color(0.45f, 0.45f, 0.45f, 1f);
+                bool on = i == _tier;
+
+                // 프리팹에 **선택 상태 그림이 이미 저작돼 있다**(shop_tab_focus + UIMask).
+                //  T1만 켜진 채로 저장돼 있었고 아무도 토글하지 않아, 무엇을 눌러도
+                //  T1이 선택된 것처럼 보였다. 색을 덧칠하는 대신 그 그림을 켜고 끈다.
+                SetTabFocus(tabs[i], on);
+
+                tabs[i].DOKill();
+                tabs[i].localScale = Vector3.one * (on ? 1.06f : 1f);
+
+                // 라벨도 같이 — 그림만 바뀌면 글자가 뒤처져 보인다.
+                foreach (var txt in tabs[i].GetComponentsInChildren<TMPro.TMP_Text>(true))
+                    txt.color = on ? Color.white : new Color(0.62f, 0.62f, 0.62f, 1f);
             }
+        }
+    }
+
+    /// <summary>탭의 선택 상태 그림(shop_tab_focus / UIMask)을 켜고 끈다.
+    /// 이름이 프리팹마다 제각각(Img_WeaponT1Btn_11, Mask_WeaponT1Btn_11 …)이라
+    /// **스프라이트 이름**으로 찾는다 — 이름 규칙에 기대면 부위 하나만 어긋나도 조용히 깨진다.</summary>
+    static void SetTabFocus(RectTransform tab, bool on)
+    {
+        foreach (var img in tab.GetComponentsInChildren<Image>(true))
+        {
+            string sp = img.sprite != null ? img.sprite.name : "";
+            if (sp == "shop_tab_focus" || sp == "UIMask")
+                img.gameObject.SetActive(on);
         }
     }
 

@@ -78,7 +78,14 @@ public class UI_ClassPopup : UI_Popup
         BindObject(typeof(GameObjects));
 
         _frameRT = GetObject((int)GameObjects.ClassPopup).GetComponent<RectTransform>();
+
+        // ⚠️ 이 팝업은 스킬북 프리팹을 복제해 만들었고, 그때 **autoPlay Move 저작 애니 9개**가
+        //  딸려 왔다(라벨·NEW 뱃지 등). 창이 아래에서 올라오는 0.5초 동안 그것들이 제각각
+        //  0.5초씩 따로 움직여, 내용물이 창을 쫓아오다 미끄러지는 것처럼 보였다.
+        //  창과 내용이 **한 덩어리로** 올라오게 만든 뒤, 내용은 부드럽게 페이드로만 들인다.
+        StopStrayIntroAnimations();
         OpenAnimation();
+        FadeInContents();
 
         GetButton((int)Buttons.ClassPopupBackground).gameObject.BindEvent(OnClickBG);
         // 우상단 X 버튼 — Button 미부착 노드라 Image에 직접 바인드 (UI_SkillDetailPopup과 동일 패턴)
@@ -99,6 +106,41 @@ public class UI_ClassPopup : UI_Popup
         if (Managers.Ability != null) Managers.Ability.OnAbilityChanged += Refresh;
 
         return true;
+    }
+
+    // ── 등장 연출 ────────────────────────────────────────────────
+    const float CONTENT_FADE = 0.25f;
+
+    /// <summary>복제로 딸려온 autoPlay Move 애니를 멈추고 최종 위치로 확정한다.
+    /// Fade는 남겨도 무해하지만 Move는 창 이동과 겹쳐 흔들림이 된다.</summary>
+    void StopStrayIntroAnimations()
+    {
+        foreach (var anim in GetComponentsInChildren<DOTweenAnimation>(true))
+        {
+            if (!anim.autoPlay) continue;
+            if (anim.animationType != DOTweenAnimation.AnimationType.Move) continue;
+
+            anim.DOComplete();      // 목적지에 바로 놓는다
+            anim.DOKill();
+            anim.autoPlay = false;  // 다시 열 때 또 튀지 않게
+        }
+    }
+
+    /// <summary>창이 올라오는 동안 내용은 살짝 늦게 스며들게 한다.
+    /// 위치를 건드리지 않아 창 이동과 싸우지 않는다.</summary>
+    void FadeInContents()
+    {
+        if (_frameRT == null) return;
+
+        // ⚠️ `??`는 여기서 못 쓴다 — 유니티의 파괴된/없는 컴포넌트는 진짜 null이 아니라
+        //  "fake null"이라 null 병합 연산자가 왼쪽을 살아 있다고 보고 넘어간다.
+        //  실제로 CanvasGroup이 끝내 안 붙어 페이드가 통째로 건너뛰어졌다.
+        var cg = _frameRT.GetComponent<CanvasGroup>();
+        if (cg == null) cg = _frameRT.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+        cg.alpha = 0f;
+        cg.DOFade(1f, CONTENT_FADE).SetEase(Ease.OutQuad).SetUpdate(true);
     }
 
     public override void OnDestroy()
