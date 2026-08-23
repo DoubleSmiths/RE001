@@ -103,6 +103,13 @@ public class UI_EnhacePopup : UI_Popup
         var smithAnim = smithGo != null ? smithGo.GetComponent<Animator>() : null;
         if (smithAnim != null) smithAnim.Play("Normal", 0, 0f);
 
+        // 모루가 장비 아이콘에서 46유닛이나 떨어져 있어 장비가 허공에 뜬 것처럼 보였다
+        //  (원본은 아이콘 바로 밑, 아이콘 높이만큼의 간격이다). 모루를 끌어올려 붙인다.
+        //  절대값으로 넣는다 — 상대 이동은 Init이 두 번 불리면 두 번 올라간다.
+        var floorRt = Util.FindChild(gameObject, "Floor", true)?.GetComponent<RectTransform>();
+        if (floorRt != null)
+            floorRt.anchoredPosition = new Vector2(floorRt.anchoredPosition.x, ANVIL_Y);
+
         GetButton((int)Buttons.Enhance_Btn).onClick.AddListener(OnClickEnhance);
 
         var closeBtn = GetButton((int)Buttons.EnhancePopupCloseBtn);
@@ -237,6 +244,7 @@ public class UI_EnhacePopup : UI_Popup
     }
 
     Image _blackout;
+    const float ANVIL_Y = -83f;             // 프리팹 저작값 -100에서 17유닛 위 (아이콘 밑에 붙는 자리)
     const float BLACKOUT_OVERSCAN = 600f;   // 캔버스보다 넉넉히 — 가장자리가 새지 않게
 
     // 무대 색은 원본 프레임에서 재서 옮겼다.
@@ -675,7 +683,22 @@ public class UI_EnhacePopup : UI_Popup
 
         foreach (var t in new[] { _colName, _colBefore, _colArrow, _colAfter })
             if (t != null) ApplyFont(t, FontType.UI);
+
+        ScaleTable(_tblTitle);
+        ScaleTable(_tblBody);
     }
+
+    // 표 글자가 원본의 3분의 2 크기였다 — 행 간격 실측 13.7px 대 원본 19~20px.
+    //  네 열의 폰트 크기를 각각 만지면 열마다 어긋나므로, 표 묶음의 스케일만 올린다.
+    //  (열 사이 간격과 밀려 들어오는 거리까지 같은 비율로 커져 저작 레이아웃이 유지된다.)
+    const float TABLE_SCALE = 1.42f;
+
+    static void ScaleTable(GameObject node)
+    {
+        var rt = node != null ? node.transform as RectTransform : null;
+        if (rt != null) rt.localScale = Vector3.one * TABLE_SCALE;   // 절대값 — 여러 번 불려도 안전
+    }
+
 
     void RefreshPreview(Data.EquipmentData data)
     {

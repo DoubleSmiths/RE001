@@ -204,7 +204,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
         Reveal(GameObjects.Img_SuccessTxtGroup_02);
         Reveal(GameObjects._2);
 
-        PlayAuthored(GameObjects.Icon, "7");      // 모루 위로 떴던 아이콘이 내려앉으며 원래 크기로
+        DescendIcon();                            // 모루 위로 떴던 아이콘이 내려앉으며 원래 크기로
         ShowGodRays();
 
         // ── ② +1.70s : 내구도 + "능력치 변화" 라벨 ──
@@ -302,6 +302,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
     void FillStatTable(Data.EquipmentData data)
     {
         RevealText(Texts.AttText);   // "능력치 변화" 라벨도 색을 되살려야 보인다
+
+        // 제목("능력치 변화")은 이미 원본 크기다 — 같이 키우면 표와 겹친다. 본문만 키운다.
+        ScaleTable(GetObject((int)GameObjects.AttRealText));
 
         var b = Managers.Game.GetEnhanceBonus(_equip.DataId, _result.PrevLevel);
         var a = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
@@ -443,6 +446,17 @@ public class UI_EnhanceProgressPopup : UI_Popup
         }).SetUpdate(true);
     }
 
+    // 표 글자가 원본의 3분의 2 크기였다 — 행 간격 실측 13.7px 대 원본 19~20px.
+    //  네 열의 폰트 크기를 각각 만지면 열마다 어긋나므로, 표 묶음의 스케일만 올린다.
+    //  (열 사이 간격과 밀려 들어오는 거리까지 같은 비율로 커져 저작 레이아웃이 유지된다.)
+    const float TABLE_SCALE = 1.42f;
+
+    static void ScaleTable(GameObject node)
+    {
+        var rt = node != null ? node.transform as RectTransform : null;
+        if (rt != null) rt.localScale = Vector3.one * TABLE_SCALE;   // 절대값 — 여러 번 불려도 안전
+    }
+
     static WaitForSecondsRealtime Wait(float sec) => new WaitForSecondsRealtime(sec);
 
     // 단계별 증가분(EquipEnhanceData) 누적 합 — 표시용
@@ -532,6 +546,28 @@ public class UI_EnhanceProgressPopup : UI_Popup
             else a.DORestartById(id);
         }
     }
+
+    /// <summary>떠 있던 아이콘이 내려앉는다.
+    ///
+    /// ⚠️ 저작 트윈 id "7"을 그냥 재생하면 안 된다. DOTween 트윈은 **만들어질 때** 시작값을
+    ///    붙잡아 두는데, 그 값은 프리팹 자리(0,0)다. 그래서 우리가 (0,80)으로 올려 둔 자세를
+    ///    재생 순간 (0,0)으로 되돌려 버리고 거기서 (0,20)까지 짧게 움직인다 —
+    ///    "올라가고 내려갈 때 잠깐 위치가 이상해지는" 것의 정체다.
+    ///    값(목적지 (0,20) / 1.2초, 크기 1배 / 1.0초)은 그 저작 트윈에서 읽어 왔다.
+    void DescendIcon()
+    {
+        var rt = GetObject((int)GameObjects.Icon)?.transform as RectTransform;
+        if (rt == null) return;
+
+        rt.DOKill();
+        rt.DOLocalMove(new Vector3(0f, ICON_SETTLE_Y, 0f), ICON_SETTLE_DUR)
+          .SetEase(Ease.Linear).SetUpdate(true);
+        rt.DOScale(1f, ICON_SETTLE_SCALE_DUR).SetEase(Ease.Linear).SetUpdate(true);
+    }
+
+    const float ICON_SETTLE_Y         = 20f;    // 저작 id "7" LocalMove
+    const float ICON_SETTLE_DUR       = 1.2f;
+    const float ICON_SETTLE_SCALE_DUR = 1.0f;
 
     /// <summary>저작 트윈 id의 **끝 상태로 즉시 옮겨 놓는다**(재생하지 않는다).
     ///
