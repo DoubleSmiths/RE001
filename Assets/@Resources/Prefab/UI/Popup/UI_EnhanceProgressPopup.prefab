@@ -272,9 +272,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 7163186096654408189}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -488,9 +488,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 7163186096654408189}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -766,9 +766,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 5743879111310189355}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -7151,9 +7151,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 7658154979386305841}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -7745,9 +7745,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 4715160138166492206}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -7853,9 +7853,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 4715160138166492206}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -20897,9 +20897,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 2735462811575995461}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -21422,9 +21422,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6170538457352883924}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -21761,9 +21761,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6170538457352883924}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -22132,6 +22132,7 @@ GameObject:
   - component: {fileID: 8667071364358312307}
   - component: {fileID: 8440267555205503910}
   - component: {fileID: 4161210663586929472}
+  - component: {fileID: 8652109836580511278}
   m_Layer: 5
   m_Name: Hammer_IncludeAnim
   m_TagString: Untagged
@@ -22326,6 +22327,18 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalShakeRandomnessMode: 0
   optionalString: 
+--- !u!114 &8652109836580511278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7221269368245940696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &7253161035263153363
 GameObject:
   m_ObjectHideFlags: 0
@@ -22581,9 +22594,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 8432927301446237233}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -22689,9 +22702,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 8432927301446237233}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -23091,9 +23104,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6553859886581667829}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -23537,9 +23550,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 2794642755557959406}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -24070,9 +24083,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 1437866714897940194}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -24365,9 +24378,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6546449714879475869}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -24581,9 +24594,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6546449714879475869}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -25183,9 +25196,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6352569631901077369}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -25461,9 +25474,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 8274130057700578337}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -25946,9 +25959,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 1973163069102546034}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -26749,9 +26762,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 5563222090928490824}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
@@ -27594,9 +27607,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 3125290836975760771}
   animationType: 7
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0

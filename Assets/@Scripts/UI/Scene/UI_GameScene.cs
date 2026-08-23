@@ -71,10 +71,6 @@ public class UI_GameScene : UI_Scene
     {
         OptionBtn,
         GuildButton,
-        GuildButton1,
-        GuildButton2,
-        GuildButton3,
-        GuildButton4,
         TravelButtonOnBattle,
         CharacterButton,
         InventoryButton,
@@ -88,7 +84,6 @@ public class UI_GameScene : UI_Scene
     enum GameObjects
     {
         FIXED,
-        InFrame,
         MainGoldShow,
         MainCrystalShow,
         AreaBtnGroupSlot,

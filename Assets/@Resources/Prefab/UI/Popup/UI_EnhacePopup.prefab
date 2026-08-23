@@ -34363,9 +34363,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 6141094121908251775}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -34949,9 +34949,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 3689223993998418618}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -55978,9 +55978,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 8194655700692438243}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -56453,9 +56453,9 @@ MonoBehaviour:
   autoGenerate: 1
   isActive: 1
   isValid: 1
-  target: {fileID: 0}
+  target: {fileID: 3497564355873218652}
   animationType: 6
-  targetType: 10
+  targetType: 15
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
@@ -62675,6 +62675,7 @@ GameObject:
   - component: {fileID: 6802749317721112687}
   - component: {fileID: 6594584308842930862}
   - component: {fileID: 6793268195599414769}
+  - component: {fileID: 2607052740496367845}
   m_Layer: 5
   m_Name: HammerNormalAnim
   m_TagString: Untagged
@@ -62765,6 +62766,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2607052740496367845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8451050060398998303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &8505220203854012662
 GameObject:
   m_ObjectHideFlags: 0

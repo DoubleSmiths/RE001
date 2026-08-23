@@ -12,7 +12,6 @@ public class UI_Bestiary : UI_Base
 
     enum Images
     {
-        UI_Bestiary,
         BestiaryAreaTextLine,
         BestiaryBoxSelectActive,
         BestiaryBoxFrame,
@@ -35,7 +34,6 @@ public class UI_Bestiary : UI_Base
 
     enum Buttons
     {
-        UI_BestiaryBox,
     }
 
     enum GameObjects

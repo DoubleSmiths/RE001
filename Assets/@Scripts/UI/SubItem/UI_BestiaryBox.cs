@@ -30,7 +30,6 @@ public class UI_BestiaryBox : UI_Base
 
     enum Buttons
     {
-        UI_BestiaryBox,
     }
 
     enum GameObjects

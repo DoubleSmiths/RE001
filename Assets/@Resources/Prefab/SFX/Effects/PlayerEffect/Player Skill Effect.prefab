@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 3519285416099443084}
   - component: {fileID: 5378154241003223491}
   - component: {fileID: 1298626003395308325}
+  - component: {fileID: 2690987430999905480}
   m_Layer: 0
   m_Name: Player Skill WaterWhip (1)
   m_TagString: Untagged
@@ -147,6 +148,18 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2690987430999905480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2479581279896893590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &5498346710500769301
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,6 +171,7 @@ GameObject:
   - component: {fileID: 3704699246380783922}
   - component: {fileID: 2933155150557957956}
   - component: {fileID: 6550728227938281595}
+  - component: {fileID: 7490736003822251472}
   m_Layer: 0
   m_Name: Player Skill Smash Ef
   m_TagString: Untagged
@@ -262,6 +276,18 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7490736003822251472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5498346710500769301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &6760719027323800192
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,6 +299,7 @@ GameObject:
   - component: {fileID: 6865549420488603249}
   - component: {fileID: 6248093737573689466}
   - component: {fileID: 7126978852806365331}
+  - component: {fileID: 1813055453636282828}
   m_Layer: 0
   m_Name: Player Skill WaterWhip
   m_TagString: Untagged
@@ -377,6 +404,18 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1813055453636282828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6760719027323800192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &8627411860258246159
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +427,7 @@ GameObject:
   - component: {fileID: 2965600763353308113}
   - component: {fileID: 3395365168661020283}
   - component: {fileID: 4469510179271009361}
+  - component: {fileID: 6640312598465930906}
   m_Layer: 0
   m_Name: Player Skill Smash Ef - Impact
   m_TagString: Untagged
@@ -491,3 +531,15 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &6640312598465930906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8627411860258246159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink

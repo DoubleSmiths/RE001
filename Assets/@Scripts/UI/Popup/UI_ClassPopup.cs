@@ -62,8 +62,11 @@ public class UI_ClassPopup : UI_Popup
         public TMP_Text LvlTxt;         // Txt_LvlIcon_*
     }
 
-    readonly Slot[] _slots = new Slot[SLOT_COUNT];
-    readonly int[] _slotIds = new int[SLOT_COUNT];   // 슬롯별 능력 id (-1=빈 슬롯)
+    // 프리팹에 저작된 슬롯은 7개(SkillBookSkill_0~6)지만 직업 능력은 그보다 많다(현재 12개).
+    //  모자란 만큼 템플릿을 복제해 늘린다 — Content가 GridLayoutGroup + ScrollRect라
+    //  자리는 레이아웃이 잡고 넘치면 스크롤된다. 고정 배열이면 초과분이 조용히 사라진다.
+    readonly List<Slot> _slots = new List<Slot>();
+    readonly List<int> _slotIds = new List<int>();   // 슬롯별 능력 id (-1=빈 슬롯)
 
     void Awake() => Init();
 
@@ -177,7 +180,9 @@ public class UI_ClassPopup : UI_Popup
                 if (Managers.Ability.GetSource(id) == AbilitySource.Class) ids.Add(id);
         ids.Sort();
 
-        for (int i = 0; i < SLOT_COUNT; i++)
+        EnsureSlotCount(ids.Count);
+
+        for (int i = 0; i < _slots.Count; i++)
         {
             var s = _slots[i];
             if (s == null || s.Root == null) { _slotIds[i] = -1; continue; }
@@ -186,8 +191,6 @@ public class UI_ClassPopup : UI_Popup
             SetActiveSafe(s.Root.gameObject, used);
             if (used) RefreshSlot(s, ids[i]);
         }
-        if (ids.Count > SLOT_COUNT)
-            Debug.Log($"[ClassPopup] 직업 능력 {ids.Count}개 — 슬롯({SLOT_COUNT}) 초과분 미표시");
     }
 
     // 직업 숙련도 게이지 — 만충 숫자만 #00FF00('lime' TMP 미지원), 미만 yellow. '/최대'는 흰색 유지.
@@ -253,6 +256,7 @@ public class UI_ClassPopup : UI_Popup
     // 슬롯 클릭 — 보유:정보창 / 미보유&만충:축성 / 미보유&부족:토스트
     void OnClickSlot(int idx)
     {
+        if (idx < 0 || idx >= _slotIds.Count) return;
         int id = _slotIds[idx];
         if (id < 0) return;
 
@@ -278,44 +282,82 @@ public class UI_ClassPopup : UI_Popup
         Managers.UI.ShowToast(Util.Localize("Lack_Proficiency_Text"));
     }
 
-    // 슬롯 템플릿 7개의 내부 노드 캐싱 + 클릭 바인딩 (Refresh마다 재바인딩하면 람다가 중복 누적되므로 1회만)
+    /// <summary>슬롯 하나의 내부 노드를 캐싱한다. 저작 템플릿과 복제본이 같은 구조라 공용.</summary>
+    Slot BuildSlot(Transform root)
+    {
+        var s = new Slot { Root = root };
+        var btnT   = FindByPrefix(root, "Btn_");
+        var lockT  = FindByPrefix(root, "Img_LockedIcon_");
+        var memI   = FindByPrefix(root, "Img_MemorizedIcon_");
+        var memT   = FindByPrefix(root, "Txt_MemorizedIcon_");
+        var lvlI   = FindByPrefix(root, "Img_LvlIcon_");
+        var lvlT   = FindByPrefix(root, "Txt_LvlIcon_");
+        var panelT = FindByPrefix(root, "Panel_Frame_");
+
+        s.IconBtn  = btnT != null ? btnT.gameObject : null;
+        s.Locked   = lockT != null ? lockT.parent.gameObject : null;
+        s.ActiveEf = panelT != null ? panelT.gameObject : null;
+        s.MemBadge = memI != null ? memI.parent.gameObject : null;
+        s.MemTxt   = memT != null ? memT.GetComponent<TMP_Text>() : null;
+        if (lvlI != null)
+        {
+            s.LvlGroup = lvlI.parent.gameObject;
+            s.LvlFrame = lvlI.GetComponent<Image>();
+            s.LvlBg    = lvlI.parent.GetComponent<Image>();
+        }
+        s.LvlTxt = lvlT != null ? lvlT.GetComponent<TMP_Text>() : null;
+        return s;
+    }
+
+    // 저작 슬롯 캐싱 + 클릭 바인딩 (Refresh마다 재바인딩하면 람다가 중복 누적되므로 1회만)
     void CacheSlots()
     {
         var content = GetObject((int)GameObjects.Content)?.transform;
         if (content == null) return;
 
+        _slots.Clear();
+        _slotIds.Clear();
+
         for (int i = 0; i < SLOT_COUNT; i++)
         {
-            _slotIds[i] = -1;
             var root = content.Find($"SkillBookSkill_{i}");
             if (root == null) { Debug.Log($"[ClassPopup] 슬롯 템플릿 누락: SkillBookSkill_{i}"); continue; }
 
-            var s = new Slot { Root = root };
-            var btnT   = FindByPrefix(root, "Btn_");
-            var lockT  = FindByPrefix(root, "Img_LockedIcon_");
-            var memI   = FindByPrefix(root, "Img_MemorizedIcon_");
-            var memT   = FindByPrefix(root, "Txt_MemorizedIcon_");
-            var lvlI   = FindByPrefix(root, "Img_LvlIcon_");
-            var lvlT   = FindByPrefix(root, "Txt_LvlIcon_");
-            var panelT = FindByPrefix(root, "Panel_Frame_");
-
-            s.IconBtn  = btnT != null ? btnT.gameObject : null;
-            s.Locked   = lockT != null ? lockT.parent.gameObject : null;
-            s.ActiveEf = panelT != null ? panelT.gameObject : null;
-            s.MemBadge = memI != null ? memI.parent.gameObject : null;
-            s.MemTxt   = memT != null ? memT.GetComponent<TMP_Text>() : null;
-            if (lvlI != null)
-            {
-                s.LvlGroup = lvlI.parent.gameObject;
-                s.LvlFrame = lvlI.GetComponent<Image>();
-                s.LvlBg    = lvlI.parent.GetComponent<Image>();
-            }
-            s.LvlTxt = lvlT != null ? lvlT.GetComponent<TMP_Text>() : null;
-            _slots[i] = s;
+            var s = BuildSlot(root);
+            _slots.Add(s);
+            _slotIds.Add(-1);
 
             if (s.IconBtn != null)
             {
-                int idx = i;
+                int idx = _slots.Count - 1;
+                s.IconBtn.BindEvent(() => OnClickSlot(idx));
+            }
+        }
+    }
+
+    /// <summary>능력 수만큼 슬롯을 확보한다. 모자라면 첫 슬롯을 복제해 붙인다.
+    /// 클릭 바인딩은 여기서 한 번만 건다 — Refresh마다 걸면 람다가 중복 누적된다.</summary>
+    void EnsureSlotCount(int need)
+    {
+        if (_slots.Count == 0 || need <= _slots.Count) return;
+
+        var content = GetObject((int)GameObjects.Content)?.transform;
+        Transform template = _slots[0].Root;
+        if (content == null || template == null) return;
+
+        while (_slots.Count < need)
+        {
+            var copy = Instantiate(template.gameObject, content);
+            copy.name = $"SkillBookSkill_{_slots.Count}";
+            copy.SetActive(true);
+
+            var s = BuildSlot(copy.transform);
+            _slots.Add(s);
+            _slotIds.Add(-1);
+
+            if (s.IconBtn != null)
+            {
+                int idx = _slots.Count - 1;
                 s.IconBtn.BindEvent(() => OnClickSlot(idx));
             }
         }

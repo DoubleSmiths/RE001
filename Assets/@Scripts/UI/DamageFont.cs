@@ -27,6 +27,8 @@ public class DamageFont : MonoBehaviour
     const float RISE_DURATION  = 1.5f;
     const float RISE_HEIGHT    = 0.8f;
 
+    static bool s_warnedCritSprite;   // 없는 스프라이트 경고는 1회만
+
     // 슬라이드 63 — 치명타 시 데미지 숫자 왼쪽 위에 dmg_txt_critical_additive 글로우 sprite 오버레이.
     // 위치는 텍스트 bounds 기반으로 동적 계산. 아래 offset은 좌상단 corner에서 추가 시각 보정.
     static readonly Vector3 CRIT_ADDITIVE_VISUAL_OFFSET = new Vector3(0f, 0f, 0f);
@@ -103,9 +105,16 @@ public class DamageFont : MonoBehaviour
             // 텍스트 메시 위에 그리도록 sortingOrder 한 단계 위 
             int textOrder = GetComponent<MeshRenderer>()?.sortingOrder ?? 350;
             _critAdditive.sortingOrder = textOrder - 1;
-            //_critAdditive.sprite = Managers.Resource.Load<Sprite>("dmg_txt_critical_additive");
-            if (_critAdditive.sprite == null)
+            // 로드 줄이 주석 처리된 채 아래 경고만 남아 있었다 — 그래서 치명타가 뜰 때마다
+            //  절대 꺼지지 않는 경고가 찍혔다(플레이스루 한 판에 221건). 실측해 보니
+            //  주소는 멀쩡히 로드된다(접미사 유무 둘 다). 로드를 되살린다.
+            _critAdditive.sprite = Managers.Resource.Load<Sprite>("dmg_txt_critical_additive");
+            if (_critAdditive.sprite == null && !s_warnedCritSprite)
+            {
+                // 경고는 한 번만 — 타격마다 찍히면 진짜 에러가 파묻힌다.
+                s_warnedCritSprite = true;
                 Debug.LogWarning("[DamageFont] 'dmg_txt_critical_additive' sprite not found in Addressables.");
+            }
 
             // 슬라이드 63 — 외곽선 FF9900. CriticalOutlineMat이 SSU Standard shader 기반 outer outline 적용.
             //Material critMat = Managers.Resource.Load<Material>("CriticalOutlineMat");

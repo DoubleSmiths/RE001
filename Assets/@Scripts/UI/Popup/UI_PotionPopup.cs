@@ -388,6 +388,7 @@ public class UI_PotionPopup : UI_Popup
         // Lock overlay Fade out
         seq.AppendCallback(() =>
         {
+            if (!Alive()) return;
             if (_spdSlot.lockBg != null) _spdSlot.lockBg.DOFade(0f, 0.4f).SetUpdate(true);
             _spdSlot.lockIcon.DOFade(0f, 0.4f).SetUpdate(true);
         });
@@ -395,6 +396,11 @@ public class UI_PotionPopup : UI_Popup
 
         seq.AppendCallback(() =>
         {
+            // 이 연출은 1.4초짜리인데 그 사이 팝업이 닫히면 여기 오는 것들이 전부 파괴돼 있다.
+            //  lockIcon만 null 검사가 빠져 있어서, 창을 빨리 닫으면
+            //  "The object of type 'UnityEngine.UI.Image' has been destroyed"로 콜백이 터졌다.
+            if (!Alive()) return;
+
             if (_spdSlot.lockBg != null) _spdSlot.lockBg.gameObject.SetActive(false);
             _spdSlot.lockIcon.gameObject.SetActive(false);
             // 다음 번 잠금 상태 재사용을 위한 원복
@@ -403,6 +409,10 @@ public class UI_PotionPopup : UI_Popup
             RefreshSlotVisual(_spdSlot);
             Managers.Game.SpdPotionPopupAnimPlayed = true;
         });
+
+        // 연출 도중 팝업이 사라졌는지. 유니티 오브젝트는 파괴돼도 참조가 null이 아니라
+        //  "fake null"이라, == null 비교를 거쳐야 제대로 걸러진다.
+        bool Alive() => this != null && _spdSlot != null && _spdSlot.lockIcon != null && lockIconTr != null;
     }
 
     bool _closing;

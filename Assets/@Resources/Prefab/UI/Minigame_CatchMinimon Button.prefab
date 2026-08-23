@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 4050123885069896070}
   - component: {fileID: 7659543174668678607}
   - component: {fileID: 7799927596275591786}
+  - component: {fileID: 3317446672390901863}
   m_Layer: 5
   m_Name: Minimon No Exist Img
   m_TagString: Untagged
@@ -218,6 +219,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3317446672390901863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3045649036508286776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &3067920416168076086
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +243,7 @@ GameObject:
   - component: {fileID: 2892122850974855177}
   - component: {fileID: 5171450197255399794}
   - component: {fileID: 3604774271871819880}
+  - component: {fileID: 8592098155084978899}
   m_Layer: 5
   m_Name: Image (5)
   m_TagString: Untagged
@@ -316,6 +330,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8592098155084978899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3067920416168076086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8610646e928f925468ca893202e88d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimEventSink
 --- !u!1 &4347566507577101711
 GameObject:
   m_ObjectHideFlags: 0

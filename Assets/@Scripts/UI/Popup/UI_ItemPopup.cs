@@ -10,8 +10,6 @@ public class UI_ItemPopup : UI_Popup
 
     enum Images
     {
-        _0,
-        _2,
         Image_4,
         Image_5,
         ItemPopupFrame,
@@ -46,7 +44,6 @@ public class UI_ItemPopup : UI_Popup
     enum Buttons
     {
         ItemPopupBackground,
-        _1,
         ScrollUseBtn,
         SOMUseBtn,
         MORUseBtn,
