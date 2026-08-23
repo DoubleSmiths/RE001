@@ -45,6 +45,7 @@ public class UI_EnhacePopup : UI_Popup
         FlameImg,               // 잠재 박스의 불꽃 (prefab INACTIVE → 코드가 켠다)
         PlusText,               // 주문서 미선택 시 "+"
         EnhAttDetail,           // 이름/내구도/능력치 미리보기 묶음 — 연출 중 숨긴다
+        CraftEquipIcon,         // 모루 위 장비 아이콘 — 담금질에 떠오른다
         PotenForceBarGroup,     // 잠재력 슬라이더
         Holder,                 // 슬라이더 Fill 홀더 (prefab INACTIVE → 활성)
         PotenSelectPopup,       // 잠재 슬롯 선택 — 스코프 제외(비활성)
@@ -161,6 +162,7 @@ public class UI_EnhacePopup : UI_Popup
     void ExitCeremonyView()
     {
         Blackout(STAGE_IDLE, 0.30f);
+        RestoreCraftIcon(0f);                     // 떠 있던 아이콘을 제자리로
         if (_embers != null) { StopCoroutine(_embers); _embers = null; }
         foreach (var go in _hidden)
             if (go != null) go.SetActive(true);
@@ -832,17 +834,20 @@ public class UI_EnhacePopup : UI_Popup
             case "ChargeSuccess":                                    // 담금질 — 길게 떨린다
             case "ChargeFail":
                 ShakeFrame(0.90f, 4f);
+                RaiseCraftIcon();
                 break;
 
             // 결과 섬광은 **이 순간**이다(클립 t=3.83). 예전엔 코루틴이 "클립길이-0.5"로
             //  어림잡아 터뜨려 0.7초쯤 늦었다 — 소리(Success)와 빛이 어긋나 보였다.
             case "Success":
                 ShakeFrame(0.45f, 12f);
+                PopCraftIcon();
                 PopResultFlash(true);
                 break;
 
             case "Fail":
                 ShakeFrame(0.35f, 8f);
+                RestoreCraftIcon(ICON_DROP_DUR);   // 실패는 그 자리에 툭 떨어진다(원본 id 8)
                 PopResultFlash(false);
                 break;
         }
@@ -887,6 +892,108 @@ public class UI_EnhacePopup : UI_Popup
             rt.DOPunchScale(new Vector3(0.18f, -0.12f, 0f), 0.24f, 10, 0.8f).SetUpdate(true);
         }
     }
+
+    #region 장비 아이콘 궤적
+
+    // 원본은 이 궤적을 **결과창 아이콘의 DOTweenAnimation id**로 적어 뒀다:
+    //   5 담금질에 떠오르며 커진다 (+50, 1.4배, 1.4초)
+    //   6 결과가 확정될 때 한 번 더 튀어오른다 (+80, 0.3초 OutBack)
+    //   7 결과 화면에서 내려앉으며 원래 크기로 (+20, 1.2초)
+    //   8 실패는 제자리로 (0, 0.1초)
+    // 그런데 원본은 망치질과 결과가 **한 창**이고, 우리 포트는 둘로 나뉘어 있다.
+    //  그래서 5와 6은 이 창(강화창)이 맡아야 한다 — 이게 없으면 아이콘이 모루에 붙박인 채
+    //  결과창에서 난데없이 위에서 내려온다(사용자가 "아이콘 위치가 정확하지 않다"고 한 지점).
+    const float ICON_RISE_Y   = 50f;
+    const float ICON_RISE_SC  = 1.4f;
+    const float ICON_RISE_DUR = 1.4f;
+    const float ICON_POP_Y    = 80f;
+    const float ICON_POP_DUR  = 0.3f;
+    const float ICON_DROP_DUR = 0.1f;
+
+    Vector2? _craftIconHome;
+
+    RectTransform CraftIcon()
+    {
+        var go = GetObject((int)GameObjects.CraftEquipIcon);
+        var rt = go != null ? go.transform as RectTransform : null;
+        if (rt != null && _craftIconHome == null) _craftIconHome = rt.anchoredPosition;
+        return rt;
+    }
+
+    /// <summary>담금질 — 모루에서 천천히 떠오르며 커진다.</summary>
+    void RaiseCraftIcon()
+    {
+        var rt = CraftIcon();
+        if (rt == null) return;
+
+        rt.DOKill();
+        rt.DOAnchorPos(_craftIconHome.Value + new Vector2(0f, ICON_RISE_Y), ICON_RISE_DUR)
+          .SetEase(Ease.Linear).SetUpdate(true);
+        rt.DOScale(ICON_RISE_SC, ICON_RISE_DUR).SetEase(Ease.Linear).SetUpdate(true);
+
+        Whiten(1f, ICON_RISE_DUR);   // 담금질 — 쇠가 달아오르듯 아이콘이 하얗게 탄다
+    }
+
+    /// <summary>아이콘 위의 흰 덮개(프리팹 CraftEquipIcon/Flash).
+    ///
+    /// 원본에서 담금질에 들어가면 장비 칸이 서서히 하얗게 타올랐다가, 결과 섬광에서
+    ///  완전히 날아가고, 0.8초쯤 뒤 평상 밝기로 돌아온다. 우리는 타격 순간에만
+    ///  깜빡이고 말아, 떠오르는 아이콘이 그냥 빨간 네모로 보였다.
+    /// 저작 Fade(0.25초 autoPlay)가 켜질 때마다 끼어들므로 끊고 직접 몬다.</summary>
+    void Whiten(float alpha, float duration)
+    {
+        var go = Util.FindChild(gameObject, "Flash", true);
+        var img = go != null ? go.GetComponent<Image>() : null;
+        if (img == null) return;
+
+        go.SetActive(true);
+        img.DOKill();
+
+        var c = img.color;
+        if (alpha > 0f && c.a <= 0f) { c.a = 0f; img.color = c; }
+
+        img.DOFade(alpha, duration).SetEase(Ease.Linear).SetUpdate(true)
+           .OnComplete(() => { if (alpha <= 0f && go != null) go.SetActive(false); });
+    }
+
+    /// <summary>결과가 확정되는 순간 — 한 번 더 튀어오른다. 결과창은 이 꼭대기에서 이어받는다.</summary>
+    void PopCraftIcon()
+    {
+        var rt = CraftIcon();
+        if (rt == null) return;
+
+        rt.DOKill();
+        rt.DOAnchorPos(_craftIconHome.Value + new Vector2(0f, ICON_POP_Y), ICON_POP_DUR)
+          .SetEase(Ease.OutBack).SetUpdate(true);
+
+        // 섬광에서 완전히 날아갔다가 0.8초에 걸쳐 평상으로 — 원본의 해제 시점이다.
+        Whiten(1f, 0f);
+        DOVirtual.DelayedCall(ICON_WHITE_HOLD, () => Whiten(0f, ICON_WHITE_OUT)).SetUpdate(true);
+    }
+
+    const float ICON_WHITE_HOLD = 0.25f;
+    const float ICON_WHITE_OUT  = 0.55f;
+
+    /// <summary>제자리로. 연출이 끝나면 반드시 불러야 다음 강화가 어긋난 자리에서 시작하지 않는다.</summary>
+    void RestoreCraftIcon(float duration)
+    {
+        var rt = CraftIcon();
+        if (rt == null) return;
+
+        rt.DOKill();
+        if (duration <= 0f)
+        {
+            rt.anchoredPosition = _craftIconHome.Value;
+            rt.localScale = Vector3.one;
+            Whiten(0f, 0f);
+            return;
+        }
+        rt.DOAnchorPos(_craftIconHome.Value, duration).SetEase(Ease.OutQuad).SetUpdate(true);
+        rt.DOScale(1f, duration).SetEase(Ease.OutQuad).SetUpdate(true);
+        Whiten(0f, duration);
+    }
+
+    #endregion
 
     /// <summary>성공/실패 전체화면 섬광(Animator "Flash").</summary>
     void PopResultFlash(bool success)

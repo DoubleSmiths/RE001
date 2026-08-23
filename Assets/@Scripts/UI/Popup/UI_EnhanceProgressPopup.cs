@@ -75,10 +75,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
     // 능력치 표는 그 안에서 다시 다섯 걸음을 밟는다. 원본 영상을 열별 밝기로 재서 얻은 값이다
     //  (라벨 f253 → 이전값 f254 → 화살표 f255 → 초록 f256~258 → 채움 f265 → 정리 f267 → 라벨 f270).
     //  아래는 **라벨이 뜨는 순간을 0으로 둔 상대시각**이다.
-    const float TBL_VALUES    = 0.10f;   // 이전값 / 화살표 / 초록 이후값이 뒤따라 붙는다
+    const float TBL_STAGGER   = 0.10f;   // 열 하나가 뜨고 다음 열이 뜨기까지
     const float TBL_ARROW_HIT = 1.20f;   // 화살표가 속을 채우며 한 번 번쩍
-    const float TBL_SETTLE    = 1.25f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로 (실측 t0+1.25)
-    const float TBL_LABEL_OUT = 1.70f;   // 라벨은 첫 줄(강화도)만 남는다
+    const float TBL_SETTLE    = 1.40f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로
     const float ARROW_FLASH   = 0.05f;   // 원본은 채운 ▶이 딱 한 프레임이다
 
     // 강화창의 백색 판은 1.5초에 걸쳐 걷히는데, 이 창은 그 중 1.2초쯤 지난 시점에 열린다.
@@ -192,7 +191,10 @@ public class UI_EnhanceProgressPopup : UI_Popup
             bg.color = new Color(WASH_LEFT, WASH_LEFT, WASH_LEFT, 1f);
             bg.DOColor(Color.black, WASH_TAIL).SetEase(Ease.OutQuad).SetUpdate(true);
         }
-        SnapAuthored(GameObjects.Icon, "5");      // 담금질로 떠오른 자세에서 시작한다
+        // 원본의 아이콘은 담금질에 떠오르고(id 5: +50, 1.4배) 결과가 확정될 때 한 번 더
+        //  튀어오른다(id 6: +80). 결과창은 **그 꼭대기에서** 열려 내려앉기(id 7)를 시작한다.
+        SnapAuthored(GameObjects.Icon, "5");      // 위치 +50 · 크기 1.4배
+        SnapAuthored(GameObjects.Icon, "6");      // 거기서 한 번 더 +80까지
 
         Reveal(GameObjects.Flash_USETHIS);
         Reveal(GameObjects.SuccessTxtGroup);      // 제목·이름의 autoPlay 연출이 여기서 시작된다
@@ -221,20 +223,30 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         // 표는 한 번에 뜨지 않는다. 라벨이 먼저 서고, 값이 따라 붙고, 화살표가 번쩍인 뒤
         //  이전값이 걷히며 초록만 남는다 — 원본의 이 다섯 걸음이 통째로 빠져 있었다.
-        PlayAuthored(GameObjects.AttRealText, "");            // ① 스탯 이름 4줄
+        // 원본은 네 열이 **0.1초씩 어긋나** 들어온다(실측 등장 프레임 f253/254/255/256).
+        //  id "1" 하나로 셋을 한꺼번에 누르면 이전값·화살표·초록이 뭉쳐 나온다 —
+        //  DORestartById가 오브젝트 단위라, 열마다 따로 부르면 그대로 시차가 생긴다.
+        PlayAuthoredNode("Text", "");                         // ① 스탯 이름
 
-        yield return Wait(TBL_VALUES);
-        PlayAuthored(GameObjects.AttRealText, "1");           // ② 이전값 · 화살표 · 초록 이후값
-        RestoreArrowColor();
+        yield return Wait(TBL_STAGGER);
+        PlayAuthoredNode("Txt_AttRealText_02", "1");          // ② 이전값
 
-        yield return Wait(TBL_ARROW_HIT - TBL_VALUES);
+        yield return Wait(TBL_STAGGER);
+        PlayAuthoredNode("Text_2", "1", dropColor: true);     // ③ 화살표
+        SetArrowColor(ARROW_HEX);
+
+        yield return Wait(TBL_STAGGER);
+        PlayAuthoredNode("Text_3", "1");                      // ④ 초록 이후값
+
+        yield return Wait(TBL_ARROW_HIT - TBL_STAGGER * 3f);
         FlashArrows();                                        // ③ 화살표가 속을 채우며 번쩍
 
         yield return Wait(TBL_SETTLE - TBL_ARROW_HIT);
         PlayAuthored(GameObjects.AttRealText, "2");           // ④ 이전값·화살표 소멸 + 초록이 왼쪽으로
 
-        yield return Wait(TBL_LABEL_OUT - TBL_SETTLE);
-        KeepFirstStatLabel();                                 // ⑤ 라벨은 강화도만 남는다
+        // 원본은 여기서 라벨을 첫 줄만 남기고 지운다(f270, 한 프레임). 그대로 옮겼더니
+        //  "강화도만 글자가 남는다"는 지적을 받았다 — 어느 수치가 무엇인지 알 수 없어진다.
+        //  원본의 그 한 걸음은 따르지 않는다.
     }
 
     IEnumerator CoRevealFail(Data.EquipmentData data)
@@ -314,8 +326,11 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         // 화살표는 처음엔 **속이 빈 윤곽(▷)** 이고, 결과가 확정되는 순간에만 채워진다(▶).
         //  예전엔 처음부터 채운 ▶라 "번쩍" 하는 순간이 아예 없었다.
+        // ⚠️ 화살표를 여기서 보이게 두면 **라벨보다 먼저** 떠 있게 된다(실측: 라벨보다 0.1초 빨랐다).
+        //    다른 열은 저작 색이 알파 0이라 저절로 숨어 있는데, 화살표만 색을 코드로 넣기 때문이다.
+        //    글자만 채워 두고 색은 자기 차례(id "1" 재생 뒤)에 얹는다.
         SetTableText(Texts.Text_2, ArrowRow("▷"));
-        SetArrowColor(ARROW_HEX);
+        SetArrowAlpha(0f);
 
         // ⚠️ <color> 태그를 붙이면 프리팹에 저작된 초록(#0DDB00)과 그 페이드인을 덮어쓴다.
         //    글자를 넣기만 하고 색은 저작 Color 트윈(id "1")에 맡긴다.
@@ -332,11 +347,11 @@ public class UI_EnhanceProgressPopup : UI_Popup
         var duriLabel = GetText((int)Texts.DurabilityText);
         if (duriLabel != null) duriLabel.gameObject.SetActive(false);
 
+        // 성공 화면에는 내구도를 띄우지 않는다 — 원본의 결과 화면에는 제목·이름·능력치 표뿐이고,
+        //  내구도는 강화창이 이미 보여 준다. 아이콘 바로 밑에 한 줄이 더 붙어 있어
+        //  장비 아이콘의 자리가 어긋나 보였다.
         var duriValue = GetText((int)Texts.DurabilityRealText);
-        if (duriValue != null) duriValue.gameObject.SetActive(_result.Success);
-        if (_result.Success)
-            SetRevealText(Texts.DurabilityRealText,
-                $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_equip.Durability}/{data.MaxDurability}");
+        if (duriValue != null) duriValue.gameObject.SetActive(false);
     }
 
     System.Collections.Generic.List<string> _statNames;
@@ -371,6 +386,13 @@ public class UI_EnhanceProgressPopup : UI_Popup
         if (t != null) t.color = Util.HexToColor(hex);
     }
 
+    void SetArrowAlpha(float a)
+    {
+        var t = GetText((int)Texts.Text_2);
+        if (t == null) return;
+        var c = t.color; c.a = a; t.color = c;
+    }
+
     /// <summary>화살표가 속을 채우며 한 번 번쩍인다(영상 f265~f266, 두 프레임).
     /// 곧이어 id "2"가 이 열을 걷어가지만, 건너뛰기 경로를 위해 원래 모습으로 되돌려 둔다.</summary>
     void FlashArrows()
@@ -385,15 +407,6 @@ public class UI_EnhanceProgressPopup : UI_Popup
         {
             if (t != null) t.text = ArrowRow("▷");
         }).SetUpdate(true);
-    }
-
-    /// <summary>원본은 정리가 끝나면 라벨을 **첫 줄만 남기고 지운다**(f270, 한 프레임).
-    /// 값 열은 그대로 남아 초록 숫자만 세로로 늘어선 화면이 된다.</summary>
-    void KeepFirstStatLabel()
-    {
-        var t = GetText((int)Texts.Text);
-        if (t == null || _statNames == null || _statNames.Count == 0) return;
-        t.text = _statNames[0];
     }
 
     static WaitForSecondsRealtime Wait(float sec) => new WaitForSecondsRealtime(sec);
@@ -453,10 +466,38 @@ public class UI_EnhanceProgressPopup : UI_Popup
     ///    **GameObject 단위**로 도는지라(DOTween.Restart(gameObject, id)), 같은 칸의
     ///    Move를 재생하는 순간 Color도 함께 되살아난다. 그래서 저작 트윈이 끝난 뒤
     ///    (0.1초짜리다) 색만 다시 얹는다.</summary>
-    void RestoreArrowColor()
-        => DOVirtual.DelayedCall(ARROW_RECOLOR, () => SetArrowColor(ARROW_HEX)).SetUpdate(true);
 
-    const float ARROW_RECOLOR = 0.15f;   // 저작 Color(0.1초)가 끝난 직후
+
+    /// <summary>표의 **한 열만** 재생한다.
+    ///
+    /// `DORestartById`는 GameObject 단위라, 같은 id를 가진 네 열을 한 번에 부르면
+    ///  전부 동시에 나온다. 열마다 따로 부르면 원본처럼 0.1초씩 어긋난다.
+    ///
+    /// `dropColor`는 화살표 열 전용이다 — 그 열의 저작 Color는 **검정으로 끝나서**
+    ///  까만 배경 위에서 화살표를 지운다. 되살아나지 못하게 아예 끊고 색은 코드가 준다.
+    ///  (같은 오브젝트의 Move를 재생하는 순간 Color도 함께 살아나므로, 끊기를 먼저 한다.)</summary>
+    void PlayAuthoredNode(string childName, string id, bool dropColor = false)
+    {
+        var node = Util.FindChild(gameObject, childName, true);
+        if (node == null) return;
+
+        var anims = node.GetComponents<DOTweenAnimation>();
+
+        if (dropColor)
+            foreach (var a in anims)
+                if (a.id == id && a.animationType == DOTweenAnimation.AnimationType.Color)
+                    a.tween?.Kill();
+
+        foreach (var a in anims)
+        {
+            if (a.id != id) continue;
+            if (dropColor && a.animationType == DOTweenAnimation.AnimationType.Color) continue;
+
+            // 빈 id는 트윈에 id가 붙지 않아 ById로 못 찾는다(DOTweenAnimation.cs:508).
+            if (string.IsNullOrEmpty(id)) a.tween?.Restart();
+            else a.DORestartById(id);
+        }
+    }
 
     /// <summary>저작 트윈 id의 **끝 상태로 즉시 옮겨 놓는다**(재생하지 않는다).
     ///
