@@ -976,14 +976,15 @@ public class UI_EnhacePopup : UI_Popup
 
             case "ChargeSuccess":                                    // 담금질 — 길게 떨린다
             case "ChargeFail":
-                ShakeFrame(0.90f, 4f);
+                ShakeFrame(0.90f, 2.5f);   // 아이콘이 떠오르는 내내 겹치므로 약하게
                 RaiseCraftIcon();
                 break;
 
             // 결과 섬광은 **이 순간**이다(클립 t=3.83). 예전엔 코루틴이 "클립길이-0.5"로
             //  어림잡아 터뜨려 0.7초쯤 늦었다 — 소리(Success)와 빛이 어긋나 보였다.
             case "Success":
-                ShakeFrame(0.45f, 12f);
+                // 12는 화면 폭의 8%를 한 프레임에 흔든다 — 떠오르던 아이콘이 내던져지듯 보였다.
+                ShakeFrame(0.45f, 6f);
                 PopCraftIcon();
                 PopResultFlash(true);
                 break;
@@ -1046,10 +1047,15 @@ public class UI_EnhacePopup : UI_Popup
     // 그런데 원본은 망치질과 결과가 **한 창**이고, 우리 포트는 둘로 나뉘어 있다.
     //  그래서 5와 6은 이 창(강화창)이 맡아야 한다 — 이게 없으면 아이콘이 모루에 붙박인 채
     //  결과창에서 난데없이 위에서 내려온다(사용자가 "아이콘 위치가 정확하지 않다"고 한 지점).
-    const float ICON_RISE_Y   = 50f;
+    // ⚠️ 두 창의 아이콘은 **부모가 달라 1유닛이 화면에서 같은 길이가 아니다.**
+    //    좌표 로그로 재 보니 강화창은 1유닛 = 4.79px, 결과창은 3.50px였다.
+    //    같은 "+80"을 써 두면 강화창 쪽이 100px 더 올라가, 창이 바뀌는 순간 아이콘이 툭 떨어진다.
+    //    결과창 기준으로 환산한 값을 쓴다(3.50 / 4.79 = 0.731).
+    const float ICON_UNIT_FIX = 0.731f;
+    const float ICON_RISE_Y   = 50f * ICON_UNIT_FIX;
     const float ICON_RISE_SC  = 1.4f;
     const float ICON_RISE_DUR = 1.4f;
-    const float ICON_POP_Y    = 80f;
+    const float ICON_POP_Y    = 80f * ICON_UNIT_FIX;
     const float ICON_POP_DUR  = 0.3f;
     const float ICON_DROP_DUR = 0.1f;
 

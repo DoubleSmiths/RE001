@@ -178,6 +178,15 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         FillStatTable(data);
 
+        // ⚠️ 아이콘 자세는 **창이 열리는 첫 프레임에** 잡아야 한다.
+        //    0.2초 뒤에 잡았더니, 그 사이 아이콘이 제자리(모루 위)에 그려졌다가
+        //    갑자기 꼭대기로 튀어올랐다 — 강화창에서 떠 있던 아이콘이 창이 바뀌는 순간
+        //    383px 뚝 떨어졌다가 280px 되올라간 것이다(좌표 로그로 확인).
+        //  원본의 아이콘은 담금질에 떠오르고(id 5: +50, 1.4배) 결과가 확정될 때 한 번 더
+        //  튀어오른다(id 6: +80). 결과창은 **그 꼭대기에서** 열려 내려앉기를 시작한다.
+        SnapAuthored(GameObjects.Icon, "5");      // 위치 +50 · 크기 1.4배
+        SnapAuthored(GameObjects.Icon, "6");      // 거기서 한 번 더 +80까지
+
         // ── ① +0.20s : 제목/이름 · 아이콘 하강 · 빛줄기 ──
         yield return Wait(STEP_TITLE);
 
@@ -192,11 +201,6 @@ public class UI_EnhanceProgressPopup : UI_Popup
             bg.color = new Color(WASH_LEFT, WASH_LEFT, WASH_LEFT, 1f);
             bg.DOColor(Color.black, WASH_TAIL).SetEase(Ease.OutQuad).SetUpdate(true);
         }
-        // 원본의 아이콘은 담금질에 떠오르고(id 5: +50, 1.4배) 결과가 확정될 때 한 번 더
-        //  튀어오른다(id 6: +80). 결과창은 **그 꼭대기에서** 열려 내려앉기(id 7)를 시작한다.
-        SnapAuthored(GameObjects.Icon, "5");      // 위치 +50 · 크기 1.4배
-        SnapAuthored(GameObjects.Icon, "6");      // 거기서 한 번 더 +80까지
-
         Reveal(GameObjects.Flash_USETHIS);
         Reveal(GameObjects.SuccessTxtGroup);      // 제목·이름의 autoPlay 연출이 여기서 시작된다
 
