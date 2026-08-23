@@ -103,13 +103,6 @@ public class UI_EnhacePopup : UI_Popup
         var smithAnim = smithGo != null ? smithGo.GetComponent<Animator>() : null;
         if (smithAnim != null) smithAnim.Play("Normal", 0, 0f);
 
-        // 모루가 장비 아이콘에서 46유닛이나 떨어져 있어 장비가 허공에 뜬 것처럼 보였다
-        //  (원본은 아이콘 바로 밑, 아이콘 높이만큼의 간격이다). 모루를 끌어올려 붙인다.
-        //  절대값으로 넣는다 — 상대 이동은 Init이 두 번 불리면 두 번 올라간다.
-        var floorRt = Util.FindChild(gameObject, "Floor", true)?.GetComponent<RectTransform>();
-        if (floorRt != null)
-            floorRt.anchoredPosition = new Vector2(floorRt.anchoredPosition.x, ANVIL_Y);
-
         GetButton((int)Buttons.Enhance_Btn).onClick.AddListener(OnClickEnhance);
 
         var closeBtn = GetButton((int)Buttons.EnhancePopupCloseBtn);
@@ -152,6 +145,7 @@ public class UI_EnhacePopup : UI_Popup
     void EnterCeremonyView()
     {
         Blackout(STAGE_CEREMONY, 0.35f);
+        LandCraftIcon();                        // 장비가 모루 위로 내려앉는다
         _embers = StartCoroutine(CoEmbers());   // 까만 무대 위로 불티가 흩날린다(원본 전 구간)
         _hidden.Clear();
 
@@ -244,7 +238,6 @@ public class UI_EnhacePopup : UI_Popup
     }
 
     Image _blackout;
-    const float ANVIL_Y = -83f;             // 프리팹 저작값 -100에서 17유닛 위 (아이콘 밑에 붙는 자리)
     const float BLACKOUT_OVERSCAN = 600f;   // 캔버스보다 넉넉히 — 가장자리가 새지 않게
 
     // 무대 색은 원본 프레임에서 재서 옮겼다.
@@ -965,32 +958,33 @@ public class UI_EnhacePopup : UI_Popup
 
             // 타격 — 흔들림 + 모루 위 섬광/불티. 원본도 Shake에서 FX 오브젝트를 켠다.
             case "Shake":
-                ShakeFrame(0.22f, 6f);
+                ShakeFrame(0.22f, 2f);
                 PopImpactFx();
                 break;
 
             case "ShakeLast":
-                ShakeFrame(0.30f, 8f);
+                ShakeFrame(0.30f, 2.5f);
                 PopImpactFx();
                 break;
 
-            case "ChargeSuccess":                                    // 담금질 — 길게 떨린다
+            case "ChargeSuccess":                                    // 담금질 — 아이콘이 떠오른다
             case "ChargeFail":
-                ShakeFrame(0.90f, 2.5f);   // 아이콘이 떠오르는 내내 겹치므로 약하게
+                // 흔들지 않는다. 아이콘이 1.4초에 걸쳐 떠오르는 구간이라, 프레임을 흔들면
+                //  그 궤적이 통째로 휘청인다 — 원본은 이 구간 내내 창이 정지해 있다.
                 RaiseCraftIcon();
                 break;
 
             // 결과 섬광은 **이 순간**이다(클립 t=3.83). 예전엔 코루틴이 "클립길이-0.5"로
             //  어림잡아 터뜨려 0.7초쯤 늦었다 — 소리(Success)와 빛이 어긋나 보였다.
             case "Success":
-                // 12는 화면 폭의 8%를 한 프레임에 흔든다 — 떠오르던 아이콘이 내던져지듯 보였다.
-                ShakeFrame(0.45f, 6f);
+                // 여기도 흔들지 않는다. 결과가 확정되는 0.45초는 아이콘이 꼭대기로 튀어오르고
+                //  결과창이 그 꼭대기를 이어받는 순간이라, 프레임이 떨면 인계가 어긋나 보인다.
                 PopCraftIcon();
                 PopResultFlash(true);
                 break;
 
             case "Fail":
-                ShakeFrame(0.35f, 8f);
+                ShakeFrame(0.35f, 2.5f);
                 RestoreCraftIcon(ICON_DROP_DUR);   // 실패는 그 자리에 툭 떨어진다(원본 id 8)
                 PopResultFlash(false);
                 break;
@@ -1047,26 +1041,46 @@ public class UI_EnhacePopup : UI_Popup
     // 그런데 원본은 망치질과 결과가 **한 창**이고, 우리 포트는 둘로 나뉘어 있다.
     //  그래서 5와 6은 이 창(강화창)이 맡아야 한다 — 이게 없으면 아이콘이 모루에 붙박인 채
     //  결과창에서 난데없이 위에서 내려온다(사용자가 "아이콘 위치가 정확하지 않다"고 한 지점).
-    // ⚠️ 두 창의 아이콘은 **부모가 달라 1유닛이 화면에서 같은 길이가 아니다.**
-    //    좌표 로그로 재 보니 강화창은 1유닛 = 4.79px, 결과창은 3.50px였다.
-    //    같은 "+80"을 써 두면 강화창 쪽이 100px 더 올라가, 창이 바뀌는 순간 아이콘이 툭 떨어진다.
-    //    결과창 기준으로 환산한 값을 쓴다(3.50 / 4.79 = 0.731).
-    const float ICON_UNIT_FIX = 0.731f;
-    const float ICON_RISE_Y   = 50f * ICON_UNIT_FIX;
+    // 좌표는 **절대값**이다(피벗이 윗변이라 anchoredPosition.y가 곧 판 윗변 위치).
+    //  원본 프레임에서 그대로 읽었다 — 캔버스 세로 중앙을 0으로 놓고:
+    //    대기/정착  +20   아이콘이 모루에서 떠 있고 그 사이에 내구도 글자가 들어간다
+    //    연출 바닥    0   [강화]를 누르면 모루 위로 내려앉는다  ← 이게 빠져 있었다
+    //    담금질     +50   (저작 id 5)
+    //    결과 확정  +80   (저작 id 6) — 결과창이 이 높이에서 이어받는다
+    //
+    // ⚠️ 예전엔 "두 창의 1유닛 길이가 다르다"고 보고 0.731을 곱했다. 그건 착시였다 —
+    //    강화창은 홈(+20)에 상대로 더하고 결과창은 절대로 스냅해서, 같은 80이 다른 데로 갔던 것뿐이다.
+    //    두 창 모두 절대값을 쓰면 인계 지점이 정확히 겹친다(실측 20u = 양쪽 다 native 1215/1217px).
+    const float ICON_HOME_Y   = 20f;
+    const float ICON_ANVIL_Y  = 0f;
+    const float ICON_LAND_DUR = 0.2f;   // 원본은 두 프레임(0.1~0.2초) 만에 툭 내려앉는다
+    const float ICON_RISE_Y   = 50f;
     const float ICON_RISE_SC  = 1.4f;
     const float ICON_RISE_DUR = 1.4f;
-    const float ICON_POP_Y    = 80f * ICON_UNIT_FIX;
+    const float ICON_POP_Y    = 80f;
     const float ICON_POP_DUR  = 0.3f;
     const float ICON_DROP_DUR = 0.1f;
-
-    Vector2? _craftIconHome;
 
     RectTransform CraftIcon()
     {
         var go = GetObject((int)GameObjects.CraftEquipIcon);
-        var rt = go != null ? go.transform as RectTransform : null;
-        if (rt != null && _craftIconHome == null) _craftIconHome = rt.anchoredPosition;
-        return rt;
+        return go != null ? go.transform as RectTransform : null;
+    }
+
+    /// <summary>[강화]를 누르면 아이콘이 **모루 위로 내려앉는다.**
+    ///
+    /// 원본에서 무대가 검어지고 잠시 뒤 장비가 20유닛 아래로 내려와 모루에 닿는다
+    ///  (프레임 실측: 판 아랫변 443 → 482, 모루 윗면 486). 우리는 이 하강이 없어
+    ///  장비가 모루에서 한 뼘 뜬 채로 망치를 맞고 있었다.</summary>
+    void LandCraftIcon()
+    {
+        var rt = CraftIcon();
+        if (rt == null) return;
+
+        rt.DOKill();
+        rt.DOAnchorPos(new Vector2(0f, ICON_ANVIL_Y), ICON_LAND_DUR)
+          .SetEase(Ease.OutQuad).SetUpdate(true);
+        rt.DOScale(1f, ICON_LAND_DUR).SetEase(Ease.OutQuad).SetUpdate(true);
     }
 
     /// <summary>담금질 — 모루에서 천천히 떠오르며 커진다.</summary>
@@ -1076,7 +1090,7 @@ public class UI_EnhacePopup : UI_Popup
         if (rt == null) return;
 
         rt.DOKill();
-        rt.DOAnchorPos(_craftIconHome.Value + new Vector2(0f, ICON_RISE_Y), ICON_RISE_DUR)
+        rt.DOAnchorPos(new Vector2(0f, ICON_RISE_Y), ICON_RISE_DUR)
           .SetEase(Ease.Linear).SetUpdate(true);
         rt.DOScale(ICON_RISE_SC, ICON_RISE_DUR).SetEase(Ease.Linear).SetUpdate(true);
 
@@ -1112,7 +1126,7 @@ public class UI_EnhacePopup : UI_Popup
         if (rt == null) return;
 
         rt.DOKill();
-        rt.DOAnchorPos(_craftIconHome.Value + new Vector2(0f, ICON_POP_Y), ICON_POP_DUR)
+        rt.DOAnchorPos(new Vector2(0f, ICON_POP_Y), ICON_POP_DUR)
           .SetEase(Ease.OutBack).SetUpdate(true);
 
         // 섬광에서 완전히 날아갔다가 0.8초에 걸쳐 평상으로 — 원본의 해제 시점이다.
@@ -1132,12 +1146,12 @@ public class UI_EnhacePopup : UI_Popup
         rt.DOKill();
         if (duration <= 0f)
         {
-            rt.anchoredPosition = _craftIconHome.Value;
+            rt.anchoredPosition = new Vector2(0f, ICON_HOME_Y);
             rt.localScale = Vector3.one;
             Whiten(0f, 0f);
             return;
         }
-        rt.DOAnchorPos(_craftIconHome.Value, duration).SetEase(Ease.OutQuad).SetUpdate(true);
+        rt.DOAnchorPos(new Vector2(0f, ICON_HOME_Y), duration).SetEase(Ease.OutQuad).SetUpdate(true);
         rt.DOScale(1f, duration).SetEase(Ease.OutQuad).SetUpdate(true);
         Whiten(0f, duration);
     }
@@ -1165,17 +1179,24 @@ public class UI_EnhacePopup : UI_Popup
 
     /// <summary>강화창 프레임을 흔든다. 원본의 HammerSmash / HammerSmashLong 자리.
     /// 위치를 되돌려 놓고 끝내야 다음 연출이 어긋난 자리에서 시작하지 않는다.</summary>
+    Vector2? _frameHome;
+
     void ShakeFrame(float duration, float strength)
     {
         var rt = _frameRT != null ? _frameRT : GetObject((int)GameObjects.EnhacePopup)?.GetComponent<RectTransform>();
         if (rt == null) return;
 
-        Vector2 home = rt.anchoredPosition;
+        // ⚠️ 홈을 매번 새로 읽으면 안 된다 — 흔들리는 도중에 또 불리면 흔들린 자리를
+        //    홈으로 착각해 창이 조금씩 밀려난다.
+        if (_frameHome == null) _frameHome = rt.anchoredPosition;
+
         rt.DOKill();
-        rt.DOShakeAnchorPos(duration, strength, 18, 90f, false, false)
-          .SetEase(Ease.OutQuad)
+        rt.anchoredPosition = _frameHome.Value;
+        // fadeOut을 켠다. 껐더니 0.22초 내내 최대 진폭으로 떨다가 끝에서 툭 제자리로 돌아왔다.
+        //  vibrato 18은 0.22초에 80Hz — 프레임마다 방향이 바뀌어 떨림이 아니라 지직거림이 된다.
+        rt.DOShakeAnchorPos(duration, strength, 10, 90f, false, true)
           .SetUpdate(true)
-          .OnComplete(() => { if (rt != null) rt.anchoredPosition = home; });
+          .OnComplete(() => { if (rt != null) rt.anchoredPosition = _frameHome.Value; });
     }
 
     #endregion

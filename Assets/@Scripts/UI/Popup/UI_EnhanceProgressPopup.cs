@@ -140,6 +140,10 @@ public class UI_EnhanceProgressPopup : UI_Popup
             var animator = wIcon.GetComponent<Animator>();
             if (animator != null) animator.enabled = false;
             wIcon.sprite = sp;
+            // 두 프리팹 모두 WIcon이 z=90으로 누워 있는데 강화창만 코드가 폈다 —
+            //  그래서 창이 바뀌는 순간 검이 90° 홱 돌아 보였다. 같은 처리를 해 준다.
+            wIcon.rectTransform.localRotation = Quaternion.identity;
+            wIcon.rectTransform.localScale = Vector3.one;
         }
 
         StartCoroutine(CoPlay());
