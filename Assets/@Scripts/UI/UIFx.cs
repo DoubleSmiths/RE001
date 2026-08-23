@@ -191,6 +191,65 @@ public static class UIFx
         return host;
     }
 
+    /// <summary>**프리팹에 이미 놓여 있는** ParticleSystem을 그 자리에서 캔버스 위에 그리게 한다.
+    ///
+    /// 원작의 강화 연출은 빛줄기·불티·타격이 전부 진짜 ParticleSystem이다. 우리 프리팹에도
+    ///  같은 노드가 이식돼 있는데(God_ray_02, Btn Embers, GlowDot_01_1) **한 번도 화면에 나온 적이 없다** —
+    ///  월드 파티클은 Screen Space Camera 캔버스 위에 렌더되지 않기 때문이다.
+    ///  그래서 여태 Image로 흉내를 냈고, 그게 원작과 다르다는 지적을 받았다.
+    ///
+    /// ⚠️ UIParticle은 **자기 GameObject의 localScale을 제멋대로 덮어쓴다**(스케일 20배 사고 전례).
+    ///    그래서 파티클에 직접 붙이지 않고 전용 호스트를 만들어 그 아래로 넣는다.
+    /// 반환: 호스트(없으면 null). 같은 파티클을 두 번 감싸지 않는다.</summary>
+    public static UIParticle WrapInPlace(GameObject psGo)
+    {
+        if (psGo == null) return null;
+
+        var ps = psGo.GetComponent<ParticleSystem>();
+        if (ps == null) return null;
+
+        var parent = psGo.transform.parent as RectTransform;
+        if (parent == null) return null;
+
+        // 이미 감싸 뒀으면 그대로 쓴다
+        var existing = psGo.GetComponentInParent<UIParticle>();
+        if (existing != null) return existing;
+
+        var host = new GameObject($"UIParticle_{psGo.name}", typeof(RectTransform));
+        host.transform.SetParent(parent, false);
+
+        var hostRT = host.GetComponent<RectTransform>();
+        var srcRT = psGo.transform as RectTransform;
+        hostRT.anchorMin = hostRT.anchorMax = new Vector2(0.5f, 0.5f);
+        hostRT.pivot = new Vector2(0.5f, 0.5f);
+        hostRT.sizeDelta = Vector2.zero;
+        // 파티클이 놓여 있던 자리를 그대로 물려받는다(RectTransform이 아니면 localPosition).
+        hostRT.anchoredPosition = srcRT != null ? srcRT.anchoredPosition
+                                                : (Vector2)psGo.transform.localPosition;
+        hostRT.SetSiblingIndex(psGo.transform.GetSiblingIndex());
+
+        var uip = host.AddComponent<UIParticle>();
+        uip.SetParticleSystemInstance(psGo);      // 내부에서 host 아래로 옮기고 RefreshParticles
+        psGo.transform.localScale = Vector3.one;
+        return uip;
+    }
+
+    /// <summary>감싼 파티클을 처음부터 다시 튼다.</summary>
+    public static void Replay(UIParticle uip, int emit = 0)
+    {
+        if (uip == null) return;
+        uip.gameObject.SetActive(true);
+
+        foreach (var p in uip.GetComponentsInChildren<ParticleSystem>(true))
+        {
+            p.gameObject.SetActive(true);
+            p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            p.Clear(true);
+            p.Play(true);
+            if (emit > 0) p.Emit(emit);
+        }
+    }
+
     // ────────────────────────────────────────
     //  Util
     // ────────────────────────────────────────

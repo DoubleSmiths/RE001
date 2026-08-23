@@ -568,9 +568,10 @@ public class UI_EnhanceProgressPopup : UI_Popup
         if (rt == null) return;
 
         rt.DOKill();
+        // 저작 id "7"의 이징은 InSine이다(원작 그래프 확인). Linear로 두면 툭 떨어지듯 보인다.
         rt.DOLocalMove(new Vector3(0f, ICON_SETTLE_Y, 0f), ICON_SETTLE_DUR)
-          .SetEase(Ease.Linear).SetUpdate(true);
-        rt.DOScale(1f, ICON_SETTLE_SCALE_DUR).SetEase(Ease.Linear).SetUpdate(true);
+          .SetEase(Ease.InSine).SetUpdate(true);
+        rt.DOScale(1f, ICON_SETTLE_SCALE_DUR).SetEase(Ease.InSine).SetUpdate(true);
     }
 
     const float ICON_SETTLE_Y         = 20f;    // 저작 id "7" LocalMove
@@ -631,6 +632,27 @@ public class UI_EnhanceProgressPopup : UI_Popup
         var rays = GetObject((int)GameObjects.God_ray_02);
         if (rays == null) return;
 
+        // ⚠️ 원작의 빛줄기는 **파티클이 여러 갈래로 뿜는 빛기둥**이다. 우리는 그 재질의
+        //    텍스처 한 장을 화면에 늘여 깔았고, 그래서 뚜렷한 줄기가 아니라 회색 안개가 됐다
+        //    (결과 화면 무대 휘도 실측 57 대 원작 15 — 배경이 통째로 떠 버렸다).
+        //    프리팹의 파티클을 UIParticle로 감싸 그대로 살린다.
+        if (_rayFx == null)
+        {
+            _rayFx = UIFx.WrapInPlace(rays);
+            if (_rayFx != null)
+            {
+                rays.SetActive(true);
+                UIFx.Replay(_rayFx);
+                return;
+            }
+        }
+        else
+        {
+            UIFx.Replay(_rayFx);
+            return;
+        }
+
+        // 파티클을 못 감쌌을 때만 예전의 텍스처 한 장으로 물러선다.
         if (_rayImg == null)
         {
             var psr = rays.GetComponent<ParticleSystemRenderer>();
@@ -677,6 +699,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
     const float RAY_HIGH = 0.22f;
     const float RAY_REST = 0.12f;
 
+    Coffee.UIExtensions.UIParticle _rayFx;
     Image _rayImg;
 
     // ── 불티 ──────────────────────────────────────────────────────────

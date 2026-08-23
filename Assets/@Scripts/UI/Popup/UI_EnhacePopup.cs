@@ -90,8 +90,7 @@ public class UI_EnhacePopup : UI_Popup
         GetObject((int)GameObjects.PotentialBox)?.SetActive(true);
         GetObject((int)GameObjects.Btn_EnhacePopup_01)?.SetActive(true);
 
-        // 잠재 박스의 불꽃 — 원본은 이 자리에서 불길이 계속 타오른다.
-        GetObject((int)GameObjects.FlameImg)?.SetActive(true);
+        // 불꽃은 Init이 아니라 PlayIntro가 붙인다 — 상자가 자리에 앉은 다음이다.
 
         BindSlotButtons();
 
@@ -173,6 +172,7 @@ public class UI_EnhacePopup : UI_Popup
     void ExitCeremonyView()
     {
         Blackout(STAGE_IDLE, 0.30f);
+        GlowWash(0f, 0.30f, Ease.OutQuad);        // 백열이 남아 있으면 대기 화면이 하얗게 뜬다
         RestoreCraftIcon(0f);                     // 떠 있던 아이콘을 제자리로
         if (_embers != null) { StopCoroutine(_embers); _embers = null; }
         foreach (var go in _hidden)
@@ -278,6 +278,7 @@ public class UI_EnhacePopup : UI_Popup
     {
         if (_introPlayed) return;
         _introPlayed = true;
+        IgniteFlame();
 
         foreach (var (g, delay) in INTRO_STEPS)
         {
@@ -303,6 +304,24 @@ public class UI_EnhacePopup : UI_Popup
     }
 
     const float INTRO_DROP = 24f;    // 위에서 떨어지는 거리
+    // 잠재 슬롯 등장(0.80)이 끝나는 지점 = 원작의 상자 착지 직후 점화 시점
+    const float FLAME_IGNITE = 0.80f + INTRO_FADE;
+
+    /// <summary>잠재 슬롯이 내려앉은 뒤 불이 붙는다. Flame_Start(0.583초)가
+    /// 작은 불씨에서 긴 불길로 자라는 대목이라, 이게 보여야 "아래에서 위로 올라온다".</summary>
+    void IgniteFlame()
+    {
+        var flameGo = GetObject((int)GameObjects.FlameImg);
+        if (flameGo == null) return;
+
+        flameGo.SetActive(false);
+        DOVirtual.DelayedCall(FLAME_IGNITE, () =>
+        {
+            if (flameGo == null) return;
+            flameGo.SetActive(true);
+            flameGo.GetComponent<Animator>()?.Play("Flame_Start", 0, 0f);   // 처음부터 확실히
+        }).SetUpdate(true);
+    }
     const float INTRO_FADE = 0.28f;
 
     #endregion
@@ -859,6 +878,10 @@ public class UI_EnhacePopup : UI_Popup
         RefreshUI();   // 주문서 소진/확률/내구도/잠재력 즉시 갱신
     }
 
+    // 클립의 첫 Shake가 t=0.33이라, 암전 +1.10초에 첫 타를 놓으려면 앞에 여백을 둔다.
+    //  0.57로 넣었더니 실측 +1.27이 나와 0.2초를 덜어냈다(암전 판정 자체에 지연이 있다).
+    const float SMITH_LEAD_IN = 0.37f;
+
     /// 대장장이 모션 → 결과 창. 모션 도중에는 중복 클릭을 막는다.
     IEnumerator CoSmithMotion(GameManager.EnhanceResult result)
     {
@@ -866,6 +889,12 @@ public class UI_EnhacePopup : UI_Popup
 
         HookSmithEvents();
         EnterCeremonyView();
+
+        // ⚠️ 무대가 검어지자마자 망치를 휘두르면 안 된다.
+        //    원작 영상에서 무대 휘도 곡선을 재 보면 **암전 +1.10초**에 첫 타가 온다
+        //    (그다음 +2.10 / +3.10 — 1초 간격). 우리는 +0.53초였다.
+        //    그 0.57초는 빈 시간이 아니라 "장비가 모루에 내려앉고 대장장이가 망치를 드는" 사이다.
+        yield return new WaitForSecondsRealtime(SMITH_LEAD_IN);
 
         var smith = GetObject((int)GameObjects.HammerNormalAnim);
         var anim = smith != null ? smith.GetComponent<Animator>() : null;
@@ -969,6 +998,10 @@ public class UI_EnhacePopup : UI_Popup
 
             case "ChargeSuccess":                                    // 담금질 — 아이콘이 떠오른다
             case "ChargeFail":
+                ChargeGlow();                                        // 화면 전체가 서서히 달아오른다
+                // 원작은 담금질 순간에도 모루를 한 번 치고 들어간다(Floor PunchPosition 0.3s,
+                //  Hammer ShakePosition 0.25s). 3타의 타격감이 여기서 나온다.
+                PopImpactFx();
                 // 흔들지 않는다. 아이콘이 1.4초에 걸쳐 떠오르는 구간이라, 프레임을 흔들면
                 //  그 궤적이 통째로 휘청인다 — 원본은 이 구간 내내 창이 정지해 있다.
                 RaiseCraftIcon();
@@ -1161,21 +1194,92 @@ public class UI_EnhacePopup : UI_Popup
     /// <summary>성공/실패 전체화면 섬광(Animator "Flash").</summary>
     void PopResultFlash(bool success)
     {
-        // 성공은 섬광 한 번으로 끝나지 않는다 — 화면 전체가 하얗게 탔다가 천천히 식는다.
-        //  결과창이 열릴 무렵(1.2초 뒤)에도 아직 회색이 남아 있고, 그 창이 마저 걷어낸다.
-        if (success) Blackout(Color.white, 0f);
-        Blackout(STAGE_CEREMONY, success ? SUCCESS_WASH : 0.35f);
+        // ⚠️ 여기서 화면을 하얗게 "번쩍"하면 안 된다.
+        //    원작 영상의 전체 휘도 곡선을 재 보면 결과 순간은 **갑작스러운 섬광이 아니라
+        //    담금질부터 1.7초 동안 달아오른 백열의 정점**이다(8.6 → 137.9, 가속 곡선).
+        //    예전엔 한 프레임만 255로 튀었다가 꺼져서 "번쩍"하고 마는 정도였다.
+        //    그 오름은 ChargeGlow가 이미 몰고 있으니, 여기서는 식히기만 한다.
+        if (success)
+        {
+            // 계단 한 칸 올라갔다가(0.15초) 잠깐 머문 뒤 1.8초에 걸쳐 검정으로.
+            GlowWash(CHARGE_PEAK, PEAK_RISE, Ease.InSine);
+            DOVirtual.DelayedCall(PEAK_RISE + PEAK_HOLD,
+                () => GlowWash(0f, WASH_OUT, Ease.InOutQuad)).SetUpdate(true);
+        }
+        else
+        {
+            GlowWash(0f, 0.30f, Ease.InOutCubic);   // 실패는 원작 id"54" 0.3초 InOutCubic
+        }
+        Blackout(STAGE_CEREMONY, 0.35f);
 
-        var flash = GetObject(success ? (int)GameObjects.Flash_Success : (int)GameObjects.Flash_Fail);
-        if (flash == null) return;
-
-        flash.SetActive(false);
-        flash.SetActive(true);
-        DOVirtual.DelayedCall(FLASH_HOLD, () => { if (flash != null) flash.SetActive(false); })
-                 .SetUpdate(true);
+        // ⚠️ Flash_Success / Flash_Fail 은 **건너뛰기 전용**이다.
+        //    원작에서 그 둘은 "Skip Flash Group" 아래에 묶여 있다 — 연출을 건너뛴 사람에게
+        //    결과만 한 번 번쩍 보여 주는 장치다. 연출을 다 보는 경로에서 같이 터뜨렸더니
+        //    담금질 백열 위에 전체화면 흰 판이 겹쳐 정점이 185까지 치솟았다(원작 137.9).
+        //    건너뛰기 경로(CoSkipFlash)는 지금도 이 둘을 쓴다.
     }
 
     const float FLASH_HOLD = 0.5f;
+
+    #region 담금질 백열
+
+    // 원작 영상(3:20~3:50)의 **화면 전체 평균 휘도**를 프레임마다 재서 옮긴 값이다.
+    //  막타(암전 +3.10초)부터 결과(+4.70초)까지 1.6초 동안 8.6 → 137.9로 오른다.
+    //  흰 판을 위에 덮었다고 보고 알파를 역산하면
+    //    +3.1  0.045 / +3.5  0.133 / +4.3  0.343 / +4.7  0.525
+    //  — 가속 곡선(InQuad)에 정점 0.525다.
+    //
+    // ⚠️ 이 판은 **내용보다 위**에 깔아야 한다. 뒤에 깔면 배경만 밝아지고
+    //    모루·망치·장비는 검은 채로 남아 원작과 전혀 다른 그림이 된다
+    //    (CeremonyBlackout은 SetAsFirstSibling — 그건 무대를 지우는 용도라 그대로 둔다).
+    // 0.525는 "흰 판을 sRGB로 덧칠했다"고 본 역산값인데, 우리 렌더가 리니어라
+    //  같은 알파가 훨씬 밝게 합성된다(실측 정점 185 대 원작 137.9). 실측으로 맞춘 값이다.
+    // 원작 그래프의 실제 값(EnhanceProgress Popup / Bg):
+    //    담금질  id"51"  →회색 0.5882   1.4초 InSine
+    //    결과    id"52"  →회색 0.8627   0.15초 InSine   (계단 한 칸)
+    //    0.2초 뒤 id"53" →검정          1.8초 InOutQuad
+    //  우리 렌더는 리니어 합성이라 같은 알파가 더 밝게 나온다. **비율과 시간·이징은 원작 그대로**,
+    //  절대 알파만 실측으로 눌렀다(0.38로 재 보니 정점 165, 원작 137.9 → 0.827배).
+    const float CHARGE_PLATEAU = 0.214f;   // 0.5882 자리
+    const float CHARGE_RAMP    = 1.40f;
+    const float CHARGE_PEAK    = 0.314f;   // 0.8627 자리
+    const float PEAK_RISE      = 0.15f;
+    const float PEAK_HOLD      = 0.05f;    // 원작 Timer 0.2 − 0.15
+    const float WASH_OUT       = 1.80f;
+
+    Image _glow;
+
+    void GlowWash(float alpha, float duration, Ease ease)
+    {
+        if (_glow == null)
+        {
+            var go = new GameObject("CeremonyGlow", typeof(RectTransform));
+            go.transform.SetParent(transform, false);
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(-BLACKOUT_OVERSCAN, -BLACKOUT_OVERSCAN);
+            rt.offsetMax = new Vector2(BLACKOUT_OVERSCAN, BLACKOUT_OVERSCAN);
+            rt.SetAsLastSibling();                 // 창 내용 **위**
+
+            _glow = go.AddComponent<Image>();
+            _glow.color = new Color(1f, 1f, 1f, 0f);
+            _glow.raycastTarget = false;
+        }
+
+        _glow.transform.SetAsLastSibling();
+        _glow.gameObject.SetActive(true);
+        _glow.DOKill();
+
+        if (duration <= 0f) { var c = _glow.color; c.a = alpha; _glow.color = c; return; }
+        _glow.DOFade(alpha, duration).SetEase(ease).SetUpdate(true);
+    }
+
+    /// <summary>담금질 — 쇠가 달아오르듯 화면 전체가 하얗게 탄다.</summary>
+    void ChargeGlow() => GlowWash(CHARGE_PLATEAU, CHARGE_RAMP, Ease.InSine);
+
+    #endregion
 
     /// <summary>강화창 프레임을 흔든다. 원본의 HammerSmash / HammerSmashLong 자리.
     /// 위치를 되돌려 놓고 끝내야 다음 연출이 어긋난 자리에서 시작하지 않는다.</summary>
