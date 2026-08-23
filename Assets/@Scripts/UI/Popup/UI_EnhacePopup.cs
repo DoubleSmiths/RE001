@@ -254,7 +254,9 @@ public class UI_EnhacePopup : UI_Popup
         var result = Managers.Game.EnhanceEquipment(_equip, _scrollId);
         if (result == null) return;
 
-        Managers.Sound?.PlaySFX("SFX_EnhanceHammer");   // 망치질
+        // 망치 소리는 여기서 한 번 울리지 않는다 — 클립(Forge Smith/Success.anim)이
+        //  t=0.08 / 1.08 / 2.08 에 SmashSound 이벤트를 갖고 있어 **타격마다** 울린다.
+        //  (원본 영상도 1.0초 간격 3연타다. 예전엔 여기 한 번뿐이라 첫 타만 소리가 났다)
 
         bool skip = _skipToggle != null && _skipToggle.isOn;
         if (skip)
@@ -277,6 +279,8 @@ public class UI_EnhacePopup : UI_Popup
     {
         _resolving = true;
 
+        HookSmithEvents();
+
         var smith = GetObject((int)GameObjects.HammerNormalAnim);
         var anim = smith != null ? smith.GetComponent<Animator>() : null;
         float wait = 0.4f;
@@ -284,24 +288,159 @@ public class UI_EnhacePopup : UI_Popup
         if (anim != null)
         {
             string state = result.Success ? "Success" : "Fail";
+            _ceremony = true;
             anim.Play(state, 0, 0f);
             foreach (var c in anim.runtimeAnimatorController.animationClips)
                 if (c.name == state) { wait = c.length; break; }
         }
 
-        // 모션 끝머리에 결과 플래시를 겹쳐 타격감을 준다.
-        yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, wait - 0.5f));
-        var flash = GetObject(result.Success ? (int)GameObjects.Flash_Success : (int)GameObjects.Flash_Fail);
-        if (flash != null) { flash.SetActive(false); flash.SetActive(true); }
-        yield return new WaitForSecondsRealtime(0.5f);
-        if (flash != null) flash.SetActive(false);
+        // 결과 섬광은 클립의 Success/Fail 이벤트가 정확한 시점에 터뜨린다(OnSmithAnimEvent).
+        //  여기서는 모션이 끝날 때까지만 기다린다.
+        yield return new WaitForSecondsRealtime(wait);
 
+        _ceremony = false;                             // 대기 자세의 망치 소리는 듣지 않는다
         if (anim != null) anim.Play("Normal", 0, 0f);   // 대기 자세로 복귀
         _resolving = false;
 
         Managers.UI.ShowPopupUI<UI_EnhanceProgressPopup>().SetInfo(result, _equip);
         RefreshUI();
     }
+
+    #region 강화 연출 대본 (클립 AnimationEvent)
+
+    // 대장간 강화 클립은 stringParameter로 **연출 대본**을 들고 있다.
+    //  원본(비주얼 스크립팅)의 그래프를 그대로 옮긴 것 — 이름/시각은 클립이 정한다.
+    //
+    //    Success.anim(5.02s)  SmashSound 0.08 / Curious 0.25 / Shake 0.33
+    //                         SmashSound 1.08 / Shake 1.33
+    //                         SmashSound 2.08 / ChargeSuccess 2.33
+    //                         Serious 3.75 / Success 3.83 / SuccessDone 5.00
+    //    Fail.anim(5.02s)     … ChargeFail 2.33 / Serious 3.75 / Fail 3.85
+    //                         FailSound 3.90 / FailDone 5.00
+    //
+    //  소리 이름은 원본 그래프의 PlaySFX 인자를 우리 클립으로 옮긴 것이다.
+    static readonly (string ev, string sfx)[] EVENT_SFX =
+    {
+        ("SmashSound",  "SFX_EnhanceHammer"),     // 망치 타격 (3연타)
+        ("Curious",     "SFX_CuriousCaution2"),   // 첫 타 직후 — 대장장이가 살피는 소리
+        ("Serious",     "SFX_Serious"),           // 마지막 담금질 직전 긴장
+        ("Success",     "SFX_Success(Base)"),     // 성공 폭발 (영상에서 가장 큰 소리)
+        ("FailSound",   "SFX_Fail"),
+    };
+
+    // 실패 마무리의 불꽃 소리는 이벤트와 **동시에** 나지 않는다.
+    //  원본 그래프에서 FailDone -> Timer(0.3) -> ... -> Timer(1.1) -> Timer(0.2) -> PlaySFX(FlameOn)
+    //  이라 합계 1.6초 뒤다. 담금질한 쇠를 물에 넣는 타이밍이라 이 지연이 곧 연출이다.
+    const float FLAME_DELAY = 1.6f;
+
+    AnimEventSink _smithSink;
+
+    // 대기 자세(Normal.anim)에도 SmashSound가 3개 박혀 있다 — 대장장이가 늘 망치질하는
+    //  루프라서다. 그대로 두면 강화창을 열어 둔 내내 망치 소리가 계속 난다(원본 영상은 조용하다).
+    //  **강화 연출(Success/Fail) 중에만** 대본을 듣는다.
+    bool _ceremony;
+
+    /// <summary>망치 애니메이터의 이벤트를 구독한다. 중복 구독은 하지 않는다.</summary>
+    void HookSmithEvents()
+    {
+        var smith = GetObject((int)GameObjects.HammerNormalAnim);
+        if (smith == null) return;
+
+        var sink = smith.GetComponent<AnimEventSink>();
+        if (sink == null) sink = smith.AddComponent<AnimEventSink>();
+        if (ReferenceEquals(sink, _smithSink)) return;   // 이미 이 sink를 듣고 있다
+
+        if (_smithSink != null) _smithSink.OnAnimEvent -= OnSmithAnimEvent;
+        _smithSink = sink;
+        _smithSink.OnAnimEvent += OnSmithAnimEvent;
+    }
+
+    void OnSmithAnimEvent(string id)
+    {
+        if (!_ceremony || string.IsNullOrEmpty(id)) return;
+
+        foreach (var (ev, sfx) in EVENT_SFX)
+            if (ev == id) { Managers.Sound?.PlaySFX(sfx); break; }
+
+        switch (id)
+        {
+            case "FailDone":
+                DOVirtual.DelayedCall(FLAME_DELAY, () => Managers.Sound?.PlaySFX("SFX_FlameOn"))
+                         .SetUpdate(true);
+                break;
+
+            // 타격 — 흔들림 + 모루 위 섬광/불티. 원본도 Shake에서 FX 오브젝트를 켠다.
+            case "Shake":
+                ShakeFrame(0.22f, 6f);
+                PopImpactFx();
+                break;
+
+            case "ShakeLast":
+                ShakeFrame(0.30f, 8f);
+                PopImpactFx();
+                break;
+
+            case "ChargeSuccess":                                    // 담금질 — 길게 떨린다
+            case "ChargeFail":
+                ShakeFrame(0.90f, 4f);
+                break;
+
+            // 결과 섬광은 **이 순간**이다(클립 t=3.83). 예전엔 코루틴이 "클립길이-0.5"로
+            //  어림잡아 터뜨려 0.7초쯤 늦었다 — 소리(Success)와 빛이 어긋나 보였다.
+            case "Success":
+                ShakeFrame(0.45f, 12f);
+                PopResultFlash(true);
+                break;
+
+            case "Fail":
+                ShakeFrame(0.35f, 8f);
+                PopResultFlash(false);
+                break;
+        }
+    }
+
+    /// <summary>타격 순간의 섬광·불티. 껐다 켜야 authored 연출이 처음부터 다시 돈다.</summary>
+    void PopImpactFx()
+    {
+        foreach (string n in new[] { "Flash", "GlowDot_01_1" })
+        {
+            var go = Util.FindChild(gameObject, n, true);
+            if (go == null) continue;
+            go.SetActive(false);
+            go.SetActive(true);
+        }
+    }
+
+    /// <summary>성공/실패 전체화면 섬광(Animator "Flash").</summary>
+    void PopResultFlash(bool success)
+    {
+        var flash = GetObject(success ? (int)GameObjects.Flash_Success : (int)GameObjects.Flash_Fail);
+        if (flash == null) return;
+
+        flash.SetActive(false);
+        flash.SetActive(true);
+        DOVirtual.DelayedCall(FLASH_HOLD, () => { if (flash != null) flash.SetActive(false); })
+                 .SetUpdate(true);
+    }
+
+    const float FLASH_HOLD = 0.5f;
+
+    /// <summary>강화창 프레임을 흔든다. 원본의 HammerSmash / HammerSmashLong 자리.
+    /// 위치를 되돌려 놓고 끝내야 다음 연출이 어긋난 자리에서 시작하지 않는다.</summary>
+    void ShakeFrame(float duration, float strength)
+    {
+        var rt = _frameRT != null ? _frameRT : GetObject((int)GameObjects.EnhacePopup)?.GetComponent<RectTransform>();
+        if (rt == null) return;
+
+        Vector2 home = rt.anchoredPosition;
+        rt.DOKill();
+        rt.DOShakeAnchorPos(duration, strength, 18, 90f, false, false)
+          .SetEase(Ease.OutQuad)
+          .SetUpdate(true)
+          .OnComplete(() => { if (rt != null) rt.anchoredPosition = home; });
+    }
+
+    #endregion
 
     IEnumerator CoSkipFlash(bool success)
     {

@@ -1,23 +1,27 @@
+using System;
 using UnityEngine;
 
-/// <summary>외부에서 받아온 애니메이션 클립에 박혀 있는 AnimationEvent의 빈 수신부.
+/// <summary>애니메이션 클립에 박힌 AnimationEvent(`TriggerUnityEvent`)를 받아 흘려보낸다.
 ///
-/// 왜 필요한가
-///   구매/외주 클립(슬라임, 이모지, 대장간 망치 등)에는 `TriggerUnityEvent` 같은
-///   AnimationEvent가 남아 있다. 우리 게임은 그걸 쓰지 않는데, 유니티는 **받을 컴포넌트가
-///   없으면 프레임마다 경고를 뱉는다**. 대장간에서 망치질 몇 번에 로그가 수십 줄로 도배돼
-///   진짜 에러가 파묻혔다.
+/// 두 가지 일을 한다.
 ///
-///   클립에서 이벤트를 지우는 방법도 있지만, 원본을 다시 받아오면 되살아난다.
-///   받는 쪽을 하나 두는 편이 재발하지 않는다.
+/// 1) **경고 제거** — 받을 컴포넌트가 없으면 유니티가 프레임마다 "has no receiver"를 뱉는다.
+///    외주 클립(슬라임, 이모지 등)에는 우리가 안 쓰는 이벤트가 남아 있어 로그가 도배됐다.
+///    구독자가 없으면 조용히 삼킨다.
 ///
-///   같은 이유로 CreatureController에도 동일한 빈 메서드가 있다(몬스터용).
-///   이 컴포넌트는 그 밖의 UI/이펙트 애니메이터를 담당한다.
+/// 2) **연출 신호 전달** — 반대로 어떤 클립은 이벤트가 곧 연출 대본이다.
+///    대장간 강화 클립(Forge Smith/Success.anim)이 그렇다:
+///        t=0.08 SmashSound / t=0.33 Shake / t=1.08 SmashSound / … / t=3.83 Success
+///    원본(비주얼 스크립팅)은 이 문자열마다 소리와 흔들림을 걸어 뒀다. C# 포트에서는
+///    아무도 받지 않아 **망치질 소리가 한 번뿐**이었다. 구독해서 같은 대본을 재현한다.
 ///
-/// 붙이는 법: Tools/Fix Animation Event Warnings 가 클립을 훑어 필요한 곳에 자동으로 붙인다.
+/// 이벤트 이름은 클립이 정한다(stringParameter). 바꾸면 연출이 끊긴다.
 [DisallowMultipleComponent]
 public class AnimEventSink : MonoBehaviour
 {
-    // 이름이 곧 계약이다 — 클립의 AnimationEvent가 이 이름을 호출한다. 바꾸면 경고가 돌아온다.
-    public void TriggerUnityEvent() { }
+    /// <summary>클립이 보낸 신호. 인자는 stringParameter(예: "SmashSound").</summary>
+    public event Action<string> OnAnimEvent;
+
+    // 이름이 곧 계약이다 — 클립의 AnimationEvent가 이 이름을 호출한다.
+    public void TriggerUnityEvent(string id) => OnAnimEvent?.Invoke(id);
 }
