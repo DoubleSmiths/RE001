@@ -95,6 +95,14 @@ public class UI_EnhacePopup : UI_Popup
 
         BindSlotButtons();
 
+        // ⚠️ 망치가 대기 화면에서 **보이지 않았다.** Image 알파가 0이고, 그걸 1로 올리는 것은
+        //    Normal.anim의 커브뿐인데 애니메이터의 기본 상태가 빈 상태(New State)라
+        //    그 클립이 한 번도 돌지 않았다 — [강화]를 눌러야 비로소 망치가 생겨났다.
+        //    창을 열 때 대기 자세를 직접 재생한다(연출 소리는 _ceremony 게이트가 막는다).
+        var smithGo = GetObject((int)GameObjects.HammerNormalAnim);
+        var smithAnim = smithGo != null ? smithGo.GetComponent<Animator>() : null;
+        if (smithAnim != null) smithAnim.Play("Normal", 0, 0f);
+
         GetButton((int)Buttons.Enhance_Btn).onClick.AddListener(OnClickEnhance);
 
         var closeBtn = GetButton((int)Buttons.EnhancePopupCloseBtn);
@@ -140,14 +148,7 @@ public class UI_EnhacePopup : UI_Popup
         _embers = StartCoroutine(CoEmbers());   // 까만 무대 위로 불티가 흩날린다(원본 전 구간)
         _hidden.Clear();
 
-        // ⚠️ "강화 성공 시 / 능력치 변화" 미리보기는 **런타임에 복제해 만든 오브젝트**라
-        //    프리팹 이름으로 잡는 CEREMONY_HIDE가 닿지 않는다. 그래서 망치질 내내
-        //    까만 무대 아래에 표가 그대로 떠 있었다. 따로 접는다.
-        if (_previewTxt != null && _previewTxt.gameObject.activeSelf)
-        {
-            _previewTxt.gameObject.SetActive(false);
-            _hidden.Add(_previewTxt.gameObject);
-        }
+        // (표는 EnhAttDetail 아래에 있어 CEREMONY_HIDE[0]이 부모째 접는다)
 
         foreach (var g in CEREMONY_HIDE)
         {
@@ -570,6 +571,7 @@ public class UI_EnhacePopup : UI_Popup
 
         RefreshUI();
         PlayIntro();
+        StartCoroutine(CoRevealPreview());   // 표는 다른 것이 다 자리 잡은 뒤 차례로 선다
     }
 
     public override void RefreshUI()
@@ -636,66 +638,171 @@ public class UI_EnhacePopup : UI_Popup
     //  오르는지 보고 결정할 수 있다. 우리 강화창엔 이 화면이 통째로 없었다 —
     //  확률과 내구도 손실만 보이고 정작 얻는 것이 안 보였다.
     //  영상처럼 **변하는 스탯에만** 화살표를 붙이고, 안 변하는 것은 현재 값만 적는다.
-    TMPro.TMP_Text _previewTxt;
+    // 표는 **프리팹에 통째로 저작돼 있다** — EnhAttDetail 아래 AttText(제목 2줄)와
+    //  AttRealText(네 열: 이름 / 이전값 / 화살표 / 이후값). 네 열 각각에
+    //  "오른쪽에서 밀려 들어오는" Move(isFrom)와 Color 트윈이 붙어 있고, TMP 알파는 0이다.
+    //
+    // ⚠️ 예전엔 이걸 모르고 확률 텍스트를 복제해 **한 장짜리 TMP**에 네 행을 몰아썼다.
+    //    오브젝트가 하나라 열을 따로 움직일 수 없었고, 그래서 창이 열리는 프레임에
+    //    표가 통째로 튀어나왔다 — "순차적으로 나오는 애니메이션이 없다"의 정체다.
+    //    이제 저작된 표를 켜고 열을 차례로 부른다.
+    GameObject _tblTitle, _tblBody;
+    TMPro.TMP_Text _colName, _colBefore, _colArrow, _colAfter;
+    bool _previewRevealed;
+    readonly System.Collections.Generic.List<bool> _arrowRows = new System.Collections.Generic.List<bool>();
+
+    const float PREVIEW_DELAY   = 1.65f;   // 창이 열리고 제목이 내려앉기까지
+    const float PREVIEW_TITLE   = 0.35f;   // 제목 → 첫 열
+    const float PREVIEW_STAGGER = 0.10f;   // 열과 열 사이
+    const float PREVIEW_FLASH   = 0.05f;   // 화살표가 속을 채운 채 나타나는 한 순간
+    const string PREVIEW_ARROW_HEX = "A60000";
+
+    void CachePreviewNodes()
+    {
+        if (_tblBody != null) return;
+
+        var detail = GetObject((int)GameObjects.EnhAttDetail);
+        if (detail == null) return;
+
+        _tblTitle = Util.FindChild(detail, "AttText", true);
+        _tblBody  = Util.FindChild(detail, "AttRealText", true);
+        if (_tblBody == null) return;
+
+        _colName   = Util.FindChild(_tblBody, "Txt_AttRealText_03", true)?.GetComponent<TMPro.TMP_Text>();
+        _colBefore = Util.FindChild(_tblBody, "Text_1", true)?.GetComponent<TMPro.TMP_Text>();
+        _colArrow  = Util.FindChild(_tblBody, "Text_2", true)?.GetComponent<TMPro.TMP_Text>();
+        _colAfter  = Util.FindChild(_tblBody, "Text_3", true)?.GetComponent<TMPro.TMP_Text>();
+
+        foreach (var t in new[] { _colName, _colBefore, _colArrow, _colAfter })
+            if (t != null) ApplyFont(t, FontType.UI);
+    }
 
     void RefreshPreview(Data.EquipmentData data)
     {
-        if (_previewTxt == null)
-        {
-            // 확률 텍스트를 복제해 서식을 물려받되, 자리는 **강화 버튼 아래** 빈 공간에 잡는다.
-            //  확률 아래에 두었더니 버튼과 [영상 건너뛰기] 토글 위에 겹쳐 찍혔다.
-            var anchor = GetText((int)Texts.ChanceTxt);
-            if (anchor == null) return;
-            var go = Instantiate(anchor.gameObject, anchor.transform.parent);
-            go.name = "Txt_EnhancePreview";
-            _previewTxt = go.GetComponent<TMPro.TMP_Text>();
+        CachePreviewNodes();
+        if (_colName == null) return;
 
-            var rt = _previewTxt.rectTransform;
-            var btn = GetButton((int)Buttons.Enhance_Btn);
-            var btnRt = btn != null ? btn.transform as RectTransform : null;
-            if (btnRt != null && btnRt.parent == rt.parent)
-                rt.anchoredPosition = btnRt.anchoredPosition + new Vector2(0f, -34f);
-            else
-                rt.anchoredPosition = anchor.rectTransform.anchoredPosition + new Vector2(0f, -120f);
-            rt.sizeDelta = new Vector2(120f, 0f);
-            _previewTxt.fontSize = Mathf.Max(5f, anchor.fontSize * 0.62f);
-            _previewTxt.alignment = TMPro.TextAlignmentOptions.Top;
-            _previewTxt.color = Color.white;
-        }
-
-        bool maxed = _equip.EnhanceLevel >= ENHANCE_MAX_LEVEL;
-        if (maxed) { _previewTxt.gameObject.SetActive(false); return; }
-
-        // 연출 중에는 되살리지 않는다 — OnClickEnhance가 코루틴을 띄운 **직후** RefreshUI를
-        //  부르기 때문에, 그냥 켜면 방금 접은 것을 같은 프레임에 도로 펴 버린다.
-        _previewTxt.gameObject.SetActive(!_resolving);
-        if (_resolving) return;
+        if (_equip.EnhanceLevel >= ENHANCE_MAX_LEVEL) { _tblBody.SetActive(false); return; }
 
         var cur  = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
         var next = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel + 1);
 
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"<color=#F5DD6C>{Util.Localize("EnhancePreviewText")}</color>");
-        sb.AppendLine(Row(Util.Localize(LocalizeKey.EnhanceLevelText),
-                          $"+{_equip.EnhanceLevel}", $"+{_equip.EnhanceLevel + 1}", true));
-        sb.AppendLine(Row(Util.Localize(LocalizeKey.PhysicalAttackText),
-                          $"+{data.BaseAtk + cur.atk}", $"+{data.BaseAtk + next.atk}", next.atk != cur.atk));
-        sb.AppendLine(Row(Util.Localize(LocalizeKey.CriticalText),
-                          $"+{data.BaseCritRate + cur.crit:0.#}%", $"+{data.BaseCritRate + next.crit:0.#}%",
-                          !Mathf.Approximately(next.crit, cur.crit)));
-        sb.Append(Row(Util.Localize(LocalizeKey.MagicAttackText),
-                      $"+{data.BaseMagicAtk + cur.magic}", $"+{data.BaseMagicAtk + next.magic}",
-                      next.magic != cur.magic));
+        var names = new System.Collections.Generic.List<string>();
+        var befs  = new System.Collections.Generic.List<string>();
+        var afts  = new System.Collections.Generic.List<string>();
+        _arrowRows.Clear();
 
-        _previewTxt.text = sb.ToString();
-        ApplyFont(_previewTxt, FontType.UI);
+        // 네 줄 고정. 안 변하는 줄도 이름과 현재값은 찍고, 화살표와 이후값만 비운다.
+        void AddRow(string nm, string bef, string aft, bool changed)
+        {
+            names.Add(nm);
+            befs.Add(bef);
+            afts.Add(changed ? aft : "");
+            _arrowRows.Add(changed);
+        }
+
+        AddRow(Util.Localize(LocalizeKey.EnhanceLevelText),
+               $"+{_equip.EnhanceLevel}", $"+{_equip.EnhanceLevel + 1}", true);
+        AddRow(Util.Localize(LocalizeKey.PhysicalAttackText),
+               $"+{data.BaseAtk + cur.atk}", $"+{data.BaseAtk + next.atk}", next.atk != cur.atk);
+        AddRow(Util.Localize(LocalizeKey.CriticalText),
+               $"+{data.BaseCritRate + cur.crit:0.#}%", $"+{data.BaseCritRate + next.crit:0.#}%",
+               !Mathf.Approximately(next.crit, cur.crit));
+        AddRow(Util.Localize(LocalizeKey.MagicAttackText),
+               $"+{data.BaseMagicAtk + cur.magic}", $"+{data.BaseMagicAtk + next.magic}",
+               next.magic != cur.magic);
+
+        // ⚠️ <color> 태그를 붙이면 저작 Color 트윈(흰 / 흰 / 검정 / 초록)을 덮어쓴다.
+        _colName.text   = string.Join("\n", names);
+        _colBefore.text = string.Join("\n", befs);
+        _colAfter.text  = string.Join("\n", afts);
+        _colArrow.text  = PreviewArrowRow("▷");
+
+        // 다른 열은 저작 알파가 0이라 저절로 숨는데, 화살표만 색을 코드가 준다 —
+        //  제 차례가 오기 전에는 직접 감춘다.
+        if (!_previewRevealed) SetPreviewArrowAlpha(0f);
     }
 
-    // 변하는 줄만 "현재 ▷ 이후", 안 변하면 현재 값만 (영상과 같은 규칙)
-    static string Row(string name, string before, string after, bool changed)
-        => changed
-            ? $"{name}  {before} <color=#FF4C4C>▷</color> <color=#00FF00>{after}</color>"
-            : $"{name}  {before}";
+    string PreviewArrowRow(string glyph)
+    {
+        var lines = new string[_arrowRows.Count];
+        for (int i = 0; i < _arrowRows.Count; i++) lines[i] = _arrowRows[i] ? glyph : "";
+        return string.Join("\n", lines);
+    }
+
+    void SetPreviewArrowAlpha(float a)
+    {
+        if (_colArrow == null) return;
+        var c = _colArrow.color; c.a = a; _colArrow.color = c;
+    }
+
+    /// <summary>제목이 내려앉고, 네 열이 0.1초씩 어긋나 오른쪽에서 밀려 들어온다.
+    /// 창을 여는 프레임에 표가 통째로 뜨지 않게, 다른 요소가 다 자리 잡은 뒤에 시작한다.</summary>
+    IEnumerator CoRevealPreview()
+    {
+        CachePreviewNodes();
+        if (_previewRevealed || _tblBody == null) yield break;
+        _previewRevealed = true;
+
+        yield return new WaitForSecondsRealtime(PREVIEW_DELAY);
+
+        if (_tblTitle != null)
+        {
+            _tblTitle.SetActive(true);            // autoPlay 저작 LocalMove가 스스로 내려앉는다
+            yield return null;
+            PlayAuthoredNode("AttText", "");      // 두 번째부터는 직접 되감아 준다
+        }
+
+        yield return new WaitForSecondsRealtime(PREVIEW_TITLE);
+
+        _tblBody.SetActive(true);
+        yield return null;                        // 켜진 프레임에 DOTweenAnimation이 트윈을 만든다
+
+        PlayAuthoredNode("Txt_AttRealText_03", "");        // ① 이름
+        yield return new WaitForSecondsRealtime(PREVIEW_STAGGER);
+
+        PlayAuthoredNode("Text_1", "");                    // ② 이전값
+        yield return new WaitForSecondsRealtime(PREVIEW_STAGGER);
+
+        PlayAuthoredNode("Text_2", "", dropColor: true);   // ③ 화살표 (저작 Color는 검정으로 끝난다)
+        SetPreviewArrowAlpha(1f);
+        _colArrow.color = Util.HexToColor(PREVIEW_ARROW_HEX);
+        _colArrow.text  = PreviewArrowRow("▶");            // 나타나는 한 순간만 속이 찬다
+        DOVirtual.DelayedCall(PREVIEW_FLASH,
+            () => { if (_colArrow != null) _colArrow.text = PreviewArrowRow("▷"); }).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(PREVIEW_STAGGER);
+
+        PlayAuthoredNode("Text_3", "");                    // ④ 이후값
+    }
+
+    /// <summary>표의 **한 열만** 재생한다.
+    ///
+    /// 이 표의 저작 트윈은 id가 전부 빈 문자열이라 `DORestartById`로는 잡히지 않는다 —
+    ///  빈 id에는 SetId가 걸리지 않는다(DOTweenAnimation.cs:508). 컴포넌트가 들고 있는
+    ///  트윈을 직접 되감는다.
+    /// `dropColor`는 화살표 열 전용 — 그 열의 저작 Color는 **검정으로 끝나서**
+    ///  까만 배경 위에서 화살표를 지운다.</summary>
+    void PlayAuthoredNode(string childName, string id, bool dropColor = false)
+    {
+        var node = Util.FindChild(gameObject, childName, true);
+        if (node == null) return;
+
+        var anims = node.GetComponents<DOTweenAnimation>();
+
+        if (dropColor)
+            foreach (var a in anims)
+                if (a.id == id && a.animationType == DOTweenAnimation.AnimationType.Color)
+                    a.tween?.Kill();
+
+        foreach (var a in anims)
+        {
+            if (a.id != id) continue;
+            if (dropColor && a.animationType == DOTweenAnimation.AnimationType.Color) continue;
+
+            if (string.IsNullOrEmpty(id)) a.tween?.Restart();
+            else a.DORestartById(id);
+        }
+    }
 
     // ────────────────────────────────────────
     //  강화 실행
