@@ -71,25 +71,25 @@ public class UI_EnhanceProgressPopup : UI_Popup
     const float STEP_TITLE  = 0.20f;   // 제목/이름 + 아이콘 하강 + 빛줄기
     const float STEP_DETAIL = 1.70f;   // 내구도 + "능력치 변화" 라벨
     const float STEP_TABLE  = 0.25f;   // 능력치 표가 오른쪽에서 밀려 들어온다
-    const float STEP_FINAL  = 1.85f;   // (예약) 표 내부 타임라인이 이 자리를 대신한다
 
     // 능력치 표는 그 안에서 다시 다섯 걸음을 밟는다. 원본 영상을 열별 밝기로 재서 얻은 값이다
     //  (라벨 f253 → 이전값 f254 → 화살표 f255 → 초록 f256~258 → 채움 f265 → 정리 f267 → 라벨 f270).
     //  아래는 **라벨이 뜨는 순간을 0으로 둔 상대시각**이다.
     const float TBL_VALUES    = 0.10f;   // 이전값 / 화살표 / 초록 이후값이 뒤따라 붙는다
     const float TBL_ARROW_HIT = 1.20f;   // 화살표가 속을 채우며 한 번 번쩍
-    const float TBL_SETTLE    = 1.40f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로
+    const float TBL_SETTLE    = 1.25f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로 (실측 t0+1.25)
     const float TBL_LABEL_OUT = 1.70f;   // 라벨은 첫 줄(강화도)만 남는다
-    const float ARROW_FLASH   = 0.20f;
+    const float ARROW_FLASH   = 0.05f;   // 원본은 채운 ▶이 딱 한 프레임이다
 
     // 강화창의 백색 판은 1.5초에 걸쳐 걷히는데, 이 창은 그 중 1.2초쯤 지난 시점에 열린다.
     //  남은 밝기에서 이어받아 마저 검게 만든다(원본 223.1s 실측 46/255).
     const float WASH_LEFT = 0.18f;
     const float WASH_TAIL = 0.45f;
 
-    // 화살표 색 — 평소엔 어두운 윤곽, 번쩍일 때만 채운 붉은색 (영상 픽셀 계측값)
-    const string ARROW_IDLE_HEX  = "6E0A0F";
-    const string ARROW_FLASH_HEX = "A30000";
+    // 화살표 색은 처음부터 끝까지 **하나**다(#A60000). 원본에서 바뀌는 건 색이 아니라
+    //  글리프뿐이다 — 속 빈 ▷가 한 프레임 채워진 ▶이 된다(f264와 f265의 픽셀을 비교하면
+    //  색 바이트는 그대로고 속만 0 → 166으로 찬다).
+    const string ARROW_HEX = "A60000";
 
     GameManager.EnhanceResult _result;
     Equipment _equip;
@@ -225,6 +225,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         yield return Wait(TBL_VALUES);
         PlayAuthored(GameObjects.AttRealText, "1");           // ② 이전값 · 화살표 · 초록 이후값
+        RestoreArrowColor();
 
         yield return Wait(TBL_ARROW_HIT - TBL_VALUES);
         FlashArrows();                                        // ③ 화살표가 속을 채우며 번쩍
@@ -281,45 +282,44 @@ public class UI_EnhanceProgressPopup : UI_Popup
         var befs  = new System.Collections.Generic.List<string>();
         var afts  = new System.Collections.Generic.List<string>();
 
-        names.Add(Util.Localize(LocalizeKey.EnhanceLevelText));
-        befs.Add($"+{_result.PrevLevel}");
-        afts.Add($"+{_equip.EnhanceLevel}");
+        // 표는 **네 줄 고정**이다. 원본은 안 변한 항목도 이름과 현재값을 찍고,
+        //  그 줄에만 화살표와 초록 이후값을 비워 둔다. 변한 줄만 골라 넣으면
+        //  강화 때마다 표의 줄 수가 들쭉날쭉해진다(원본은 늘 같은 네 줄이다).
+        //  잠재력은 이 표에 없다 — 그 수치는 강화창 상단 게이지가 맡는다.
+        _arrowRows = new System.Collections.Generic.List<bool>();
 
-        if (_result.PotenGain > 0)
+        void AddRow(string nm, string bef, string aft, bool changed)
         {
-            names.Add("잠재력");
-            befs.Add($"{_equip.Potential - _result.PotenGain}");
-            afts.Add($"{_equip.Potential}");
+            names.Add(nm);
+            befs.Add(bef);
+            afts.Add(changed ? aft : "");   // 안 변한 줄은 이후값 자리를 비운다
+            _arrowRows.Add(changed);
         }
 
-        names.Add(Util.Localize(LocalizeKey.PhysicalAttackText));
-        befs.Add($"+{data.BaseAtk + b.atk}");
-        afts.Add($"+{data.BaseAtk + a.atk}");
-
-        if (!Mathf.Approximately(a.crit, b.crit))
-        {
-            names.Add(Util.Localize(LocalizeKey.CriticalText));
-            befs.Add($"+{data.BaseCritRate + b.crit:0.#}%");
-            afts.Add($"+{data.BaseCritRate + a.crit:0.#}%");
-        }
-        if (a.magic != b.magic)
-        {
-            names.Add(Util.Localize(LocalizeKey.MagicAttackText));
-            befs.Add($"+{data.BaseMagicAtk + b.magic}");
-            afts.Add($"+{data.BaseMagicAtk + a.magic}");
-        }
+        AddRow(Util.Localize(LocalizeKey.EnhanceLevelText),
+               $"+{_result.PrevLevel}", $"+{_equip.EnhanceLevel}", true);
+        AddRow(Util.Localize(LocalizeKey.PhysicalAttackText),
+               $"+{data.BaseAtk + b.atk}", $"+{data.BaseAtk + a.atk}", a.atk != b.atk);
+        AddRow(Util.Localize(LocalizeKey.CriticalText),
+               $"+{data.BaseCritRate + b.crit:0.#}%", $"+{data.BaseCritRate + a.crit:0.#}%",
+               !Mathf.Approximately(a.crit, b.crit));
+        AddRow(Util.Localize(LocalizeKey.MagicAttackText),
+               $"+{data.BaseMagicAtk + b.magic}", $"+{data.BaseMagicAtk + a.magic}",
+               a.magic != b.magic);
 
         _statNames = names;
 
-        SetRevealText(Texts.Text, string.Join("\n", names));
-        SetRevealText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
+        SetTableText(Texts.Text, string.Join("\n", names));
+        SetTableText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
 
         // 화살표는 처음엔 **속이 빈 윤곽(▷)** 이고, 결과가 확정되는 순간에만 채워진다(▶).
         //  예전엔 처음부터 채운 ▶라 "번쩍" 하는 순간이 아예 없었다.
-        SetRevealText(Texts.Text_2, ArrowRow("▷"));
-        SetArrowColor(ARROW_IDLE_HEX);
+        SetTableText(Texts.Text_2, ArrowRow("▷"));
+        SetArrowColor(ARROW_HEX);
 
-        SetRevealText(Texts.Text_3, string.Join("\n", afts.ConvertAll(v => $"<color=#00FF00>{v}</color>")));
+        // ⚠️ <color> 태그를 붙이면 프리팹에 저작된 초록(#0DDB00)과 그 페이드인을 덮어쓴다.
+        //    글자를 넣기만 하고 색은 저작 Color 트윈(id "1")에 맡긴다.
+        SetTableText(Texts.Text_3, string.Join("\n", afts));
     }
 
     /// <summary>EnhAttDetail 내구도 현황.
@@ -341,13 +341,28 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
     System.Collections.Generic.List<string> _statNames;
 
-    /// <summary>화살표 열 — 줄 수가 스탯 표와 같아야 칸이 맞는다.</summary>
+    System.Collections.Generic.List<bool> _arrowRows;
+
+    /// <summary>화살표 열 — **변한 줄에만** 글리프를 놓고 나머지는 빈 줄로 둔다.
+    /// 줄 수가 스탯 표와 같아야 칸이 맞는다.</summary>
     string ArrowRow(string glyph)
     {
-        int rows = _statNames != null ? _statNames.Count : 0;
-        var lines = new string[rows];
-        for (int i = 0; i < rows; i++) lines[i] = glyph;
+        if (_arrowRows == null) return string.Empty;
+
+        var lines = new string[_arrowRows.Count];
+        for (int i = 0; i < _arrowRows.Count; i++) lines[i] = _arrowRows[i] ? glyph : "";
         return string.Join("\n", lines);
+    }
+
+    /// <summary>표 네 열 전용. MakeVisible을 태우지 않는다 —
+    /// 저작 색은 알파 0에서 시작해야 저작 페이드인(0.1~0.3초)이 살아난다.</summary>
+    void SetTableText(Texts t, string value)
+    {
+        var txt = GetText((int)t);
+        if (txt == null) return;
+
+        txt.text = value;
+        ApplyFont(txt, FontType.UI);
     }
 
     void SetArrowColor(string hex)
@@ -364,13 +379,11 @@ public class UI_EnhanceProgressPopup : UI_Popup
         if (t == null) return;
 
         t.text = ArrowRow("▶");
-        SetArrowColor(ARROW_FLASH_HEX);
+        SetArrowColor(ARROW_HEX);      // 번쩍이는 순간에도 색은 같다 — 채워지는 건 글리프뿐
 
         DOVirtual.DelayedCall(ARROW_FLASH, () =>
         {
-            if (t == null) return;
-            t.text = ArrowRow("▷");
-            SetArrowColor(ARROW_IDLE_HEX);
+            if (t != null) t.text = ArrowRow("▷");
         }).SetUpdate(true);
     }
 
@@ -419,8 +432,31 @@ public class UI_EnhanceProgressPopup : UI_Popup
         if (root == null) return;
 
         foreach (var anim in root.GetComponentsInChildren<DOTweenAnimation>(true))
-            if (anim.id == id) anim.DORestartById(id);
+        {
+            if (anim.id != id) continue;
+
+            // ⚠️ **빈 id는 DORestartById로 못 찾는다.** DOTweenAnimation은 id가 비어 있으면
+            //    트윈에 SetId를 걸지 않는다(DOTweenAnimation.cs:508) — ById 조회의 열쇠가
+            //    아예 없는 셈이다. 스탯 이름 열이 정확히 그 경우라, 이 호출이 오랫동안
+            //    **아무 일도 하지 않고 있었다**(라벨이 슬며시 들어오는 연출이 통째로 빠졌다).
+            if (string.IsNullOrEmpty(id)) anim.tween?.Restart();
+            else anim.DORestartById(id);
+        }
     }
+
+    /// <summary>화살표 열의 색을 되돌려 놓는다.
+    ///
+    /// 화살표 열에는 **검정으로 끝나는** 저작 Color 트윈(id "1")이 걸려 있어,
+    ///  까만 배경 위에서 화살표가 등장 0.1초 만에 사라진다. 원본은 처음부터 끝까지
+    ///  붉은 ▷다.
+    /// ⚠️ 그 컴포넌트만 골라 건너뛰는 방법은 통하지 않는다 — `DORestartById`는
+    ///    **GameObject 단위**로 도는지라(DOTween.Restart(gameObject, id)), 같은 칸의
+    ///    Move를 재생하는 순간 Color도 함께 되살아난다. 그래서 저작 트윈이 끝난 뒤
+    ///    (0.1초짜리다) 색만 다시 얹는다.</summary>
+    void RestoreArrowColor()
+        => DOVirtual.DelayedCall(ARROW_RECOLOR, () => SetArrowColor(ARROW_HEX)).SetUpdate(true);
+
+    const float ARROW_RECOLOR = 0.15f;   // 저작 Color(0.1초)가 끝난 직후
 
     /// <summary>저작 트윈 id의 **끝 상태로 즉시 옮겨 놓는다**(재생하지 않는다).
     ///
