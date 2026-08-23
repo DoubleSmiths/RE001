@@ -1,6 +1,8 @@
 using System.Collections;
 using TMPro;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 using static Define;
 
 /// <summary>
@@ -55,12 +57,20 @@ public class UI_EnhanceProgressPopup : UI_Popup
         _2,
         FailTxtGroup,
         PotenGroup,
+        EnhAttDetail,            // 내구도 + "능력치 변화" 라벨 묶음
         AttRealText,
+        God_ray_02,              // 빛줄기 (월드 ParticleSystem → UIParticle 필요)
     }
 
     #endregion
 
-    const float HAMMER_DURATION = 1.2f;   // 망치 연출 시간 — 결과 공개 전 대기
+    // 원본(비주얼 스크립팅) 그래프의 'SuccessDone' 사슬을 그대로 옮긴 간격이다.
+    //  Timer 노드 값: 0.2 → 1.7 → 0.25 → 1.85.
+    //  이 창은 대장장이 클립이 끝나는 순간(SuccessDone) 열리므로 첫 대기가 곧 0.2다.
+    const float STEP_TITLE  = 0.20f;   // 제목/이름 + 아이콘 하강 + 빛줄기
+    const float STEP_DETAIL = 1.70f;   // 내구도 + "능력치 변화" 라벨
+    const float STEP_TABLE  = 0.25f;   // 능력치 표가 오른쪽에서 밀려 들어온다
+    const float STEP_FINAL  = 1.85f;   // 이전값·화살표가 걷히고 최종값만 남는다
 
     GameManager.EnhanceResult _result;
     Equipment _equip;
@@ -94,11 +104,14 @@ public class UI_EnhanceProgressPopup : UI_Popup
             return;
         }
 
-        // 결과 요소는 전부 숨긴 채 망치 연출부터
-        SetGroupActive(GameObjects.SuccessTxtGroup, true);   // 그룹 자체는 켜두고 자식(INACTIVE)만 개별 공개
+        // 결과 요소는 **꺼진 채로** 시작한다. 프리팹의 DOTweenAnimation이 대부분 autoPlay라
+        //  그룹을 켜는 순간이 곧 그 연출의 시작이다 — 미리 켜 두면 아무 일도 안 일어난 채
+        //  결과가 이미 떠 있는 화면이 된다(예전 증상).
+        SetGroupActive(GameObjects.SuccessTxtGroup, false);
         SetGroupActive(GameObjects.FailTxtGroup, true);
         SetGroupActive(GameObjects.PotenGroup, true);
         SetGroupActive(GameObjects.AttRealText, false);
+        SetGroupActive(GameObjects.EnhAttDetail, false);
 
         // 장비 아이콘 — EquipIcon Animator 정지 후 세팅
         var wIcon = GetImage((int)Images.WIcon);
@@ -115,100 +128,162 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
     IEnumerator CoPlay()
     {
-        yield return new WaitForSecondsRealtime(HAMMER_DURATION);   // 망치 연출(authored Animator 'Forge Smith')
-
         _revealed = true;
         var data = _equip.EquipmentData;
         string nm = Util.Localize(data.Name);
         string nmEnh = _equip.EnhanceLevel > 0 ? $"+{_equip.EnhanceLevel} {nm}" : nm;
 
+        RefreshDurability(data);
+
         if (_result.Success)
-        {
-            Managers.Sound?.PlaySFX("SFX_Upgrade");   // 강화 성공음 (클립 미등록이면 경고만)
-
-            // 플래시 + 성공 텍스트 (INACTIVE 자식들 활성 → authored autoPlay 연출 재생)
-            Reveal(GameObjects.Flash_USETHIS);
-            // 프리팹에 오타 섞인 영문("ENHACE SUCCEEDED")이 박혀 한글 화면에 그대로 떴다.
-            SetRevealText(Texts.Txt_SuccessTxtGroup_01, Util.Localize("EnhanceSucceededText"));
-            Reveal(GameObjects.Img_SuccessTxtGroup_02);
-            Reveal(GameObjects._2);
-            SetRevealText(Texts.Txt_SuccessTxtGroup_03, nmEnh);
-            SetRevealText(Texts._4, nmEnh);
-
-            // 잠재력 변화.
-            //  "잠재력 변화" 라벨이 "능력치 변화" 라벨과 **같은 좌표**에 놓여 있어 두 글자가 겹쳐 찍혔다.
-            //  라벨은 끄고 수치 쪽에 이름을 붙인다(내구도와 같은 처리). 라벨의 원래 자리는
-            //  자기 수치(아래쪽)와도 멀어서 어차피 제 위치가 아니었다.
-            var potenLabel = GetText((int)Texts.Txt_PotenGroup_01);
-            if (potenLabel != null) potenLabel.gameObject.SetActive(false);
-            SetRevealText(Texts.MainPotenText, $"잠재력 {_equip.Potential}");
-            SetRevealText(Texts.IncPotenText, $"+{_result.PotenGain}");
-
-            // 능력치 변화.
-            //  ⚠️ 예전엔 **강화 보너스 누적합만** 물공 한 줄로 찍었다(+0 ▶ +6).
-            //     영상은 강화도와 함께 **장비 총합**(기본치 포함)을 보여주고, 같은 프로젝트의
-            //     장비 상세창도 이미 총합으로 찍는다 — 두 창이 서로 다른 숫자를 보여주고 있었다.
-            //     총합 기준으로 맞추고, 실제로 변한 스탯(치명/마공)도 줄을 추가한다.
-            //  프리팹 행이 1줄(라벨/이전/▶/이후 4열)뿐이라 각 열에 개행으로 몰아쓴다(프리팹 무수정).
-            SetGroupActive(GameObjects.AttRealText, true);
-            RevealText(Texts.AttText);   // "능력치 변화" 라벨도 색을 되살려야 보인다
-
-            var b = Managers.Game.GetEnhanceBonus(_equip.DataId, _result.PrevLevel);
-            var a = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
-
-            var names = new System.Collections.Generic.List<string>();
-            var befs  = new System.Collections.Generic.List<string>();
-            var afts  = new System.Collections.Generic.List<string>();
-
-            names.Add(Util.Localize(LocalizeKey.EnhanceLevelText));
-            befs.Add($"+{_result.PrevLevel}");
-            afts.Add($"+{_equip.EnhanceLevel}");
-
-            names.Add(Util.Localize(LocalizeKey.PhysicalAttackText));
-            befs.Add($"+{data.BaseAtk + b.atk}");
-            afts.Add($"+{data.BaseAtk + a.atk}");
-
-            if (!Mathf.Approximately(a.crit, b.crit))
-            {
-                names.Add(Util.Localize(LocalizeKey.CriticalText));
-                befs.Add($"+{data.BaseCritRate + b.crit:0.#}%");
-                afts.Add($"+{data.BaseCritRate + a.crit:0.#}%");
-            }
-            if (a.magic != b.magic)
-            {
-                names.Add(Util.Localize(LocalizeKey.MagicAttackText));
-                befs.Add($"+{data.BaseMagicAtk + b.magic}");
-                afts.Add($"+{data.BaseMagicAtk + a.magic}");
-            }
-
-            SetRevealText(Texts.Text, string.Join("\n", names));
-            SetRevealText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
-            SetRevealText(Texts.Text_2, string.Join("\n", afts.ConvertAll(_ => "▶")));
-            SetRevealText(Texts.Text_3, string.Join("\n", afts.ConvertAll(v => $"<color=#00FF00>{v}</color>")));
-        }
+            yield return CoRevealSuccess(data, nm, nmEnh);
         else
+            yield return CoRevealFail(data);
+    }
+
+    /// <summary>성공 연출. 원본 그래프의 'SuccessDone' 사슬을 그대로 따른다 —
+    /// 요소를 켜는 **순서와 간격**이 곧 연출이고, 움직임 자체는 프리팹에 저작돼 있다.</summary>
+    IEnumerator CoRevealSuccess(Data.EquipmentData data, string nm, string nmEnh)
+    {
+        Managers.Sound?.PlaySFX("SFX_Upgrade");   // 강화 성공음 (클립 미등록이면 경고만)
+
+        // ── 글자를 먼저 채운다. 그룹이 아직 꺼져 있어 연출은 시작되지 않는다 ──
+        // 프리팹에 오타 섞인 영문("ENHACE SUCCEEDED")이 박혀 한글 화면에 그대로 떴다.
+        SetRevealText(Texts.Txt_SuccessTxtGroup_01, Util.Localize("EnhanceSucceededText"));
+        SetRevealText(Texts.Txt_SuccessTxtGroup_03, nm);   // 아직 강화 전 이름
+
+        // 잠재력은 **표 안의 한 줄**로 넣는다.
+        //  프리팹의 PotenGroup은 원본에서 *실패* 연출용 자리다(FailDone 사슬에서만 켜진다).
+        //  성공 화면에 켜 두니 능력치 표 아래에 큰 글씨가 하나 더 붙어 원본과 달라 보였다.
+        SetGroupActive(GameObjects.PotenGroup, false);
+
+        FillStatTable(data);
+
+        // ── ① +0.20s : 제목/이름 · 아이콘 하강 · 빛줄기 ──
+        yield return Wait(STEP_TITLE);
+
+        StartCoroutine(CoEmbers());               // 화로는 계속 달아 있다 — 불티가 화면 내내 흩날린다
+        SnapAuthored(GameObjects.Icon, "5");      // 담금질로 떠오른 자세에서 시작한다
+
+        Reveal(GameObjects.Flash_USETHIS);
+        Reveal(GameObjects.SuccessTxtGroup);      // 제목·이름의 autoPlay 연출이 여기서 시작된다
+
+        // 제목 위아래 가로선은 프리팹에서 **꺼진 채**라 그룹을 켜도 따라 켜지지 않는다 — 따로 깨운다.
+        Reveal(GameObjects.Img_SuccessTxtGroup_02);
+        Reveal(GameObjects._2);
+
+        PlayAuthored(GameObjects.Icon, "7");      // 모루 위로 떴던 아이콘이 내려앉으며 원래 크기로
+        ShowGodRays();
+
+        // ── ② +1.70s : 내구도 + "능력치 변화" 라벨 ──
+        yield return Wait(STEP_DETAIL);
+        Reveal(GameObjects.EnhAttDetail);
+
+        // 이름이 "철검"에서 "+5 철검"으로 **바뀐다**. 프리팹은 이걸 두 개의 텍스트로 만들어 뒀다 —
+        //  원래 이름은 아래로 밀리며 사라지고(id 1), 강화된 이름이 제자리에서 톡 튀며 들어온다.
+        //  영상에서 이 교체는 "능력치 변화" 헤더가 뜨는 것과 같은 순간이다.
+        PlayAuthoredOn(Texts.Txt_SuccessTxtGroup_03, "1");
+        SetRevealText(Texts._4, nmEnh);
+
+        // ── ③ +0.25s : 능력치 표가 오른쪽에서 밀려 들어온다 ──
+        yield return Wait(STEP_TABLE);
+        SetGroupActive(GameObjects.AttRealText, true);
+        yield return null;                        // 켜진 프레임에 DOTweenAnimation이 트윈을 만든다
+
+        PlayAuthored(GameObjects.AttRealText, "");    // 스탯 이름 열
+        PlayAuthored(GameObjects.AttRealText, "1");   // 이전 / ▶ / 이후 열
+
+        // ── ④ +1.85s : 이전값과 화살표가 걷히고 초록 최종값이 왼쪽으로 정렬된다 ──
+        yield return Wait(STEP_FINAL);
+        PlayAuthored(GameObjects.AttRealText, "2");
+    }
+
+    IEnumerator CoRevealFail(Data.EquipmentData data)
+    {
+        Managers.Sound?.PlaySFX("SFX_Fail");   // 강화 실패음 (클립 미등록이면 경고만)
+
+        SetRevealText(Texts.Txt_FailTxtGroup_02, Util.Localize("EnhanceFailedText"));
+
+        // before / "/max" / after 가 프리팹에서 거의 같은 x에 겹쳐 놓여 있어
+        //  "내구도 /900" 처럼 숫자들이 서로를 덮어썼다 → 한 줄로 합쳐 라벨에 싣고 나머지는 끈다.
+        SetRevealText(Texts.Txt_FailTxtGroup_01,
+            $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_result.PrevDurability} ▶ " +
+            $"<color=red>{_equip.Durability}</color>/{data.MaxDurability}");
+        HideText(Texts._2_B4_Variable);
+        HideText(Texts.Txt_FailTxtGroup_04);
+        HideText(Texts._4_After_Variable);
+
+        SetGroupActive(GameObjects.PotenGroup, false);   // 실패 — 잠재력 변화 없음
+
+        StartCoroutine(CoEmbers());                     // 화로는 실패해도 계속 달아 있다
+
+        // 실패도 원본은 곧장 결과를 보여주지 않는다(FailDone → +0.3 → 아이콘 id 9 → …).
+        yield return Wait(STEP_TITLE);
+        PlayAuthored(GameObjects.Icon, "9");
+
+        // ⚠️ 실패창의 내구도 줄은 프리팹에서 **isFrom 트윈**이라, 만들어지는 순간
+        //    알파 0으로 눌린 채 멈춰 있다. id "1"을 눌러 주지 않으면 글자를 넣어도 보이지 않는다
+        //    (실제로 "강화 실패"만 뜨고 내구도가 통째로 사라져 있었다).
+        PlayAuthored(GameObjects.FailTxtGroup, "1");
+    }
+
+    /// <summary>능력치 표 채우기.
+    ///  ⚠️ 예전엔 **강화 보너스 누적합만** 물공 한 줄로 찍었다(+0 ▶ +6).
+    ///     영상은 강화도와 함께 **장비 총합**(기본치 포함)을 보여주고, 같은 프로젝트의
+    ///     장비 상세창도 이미 총합으로 찍는다 — 두 창이 서로 다른 숫자를 보여주고 있었다.
+    ///  프리팹 행이 1줄(라벨/이전/▶/이후 4열)뿐이라 각 열에 개행으로 몰아쓴다(프리팹 무수정).</summary>
+    void FillStatTable(Data.EquipmentData data)
+    {
+        RevealText(Texts.AttText);   // "능력치 변화" 라벨도 색을 되살려야 보인다
+
+        var b = Managers.Game.GetEnhanceBonus(_equip.DataId, _result.PrevLevel);
+        var a = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
+
+        var names = new System.Collections.Generic.List<string>();
+        var befs  = new System.Collections.Generic.List<string>();
+        var afts  = new System.Collections.Generic.List<string>();
+
+        names.Add(Util.Localize(LocalizeKey.EnhanceLevelText));
+        befs.Add($"+{_result.PrevLevel}");
+        afts.Add($"+{_equip.EnhanceLevel}");
+
+        if (_result.PotenGain > 0)
         {
-            Managers.Sound?.PlaySFX("SFX_Fail");   // 강화 실패음 (클립 미등록이면 경고만)
-
-            SetRevealText(Texts.Txt_FailTxtGroup_02, Util.Localize("EnhanceFailedText"));
-
-            // before / "/max" / after 가 프리팹에서 거의 같은 x에 겹쳐 놓여 있어
-            //  "내구도 /900" 처럼 숫자들이 서로를 덮어썼다 → 한 줄로 합쳐 라벨에 싣고 나머지는 끈다.
-            SetRevealText(Texts.Txt_FailTxtGroup_01,
-                $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_result.PrevDurability} ▶ " +
-                $"<color=red>{_equip.Durability}</color>/{data.MaxDurability}");
-            HideText(Texts._2_B4_Variable);
-            HideText(Texts.Txt_FailTxtGroup_04);
-            HideText(Texts._4_After_Variable);
-
-            SetGroupActive(GameObjects.PotenGroup, false);   // 실패 — 잠재력 변화 없음
+            names.Add("잠재력");
+            befs.Add($"{_equip.Potential - _result.PotenGain}");
+            afts.Add($"{_equip.Potential}");
         }
 
-        // EnhAttDetail 내구도 현황.
-        //  라벨과 수치가 프리팹에서 거의 같은 자리에 놓여 "내구도110/110"처럼 겹쳐 보였다 →
-        //  라벨을 수치 안으로 합치고 원래 라벨은 끈다(대장간 팝업과 같은 처리).
-        //  실패 연출에는 FailTxtGroup이 before▶after 내구도를 따로 보여주므로 여기선 통째로 숨긴다
-        //  (둘 다 켜져서 "내구도"가 두 번 겹쳐 찍혔다).
+        names.Add(Util.Localize(LocalizeKey.PhysicalAttackText));
+        befs.Add($"+{data.BaseAtk + b.atk}");
+        afts.Add($"+{data.BaseAtk + a.atk}");
+
+        if (!Mathf.Approximately(a.crit, b.crit))
+        {
+            names.Add(Util.Localize(LocalizeKey.CriticalText));
+            befs.Add($"+{data.BaseCritRate + b.crit:0.#}%");
+            afts.Add($"+{data.BaseCritRate + a.crit:0.#}%");
+        }
+        if (a.magic != b.magic)
+        {
+            names.Add(Util.Localize(LocalizeKey.MagicAttackText));
+            befs.Add($"+{data.BaseMagicAtk + b.magic}");
+            afts.Add($"+{data.BaseMagicAtk + a.magic}");
+        }
+
+        SetRevealText(Texts.Text, string.Join("\n", names));
+        SetRevealText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
+        SetRevealText(Texts.Text_2, string.Join("\n", afts.ConvertAll(_ => "▶")));
+        SetRevealText(Texts.Text_3, string.Join("\n", afts.ConvertAll(v => $"<color=#00FF00>{v}</color>")));
+    }
+
+    /// <summary>EnhAttDetail 내구도 현황.
+    ///  라벨과 수치가 프리팹에서 거의 같은 자리에 놓여 "내구도110/110"처럼 겹쳐 보였다 →
+    ///  라벨을 수치 안으로 합치고 원래 라벨은 끈다(대장간 팝업과 같은 처리).
+    ///  실패 연출에는 FailTxtGroup이 before▶after 내구도를 따로 보여주므로 여기선 통째로 숨긴다
+    ///  (둘 다 켜져서 "내구도"가 두 번 겹쳐 찍혔다).</summary>
+    void RefreshDurability(Data.EquipmentData data)
+    {
         var duriLabel = GetText((int)Texts.DurabilityText);
         if (duriLabel != null) duriLabel.gameObject.SetActive(false);
 
@@ -218,6 +293,8 @@ public class UI_EnhanceProgressPopup : UI_Popup
             SetRevealText(Texts.DurabilityRealText,
                 $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_equip.Durability}/{data.MaxDurability}");
     }
+
+    static WaitForSecondsRealtime Wait(float sec) => new WaitForSecondsRealtime(sec);
 
     // 단계별 증가분(EquipEnhanceData) 누적 합 — 표시용
     int SumAtkBonus(int enhanceLevel)
@@ -229,6 +306,158 @@ public class UI_EnhanceProgressPopup : UI_Popup
                 sum += enh.AtkBonus;
         return sum;
     }
+
+    #region 저작 연출 구동
+
+    // 이 창의 움직임은 **코드가 아니라 프리팹에 들어 있다**. Icon 하나에만
+    //  DOTweenAnimation이 12개 붙어 있고 전부 autoPlay=false — id("1"~"9")로 호출되기를
+    //  기다리는 상태다. 원본(비주얼 스크립팅)이 애니메이션 이벤트마다 DORestartById로
+    //  그 id를 눌러 연출을 지휘했다.
+    //
+    //  ⚠️ 예전 포트는 이걸 모르고 코드로 DOAnchorPos/DOScale을 새로 짜 넣었다.
+    //     저작 트윈과 같은 RectTransform을 두고 싸웠고, DOKill()이 진행 중이던
+    //     Scale 트윈을 중간에 죽여 **아이콘이 부푼 채 굳는** 버그까지 생겼다.
+    //     이제는 저작된 것을 **호출만** 한다.
+    //
+    //  Icon의 id 지도 (프리팹에서 읽음):
+    //    1 흔들림(타격) / 2 제자리로 / 3 잔진동 / 4 펀치 / 5 떠오르며 확대(담금질)
+    //    6 위로 튐(성공 순간) / 7 내려앉으며 원래 크기 / 8 즉시 원위치(실패) / 9 살짝 상승
+
+    /// <summary>node 하위에서 그 id를 가진 저작 트윈을 처음부터 재생한다.</summary>
+    void PlayAuthored(GameObjects node, string id)
+    {
+        var root = GetObject((int)node);
+        if (root == null) return;
+
+        foreach (var anim in root.GetComponentsInChildren<DOTweenAnimation>(true))
+            if (anim.id == id) anim.DORestartById(id);
+    }
+
+    /// <summary>저작 트윈 id의 **끝 상태로 즉시 옮겨 놓는다**(재생하지 않는다).
+    ///
+    /// 원본에서는 담금질(ChargeSuccess) 순간 아이콘이 모루 위로 떠오르며 커진다(id 5).
+    ///  그런데 우리 포트는 그 순간 이 창이 아직 열려 있지 않다 — 망치질은 강화창이,
+    ///  결과는 이 창이 맡기 때문이다. 그래서 창이 열릴 때 **이미 떠 있는 자세**로 시작해야
+    ///  뒤이은 하강(id 7)이 실제로 내려오는 것처럼 보인다. 값은 프리팹에서 읽는다.</summary>
+    void SnapAuthored(GameObjects node, string id)
+    {
+        var root = GetObject((int)node);
+        if (root == null) return;
+
+        foreach (var anim in root.GetComponentsInChildren<DOTweenAnimation>(true))
+        {
+            if (anim.id != id) continue;
+
+            switch (anim.animationType)
+            {
+                case DOTweenAnimation.AnimationType.LocalMove:
+                    anim.transform.localPosition = anim.endValueV3;
+                    break;
+                case DOTweenAnimation.AnimationType.Scale:
+                    anim.transform.localScale = Vector3.one * anim.endValueFloat;
+                    break;
+            }
+        }
+    }
+
+    void PlayAuthoredOn(Texts t, string id)
+    {
+        var txt = GetText((int)t);
+        if (txt == null) return;
+
+        foreach (var anim in txt.GetComponents<DOTweenAnimation>())
+            if (anim.id == id) { anim.DORestartById(id); break; }
+    }
+
+    /// <summary>성공 순간의 빛줄기.
+    ///
+    /// 프리팹의 God_ray_02는 **월드 ParticleSystem**이다. Screen Space Camera 캔버스 위에는
+    ///  그려지지 않아 켜 두어도 화면에 아무것도 안 나온다 — 원본 영상에서 가장 눈에 띄는
+    ///  연출이 통째로 빠져 보였던 이유다.
+    ///
+    /// UIParticle로 감싸는 길도 시도했으나 두 가지가 걸렸다:
+    ///  ① 자기 GameObject의 스케일을 20배로 고쳐 써 창 전체가 뒤틀렸고,
+    ///  ② Mobile/Particles/Additive 재질이 캔버스 경로에서 아무것도 그리지 않았다.
+    /// 원본 영상의 빛줄기는 사실 **거의 정지한 한 장의 그림**이다(±8px 흔들림뿐).
+    ///  그래서 그 파티클이 쓰던 **텍스처를 그대로** 가져와 Image 한 장으로 깐다.
+    ///
+    /// 밝기는 숨을 쉰다 — 등장 시 최대의 45%, 0.9초 뒤 최소, 2초에 걸쳐 최대, 그 뒤 가라앉는다.
+    void ShowGodRays()
+    {
+        var rays = GetObject((int)GameObjects.God_ray_02);
+        if (rays == null) return;
+
+        if (_rayImg == null)
+        {
+            var psr = rays.GetComponent<ParticleSystemRenderer>();
+            var tex = psr != null && psr.sharedMaterial != null
+                    ? psr.sharedMaterial.mainTexture as Texture2D : null;
+            if (tex == null) return;
+
+            var parent = rays.transform.parent;
+            var go = new GameObject("GodRayImg", typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+
+            var rt = go.GetComponent<RectTransform>();
+            // 원본의 빛줄기는 화면 위에서 내려와 **중단쯤에서 스러진다**(y35~455 / 854).
+            //  프레임 전체를 덮으면 어두운 대장간이 통째로 흐려져 안개처럼 보인다.
+            rt.anchorMin = new Vector2(-0.25f, 0.30f);
+            rt.anchorMax = new Vector2(1.25f, 1.15f);
+            rt.offsetMin = rt.offsetMax = Vector2.zero;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.localRotation = Quaternion.Euler(0f, 0f, RAY_TILT);
+            rt.SetSiblingIndex(rays.transform.GetSiblingIndex());   // 배경 위, 다리 난간 아래
+
+            _rayImg = go.AddComponent<Image>();
+            _rayImg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height),
+                                           new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+            _rayImg.raycastTarget = false;
+            _rayImg.preserveAspect = false;
+        }
+
+        _rayImg.gameObject.SetActive(true);
+        _rayImg.DOKill();
+        _rayImg.color = new Color(1f, 1f, 1f, RAY_IN);        // 페이드 없이 곧바로 켜진다
+
+        DOTween.Sequence().SetUpdate(true)
+            .Append(_rayImg.DOFade(RAY_LOW,  0.9f))
+            .Append(_rayImg.DOFade(RAY_HIGH, 2.0f).SetEase(Ease.InOutSine))
+            .Append(_rayImg.DOFade(RAY_REST, 1.6f));
+    }
+
+    const float RAY_TILT = -12f;    // 원본의 좌경사 (y 160px당 좌로 33px)
+    // 원본의 빛줄기 기여도는 255 중 24~55다 — 알파로 옮기면 0.09~0.22.
+    //  이보다 올리면 대장간이 하얗게 떠 버린다(처음 그렇게 만들었다가 안개가 됐다).
+    const float RAY_IN   = 0.10f;   // 등장 순간 = 최대의 45%
+    const float RAY_LOW  = 0.075f;
+    const float RAY_HIGH = 0.22f;
+    const float RAY_REST = 0.12f;
+
+    Image _rayImg;
+
+    // ── 불티 ──────────────────────────────────────────────────────────
+    //  원본은 결과 화면 **내내** 주황 불티가 흩날린다(프레임 001~060 전 구간).
+    //  대장간이 아직 달아 있다는 신호라 이게 없으면 화면이 죽은 그림처럼 보인다.
+    //  프리팹의 Dust_01은 월드 파티클이라 캔버스에 안 그려진다 — 빛줄기와 같은 이유로
+    //  UI Image 몇 장을 주기적으로 띄워 대신한다.
+    const float EMBER_INTERVAL = 0.16f;
+    const int   EMBER_PER_TICK = 2;
+
+    IEnumerator CoEmbers()
+    {
+        var host = GetObject((int)GameObjects.God_ray_02)?.transform.parent as RectTransform;
+        if (host == null) yield break;
+
+        var wait = new WaitForSecondsRealtime(EMBER_INTERVAL);
+        while (true)
+        {
+            for (int i = 0; i < EMBER_PER_TICK; i++) UIFx.SpawnEmber(host);
+            yield return wait;
+        }
+    }
+
+
+    #endregion
 
     // ── 공개 헬퍼: INACTIVE 노드를 활성화(authored autoPlay 연출 재생)하고 텍스트 세팅 ──
     void Reveal(GameObjects go)

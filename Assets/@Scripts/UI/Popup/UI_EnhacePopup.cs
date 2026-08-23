@@ -9,7 +9,8 @@ using static Define;
 /// 성공확률/실패 리스크(내구도 감소량)/잠재력 게이지 표시 + [강화] 실행.
 ///  · [영상 건너뛰기] 체크: 결과 플래시(Flash_Success/Fail)만 재생하고 팝업 유지(연속 강화).
 ///  · 미체크: UI_EnhanceProgressPopup(결과 연출)로 진행.
-/// 잠재 슬롯(PotenSelectPopup)/주문서 재선택(EnhScrollSelectPopup)/SOM(돌파)은 이번 스코프 제외.
+///  · [주문서 슬롯]/[잠재 슬롯] 두 박스를 눌러 각각 선택 팝업을 연다(원본 영상과 동일).
+/// SOM(돌파)만 스코프 제외.
 /// </summary>
 public class UI_EnhacePopup : UI_Popup
 {
@@ -29,6 +30,7 @@ public class UI_EnhacePopup : UI_Popup
         EnhEquipNameText,       // "+N 장비명"
         DurabilityText,         // "내구도" 라벨
         DurabilityRealText,     // "cur/max"
+        AmountText,             // 주문서 보유 수량 (prefab INACTIVE → 코드가 켠다)
     }
 
     enum Buttons
@@ -40,6 +42,9 @@ public class UI_EnhacePopup : UI_Popup
     enum GameObjects
     {
         EnhacePopup,            // 프레임 루트
+        FlameImg,               // 잠재 박스의 불꽃 (prefab INACTIVE → 코드가 켠다)
+        PlusText,               // 주문서 미선택 시 "+"
+        EnhAttDetail,           // 이름/내구도/능력치 미리보기 묶음 — 연출 중 숨긴다
         PotenForceBarGroup,     // 잠재력 슬라이더
         Holder,                 // 슬라이더 Fill 홀더 (prefab INACTIVE → 활성)
         PotenSelectPopup,       // 잠재 슬롯 선택 — 스코프 제외(비활성)
@@ -72,13 +77,22 @@ public class UI_EnhacePopup : UI_Popup
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
-        // 이번 스코프 제외 요소 정리
+        // 선택 팝업은 닫힌 채로 시작한다(버튼을 눌러야 열린다).
         GetObject((int)GameObjects.PotenSelectPopup)?.SetActive(false);
         GetObject((int)GameObjects.EnhScrollSelectPopup)?.SetActive(false);
-        GetObject((int)GameObjects.PotentialBox)?.SetActive(false);
-        GetObject((int)GameObjects.Btn_EnhacePopup_01)?.SetActive(false);
         GetObject((int)GameObjects.Holder)?.SetActive(true);
         GetObject((int)GameObjects.text)?.SetActive(true);
+
+        // ⚠️ 예전엔 이 두 박스를 "스코프 제외"라며 통째로 꺼 뒀다. 원본 영상에서는
+        //  [영상 건너뛰기] 위에 **두 개의 박스**가 있고, 거기에 강화 주문서와 잠재력을 넣는다.
+        //  꺼 두니 강화창에서 주문서를 바꿀 방법이 아예 없었다.
+        GetObject((int)GameObjects.PotentialBox)?.SetActive(true);
+        GetObject((int)GameObjects.Btn_EnhacePopup_01)?.SetActive(true);
+
+        // 잠재 박스의 불꽃 — 원본은 이 자리에서 불길이 계속 타오른다.
+        GetObject((int)GameObjects.FlameImg)?.SetActive(true);
+
+        BindSlotButtons();
 
         GetButton((int)Buttons.Enhance_Btn).onClick.AddListener(OnClickEnhance);
 
@@ -101,6 +115,345 @@ public class UI_EnhacePopup : UI_Popup
             Managers.Game.EquipInfoChanged -= OnEquipInfoChanged;
     }
 
+    #region 연출 중 화면 정리 / 순차 등장
+
+    // 원본 영상에서 [강화]를 누르면 화면이 **비워진다** — 이름·내구도·확률·슬롯·버튼이
+    //  전부 사라지고 모루 위의 망치와 장비만 남는다. 그래야 타격에 눈이 간다.
+    //  우리 창은 강화 중에도 표가 그대로 떠 있어 어수선했다.
+    static readonly GameObjects[] CEREMONY_HIDE =
+    {
+        GameObjects.EnhAttDetail,      // 이름 / 내구도 / 능력치 미리보기
+        GameObjects.PotenForceBarGroup,// 상단 잠재력 게이지
+        GameObjects.PotentialBox,      // 잠재 슬롯
+        GameObjects.Btn_EnhacePopup_01,// 주문서 슬롯
+        GameObjects.RiskGroup,
+        GameObjects.isSkipBtn,         // 영상 건너뛰기
+    };
+
+    readonly System.Collections.Generic.List<GameObject> _hidden = new System.Collections.Generic.List<GameObject>();
+
+    /// <summary>연출 시작 — 부수적인 UI를 접는다. 껐다는 사실을 기억해 나중에 정확히 되돌린다.</summary>
+    void EnterCeremonyView()
+    {
+        Blackout(DIM_CEREMONY, 0.35f);
+        _embers = StartCoroutine(CoEmbers());   // 까만 무대 위로 불티가 흩날린다(원본 전 구간)
+        _hidden.Clear();
+
+        foreach (var g in CEREMONY_HIDE)
+        {
+            var go = GetObject((int)g);
+            if (go == null || !go.activeSelf) continue;
+            go.SetActive(false);
+            _hidden.Add(go);
+        }
+
+        // 확률/버튼은 오브젝트가 아니라 텍스트라 따로 접는다.
+        FadeText(Texts.ChanceTxt, 0f);
+        var btn = GetButton((int)Buttons.Enhance_Btn);
+        if (btn != null) btn.gameObject.SetActive(false);
+
+        // 선택 팝업이 열려 있었다면 닫는다.
+        GetObject((int)GameObjects.EnhScrollSelectPopup)?.SetActive(false);
+        GetObject((int)GameObjects.PotenSelectPopup)?.SetActive(false);
+    }
+
+    /// <summary>연출 끝 — 접었던 것만 되돌린다(원래 꺼져 있던 것은 꺼진 채로).</summary>
+    void ExitCeremonyView()
+    {
+        Blackout(DIM_IDLE, 0.30f);
+        if (_embers != null) { StopCoroutine(_embers); _embers = null; }
+        foreach (var go in _hidden)
+            if (go != null) go.SetActive(true);
+        _hidden.Clear();
+
+        FadeText(Texts.ChanceTxt, 1f);
+        var btn = GetButton((int)Buttons.Enhance_Btn);
+        if (btn != null) btn.gameObject.SetActive(true);
+    }
+
+    /// <summary>연출 동안 화면 전체를 검게 덮는다.
+    ///
+    /// 원본 영상에서 [강화]를 누르면 **마을 배경도, 상단 HUD도, 하단 탭도 전부 사라진다** —
+    ///  까만 무대에 모루와 망치만 남는다. 우리 창은 팝업 안쪽만 정리해서, 뒤로 캐릭터 초상화와
+    ///  체력바가 그대로 비쳤다. 뒤에 있는 것들은 다른 캔버스라 이 창의 SetActive로는 못 끈다 —
+    ///  이 팝업 캔버스 맨 아래에 검은 판을 깔면 한 번에 덮인다.
+    ///
+    /// 판은 흔들리는 프레임이 아니라 **팝업 루트**에 붙인다(같이 흔들리면 가장자리가 새어 나온다).
+    void Blackout(float alpha, float duration)
+    {
+        if (_blackout == null)
+        {
+            if (alpha <= 0f) return;
+
+            var go = new GameObject("CeremonyBlackout", typeof(RectTransform));
+            go.transform.SetParent(transform, false);
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(-BLACKOUT_OVERSCAN, -BLACKOUT_OVERSCAN);
+            rt.offsetMax = new Vector2(BLACKOUT_OVERSCAN, BLACKOUT_OVERSCAN);
+            rt.SetAsFirstSibling();          // 창 내용보다 뒤, 게임 화면보다 앞
+
+            _blackout = go.AddComponent<Image>();
+            _blackout.color = new Color(0f, 0f, 0f, 0f);
+            _blackout.raycastTarget = true;  // 연출 중 뒤쪽 클릭을 막는다
+        }
+
+        _blackout.DOKill();
+        _blackout.gameObject.SetActive(true);
+        _blackout.DOFade(alpha, duration).SetEase(Ease.OutQuad).SetUpdate(true);
+    }
+
+    // 불티는 프레임(흔들리는 노드)에 붙여야 모루와 함께 움직인다.
+    Coroutine _embers;
+    const float EMBER_INTERVAL = 0.16f;
+    const int   EMBER_PER_TICK = 2;
+
+    IEnumerator CoEmbers()
+    {
+        var host = _frameRT != null ? _frameRT
+                 : GetObject((int)GameObjects.EnhacePopup)?.GetComponent<RectTransform>();
+        if (host == null) yield break;
+
+        var wait = new WaitForSecondsRealtime(EMBER_INTERVAL);
+        while (true)
+        {
+            for (int i = 0; i < EMBER_PER_TICK; i++) UIFx.SpawnEmber(host);
+            yield return wait;
+        }
+    }
+
+    Image _blackout;
+    const float BLACKOUT_OVERSCAN = 600f;   // 캔버스보다 넉넉히 — 가장자리가 새지 않게
+
+    // 창이 떠 있는 동안은 뒤가 **거의** 안 보이고(대장간 팝업이 희미하게 비치는 정도),
+    //  연출이 시작되면 완전히 검어진다.
+    const float DIM_IDLE     = 0.86f;
+    const float DIM_CEREMONY = 1f;
+
+    void FadeText(Texts t, float alpha)
+    {
+        var txt = GetText((int)t);
+        if (txt == null) return;
+        var c = txt.color; c.a = alpha; txt.color = c;
+    }
+
+    // ── 순차 등장 ──────────────────────────────────────────────────
+    //  원본은 창이 통째로 뜨지 않는다. 망치가 위에서 떨어지고, 모루·장비·내구도·게이지·
+    //  슬롯·불꽃·능력치표가 차례로 붙는다. 순서와 간격은 영상에서 읽은 값이다.
+    static readonly (GameObjects go, float delay)[] INTRO_STEPS =
+    {
+        (GameObjects.HammerNormalAnim,   0.00f),   // 망치가 먼저 떨어진다
+        (GameObjects.EnhAttDetail,       0.35f),   // 장비 이름 / 내구도
+        (GameObjects.PotenForceBarGroup, 0.60f),   // 상단 게이지가 좌우로 펼쳐진다
+        (GameObjects.PotentialBox,       0.80f),   // 잠재 슬롯 + 불꽃
+        (GameObjects.Btn_EnhacePopup_01, 0.95f),   // 주문서 슬롯
+        (GameObjects.isSkipBtn,          1.10f),   // 영상 건너뛰기
+        (GameObjects.RiskGroup,          1.20f),
+    };
+
+    bool _introPlayed;
+
+    /// <summary>처음 열릴 때 한 번만. 다시 강화할 때마다 재생하면 지겹다(원본도 1회다).</summary>
+    void PlayIntro()
+    {
+        if (_introPlayed) return;
+        _introPlayed = true;
+
+        foreach (var (g, delay) in INTRO_STEPS)
+        {
+            var go = GetObject((int)g);
+            if (go == null) continue;
+
+            var rt = go.transform as RectTransform;
+            if (rt == null) continue;
+
+            Vector2 home = rt.anchoredPosition;
+            var cg = go.GetComponent<CanvasGroup>();
+            if (cg == null) cg = go.AddComponent<CanvasGroup>();
+
+            cg.alpha = 0f;
+            rt.anchoredPosition = home + new Vector2(0f, INTRO_DROP);
+
+            cg.DOKill();
+            rt.DOKill();
+            cg.DOFade(1f, INTRO_FADE).SetDelay(delay).SetUpdate(true);
+            rt.DOAnchorPos(home, INTRO_FADE).SetDelay(delay)
+              .SetEase(Ease.OutBack).SetUpdate(true);
+        }
+    }
+
+    const float INTRO_DROP = 24f;    // 위에서 떨어지는 거리
+    const float INTRO_FADE = 0.28f;
+
+    #endregion
+
+    #region 주문서 / 잠재 슬롯
+
+    // 선택 팝업 안의 칸 이름. 프리팹이 정한 순서라 코드가 맞춘다
+    //  (Btn_Layout_02가 1번 칸이다 — 이름만 다르고 역할은 같다).
+    static readonly string[] SCROLL_BOX_NODES =
+    {
+        "Btn_Layout_02", "EnhScrollBox2", "EnhScrollBox3", "EnhScrollBox4",
+    };
+
+    void BindSlotButtons()
+    {
+        // 주문서 박스 — 누르면 주문서 선택 팝업
+        var scrollBox = GetObject((int)GameObjects.Btn_EnhacePopup_01);
+        if (scrollBox != null) scrollBox.BindEvent(ToggleScrollSelect);
+
+        // 잠재 박스 — 누르면 잠재 선택 팝업
+        var potenBox = GetObject((int)GameObjects.PotentialBox);
+        if (potenBox != null) potenBox.BindEvent(TogglePotenSelect);
+
+        // 선택 팝업의 각 칸
+        var sel = GetObject((int)GameObjects.EnhScrollSelectPopup);
+        if (sel != null)
+        {
+            for (int i = 0; i < SCROLL_BOX_NODES.Length && i < ENHANCE_SCROLL_IDS.Length; i++)
+            {
+                var node = Util.FindChild(sel, SCROLL_BOX_NODES[i], true);
+                if (node == null) { Debug.Log($"[EnhacePopup] 주문서 칸 없음: {SCROLL_BOX_NODES[i]}"); continue; }
+                int idx = i;
+                node.BindEvent(() => OnPickScroll(idx));
+            }
+        }
+    }
+
+    void ToggleScrollSelect()
+    {
+        if (_resolving) return;
+        var sel = GetObject((int)GameObjects.EnhScrollSelectPopup);
+        if (sel == null) return;
+
+        bool on = !sel.activeSelf;
+        GetObject((int)GameObjects.PotenSelectPopup)?.SetActive(false);
+        sel.SetActive(on);
+        if (on) { RefreshScrollSelect(); PopIn(sel); }
+        Managers.Sound?.PlaySFX("SFX_BtnSelect");
+    }
+
+    void TogglePotenSelect()
+    {
+        if (_resolving) return;
+        var sel = GetObject((int)GameObjects.PotenSelectPopup);
+        if (sel == null) return;
+
+        bool on = !sel.activeSelf;
+        GetObject((int)GameObjects.EnhScrollSelectPopup)?.SetActive(false);
+        sel.SetActive(on);
+        if (on) PopIn(sel);
+        Managers.Sound?.PlaySFX("SFX_BtnSelect");
+    }
+
+    /// <summary>선택 팝업이 톡 튀어나오게. 원본도 즉시 나타나지 않고 살짝 커지며 뜬다.</summary>
+    static void PopIn(GameObject go)
+    {
+        var rt = go.transform as RectTransform;
+        if (rt == null) return;
+        rt.DOKill();
+        rt.localScale = Vector3.one * 0.8f;
+        rt.DOScale(1f, 0.18f).SetEase(Ease.OutBack).SetUpdate(true);
+    }
+
+    /// <summary>선택 팝업의 네 칸에 아이콘과 보유 수량을 채운다. 없는 주문서는 흐리게.</summary>
+    void RefreshScrollSelect()
+    {
+        var sel = GetObject((int)GameObjects.EnhScrollSelectPopup);
+        if (sel == null) return;
+
+        for (int i = 0; i < SCROLL_BOX_NODES.Length && i < ENHANCE_SCROLL_IDS.Length; i++)
+        {
+            var node = Util.FindChild(sel, SCROLL_BOX_NODES[i], true);
+            if (node == null) continue;
+
+            int id = ENHANCE_SCROLL_IDS[i];
+            int have = Managers.Game.GetItemCount(id);
+
+            // 칸 안에서 아이콘은 "Img_" 중 스프라이트를 받을 수 있는 것, 수량은 "Txt_"다.
+            foreach (var img in node.GetComponentsInChildren<Image>(true))
+            {
+                if (!img.name.StartsWith("Img_")) continue;
+                Sprite sp = ScrollSprite(id);
+                if (sp == null) break;
+                img.sprite = sp;
+                img.color = have > 0 ? Color.white : new Color(0.4f, 0.4f, 0.4f, 1f);
+                break;
+            }
+            foreach (var t in node.GetComponentsInChildren<TMPro.TMP_Text>(true))
+            {
+                if (!t.name.StartsWith("Txt_")) continue;
+                t.text = have.ToString();
+                t.color = have > 0 ? Color.white : Util.HexToColor("FF5555");
+                ApplyFont(t, FontType.UI);
+                break;
+            }
+        }
+    }
+
+    static Sprite ScrollSprite(int itemId)
+    {
+        if (Managers.Data.ItemDic == null) return null;
+        if (!Managers.Data.ItemDic.TryGetValue(itemId, out var it)) return null;
+        return string.IsNullOrEmpty(it.SpriteName) ? null : Managers.Resource.Load<Sprite>(it.SpriteName);
+    }
+
+    void OnPickScroll(int idx)
+    {
+        if (_resolving) return;
+        if (idx < 0 || idx >= ENHANCE_SCROLL_IDS.Length) return;
+
+        int id = ENHANCE_SCROLL_IDS[idx];
+        if (Managers.Game.GetItemCount(id) <= 0)
+        {
+            // 없는 주문서를 고르면 왜 안 되는지 말해 준다 — 조용히 무시하면 고장으로 보인다.
+            string nm = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(id, out var it)
+                ? Util.Localize(it.Name) : id.ToString();
+            Managers.UI.ShowToast($"{nm} 없음");
+            return;
+        }
+
+        _scrollId = id;
+        GetObject((int)GameObjects.EnhScrollSelectPopup)?.SetActive(false);
+        Managers.Sound?.PlaySFX("SFX_BtnSelect");
+        RefreshUI();
+    }
+
+    /// <summary>주문서 박스 겉면 — 고른 주문서의 아이콘과 남은 수량.</summary>
+    void RefreshScrollBox()
+    {
+        var box = GetObject((int)GameObjects.Btn_EnhacePopup_01);
+        if (box == null) return;
+
+        int have = Managers.Game.GetItemCount(_scrollId);
+        Sprite sp = ScrollSprite(_scrollId);
+
+        // 주문서를 고른 상태면 아이콘을, 아니면 "+"를 보인다.
+        var plus = GetObject((int)GameObjects.PlusText);
+        if (plus != null) plus.SetActive(sp == null);
+
+        foreach (var img in box.GetComponentsInChildren<Image>(true))
+        {
+            if (img.name != "Img_EnhScrollBox_02") continue;
+            img.gameObject.SetActive(sp != null);
+            if (sp != null) { img.sprite = sp; img.color = Color.white; }
+            break;
+        }
+
+        var amount = GetText((int)Texts.AmountText);
+        if (amount != null)
+        {
+            amount.gameObject.SetActive(sp != null);
+            amount.text = have.ToString();
+            amount.color = have > 0 ? Color.white : Util.HexToColor("FF5555");
+            ApplyFont(amount, FontType.UI);
+        }
+    }
+
+    #endregion
+
     void OnEquipInfoChanged()
     {
         if (_equip != null) RefreshUI();
@@ -114,7 +467,14 @@ public class UI_EnhacePopup : UI_Popup
         _equip = equip;
         _scrollId = scrollId;
         if (_equip == null) return;
+
+        // 원본에서 강화창은 **어두운 무대 위**에 선다 — 마을 배경도 상단 재화 HUD도 하단 탭도
+        //  거의 보이지 않고, 앞 창(대장간)만 희미하게 남는다. 우리 창은 뒤가 전부 밝게 비쳐
+        //  모루와 망치가 마을 그림 위에 떠 있는 것처럼 보였다.
+        Blackout(DIM_IDLE, 0.25f);
+
         RefreshUI();
+        PlayIntro();
     }
 
     public override void RefreshUI()
@@ -164,6 +524,7 @@ public class UI_EnhacePopup : UI_Popup
         if (slider != null) slider.value = Mathf.Clamp01(_equip.Potential / ENHANCE_POTEN_FULL);
         GetText((int)Texts.PotenForceBarBarText).text = _equip.Potential.ToString();
 
+        RefreshScrollBox();
         RefreshPreview(data);
 
         // 강화 가능 여부
@@ -280,6 +641,7 @@ public class UI_EnhacePopup : UI_Popup
         _resolving = true;
 
         HookSmithEvents();
+        EnterCeremonyView();
 
         var smith = GetObject((int)GameObjects.HammerNormalAnim);
         var anim = smith != null ? smith.GetComponent<Animator>() : null;
@@ -300,6 +662,7 @@ public class UI_EnhacePopup : UI_Popup
 
         _ceremony = false;                             // 대기 자세의 망치 소리는 듣지 않는다
         if (anim != null) anim.Play("Normal", 0, 0f);   // 대기 자세로 복귀
+        ExitCeremonyView();
         _resolving = false;
 
         Managers.UI.ShowPopupUI<UI_EnhanceProgressPopup>().SetInfo(result, _equip);
@@ -399,15 +762,43 @@ public class UI_EnhacePopup : UI_Popup
         }
     }
 
-    /// <summary>타격 순간의 섬광·불티. 껐다 켜야 authored 연출이 처음부터 다시 돈다.</summary>
+    /// <summary>타격 순간의 이펙트. 프리팹에 저작된 섬광을 되살리고, 그 위에
+    /// 모루 지점에서 흰 구체 + 연기 + 불티를 터뜨린다(원본 영상의 타격 구성).</summary>
     void PopImpactFx()
     {
+        // 프리팹 저작 섬광 — 껐다 켜야 처음부터 다시 돈다
         foreach (string n in new[] { "Flash", "GlowDot_01_1" })
         {
             var go = Util.FindChild(gameObject, n, true);
             if (go == null) continue;
             go.SetActive(false);
             go.SetActive(true);
+        }
+
+        // 타격점은 장비 아이콘 자리다(망치가 내려찍는 곳). 그 좌표에 버스트를 얹는다.
+        var host = _frameRT != null ? _frameRT
+                 : GetObject((int)GameObjects.EnhacePopup)?.GetComponent<RectTransform>();
+        if (host == null) return;
+
+        Vector2 at = Vector2.zero;
+        var icon = GetImage((int)Images.WIcon);
+        if (icon != null)
+        {
+            // 아이콘의 위치를 프레임 좌표계로 옮긴다 — 부모가 달라 anchoredPosition을 그대로 쓰면 어긋난다.
+            Vector3 world = icon.rectTransform.position;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                host, RectTransformUtility.WorldToScreenPoint(GetComponent<Canvas>()?.worldCamera, world),
+                GetComponent<Canvas>()?.worldCamera, out at);
+        }
+
+        UIFx.PlayBurst(host, at, UIFx.FxType.ForgeSmash);
+
+        // 장비 아이콘도 얻어맞는다 — 살짝 눌렸다 돌아온다.
+        if (icon != null)
+        {
+            var rt = icon.rectTransform;
+            rt.DOComplete();
+            rt.DOPunchScale(new Vector3(0.18f, -0.12f, 0f), 0.24f, 10, 0.8f).SetUpdate(true);
         }
     }
 
@@ -445,6 +836,7 @@ public class UI_EnhacePopup : UI_Popup
     IEnumerator CoSkipFlash(bool success)
     {
         _resolving = true;
+        // 건너뛰기는 화면을 비우지 않는다 — 연속 강화가 목적이라 표가 계속 보여야 한다.
         var flash = GetObject(success ? (int)GameObjects.Flash_Success : (int)GameObjects.Flash_Fail);
         if (flash != null)
         {

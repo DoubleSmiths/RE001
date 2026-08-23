@@ -21,6 +21,10 @@ public static class UIFx
         Sparkle,
         /// <summary>S42 HP 물약 사용 이펙트: 녹색 맥동 + 상승</summary>
         Heal,
+        /// <summary>대장간 망치 타격: 흰 구체 + 흩어지는 연기 + 청록 불티.
+        /// 원본 영상(3:38~3:41)의 타격 순간을 옮긴 것 — 구체가 먼저 터지고,
+        /// 연기가 옆으로 퍼지며, 청록 불티가 사방으로 튄다.</summary>
+        ForgeSmash,
     }
 
     /// <summary>
@@ -47,6 +51,7 @@ public static class UIFx
             case FxType.Splash:  lifetime = SpawnSplash(rt); break;
             case FxType.Sparkle: lifetime = SpawnSparkle(rt); break;
             case FxType.Heal:    lifetime = SpawnHeal(rt); break;
+            case FxType.ForgeSmash: lifetime = SpawnForgeSmash(rt); break;
             default:             lifetime = 0.5f; break;
         }
 
@@ -190,7 +195,172 @@ public static class UIFx
     //  Util
     // ────────────────────────────────────────
 
-    static Image CreateImage(RectTransform parent, string name, Vector2 pos, Vector2 size, Color color)
+    /// <summary>대장간 타격 — 흰 구체 / 연기 / 청록 불티 세 겹.
+    /// 영상에서 읽은 순서 그대로다: 구체가 가장 빠르고(0.18s), 연기가 옆으로 눕고(0.5s),
+    /// 불티가 가장 오래 남는다(0.6s). 겹치는 시간이 곧 타격감이다.</summary>
+    // 원본 영상의 타격 한 번은 세 겹이다(vid_hammer 004~012 프레임):
+    //   ① 모루 위에 흰 구체가 번쩍 → ② 가로로 길게 퍼지는 연기 + 흰 충격파 줄무늬
+    //   → ③ 청록 반짝임이 사방으로 튀며 가장 늦게까지 남는다.
+    // ⚠️ 스프라이트를 안 준 Image는 **흰 사각형**이다. 예전 버전이 그래서
+    //    구체가 네모난 판때기로, 연기가 회색 벽돌로 보였다. 둥근/별 텍스처를 만들어 쓴다.
+    static float SpawnForgeSmash(RectTransform root)
+    {
+        Sprite dot = Dot(), star = Star();
+
+        // ① 타격점의 흰 구체 — 크게 났다가 곧바로 꺼진다
+        // 원본의 구체는 모루를 통째로 삼킬 만큼 크다(화면 폭의 약 30%).
+        var orb = CreateImage(root, "SmashOrb", Vector2.zero, new Vector2(46f, 46f),
+                              new Color(1f, 1f, 1f, 1f), dot);
+        orb.transform.localScale = Vector3.one * 0.35f;
+        orb.transform.DOScale(1.25f, 0.16f).SetEase(Ease.OutQuad).SetUpdate(true);
+        orb.DOFade(0f, 0.32f).SetEase(Ease.InQuad).SetUpdate(true);
+
+        // ② 연기 — 위로 솟지 않고 모루를 따라 좌우로 낮게 깔린다
+        for (int i = 0; i < 7; i++)
+        {
+            float dir = i % 2 == 0 ? 1f : -1f;
+            float spread = 12f + i * 5.5f;
+            var puff = CreateImage(root, $"SmashSmoke{i}", new Vector2(dir * 4f, 0f),
+                                   new Vector2(24f, 18f), new Color(0.86f, 0.87f, 0.92f, 0.55f), dot);
+            puff.rectTransform.DOAnchorPos(new Vector2(dir * spread, 3f + i * 1.2f), 0.55f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
+            puff.rectTransform.DOScale(1.8f, 0.55f).SetEase(Ease.OutQuad).SetUpdate(true);
+            puff.DOFade(0f, 0.55f).SetEase(Ease.InQuad).SetUpdate(true);
+        }
+
+        // ②-b 충격파 줄무늬 — 연기를 가로지르는 흰 선. 이게 있어야 "때렸다"로 읽힌다.
+        for (int i = 0; i < 4; i++)
+        {
+            float dir = i % 2 == 0 ? 1f : -1f;
+            float y = (i / 2 == 0 ? 3f : -3f);
+            var line = CreateImage(root, $"SmashLine{i}", new Vector2(0f, y),
+                                   new Vector2(22f, 2.4f), new Color(1f, 1f, 1f, 0.9f), dot);
+            line.rectTransform.DOAnchorPos(new Vector2(dir * 34f, y), 0.28f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
+            line.rectTransform.DOSizeDelta(new Vector2(46f, 1.2f), 0.28f).SetUpdate(true);
+            line.DOFade(0f, 0.32f).SetEase(Ease.InQuad).SetUpdate(true);
+        }
+
+        // ③ 청록 반짝임 — 옆으로 납작하게 퍼진다(위로 뿜지 않는다)
+        const int N = 8;
+        for (int i = 0; i < N; i++)
+        {
+            float rad = (360f / N * i + 14f) * Mathf.Deg2Rad;
+            var dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad) * 0.65f);
+            var sp = CreateImage(root, $"SmashSpark{i}", Vector2.zero,
+                                 new Vector2(9f, 9f), new Color(0.62f, 1f, 0.94f, 1f), star);
+            sp.rectTransform.DOAnchorPos(dir * (32f + (i % 3) * 9f), 0.6f)
+              .SetEase(Ease.OutQuad).SetUpdate(true);
+            sp.rectTransform.DOScale(0.35f, 0.6f).SetEase(Ease.InQuad).SetUpdate(true);
+            sp.DOFade(0f, 0.6f).SetEase(Ease.InQuad).SetUpdate(true);
+        }
+
+        return 0.7f;
+    }
+
+    // ────────────────────────────────────────
+    //  불티 — 대장간 연출 내내 흩날린다
+    // ────────────────────────────────────────
+
+    /// <summary>주황 불티 한 점. 원본 영상은 망치질부터 결과창까지 **전 구간** 불티가 떠 있다.
+    ///  화로가 아직 달아 있다는 신호라, 없으면 까만 무대가 정지 화면처럼 보인다.
+    ///  프리팹의 Dust_01은 월드 파티클이라 캔버스에 안 그려져 UI Image로 대신한다.</summary>
+    public static void SpawnEmber(RectTransform host, float halfWidth = 78f)
+    {
+        if (host == null) return;
+
+        float x = UnityEngine.Random.Range(-halfWidth, halfWidth);
+        float y = UnityEngine.Random.Range(-40f, 120f);
+
+        var img = CreateImage(host, "Ember", new Vector2(x, y),
+                              new Vector2(1.6f, UnityEngine.Random.Range(2.5f, 5f)),
+                              UnityEngine.Random.value < 0.25f
+                                  ? new Color(1f, 0.95f, 0.75f, 0.9f)                                   // 드물게 흰 점
+                                  : new Color(1f, UnityEngine.Random.Range(0.45f, 0.75f), 0.15f, 0.9f), // 주황 불티
+                              Dot());
+        img.rectTransform.localRotation =
+            Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(30f, 60f));   // 45° 근처 대각 스트릭
+
+        // ⚠️ 낙하와 페이드를 **각각** 트윈으로 걸고 페이드 쪽에서 Destroy하면,
+        //    같은 프레임에 아직 살아 있는 낙하 트윈이 파괴된 RectTransform을 건드려
+        //    DOTween이 "has been destroyed" 오류를 뱉는다. 한 시퀀스로 묶어 함께 끝낸다.
+        float life = UnityEngine.Random.Range(1.4f, 2.6f);
+        var fall = new Vector2(x + UnityEngine.Random.Range(-14f, 14f),
+                               y - UnityEngine.Random.Range(70f, 150f));
+
+        DOTween.Sequence().SetUpdate(true).SetLink(img.gameObject)
+               .Join(img.rectTransform.DOAnchorPos(fall, life).SetEase(Ease.InQuad))
+               .Join(img.DOFade(0f, life).SetEase(Ease.InQuad))
+               .OnComplete(() => { if (img != null) UnityEngine.Object.Destroy(img.gameObject); });
+    }
+
+    // ────────────────────────────────────────
+    //  절차적 스프라이트 — 에셋을 늘리지 않고 모양을 만든다
+    //   (Image에 스프라이트를 안 주면 흰 사각형이 그려진다)
+    // ────────────────────────────────────────
+    static Sprite s_dot, s_star;
+
+    /// <summary>가장자리가 부드러운 흰 원. 구체·연기·선 전부 이걸 늘려 쓴다.</summary>
+    static Sprite Dot()
+    {
+        if (s_dot != null) return s_dot;
+        s_dot = Build("UIFx_Dot", (nx, ny) =>
+        {
+            float d = Mathf.Sqrt(nx * nx + ny * ny);
+            return Mathf.Clamp01(1f - d);
+        });
+        return s_dot;
+    }
+
+    /// <summary>네 갈래 반짝임(✦). 축에 붙을수록 밝고 대각선은 파인 별 모양.</summary>
+    static Sprite Star()
+    {
+        if (s_star != null) return s_star;
+        s_star = Build("UIFx_Star", (nx, ny) =>
+        {
+            // astroid: |x|^(2/3)+|y|^(2/3)=1 보다 더 뾰족하게 지수를 낮춘다
+            float v = 1f - (Mathf.Pow(Mathf.Abs(nx), 0.5f) + Mathf.Pow(Mathf.Abs(ny), 0.5f));
+            return Mathf.Clamp01(v * 1.6f);
+        });
+        return s_star;
+    }
+
+    /// <summary>중심 기준 -1..1 좌표로 알파를 그려 64px 스프라이트를 굽는다.</summary>
+    static Sprite Build(string name, Func<float, float, float> alpha)
+    {
+        const int S = 64;
+        var tex = new Texture2D(S, S, TextureFormat.RGBA32, false)
+        {
+            name = name,
+            filterMode = FilterMode.Bilinear,
+            wrapMode = TextureWrapMode.Clamp,
+            hideFlags = HideFlags.HideAndDontSave,   // 씬 전환에도 살아남되 저장은 안 한다
+        };
+
+        var px = new Color32[S * S];
+        float half = S * 0.5f;
+        for (int y = 0; y < S; y++)
+        {
+            for (int x = 0; x < S; x++)
+            {
+                float nx = (x + 0.5f - half) / half;
+                float ny = (y + 0.5f - half) / half;
+                float a = Mathf.Clamp01(alpha(nx, ny));
+                a = a * a * (3f - 2f * a);           // smoothstep — 계단지지 않게
+                px[y * S + x] = new Color32(255, 255, 255, (byte)(a * 255f));
+            }
+        }
+        tex.SetPixels32(px);
+        tex.Apply(false, false);
+
+        var sp = Sprite.Create(tex, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+        sp.name = name;
+        sp.hideFlags = HideFlags.HideAndDontSave;
+        return sp;
+    }
+
+    static Image CreateImage(RectTransform parent, string name, Vector2 pos, Vector2 size, Color color,
+                             Sprite sprite = null)
     {
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
@@ -200,6 +370,7 @@ public static class UIFx
         rt.anchoredPosition = pos;
         rt.sizeDelta = size;
         var img = go.AddComponent<Image>();
+        img.sprite = sprite;         // null이면 유니티 기본 흰 사각형
         img.color = color;
         img.raycastTarget = false;
         return img;
