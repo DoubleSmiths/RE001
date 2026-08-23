@@ -331,7 +331,7 @@ public class UI_EnhacePopup : UI_Popup
         bool on = !sel.activeSelf;
         GetObject((int)GameObjects.PotenSelectPopup)?.SetActive(false);
         sel.SetActive(on);
-        if (on) { RefreshScrollSelect(); PopIn(sel); }
+        if (on) { sel.transform.SetAsLastSibling(); RefreshScrollSelect(); PopIn(sel); }
         Managers.Sound?.PlaySFX("SFX_BtnSelect");
     }
 
@@ -344,7 +344,8 @@ public class UI_EnhacePopup : UI_Popup
         bool on = !sel.activeSelf;
         GetObject((int)GameObjects.EnhScrollSelectPopup)?.SetActive(false);
         sel.SetActive(on);
-        if (on) PopIn(sel);
+        // 프리팹 순서상 장비 아이콘보다 뒤라 아이콘이 팝업을 뚫고 나왔다 — 열 때 맨 앞으로.
+        if (on) { sel.transform.SetAsLastSibling(); PopIn(sel); }
         Managers.Sound?.PlaySFX("SFX_BtnSelect");
     }
 
@@ -372,24 +373,101 @@ public class UI_EnhacePopup : UI_Popup
             int id = ENHANCE_SCROLL_IDS[i];
             int have = Managers.Game.GetItemCount(id);
 
-            // 칸 안에서 아이콘은 "Img_" 중 스프라이트를 받을 수 있는 것, 수량은 "Txt_"다.
-            foreach (var img in node.GetComponentsInChildren<Image>(true))
-            {
-                if (!img.name.StartsWith("Img_")) continue;
-                Sprite sp = ScrollSprite(id);
-                if (sp == null) break;
-                img.sprite = sp;
-                img.color = have > 0 ? Color.white : new Color(0.4f, 0.4f, 0.4f, 1f);
-                break;
-            }
+            // ⚠️ 칸 그림은 **건드리지 않는다.**
+            //  프리팹의 네 칸에는 이미 등급별 배경(초록/파랑/보라/빨강)과 그에 맞는
+            //  주문서 그림이 저작돼 있다. 예전엔 첫 번째 "Img_"에 ScrollSprite를 덮어써서
+            //  네 칸이 전부 같은 회색 그림이 됐다 — 원본은 등급 색으로 구분한다.
+            //  보유하지 않은 주문서만 흐리게 눌러 준다.
+            PaintScrollCell(node, i, have > 0);
             foreach (var t in node.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (!t.name.StartsWith("Txt_")) continue;
-                t.text = have.ToString();
+                t.text = ShortCount(have);
                 t.color = have > 0 ? Color.white : Util.HexToColor("FF5555");
                 ApplyFont(t, FontType.UI);
+                SeatAmountBadge(t, CELL_BADGE_SIZE);
                 break;
             }
+        }
+    }
+
+    /// <summary>수량 라벨을 칸 **안쪽 아래**에 앉힌다.
+    ///
+    /// 프리팹의 수량 텍스트는 `anchor/pivot = (0.5, 0)`에 `sizeDelta.y = 1`(슬롯 쪽은 0),
+    ///  `anchoredPosition.y = -1`로 저작돼 있다. 글자 높이가 들어갈 자리가 없는 데다
+    ///  기준점이 칸 **바닥**이라, 숫자가 칸 밑으로 흘러내려 테두리 밖에 걸린다
+    ///  (수량이 한 자리인 원본에서도 아슬아슬했고, 네 자리가 되자 확실히 새어 나왔다).
+    ///  높이를 주고 안쪽으로 끌어올려 배지처럼 앉힌다.
+    static void SeatAmountBadge(TMPro.TMP_Text txt, float fontSize)
+    {
+        if (txt == null) return;
+
+        var rt = txt.rectTransform;
+        rt.anchorMin = new Vector2(0.5f, 0f);
+        rt.anchorMax = new Vector2(0.5f, 0f);
+        rt.pivot     = new Vector2(0.5f, 0f);
+        rt.sizeDelta = new Vector2(Mathf.Max(rt.sizeDelta.x, 18f), fontSize + 2f);
+        rt.anchoredPosition = new Vector2(0f, BADGE_INSET);
+
+        txt.fontSize = fontSize;
+        txt.alignment = TMPro.TextAlignmentOptions.Bottom;
+        txt.enableWordWrapping = false;
+        txt.overflowMode = TMPro.TextOverflowModes.Overflow;
+    }
+
+    const float BADGE_INSET = 1.5f;   // 칸 바닥에서 살짝 올려 테두리를 밟지 않게
+    const float CELL_BADGE_SIZE = 6f;  // 선택 팝업 칸 (프리팹 저작값)
+    const float SLOT_BADGE_SIZE = 6f;  // 슬롯 겉면 — 저작값 10은 칸보다 커서 밖으로 삐져나왔다
+
+    /// <summary>네 자리 수량은 칸 폭을 넘는다 — 원본은 한두 자리였다.</summary>
+    static string ShortCount(int n) => n > 999 ? "999+" : n.ToString();
+
+    // 원본은 칸마다 **등급 색**을 깔아 네 주문서를 색으로 구분한다(초록/파랑/보라/빨강).
+    //  우리 프리팹의 네 칸은 전부 같은 그림에 검은 70% 덮개라, 넷이 똑같은 회색으로 보였다.
+    //  덮개의 색을 등급 색으로 바꾸고 그림만 갈아 끼운다(구조는 그대로 둔다).
+    static readonly Color[] SCROLL_GRADE_TINT =
+    {
+        new Color(0.16f, 0.50f, 0.18f, 1f),      // 일반
+        new Color(0.13f, 0.32f, 0.72f, 1f),      // 상급
+        new Color(0.46f, 0.16f, 0.70f, 1f),      // 고대
+        new Color(0.66f, 0.13f, 0.15f, 1f),      // 이그누스의 인정
+    };
+
+    // 칸의 자식 순서 — 프리팹이 정한 구조다(네 칸 모두 같다).
+    //  0 테두리 / 1 마스크+광택 / 2 주문서 그림 / 3 덮개
+    const int CELL_FRAME   = 0;
+    const int CELL_PICTURE = 2;
+    const int CELL_VEIL    = 3;
+
+    /// <summary>칸 하나를 등급 색으로 칠하고 그 주문서 그림을 넣는다.
+    /// ⚠️ 칸 안의 Image를 이름으로 뭉뚱그려 칠하면 안 된다 — 알파 0으로 숨겨 둔 흰 판이 섞여 있어
+    ///    한꺼번에 흰색을 먹이면 칸이 통째로 하얘진다(실제로 그렇게 만들었다가 되돌렸다).</summary>
+    void PaintScrollCell(GameObject node, int idx, bool owned)
+    {
+        if (node == null || idx < 0 || idx >= SCROLL_GRADE_TINT.Length) return;
+        if (node.transform.childCount <= CELL_VEIL) return;
+
+        // 색은 **그림 뒤쪽 테두리**에 넣는다. 맨 위 덮개에 칠하면 주문서 그림까지 물들어
+        //  파스텔처럼 흐려진다(원본은 그림이 또렷하고 배경만 색이다).
+        var frame = node.transform.GetChild(CELL_FRAME).GetComponent<Image>();
+        if (frame != null) frame.color = owned ? SCROLL_GRADE_TINT[idx] : new Color(0.22f, 0.22f, 0.22f, 1f);
+
+        var veil = node.transform.GetChild(CELL_VEIL).GetComponent<Image>();
+        if (veil != null)
+        {
+            // 덮개는 옅게만 — 테두리 색만으로는 칸 안쪽이 허옇게 뜬다. 같은 색을 얇게 얹어
+            //  바탕까지 물들이되, 그림이 파스텔로 흐려지지 않을 만큼만(알파 0.35).
+            Color c = SCROLL_GRADE_TINT[idx];
+            c.a = 0.35f;
+            veil.color = owned ? c : new Color(0f, 0f, 0f, 0.70f);
+        }
+
+        var pic = node.transform.GetChild(CELL_PICTURE).GetComponent<Image>();
+        Sprite sp = ScrollSprite(ENHANCE_SCROLL_IDS[idx]);
+        if (pic != null && sp != null)
+        {
+            pic.sprite = sp;
+            pic.color = owned ? Color.white : new Color(0.55f, 0.55f, 0.55f, 1f);
         }
     }
 
@@ -446,9 +524,10 @@ public class UI_EnhacePopup : UI_Popup
         if (amount != null)
         {
             amount.gameObject.SetActive(sp != null);
-            amount.text = have.ToString();
+            amount.text = ShortCount(have);
             amount.color = have > 0 ? Color.white : Util.HexToColor("FF5555");
             ApplyFont(amount, FontType.UI);
+            SeatAmountBadge(amount, SLOT_BADGE_SIZE);
         }
     }
 

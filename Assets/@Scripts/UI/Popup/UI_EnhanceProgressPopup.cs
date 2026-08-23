@@ -70,7 +70,20 @@ public class UI_EnhanceProgressPopup : UI_Popup
     const float STEP_TITLE  = 0.20f;   // 제목/이름 + 아이콘 하강 + 빛줄기
     const float STEP_DETAIL = 1.70f;   // 내구도 + "능력치 변화" 라벨
     const float STEP_TABLE  = 0.25f;   // 능력치 표가 오른쪽에서 밀려 들어온다
-    const float STEP_FINAL  = 1.85f;   // 이전값·화살표가 걷히고 최종값만 남는다
+    const float STEP_FINAL  = 1.85f;   // (예약) 표 내부 타임라인이 이 자리를 대신한다
+
+    // 능력치 표는 그 안에서 다시 다섯 걸음을 밟는다. 원본 영상을 열별 밝기로 재서 얻은 값이다
+    //  (라벨 f253 → 이전값 f254 → 화살표 f255 → 초록 f256~258 → 채움 f265 → 정리 f267 → 라벨 f270).
+    //  아래는 **라벨이 뜨는 순간을 0으로 둔 상대시각**이다.
+    const float TBL_VALUES    = 0.10f;   // 이전값 / 화살표 / 초록 이후값이 뒤따라 붙는다
+    const float TBL_ARROW_HIT = 1.20f;   // 화살표가 속을 채우며 한 번 번쩍
+    const float TBL_SETTLE    = 1.40f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로
+    const float TBL_LABEL_OUT = 1.70f;   // 라벨은 첫 줄(강화도)만 남는다
+    const float ARROW_FLASH   = 0.20f;
+
+    // 화살표 색 — 평소엔 어두운 윤곽, 번쩍일 때만 채운 붉은색 (영상 픽셀 계측값)
+    const string ARROW_IDLE_HEX  = "6E0A0F";
+    const string ARROW_FLASH_HEX = "A30000";
 
     GameManager.EnhanceResult _result;
     Equipment _equip;
@@ -190,12 +203,21 @@ public class UI_EnhanceProgressPopup : UI_Popup
         SetGroupActive(GameObjects.AttRealText, true);
         yield return null;                        // 켜진 프레임에 DOTweenAnimation이 트윈을 만든다
 
-        PlayAuthored(GameObjects.AttRealText, "");    // 스탯 이름 열
-        PlayAuthored(GameObjects.AttRealText, "1");   // 이전 / ▶ / 이후 열
+        // 표는 한 번에 뜨지 않는다. 라벨이 먼저 서고, 값이 따라 붙고, 화살표가 번쩍인 뒤
+        //  이전값이 걷히며 초록만 남는다 — 원본의 이 다섯 걸음이 통째로 빠져 있었다.
+        PlayAuthored(GameObjects.AttRealText, "");            // ① 스탯 이름 4줄
 
-        // ── ④ +1.85s : 이전값과 화살표가 걷히고 초록 최종값이 왼쪽으로 정렬된다 ──
-        yield return Wait(STEP_FINAL);
-        PlayAuthored(GameObjects.AttRealText, "2");
+        yield return Wait(TBL_VALUES);
+        PlayAuthored(GameObjects.AttRealText, "1");           // ② 이전값 · 화살표 · 초록 이후값
+
+        yield return Wait(TBL_ARROW_HIT - TBL_VALUES);
+        FlashArrows();                                        // ③ 화살표가 속을 채우며 번쩍
+
+        yield return Wait(TBL_SETTLE - TBL_ARROW_HIT);
+        PlayAuthored(GameObjects.AttRealText, "2");           // ④ 이전값·화살표 소멸 + 초록이 왼쪽으로
+
+        yield return Wait(TBL_LABEL_OUT - TBL_SETTLE);
+        KeepFirstStatLabel();                                 // ⑤ 라벨은 강화도만 남는다
     }
 
     IEnumerator CoRevealFail(Data.EquipmentData data)
@@ -271,9 +293,16 @@ public class UI_EnhanceProgressPopup : UI_Popup
             afts.Add($"+{data.BaseMagicAtk + a.magic}");
         }
 
+        _statNames = names;
+
         SetRevealText(Texts.Text, string.Join("\n", names));
         SetRevealText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
-        SetRevealText(Texts.Text_2, string.Join("\n", afts.ConvertAll(_ => "▶")));
+
+        // 화살표는 처음엔 **속이 빈 윤곽(▷)** 이고, 결과가 확정되는 순간에만 채워진다(▶).
+        //  예전엔 처음부터 채운 ▶라 "번쩍" 하는 순간이 아예 없었다.
+        SetRevealText(Texts.Text_2, ArrowRow("▷"));
+        SetArrowColor(ARROW_IDLE_HEX);
+
         SetRevealText(Texts.Text_3, string.Join("\n", afts.ConvertAll(v => $"<color=#00FF00>{v}</color>")));
     }
 
@@ -292,6 +321,50 @@ public class UI_EnhanceProgressPopup : UI_Popup
         if (_result.Success)
             SetRevealText(Texts.DurabilityRealText,
                 $"{Util.Localize(LocalizeKey.ForgeDurabilityText)} {_equip.Durability}/{data.MaxDurability}");
+    }
+
+    System.Collections.Generic.List<string> _statNames;
+
+    /// <summary>화살표 열 — 줄 수가 스탯 표와 같아야 칸이 맞는다.</summary>
+    string ArrowRow(string glyph)
+    {
+        int rows = _statNames != null ? _statNames.Count : 0;
+        var lines = new string[rows];
+        for (int i = 0; i < rows; i++) lines[i] = glyph;
+        return string.Join("\n", lines);
+    }
+
+    void SetArrowColor(string hex)
+    {
+        var t = GetText((int)Texts.Text_2);
+        if (t != null) t.color = Util.HexToColor(hex);
+    }
+
+    /// <summary>화살표가 속을 채우며 한 번 번쩍인다(영상 f265~f266, 두 프레임).
+    /// 곧이어 id "2"가 이 열을 걷어가지만, 건너뛰기 경로를 위해 원래 모습으로 되돌려 둔다.</summary>
+    void FlashArrows()
+    {
+        var t = GetText((int)Texts.Text_2);
+        if (t == null) return;
+
+        t.text = ArrowRow("▶");
+        SetArrowColor(ARROW_FLASH_HEX);
+
+        DOVirtual.DelayedCall(ARROW_FLASH, () =>
+        {
+            if (t == null) return;
+            t.text = ArrowRow("▷");
+            SetArrowColor(ARROW_IDLE_HEX);
+        }).SetUpdate(true);
+    }
+
+    /// <summary>원본은 정리가 끝나면 라벨을 **첫 줄만 남기고 지운다**(f270, 한 프레임).
+    /// 값 열은 그대로 남아 초록 숫자만 세로로 늘어선 화면이 된다.</summary>
+    void KeepFirstStatLabel()
+    {
+        var t = GetText((int)Texts.Text);
+        if (t == null || _statNames == null || _statNames.Count == 0) return;
+        t.text = _statNames[0];
     }
 
     static WaitForSecondsRealtime Wait(float sec) => new WaitForSecondsRealtime(sec);
