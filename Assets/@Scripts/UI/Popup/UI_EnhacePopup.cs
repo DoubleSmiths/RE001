@@ -25,7 +25,7 @@ public class UI_EnhacePopup : UI_Popup
     {
         ENumber,                // "+N"
         PotenForceBarBarText,   // 잠재력 수치
-        ChanceTxt,              // 성공확률 "99.999%"
+        ChanceTxt,              // 성공확률 "90%"
         RiskNum,                // 실패 시 내구도 감소량
         EnhEquipNameText,       // "+N 장비명"
         DurabilityText,         // "내구도" 라벨
@@ -135,7 +135,7 @@ public class UI_EnhacePopup : UI_Popup
     /// <summary>연출 시작 — 부수적인 UI를 접는다. 껐다는 사실을 기억해 나중에 정확히 되돌린다.</summary>
     void EnterCeremonyView()
     {
-        Blackout(DIM_CEREMONY, 0.35f);
+        Blackout(STAGE_CEREMONY, 0.35f);
         _embers = StartCoroutine(CoEmbers());   // 까만 무대 위로 불티가 흩날린다(원본 전 구간)
         _hidden.Clear();
 
@@ -160,7 +160,7 @@ public class UI_EnhacePopup : UI_Popup
     /// <summary>연출 끝 — 접었던 것만 되돌린다(원래 꺼져 있던 것은 꺼진 채로).</summary>
     void ExitCeremonyView()
     {
-        Blackout(DIM_IDLE, 0.30f);
+        Blackout(STAGE_IDLE, 0.30f);
         if (_embers != null) { StopCoroutine(_embers); _embers = null; }
         foreach (var go in _hidden)
             if (go != null) go.SetActive(true);
@@ -179,12 +179,10 @@ public class UI_EnhacePopup : UI_Popup
     ///  이 팝업 캔버스 맨 아래에 검은 판을 깔면 한 번에 덮인다.
     ///
     /// 판은 흔들리는 프레임이 아니라 **팝업 루트**에 붙인다(같이 흔들리면 가장자리가 새어 나온다).
-    void Blackout(float alpha, float duration)
+    void Blackout(Color target, float duration)
     {
         if (_blackout == null)
         {
-            if (alpha <= 0f) return;
-
             var go = new GameObject("CeremonyBlackout", typeof(RectTransform));
             go.transform.SetParent(transform, false);
 
@@ -202,7 +200,9 @@ public class UI_EnhacePopup : UI_Popup
 
         _blackout.DOKill();
         _blackout.gameObject.SetActive(true);
-        _blackout.DOFade(alpha, duration).SetEase(Ease.OutQuad).SetUpdate(true);
+
+        if (duration <= 0f) { _blackout.color = target; return; }
+        _blackout.DOColor(target, duration).SetEase(Ease.OutQuad).SetUpdate(true);
     }
 
     // 불티는 프레임(흔들리는 노드)에 붙여야 모루와 함께 움직인다.
@@ -227,10 +227,15 @@ public class UI_EnhacePopup : UI_Popup
     Image _blackout;
     const float BLACKOUT_OVERSCAN = 600f;   // 캔버스보다 넉넉히 — 가장자리가 새지 않게
 
-    // 창이 떠 있는 동안은 뒤가 **거의** 안 보이고(대장간 팝업이 희미하게 비치는 정도),
-    //  연출이 시작되면 완전히 검어진다.
-    const float DIM_IDLE     = 0.86f;
-    const float DIM_CEREMONY = 1f;
+    // 무대 색은 원본 프레임에서 재서 옮겼다.
+    //  대기 중에는 **완전한 검정이 아니라 어두운 적색**이다(RGB 24,0,0) — 화로의 열기다.
+    //  망치질에 들어가면 그마저 꺼지고 순수한 검정이 된다(측정 밝기 10).
+    static readonly Color STAGE_IDLE     = new Color(24f / 255f, 1f / 255f, 1f / 255f, 1f);
+    static readonly Color STAGE_CEREMONY = new Color(0f, 0f, 0f, 1f);
+
+    // 성공하면 화면이 통째로 하얗게 타올랐다가 1.5초에 걸쳐 걷힌다(원본 221.9~223.4s).
+    //  예전엔 0.5초짜리 섬광 한 번뿐이라 "번쩍"하고 마는 정도였다.
+    const float SUCCESS_WASH = 1.5f;
 
     void FadeText(Texts t, float alpha)
     {
@@ -550,7 +555,7 @@ public class UI_EnhacePopup : UI_Popup
         // 원본에서 강화창은 **어두운 무대 위**에 선다 — 마을 배경도 상단 재화 HUD도 하단 탭도
         //  거의 보이지 않고, 앞 창(대장간)만 희미하게 남는다. 우리 창은 뒤가 전부 밝게 비쳐
         //  모루와 망치가 마을 그림 위에 떠 있는 것처럼 보였다.
-        Blackout(DIM_IDLE, 0.25f);
+        Blackout(STAGE_IDLE, 0.25f);
 
         RefreshUI();
         PlayIntro();
@@ -590,7 +595,9 @@ public class UI_EnhacePopup : UI_Popup
 
         // 성공확률 / 리스크
         bool maxed = _equip.EnhanceLevel >= ENHANCE_MAX_LEVEL;
-        GetText((int)Texts.ChanceTxt).text = maxed ? "MAX" : $"{Managers.Game.GetEnhanceChance(_equip):F3}%";
+        // 원본은 정수 퍼센트다("32%" → "88%" → "90%"). 소수 셋째 자리까지 찍으니
+        //  숫자가 길어져 자리를 넘치고, 한눈에 읽히지도 않았다.
+        GetText((int)Texts.ChanceTxt).text = maxed ? "MAX" : $"{Managers.Game.GetEnhanceChance(_equip):F0}%";
 
         int idx = System.Array.IndexOf(ENHANCE_SCROLL_IDS, _scrollId);
         var riskTxt = GetText((int)Texts.RiskNum);
@@ -884,6 +891,11 @@ public class UI_EnhacePopup : UI_Popup
     /// <summary>성공/실패 전체화면 섬광(Animator "Flash").</summary>
     void PopResultFlash(bool success)
     {
+        // 성공은 섬광 한 번으로 끝나지 않는다 — 화면 전체가 하얗게 탔다가 천천히 식는다.
+        //  결과창이 열릴 무렵(1.2초 뒤)에도 아직 회색이 남아 있고, 그 창이 마저 걷어낸다.
+        if (success) Blackout(Color.white, 0f);
+        Blackout(STAGE_CEREMONY, success ? SUCCESS_WASH : 0.35f);
+
         var flash = GetObject(success ? (int)GameObjects.Flash_Success : (int)GameObjects.Flash_Fail);
         if (flash == null) return;
 

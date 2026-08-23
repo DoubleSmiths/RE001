@@ -51,7 +51,7 @@ public static class ForgeCeremonyDemo
     const float T_ENHANCE = 1.6f;    // 강화창 등장 (원본 208s)
     const float T_OPEN    = 6.0f;    // 주문서 슬롯 열기 (원본 213.5s)
     const float T_PICK    = 8.2f;    // 주문서 고르기 (원본 215.5s)
-    const float T_SMITH   = 10.6f;   // [강화] (원본 217.6s)
+    const float T_SMITH   = 9.9f;    // [강화] (원본 217.6s — 섬광이 같은 자리에 오도록 맞춘 값)
     const float T_CLOSE   = 27.0f;   // 결과창 닫기 → 복귀 (원본 228.6s)
 
     static IEnumerator CoScript()

@@ -52,6 +52,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
         Hammer_IncludeAnim,
         SuccessFlash,
         Flash_USETHIS,
+        Bg,                      // 전면 배경판 — 성공 직후 백색 잔광이 여기서 마저 걷힌다
         SuccessTxtGroup,
         Img_SuccessTxtGroup_02,  // 성공 텍스트 상하 라인
         _2,
@@ -80,6 +81,11 @@ public class UI_EnhanceProgressPopup : UI_Popup
     const float TBL_SETTLE    = 1.40f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로
     const float TBL_LABEL_OUT = 1.70f;   // 라벨은 첫 줄(강화도)만 남는다
     const float ARROW_FLASH   = 0.20f;
+
+    // 강화창의 백색 판은 1.5초에 걸쳐 걷히는데, 이 창은 그 중 1.2초쯤 지난 시점에 열린다.
+    //  남은 밝기에서 이어받아 마저 검게 만든다(원본 223.1s 실측 46/255).
+    const float WASH_LEFT = 0.18f;
+    const float WASH_TAIL = 0.45f;
 
     // 화살표 색 — 평소엔 어두운 윤곽, 번쩍일 때만 채운 붉은색 (영상 픽셀 계측값)
     const string ARROW_IDLE_HEX  = "6E0A0F";
@@ -176,6 +182,16 @@ public class UI_EnhanceProgressPopup : UI_Popup
         yield return Wait(STEP_TITLE);
 
         StartCoroutine(CoEmbers());               // 화로는 계속 달아 있다 — 불티가 화면 내내 흩날린다
+
+        // 강화창에서 시작된 백색 잔광이 아직 남아 있는 시점에 이 창이 열린다.
+        //  까만 배경으로 덮어 버리면 그 잔광이 한 프레임에 뚝 끊긴다 — 이어받아 마저 걷는다.
+        var bg = GetObject((int)GameObjects.Bg)?.GetComponent<Image>();
+        if (bg != null)
+        {
+            bg.DOKill();
+            bg.color = new Color(WASH_LEFT, WASH_LEFT, WASH_LEFT, 1f);
+            bg.DOColor(Color.black, WASH_TAIL).SetEase(Ease.OutQuad).SetUpdate(true);
+        }
         SnapAuthored(GameObjects.Icon, "5");      // 담금질로 떠오른 자세에서 시작한다
 
         Reveal(GameObjects.Flash_USETHIS);
