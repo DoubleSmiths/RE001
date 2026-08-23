@@ -140,6 +140,15 @@ public class UI_EnhacePopup : UI_Popup
         _embers = StartCoroutine(CoEmbers());   // 까만 무대 위로 불티가 흩날린다(원본 전 구간)
         _hidden.Clear();
 
+        // ⚠️ "강화 성공 시 / 능력치 변화" 미리보기는 **런타임에 복제해 만든 오브젝트**라
+        //    프리팹 이름으로 잡는 CEREMONY_HIDE가 닿지 않는다. 그래서 망치질 내내
+        //    까만 무대 아래에 표가 그대로 떠 있었다. 따로 접는다.
+        if (_previewTxt != null && _previewTxt.gameObject.activeSelf)
+        {
+            _previewTxt.gameObject.SetActive(false);
+            _hidden.Add(_previewTxt.gameObject);
+        }
+
         foreach (var g in CEREMONY_HIDE)
         {
             var go = GetObject((int)g);
@@ -656,7 +665,11 @@ public class UI_EnhacePopup : UI_Popup
 
         bool maxed = _equip.EnhanceLevel >= ENHANCE_MAX_LEVEL;
         if (maxed) { _previewTxt.gameObject.SetActive(false); return; }
-        _previewTxt.gameObject.SetActive(true);
+
+        // 연출 중에는 되살리지 않는다 — OnClickEnhance가 코루틴을 띄운 **직후** RefreshUI를
+        //  부르기 때문에, 그냥 켜면 방금 접은 것을 같은 프레임에 도로 펴 버린다.
+        _previewTxt.gameObject.SetActive(!_resolving);
+        if (_resolving) return;
 
         var cur  = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel);
         var next = Managers.Game.GetEnhanceBonus(_equip.DataId, _equip.EnhanceLevel + 1);

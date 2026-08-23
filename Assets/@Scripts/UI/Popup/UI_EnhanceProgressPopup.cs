@@ -79,6 +79,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
     const float TBL_ARROW_HIT = 1.20f;   // 화살표가 속을 채우며 한 번 번쩍
     const float TBL_SETTLE    = 1.40f;   // 화살표·이전값이 걷히고 초록이 왼쪽으로
     const float ARROW_FLASH   = 0.05f;   // 원본은 채운 ▶이 딱 한 프레임이다
+    const float ROW_STAGGER   = 0.15f;   // 표의 줄이 하나씩 붙는 간격
 
     // 강화창의 백색 판은 1.5초에 걸쳐 걷히는데, 이 창은 그 중 1.2초쯤 지난 시점에 열린다.
     //  남은 밝기에서 이어받아 마저 검게 만든다(원본 223.1s 실측 46/255).
@@ -226,6 +227,8 @@ public class UI_EnhanceProgressPopup : UI_Popup
         // 원본은 네 열이 **0.1초씩 어긋나** 들어온다(실측 등장 프레임 f253/254/255/256).
         //  id "1" 하나로 셋을 한꺼번에 누르면 이전값·화살표·초록이 뭉쳐 나온다 —
         //  DORestartById가 오브젝트 단위라, 열마다 따로 부르면 그대로 시차가 생긴다.
+        SetTableLines(1);                                     // 우선 첫 줄만 보인다
+
         PlayAuthoredNode("Text", "");                         // ① 스탯 이름
 
         yield return Wait(TBL_STAGGER);
@@ -238,11 +241,24 @@ public class UI_EnhanceProgressPopup : UI_Popup
         yield return Wait(TBL_STAGGER);
         PlayAuthoredNode("Text_3", "1");                      // ④ 초록 이후값
 
-        yield return Wait(TBL_ARROW_HIT - TBL_STAGGER * 3f);
+        // ⑤ 나머지 줄이 하나씩 붙는다.
+        //  열을 0.1초씩 어긋나게 넣는 것만으로는 "순차적으로 나온다"고 읽히지 않았다 —
+        //  세 프레임 차이라 눈에 걸리지 않는다. 줄 단위로 늘려야 비로소 차례로 보인다.
+        //  네 열이 각각 개행으로 몰아쓴 한 장이라, TMP의 maxVisibleLines를 늘려 드러낸다.
+        int rows = _statNames != null ? _statNames.Count : 0;
+        for (int line = 2; line <= rows; line++)
+        {
+            yield return Wait(ROW_STAGGER);
+            SetTableLines(line);
+        }
+
+        float spent = TBL_STAGGER * 3f + ROW_STAGGER * Mathf.Max(0, rows - 1);
+        yield return Wait(Mathf.Max(0f, TBL_ARROW_HIT - spent));
         FlashArrows();                                        // ③ 화살표가 속을 채우며 번쩍
 
         yield return Wait(TBL_SETTLE - TBL_ARROW_HIT);
-        PlayAuthored(GameObjects.AttRealText, "2");           // ④ 이전값·화살표 소멸 + 초록이 왼쪽으로
+        SetTableLines(int.MaxValue);                          // 이제 전부 보인다(다음 강화도 정상)
+        PlayAuthored(GameObjects.AttRealText, "2");           // 이전값·화살표 소멸 + 초록이 왼쪽으로
 
         // 원본은 여기서 라벨을 첫 줄만 남기고 지운다(f270, 한 프레임). 그대로 옮겼더니
         //  "강화도만 글자가 남는다"는 지적을 받았다 — 어느 수치가 무엇인지 알 수 없어진다.
@@ -320,6 +336,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
                a.magic != b.magic);
 
         _statNames = names;
+        SetTableLines(0);          // 차례로 드러낼 때까지 감춰 둔다
 
         SetTableText(Texts.Text, string.Join("\n", names));
         SetTableText(Texts.Txt_AttRealText_02, string.Join("\n", befs));
@@ -384,6 +401,23 @@ public class UI_EnhanceProgressPopup : UI_Popup
     {
         var t = GetText((int)Texts.Text_2);
         if (t != null) t.color = Util.HexToColor(hex);
+    }
+
+    // 표의 네 열은 각각 "한 장에 개행으로 몰아쓴" 텍스트다(프리팹 구조가 그렇다).
+    //  줄을 따로 움직일 수는 없지만, 몇 줄까지 보일지는 TMP가 정해 준다.
+    static readonly Texts[] TABLE_COLUMNS =
+    {
+        Texts.Text, Texts.Txt_AttRealText_02, Texts.Text_2, Texts.Text_3,
+    };
+
+    void SetTableLines(int lines)
+    {
+        foreach (var col in TABLE_COLUMNS)
+        {
+            var t = GetText((int)col);
+            if (t == null) continue;
+            t.maxVisibleLines = Mathf.Max(0, lines);
+        }
     }
 
     void SetArrowAlpha(float a)
