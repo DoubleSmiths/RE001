@@ -642,6 +642,11 @@ public class UI_EnhanceProgressPopup : UI_Popup
             if (_rayFx != null)
             {
                 rays.SetActive(true);
+                TuneGodRays(rays);
+                // 원작의 빛줄기는 **화면 위 가장자리부터 폭 전체**를 덮는다(ref x0~344 / y20~450).
+                //  우리 것은 가운데 한 다발이라 자리를 올리고 넓혀야 같은 그림이 된다.
+                var hostRt = _rayFx.transform as RectTransform;
+                if (hostRt != null) hostRt.anchoredPosition += new Vector2(0f, RAY_LIFT);
                 UIFx.Replay(_rayFx);
                 return;
             }
@@ -699,6 +704,40 @@ public class UI_EnhanceProgressPopup : UI_Popup
     const float RAY_HIGH = 0.22f;
     const float RAY_REST = 0.12f;
 
+    /// <summary>빛줄기를 원작 밝기·폭으로 맞춘다.
+    ///
+    /// 파티클 값은 원작에서 그대로 이식됐지만, 원작 화면은 캔버스가 폭에 꽉 차고(344/344)
+    ///  우리 화면은 86%만 채운다 — 같은 파티클이 화면에서 더 좁고 어둡게 보인다.
+    ///  실측 결과 화면 전체 휘도가 10.5로 원작 21.6의 절반이었다.</summary>
+    void TuneGodRays(GameObject rays)
+    {
+        foreach (var ps in rays.GetComponentsInChildren<ParticleSystem>(true))
+        {
+            var main = ps.main;
+            main.startSizeMultiplier *= RAY_SIZE_MUL;
+
+            // 원작은 갈래가 여럿이다 — 굵기를 키우는 대신 **개수**를 늘려야 같은 그림이 된다.
+            var em = ps.emission;
+            em.rateOverTimeMultiplier *= RAY_RATE_MUL;
+            main.maxParticles = Mathf.Max(main.maxParticles, 60);
+
+            var sh = ps.shape;
+            if (sh.enabled) sh.scale = new Vector3(sh.scale.x * RAY_SPREAD, sh.scale.y, sh.scale.z);
+            var c = main.startColor;
+            if (c.mode == ParticleSystemGradientMode.Color)
+            {
+                var col = c.color; col.a = Mathf.Clamp01(col.a * RAY_ALPHA_MUL);
+                main.startColor = col;
+            }
+        }
+    }
+
+    const float RAY_RATE_MUL  = 2.2f;
+    const float RAY_SPREAD    = 1.8f;
+    const float RAY_SIZE_MUL  = 1.90f;   // 더 키우면 갈래가 뭉쳐 한 덩어리가 된다
+    const float RAY_ALPHA_MUL = 1.9f;
+    const float RAY_LIFT      = 48f;     // 제목을 덮지 않는 선
+
     Coffee.UIExtensions.UIParticle _rayFx;
     Image _rayImg;
 
@@ -707,8 +746,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
     //  대장간이 아직 달아 있다는 신호라 이게 없으면 화면이 죽은 그림처럼 보인다.
     //  프리팹의 Dust_01은 월드 파티클이라 캔버스에 안 그려진다 — 빛줄기와 같은 이유로
     //  UI Image 몇 장을 주기적으로 띄워 대신한다.
-    const float EMBER_INTERVAL = 0.16f;
-    const int   EMBER_PER_TICK = 2;
+    // 원작 결과 화면은 불티가 훨씬 촘촘하다(프레임마다 20~30점).
+    const float EMBER_INTERVAL = 0.08f;
+    const int   EMBER_PER_TICK = 4;
 
     IEnumerator CoEmbers()
     {

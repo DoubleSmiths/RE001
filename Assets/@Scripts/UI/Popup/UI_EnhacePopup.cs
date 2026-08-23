@@ -1018,7 +1018,7 @@ public class UI_EnhacePopup : UI_Popup
 
             case "Fail":
                 ShakeFrame(0.35f, 2.5f);
-                RestoreCraftIcon(ICON_DROP_DUR);   // 실패는 그 자리에 툭 떨어진다(원본 id 8)
+                DropToAnvil();                     // 실패는 **모루 위로** 툭 떨어진다(원작 id 8)
                 PopResultFlash(false);
                 break;
         }
@@ -1026,16 +1026,23 @@ public class UI_EnhacePopup : UI_Popup
 
     /// <summary>타격 순간의 이펙트. 프리팹에 저작된 섬광을 되살리고, 그 위에
     /// 모루 지점에서 흰 구체 + 연기 + 불티를 터뜨린다(원본 영상의 타격 구성).</summary>
+    Coffee.UIExtensions.UIParticle _impactFx;
+
     void PopImpactFx()
     {
-        // 프리팹 저작 섬광 — 껐다 켜야 처음부터 다시 돈다
-        foreach (string n in new[] { "Flash", "GlowDot_01_1" })
-        {
-            var go = Util.FindChild(gameObject, n, true);
-            if (go == null) continue;
-            go.SetActive(false);
-            go.SetActive(true);
-        }
+        // ⚠️ 타격 파티클은 프리팹에 **이미 이식돼 있다** — GlowDot_01_1 과 그 자식
+        //    VFX_GlowDot_01_1_03(원작 Dust_01, 연기) / Ring_01(퍼지는 링).
+        //    그런데 월드 ParticleSystem이라 Screen Space Camera 캔버스 위에 렌더되지 않아
+        //    **한 번도 화면에 나온 적이 없다.** 켰다 껐다만 하고 있었으니 아무 일도 없었고,
+        //    그래서 원작의 "검은 연기 구름 + 흰 반짝임"이 우리에겐 흐릿한 흰 얼룩이었다.
+        //    UIParticle로 감싸면 그 자리에서 그대로 그려진다(빛줄기와 같은 처리).
+        // ⚠️ 프리팹의 GlowDot_01_1(원작 타격 파티클)은 UIParticle로 감싸도 **아무것도 그리지 않는다**
+        //    (재질이 Mobile/Particles/Additive라 캔버스 경로에서 죽는다 — 빛줄기와 달랐다).
+        //    실측으로 재현한 그림(UIFx.SpawnForgeSmash)이 지금은 유일하게 보이는 길이다.
+
+        // 저작 섬광(Flash)은 Image라 그대로 껐다 켠다
+        var flashGo = Util.FindChild(gameObject, "Flash", true);
+        if (flashGo != null) { flashGo.SetActive(false); flashGo.SetActive(true); }
 
         // 타격점은 장비 아이콘 자리다(망치가 내려찍는 곳). 그 좌표에 버스트를 얹는다.
         var host = _frameRT != null ? _frameRT
@@ -1053,14 +1060,19 @@ public class UI_EnhacePopup : UI_Popup
                 GetComponent<Canvas>()?.worldCamera, out at);
         }
 
+        // 진짜 파티클이 살아났으면 흉내는 필요 없다 — 겹치면 원작에 없는 흰 구름이 된다.
         UIFx.PlayBurst(host, at, UIFx.FxType.ForgeSmash);
 
-        // 장비 아이콘도 얻어맞는다 — 살짝 눌렸다 돌아온다.
-        if (icon != null)
+        // 장비 아이콘도 얻어맞는다. 원작 id"1"은 **ShakePosition (4,4,0) 0.25초 OutQuad**다 —
+        //  크기를 눌렀다 펴면(예전 방식) 판이 찌그러져 보이고, 모루에 박혀 있다는 느낌이 안 난다.
+        var iconRt = CraftIcon();
+        if (iconRt != null)
         {
-            var rt = icon.rectTransform;
-            rt.DOComplete();
-            rt.DOPunchScale(new Vector3(0.18f, -0.12f, 0f), 0.24f, 10, 0.8f).SetUpdate(true);
+            Vector2 home = iconRt.anchoredPosition;
+            iconRt.DOComplete();
+            iconRt.DOShakeAnchorPos(0.25f, new Vector2(4f, 4f), 50, 90f, false, true)
+                  .SetUpdate(true)
+                  .OnComplete(() => { if (iconRt != null) iconRt.anchoredPosition = home; });
         }
     }
 
@@ -1086,7 +1098,9 @@ public class UI_EnhacePopup : UI_Popup
     //    두 창 모두 절대값을 쓰면 인계 지점이 정확히 겹친다(실측 20u = 양쪽 다 native 1215/1217px).
     const float ICON_HOME_Y   = 20f;
     const float ICON_ANVIL_Y  = 0f;
-    const float ICON_LAND_DUR = 0.2f;   // 원본은 두 프레임(0.1~0.2초) 만에 툭 내려앉는다
+    const float ICON_LAND_DUR   = 0.30f;   // 원작 id"2"
+    // 원작은 아이콘이 **망치가 돌기 시작하는 바로 그 순간**에 모루에 얹힌다(그래프 T+0.40→0.70).
+    const float ICON_LAND_DELAY = 0.07f;   // = SMITH_LEAD_IN(0.37) − 0.30
     const float ICON_RISE_Y   = 50f;
     const float ICON_RISE_SC  = 1.4f;
     const float ICON_RISE_DUR = 1.4f;
@@ -1111,9 +1125,11 @@ public class UI_EnhacePopup : UI_Popup
         if (rt == null) return;
 
         rt.DOKill();
+        // 원작 저작값은 id"2" LocalMove (0,0,0) / 0.3초 / **InBack** 이다.
+        //  InBack은 먼저 위로 살짝 물렸다가 가속해 "쿵" 얹힌다 — OutQuad로 두면 스르르 멈춘다.
+        //  스케일 트윈은 원작에 없다(내려앉는 동안 크기는 1 그대로).
         rt.DOAnchorPos(new Vector2(0f, ICON_ANVIL_Y), ICON_LAND_DUR)
-          .SetEase(Ease.OutQuad).SetUpdate(true);
-        rt.DOScale(1f, ICON_LAND_DUR).SetEase(Ease.OutQuad).SetUpdate(true);
+          .SetEase(Ease.InBack).SetDelay(ICON_LAND_DELAY).SetUpdate(true);
     }
 
     /// <summary>담금질 — 모루에서 천천히 떠오르며 커진다.</summary>
@@ -1169,6 +1185,23 @@ public class UI_EnhacePopup : UI_Popup
 
     const float ICON_WHITE_HOLD = 0.25f;
     const float ICON_WHITE_OUT  = 0.55f;
+
+    /// <summary>실패 — 떠 있던 아이콘이 **모루 위로** 툭 떨어진다.
+    ///
+    /// ⚠️ 예전엔 RestoreCraftIcon을 불러 대기 자리(+20)로 돌려보냈다. 그러면 실패 결과를
+    ///    보는 내내 장비가 모루에서 20유닛 뜬 채로 떠 있다 — 원작 id"8"은 (0,0)이다.
+    /// 크기는 따로 1.0초에 걸쳐 돌아온다(원작도 이동 0.1초 / 크기 1.0초로 따로 간다).</summary>
+    void DropToAnvil()
+    {
+        var rt = CraftIcon();
+        if (rt == null) return;
+
+        rt.DOKill();
+        rt.DOAnchorPos(new Vector2(0f, ICON_ANVIL_Y), ICON_DROP_DUR)
+          .SetEase(Ease.OutBack).SetUpdate(true);
+        rt.DOScale(1f, 1.0f).SetEase(Ease.OutQuad).SetUpdate(true);
+        Whiten(0f, 0.3f);
+    }
 
     /// <summary>제자리로. 연출이 끝나면 반드시 불러야 다음 강화가 어긋난 자리에서 시작하지 않는다.</summary>
     void RestoreCraftIcon(float duration)
@@ -1240,9 +1273,9 @@ public class UI_EnhacePopup : UI_Popup
     //    0.2초 뒤 id"53" →검정          1.8초 InOutQuad
     //  우리 렌더는 리니어 합성이라 같은 알파가 더 밝게 나온다. **비율과 시간·이징은 원작 그대로**,
     //  절대 알파만 실측으로 눌렀다(0.38로 재 보니 정점 165, 원작 137.9 → 0.827배).
-    const float CHARGE_PLATEAU = 0.214f;   // 0.5882 자리
+    const float CHARGE_PLATEAU = 0.184f;   // 0.5882 자리
     const float CHARGE_RAMP    = 1.40f;
-    const float CHARGE_PEAK    = 0.314f;   // 0.8627 자리
+    const float CHARGE_PEAK    = 0.270f;   // 0.8627 자리
     const float PEAK_RISE      = 0.15f;
     const float PEAK_HOLD      = 0.05f;    // 원작 Timer 0.2 − 0.15
     const float WASH_OUT       = 1.80f;
