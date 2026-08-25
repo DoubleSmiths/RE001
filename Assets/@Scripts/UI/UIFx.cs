@@ -157,7 +157,10 @@ public static class UIFx
     /// Addressable에 등록된 ParticleSystem prefab을 UI 위에 스폰 (Coffee.UIExtensions.UIParticle 사용).
     /// prefabKey: 예) "FX_splash_spark_floor", "FX_splash_spark_air"
     /// </summary>
-    public static GameObject PlayParticle(RectTransform parent, Vector2 localPos, string prefabKey, float lifetime = 2f)
+    /// <param name="emit">추가로 강제 방출할 입자 수. **버스트로 설계된 FX 에는 0**을 줘야 한다
+    /// (30개를 덧뿌리면 원작의 타이밍이 뭉개진다).</param>
+    public static GameObject PlayParticle(RectTransform parent, Vector2 localPos, string prefabKey,
+                                          float lifetime = 2f, int emit = 30, float scale = 0f)
     {
         if (parent == null || string.IsNullOrEmpty(prefabKey)) return null;
 
@@ -186,6 +189,7 @@ public static class UIFx
         // 3) UIParticle에 연결 (내부에서 host 하위로 reparent + RefreshParticles 호출)
         uip.SetParticleSystemInstance(ps);
         ps.transform.localScale = Vector3.one;
+        if (scale > 0f) uip.scale = scale;   // 원작 크기에 맞출 때
 
         // 4) 명시적 Play + Emit (prefab의 rateOverTime=0, burst 미설정 방어)
         foreach (var p in ps.GetComponentsInChildren<ParticleSystem>(true))
@@ -193,7 +197,7 @@ public static class UIFx
             p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             p.Clear(true);
             p.Play(true);
-            p.Emit(30);
+            if (emit > 0) p.Emit(emit);
         }
 
         UnityEngine.Object.Destroy(host, lifetime);
@@ -288,85 +292,126 @@ public static class UIFx
     ///
     /// ⚠️ 예전 것은 연기가 3배 밝고(기여 52 대 17.6) 0.7초를 끌어 무대가 하얗게 떴다.
     ///    그리고 타격마다 흰 링을 그렸는데 **원작의 링은 결과 확정 순간에만** 있다.</summary>
+    // ────────────────────────────────────────
+    //  대장간 타격 — 원작 프레임 실측 그대로
+    // ────────────────────────────────────────
+
+    // 원작(RE001.mp4 3:38, 10fps)에서 1타를 프레임마다 재서 옮겼다. t는 타격 순간 기준.
+    //
+    //   흰 원   t 0.00~0.20 (두 프레임). 지름 90 ref-px = 47유닛. **완전 포화 흰색**.
+    //   연기    t 0.18 등장 → 0.20~0.30 최대(깨끗한 자리 밝기 77) → 0.40 에 19 → 0.45 소멸.
+    //           가로 342 ref-px = 179유닛으로 **화면을 꽉 채운다**. 안에 흰 스크래치 선.
+    //   청록 별 t 0.00~0.60. 0.20 에 가장 많다(화소 178). 크기 15 ref-px 안팎.
+    //
+    // ⚠️ 파티클(FX_splash_crystal_air)로 재생하는 길은 막혀 있다 — 팩 재질이 우리
+    //    프로젝트에서 URP/Lit 으로 떨어져 파티클 색을 안 먹고, UV 애니메이션이 아틀라스의
+    //    엉뚱한 칸(해골·송곳니)을 골라 그린다. 그래서 **아틀라스에서 필요한 조각만 잘라**
+    //    (FX_Orb / FX_Wisp* / FX_Streak / FX_Star) 위 대본대로 직접 놓는다.
+    //    모양은 원작 것 그대로이고, 시각·크기·밝기는 위 실측값이다.
+
+    const float ORB_SIZE   = 47f;     // 90 ref-px
+    const float ORB_HOLD   = 0.15f;
+    const float ORB_OUT    = 0.06f;
+
+    const float SMOKE_IN   = 0.19f;   // 등장 시각
+    const float SMOKE_RISE = 0.05f;
+    const float SMOKE_HOLD = 0.02f;
+    const float SMOKE_OUT  = 0.20f;
+    const float SMOKE_REACH = 90f;    // ±90유닛 = 179유닛 폭
+    const float SMOKE_A    = 0.135f;
+
+    const float STAR_LIFE  = 0.60f;
+    const int   STAR_N     = 7;
+
     static float SpawnForgeSmash(RectTransform root)
     {
-        Sprite dot = Dot(), star = Star(), disc = Disc();
-
-        // ① 흰 원반 — 이 순간이 가장 밝다. 처음부터 최대 크기로 난다.
+        // ① 흰 원 — 이 두 프레임이 타격의 전부다
         var orb = CreateImage(root, "SmashOrb", Vector2.zero, new Vector2(ORB_SIZE, ORB_SIZE),
-                              Color.white, disc);
-        orb.transform.localScale = Vector3.one * 0.9f;
-        orb.transform.DOScale(1.05f, ORB_LIFE).SetEase(Ease.OutQuad).SetUpdate(true);
+                              Color.white, Fx("FX_Orb") ?? Disc());
+        orb.transform.localScale = Vector3.one * 0.95f;
+        orb.transform.DOScale(1.06f, ORB_HOLD + ORB_OUT).SetEase(Ease.OutQuad).SetUpdate(true);
         DOTween.Sequence().SetUpdate(true).SetLink(orb.gameObject)
                .AppendInterval(ORB_HOLD)
-               .Append(orb.DOFade(0f, ORB_LIFE - ORB_HOLD).SetEase(Ease.InQuad));
+               .Append(orb.DOFade(0f, ORB_OUT).SetEase(Ease.Linear));
 
-        // ② 연기 — **어둡고 넓고 짧다.** 구체가 한 번 번쩍인 뒤에 피어오른다.
-        for (int i = 0; i < SMOKE_N; i++)
+        // ② 연기 — 원작 조각을 가로로 늘어놓아 화면 폭을 채운다
+        string[] wisps = { "FX_Wisp1", "FX_Wisp2", "FX_Wisp3", "FX_Cloud" };
+        for (int i = 0; i < 6; i++)
         {
-            float dir = i % 2 == 0 ? 1f : -1f;
-            float spread = 10f + (i / 2) * (SMOKE_REACH / (SMOKE_N / 2f));
-            // 원작의 연기는 옆으로만 깔리지 않고 **위로도 크게 부푼다**(아이콘 높이까지).
-            float lift = SMOKE_RISE + UnityEngine.Random.Range(-10f, 46f) * (1f - spread / (SMOKE_REACH * 2.0f));
-            float w = UnityEngine.Random.Range(26f, 46f);
+            float x = -SMOKE_REACH + (SMOKE_REACH * 2f) * (i + 0.5f) / 6f;
+            float y = UnityEngine.Random.Range(-4f, 16f);
+            float w = UnityEngine.Random.Range(46f, 64f);
 
-            var puff = CreateImage(root, $"SmashSmoke{i}", new Vector2(dir * 4f, 0f),
-                                   new Vector2(w, w * UnityEngine.Random.Range(0.55f, 0.95f)),
-                                   new Color(SMOKE_V, SMOKE_V, SMOKE_V, 0f), Smoke(i % 3));
-            puff.rectTransform.DOAnchorPos(new Vector2(dir * spread, lift), SMOKE_LIFE)
+            var puff = CreateImage(root, $"SmashSmoke{i}", new Vector2(x * 0.55f, y * 0.5f),
+                                   new Vector2(w, w * UnityEngine.Random.Range(0.85f, 1.15f)),
+                                   new Color(1f, 1f, 1f, 0f),
+                                   i % 2 == 0 ? Smoke(i % 3) : (Fx(wisps[i % wisps.Length]) ?? Dot()));
+            puff.rectTransform.localRotation =
+                Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(-14f, 14f));
+            puff.rectTransform.DOAnchorPos(new Vector2(x, y), SMOKE_IN + SMOKE_RISE + SMOKE_HOLD + SMOKE_OUT)
                 .SetEase(Ease.OutQuad).SetUpdate(true);
-            puff.rectTransform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
-            puff.rectTransform.DOScale(UnityEngine.Random.Range(1.6f, 2.6f), SMOKE_LIFE)
+            puff.rectTransform.DOScale(1.25f, SMOKE_IN + SMOKE_RISE + SMOKE_HOLD + SMOKE_OUT)
                 .SetEase(Ease.OutQuad).SetUpdate(true);
 
             DOTween.Sequence().SetUpdate(true).SetLink(puff.gameObject)
-                   .AppendInterval(SMOKE_DELAY)
-                   .Append(puff.DOFade(SMOKE_PEAK, SMOKE_LIFE * 0.25f).SetEase(Ease.OutQuad))
-                   .Append(puff.DOFade(0f, SMOKE_LIFE * 0.6f).SetEase(Ease.Linear));
+                   .AppendInterval(SMOKE_IN)
+                   .Append(puff.DOFade(SMOKE_A, SMOKE_RISE).SetEase(Ease.OutQuad))
+                   .AppendInterval(SMOKE_HOLD)
+                   .Append(puff.DOFade(0f, SMOKE_OUT).SetEase(Ease.Linear));
         }
 
-        // ③ 충격파 줄무늬 — 연기를 가로지르는 흰 선. 원작은 짧고 굵은 X자다.
-        for (int i = 0; i < 4; i++)
+        // ③ 연기를 가로지르는 흰 스크래치 — 원작 f185 에 뚜렷하다
+        for (int i = 0; i < 3; i++)
         {
-            float dir = i % 2 == 0 ? 1f : -1f;
-            float ang = (i / 2 == 0 ? 9f : -9f) * dir;
-            var line = CreateImage(root, $"SmashLine{i}", new Vector2(0f, 0f),
-                                   new Vector2(18f, 2.6f), new Color(1f, 1f, 1f, 0.9f), dot);
-            line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, ang);
-            line.rectTransform.DOAnchorPos(new Vector2(dir * 26f, (i / 2 == 0 ? 4f : -3f)), 0.26f)
-                .SetEase(Ease.OutQuad).SetUpdate(true);
-            line.rectTransform.DOSizeDelta(new Vector2(44f, 1.2f), 0.26f).SetUpdate(true);
-            line.DOFade(0f, 0.30f).SetEase(Ease.InQuad).SetUpdate(true);
+            float y = -6f + i * 7f;
+            var line = CreateImage(root, $"SmashStreak{i}", new Vector2(-10f + i * 8f, y),
+                                   new Vector2(40f, 4f), new Color(1f, 1f, 1f, 0f),
+                                   Fx("FX_Streak") ?? Dot());
+            line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, (i % 2 == 0 ? 1f : -1f) * 7f);
+            line.rectTransform.DOSizeDelta(new Vector2(92f, 3f), 0.24f).SetEase(Ease.OutQuad).SetUpdate(true);
+
+            DOTween.Sequence().SetUpdate(true).SetLink(line.gameObject)
+                   .AppendInterval(SMOKE_IN)
+                   .Append(line.DOFade(0.6f, 0.04f))
+                   .AppendInterval(0.06f)
+                   .Append(line.DOFade(0f, 0.16f));
         }
 
-        // ④ 청록 4각별 — 원작은 크고 또렷한 별이 여럿 흩어져 위로 뜬다.
+        // ④ 청록 4각별 — 타격부터 0.6초까지, 0.2초에 가장 많다
         for (int i = 0; i < STAR_N; i++)
         {
-            float rad = (360f / STAR_N * i + 14f) * Mathf.Deg2Rad;
-            var dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad) * 0.7f);
-            float sz = UnityEngine.Random.Range(11f, 17f);
-            var sp = CreateImage(root, $"SmashSpark{i}", Vector2.zero,
-                                 new Vector2(sz, sz), new Color(0.62f, 1f, 0.94f, 1f), star);
-            sp.rectTransform.DOAnchorPos(dir * (30f + (i % 4) * 11f) + new Vector2(0f, 10f), 0.62f)
+            float rad = (360f / STAR_N * i + UnityEngine.Random.Range(-18f, 18f)) * Mathf.Deg2Rad;
+            var dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad) * 0.62f);
+            float sz = UnityEngine.Random.Range(8f, 13f);
+
+            var sp = CreateImage(root, $"SmashStar{i}", dir * 8f, new Vector2(sz, sz),
+                                 new Color(0.62f, 1f, 0.94f, 0f), Fx("FX_Star") ?? Star());
+            float life = UnityEngine.Random.Range(0.38f, STAR_LIFE);
+            sp.rectTransform.DOAnchorPos(dir * UnityEngine.Random.Range(28f, 58f), life)
               .SetEase(Ease.OutQuad).SetUpdate(true);
-            sp.rectTransform.DOScale(0.3f, 0.62f).SetEase(Ease.InQuad).SetUpdate(true);
-            sp.DOFade(0f, 0.62f).SetEase(Ease.InQuad).SetUpdate(true);
+
+            DOTween.Sequence().SetUpdate(true).SetLink(sp.gameObject)
+                   .AppendInterval(UnityEngine.Random.Range(0f, 0.12f))
+                   .Append(sp.DOFade(1f, 0.05f))
+                   .AppendInterval(life * 0.45f)
+                   .Append(sp.DOFade(0f, life * 0.45f).SetEase(Ease.InQuad));
+            sp.rectTransform.DOScale(0.4f, life).SetEase(Ease.InQuad).SetUpdate(true);
         }
 
         return 0.75f;
     }
 
-    const float ORB_SIZE    = 47f;    // 원작 실측 90 ref-px
-    const float ORB_HOLD    = 0.10f;  // 포화 상태로 버티는 시간 (두 프레임)
-    const float ORB_LIFE    = 0.22f;
-    const float SMOKE_V     = 0.6698f; // 원작 wind startColor
-    const float SMOKE_N     = 14f;
-    const float SMOKE_REACH = 140f;    // 원작 연기 폭 342 ref-px ≒ ±90유닛
-    const float SMOKE_DELAY = 0.08f;  // 구체가 먼저 번쩍이고 나서 피어오른다
-    const float SMOKE_PEAK  = 0.10f;  // ⚠️ 1.0 이면 기여 휘도가 원작의 3배가 된다
-    const float SMOKE_LIFE  = 0.34f;  // 원작은 0.4초면 바닥으로 돌아온다
-    const float SMOKE_RISE  = 12f;    // 연기 무리의 바탕 높이
-    const int   STAR_N      = 8;
+    // 원작 아틀라스에서 잘라 등록한 조각들(Tools/Forge/타격 스프라이트 등록).
+    static readonly System.Collections.Generic.Dictionary<string, Sprite> s_fx =
+        new System.Collections.Generic.Dictionary<string, Sprite>();
+
+    static Sprite Fx(string key)
+    {
+        if (s_fx.TryGetValue(key, out var sp) && sp != null) return sp;
+        sp = Managers.Resource != null ? Managers.Resource.Load<Sprite>(key + ".sprite") : null;
+        s_fx[key] = sp;
+        return sp;
+    }
 
     /// <summary>결과 화면의 빛줄기.
     ///
@@ -541,13 +586,16 @@ public static class UIFx
     ///    지적한 것이 이것이다.
     /// 실측: 방출 원반 반경 86유닛, 속도 위 32.5유닛/s · 좌 9.7유닛/s, 수명 0.5~1.0초,
     ///       크기 1.0~2.5유닛, 색 주황(1,0.34,0) 과 옅은 노랑이 반반, 등속.</summary>
-    public static void SpawnEmber(RectTransform host, float halfRadius = 86f)
+    public static void SpawnEmber(RectTransform host, float unused = 0f)
     {
         if (host == null) return;
 
-        float ang = UnityEngine.Random.value * Mathf.PI * 2f;
-        float rad = halfRadius * Mathf.Sqrt(UnityEngine.Random.value);   // 원 안 균등 분포
-        var pos = new Vector2(Mathf.Cos(ang) * rad, EMBER_ORIGIN_Y + Mathf.Sin(ang) * rad * 0.85f);
+        // ⚠️ 예전엔 반경 86유닛짜리 **원 안**에만 뿌렸다. 그래서 불티가 무대 아래쪽에
+        //    동그랗게 뭉쳐 보였고 오른쪽 끝은 텅 비었다("특정 공간만 뿌려져 이질적이다").
+        //    원작을 재 보면 화면 가로 전체(ref x40~344)와 세로 y360~660 에 걸쳐
+        //    **드문드문** 흩어진다 — 프레임당 23화소로, 우리(65)의 3분의 1이다.
+        var pos = new Vector2(UnityEngine.Random.Range(-EMBER_HALF_W, EMBER_HALF_W),
+                              UnityEngine.Random.Range(EMBER_BOTTOM, EMBER_TOP));
 
         float sz = UnityEngine.Random.Range(1.0f, 2.5f);
         bool light = UnityEngine.Random.value < 0.5f;
@@ -569,7 +617,11 @@ public static class UIFx
         seq.OnComplete(() => { if (img != null) UnityEngine.Object.Destroy(img.gameObject); });
     }
 
-    const float EMBER_ORIGIN_Y = -86.5f;   // 원작 Btn Embers 의 자리(무대 바닥)
+    // 원작 실측(ref-px → 캔버스유닛): 가로 x40~344 = ±88, 세로 y360~660 = +35 ~ -122
+    const float EMBER_HALF_W = 88f;
+    const float EMBER_TOP    = 30f;
+    const float EMBER_BOTTOM = -122f;
+
 
     // ────────────────────────────────────────
     //  절차적 스프라이트 — 에셋을 늘리지 않고 모양을 만든다

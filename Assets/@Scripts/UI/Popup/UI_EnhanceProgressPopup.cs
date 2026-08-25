@@ -417,10 +417,19 @@ public class UI_EnhanceProgressPopup : UI_Popup
         var host = GetObject((int)GameObjects.Icon)?.transform.parent as RectTransform;
         if (host == null) return;
 
-        var icon = GetObject((int)GameObjects.Icon)?.transform as RectTransform;
-        Vector2 at = icon != null ? icon.anchoredPosition + new Vector2(0f, -15f) : Vector2.zero;
-        UIFx.PlayBurst(host, at, UIFx.FxType.ForgeSmash);
+        // ⚠️ 손으로 그린 대체품을 쓰지 않는다. 원작의 타격은 `FX_splash_crystal_air` 를
+        //    씬에서 값만 바꿔 쓴 것이고, 그 팩이 우리 프로젝트에도 그대로 들어와 있다
+        //    (Tools/Forge/타격 파티클 프리팹 생성 → FX_HammerSmash).
+        //    재질이 캔버스 경로에서 실제로 그려진다 — 물약창이 같은 팩을 이미 그렇게 쓴다.
+        //    그동안 못 쓴 것은 우리 프리팹의 GlowDot_01_1 이 built-in Additive 라
+        //    UIParticle 로도 아무것도 안 나왔기 때문이다(출처가 다른 에셋이었다).
+        //  버스트 설계라 강제 방출(emit)은 0이어야 원작 타이밍이 뭉개지지 않는다.
+        UIFx.PlayBurst(host, new Vector2(0f, IMPACT_Y), UIFx.FxType.ForgeSmash);
     }
+
+    const float IMPACT_Y    = -23f;   // 모루 상판 위 약 7유닛 (원작 In-Frame 기준 -25)
+    const float IMPACT_LIFE  = 1.05f;  // 원작 인스턴스의 자멸 타이머
+    const float IMPACT_SCALE = 24f;    // 연기 폭을 원작(342 ref-px)에 맞춘 값
 
     #endregion
 
@@ -949,9 +958,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
     //  대장간이 아직 달아 있다는 신호라 이게 없으면 화면이 죽은 그림처럼 보인다.
     //  프리팹의 Dust_01은 월드 파티클이라 캔버스에 안 그려진다 — 빛줄기와 같은 이유로
     //  UI Image 몇 장을 주기적으로 띄워 대신한다.
-    // 원작 결과 화면은 불티가 훨씬 촘촘하다(프레임마다 20~30점).
-    const float EMBER_INTERVAL = 0.08f;
-    const int   EMBER_PER_TICK = 4;
+    // 원작 실측: 결과 화면에서 불티가 프레임당 23화소다(우리 65 → 3분의 1로).
+    const float EMBER_INTERVAL = 0.11f;
+    const int   EMBER_PER_TICK = 2;
 
     IEnumerator CoEmbers()
     {

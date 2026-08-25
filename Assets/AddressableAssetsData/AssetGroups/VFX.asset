@@ -21,6 +21,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0175566d649ad5048b027f2bd6404b7e
+    m_Address: FX_Wisp2.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1e643886070694445b00a9a7dc4c564a
     m_Address: Basic Crit
     m_ReadOnly: 0
@@ -33,11 +38,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 33445fbf2c714b544b9aab21acad45a3
+    m_Address: FX_Cloud.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d556e46e0d8cd34fbb1364c896a69f6
     m_Address: FX_splash_spark_air
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65855c5d90b85644a8ae68cc6835795a
+    m_Address: FX_Wisp3.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 733e6d002d352f740ad5630d66983ce2
+    m_Address: FX_HammerSmash
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 77ae2f73c52305445a555cf89deec99f
     m_Address: FX_hit_01
@@ -51,17 +71,37 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8387035bbcc0702468d202cf762f86c4
+    m_Address: FX_Streak.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 883f85f97cfe88548904909588b145a1
+    m_Address: FX_Star.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a6045a72f9770eb4da64fb05bd5fd0a6
     m_Address: Player Level Up Ef
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a6129d202e1a0764b9dc8e1beed061bf
+    m_Address: FX_Wisp1.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ac4cf49d13e8830488fd20a29a1f195e
     m_Address: Star_01_Anim_13_a
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b60712f73fb77f24285b73b70646fb3c
+    m_Address: FX_Orb.sprite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bd50ea9b54da7cf4eb616b91f3287b94
     m_Address: FX_hit_04
