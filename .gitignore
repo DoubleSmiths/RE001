@@ -124,3 +124,6 @@ Documents/RE001_Share-main/
 # 시연 녹화 산출물 — 녹화기로 언제든 다시 뽑는다. 119MB를 히스토리에 남기지 않는다.
 # (수동으로 고른 Documents/RE001.mp4, UnlockAnim_*.mp4 는 기존대로 추적)
 Documents/Showcase_*.mp4
+
+# 원작 씬 파싱 캐시 (share_scene_dump.py 생성물)
+_tools/.share_scene.pkl
