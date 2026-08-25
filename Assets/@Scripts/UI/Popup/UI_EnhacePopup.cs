@@ -870,10 +870,13 @@ public class UI_EnhacePopup : UI_Popup
         }
         else
         {
-            // 대장장이 모션(성공/실패)을 보여준 뒤 결과 창으로 넘긴다.
-            //  ⚠️ 프리팹에 Forge Smith 애니메이터(Normal/Success/Fail 3.0~5.0초)가 저작돼 있는데
-            //     **코드가 한 번도 재생하지 않았다** — 강화를 눌러도 망치질 한 번 없이 결과창만 떴다.
-            StartCoroutine(CoSmithMotion(result));
+            // 원작대로 **결과창이 연출 전체를 맡는다.** [강화]를 누른 쪽은 창을 띄우기만 한다
+            //  (원작 그래프: 확률 굴림 → SetActive(EnhanceProgress Popup) → CustomEvent).
+            //  예전엔 여기서 망치질을 하고 끝나면 결과창으로 갈아탔는데, 그 이음매에서
+            //  백열 잔광이 끊기고 프리팹에 저작된 아이콘 궤적을 쓸 수 없었다.
+            _resolving = true;
+            Managers.UI.ShowPopupUI<UI_EnhanceProgressPopup>().SetInfo(result, _equip);
+            _resolving = false;
         }
         RefreshUI();   // 주문서 소진/확률/내구도/잠재력 즉시 갱신
     }

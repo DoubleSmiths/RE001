@@ -55,7 +55,16 @@ public static class UIFx
             default:             lifetime = 0.5f; break;
         }
 
-        UnityEngine.Object.Destroy(go, lifetime);
+        // 자식 이미지들의 트윈은 이 오브젝트가 사라져도 살아남아 파괴된 대상을 건드린다
+        //  (연출 한 번에 콘솔이 DOTween "has been destroyed" 수십 줄로 도배됐다).
+        //  지우기 전에 먼저 끊는다.
+        DOVirtual.DelayedCall(lifetime, () =>
+        {
+            if (go == null) return;
+            foreach (var t in go.GetComponentsInChildren<RectTransform>(true)) t.DOKill();
+            foreach (var im in go.GetComponentsInChildren<Image>(true)) im.DOKill();
+            UnityEngine.Object.Destroy(go);
+        }).SetUpdate(true);
         return go;
     }
 
@@ -295,16 +304,16 @@ public static class UIFx
         // ②-b 연기 — **어두운 회색**이다. 원작 wind startColor (0.6698,0.6698,0.6698),
         //      알파가 1에서 0.196으로 빠르게 죽어 검은 무대 위에서 그을음처럼 읽힌다.
         // 원작의 연기는 팝업 폭을 거의 다 덮는다(실측 반경 약 70유닛). 작게 뭉치면 얼룩으로 읽힌다.
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i < 15; i++)
         {
             float dir = i % 2 == 0 ? 1f : -1f;
-            float spread = 12f + (i / 2) * 13f;
+            float spread = 12f + (i / 2) * 12f;
             // 원작의 연기는 가로 띠가 아니라 **울퉁불퉁한 덩어리**다 — 위로도 크게 부풀고
             //  덩어리마다 크기와 높이가 제각각이라 사이사이 구멍이 보인다.
             float lift = UnityEngine.Random.Range(-4f, 34f) * (1f - spread / 90f) + i * 0.8f;
             float w = UnityEngine.Random.Range(22f, 38f);
             var puff = CreateImage(root, $"SmashSmoke{i}", new Vector2(dir * 4f, 0f),
-                                   new Vector2(w, w * UnityEngine.Random.Range(0.6f, 1.0f)),
+                                   new Vector2(w * 1.25f, w * UnityEngine.Random.Range(0.7f, 1.1f)),
                                    new Color(SMOKE_V, SMOKE_V, SMOKE_V, 1f), dot);
             puff.rectTransform.DOAnchorPos(new Vector2(dir * spread, lift), SMOKE_LIFE)
                 .SetEase(Ease.OutQuad).SetUpdate(true);
@@ -352,6 +361,59 @@ public static class UIFx
     const float RING_LIFE  = 0.30f;
     const float SMOKE_V    = 0.6698f;   // 원작 wind startColor
     const float SMOKE_LIFE = 0.70f;
+
+    /// <summary>결과 확정의 흰 링. 원작 f216 실측:
+    ///  지름 약 55 ref-px(=29유닛)의 **테두리 링**이 0.5초에 걸쳐 1.6배로 퍼지며 옅어지고,
+    ///  그 안에서 X자(대각 두 줄)가 좌우로 뻗는다. 배경이 이미 흰 회색이라
+    ///  꽉 찬 원반으로는 보이지 않는다 — 링이어야 읽힌다.</summary>
+    public static void PlaySuccessRing(RectTransform parent, Vector2 localPos)
+    {
+        if (parent == null) return;
+
+        var go = new GameObject("UIFx_SuccessRing", typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        var root = go.GetComponent<RectTransform>();
+        root.anchorMin = root.anchorMax = new Vector2(0.5f, 0.5f);
+        root.pivot = new Vector2(0.5f, 0.5f);
+        root.anchoredPosition = localPos;
+        root.sizeDelta = Vector2.zero;
+        root.SetAsLastSibling();
+
+        var ring = CreateImage(root, "Ring", Vector2.zero, new Vector2(RING_SIZE, RING_SIZE),
+                               new Color(1f, 1f, 1f, 1f), Ring());
+        ring.transform.localScale = Vector3.one * 0.55f;
+        ring.transform.DOScale(1.6f, RING_DUR).SetEase(Ease.OutQuad).SetUpdate(true);
+        ring.DOFade(0f, RING_DUR).SetEase(Ease.InQuad).SetUpdate(true);
+
+        // 링 안의 X자 — 좌우로 뻗는 두 줄
+        for (int i = 0; i < 2; i++)
+        {
+            float ang = i == 0 ? 18f : -18f;
+            var line = CreateImage(root, $"XFlash{i}", Vector2.zero,
+                                   new Vector2(10f, 2.2f), new Color(1f, 1f, 1f, 1f), Dot());
+            line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, ang);
+            line.rectTransform.DOSizeDelta(new Vector2(RING_SIZE * 1.5f, 1.1f), RING_DUR * 0.6f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
+            line.DOFade(0f, RING_DUR * 0.75f).SetEase(Ease.InQuad).SetUpdate(true);
+        }
+
+        // 중심의 세로 마름모 — 원작 링 한가운데의 밝은 코어
+        var core = CreateImage(root, "Core", Vector2.zero, new Vector2(6f, 22f),
+                               new Color(1f, 1f, 1f, 1f), Star());
+        core.transform.DOScale(1.5f, RING_DUR * 0.5f).SetEase(Ease.OutQuad).SetUpdate(true);
+        core.DOFade(0f, RING_DUR * 0.6f).SetEase(Ease.InQuad).SetUpdate(true);
+
+        DOVirtual.DelayedCall(RING_DUR + 0.1f, () =>
+        {
+            if (go == null) return;
+            foreach (var rt in go.GetComponentsInChildren<RectTransform>(true)) rt.DOKill();
+            foreach (var im in go.GetComponentsInChildren<Image>(true)) im.DOKill();
+            UnityEngine.Object.Destroy(go);
+        }).SetUpdate(true);
+    }
+
+    const float RING_SIZE = 29f;    // 원작 실측 55 ref-px
+    const float RING_DUR  = 0.50f;
 
     // ────────────────────────────────────────
     //  불티 — 대장간 연출 내내 흩날린다

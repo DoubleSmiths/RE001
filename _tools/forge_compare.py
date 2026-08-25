@@ -17,9 +17,13 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from forge_norm import load_our, load_ref, normalize, REF_W, REF_H  # noqa: E402
+from forge_norm import load_our, load_ref, normalize, REF_W, REF_H, OUR_DIR  # noqa: E402
 
-OUR_FPS = 15.0
+# ⚠️ 녹화 프레임률은 고정이 아니다 — 캡처가 무거워 런마다 15~17fps 사이로 흔들린다.
+#    15로 못 박아 뒀더니 517장 녹화본에서 타격 간격이 1.00초 대신 1.20초로 읽혔다.
+#    실제 장수 / 녹화 길이로 매번 다시 구한다.
+DEMO_SECONDS = 30.0
+OUR_FPS = 15.0   # 실행 시 실제 장수로 덮어쓴다
 REF_FPS = 10.0
 STAGE = (slice(380, 500), slice(110, 240))   # 모루 둘레 — 타격 섬광이 여기서 터진다
 
@@ -81,10 +85,33 @@ def summarize(rows, fps, tag):
             if r[0] >= want:
                 settle = r
                 break
-    return dict(tag=tag, fps=fps, blackout=bo, strikes=st, peak=peak, settle=settle, rows=rows)
+    return dict(tag=tag, fps=fps, blackout=bo, strikes=st, peak=peak, settle=settle, rows=rows,
+                stamps=STAMPS if tag == '우리' else None)
+
+
+STAMPS = {}
+
+
+def load_stamps():
+    """녹화기가 남긴 프레임별 실제 시각. 없으면 평균 fps로 물러선다."""
+    p = os.path.join(OUR_DIR, 'frames.tsv')
+    if not os.path.exists(p):
+        return {}
+    out = {}
+    for i, line in enumerate(open(p, encoding='utf-8')):
+        if i == 0:
+            continue
+        a = line.split('	')
+        if len(a) >= 2:
+            out[int(a[0])] = float(a[1])
+    return out
 
 
 def rel(s, n):
+    if s.get('stamps'):
+        st = s['stamps']
+        if n in st and s['blackout'] in st:
+            return st[n] - st[s['blackout']]
     return (n - s['blackout']) / s['fps']
 
 
@@ -137,6 +164,20 @@ def report(a, b):
     return '\n'.join(L)
 
 
+def frame_at(s, t):
+    """암전 기준 t초에 해당하는 프레임 번호."""
+    st = s.get('stamps')
+    if st and s['blackout'] in st:
+        want = st[s['blackout']] + t
+        best, bd = s['blackout'], 1e9
+        for n, v in st.items():
+            d = abs(v - want)
+            if d < bd:
+                bd, best = d, n
+        return best
+    return int(round(s['blackout'] + t * s['fps']))
+
+
 def strip(a, b, out, marks=None, crop=(60, 330, 230, 210), zoom=2):
     """암전을 0으로 맞춘 같은 시각의 프레임을 위=원작 / 아래=우리 로 늘어놓는다."""
     if marks is None:
@@ -145,7 +186,7 @@ def strip(a, b, out, marks=None, crop=(60, 330, 230, 210), zoom=2):
     sheet = Image.new('RGB', (w * len(marks), h * 2 + 6), (40, 40, 40))
     for i, t in enumerate(marks):
         rn = int(round(a['blackout'] + t * a['fps']))
-        on = int(round(b['blackout'] + t * b['fps']))
+        on = frame_at(b, t)
         try:
             sheet.paste(load_ref(rn).crop((x, y, x + w, y + h)), (i * w, 0))
         except (IOError, OSError):
@@ -165,8 +206,19 @@ def main():
     ap.add_argument('--marks')
     a = ap.parse_args()
 
+    import glob
+    shots = len(glob.glob(os.path.join(OUR_DIR, '*.png')))
+    fps = (shots / DEMO_SECONDS) if shots else OUR_FPS
+    print('녹화 %d장 -> %.2f fps' % (shots, fps))
+    print()
+
+    global STAMPS
+    STAMPS = load_stamps()
+    if STAMPS:
+        print('프레임 시각 기록 %d개 사용' % len(STAMPS))
+
     ref = summarize(curve(load_ref, 150, 300), REF_FPS, '원작')
-    our = summarize(curve(load_our, 120, 400, norm=True), OUR_FPS, '우리')
+    our = summarize(curve(load_our, 120, 460, norm=True), fps, '우리')
     if ref is None or our is None:
         print('암전을 찾지 못했다 — 녹화 구간을 확인하라')
         return

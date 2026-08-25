@@ -61,6 +61,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
         EnhAttDetail,            // 내구도 + "능력치 변화" 라벨 묶음
         AttRealText,
         God_ray_02,              // 빛줄기 (월드 ParticleSystem → UIParticle 필요)
+        Floor,                   // 모루 밑 돌 아치 — 타격마다 눌린다(저작 PunchPosition)
+        forAnim,                 // 아이콘 판 묶음 — 담금질에 1.7초 잔진동
+        Flash,                   // 아이콘 판 위 흰 섬광(타격 순간, autoPlay Fade 0.25 InBack)
     }
 
     #endregion
@@ -146,8 +149,244 @@ public class UI_EnhanceProgressPopup : UI_Popup
             wIcon.rectTransform.localScale = Vector3.one;
         }
 
-        StartCoroutine(CoPlay());
+        StartCoroutine(CoCeremony());
     }
+
+    #region 연출 대본 (원작 EnhanceProgress Popup 그래프)
+
+    // ⚠️ 원작은 **망치질부터 결과까지 이 창 하나**에서 한다. [강화] 버튼 쪽 그래프는
+    //    확률만 굴리고 `SetActive(EnhanceProgress Popup, true)` + CustomEvent 를 던질 뿐이다.
+    //    우리 포트는 강화창이 망치질을 하고 나중에 이 창으로 갈아탔다 — 그래서
+    //    ① 창이 바뀌는 순간 백열 잔광이 뚝 끊기고
+    //    ② 프리팹에 저작된 아이콘 궤적(id 1~9)을 못 쓰고 코드 상수로 베껴야 했다
+    //       (저작 트윈은 **처음 재생될 때** 시작값을 잡으므로, 한 창에서 이어 놀 때만 맞는다).
+    //
+    // 원작 그래프의 시각 (T=0 은 이 창이 켜지는 순간):
+    //   T+0.00  Bg Color isFrom(0,0,0,0)→검정 0.25초 InOutQuad + PlaySFX
+    //   T+0.10  Icon id"4"  PunchScale
+    //   T+0.40  Icon id"2"  →(0,0) 0.3초 InBack      ← 모루 위로 내려앉는다
+    //   T+0.70  Hammer_IncludeAnim.Animator.Play("Success"/"Fail")
+    //   클립 이벤트가 나머지를 몬다(OnSmithAnimEvent).
+    const float T_PUNCH  = 0.10f;
+    const float T_LAND   = 0.40f;
+    const float T_SMITH  = 0.70f;
+    // 원작 프레임을 재 보면 암전은 **거의 한 프레임 컷**이다(f172 17.1 → f173 9.2).
+    //  저작값 0.25초를 그대로 쓰면 우리 쪽은 네 프레임에 걸쳐 흐려져, 그동안 강화창의
+    //  확률·재화·내구도가 그대로 비친다. 원작처럼 즉시 덮고 나머지만 짧게 다듬는다.
+    //  0.08초로도 두세 프레임이 걸려 강화창이 비쳤다. 원작처럼 **완전한 컷**으로 덮는다.
+    const float BLACKOUT_IN = 0f;
+
+    // 무대를 캔버스 밖까지 늘린다 — 뒤쪽 마을 배경과 HUD는 다른 캔버스라 이걸로만 덮인다.
+    const float BG_OVERSCAN = 600f;
+
+    bool _ceremony;
+    AnimEventSink _smithSink;
+
+    IEnumerator CoCeremony()
+    {
+        SetGroupActive(GameObjects.PotenGroup, false);
+        var exit = GetButton((int)Buttons.ExitBtn);
+        if (exit != null) exit.interactable = false;      // 연출 중엔 닫히지 않는다
+
+        // ── T+0 : 암전 ──
+        var bg = GetObject((int)GameObjects.Bg)?.GetComponent<Image>();
+        if (bg != null)
+        {
+            var rt = bg.rectTransform;
+            rt.offsetMin = new Vector2(-BG_OVERSCAN, -BG_OVERSCAN);
+            rt.offsetMax = new Vector2(BG_OVERSCAN, BG_OVERSCAN);
+            bg.DOKill();
+            if (BLACKOUT_IN <= 0f) bg.color = Color.black;
+            else
+            {
+                bg.color = new Color(0f, 0f, 0f, 0f);
+                bg.DOColor(Color.black, BLACKOUT_IN).SetEase(Ease.InOutQuad).SetUpdate(true);
+            }
+            bg.raycastTarget = true;
+        }
+        Managers.Sound?.PlaySFX("SFX_SharpThin");
+
+        // 아이콘은 대기 자세(+20)에서 시작한다 — 저작 id"2"가 여기서 (0,0)으로 내려간다.
+        var icon = GetObject((int)GameObjects.Icon)?.transform as RectTransform;
+        if (icon != null) { icon.DOKill(); icon.anchoredPosition = new Vector2(0f, 20f); icon.localScale = Vector3.one; }
+        ResetIconFlash();
+
+        StartCoroutine(CoEmbers());          // 화로는 처음부터 달아 있다
+
+        yield return Wait(T_PUNCH);
+        PlayAuthoredSelf(GameObjects.Icon, "4");
+
+        yield return Wait(T_LAND - T_PUNCH);
+        PlayAuthoredSelf(GameObjects.Icon, "2");          // 모루 위로
+
+        yield return Wait(T_SMITH - T_LAND);
+
+        // ── T+0.70 : 대장장이 ──
+        var smith = GetObject((int)GameObjects.Hammer_IncludeAnim);
+        var anim = smith != null ? smith.GetComponent<Animator>() : null;
+        float wait = 5.0167f;
+
+        if (anim != null)
+        {
+            HookSmithEvents(smith);
+            _ceremony = true;
+            string state = _result.Success ? "Success" : "Fail";
+            anim.Play(state, 0, 0f);
+            foreach (var c in anim.runtimeAnimatorController.animationClips)
+                if (c.name == state) { wait = c.length; break; }
+        }
+
+        yield return Wait(wait);
+
+        _ceremony = false;
+        if (anim != null) anim.Play("Normal", 0, 0f);
+
+        yield return CoPlay();
+    }
+
+    void HookSmithEvents(GameObject smith)
+    {
+        var sink = smith.GetComponent<AnimEventSink>();
+        if (sink == null) sink = smith.AddComponent<AnimEventSink>();
+        if (ReferenceEquals(sink, _smithSink)) return;
+
+        if (_smithSink != null) _smithSink.OnAnimEvent -= OnSmithAnimEvent;
+        _smithSink = sink;
+        _smithSink.OnAnimEvent += OnSmithAnimEvent;
+    }
+
+    // 클립(Forge Smith Success/Fail 5.0167초)이 stringParameter로 대본을 들고 있다.
+    //  이름·시각은 클립이 정하고, **무엇을 할지는 전부 프리팹에 저작된 트윈**이다.
+    static readonly (string ev, string sfx)[] EVENT_SFX =
+    {
+        ("SmashSound",  "SFX_EnhanceHammer"),
+        ("Curious",     "SFX_CuriousCaution2"),
+        ("Serious",     "SFX_Serious"),
+        ("Success",     "SFX_Success(Base)"),
+        ("FailSound",   "SFX_Fail"),
+    };
+
+    void OnSmithAnimEvent(string id)
+    {
+        if (!_ceremony || string.IsNullOrEmpty(id)) return;
+
+        foreach (var (ev, sfx) in EVENT_SFX)
+            if (ev == id) { Managers.Sound?.PlaySFX(sfx); break; }
+
+        switch (id)
+        {
+            // 타격 — 원작 node[172] 사슬 그대로
+            case "Shake":
+            case "ShakeLast":
+                PlayAuthoredSelf(GameObjects.Icon, "1");             // 판이 자리에서 떤다 (4,4) 0.25초
+                PopIconFlash();                                  // 판 위 흰 섬광 — 0.25초에 걷힌다
+                PlayAuthored(GameObjects.Hammer_IncludeAnim, ""); // 망치도 떤다 (2.5,2.5)
+                PlayAuthored(GameObjects.Floor, "");             // 모루 밑이 눌린다 (2,1.5) 0.3초
+                PopImpactFx();
+                break;
+
+            // 담금질 — 화면이 달아오르고 아이콘이 떠오른다
+            case "ChargeSuccess":
+            case "ChargeFail":
+                PlayAuthored(GameObjects.Bg, "51");              // 배경 →회색 0.5882 / 1.4초
+                PlayAuthoredSelf(GameObjects.Icon, "5");             // →(0,50) + 1.4배 / 1.4초
+                PlayAuthored(GameObjects.forAnim, "");           // 판 잔진동 1.7초
+                PlayAuthored(GameObjects.SuccessFlash, "1");     // 판이 하얗게 탄다 →0.627 / 1.4초
+                PlayAuthored(GameObjects.Hammer_IncludeAnim, "");
+                PlayAuthored(GameObjects.Floor, "");
+                PopImpactFx();
+
+                DOVirtual.DelayedCall(CHARGE_TO_FULL,
+                    () => PlayAuthored(GameObjects.SuccessFlash, "2")).SetUpdate(true);   // →1.0 / 0.3초
+                DOVirtual.DelayedCall(CHARGE_TO_OUT,
+                    () => PlayAuthored(GameObjects.SuccessFlash, "3")).SetUpdate(true);   // →0 / 0.5초
+                break;
+
+            // 결과 확정 — 백열이 계단 한 칸 뛰고, 아이콘이 한 번 더 튄다
+            case "Success":
+                PlayAuthored(GameObjects.Bg, "52");              // →회색 0.8627 / 0.15초
+                PlayAuthoredSelf(GameObjects.Icon, "6");             // →(0,80) / 0.3초 OutBack
+                PopSuccessRing();                                // 모루 위에 흰 링 + X자 섬광
+                DOVirtual.DelayedCall(PEAK_TO_DARK,
+                    () => PlayAuthored(GameObjects.Bg, "53")).SetUpdate(true);            // →검정 / 1.8초
+                break;
+
+            case "Fail":
+                PlayAuthored(GameObjects.Bg, "54");              // →검정 / 0.3초
+                PlayAuthoredSelf(GameObjects.Icon, "8");             // →(0,0) 모루 위로 툭
+                break;
+        }
+    }
+
+    // 원작 Timer: ChargeSuccess +1.501 소리 → +0.21 SuccessFlash id"2" → +0.31 id"3"
+    const float CHARGE_TO_FULL = 1.711f;
+    const float CHARGE_TO_OUT  = 2.021f;
+    const float PEAK_TO_DARK   = 0.20f;
+
+    /// <summary>타격 순간 판 위에 터지는 흰 섬광.
+    ///
+    /// ⚠️ 저작 트윈(Fade→0, 0.25초 InBack, autoPlay)에 맡겼더니 판이 **하얗게 굳은 채** 남았다.
+    ///    껐다 켜는 것만으로는 알파가 1로 되돌아가지 않아 두 번째 타격부터 어긋난다.
+    ///    직접 1로 올렸다가 걷고, 끝나면 꺼 둔다.</summary>
+    void PopIconFlash()
+    {
+        var go = GetObject((int)GameObjects.Flash);
+        var img = go != null ? go.GetComponent<Image>() : null;
+        if (img == null) return;
+
+        go.SetActive(true);
+        img.DOKill();
+        var c = img.color; c.a = 1f; img.color = c;
+        img.DOFade(0f, ICON_FLASH_OUT).SetEase(Ease.InBack).SetUpdate(true)
+           .OnComplete(() => { if (go != null) go.SetActive(false); });
+    }
+
+    const float ICON_FLASH_OUT = 0.25f;   // 저작값
+
+    /// <summary>판 위 흰 덮개들을 처음 상태로. 연속 강화에서 하얗게 굳어 있지 않도록.</summary>
+    void ResetIconFlash()
+    {
+        // 저작 autoPlay 트윈이 팝업이 켜지는 프레임에 이미 돌기 시작한다 —
+        //  알파만 0으로 눌러 두면 그 트윈이 도로 올려 놓는다. 끊고, 꺼 둔다.
+        foreach (var n in new[] { GameObjects.SuccessFlash, GameObjects.Flash_USETHIS, GameObjects.Flash })
+        {
+            var go = GetObject((int)n);
+            var img = go != null ? go.GetComponent<Image>() : null;
+            if (img == null) continue;
+            img.DOKill();
+            var c = img.color; c.a = 0f; img.color = c;
+            if (n != GameObjects.SuccessFlash) go.SetActive(false);
+        }
+    }
+
+    /// <summary>결과가 확정되는 순간, 모루 위에서 **흰 링이 퍼지고 그 안이 X자로 번쩍인다.**
+    /// 원작 프레임(f216)에서 가장 눈에 띄는 그림인데 우리에겐 통째로 없었다 —
+    /// 흰 배경 위라 원반이 아니라 **테두리만 있는 링**이어야 보인다.</summary>
+    void PopSuccessRing()
+    {
+        var host = GetObject((int)GameObjects.Icon)?.transform.parent as RectTransform;
+        if (host == null) return;
+
+        var icon = GetObject((int)GameObjects.Icon)?.transform as RectTransform;
+        Vector2 at = icon != null ? new Vector2(icon.anchoredPosition.x, RING_Y) : new Vector2(0f, RING_Y);
+        UIFx.PlaySuccessRing(host, at);
+    }
+
+    const float RING_Y = -22f;   // 모루 상판 바로 위 (원작 실측 ref y470 ≈ -22유닛)
+
+    /// <summary>타격 순간의 그림 — 흰 원반·링·연기·청록 반짝임.
+    /// (프리팹의 GlowDot 파티클은 Mobile/Particles/Additive라 캔버스에서 아무것도 안 그린다)</summary>
+    void PopImpactFx()
+    {
+        var host = GetObject((int)GameObjects.Icon)?.transform.parent as RectTransform;
+        if (host == null) return;
+
+        var icon = GetObject((int)GameObjects.Icon)?.transform as RectTransform;
+        Vector2 at = icon != null ? icon.anchoredPosition + new Vector2(0f, -15f) : Vector2.zero;
+        UIFx.PlayBurst(host, at, UIFx.FxType.ForgeSmash);
+    }
+
+    #endregion
 
     IEnumerator CoPlay()
     {
@@ -182,29 +421,10 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         FillStatTable(data);
 
-        // ⚠️ 아이콘 자세는 **창이 열리는 첫 프레임에** 잡아야 한다.
-        //    0.2초 뒤에 잡았더니, 그 사이 아이콘이 제자리(모루 위)에 그려졌다가
-        //    갑자기 꼭대기로 튀어올랐다 — 강화창에서 떠 있던 아이콘이 창이 바뀌는 순간
-        //    383px 뚝 떨어졌다가 280px 되올라간 것이다(좌표 로그로 확인).
-        //  원본의 아이콘은 담금질에 떠오르고(id 5: +50, 1.4배) 결과가 확정될 때 한 번 더
-        //  튀어오른다(id 6: +80). 결과창은 **그 꼭대기에서** 열려 내려앉기를 시작한다.
-        SnapAuthored(GameObjects.Icon, "5");      // 위치 +50 · 크기 1.4배
-        SnapAuthored(GameObjects.Icon, "6");      // 거기서 한 번 더 +80까지
-
         // ── ① +0.20s : 제목/이름 · 아이콘 하강 · 빛줄기 ──
         yield return Wait(STEP_TITLE);
 
-        StartCoroutine(CoEmbers());               // 화로는 계속 달아 있다 — 불티가 화면 내내 흩날린다
-
-        // 강화창에서 시작된 백색 잔광이 아직 남아 있는 시점에 이 창이 열린다.
-        //  까만 배경으로 덮어 버리면 그 잔광이 한 프레임에 뚝 끊긴다 — 이어받아 마저 걷는다.
-        var bg = GetObject((int)GameObjects.Bg)?.GetComponent<Image>();
-        if (bg != null)
-        {
-            bg.DOKill();
-            bg.color = new Color(WASH_LEFT, WASH_LEFT, WASH_LEFT, 1f);
-            bg.DOColor(Color.black, WASH_TAIL).SetEase(Ease.OutQuad).SetUpdate(true);
-        }
+        // 배경은 이미 저작 id"53"이 1.8초에 걸쳐 검정으로 몰고 있다 — 손대지 않는다.
         Reveal(GameObjects.Flash_USETHIS);
         Reveal(GameObjects.SuccessTxtGroup);      // 제목·이름의 autoPlay 연출이 여기서 시작된다
 
@@ -212,7 +432,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
         Reveal(GameObjects.Img_SuccessTxtGroup_02);
         Reveal(GameObjects._2);
 
-        DescendIcon();                            // 모루 위로 떴던 아이콘이 내려앉으며 원래 크기로
+        PlayAuthoredSelf(GameObjects.Icon, "7");      // 저작 id"7" — 내려앉으며 원래 크기로 (1.2초/1.0초)
         ShowGodRays();
 
         // ── ② +1.70s : 내구도 + "능력치 변화" 라벨 ──
@@ -294,7 +514,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         // 실패도 원본은 곧장 결과를 보여주지 않는다(FailDone → +0.3 → 아이콘 id 9 → …).
         yield return Wait(STEP_TITLE);
-        PlayAuthored(GameObjects.Icon, "9");
+        PlayAuthoredSelf(GameObjects.Icon, "9");
 
         // ⚠️ 실패창의 내구도 줄은 프리팹에서 **isFrom 트윈**이라, 만들어지는 순간
         //    알파 0으로 눌린 채 멈춰 있다. id "1"을 눌러 주지 않으면 글자를 넣어도 보이지 않는다
@@ -493,6 +713,24 @@ public class UI_EnhanceProgressPopup : UI_Popup
     //  Icon의 id 지도 (프리팹에서 읽음):
     //    1 흔들림(타격) / 2 제자리로 / 3 잔진동 / 4 펀치 / 5 떠오르며 확대(담금질)
     //    6 위로 튐(성공 순간) / 7 내려앉으며 원래 크기 / 8 즉시 원위치(실패) / 9 살짝 상승
+
+    /// <summary>그 오브젝트 **자신에게 붙은** 트윈만 재생한다.
+    ///
+    /// ⚠️ 하위까지 훑으면 안 되는 경우가 있다. Icon 아래 SuccessFlash 도 id "1"~"4" 를 갖고 있어,
+    ///    타격마다 `PlayAuthored(Icon,"1")` 이 그 **판을 하얗게 태우는 1.4초짜리 Color 트윈**까지
+    ///    같이 깨웠다 — 첫 타격 뒤로 장비 판이 계속 허옇게 뜬 채였다(실측 판 휘도 28 → 76~154).</summary>
+    void PlayAuthoredSelf(GameObjects node, string id)
+    {
+        var root = GetObject((int)node);
+        if (root == null) return;
+
+        foreach (var anim in root.GetComponents<DOTweenAnimation>())
+        {
+            if (anim.id != id) continue;
+            if (string.IsNullOrEmpty(id)) anim.tween?.Restart();
+            else anim.DORestartById(id);
+        }
+    }
 
     /// <summary>node 하위에서 그 id를 가진 저작 트윈을 처음부터 재생한다.</summary>
     void PlayAuthored(GameObjects node, string id)
@@ -734,9 +972,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
     const float RAY_RATE_MUL  = 2.2f;
     const float RAY_SPREAD    = 1.8f;
-    const float RAY_SIZE_MUL  = 1.90f;   // 더 키우면 갈래가 뭉쳐 한 덩어리가 된다
+    const float RAY_SIZE_MUL  = 2.15f;   // 더 키우면 갈래가 뭉쳐 한 덩어리가 된다
     const float RAY_ALPHA_MUL = 1.9f;
-    const float RAY_LIFT      = 48f;     // 제목을 덮지 않는 선
+    const float RAY_LIFT      = 30f;     // 원작 밴드는 모루까지 닿는다 — 너무 올리면 무대가 죽는다
 
     Coffee.UIExtensions.UIParticle _rayFx;
     Image _rayImg;

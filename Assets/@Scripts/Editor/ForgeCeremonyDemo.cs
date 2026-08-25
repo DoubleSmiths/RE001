@@ -16,8 +16,12 @@ public static class ForgeCeremonyDemo
     const float DURATION = 30f;
 
     static string s_dir;
-    static double s_next, s_end;
+    static double s_next, s_end, s_begin;
     static int s_idx;
+    // ⚠️ 캡처가 무거워 프레임률이 15~17fps 사이에서 **연출 구간에만 더 떨어진다.**
+    //    장수/30초로 평균 fps를 잡으면 그 구간 시각이 늘어져 읽힌다(타격 간격 1.00 → 1.20).
+    //    프레임마다 실제 시각을 같이 남겨 둔다.
+    static System.Text.StringBuilder s_stamps;
 
     [MenuItem("Test/Forge/연출 전 구간 녹화 (30초)")]
     static void Run()
@@ -33,6 +37,8 @@ public static class ForgeCeremonyDemo
         Directory.CreateDirectory(s_dir);
 
         s_idx = 0;
+        s_stamps = new System.Text.StringBuilder("frame\ttime\n");
+        s_begin = EditorApplication.timeSinceStartup;
         s_next = EditorApplication.timeSinceStartup;
         s_end = s_next + DURATION;
         EditorApplication.update -= Tick;
@@ -104,12 +110,14 @@ public static class ForgeCeremonyDemo
         if (now >= s_end)
         {
             EditorApplication.update -= Tick;
+            File.WriteAllText(Path.Combine(s_dir, "frames.tsv"), s_stamps.ToString());
             Debug.Log($"[Demo] 녹화 종료 — {s_idx}장 → {s_dir}");
             return;
         }
         if (now < s_next) return;
 
         s_next = now + INTERVAL;
+        s_stamps.AppendLine($"{s_idx}\t{(now - s_begin):0.0000}");
         ScreenCapture.CaptureScreenshot(Path.Combine(s_dir, $"{s_idx:0000}.png"));
         s_idx++;
     }
