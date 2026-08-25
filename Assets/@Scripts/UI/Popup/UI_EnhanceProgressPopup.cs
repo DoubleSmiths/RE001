@@ -213,13 +213,17 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         StartCoroutine(CoEmbers());          // 화로는 처음부터 달아 있다
 
-        yield return Wait(T_PUNCH);
+        // ⚠️ 상대 대기를 이어 붙이면 프레임 반올림이 **쌓인다**(15fps 녹화에서 0.2초까지 밀렸다).
+        //    시작 시각 기준 절대 시각까지 기다린다 — 오차가 누적되지 않고 늘 한 프레임 안이다.
+        float t0 = Time.realtimeSinceStartup;
+
+        yield return WaitUntil(t0, T_PUNCH);
         PlayAuthoredSelf(GameObjects.Icon, "4");
 
-        yield return Wait(T_LAND - T_PUNCH);
+        yield return WaitUntil(t0, T_LAND);
         PlayAuthoredSelf(GameObjects.Icon, "2");          // 모루 위로
 
-        yield return Wait(T_SMITH - T_LAND);
+        yield return WaitUntil(t0, T_SMITH);
 
         // ── T+0.70 : 대장장이 ──
         var smith = GetObject((int)GameObjects.Hammer_IncludeAnim);
@@ -231,9 +235,14 @@ public class UI_EnhanceProgressPopup : UI_Popup
             HookSmithEvents(smith);
             _ceremony = true;
             string state = _result.Success ? "Success" : "Fail";
-            anim.Play(state, 0, 0f);
             foreach (var c in anim.runtimeAnimatorController.animationClips)
                 if (c.name == state) { wait = c.length; break; }
+
+            // 남은 반 프레임까지 없앤다 — 늦게 깨어난 만큼 클립을 **미리 감아** 시작한다.
+            //  이러면 첫 타격이 팝업 열림 +1.033초(원작 그래프 값)에 정확히 떨어진다.
+            float over = Mathf.Clamp((Time.realtimeSinceStartup - t0) - T_SMITH, 0f, wait * 0.25f);
+            anim.Play(state, 0, over / wait);
+            wait -= over;
         }
 
         yield return Wait(wait);
@@ -288,7 +297,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
             // 담금질 — 화면이 달아오르고 아이콘이 떠오른다
             case "ChargeSuccess":
             case "ChargeFail":
-                PlayAuthored(GameObjects.Bg, "51");              // 배경 →회색 0.5882 / 1.4초
+                PlayBgStep("51");                                // 배경 →회색 0.5882 / 1.4초
                 PlayAuthoredSelf(GameObjects.Icon, "5");             // →(0,50) + 1.4배 / 1.4초
                 PlayAuthored(GameObjects.forAnim, "");           // 판 잔진동 1.7초
                 PlayAuthored(GameObjects.SuccessFlash, "1");     // 판이 하얗게 탄다 →0.627 / 1.4초
@@ -304,15 +313,15 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
             // 결과 확정 — 백열이 계단 한 칸 뛰고, 아이콘이 한 번 더 튄다
             case "Success":
-                PlayAuthored(GameObjects.Bg, "52");              // →회색 0.8627 / 0.15초
+                PlayBgStep("52");                                // →회색 0.8627 / 0.15초
                 PlayAuthoredSelf(GameObjects.Icon, "6");             // →(0,80) / 0.3초 OutBack
                 PopSuccessRing();                                // 모루 위에 흰 링 + X자 섬광
                 DOVirtual.DelayedCall(PEAK_TO_DARK,
-                    () => PlayAuthored(GameObjects.Bg, "53")).SetUpdate(true);            // →검정 / 1.8초
+                    () => PlayBgStep("53")).SetUpdate(true);                              // →검정 / 1.8초
                 break;
 
             case "Fail":
-                PlayAuthored(GameObjects.Bg, "54");              // →검정 / 0.3초
+                PlayBgStep("54");                                // →검정 / 0.3초
                 PlayAuthoredSelf(GameObjects.Icon, "8");             // →(0,0) 모루 위로 툭
                 break;
         }
@@ -358,6 +367,33 @@ public class UI_EnhanceProgressPopup : UI_Popup
             if (n != GameObjects.SuccessFlash) go.SetActive(false);
         }
     }
+
+    /// <summary>배경판의 저작 색 단계를 **밝기만 보정해서** 재생한다.
+    ///
+    /// 원작의 회색(0.5882 → 0.8627)을 그대로 쓰면 우리 화면이 더 밝게 합성된다
+    ///  (실측 정점 145.6 대 원작 137.9). 지속시간·이징·비율은 저작값 그대로 두고
+    ///  **절대 밝기에만** 계수를 곱한다 — 프리팹이 바뀌면 그대로 따라간다.</summary>
+    void PlayBgStep(string id)
+    {
+        var go = GetObject((int)GameObjects.Bg);
+        var img = go != null ? go.GetComponent<Image>() : null;
+        if (img == null) return;
+
+        foreach (var a in go.GetComponents<DOTweenAnimation>())
+        {
+            if (a.id != id) continue;
+
+            Color end = a.endValueColor;
+            end = new Color(end.r * BG_CAL, end.g * BG_CAL, end.b * BG_CAL, end.a);
+
+            img.DOKill();
+            img.DOColor(end, a.duration).SetEase(a.easeType).SetUpdate(true);
+            return;
+        }
+    }
+
+    // 실측으로 맞춘 계수: 정점 145.6 → 137.9 (검정 바닥 6.5 기준 (137.9-6.5)/(145.6-6.5))
+    const float BG_CAL = 0.945f;
 
     /// <summary>결과가 확정되는 순간, 모루 위에서 **흰 링이 퍼지고 그 안이 X자로 번쩍인다.**
     /// 원작 프레임(f216)에서 가장 눈에 띄는 그림인데 우리에겐 통째로 없었다 —
@@ -698,6 +734,13 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
     static WaitForSecondsRealtime Wait(float sec) => new WaitForSecondsRealtime(sec);
 
+    /// <summary>시작 시각 t0 기준 **절대 시각** at 까지 기다린다(오차가 누적되지 않는다).</summary>
+    static IEnumerator WaitUntil(float t0, float at)
+    {
+        float left = (t0 + at) - Time.realtimeSinceStartup;
+        if (left > 0f) yield return new WaitForSecondsRealtime(left);
+    }
+
     // 단계별 증가분(EquipEnhanceData) 누적 합 — 표시용
     int SumAtkBonus(int enhanceLevel)
     {
@@ -876,141 +919,29 @@ public class UI_EnhanceProgressPopup : UI_Popup
     ///  그래서 그 파티클이 쓰던 **텍스처를 그대로** 가져와 Image 한 장으로 깐다.
     ///
     /// 밝기는 숨을 쉰다 — 등장 시 최대의 45%, 0.9초 뒤 최소, 2초에 걸쳐 최대, 그 뒤 가라앉는다.
+    /// <summary>결과 화면의 빛줄기.
+    ///
+    /// 프리팹의 God_ray_02 는 **월드 ParticleSystem**이라 캔버스에 안 그려진다.
+    ///  UIParticle 로 살려도 원작 그림이 안 나왔다 — 원작 밴드는 위가 밝고 아래로 사라지는
+    ///  기울기를 갖는데 Stretched Billboard 는 심지 전체가 같은 밝기라, 위를 맞추면 모루까지
+    ///  환해지고(무대 구역 50 대 원작 28) 아래를 맞추면 위가 텅 빈다(14 대 66).
+    ///  원작 프레임에서 잰 2D 분포를 그대로 구워 한 장으로 깐다(UIFx.PlayGodRays).</summary>
     void ShowGodRays()
     {
         var rays = GetObject((int)GameObjects.God_ray_02);
-        if (rays == null) return;
+        if (rays != null) rays.SetActive(false);
 
-        // ⚠️ 원작의 빛줄기는 **파티클이 여러 갈래로 뿜는 빛기둥**이다. 우리는 그 재질의
-        //    텍스처 한 장을 화면에 늘여 깔았고, 그래서 뚜렷한 줄기가 아니라 회색 안개가 됐다
-        //    (결과 화면 무대 휘도 실측 57 대 원작 15 — 배경이 통째로 떠 버렸다).
-        //    프리팹의 파티클을 UIParticle로 감싸 그대로 살린다.
-        if (_rayFx == null)
-        {
-            _rayFx = UIFx.WrapInPlace(rays);
-            if (_rayFx != null)
-            {
-                rays.SetActive(true);
-                TuneGodRays(rays);
-                // 원작의 빛줄기는 **화면 위 가장자리부터 폭 전체**를 덮는다(ref x0~344 / y20~450).
-                //  우리 것은 가운데 한 다발이라 자리를 올리고 넓혀야 같은 그림이 된다.
-                var hostRt = _rayFx.transform as RectTransform;
-                if (hostRt != null)
-                {
-                    // 파티클 자체가 이미 좌경사(속도 방향)를 갖고 있다 — 여기서 더 돌리면
-                    //  25°까지 누워 화면 왼쪽이 텅 빈다(원작 실측 14°). 자리만 옮긴다.
-                    hostRt.anchoredPosition += new Vector2(RAY_SHIFT_X, RAY_LIFT);
-                }
+        if (_rayImg != null) { _rayImg.gameObject.SetActive(true); return; }
 
-                // 밝기는 모드(단색/그라디언트)를 안 가리는 CanvasGroup 으로 잡는다 —
-                //  startColor 알파만 만졌더니 그라디언트 모드에서 먹지 않았다(실측 30.5 대 원작 21.6).
-                var cg = _rayFx.GetComponent<CanvasGroup>();
-                if (cg == null) cg = _rayFx.gameObject.AddComponent<CanvasGroup>();
-                cg.alpha = RAY_DIM;
-                cg.blocksRaycasts = false;
-                UIFx.Replay(_rayFx);
-                return;
-            }
-        }
-        else
-        {
-            UIFx.Replay(_rayFx);
-            return;
-        }
+        var host = rays != null ? rays.transform.parent as RectTransform
+                                : GetObject((int)GameObjects.Icon)?.transform.parent as RectTransform;
+        if (host == null) return;
 
-        // 파티클을 못 감쌌을 때만 예전의 텍스처 한 장으로 물러선다.
-        if (_rayImg == null)
-        {
-            var psr = rays.GetComponent<ParticleSystemRenderer>();
-            var tex = psr != null && psr.sharedMaterial != null
-                    ? psr.sharedMaterial.mainTexture as Texture2D : null;
-            if (tex == null) return;
-
-            var parent = rays.transform.parent;
-            var go = new GameObject("GodRayImg", typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-
-            var rt = go.GetComponent<RectTransform>();
-            // 원본의 빛줄기는 화면 위에서 내려와 **중단쯤에서 스러진다**(y35~455 / 854).
-            //  프레임 전체를 덮으면 어두운 대장간이 통째로 흐려져 안개처럼 보인다.
-            rt.anchorMin = new Vector2(-0.25f, 0.30f);
-            rt.anchorMax = new Vector2(1.25f, 1.15f);
-            rt.offsetMin = rt.offsetMax = Vector2.zero;
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.localRotation = Quaternion.Euler(0f, 0f, RAY_TILT);
-            rt.SetSiblingIndex(rays.transform.GetSiblingIndex());   // 배경 위, 다리 난간 아래
-
-            _rayImg = go.AddComponent<Image>();
-            _rayImg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height),
-                                           new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-            _rayImg.raycastTarget = false;
-            _rayImg.preserveAspect = false;
-        }
-
-        _rayImg.gameObject.SetActive(true);
-        _rayImg.DOKill();
-        _rayImg.color = new Color(1f, 1f, 1f, RAY_IN);        // 페이드 없이 곧바로 켜진다
-
-        DOTween.Sequence().SetUpdate(true)
-            .Append(_rayImg.DOFade(RAY_LOW,  0.9f))
-            .Append(_rayImg.DOFade(RAY_HIGH, 2.0f).SetEase(Ease.InOutSine))
-            .Append(_rayImg.DOFade(RAY_REST, 1.6f));
+        _rayImg = UIFx.PlayGodRays(host);
+        if (_rayImg != null && rays != null)
+            _rayImg.transform.SetSiblingIndex(rays.transform.GetSiblingIndex());   // 배경 위, 다리 아래
     }
 
-    const float RAY_TILT = -12f;    // 원본의 좌경사 (y 160px당 좌로 33px)
-    // 원본의 빛줄기 기여도는 255 중 24~55다 — 알파로 옮기면 0.09~0.22.
-    //  이보다 올리면 대장간이 하얗게 떠 버린다(처음 그렇게 만들었다가 안개가 됐다).
-    const float RAY_IN   = 0.10f;   // 등장 순간 = 최대의 45%
-    const float RAY_LOW  = 0.075f;
-    const float RAY_HIGH = 0.22f;
-    const float RAY_REST = 0.12f;
-
-    /// <summary>빛줄기를 원작 밝기·폭으로 맞춘다.
-    ///
-    /// 파티클 값은 원작에서 그대로 이식됐지만, 원작 화면은 캔버스가 폭에 꽉 차고(344/344)
-    ///  우리 화면은 86%만 채운다 — 같은 파티클이 화면에서 더 좁고 어둡게 보인다.
-    ///  실측 결과 화면 전체 휘도가 10.5로 원작 21.6의 절반이었다.</summary>
-    void TuneGodRays(GameObject rays)
-    {
-        foreach (var ps in rays.GetComponentsInChildren<ParticleSystem>(true))
-        {
-            var main = ps.main;
-            main.startSizeMultiplier *= RAY_SIZE_MUL;
-
-            // 원작은 갈래가 여럿이다 — 굵기를 키우는 대신 **개수**를 늘려야 같은 그림이 된다.
-            var em = ps.emission;
-            em.rateOverTimeMultiplier *= RAY_RATE_MUL;
-            main.maxParticles = Mathf.Max(main.maxParticles, 60);
-
-            var sh = ps.shape;
-            if (sh.enabled) sh.scale = new Vector3(sh.scale.x * RAY_SPREAD, sh.scale.y, sh.scale.z);
-
-            // ⚠️ 이 파티클은 **Stretched Billboard**(renderMode 1)다 — 굵기(startSize)를 키우면
-            //    갈래가 뭉쳐 한 덩어리가 되고, 길어지지는 않는다. 길이는 lengthScale 이 정한다.
-            //    원작의 빛줄기는 화면 위 가장자리부터 모루 아래까지 닿는데 우리 것은
-            //    제목 부근에만 뭉쳐 있었다(결과화면 무대 휘도 12.0 대 원작 15.6).
-            var psr = ps.GetComponent<ParticleSystemRenderer>();
-            if (psr != null && psr.renderMode == ParticleSystemRenderMode.Stretch)
-                psr.lengthScale *= RAY_LENGTH_MUL;
-            var c = main.startColor;
-            if (c.mode == ParticleSystemGradientMode.Color)
-            {
-                var col = c.color; col.a = Mathf.Clamp01(col.a * RAY_ALPHA_MUL);
-                main.startColor = col;
-            }
-        }
-    }
-
-    const float RAY_RATE_MUL  = 1.6f;
-    const float RAY_SPREAD    = 2.6f;
-    const float RAY_SIZE_MUL   = 1.50f;   // 굵기 — 더 키우면 갈래가 뭉친다
-    const float RAY_LENGTH_MUL = 6.5f;    // 길이 — 화면 위에서 모루까지 닿게
-    const float RAY_ALPHA_MUL = 1.0f;
-    const float RAY_SHIFT_X   = -20f;   // 밴드를 화면 폭 가운데로
-    const float RAY_DIM       = 0.50f;  // 전체 휘도를 원작 21.6에 맞춘 값
-    const float RAY_LIFT      = 6f;     // 원작 밴드는 모루까지 닿는다 — 너무 올리면 무대가 죽는다
-
-    Coffee.UIExtensions.UIParticle _rayFx;
     Image _rayImg;
 
     // ── 불티 ──────────────────────────────────────────────────────────

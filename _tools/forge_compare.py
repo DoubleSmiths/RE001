@@ -77,14 +77,18 @@ def summarize(rows, fps, tag):
     # 백색광: 전체 휘도 최대
     tail = [r for r in rows if r[0] > bo]
     peak = max(tail, key=lambda r: r[1]) if tail else None
-    # 결과 안정: 백색광 이후 1.5초 지난 지점의 전체/무대 휘도
+    # 결과 화면: **구간 평균**으로 잰다.
+    #  ⚠️ 한 프레임만 집으면 안 된다 — 원작의 빛줄기는 크게 진동해서(전체 휘도 17.5~41.7)
+    #     어느 프레임을 집느냐에 따라 결론이 뒤집힌다. 백색광 이후 2~6초를 평균한다.
     settle = None
     if peak:
-        want = peak[0] + int(2.0 * fps)
-        for r in tail:
-            if r[0] >= want:
-                settle = r
-                break
+        lo = peak[0] + int(2.0 * fps)
+        hi = peak[0] + int(6.0 * fps)
+        seg = [r for r in tail if lo <= r[0] <= hi]
+        if seg:
+            settle = (seg[0][0],
+                      sum(r[1] for r in seg) / len(seg),
+                      sum(r[2] for r in seg) / len(seg))
     return dict(tag=tag, fps=fps, blackout=bo, strikes=st, peak=peak, settle=settle, rows=rows,
                 stamps=STAMPS if tag == '우리' else None)
 
@@ -142,8 +146,8 @@ def report(a, b):
     if a['peak'] and b['peak']:
         L.append('%-26s %14.1f %14.1f %9.1f' % ('백색광 전체휘도', a['peak'][1], b['peak'][1], b['peak'][1] - a['peak'][1]))
     if a['settle'] and b['settle']:
-        L.append('%-26s %14.1f %14.1f %9.1f' % ('결과화면 전체휘도', a['settle'][1], b['settle'][1], b['settle'][1] - a['settle'][1]))
-        L.append('%-26s %14.1f %14.1f %9.1f' % ('결과화면 무대휘도', a['settle'][2], b['settle'][2], b['settle'][2] - a['settle'][2]))
+        L.append('%-26s %14.1f %14.1f %9.1f' % ('결과화면 전체휘도(평균)', a['settle'][1], b['settle'][1], b['settle'][1] - a['settle'][1]))
+        L.append('%-26s %14.1f %14.1f %9.1f' % ('결과화면 무대휘도(평균)', a['settle'][2], b['settle'][2], b['settle'][2] - a['settle'][2]))
 
     # 담금질 구간 — 마지막 타격에서 백색광 정점까지 무대가 얼마나 달아오르는가
     def charge(s):
@@ -217,7 +221,7 @@ def main():
     if STAMPS:
         print('프레임 시각 기록 %d개 사용' % len(STAMPS))
 
-    ref = summarize(curve(load_ref, 150, 300), REF_FPS, '원작')
+    ref = summarize(curve(load_ref, 150, 320), REF_FPS, '원작')
     our = summarize(curve(load_our, 120, 460, norm=True), fps, '우리')
     if ref is None or our is None:
         print('암전을 찾지 못했다 — 녹화 구간을 확인하라')
