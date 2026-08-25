@@ -677,12 +677,23 @@ public class UI_EnhanceProgressPopup : UI_Popup
     // 표 글자가 원본의 3분의 2 크기였다 — 행 간격 실측 13.7px 대 원본 19~20px.
     //  네 열의 폰트 크기를 각각 만지면 열마다 어긋나므로, 표 묶음의 스케일만 올린다.
     //  (열 사이 간격과 밀려 들어오는 거리까지 같은 비율로 커져 저작 레이아웃이 유지된다.)
-    const float TABLE_SCALE = 1.42f;
+    // ⚠️ 1.42는 **레터박스 때문에 잘못 잰 값**이었다. 우리 캡처(1080x2640) 안에 게임 뷰가
+    //    933x2280 으로 들어가 있는데 그걸 모른 채 344 폭으로 통째 리사이즈해 재서,
+    //    13.6% 깎인 상태를 "우리 글자가 작다"로 읽었다.
+    //    캔버스 중앙 기준으로 환산해 다시 재니 글자 높이가 원작 11~12 대 우리 16~19 —
+    //    오히려 우리가 컸다. 저작 크기 그대로 두고, 행 간격만 원작에 맞춘다.
+    const float TABLE_SCALE = 1.0f;
+    // 원작 행 간격 20 ref-px. 저작값 그대로면 15.7밖에 안 된다(글자 폭 대비 leading이 크다).
+    const float TABLE_LINE_SPACING = 21f;
 
     static void ScaleTable(GameObject node)
     {
         var rt = node != null ? node.transform as RectTransform : null;
         if (rt != null) rt.localScale = Vector3.one * TABLE_SCALE;   // 절대값 — 여러 번 불려도 안전
+
+        if (node == null) return;
+        foreach (var t in node.GetComponentsInChildren<TMPro.TMP_Text>(true))
+            t.lineSpacing = TABLE_LINE_SPACING;
     }
 
     static WaitForSecondsRealtime Wait(float sec) => new WaitForSecondsRealtime(sec);
@@ -884,7 +895,19 @@ public class UI_EnhanceProgressPopup : UI_Popup
                 // 원작의 빛줄기는 **화면 위 가장자리부터 폭 전체**를 덮는다(ref x0~344 / y20~450).
                 //  우리 것은 가운데 한 다발이라 자리를 올리고 넓혀야 같은 그림이 된다.
                 var hostRt = _rayFx.transform as RectTransform;
-                if (hostRt != null) hostRt.anchoredPosition += new Vector2(0f, RAY_LIFT);
+                if (hostRt != null)
+                {
+                    // 파티클 자체가 이미 좌경사(속도 방향)를 갖고 있다 — 여기서 더 돌리면
+                    //  25°까지 누워 화면 왼쪽이 텅 빈다(원작 실측 14°). 자리만 옮긴다.
+                    hostRt.anchoredPosition += new Vector2(RAY_SHIFT_X, RAY_LIFT);
+                }
+
+                // 밝기는 모드(단색/그라디언트)를 안 가리는 CanvasGroup 으로 잡는다 —
+                //  startColor 알파만 만졌더니 그라디언트 모드에서 먹지 않았다(실측 30.5 대 원작 21.6).
+                var cg = _rayFx.GetComponent<CanvasGroup>();
+                if (cg == null) cg = _rayFx.gameObject.AddComponent<CanvasGroup>();
+                cg.alpha = RAY_DIM;
+                cg.blocksRaycasts = false;
                 UIFx.Replay(_rayFx);
                 return;
             }
@@ -961,6 +984,14 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
             var sh = ps.shape;
             if (sh.enabled) sh.scale = new Vector3(sh.scale.x * RAY_SPREAD, sh.scale.y, sh.scale.z);
+
+            // ⚠️ 이 파티클은 **Stretched Billboard**(renderMode 1)다 — 굵기(startSize)를 키우면
+            //    갈래가 뭉쳐 한 덩어리가 되고, 길어지지는 않는다. 길이는 lengthScale 이 정한다.
+            //    원작의 빛줄기는 화면 위 가장자리부터 모루 아래까지 닿는데 우리 것은
+            //    제목 부근에만 뭉쳐 있었다(결과화면 무대 휘도 12.0 대 원작 15.6).
+            var psr = ps.GetComponent<ParticleSystemRenderer>();
+            if (psr != null && psr.renderMode == ParticleSystemRenderMode.Stretch)
+                psr.lengthScale *= RAY_LENGTH_MUL;
             var c = main.startColor;
             if (c.mode == ParticleSystemGradientMode.Color)
             {
@@ -970,11 +1001,14 @@ public class UI_EnhanceProgressPopup : UI_Popup
         }
     }
 
-    const float RAY_RATE_MUL  = 2.2f;
-    const float RAY_SPREAD    = 1.8f;
-    const float RAY_SIZE_MUL  = 2.15f;   // 더 키우면 갈래가 뭉쳐 한 덩어리가 된다
-    const float RAY_ALPHA_MUL = 1.9f;
-    const float RAY_LIFT      = 30f;     // 원작 밴드는 모루까지 닿는다 — 너무 올리면 무대가 죽는다
+    const float RAY_RATE_MUL  = 1.6f;
+    const float RAY_SPREAD    = 2.6f;
+    const float RAY_SIZE_MUL   = 1.50f;   // 굵기 — 더 키우면 갈래가 뭉친다
+    const float RAY_LENGTH_MUL = 6.5f;    // 길이 — 화면 위에서 모루까지 닿게
+    const float RAY_ALPHA_MUL = 1.0f;
+    const float RAY_SHIFT_X   = -20f;   // 밴드를 화면 폭 가운데로
+    const float RAY_DIM       = 0.50f;  // 전체 휘도를 원작 21.6에 맞춘 값
+    const float RAY_LIFT      = 6f;     // 원작 밴드는 모루까지 닿는다 — 너무 올리면 무대가 죽는다
 
     Coffee.UIExtensions.UIParticle _rayFx;
     Image _rayImg;
