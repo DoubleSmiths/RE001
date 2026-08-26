@@ -318,9 +318,10 @@ public static class UIFx
     const float SMOKE_HOLD = 0.02f;
     const float SMOKE_OUT  = 0.20f;
     const float SMOKE_REACH = 90f;    // ±90유닛 = 179유닛 폭
-    const float SMOKE_A    = 0.135f;
+    const float SMOKE_A    = 0.100f;
 
     const float STAR_LIFE  = 0.60f;
+    const float SCRIBBLE_W = 0.8f;
     const int   STAR_N     = 7;
 
     static float SpawnForgeSmash(RectTransform root)
@@ -340,7 +341,7 @@ public static class UIFx
         {
             float x = -SMOKE_REACH + (SMOKE_REACH * 2f) * (i + 0.5f) / 6f;
             float y = UnityEngine.Random.Range(-4f, 16f);
-            float w = UnityEngine.Random.Range(46f, 64f);
+            float w = UnityEngine.Random.Range(58f, 80f);
 
             var puff = CreateImage(root, $"SmashSmoke{i}", new Vector2(x * 0.55f, y * 0.5f),
                                    new Vector2(w, w * UnityEngine.Random.Range(0.85f, 1.15f)),
@@ -360,21 +361,30 @@ public static class UIFx
                    .Append(puff.DOFade(0f, SMOKE_OUT).SetEase(Ease.Linear));
         }
 
-        // ③ 연기를 가로지르는 흰 스크래치 — 원작 f185 에 뚜렷하다
-        for (int i = 0; i < 3; i++)
+        // ③ 연기를 가로지르는 흰 스크래치.
+        //  ⚠️ 원작 f185 의 그것은 **갈겨쓴 가는 획 다발**이다. 아틀라스의 지그재그 조각을
+        //     납작하게 눌러도, 키워도 뭉개진 흰 얼룩이 될 뿐이었다(직선 두 개 / 흰 덩어리).
+        //     스프라이트 없이 **가늘고 긴 흰 사각**을 여러 각도로 겹쳐 긋는 쪽이 원작에 가깝다.
+        for (int i = 0; i < 10; i++)
         {
-            float y = -6f + i * 7f;
-            var line = CreateImage(root, $"SmashStreak{i}", new Vector2(-10f + i * 8f, y),
-                                   new Vector2(40f, 4f), new Color(1f, 1f, 1f, 0f),
-                                   Fx("FX_Streak") ?? Dot());
-            line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, (i % 2 == 0 ? 1f : -1f) * 7f);
-            line.rectTransform.DOSizeDelta(new Vector2(92f, 3f), 0.24f).SetEase(Ease.OutQuad).SetUpdate(true);
+            float len = UnityEngine.Random.Range(16f, 36f);
+            // 원작의 획은 흩어져 있지 않다 — 왼쪽 위에서 오른쪽 아래로 흐르는 **한 다발**이다.
+            float u = (i + UnityEngine.Random.value) / 10f;          // 다발을 따라가는 위치
+            var pos = new Vector2(-38f + u * 62f + UnityEngine.Random.Range(-5f, 5f),
+                                  9f - u * 17f + UnityEngine.Random.Range(-3f, 3f));
+
+            var line = CreateImage(root, $"SmashScribble{i}", pos,
+                                   new Vector2(len, SCRIBBLE_W), new Color(1f, 1f, 1f, 0f));
+            line.rectTransform.localRotation =
+                Quaternion.Euler(0f, 0f, -11f + UnityEngine.Random.Range(-6f, 6f));
+            line.rectTransform.DOAnchorPos(pos + new Vector2(UnityEngine.Random.Range(-9f, 9f), 2f), 0.22f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
 
             DOTween.Sequence().SetUpdate(true).SetLink(line.gameObject)
-                   .AppendInterval(SMOKE_IN)
-                   .Append(line.DOFade(0.6f, 0.04f))
-                   .AppendInterval(0.06f)
-                   .Append(line.DOFade(0f, 0.16f));
+                   .AppendInterval(SMOKE_IN + UnityEngine.Random.Range(0f, 0.04f))
+                   .Append(line.DOFade(UnityEngine.Random.Range(0.30f, 0.62f), 0.03f))
+                   .AppendInterval(0.07f)
+                   .Append(line.DOFade(0f, 0.15f));
         }
 
         // ④ 청록 4각별 — 타격부터 0.6초까지, 0.2초에 가장 많다
@@ -461,6 +471,22 @@ public static class UIFx
     const float RAY_PULSE_LOW = 0.42f;
     const float RAY_PULSE_DUR = 1.7f;
 
+    // 원작 f263 의 가로 밝기 마루에서 읽은 갈래 — {중심 ref-x, 폭, 세기} × N.
+    //  코사인 줄무늬가 아니라 이렇게 낱개로 놓아야 원작처럼 굵기가 들쭉날쭉해진다.
+    static readonly float[] RAY_BEAMS =
+    {
+         58f, 10f, 0.50f,
+         94f, 15f, 0.90f,
+        130f,  8f, 0.45f,
+        164f, 18f, 1.00f,
+        204f,  9f, 0.50f,
+        238f, 13f, 0.75f,
+        282f,  8f, 0.40f,
+        318f, 11f, 0.38f,
+    };
+    const float RAY_SHEAR = 0.34f;    // 기울기 ≈19°
+    const float RAY_FLOOR = 0.03f;    // 갈래 사이에도 옅게 남는 바탕
+
     static Sprite s_rayBand;
 
     /// <summary>실측 분포를 구운 빛줄기 한 장.</summary>
@@ -505,10 +531,17 @@ public static class UIFx
                 float refX = (x + 0.5f) / W * 344f;
                 float h = lerpAt(H, refX / 20f) / 113f;
 
-                // 갈래 — 기울기 14°(위가 오른쪽)를 넣어 대각으로 흐르게
-                float sheared = refX + (refY - 235f) * 0.249f;
-                float stripe = 0.62f + 0.38f * Mathf.Cos(sheared / 34f * Mathf.PI * 2f);
-                stripe *= 0.80f + 0.20f * Mathf.Cos(sheared / 11f * Mathf.PI * 2f);
+                // ⚠️ 코사인으로 줄무늬를 만들면 **바코드처럼 균일**해진다 — 원작은 굵기와
+                //    간격이 제각각인 몇 갈래다. 자리와 폭을 하나씩 적어 넣는다.
+                //    기울기 14°(위가 오른쪽)를 함께 준다.
+                float sheared = refX + (refY - 235f) * RAY_SHEAR;
+                float stripe = RAY_FLOOR;
+                for (int k = 0; k < RAY_BEAMS.Length; k += 3)
+                {
+                    float d = (sheared - RAY_BEAMS[k]) / RAY_BEAMS[k + 1];
+                    stripe += RAY_BEAMS[k + 2] * Mathf.Exp(-d * d);
+                }
+                stripe = Mathf.Clamp01(stripe);
 
                 float a = Mathf.Clamp01(v * h * stripe);
                 px[y * W + x] = new Color32(255, 255, 255, (byte)(a * 255f));
@@ -575,6 +608,28 @@ public static class UIFx
     const float RING_SIZE = 29f;    // 원작 실측 55 ref-px
     const float RING_DUR  = 0.50f;
 
+    /// <summary>가운데가 진하고 가장자리로 스러지는 색판 한 장(화로의 열기 같은 것).</summary>
+    public static Image AddSoftTint(RectTransform host, Vector2 size, Vector2 pos, Color color)
+    {
+        if (host == null) return null;
+
+        var go = new GameObject("SoftTint", typeof(RectTransform));
+        go.transform.SetParent(host, false);
+
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = size;
+        rt.anchoredPosition = pos;
+        rt.SetAsLastSibling();
+
+        var img = go.AddComponent<Image>();
+        img.sprite = Dot();
+        img.color = color;
+        img.raycastTarget = false;
+        return img;
+    }
+
     // ────────────────────────────────────────
     //  불티 — 대장간 연출 내내 흩날린다
     // ────────────────────────────────────────
@@ -605,15 +660,30 @@ public static class UIFx
         var img = CreateImage(host, "Ember", pos, new Vector2(sz, sz), col, Dot());
         img.rectTransform.localRotation = Quaternion.identity;   // 원작 startRotation = 0
 
-        float life = UnityEngine.Random.Range(0.5f, 1.0f);
-        var rise = pos + new Vector2(-UnityEngine.Random.Range(6f, 14f) * life,
-                                      UnityEngine.Random.Range(27f, 41f) * life);
+        float life = UnityEngine.Random.Range(0.7f, 1.5f);
+        float up = UnityEngine.Random.Range(30f, 52f) * life;
+        float drift = -UnityEngine.Random.Range(4f, 16f) * life;
 
+        // ⚠️ 직선으로 곧게 오르면 불티가 아니라 **비 오는 것**처럼 보인다.
+        //    불티는 열기에 실려 좌우로 흔들리며 오른다 — 올라가는 동안 가로로 두 번 훑고,
+        //    밝기도 불규칙하게 깜빡인다.
         img.color = new Color(col.r, col.g, col.b, 0f);
         var seq = DOTween.Sequence().SetUpdate(true).SetLink(img.gameObject);
-        seq.Join(img.rectTransform.DOAnchorPos(rise, life).SetEase(Ease.Linear));    // 원작은 등속
-        seq.Insert(0f, img.DOFade(col.a, life * 0.2f).SetEase(Ease.Linear));
-        seq.Insert(life * 0.8f, img.DOFade(0f, life * 0.2f).SetEase(Ease.Linear));
+        seq.Join(img.rectTransform.DOAnchorPosY(pos.y + up, life).SetEase(Ease.Linear));
+
+        float sway = UnityEngine.Random.Range(4f, 11f) * (UnityEngine.Random.value < 0.5f ? -1f : 1f);
+        seq.Insert(0f, img.rectTransform.DOAnchorPosX(pos.x + drift * 0.35f + sway, life * 0.33f)
+                          .SetEase(Ease.InOutSine));
+        seq.Insert(life * 0.33f, img.rectTransform.DOAnchorPosX(pos.x + drift * 0.7f - sway, life * 0.34f)
+                          .SetEase(Ease.InOutSine));
+        seq.Insert(life * 0.67f, img.rectTransform.DOAnchorPosX(pos.x + drift, life * 0.33f)
+                          .SetEase(Ease.InOutSine));
+
+        // 깜빡임 — 켜지고, 한 번 흔들리고, 꺼진다
+        seq.Insert(0f, img.DOFade(col.a, life * 0.15f).SetEase(Ease.Linear));
+        seq.Insert(life * 0.40f, img.DOFade(col.a * 0.45f, life * 0.12f).SetEase(Ease.InOutSine));
+        seq.Insert(life * 0.55f, img.DOFade(col.a, life * 0.12f).SetEase(Ease.InOutSine));
+        seq.Insert(life * 0.78f, img.DOFade(0f, life * 0.22f).SetEase(Ease.InQuad));
         seq.OnComplete(() => { if (img != null) UnityEngine.Object.Destroy(img.gameObject); });
     }
 

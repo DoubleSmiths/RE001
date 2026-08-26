@@ -94,6 +94,8 @@ public class UI_EnhanceProgressPopup : UI_Popup
     //  색 바이트는 그대로고 속만 0 → 166으로 찬다).
     const string ARROW_HEX = "A60000";
 
+    const float NAME_PUSH_OUT = 0.45f;   // 저작 id"1"이 옛 이름을 밀어내는 데 걸리는 시간
+
     GameManager.EnhanceResult _result;
     Equipment _equip;
     bool _revealed;
@@ -489,6 +491,12 @@ public class UI_EnhanceProgressPopup : UI_Popup
         //  영상에서 이 교체는 "능력치 변화" 헤더가 뜨는 것과 같은 순간이다.
         PlayAuthoredOn(Texts.Txt_SuccessTxtGroup_03, "1");
         SetRevealText(Texts._4, nmEnh);
+
+        // ⚠️ 저작 트윈 id"1"은 옛 이름을 아래로 밀어내지만 **알파를 0으로 만들지는 않는다** —
+        //    그대로 두면 "+1 여행자의 검" 밑에 "여행자의 검"이 회색으로 남아 두 줄이 된다
+        //    (원작은 강화된 이름 한 줄뿐이다). 밀려난 뒤 확실히 지운다.
+        DOVirtual.DelayedCall(NAME_PUSH_OUT, () => HideText(Texts.Txt_SuccessTxtGroup_03))
+                 .SetUpdate(true);
 
         // ── ③ +0.25s : 능력치 표가 오른쪽에서 밀려 들어온다 ──
         yield return Wait(STEP_TABLE);
@@ -959,8 +967,8 @@ public class UI_EnhanceProgressPopup : UI_Popup
     //  프리팹의 Dust_01은 월드 파티클이라 캔버스에 안 그려진다 — 빛줄기와 같은 이유로
     //  UI Image 몇 장을 주기적으로 띄워 대신한다.
     // 원작 실측: 결과 화면에서 불티가 프레임당 23화소다(우리 65 → 3분의 1로).
-    const float EMBER_INTERVAL = 0.11f;
-    const int   EMBER_PER_TICK = 2;
+    const float EMBER_INTERVAL = 0.07f;
+    const int   EMBER_PER_TICK = 3;
 
     IEnumerator CoEmbers()
     {

@@ -102,6 +102,8 @@ public class UI_EnhacePopup : UI_Popup
         var smithAnim = smithGo != null ? smithGo.GetComponent<Animator>() : null;
         if (smithAnim != null) smithAnim.Play("Normal", 0, 0f);
 
+        StageTint();   // 화로의 열기 — 화면 전체에 옅은 붉은 기운
+
         GetButton((int)Buttons.Enhance_Btn).onClick.AddListener(OnClickEnhance);
 
         var closeBtn = GetButton((int)Buttons.EnhancePopupCloseBtn);
@@ -192,6 +194,32 @@ public class UI_EnhacePopup : UI_Popup
             yield return wait;
         }
     }
+
+    /// <summary>대장간의 열기 — 화로 언저리가 붉게 물든다.
+    ///
+    /// 원작 강화창은 화로 불빛으로 화면이 미지근하게 붉다. 색으로 재면 R−B 가
+    ///  상단 +7.6 / **중단 +22.6** / 하단 +6.4 — 가운데(모루·화로)가 가장 진하다.
+    ///  우리는 +3.9 / +8.9 / +5.7 로 사실상 붉은 기운이 없었다.
+    ///
+    /// ⚠️ 화면 전체를 균일하게 덮으면 안 된다. 원작은 가운데만 진하고, 무엇보다
+    ///    우리 렌더가 리니어라 **같은 알파가 훨씬 진하게 합성된다**(0.035 를 얹었더니
+    ///    R−B 가 +53까지 튀었다 — 기대치의 6배). 가운데가 진한 원판으로, 세기는 실측으로.</summary>
+    void StageTint()
+    {
+        if (_tint != null) return;
+
+        var host = _frameRT != null ? _frameRT
+                 : GetObject((int)GameObjects.EnhacePopup)?.GetComponent<RectTransform>();
+        if (host == null) return;
+
+        _tint = UIFx.AddSoftTint(host, new Vector2(TINT_W, TINT_H), new Vector2(0f, TINT_Y), TINT_COLOR);
+    }
+
+    Image _tint;
+    const float TINT_W = 300f;
+    const float TINT_H = 260f;
+    const float TINT_Y = -20f;    // 모루 언저리
+    static readonly Color TINT_COLOR = new Color(1f, 0.12f, 0.06f, 0.020f);
 
     Image _blackout;
     const float BLACKOUT_OVERSCAN = 600f;   // 캔버스보다 넉넉히 — 가장자리가 새지 않게
