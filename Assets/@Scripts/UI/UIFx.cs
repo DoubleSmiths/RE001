@@ -451,14 +451,41 @@ public static class UIFx
         var img = go.AddComponent<Image>();
         img.sprite = RayBand();
         img.raycastTarget = false;
-        // 원작의 빛줄기는 **맥동한다** — 화면 전체 휘도가 17.5~41.7 사이를 오간다.
-        //  파티클이 심지를 냈다 지웠다 하기 때문인데, 한 장짜리로는 알파를 흔들어 흉내낸다.
-        //  평평하게 두면 늘 최대치라 평균이 원작보다 밝게 잡힌다.
+
+        // 원작의 빛줄기는 **맥동하고 흐른다** — 화면 전체 휘도가 17.5~41.7 을 오간다.
+        //  한 장을 알파만 흔들면 통째로 껌뻑여 판때기처럼 보인다.
+        //  **두 겹**을 크기와 방향을 달리해 아주 느리게 흘려보내면, 겹치는 자리가 계속
+        //  바뀌면서 갈래가 살아 움직인다(간섭). 위상도 어긋나게 둔다.
         img.color = new Color(1f, 1f, 1f, 0f);
         DOTween.Sequence().SetUpdate(true).SetLink(go)
-            .Append(img.DOFade(RAY_A, 0.6f).SetEase(Ease.OutQuad))
-            .Append(img.DOFade(RAY_A * RAY_PULSE_LOW, RAY_PULSE_DUR).SetEase(Ease.InOutSine))
+            .Append(img.DOFade(RAY_A * RAY_LAYER_A, 0.6f).SetEase(Ease.OutQuad))
+            .Append(img.DOFade(RAY_A * RAY_LAYER_A * RAY_PULSE_LOW, RAY_PULSE_DUR).SetEase(Ease.InOutSine))
             .SetLoops(-1, LoopType.Yoyo);
+        Drift(rt, RAY_DRIFT, RAY_DRIFT_DUR);
+
+        // 둘째 겹 — 조금 크고 반대로 흐른다
+        var go2 = new GameObject("UIFx_GodRays2", typeof(RectTransform));
+        go2.transform.SetParent(parent, false);
+        var rt2 = go2.GetComponent<RectTransform>();
+        rt2.anchorMin = rt2.anchorMax = new Vector2(0.5f, 0.5f);
+        rt2.pivot = new Vector2(0.5f, 0.5f);
+        rt2.sizeDelta = new Vector2(RAY_W * 1.22f, RAY_H * 1.04f);
+        rt2.anchoredPosition = new Vector2(RAY_LAYER2_X, RAY_Y + 4f);
+        // ⚠️ 좌우로 뒤집으면 기울기가 반대가 되어 두 겹이 **X자 격자**로 교차한다.
+        //    원작 갈래는 한 방향이다 — 뒤집지 말고 자리와 크기만 달리해 겹친다.
+
+        var img2 = go2.AddComponent<Image>();
+        img2.sprite = RayBand();
+        img2.raycastTarget = false;
+        img2.color = new Color(1f, 1f, 1f, 0f);
+        DOTween.Sequence().SetUpdate(true).SetLink(go2)
+            .AppendInterval(RAY_PULSE_DUR * 0.5f)                     // 위상 어긋내기
+            .Append(img2.DOFade(RAY_A * RAY_LAYER_B, 0.6f).SetEase(Ease.OutQuad))
+            .Append(img2.DOFade(RAY_A * RAY_LAYER_B * RAY_PULSE_LOW, RAY_PULSE_DUR * 1.31f)
+                        .SetEase(Ease.InOutSine))
+            .SetLoops(-1, LoopType.Yoyo);
+        Drift(rt2, -RAY_DRIFT * 0.7f, RAY_DRIFT_DUR * 1.37f);
+
         return img;
     }
 
@@ -469,6 +496,19 @@ public static class UIFx
     const float RAY_GAMMA = 1.45f;
     const float RAY_TOP   = 46f;    // 밴드가 시작하는 ref y (원작은 y36 부터 서서히)
     const float RAY_PULSE_LOW = 0.42f;
+    const float RAY_LAYER_A   = 0.72f;   // 두 겹으로 나눠 담는다(합쳐서 예전 한 겹과 비슷하게)
+    const float RAY_LAYER_B   = 0.46f;
+    const float RAY_LAYER2_X  = 26f;
+    const float RAY_DRIFT     = 9f;      // 아주 느리게 좌우로 흐른다
+    const float RAY_DRIFT_DUR = 6.5f;
+
+    /// <summary>제자리에서 아주 느리게 좌우로 오간다(빛줄기가 살아 있게).</summary>
+    static void Drift(RectTransform rt, float dx, float dur)
+    {
+        float x0 = rt.anchoredPosition.x;
+        rt.DOAnchorPosX(x0 + dx, dur).SetEase(Ease.InOutSine).SetUpdate(true)
+          .SetLoops(-1, LoopType.Yoyo).SetLink(rt.gameObject);
+    }
     const float RAY_PULSE_DUR = 1.7f;
 
     // 원작 f263 의 가로 밝기 마루에서 읽은 갈래 — {중심 ref-x, 폭, 세기} × N.
@@ -652,10 +692,28 @@ public static class UIFx
         var pos = new Vector2(UnityEngine.Random.Range(-EMBER_HALF_W, EMBER_HALF_W),
                               UnityEngine.Random.Range(EMBER_BOTTOM, EMBER_TOP));
 
-        float sz = UnityEngine.Random.Range(1.0f, 2.5f);
+        // 불티는 한 종류가 아니다 — 대부분은 작고 빠른 티끌이고, 가끔 크고 느린 덩이가
+        //  잔광을 끌며 오른다. 크기를 한 가지로 두면 화면이 모래알처럼 밋밋해진다.
+        bool big = UnityEngine.Random.value < EMBER_BIG_RATE;
+        float sz = big ? UnityEngine.Random.Range(2.6f, 4.2f)
+                       : UnityEngine.Random.Range(0.9f, 2.2f);
+
         bool light = UnityEngine.Random.value < 0.5f;
         var col = light ? new Color(1f, UnityEngine.Random.Range(0.41f, 0.87f), 0f, 0.35f)
                         : new Color(1f, 0.34f, 0f, 1f);
+
+        // 큰 불티에는 옅은 잔광을 깐다(뒤에 한 장 더).
+        if (big)
+        {
+            var halo = CreateImage(host, "EmberHalo", pos, new Vector2(sz * 3.2f, sz * 3.2f),
+                                   new Color(1f, 0.42f, 0.08f, 0f), Dot());
+            float hl = UnityEngine.Random.Range(0.6f, 1.1f);
+            DOTween.Sequence().SetUpdate(true).SetLink(halo.gameObject)
+                   .Append(halo.DOFade(0.13f, hl * 0.25f))
+                   .Append(halo.DOFade(0f, hl * 0.75f))
+                   .OnComplete(() => { if (halo != null) UnityEngine.Object.Destroy(halo.gameObject); });
+            halo.rectTransform.DOAnchorPosY(pos.y + 22f, hl).SetEase(Ease.Linear).SetUpdate(true);
+        }
 
         var img = CreateImage(host, "Ember", pos, new Vector2(sz, sz), col, Dot());
         img.rectTransform.localRotation = Quaternion.identity;   // 원작 startRotation = 0
@@ -688,6 +746,7 @@ public static class UIFx
     }
 
     // 원작 실측(ref-px → 캔버스유닛): 가로 x40~344 = ±88, 세로 y360~660 = +35 ~ -122
+    const float EMBER_BIG_RATE = 0.18f;   // 큰 불티 비율
     const float EMBER_HALF_W = 88f;
     const float EMBER_TOP    = 30f;
     const float EMBER_BOTTOM = -122f;

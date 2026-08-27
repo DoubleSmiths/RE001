@@ -255,6 +255,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
         yield return CoPlay();
     }
 
+    // 안전망 — 코루틴이 중간에 끊기더라도(창 파괴 등) 버튼이 죽은 채 남지 않게 한다.
+    void OnDisable() => EnableExit();
+
     void HookSmithEvents(GameObject smith)
     {
         var sink = smith.GetComponent<AnimEventSink>();
@@ -448,7 +451,22 @@ public class UI_EnhanceProgressPopup : UI_Popup
             yield return CoRevealSuccess(data, nm, nmEnh);
         else
             yield return CoRevealFail(data);
+
+        // ⚠️ 연출을 시작할 때 끈 닫기 버튼을 **다시 켜야 한다.**
+        //    켜는 곳이 없어서 강화가 끝나도 화면을 눌러도 넘어가지 않았다(창에 갇힘).
+        //    원작도 연출이 끝난 뒤에야 켠다(성공 t=9.700 / 실패 t=9.350).
+        yield return Wait(EXIT_DELAY);
+        EnableExit();
     }
+
+    /// <summary>닫기 버튼을 켠다. 어떤 경로로 끝나도 반드시 켜지도록 따로 둔다.</summary>
+    void EnableExit()
+    {
+        var exit = GetButton((int)Buttons.ExitBtn);
+        if (exit != null) exit.interactable = true;
+    }
+
+    const float EXIT_DELAY = 0.6f;   // 결과가 다 서고 나서
 
     /// <summary>성공 연출. 원본 그래프의 'SuccessDone' 사슬을 그대로 따른다 —
     /// 요소를 켜는 **순서와 간격**이 곧 연출이고, 움직임 자체는 프리팹에 저작돼 있다.</summary>
