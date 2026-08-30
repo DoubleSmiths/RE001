@@ -91,6 +91,16 @@ public class UI_TtitleScene : UI_Scene
                 Managers.Sound.Init();
                 Managers.Quest.Init();
                 Managers.SubQuest.Init();
+
+                // ⚠️ 로컬라이즈 사전은 **지금** 준비된다(Managers.Data.Init 이후).
+                //  Init()은 Awake에서 도는터라 그때 불러도 사전이 비어 있어
+                //  Util.Localize 가 **키를 그대로 돌려준다** — 실제로 빌드된 게임의
+                //  시작 버튼에 "StartText" 라는 키가 그대로 찍혀 나왔다.
+                //  Managers.Game 도 Awake 시점엔 null 이라 언어 변경 구독도 못 걸었다.
+                Managers.Game.OnLanguageChanged -= RefreshTexts;   // 타이틀 재진입 시 중복 구독 방지
+                Managers.Game.OnLanguageChanged += RefreshTexts;
+                RefreshTexts();
+
                 StartAnimation();
             }
         });
