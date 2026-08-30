@@ -127,3 +127,8 @@ Documents/Showcase_*.mp4
 
 # 원작 씬 파싱 캐시 (share_scene_dump.py 생성물)
 _tools/.share_scene.pkl
+
+# 대장간 연출 분석 부산물 — 원작 대조용 캡처/씬 덤프(205 png + 21 txt, 74MB).
+#  결론은 AI/forge_ref/findings.md 에 남으므로 그것만 추적한다.
+AI/forge_ref/*
+!AI/forge_ref/*.md
