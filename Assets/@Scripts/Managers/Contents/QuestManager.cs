@@ -322,8 +322,12 @@ public class QuestManager
         return Managers.Data.QuestDic.TryGetValue(CurrentQuestID, out quest);
     }
 
-#if UNITY_EDITOR
-    /// <summary>[에디터 전용] 지정한 퀘스트 ID로 즉시 이동 (이벤트 재발행)</summary>
+    /// <summary>지정한 퀘스트 ID로 즉시 이동 (이벤트 재발행).
+    ///
+    /// ⚠️ 예전엔 `#if UNITY_EDITOR` 로 묶여 있었으나 **플레이어 빌드가 깨졌다** —
+    ///  런타임 치트(만능 키 K)의 GameManager.UnlockEverything 이 이걸 부르기 때문이다.
+    ///  치트 자체가 빌드에 들어가는 이상 "디버그 API를 빌드에서 뺀다"는 전제는 이미 없다.
+    ///  에디터에선 통과하고 빌드에서만 CS1061 로 터지는 자리라 눈에 잘 띄지 않는다.</summary>
     public void JumpToQuest(int questId)
     {
         // 예전엔 SetCurrentQuest의 내용을 그대로 베껴 뒀다. 그러다 보니 본체에 처리를 추가해도
@@ -331,5 +335,4 @@ public class QuestManager
         //  같은 함수를 부른다.
         SetCurrentQuest(questId);
     }
-#endif
 }

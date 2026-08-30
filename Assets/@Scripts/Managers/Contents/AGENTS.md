@@ -34,7 +34,8 @@ RE001 게임 로직 전용 매니저 계층. 계정 세이브데이터(GameData)
 - `event Action` / `event Action<T>` Observer — 상태 변경 → 이벤트 발행 → UI 구독 갱신 (컨트롤러/매니저가 UI를 직접 참조하지 않음).
 - 데이터 조회는 `Managers.Data.XxxDic.TryGetValue(dataId, ...)` — 실패 시 조용히 반환하거나 LogWarning.
 - Find-or-Create 세이브 엔트리: `GetSaveData(dataId)`는 없으면 생성(쓰기용), `FindSave`는 읽기 전용(부작용 없음) — 조회 API에는 FindSave 계열 사용.
-- `#if UNITY_EDITOR` 디버그 점프 API (`JumpToQuest`/`JumpToSubQuest`), Debug 세터(`DebugSetKillCount` 등).
+- 디버그 점프 API: `JumpToSubQuest` 는 `#if UNITY_EDITOR`, **`JumpToQuest` 는 런타임**(치트 K = 만능 키가 부른다). Debug 세터(`DebugSetKillCount` 등).
+  ⚠️ 에디터 전용 API를 런타임에서 부르면 **에디터는 통과하고 플레이어 빌드만 CS1061 로 터진다** (Addressables 콘텐츠 빌드가 "SBP Error" 로 죽는다).
 - 비트마스크 해금 상태 (`UnlockedBtmButtons`, `NewBadgeTabs` — `1 << (int)TabType`).
 - 슬라이드 번호 주석("슬38", "슬23" 등) = 기획서 슬라이드 참조 — 수정 시 해당 기획 의도 유지.
 
