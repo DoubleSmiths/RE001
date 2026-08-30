@@ -94,13 +94,23 @@ public class UI_EnhacePopup : UI_Popup
 
         BindSlotButtons();
 
-        // ⚠️ 망치가 대기 화면에서 **보이지 않았다.** Image 알파가 0이고, 그걸 1로 올리는 것은
-        //    Normal.anim의 커브뿐인데 애니메이터의 기본 상태가 빈 상태(New State)라
-        //    그 클립이 한 번도 돌지 않았다 — [강화]를 눌러야 비로소 망치가 생겨났다.
-        //    창을 열 때 대기 자세를 직접 재생한다(연출 소리는 _ceremony 게이트가 막는다).
+        // 망치·모루 그림은 Image 알파가 0으로 저작돼 있고, 그걸 1로 올리는 것은 Normal.anim의
+        //  커브뿐이다(애니메이터 기본 상태가 빈 New State라 저절로는 돌지 않는다).
+        //
+        // ⚠️ 그렇다고 `Play("Normal")` 로 두면 **대기 화면에서 대장장이가 계속 망치질한다.**
+        //    원작 강화창의 망치는 서 있기만 한다 — 그 오브젝트의 그래프가 OnEnable 에서
+        //    `Animator.enabled = false` 로 아예 꺼 버리고, Normal 루프는 연출이 끝난 뒤
+        //    되돌릴 때만 쓴다.
+        //    **첫 프레임만 찍어 그림을 얻고 애니메이터를 끈다** — 알파는 올라오고 움직임은 없다.
         var smithGo = GetObject((int)GameObjects.HammerNormalAnim);
         var smithAnim = smithGo != null ? smithGo.GetComponent<Animator>() : null;
-        if (smithAnim != null) smithAnim.Play("Normal", 0, 0f);
+        if (smithAnim != null)
+        {
+            smithAnim.enabled = true;
+            smithAnim.Play("Normal", 0, 0f);
+            smithAnim.Update(0f);        // 0프레임을 한 번 적용하고
+            smithAnim.enabled = false;   // 거기서 멈춘다
+        }
 
         StageTint();   // 화로의 열기 — 화면 전체에 옅은 붉은 기운
 

@@ -234,6 +234,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
 
         if (anim != null)
         {
+            // 연출이 끝나면 애니메이터를 끄므로(결과 화면에서 망치가 반복되지 않게),
+            //  다시 시작할 때는 반드시 켜 준다 — 창이 재사용되는 경로 대비.
+            anim.enabled = true;
             HookSmithEvents(smith);
             _ceremony = true;
             string state = _result.Success ? "Success" : "Fail";
@@ -250,7 +253,12 @@ public class UI_EnhanceProgressPopup : UI_Popup
         yield return Wait(wait);
 
         _ceremony = false;
-        if (anim != null) anim.Play("Normal", 0, 0f);
+
+        // ⚠️ 여기서 `Play("Normal")` 을 부르면 **결과 화면 내내 망치질이 반복된다.**
+        //    Normal.anim 은 대장장이가 계속 두드리는 대기 루프다(3.02초, 루프).
+        //    원작의 결과 화면은 망치가 세워진 자세로 **정지**해 있다(f245~f275 동일).
+        //    Success 클립이 끝난 마지막 자세 그대로 두면 된다 — 애니메이터만 끈다.
+        if (anim != null) anim.enabled = false;
 
         yield return CoPlay();
     }
