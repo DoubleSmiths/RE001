@@ -242,8 +242,10 @@ public class UI_MinionInfoPopup : UI_Popup
         var skillTxt = GetText((int)Texts.SkillNameText);
         if (skillTxt != null)
         {
+            // UniqueSkillName 은 로컬라이즈 **키**다 — 그대로 찍으면 키가 노출된다
+            //  (503종 전부 "0" 이던 시절엔 실제로 "0" 이 표시됐다).
             string name = data != null ? data.UniqueSkillName : "";
-            skillTxt.text = string.IsNullOrEmpty(name) ? "-" : name;
+            skillTxt.text = string.IsNullOrEmpty(name) ? "-" : Util.Localize(name);
             ApplyFont(skillTxt, Define.FontType.UI);
         }
 

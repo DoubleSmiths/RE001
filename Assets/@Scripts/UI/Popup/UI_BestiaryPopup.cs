@@ -205,13 +205,28 @@ public class UI_BestiaryPopup : UI_Popup
     }
 
     // 고유기술 이름 — CreatureData.UniqueSkillName 우선, 비어있으면 폴백.
+    //
+    // ⚠️ 시트의 이 컬럼은 헤더가 "고유기술명(로컬키)" 인 **로컬라이즈 키**인데
+    //    예전엔 값을 그대로 돌려줬다. 게다가 503종 전부 값이 문자열 "0" 이라
+    //    IsNullOrEmpty 가 false → 폴백도 안 걸리고 **도감에 "0" 이 찍혀 나왔다.**
+    //    Util.Localize 는 사전에 없으면 키를 그대로 돌려주므로 폴백은 그대로 살아 있다.
     public static string GetUniqueSkillName(int dataId)
     {
         if (Managers.Data != null
             && Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)
             && !string.IsNullOrEmpty(cd.UniqueSkillName))
-            return cd.UniqueSkillName;
+            return Util.Localize(cd.UniqueSkillName);
         return $"고유기술";
+    }
+
+    /// <summary>고유기술 설명(로컬키). 없으면 빈 문자열.</summary>
+    public static string GetUniqueSkillDesc(int dataId)
+    {
+        if (Managers.Data != null
+            && Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)
+            && !string.IsNullOrEmpty(cd.UniqueSkillDesc))
+            return Util.Localize(cd.UniqueSkillDesc);
+        return string.Empty;
     }
 
     // ── 슬라이드 86/87: 보유 미니몬 능력치 (MinMonManager 이관) ──
