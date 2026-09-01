@@ -442,6 +442,7 @@ public class PlayerController : CreatureController
         {
             Managers.Game.Exp  -= _expRequired;
             Managers.Game.Level++;
+            GrantStatusPoint(Managers.Game.Level);
 
             // 슬라이드 68 #2-3 — Now HP를 Max HP로 회복. RefreshStats 전 prevHp 캡쳐해서 회복량 계산.
             float prevHp = Hp;
@@ -452,6 +453,25 @@ public class PlayerController : CreatureController
             // _expRequired는 위 RefreshStats()가 LevelData(없으면 fallback 식)로 이미 갱신함.
             // 여기서 또 ×1.2 하면 세션 내 연속 레벨업과 재접속 시 요구 경험치가 달라지는 버그가 있었음.
         }
+    }
+
+    /// <summary>그 레벨에 도달하며 받는 능력점수를 지급한다.
+    ///
+    /// ⚠️ 예전엔 레벨업이 능력점수를 **한 점도 주지 않았다.** 캐릭터창의 스탯 분배
+    ///  (GameData.StatInvest + STAT_PER_POINT)는 만들어져 있는데 쓸 포인트가 들어오는
+    ///  경로가 없어서, 300레벨을 올려도 분배 화면이 늘 0이었다(올리는 코드가 에디터
+    ///  테스트 메뉴뿐이었다). 레벨로 변하는 스탯도 14종 중 4종뿐이라, 나머지 성장을
+    ///  플레이어가 고르게 하는 것이 이 포인트의 자리다.
+    ///
+    /// 지급량은 코드가 아니라 PlayerStatusData 의 StatusPoint 컬럼에서 온다
+    ///  (수치 하드코딩 금지 — 시트가 원천). 데이터가 없으면 아무것도 주지 않는다.</summary>
+    void GrantStatusPoint(int level)
+    {
+        if (Managers.Data?.PlayerStatusDic == null) return;
+        if (!Managers.Data.PlayerStatusDic.TryGetValue(level, out var st)) return;
+        if (st.StatusPoint <= 0) return;
+
+        Managers.Game.StatusPoint += st.StatusPoint;
     }
 
     // ────────────────────────────────────────
