@@ -21,6 +21,7 @@ public class QuestManager
     public void Init()
     {
         CurrentQuestID = Managers.Game.CurrentQuestID;
+        RefreshAdventurerRank();
         // MULTI 조건 충족 상태 복원 (대화 도중 종료 후 재시작해도 진입 조건이 소실되지 않도록).
         _metConditions.Clear();
         foreach (int order in Managers.Game.MetQuestConditions)
@@ -247,6 +248,7 @@ public class QuestManager
         _metConditions.Clear();
 
         Managers.Game.CurrentQuestID = questId;
+        RefreshAdventurerRank();
         SyncMetConditionsToSave();      // 새 퀘스트 → 충족 집합 비움(영속)
         Managers.Game.SaveGame();
 
@@ -266,6 +268,17 @@ public class QuestManager
         var save = Managers.Game.MetQuestConditions;
         save.Clear();
         save.AddRange(_metConditions);
+    }
+
+    void RefreshAdventurerRank()
+    {
+        // 승급 연출만 재생되고 등급은 0에 머물렀다. 완료한 보고를 세어 구세이브도 복구한다.
+        int rank = 0;
+        foreach (var quest in Managers.Data.QuestDic.Values)
+            if (quest.QuestID < CurrentQuestID && quest.CompleteType == QuestCompleteType.BTN_CLICK
+                && quest.CompleteTarget == BTN_GUILD_QUEST)
+                rank++;
+        Managers.Game.AdventurerRank = Math.Max(Managers.Game.AdventurerRank, rank);
     }
 
     void ProcessUnlocks(int questId)

@@ -254,8 +254,17 @@ public class GameManager
     public int AdventurerRank
     {
         get => _gameData.AdventurerRank;
-        set { _gameData.AdventurerRank = Mathf.Clamp(value, 0, 99); SaveGame(); }
+        set
+        {
+            int next = Mathf.Clamp(value, 0, 99);
+            if (_gameData.AdventurerRank == next) return;
+            _gameData.AdventurerRank = next;
+            SaveGame();
+            OnAdventurerRankChanged?.Invoke();
+        }
     }
+
+    public event Action OnAdventurerRankChanged;
 
     // 전직: 직업 숙련도 (0~CLASS_PROFICIENCY_MAX). 몬스터 처치 시 AddClassProficiency로 누적.
     public int ClassProficiency => _gameData.ClassProficiency;

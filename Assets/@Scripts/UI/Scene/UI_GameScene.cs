@@ -210,6 +210,7 @@ public class UI_GameScene : UI_Scene
         if (Managers.Game != null)
         {
             Managers.Game.OnResourceChanged -= RefreshCurrency;
+            Managers.Game.OnAdventurerRankChanged -= RefreshPlayerBar;
             Managers.Game.OnIdleBatch -= ShowIdleBatch;
             Managers.Game.OnLanguageChanged -= RefreshTexts;
             Managers.Game.OnInventoryNewChanged -= RefreshBTMButtonGroup;
@@ -525,6 +526,7 @@ public class UI_GameScene : UI_Scene
         RefreshBTMButtonGroup();
 
         Managers.Game.OnResourceChanged += RefreshCurrency;
+        Managers.Game.OnAdventurerRankChanged += RefreshPlayerBar;
         Managers.Game.OnIdleBatch += ShowIdleBatch;
         Managers.Game.OnLanguageChanged += RefreshTexts;
         Managers.Game.OnInventoryNewChanged += RefreshBTMButtonGroup;
