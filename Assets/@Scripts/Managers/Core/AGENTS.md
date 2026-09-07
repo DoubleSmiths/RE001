@@ -22,7 +22,7 @@
 ### Working In This Directory
 - 리소스는 반드시 Addressables **프리로드 후** 사용 — `ResourceManager.Load<T>`는 캐시만 조회하므로 새 에셋은 Addressable 그룹(PreLoad 라벨) 등록이 선행돼야 한다. DataManager의 에러 메시지도 이를 안내함.
 - 오브젝트 생성/삭제는 `Managers.Resource.Instantiate()` / `Managers.Resource.Destroy()` 경유 (Destroy가 풀 반환을 먼저 시도). 풀 키는 prefab 이름이므로 생성 시 `go.name = prefab.name` 유지가 전제 — 이름을 바꾸면 Push가 실패한다.
-- 팝업은 `Managers.UI.ShowPopupUI<T>()`/`ClosePopupUI()`로만 열고 닫기. `ClosePopupUI(popup)`은 스택 top과 일치할 때만 닫힘. **주의**: CLAUDE.md 가이드와 달리 현 코드의 `RefreshTimeScale()`은 본문이 전부 주석 처리되어 팝업이 게임을 일시정지하지 않는다 (`IsActiveSoulShop` setter만 timeScale 조작).
+- 팝업은 `Managers.UI.ShowPopupUI<T>()`/`ClosePopupUI()`로만 열고 닫기. `ClosePopupUI(popup)`은 스택 top과 일치할 때만 닫힘. **주의**: `RefreshTimeScale()`은 본문이 전부 주석 처리되어 팝업이 게임을 일시정지하지 않는다 (`IsActiveSoulShop` setter만 timeScale 조작). 루트 `AGENTS.md` §3 과 같은 내용이다.
 - 팝업 Canvas는 프리팹 설정(ScreenSpaceCamera) 유지 — `SetCanvas`에서 Overlay로 강제하지 말 것(레이아웃 깨짐 이력). CanvasScaler referenceResolution은 180x440.
 - 새 JSON 시트 추가 시: Data 클래스 + `ILoader` 구현 Loader 작성 → DataManager에 Dictionary property와 `Init()` 로드 한 줄 추가 → JSON을 Addressable PreLoad 그룹 등록. 게임은 JSON만 읽으므로 시트 수정 후 Tools 파서 실행 필요.
 - 씬 전환은 `Managers.Scene.LoadScene()` — 내부에서 `Managers.Clear()`가 호출돼 팝업/풀/사운드가 정리됨을 전제로 코드 작성.
