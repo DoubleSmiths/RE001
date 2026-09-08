@@ -67,3 +67,10 @@
   SHA256 `00921138a40e8542dbc0da7f9faddcb5fae8244bb9520e978cbc390a92074644`.
 - 원본 SaveData 복원 완료. SHA256 `cb727d514d88abbac1635e9a15eb67215376606120a11c2b4bb066182ee1fc38` 일치.
   PlayerPrefs 11개 값도 원본과 정확히 일치 확인. 검증 후 세이브·설정은 별도 백업으로 보존.
+- 추가 훅 수리: Git Bash 절대 경로·PowerShell 호출 연산자·LF·Unix PATH·진단 stderr 교정.
+  보안 후크의 비호환 metrics/rewakeSummary만 제거하고 차단 피드백은 보존.
+  22개 후크가 exit0/빈 stderr/단일 JSON 또는 빈 stdout/timeout 내 완료, 캐시 원복0 확인.
+  원본 옆 백업7개 보존. SDK 설치와 조건부 네트워크 보안 리뷰는 이 격리 검사에서 제외.
+  재발 시 `python _tools/verify_codex_plugin_hooks.py`로 감지하고
+  `python _tools/repair_codex_plugin_hooks.py --apply`로 백업 후 복구한다.
+  이전 수정의 원복은 확인했지만 원복 주체는 로그로 특정하지 못했다.
