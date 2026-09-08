@@ -62,7 +62,7 @@
 - 독립 리뷰: 런타임 연결/의뢰 제출 경로 결함 없음. 신속 물약 xlsx는 K4:K7만 변경,
   기존 번역 셀 보존과 추가 키의 한영 포맷 인자 일치를 확인.
 - 커밋: cafc899b(승급), 61241db3(시설), f508fc82(빌드 초기화), 0c7ddffc(의뢰·물약), c067f5e0(UI).
-- Android 최종 재빌드: Succeeded, 2분28초, 배치 종료 코드0. APK 162,145,591 bytes.
+- Android 중간 재빌드: Succeeded, 2분28초, 배치 종료 코드0. APK 162,145,591 bytes.
   ZIP CRC 검사와 ARM64 libil2cpp 포함 확인. adb 연결 기기0대 유지.
   SHA256 `00921138a40e8542dbc0da7f9faddcb5fae8244bb9520e978cbc390a92074644`.
 - 원본 SaveData 복원 완료. SHA256 `cb727d514d88abbac1635e9a15eb67215376606120a11c2b4bb066182ee1fc38` 일치.
@@ -74,3 +74,17 @@
   재발 시 `python _tools/verify_codex_plugin_hooks.py`로 감지하고
   `python _tools/repair_codex_plugin_hooks.py --apply`로 백업 후 복구한다.
   이전 수정의 원복은 확인했지만 원복 주체는 로그로 특정하지 못했다.
+- 추가 빌드 오류 해결: 미참조 Assets/Test/UI.prefab의 사라진 서브그래프378개가
+  Visual Scripting 링커 스캔을 깨뜨렸다. 원본 prefab/meta는 Documents/Legacy에 바이트 그대로 보존.
+  ADR0012 및 `verify_legacy_ui_archive.py` PASS. 실제 게임 VS 컴포넌트는 유지.
+- 최종 배포용 APK: `Builds/Android/RE001.apk`, 162,404,559 bytes.
+  `android-clean-build.log`: Succeeded, 3분18초, **오류0 / 경고21**, 종료 코드0.
+  link.xml 정상 생성, APK CRC·ARM64 검사 PASS.
+  SHA256 `44325f87fd0540fd40753bda53dc3cd32b23de75396578d75b44d58a505bfa8a`.
+  추가 빌드 종료 후 원본 세이브와 PlayerPrefs 11개 일치 재확인.
+
+## 남은 외부 검증
+
+Android 실기기가 연결되지 않아 설치·터치·백그라운드 복귀·기기 저장 복원은 검증하지 못했다.
+후반 장기 체감 밸런스도 실기기 플레이 데이터를 더 모은 뒤 판단한다.
+에디터는 최종 배치 빌드 종료 상태이며 사용자 세이브로 플레이를 다시 실행하지 않았다.
