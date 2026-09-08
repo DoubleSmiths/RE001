@@ -132,3 +132,7 @@ _tools/.share_scene.pkl
 #  결론은 AI/forge_ref/findings.md 에 남으므로 그것만 추적한다.
 AI/forge_ref/*
 !AI/forge_ref/*.md
+
+# 정상 진행 검증의 개인 세이브/PlayerPrefs 백업 및 캡처
+/Documents/Verification-*/
+/_tools/node_modules/
