@@ -312,7 +312,15 @@ public class QuestManager
                     {
                         int have = Managers.Game.GetItemCount(removeId);
                         if (have > 0)
-                            Managers.Game.RemoveItem(removeId, have);
+                        {
+                            // 제출 재료는 요구량만 회수한다. 증명서 교체처럼 표시 재료와 다른 회수는 전량 유지.
+                            int count = have;
+                            if (Managers.Data.QuestDic.TryGetValue(questId, out var completed)
+                                && int.TryParse(completed.FollowItemID, out int followId)
+                                && followId == removeId && completed.FollowCount > 0)
+                                count = Math.Min(have, completed.FollowCount);
+                            Managers.Game.RemoveItem(removeId, count);
+                        }
                     }
                     break;
             }
