@@ -26,25 +26,7 @@ public class GameScene : BaseScene
                 Managers.Quest.Init();
                 Managers.SubQuest.Init();
                 Init();
-                _game = Managers.Game;
-                _player = FindAnyObjectByType<PlayerController>();
-                Managers.Game.Player = _player;
-                Managers.Combo.Init();              // 콤보 매니저 초기화
-                Managers.Combo.AttachPlayer(_player); // Player.OnHitLanded 구독
-                if (_player != null)
-                {
-                    // BaseController.Awake → RefreshStats가 Managers.Data/Game 초기화 전에 1회 호출되어
-                    // 세이브된 Level이나 PlayerStatusData가 반영되지 않은 상태로 남아있음.
-                    // Data.Init + Game.Init(LoadGame) 완료된 지금 다시 호출해 실제 값으로 덮어쓴다.
-                    _player.RefreshStats();
-                    _ui.BindPlayer(_player);
-
-                    // 방치 보상 정산 — 데이터·플레이어가 모두 준비된 뒤여야 한다
-                    // (GainExp가 Player를, 지역 평균 계산이 CreatureDic을 쓴다).
-                    var reward = Managers.Game.ClaimOfflineReward();
-                    if (reward.Kills > 0)
-                        _ui.ShowOfflineReward(reward);
-                }
+                BindPlayer();
                 //StartAnimation();
             }
         });
@@ -55,8 +37,7 @@ public class GameScene : BaseScene
 
         Init();
 
-        // TODO : 게임 데이터 불러오기
-         _game = Managers.Game;
+        // 데이터는 TitleScene의 프리로드에서 준비된다. 플레이어 연결은 Awake 완료 후 Start에서 한다.
 
         // Fade 효과를 UI_Scene에 배치?
 
@@ -77,7 +58,25 @@ public class GameScene : BaseScene
 
     void Start()
     {
-        
+#if !UNITY_EDITOR
+        BindPlayer();
+#endif
+    }
+
+    void BindPlayer()
+    {
+        _game = Managers.Game;
+        _player = FindAnyObjectByType<PlayerController>();
+        _game.Player = _player;
+        Managers.Combo.Init(); // 내부에서 Player.OnHitLanded를 구독한다.
+        if (_player == null) return;
+
+        // 데이터 로드 전에 실행된 Awake의 스탯을 저장된 진행도로 다시 계산한다.
+        _player.RefreshStats();
+        _ui.BindPlayer(_player);
+        var reward = _game.ClaimOfflineReward();
+        if (reward.Kills > 0)
+            _ui.ShowOfflineReward(reward);
     }
 
     void Update()

@@ -10,7 +10,7 @@
 | File | Description |
 |------|-------------|
 | `BaseScene.cs` | abstract 베이스. `Awake()→Init()`, EventSystem 없으면 `Managers.Resource.Instantiate("UI/EventSystem")`로 생성해 `@EventSystem` 명명. `Define.Scene SceneType` 프로퍼티, `Clear()` abstract |
-| `GameScene.cs` | 메인 씬. `#if UNITY_EDITOR` 분기의 Awake에서 `Managers.Resource.LoadAllAsync<Object>("PreLoad")` 콜백 완료 시 매니저 일괄 Init + `FindAnyObjectByType<PlayerController>()`로 Player 연결 + `Managers.Combo.AttachPlayer()` + `_player.RefreshStats()` 재호출(초기화 전 1회 호출된 스탯 덮어쓰기) + `_ui.BindPlayer()`. 비에디터 분기는 미완성(TODO) |
+| `GameScene.cs` | 메인 씬. 에디터 Awake의 PreLoad 완료 콜백에서 매니저 초기화 후 BindPlayer 호출. 빌드는 TitleScene 프리로드를 사용하고 Start에서 BindPlayer 호출. 공통 연결은 Player 지정 → Combo.Init → RefreshStats → HUD 연결 → 방치 보상 순서 |
 | `TitleScene.cs` | `SceneType = Define.Scene.TitleScene`만 설정하는 최소 구현 |
 
 ## For AI Agents
@@ -21,7 +21,7 @@
 - `RefreshStats()` 재호출 주석 주의: `BaseController.Awake → RefreshStats`가 Data/Game 초기화 **전에** 1회 실행되므로, 초기화 완료 후 반드시 다시 호출해 세이브된 Level/PlayerStatusData를 반영한다. Player 초기화 관련 수정 시 이 이중 호출을 깨지 말 것.
 - 씬 UI는 `Managers.UI.ShowSceneUI<UI_GameScene>()`으로만 생성 (직접 Instantiate 금지).
 - 새 씬 추가 시: `Define.Scene` enum에 값 추가 → `BaseScene` 상속 → `Init()`에서 `SceneType` 설정 + `Clear()` 구현.
-- `GameScene`의 `#else`(빌드) 분기는 매니저 Init이 빠져 있는 미완성 상태(TODO 주석) — 빌드 대상 작업 시 이 분기를 함께 점검해야 한다.
+- 빌드는 TitleScene 프리로드에서 매니저를 초기화한다. GameScene.Start에서 공통 BindPlayer를 호출해 모든 Awake가 끝난 후 플레이어·HUD·콤보·방치 보상을 연결한다. 에디터 직접 진입은 프리로드 완료 콜백에서 같은 메서드를 호출한다.
 
 ### Common Patterns
 - `Awake() → Init()` 템플릿 메서드 패턴: 자식은 `protected override Init()`에서 `base.Init()` 호출 후 자기 설정.
