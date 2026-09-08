@@ -537,7 +537,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     static bool IsUnlockAnimTarget(string btnId)
     {
-        return btnId == UNLOCK_TRAVEL_BUTTON || btnId == UNLOCK_ALCHEMY_BUTTON;
+        return btnId == UNLOCK_TRAVEL_BUTTON || btnId == UNLOCK_ALCHEMY_BUTTON
+            || btnId == UNLOCK_FORGE_BUTTON || btnId == UNLOCK_SHOP_BUTTON
+            || btnId == UNLOCK_MONASTERY_BUTTON;
     }
 
     void TryPlayPendingUnlock()
