@@ -33,6 +33,18 @@ public class UI_EquipDetailPopup : UI_Popup
         BaseTxt,                  // (+)상세: 기본 행
         EnTxt,                    // (+)상세: 강화 행
         DurTxt,                   // (+)상세: 내구 행
+        Txt_EquipDuriTxtGroup_07,
+        Txt_EquipSkillTxtGroup_05,
+        Txt_EquipStatTxtGroup_02,
+        Txt_EquipBtn_04,
+        Txt_OnEquipBtn_02,
+        Txt_DontHaveBtn_03,
+        Txt_EnhaceBtn_05,
+        Txt_X_1_08,
+        Txt_X_1_02,
+        Txt_X_1_04,
+        __3,
+        Btn_EquipAmountDetailPopup_03,
     }
 
     enum Buttons
@@ -72,6 +84,48 @@ public class UI_EquipDetailPopup : UI_Popup
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
+        // 가로 자동 확장이 버튼 마스크를 넘지 않도록 부모 버튼 안에서 줄바꿈한다.
+        foreach (var id in new[] { Texts.Txt_EquipBtn_04, Texts.Txt_OnEquipBtn_02, Texts.Txt_DontHaveBtn_03, Texts.Txt_EnhaceBtn_05 })
+        {
+            var label = GetText((int)id);
+            var fitter = label.GetComponent<ContentSizeFitter>();
+            if (fitter != null) fitter.enabled = false;
+            label.rectTransform.anchorMin = Vector2.zero;
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = new Vector2(2f, 1f);
+            label.rectTransform.offsetMax = new Vector2(-2f, -1f);
+            label.enableAutoSizing = true;
+            label.fontSizeMax = label.fontSize;
+            label.fontSizeMin = label.fontSizeMax * 0.65f;
+            label.textWrappingMode = TextWrappingModes.Normal;
+            label.alignment = TextAlignmentOptions.Center;
+        }
+
+        // 본문은 뷰포트 폭을 지키며 세로로 늘어나야 마지막 제작 재료까지 스크롤할 수 있다.
+        var content = GetText((int)Texts.Content);
+        var contentFitter = content.GetComponent<ContentSizeFitter>();
+        if (contentFitter != null)
+        {
+            contentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        }
+        content.textWrappingMode = TextWrappingModes.Normal;
+
+        // 영어 제목이 오른쪽 수치 열(x=33)을 덮지 않도록 기존 두 열 간격 안에 맞춘다.
+        foreach (var id in new[] { Texts.Txt_EquipDuriTxtGroup_07, Texts.Txt_EquipSkillTxtGroup_05 })
+        {
+            var label = GetText((int)id);
+            var fitter = label.GetComponent<ContentSizeFitter>();
+            if (fitter != null) fitter.enabled = false;
+            label.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 26f);
+            label.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 8f);
+            label.enableAutoSizing = true;
+            label.fontSizeMax = label.fontSize;
+            label.fontSizeMin = label.fontSizeMax * 0.65f;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.alignment = TextAlignmentOptions.TopLeft;
+        }
+
         _frameRT = GetObject((int)GameObjects.EquipDetailPopup)?.GetComponent<RectTransform>();
 
         // 닫기: BG / X버튼 (X는 Button 없음 → Image GO에 바인드)
@@ -95,7 +149,10 @@ public class UI_EquipDetailPopup : UI_Popup
 
         // 강화/장착 등 장비 상태 변화 시 자동 갱신 (대장간에서 강화 후 복귀 포함)
         if (Managers.Game != null)
+        {
             Managers.Game.EquipInfoChanged += RefreshUI;
+            Managers.Game.OnLanguageChanged += RefreshUI;
+        }
 
         return true;
     }
@@ -104,7 +161,10 @@ public class UI_EquipDetailPopup : UI_Popup
     {
         base.OnDestroy();
         if (Managers.Game != null)
+        {
             Managers.Game.EquipInfoChanged -= RefreshUI;
+            Managers.Game.OnLanguageChanged -= RefreshUI;
+        }
     }
 
     // 장비창에서 슬롯 클릭 시 호출 — 표시할 장비 지정.
@@ -116,6 +176,7 @@ public class UI_EquipDetailPopup : UI_Popup
 
     public override void RefreshUI()
     {
+        RefreshTexts();
         if (_equip == null) return;
         var data = _equip.EquipmentData;
         if (data == null)
@@ -193,7 +254,7 @@ public class UI_EquipDetailPopup : UI_Popup
         var label = go.GetComponentInChildren<TMP_Text>(true);
         if (label != null)
         {
-            label.text = can ? "제작" : reason;
+            label.text = can ? Util.Localize(LocalizeKey.CraftText) : reason;
             ApplyFont(label, FontType.UI);
         }
 
@@ -227,17 +288,17 @@ public class UI_EquipDetailPopup : UI_Popup
 
     // ── 표시 빌더 ──
 
-    // 부위명 — 슬롯 타입 로컬라이즈 키 부재 → 한글 고정 (키 추가 시 Util.Localize로 교체)
+    // 부위명 — 기존 메서드명은 유지하고 현재 언어의 슬롯 이름을 표시한다.
     static string SlotKor(EquipSlotType slot)
     {
         switch (slot)
         {
-            case EquipSlotType.Weapon:    return "무기";
-            case EquipSlotType.Helmet:    return "투구";
-            case EquipSlotType.Armor:     return "갑옷";
-            case EquipSlotType.Gloves:    return "장갑";
-            case EquipSlotType.Legs:      return "신발";
-            case EquipSlotType.Accessory: return "장신구";
+            case EquipSlotType.Weapon:    return Util.Localize(LocalizeKey.EquipSlotWeaponText);
+            case EquipSlotType.Helmet:    return Util.Localize(LocalizeKey.EquipSlotHelmetText);
+            case EquipSlotType.Armor:     return Util.Localize(LocalizeKey.EquipSlotArmorText);
+            case EquipSlotType.Gloves:    return Util.Localize(LocalizeKey.EquipSlotGlovesText);
+            case EquipSlotType.Legs:      return Util.Localize(LocalizeKey.EquipSlotLegsText);
+            case EquipSlotType.Accessory: return Util.Localize(LocalizeKey.EquipSlotAccessoryText);
             default:                      return slot.ToString();
         }
     }
@@ -271,9 +332,9 @@ public class UI_EquipDetailPopup : UI_Popup
     {
         SumEnhanceBonus(out int enAtk, out float enCrit, out int enMagic);
         var sb = new StringBuilder();
-        AppendStat(sb, "물리공격", data.BaseAtk + enAtk, enAtk, false);
-        AppendStat(sb, "치명타", data.BaseCritRate + enCrit, enCrit, true);
-        AppendStat(sb, "마법공격", data.BaseMagicAtk + enMagic, enMagic, false);
+        AppendStat(sb, Util.Localize(LocalizeKey.PhysicalAttackText), data.BaseAtk + enAtk, enAtk, false);
+        AppendStat(sb, Util.Localize(LocalizeKey.CriticalText), data.BaseCritRate + enCrit, enCrit, true);
+        AppendStat(sb, Util.Localize(LocalizeKey.MagicalAttackText), data.BaseMagicAtk + enMagic, enMagic, false);
 
         // 미보유면 능력치 아래에 **필요 재료**를 같이 보여준다.
         //  버튼에는 첫 번째로 막힌 사유만 뜨므로, 전체 목록은 여기서 확인한다.
@@ -286,9 +347,9 @@ public class UI_EquipDetailPopup : UI_Popup
                 // 한 줄에 몰아넣으면 폭이 좁아 뒷자리가 잘리고("골드 4,200/1"),
                 //  기본 크기로는 5줄이 표시 영역을 넘어 마지막 재료가 잘린다. 줄을 나누고 조금 작게.
                 if (sb.Length > 0) sb.Append("\n");
-                sb.Append("\n<size=85%><color=#FFD000>[제작 재료]</color>");
-                sb.Append($"\n레벨 {Colored(Managers.Game.Level, recipe.ReqLevel)}");
-                sb.Append($"\n골드 {Colored(Managers.Game.Gold, recipe.Gold)}");
+                sb.Append($"\n<size=85%><color=#FFD000>[{Util.Localize(LocalizeKey.ForgeReqMaterialText)}]</color>");
+                sb.Append($"\n{Util.Localize(LocalizeKey.PlayerLevelLabelText)} {Colored(Managers.Game.Level, recipe.ReqLevel)}");
+                sb.Append($"\n{Util.Localize(LocalizeKey.GoldLabelText)} {Colored(Managers.Game.Gold, recipe.Gold)}");
 
                 foreach (var (id, need) in GameManager.RecipeMaterials(recipe))
                 {
@@ -323,7 +384,8 @@ public class UI_EquipDetailPopup : UI_Popup
     void RefreshAmountDetail(Data.EquipmentData data)
     {
         SumEnhanceBonus(out int enAtk, out float enCrit, out int enMagic);
-        SetText(Texts.StatNameTxt, "물리공격   치명타   마법공격");
+        SetText(Texts.StatNameTxt, $"{Util.Localize(LocalizeKey.PhysicalAttackText)}   {Util.Localize(LocalizeKey.CriticalText)}   {Util.Localize(LocalizeKey.MagicalAttackText)}");
+        SetText(Texts.Btn_EquipAmountDetailPopup_03, GetText((int)Texts.StatNameTxt).text);
         SetText(Texts.BaseTxt, $"+{data.BaseAtk}   +{data.BaseCritRate:0.#}%   +{data.BaseMagicAtk}");
         SetText(Texts.EnTxt, $"+{enAtk}   +{enCrit:0.#}%   +{enMagic}");
         SetText(Texts.DurTxt, "-   -   -");
@@ -354,6 +416,20 @@ public class UI_EquipDetailPopup : UI_Popup
     void CloseAmountDetail() => SetActive(GetObject((int)GameObjects.EquipAmountDetailPopup), false);
 
     // ── 헬퍼 (UI_SkillDetailPopup과 동일 패턴) ──
+
+    void RefreshTexts()
+    {
+        SetText(Texts.Txt_EquipDuriTxtGroup_07, Util.Localize(LocalizeKey.ForgeDurabilityText));
+        SetText(Texts.Txt_EquipSkillTxtGroup_05, Util.Localize(LocalizeKey.UniqueSkillText));
+        SetText(Texts.Txt_EquipStatTxtGroup_02, Util.Localize("EquipmentStatsText"));
+        SetText(Texts.Txt_EquipBtn_04, Util.Localize("EquipActionText"));
+        SetText(Texts.Txt_OnEquipBtn_02, Util.Localize("EquippedText"));
+        SetText(Texts.Txt_EnhaceBtn_05, Util.Localize(LocalizeKey.ForgeText));
+        SetText(Texts.Txt_X_1_08, Util.Localize(LocalizeKey.BaseStatText));
+        SetText(Texts.Txt_X_1_02, Util.Localize(LocalizeKey.ForgeEnhanceBtnText));
+        SetText(Texts.Txt_X_1_04, Util.Localize(LocalizeKey.ForgeDurabilityText));
+        SetText(Texts.__3, Util.Localize(LocalizeKey.DescriptionText));
+    }
 
     static void SetActive(GameObject go, bool on) { if (go != null && go.activeSelf != on) go.SetActive(on); }
     GameObject GetTextGo(Texts id) { var t = GetText((int)id); return t != null ? t.gameObject : null; }

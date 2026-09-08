@@ -1235,12 +1235,12 @@ public class GameManager
     /// <summary>제작이 막힌 이유. 만들 수 있으면 빈 문자열.</summary>
     public string GetCraftBlockReason(int equipDataId)
     {
-        if (HasEquipment(equipDataId)) return "이미 보유";
+        if (HasEquipment(equipDataId)) return Util.Localize(LocalizeKey.EquipAlreadyOwnedText);
 
         var r = GetRecipeFor(equipDataId);
-        if (r == null) return "제작 불가";
-        if (Level < r.ReqLevel) return $"Lv.{r.ReqLevel} 필요";
-        if (Gold < r.Gold) return $"골드 {r.Gold:N0} 필요";
+        if (r == null) return Util.Localize(LocalizeKey.EquipCannotCraftText);
+        if (Level < r.ReqLevel) return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), r.ReqLevel);
+        if (Gold < r.Gold) return string.Format(Util.Localize(LocalizeKey.RequiredGoldFormat), r.Gold);
 
         foreach (var (id, need) in RecipeMaterials(r))
         {

@@ -155,9 +155,9 @@ public class UI_ClassPopup : UI_Popup
 
     public void SetInfo()
     {
-        // 타이틀 "직업"은 prefab authored 텍스트 유지(전용 로컬라이즈 키 없음 — 새 키 남발 금지), 폰트만 적용
+        // 실제 기능인 직업 능력 습득을 한영 공통 키로 표시한다.
         var title = GetText((int)Texts.title);
-        if (title != null) ApplyFont(title, FontType.UI);
+        if (title != null) { title.text = Util.Localize(LocalizeKey.Class_Ability_Text); ApplyFont(title, FontType.UI); }
 
         // 상단 서브타이틀 = "직업 기술" (기존 키 Class_Ability_Text 재사용)
         var sub = GetText((int)Texts.SubtitleText);

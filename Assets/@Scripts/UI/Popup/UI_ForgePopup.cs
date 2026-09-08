@@ -237,6 +237,10 @@ public class UI_ForgePopup : UI_Popup
         // 프리팹에 남아 있던 영문 라벨들 — 한글 화면에 "POTENCIALS"(오타까지) / "OR"가 그대로 떴다.
         SetOverlayText("Txt_EnhancePart_02", Util.Localize("ForgePotentialText"));
         SetOverlayText("Text_3", Util.Localize("ForgeOrText"));
+        SetOverlayText("Txt_Title_04", Util.Localize("ForgeRestoreTitleText"));
+        SetOverlayText("Txt_DoEnhaceBtn_11", Util.Localize("ForgeRestoreActionText"));
+        SetOverlayText("Txt_Title_1_05", Util.Localize(LocalizeKey.ForgeEnhanceBtnText));
+        SetOverlayText("Txt_DoEnhaceBtn_10", Util.Localize(LocalizeKey.ForgeEnhanceBtnText));
 
         int matCount = Managers.Game.GetItemCount(RESTORE_MATERIAL_ID);
         bool matOk   = matCount >= RESTORE_MATERIAL_COUNT;
@@ -268,7 +272,7 @@ public class UI_ForgePopup : UI_Popup
         {
             // 강화쪽과 같은 이유 — "복구불가"만 떠 있으면 왜 안 되는지 알 수 없다.
             SetOverlayText("Txt_CantEnhaceCraft_13",
-                _equip.Durability >= maxDuri ? "내구도 가득" : "재료 부족");
+                Util.Localize(_equip.Durability >= maxDuri ? LocalizeKey.DurabilityFullText : LocalizeKey.InsufficientMaterialsText));
         }
 
         // ── EnhancePart: 주문서 4종 ──
@@ -332,19 +336,19 @@ public class UI_ForgePopup : UI_Popup
     string BlockReason()
     {
         if (_equip == null) return Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText);
-        if (_equip.EnhanceLevel >= ENHANCE_MAX_LEVEL) return "최대 강화";
-        if (_equip.Durability <= 0) return "내구도 0";
-        if (_selectedScroll < 0) return "주문서 선택";
+        if (_equip.EnhanceLevel >= ENHANCE_MAX_LEVEL) return Util.Localize(LocalizeKey.EnhanceMaxText);
+        if (_equip.Durability <= 0) return Util.Localize(LocalizeKey.DurabilityZeroText);
+        if (_selectedScroll < 0) return Util.Localize(LocalizeKey.SelectScrollText);
 
         int cost = Managers.Game.GetEnhanceCost(_equip);
-        if (Managers.Game.Gold < cost) return $"골드 {cost:N0} 필요";
+        if (Managers.Game.Gold < cost) return string.Format(Util.Localize(LocalizeKey.RequiredGoldFormat), cost);
 
         var (matId, matNeed) = Managers.Game.GetEnhanceMaterial(_equip);
         if (matId > 0 && matNeed > 0 && Managers.Game.GetItemCount(matId) < matNeed)
         {
             string nm = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(matId, out var it)
                       ? Util.Localize(it.Name) : matId.ToString();
-            return $"{nm} {matNeed}개 필요";
+            return string.Format(Util.Localize(LocalizeKey.RequiredItemFormat), nm, matNeed);
         }
         return Util.Localize(Define.LocalizeKey.ForgeCantEnhanceText);
     }
@@ -363,7 +367,9 @@ public class UI_ForgePopup : UI_Popup
     void SetOverlayText(string childName, string text)
     {
         var t = Util.FindChild<TMP_Text>(gameObject, childName, true);
-        if (t != null) t.text = text;
+        if (t == null) return;
+        t.text = text;
+        ApplyFont(t, FontType.UI);
     }
 
     void SetItemBox(Image icon, TMP_Text countTxt, int itemId, string countStr, bool enough)
@@ -416,7 +422,7 @@ public class UI_ForgePopup : UI_Popup
         //  전형적인 지점이다. 왜 안 되는지 말해 준다.
         if (_selectedScroll < 0)
         {
-            Managers.UI.ShowToast("강화에 쓸 주문서를 먼저 선택하세요");
+            Managers.UI.ShowToast(Util.Localize(LocalizeKey.SelectScrollFirstText));
             return;
         }
 
@@ -426,7 +432,7 @@ public class UI_ForgePopup : UI_Popup
         int cost = Managers.Game.GetEnhanceCost(_equip);
         if (Managers.Game.Gold < cost)
         {
-            Managers.UI.ShowToast($"골드가 부족합니다\n강화 비용 {cost:N0} (보유 {Managers.Game.Gold:N0})");
+            Managers.UI.ShowToast(string.Format(Util.Localize(LocalizeKey.EnhanceGoldShortFormat), cost, Managers.Game.Gold));
             return;
         }
         if (!Managers.Game.CanEnhance(_equip, scrollId)) return;

@@ -6539,6 +6539,146 @@
       "TextKey": "MonSkillVoidThingDesc",
       "Kor": "닿는 것을 공허로 빨아들인다.",
       "Eng": "Draws whatever it touches into the void."
+    },
+    {
+      "TextKey": "EquipAlreadyOwnedText",
+      "Kor": "이미 보유",
+      "Eng": "OWNED"
+    },
+    {
+      "TextKey": "EquipCannotCraftText",
+      "Kor": "제작 불가",
+      "Eng": "UNAVAILABLE"
+    },
+    {
+      "TextKey": "RequiredLevelFormat",
+      "Kor": "Lv.{0} 필요",
+      "Eng": "Requires Lv.{0}"
+    },
+    {
+      "TextKey": "RequiredGoldFormat",
+      "Kor": "골드 {0:N0} 필요",
+      "Eng": "Requires {0:N0} G"
+    },
+    {
+      "TextKey": "RequiredItemFormat",
+      "Kor": "{0} {1}개 필요",
+      "Eng": "Requires {1} {0}"
+    },
+    {
+      "TextKey": "MissingItemFormat",
+      "Kor": "{0} 없음",
+      "Eng": "No {0}"
+    },
+    {
+      "TextKey": "EquipSlotWeaponText",
+      "Kor": "무기",
+      "Eng": "WEAPON"
+    },
+    {
+      "TextKey": "EquipSlotHelmetText",
+      "Kor": "투구",
+      "Eng": "HELMET"
+    },
+    {
+      "TextKey": "EquipSlotArmorText",
+      "Kor": "갑옷",
+      "Eng": "ARMOR"
+    },
+    {
+      "TextKey": "EquipSlotGlovesText",
+      "Kor": "장갑",
+      "Eng": "GLOVES"
+    },
+    {
+      "TextKey": "EquipSlotLegsText",
+      "Kor": "신발",
+      "Eng": "BOOTS"
+    },
+    {
+      "TextKey": "EquipSlotAccessoryText",
+      "Kor": "장신구",
+      "Eng": "ACCESSORY"
+    },
+    {
+      "TextKey": "PlayerLevelLabelText",
+      "Kor": "레벨",
+      "Eng": "LEVEL"
+    },
+    {
+      "TextKey": "GoldLabelText",
+      "Kor": "골드",
+      "Eng": "GOLD"
+    },
+    {
+      "TextKey": "DurabilityFullText",
+      "Kor": "내구도 가득",
+      "Eng": "FULL DURABILITY"
+    },
+    {
+      "TextKey": "InsufficientMaterialsText",
+      "Kor": "재료 부족",
+      "Eng": "NEED MATERIALS"
+    },
+    {
+      "TextKey": "EnhanceMaxText",
+      "Kor": "최대 강화",
+      "Eng": "MAX ENHANCE"
+    },
+    {
+      "TextKey": "DurabilityZeroText",
+      "Kor": "내구도 0",
+      "Eng": "DURABILITY 0"
+    },
+    {
+      "TextKey": "SelectScrollText",
+      "Kor": "주문서 선택",
+      "Eng": "SELECT SCROLL"
+    },
+    {
+      "TextKey": "SelectScrollFirstText",
+      "Kor": "강화에 쓸 주문서를 먼저 선택하세요",
+      "Eng": "Select an enhancement scroll first."
+    },
+    {
+      "TextKey": "EnhanceGoldShortFormat",
+      "Kor": "골드가 부족합니다\n강화 비용 {0:N0} (보유 {1:N0})",
+      "Eng": "Not enough gold\nCost {0:N0} G (have {1:N0})"
+    },
+    {
+      "TextKey": "EquipActionText",
+      "Kor": "장착",
+      "Eng": "EQUIP"
+    },
+    {
+      "TextKey": "EquippedText",
+      "Kor": "장착중",
+      "Eng": "EQUIPPED"
+    },
+    {
+      "TextKey": "EquipmentStatsText",
+      "Kor": "능력치",
+      "Eng": "STATS"
+    },
+    {
+      "TextKey": "ForgeRestoreTitleText",
+      "Kor": "장비 복구",
+      "Eng": "REPAIR EQUIPMENT"
+    },
+    {
+      "TextKey": "ForgeRestoreActionText",
+      "Kor": "복구",
+      "Eng": "REPAIR"
+    },
+    {
+      "TextKey": "SkipEnhanceAnimationText",
+      "Kor": "영상\n건너뛰기",
+      "Eng": "SKIP\nANIMATION"
+    },
+    {
+      "TextKey": "EnhanceDurabilityRiskText",
+      "Kor": "실패 시 내구도 감소량",
+      "Eng": "DURABILITY LOSS ON FAILURE"
     }
   ]
 }

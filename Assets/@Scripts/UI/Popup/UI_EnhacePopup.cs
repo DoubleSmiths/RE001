@@ -520,7 +520,7 @@ public class UI_EnhacePopup : UI_Popup
             // 없는 주문서를 고르면 왜 안 되는지 말해 준다 — 조용히 무시하면 고장으로 보인다.
             string nm = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(id, out var it)
                 ? Util.Localize(it.Name) : id.ToString();
-            Managers.UI.ShowToast($"{nm} 없음");
+            Managers.UI.ShowToast(string.Format(Util.Localize(LocalizeKey.MissingItemFormat), nm));
             return;
         }
 
@@ -592,6 +592,17 @@ public class UI_EnhacePopup : UI_Popup
     {
         if (_equip == null || _equip.EquipmentData == null) return;
         var data = _equip.EquipmentData;
+        SetLocalizedLabel("DurabilityText", LocalizeKey.ForgeDurabilityText);
+        SetLocalizedLabel("AttText", LocalizeKey.EnhancePreviewText);
+        SetLocalizedLabel("Text_Legacy", "SkipEnhanceAnimationText");
+        SetLocalizedLabel("text", "EnhanceDurabilityRiskText");
+        SetLocalizedLabel("Txt_Enhance_Btn_01", LocalizeKey.ForgeEnhanceBtnText);
+
+        // 제목의 구형 한영 복제본은 원본 텍스트와 겹치므로 하나만 표시한다.
+        var korTitle = Util.FindChild(gameObject, "AttText_Kor", true);
+        var engTitle = Util.FindChild(gameObject, "AttText_Eng", true);
+        if (korTitle != null) korTitle.SetActive(false);
+        if (engTitle != null) engTitle.SetActive(false);
 
         // 장비 아이콘 — EquipIcon Animator가 sprite를 덮어쓰므로 코드 세팅 시 정지 (ForgePopup과 동일 처리)
         var wIcon = GetImage((int)Images.WIcon);
@@ -855,7 +866,7 @@ public class UI_EnhacePopup : UI_Popup
         int cost = Managers.Game.GetEnhanceCost(_equip);
         if (Managers.Game.Gold < cost)
         {
-            Managers.UI.ShowToast($"골드가 부족합니다\n강화 비용 {cost:N0} (보유 {Managers.Game.Gold:N0})");
+            Managers.UI.ShowToast(string.Format(Util.Localize(LocalizeKey.EnhanceGoldShortFormat), cost, Managers.Game.Gold));
             return;
         }
         if (!Managers.Game.CanEnhance(_equip, _scrollId)) return;
@@ -904,6 +915,14 @@ public class UI_EnhacePopup : UI_Popup
         if (flash != null) flash.SetActive(false);
         _resolving = false;
         RefreshUI();
+    }
+
+    void SetLocalizedLabel(string name, string key)
+    {
+        var text = Util.FindChild<TMPro.TMP_Text>(gameObject, name, true);
+        if (text == null) return;
+        text.text = Util.Localize(key);
+        ApplyFont(text, FontType.UI);
     }
 
     void OnClickClose()
