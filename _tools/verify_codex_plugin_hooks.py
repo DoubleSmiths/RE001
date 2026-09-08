@@ -18,7 +18,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 self_check()
 results = []
 drift = [str(path) for path, *_ in planned_changes()]
-plugins = dict(PLUGINS, ponytail="ponytail/ponytail/4.9.0")
+plugins = PLUGINS
 with tempfile.TemporaryDirectory(prefix="codex-hook-check-") as work:
     Path(work, ".omc-workspace").touch()
     Path(work, "security").mkdir()
@@ -42,6 +42,12 @@ with tempfile.TemporaryDirectory(prefix="codex-hook-check-") as work:
                                PLUGIN_DATA=work + "/plugin-data/" + plugin,
                                OMC_STATE_DIR=work + "/omc-state",
                                SECURITY_WARNINGS_STATE_DIR=work + "/security", PYTHONUTF8="1")
+                    if plugin in ("superpowers", "ponytail"):
+                        # 명령의 경로 치환과 자식 프로세스 환경변수 주입은 별개다.
+                        env.pop("CLAUDE_PLUGIN_ROOT", None)
+                        env.pop("COPILOT_PLUGIN_DATA", None)
+                        env.pop("CURSOR_PLUGIN_ROOT", None)
+                        env["PONYTAIL_DEFAULT_MODE"] = "full"
                     payload = json.dumps({"hook_event_name": event, "session_id": "hook-check", "cwd": work,
                                           "source": "startup", "prompt": "Explain the project.", "tool_name": "Read",
                                           "tool_input": {"file_path": work + "/sample.txt"},
@@ -56,7 +62,21 @@ with tempfile.TemporaryDirectory(prefix="codex-hook-check-") as work:
                         stdout = run.stdout.decode("utf-8-sig").strip()
                         if stdout:
                             # 두 JSON 또는 로그+JSON 출력도 json.loads가 거부한다.
-                            assert isinstance(json.loads(stdout), dict), "Hook output must be one JSON object"
+                            output = json.loads(stdout)
+                            assert isinstance(output, dict), "Hook output must be one JSON object"
+                            if event == "SessionStart" or plugin == "ponytail":
+                                allowed = {"continue", "stopReason", "systemMessage", "suppressOutput", "hookSpecificOutput"}
+                                assert not (output.keys() - allowed), f"Unsupported {event} fields: {output.keys() - allowed}"
+                                specific = output.get("hookSpecificOutput", {})
+                                assert isinstance(specific, dict)
+                                assert not (specific.keys() - {"hookEventName", "additionalContext"})
+                                if specific:
+                                    assert specific.get("hookEventName") == event
+                                    assert isinstance(specific.get("additionalContext", ""), str)
+                            if plugin == "ponytail":
+                                assert "systemMessage" not in output, "Ponytail mode must not emit a UI warning"
+                            if plugin in ("ponytail", "superpowers") and event == "SessionStart":
+                                assert output["hookSpecificOutput"]["additionalContext"], "Mode instructions were lost"
                         result["ok"] = run.returncode == 0 and "Error:" not in result["stderr"]
                     except (subprocess.TimeoutExpired, UnicodeError, ValueError, AssertionError) as error:
                         result.update(ok=False, error=str(error))

@@ -7,6 +7,7 @@ PLUGINS = {
     "security": "claude-plugins-official/security-guidance/2.0.7",
     "ralph": "claude-plugins-official/ralph-loop/1.0.0",
     "superpowers": "claude-plugins-official/superpowers/6.3.0",
+    "ponytail": "ponytail/ponytail/4.9.0",
 }
 
 def repair_command(command, plugin):
@@ -23,7 +24,7 @@ def planned_changes():
     changes = []
     for plugin, relative in PLUGINS.items():
         root = BASE / relative
-        path = root / "hooks/hooks.json"
+        path = root / "hooks" / ("claude-codex-hooks.json" if plugin == "ponytail" else "hooks.json")
         before = path.read_bytes()
         data = json.loads(before)
         count = 0
@@ -44,6 +45,11 @@ def planned_changes():
             path = root / "hooks" / scripts[plugin]
             before = path.read_bytes()
             after = before.replace(b"\r\n", b"\n")
+            if plugin == "superpowers":
+                old = b'elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; then'
+                new = b'elif [ -n "${PLUGIN_DATA:-}" ] || { [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; }; then'
+                assert old in after or new in after, "Superpowers platform detection changed"
+                after = after.replace(old, new)
             if plugin == "ralph":
                 if b'export PATH="/usr/bin:$PATH"' not in after:
                     after = after.replace(b'set -euo pipefail\n', b'set -euo pipefail\nexport PATH="/usr/bin:$PATH"\n', 1)
@@ -51,7 +57,16 @@ def planned_changes():
                     if line.lstrip().startswith(b'echo ') and (b'Max iterations (' in line or b'Detected <promise>' in line) and not line.endswith(b'>&2'):
                         after = after.replace(line, line + b' >&2')
             if before != after:
-                changes.append((path, before, after, "LF, Unix PATH and diagnostic stderr"))
+                changes.append((path, before, after, "Windows shell and Codex output compatibility"))
+        if plugin == "ponytail":
+            path = root / "hooks/ponytail-runtime.js"
+            before = path.read_bytes()
+            old = b'const output = { systemMessage: `PONYTAIL:${mode.toUpperCase()}` };'
+            new = b'const output = {}; // Codex: keep mode context without a UI warning.'
+            assert old in before or new in before, "Ponytail emitter changed"
+            after = before.replace(old, new)
+            if before != after:
+                changes.append((path, before, after, "Keep Ponytail active without a warning badge"))
         if plugin == "security":
             path = root / "hooks/security_reminder_hook.py"
             before = path.read_bytes()
