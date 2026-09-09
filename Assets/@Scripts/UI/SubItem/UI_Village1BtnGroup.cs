@@ -831,7 +831,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.TravelButtonIcon),
                     GetText((int)Texts.TravelButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Travel_Icon", LocalizeKey.TravelBtnText, LocalizeKey.TravelUnlockText)); // 해금 대상 = [여정] 버튼
+                        .SetInfo(GetImage((int)Images.TravelButtonIcon).sprite, LocalizeKey.TravelBtnText, LocalizeKey.TravelUnlockText)); // 해금 대상 = [여정] 버튼
                 break;
 
             case UNLOCK_FORGE_BUTTON:
@@ -841,7 +841,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.ForgeButtonIcon),
                     GetText((int)Texts.ForgeButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Forge_Icon", LocalizeKey.ForgeText, LocalizeKey.ForgeUnlockText));
+                        .SetInfo(GetImage((int)Images.ForgeButtonIcon).sprite, LocalizeKey.ForgeText, LocalizeKey.ForgeUnlockText));
                 break;
 
             case UNLOCK_SHOP_BUTTON:
@@ -851,7 +851,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.ShopButtonIcon),
                     GetText((int)Texts.ShopButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Shop_Icon", LocalizeKey.ShopText, LocalizeKey.ShopUnlockText));
+                        .SetInfo(GetImage((int)Images.ShopButtonIcon).sprite, LocalizeKey.ShopText, LocalizeKey.ShopUnlockText));
                 break;
 
             case UNLOCK_MONASTERY_BUTTON:
@@ -861,7 +861,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.MonasteryButtonIcon),
                     GetText((int)Texts.MonasteryButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Monastery_Icon", LocalizeKey.MonasteryText, LocalizeKey.MonasteryUnlockText));
+                        .SetInfo(GetImage((int)Images.MonasteryButtonIcon).sprite, LocalizeKey.MonasteryText, LocalizeKey.MonasteryUnlockText));
                 break;
 
             case UNLOCK_ALCHEMY_BUTTON:
@@ -871,7 +871,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.AlchemyButtonIcon),
                     GetText((int)Texts.AlchemyButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Alchemy_Icon", LocalizeKey.AlchemyText, LocalizeKey.AlchemyUnlockText));
+                        .SetInfo(GetImage((int)Images.AlchemyButtonIcon).sprite, LocalizeKey.AlchemyText, LocalizeKey.AlchemyUnlockText));
                 break;
         }
     }
