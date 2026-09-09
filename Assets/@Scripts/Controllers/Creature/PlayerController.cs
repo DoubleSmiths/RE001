@@ -313,8 +313,9 @@ public class PlayerController : CreatureController
     void AutoAttack()
     {
         if (State == Define.State.Attack) return;
-        // 콤보 + 신속물약 공격속도 버프: 합산 %만큼 공격 사이클 전체가 빨라짐(쿨타임 + 애니 + 상태지속).
-        float speedMul = 1f + (ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / 100f;
+        // 기본 공속(100)과 능력·콤보·물약을 같은 단위로 합산한다. 이번 공격은 시작 시 배율로 마친다.
+        float speedMul = Mathf.Max(MIN_PLAYER_ATTACK_SPEED_MULTIPLIER,
+            (AtkSpeed + ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / ABILITY_PERCENT_BASE);
         float effectiveCooldown = AtkCooldown / speedMul;
         if (Time.time < _lastAtkTime + effectiveCooldown) return;
 
@@ -325,13 +326,18 @@ public class PlayerController : CreatureController
 
         _lastAtkTime = Time.time;
         _attackTarget = target;         // 슬라이드 61 — 키프레임 시점에 데미지 적용하기 위해 락온
+        // 이전 Idle 피격의 복귀가 새 공격을 중간에 Idle로 덮어쓰지 않게 한다.
+        if (_onHitCo != null)
+        {
+            StopCoroutine(_onHitCo);
+            _onHitCo = null;
+        }
         State = Define.State.Attack;
         // 공격속도만큼 Attack 애니 재생속도를 올려 키프레임(AttackTrigger)과 클립 종료가 함께 빨라지도록.
         if (_anim != null) _anim.speed = speedMul;
 
         // 명중/회피 dice + BattleMath.Resolve + TakeHit는 Attack.anim의 키프레임 이벤트
-        // (AttackTrigger, 0.5s)에서 호출됨. OnHit으로 인터럽트되면 키프레임에 도달하지
-        // 못해 자연스럽게 데미지 미적용 (슬라이드 60 — 인터럽트 = 빗나감).
+        // (AttackTrigger, 0.5s)에서 호출된다. 일반 피격은 진행 중인 공격을 끊지 않는다(ADR0024).
 
         if (_attackResetCo != null) StopCoroutine(_attackResetCo);
         // Attack 상태 지속도 공격속도만큼 단축 — 클립 길이가 병목이 되지 않도록.
@@ -411,8 +417,9 @@ public class PlayerController : CreatureController
         if (MaxHp > 0f) _abilityRunner?.Notify(Define.AbilityCondition.LowHp, Hp / MaxHp * 100f);
     }
 
-    // 슬라이드 60/64/65 Player —
-    //  · OnHit Anim을 처음부터 재생 (어느 상태에서 피격되었든)
+    // 슬라이드 60/64/65 Player — 일반 피격의 공격 취소는 ADR0024로 변경.
+    //  · 공격 중에는 피해·소리는 유지하고 타격 키프레임까지 공격 모션을 마친다.
+    //  · 그 외 상태에서는 OnHit Anim을 처음부터 재생
     //  · OnHit 클립 길이 0.35s (슬라이드 65 고정)
     //  · OnHit 끝나면 Idle로 복귀 → AutoAttack이 자연 재개 (cooldown 끝나는 대로 Attack)
     //  · OnHit 도중 또 피격 시 OnHit 처음부터 재시작 (CrossFade normalizedTime 0)
@@ -422,6 +429,7 @@ public class PlayerController : CreatureController
         if (_anim == null) return;
 
         Managers.Sound?.PlaySFX("Sound_PlayeronHit");   // 플레이어 피격
+        if (State == Define.State.Attack) return;
         _anim.speed = 1f;   // 공격속도 버프로 올렸던 애니 속도 원복(피격 연출은 정상 속도)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
 
@@ -629,8 +637,7 @@ public class PlayerController : CreatureController
     // Attack.anim의 0.5s 키프레임에 functionName=AttackTrigger 이벤트 등록되어 있음.
     // 명중/회피 dice + BattleMath.Resolve + TakeHit를 이 시점에 처리.
     //
-    // OnHit 등으로 Attack 클립이 인터럽트되면 이 이벤트가 발화되지 않아 자연스럽게
-    // 데미지가 들어가지 않음 (슬라이드 60 — 공격이 끊긴 경우).
+    // 일반 피격은 공격을 유지하며, 사망·교전 종료는 아래 상태/타겟 가드로 타격을 차단한다.
     // 디버그 — 레벨/EXP 리셋. 테스트 메뉴에서 호출.
     public void DebugResetLevel(int targetLevel = 1)
     {

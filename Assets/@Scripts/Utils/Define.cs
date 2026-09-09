@@ -118,6 +118,7 @@ public class Define
     public const string COMBAT_ABILITY_NO_TARGET_TEXT = "CombatAbilityNoTargetText";
     public const string COMBAT_ABILITY_UNAVAILABLE_TEXT = "CombatAbilityUnavailableText";
     public const float ABILITY_PERCENT_BASE = 100f;
+    public const float MIN_PLAYER_ATTACK_SPEED_MULTIPLIER = 0.1f;
     public const string COMPANION_ABILITY_BORROWED_TEXT = "CompanionAbilityBorrowedText";
     public const string COMPANION_ABILITY_AVAILABLE_TEXT = "CompanionAbilityAvailableText";
 
