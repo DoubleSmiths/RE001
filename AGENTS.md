@@ -35,6 +35,12 @@ RE001 — Unity 2D 사이드뷰 액션 RPG (모바일 세로 화면, 픽셀 아�
 **자동화 테스트 스위트가 없다.** 검증은 Unity Editor + `unity-cli`로 한다.
 
 ### unity-cli (켜져 있는 에디터에 붙어서 조종)
+Windows에서 프로젝트를 열 때 `_tools/open_unity.bat`를 사용한다. 프로젝트 버전의 에디터를 DX11로 실행하며,
+실행 중인 Unity가 없을 때만 남은 씬 백업을 `Documents/UnityRecovery/`로 **보존 이동**한다.
+`Assets/_Recovery` 사본은 그대로 둔다. Windows 기본 그래픽 API도 DX11이며 Android 설정과 별개다.
+에디터 종료는 저장 상태를 확인한 뒤 실제 창 닫기(Alt+F4)를 사용한다. `unity-cli menu "File/Exit"`와
+`EditorApplication.Exit`는 이번 환경에서 프로세스 종료 후에도 씬 백업을 남겼지만 창 닫기는 정상 정리했다.
+
 `C:\Users\Mycom\AppData\Local\unity-cli\unity-cli.exe` (v0.3.22, 비공식 도구)
 
 ```bash
