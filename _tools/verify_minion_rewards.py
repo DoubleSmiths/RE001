@@ -37,13 +37,23 @@ def verify(runtime=False):
             assert s[col] in localize and localize[s[col]]['Kor'] and localize[s[col]]['Eng'], (mid, col)
     starter_habitat = next(c['Habitat'] for c in creatures if c['DataId'] == 2001)
     starters = [c['DataId'] for c in creatures if c['Habitat'] == starter_habitat]
+    assert len(starters) == 4, starters
     for mid in starters:
         assert minions[mid].get('FirstInterestKillCount') == 3, mid
         assert minions[mid].get('FirstCatchChance') == 1, mid
-    # 초반부터 서로 다른 전투 선택이 있어야 한다. 기존 6001/6002 패시브도 유지한다.
-    effects = {ids[mid + 4000]['Effect'] if ids[mid + 4000]['Effect'] != 'None'
-               else ids[mid + 4000]['StatType'] for mid in starters}
-    assert {'Heal', 'BonusDamage', 'AtkSpeed'} <= effects, effects
+        s = ids[mid + 4000]
+        assert s['TriggerType'] == 'Active' and s['SkillActiveType'] == 'Repeat', (mid, s['TriggerType'])
+    # 첫 포획부터 직접 쓰는 선택이 생기며, 기존 패시브 성장 보상은 그대로 남는다.
+    effects = {ids[mid + 4000]['Effect'] for mid in starters}
+    assert {'Heal', 'BonusDamage', 'Buff'} <= effects, effects
+    for sid, stat, bonus, effect, effect_stat, value, duration in (
+            (6001, 'MaxHp', 30, 'Heal', 'MaxHp', 18, 0),
+            (6002, 'AtkSpeed', 10, 'Buff', 'AtkSpeed', 30, 8)):
+        s = ids[sid]
+        assert s['Category'] == 'Memory' and s['StatType'] == stat and s['StatBonus'] == bonus, sid
+        assert s['MaxLevel'] == 2 and s['MemoryCapacity'] == 2, sid
+        assert (s['Effect'], s['EffectStat'], s['EffectValue'], s['EffectDuration'], s['Cooldown']) == (
+            effect, effect_stat, value, duration, 18), sid
     for m in minions.values():
         assert 0 <= m['CatchChance'] <= 1
         if m['DataId'] not in starters:

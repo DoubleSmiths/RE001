@@ -562,7 +562,7 @@
     },
     {
       "TextKey": "TryLureText",
-      "Kor": "당신는(은) 매력발산!를(을) 사용했다!",
+      "Kor": "매력을 발산해 미니몬의 관심을 끌었다!",
       "Eng": "You used WORK YOUR CHARM!"
     },
     {
@@ -1302,8 +1302,8 @@
     },
     {
       "TextKey": "Skill6001DescText",
-      "Kor": "젤리 퐁의 고유기술. 최대 체력을 늘린다.",
-      "Eng": "Jelly Pong's unique skill. Increases max HP."
+      "Kor": "기본 효과: 단계당 최대 체력 +30.\n수동 사용: 최대 체력의 18% × 능력 단계만큼 회복한다.\n재사용 18초(미니몬 능력끼리 공유).\n동행 중 임시 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Passive: +30 maximum HP per ability level.\nManual use: Restore 18% of maximum HP per ability level.\nCooldown: 18s, shared by minion abilities.\nAvailable temporarily while accompanying. Permanently learned at 100% resonance."
     },
     {
       "TextKey": "Skill6001StoryText",
@@ -1317,8 +1317,8 @@
     },
     {
       "TextKey": "Skill6002DescText",
-      "Kor": "라비 슬라임의 고유기술. 공격속도를 높인다.",
-      "Eng": "Rabi Slime's unique skill. Increases attack speed."
+      "Kor": "기본 효과: 단계당 공격속도 +10%p.\n수동 사용: 8초 동안 공격속도가 30%p × 능력 단계만큼 오른다.\n재사용 18초(미니몬 능력끼리 공유).\n동행 중 임시 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Passive: +10 percentage points of attack speed per ability level.\nManual use: Gain 30 percentage points of attack speed per ability level for 8 seconds.\nCooldown: 18s, shared by minion abilities.\nAvailable temporarily while accompanying. Permanently learned at 100% resonance."
     },
     {
       "TextKey": "Skill5005NameText",

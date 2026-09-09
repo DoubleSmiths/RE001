@@ -82,6 +82,7 @@ try
     Check(runner.GetEffectValue(Managers.Data.SkillDic[5200], 1) == 40f, "Legacy fixed damage remains fixed");
     Check(ability.GetRoles(6003).Contains(AbilityManager.Role.Skill) && ability.GetRoles(6101).Contains(AbilityManager.Role.Def), "Attack and recovery have correct roles");
     var haste = Managers.Data.SkillDic.Values.First(s => s.Source == Define.AbilitySource.Minion && s.TriggerType == Define.AbilityTrigger.Active && s.Effect == Define.AbilityEffect.Buff && s.EffectStat == "AtkSpeed");
+    float speedBeforeHaste = player.AtkSpeed;
     minion.AddMinMon(haste.DataId - 4000);
     minion.SetCompanion(haste.DataId - 4000);
     typeof(AbilityRunner).GetField("_minionCooldown", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).SetValue(runner, 0f);
@@ -92,7 +93,7 @@ try
     minion.AddMinMon(2102);
     Check(player.AtkSpeed == buffedSpeed, "Unrelated mastery reward preserves active buff");
     minion.RemoveCompanion();
-    Check(player.AtkSpeed == baseSpeed, "Dismissing borrowed ability removes its buff");
+    Check(player.AtkSpeed == speedBeforeHaste, "Dismissing borrowed ability removes its buff and passive bonus");
 }
 finally
 {
