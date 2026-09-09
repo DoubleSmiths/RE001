@@ -228,7 +228,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
         GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() =>
         {
-            Sequence seq = DOTween.Sequence();
+            Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
             // t=0 : 버튼 OutBack 역재생 + 페이드 시작 (FadeInOut: 0.4 out + 0.15 wait + 0.5 in)
             seq.AppendCallback(() =>
@@ -290,7 +290,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         });
         GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() =>
         {
-            Sequence seq = DOTween.Sequence();
+            Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
             // t=0 : 하위 버튼 OutBack 역재생 + 페이드 시작
             seq.AppendCallback(() =>
@@ -395,6 +395,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     public override void OnDestroy()
     {
+        base.OnDestroy();
         if (Managers.Quest != null)
         {
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
@@ -547,7 +548,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         if (string.IsNullOrEmpty(_pendingUnlockBtnId)) return;
         string unlockId = _pendingUnlockBtnId;
         _pendingUnlockBtnId = null;
-        DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId));
+        DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId)).SetTarget(this).SetLink(gameObject);
     }
 
     void SetInfo()
@@ -770,7 +771,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.ShopButton).gameObject.SetActive(false);
         GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         seq.AppendCallback(() =>
         {
@@ -934,7 +935,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void EnterBuilding(Village1Group group, GameObjects groupObj, string bgKey, Texts nameText,
                        string enterVfxId, Buttons[] subBtns)
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         // t=0 : 로비 버튼 OutBack 역재생
         seq.AppendCallback(RetractMainButtons);
@@ -982,7 +983,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     /// <summary>건물 → 마을 로비 복귀 연출.</summary>
     void ExitBuilding(string exitVfxId, Buttons[] subBtns)
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         // t=0 : 하위 버튼 역재생 + 페이드 시작
         seq.AppendCallback(() =>
@@ -1116,7 +1117,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickGuild()
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         seq.AppendCallback(() =>
         {
@@ -1180,7 +1181,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickAlchemy()
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         // t=0 : 로비 TYPE 1 버튼 OutBack 역재생
         seq.AppendCallback(() =>
@@ -1327,7 +1328,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     {
                         Managers.UI.ShowPopupUI<UI_PotionDetailPopup>()
                             .SetInfo(Managers.Game.CurrentHPPotionDataId, fromCustomOrder: false);
-                    }).SetUpdate(true);
+                    }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
                 }
             },
             randomSingleLine: !useFullDialogue,
