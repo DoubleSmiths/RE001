@@ -1,5 +1,17 @@
 $ErrorActionPreference = 'Stop'
 
+# 일부 자동화 호스트는 이 Windows 기본 변수를 넘기지 않는다. UPM은 이 값으로
+# 전역 설정 경로를 조합하므로, 누락된 경우에만 Windows 공용 데이터 경로로 보완한다.
+if ([string]::IsNullOrWhiteSpace($env:ALLUSERSPROFILE))
+{
+    $commonDataPath = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
+    if ([string]::IsNullOrWhiteSpace($commonDataPath) -or -not (Test-Path -LiteralPath $commonDataPath -PathType Container))
+    {
+        throw 'Windows common application data folder could not be resolved.'
+    }
+    $env:ALLUSERSPROFILE = $commonDataPath
+}
+
 # 다른 에디터가 백업을 쓰고 있을 수 있으므로 실행 중에는 손대지 않는다.
 if (Get-Process -Name Unity -ErrorAction SilentlyContinue)
 {

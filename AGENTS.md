@@ -40,6 +40,8 @@ Windows에서 프로젝트를 열 때 `_tools/open_unity.bat`를 사용한다. �
 `Assets/_Recovery` 사본은 그대로 둔다. Windows 기본 그래픽 API도 DX11이며 Android 설정과 별개다.
 에디터 종료는 저장 상태를 확인한 뒤 실제 창 닫기(Alt+F4)를 사용한다. 플레이 후에는 창 닫기에서도
 씬 백업이 잔류할 수 있어 `SceneBackupArchive`가 정상 종료 확정 시 보존 이동한다(ADR0016).
+런처는 자동화 호스트에서 누락될 수 있는 `ALLUSERSPROFILE`도 Windows 공용 데이터 경로로 보완한다.
+UPM이 `path ... Received undefined`로 실패하면 패키지 캐시를 지우기 전에 실행 환경을 확인한다(ADR0018).
 
 `C:\Users\Mycom\AppData\Local\unity-cli\unity-cli.exe` (v0.3.22, 비공식 도구)
 
