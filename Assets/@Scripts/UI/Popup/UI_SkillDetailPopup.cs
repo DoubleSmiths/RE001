@@ -922,11 +922,12 @@ public class UI_SkillDetailPopup : UI_Popup
         if (memIcon != null) memIcon.anchoredPosition = new Vector2(_badgeBaseX + off, memIcon.anchoredPosition.y);
 
         // 점유량(GotMEM) / 재능(NoMEM) — 점유량 0이면 재능 표기
-        SetActive(GetObject((int)GameObjects.GotMEM), owned && !talent);
+        SetActive(GetObject((int)GameObjects.GotMEM), (owned || sd?.Source == Define.AbilitySource.Class) && !talent);
         SetActive(GetTextGo((int)Texts.NoMEM),        talent);
 
-        // 미니몬은 포획 전에 능력 효과를 미리 보여준다.
-        SetActive(GetTextGo((int)Texts.Lv0Text), !owned && sd?.Source != Define.AbilitySource.Minion);
+        // 포획과 축성은 습득 전에 효과를 비교할 수 있다.
+        SetActive(GetTextGo((int)Texts.Lv0Text), !owned
+            && sd?.Source != Define.AbilitySource.Minion && sd?.Source != Define.AbilitySource.Class);
 
         // 슬43/45: 능력이 [재능]이거나 기억(사용)중이면 아이콘 배경 Active_Ef(빛 sweep 루프) 활성.
         //  (모션/색은 prefab authored 이펙트 유지 — 코드는 토글만. UI_SkillBookSkill.cs와 동일 패턴)
@@ -973,9 +974,10 @@ public class UI_SkillDetailPopup : UI_Popup
             ApplyFont(lvT, Define.FontType.UI);
         }
 
-        // 미니몬은 발견 후 어떤 전투 보상을 얻는지 확인할 수 있다.
+        // 포획·축성의 보상을 습득 전에 확인할 수 있다.
         bool showDesc = Managers.Ability.IsLearned(SkillId) ||
-            (Managers.Data.SkillDic.TryGetValue(SkillId, out var data) && data.Source == Define.AbilitySource.Minion);
+            (Managers.Data.SkillDic.TryGetValue(SkillId, out var data)
+                && (data.Source == Define.AbilitySource.Minion || data.Source == Define.AbilitySource.Class));
         var realT = GetText((int)Texts.LvEffectTxt_Real);
         if (realT != null)
         {

@@ -60,3 +60,5 @@
 - UnityEngine.UI.Extensions (`UIParticleSystem`) — UI_ParticlePlay
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- `ItemSourceGuide`는 실제 드롭·출현 조건과 여정의 서식지 매칭을 이용해 재료의 첫 획득 지역·마물을 조회한다. 출처가 없으면 데이터에 저작된 `FoundLocation`으로 돌아간다.

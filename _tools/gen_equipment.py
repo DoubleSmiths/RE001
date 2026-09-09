@@ -126,11 +126,16 @@ def write_enhance(enh):
     ws = wb[wb.sheetnames[0]]
     hdr = {ws.cell(1, c).value: c for c in range(1, ws.max_column + 1)}
 
-    # 기존 데이터 행 전부 제거 후 재작성 (장비별 9단계를 일관되게 유지)
-    if ws.max_row >= 4:
-        ws.delete_rows(4, ws.max_row - 3)
+    # 이 생성기의 기본 장비 범위만 갱신한다. 별도 입문 장비의 강화 행은 보존한다.
+    have = {ws.cell(r, hdr["DataId"]).value: r for r in range(4, ws.max_row + 1)
+            if ws.cell(r, hdr["DataId"]).value is not None}
     for i, e in enumerate(enh, start=1):
-        r = 3 + i
+        r = have.get(i)
+        if r is not None:
+            assert (ws.cell(r, hdr["EquipDataId"]).value, ws.cell(r, hdr["Level"]).value) == (
+                e["equip"], e["level"]), f'기본 강화 ID 충돌: {i}'
+    for i, e in enumerate(enh, start=1):
+        r = have.get(i, max(4, ws.max_row + 1))
         ws.cell(r, hdr["DataId"], i)
         ws.cell(r, hdr["EquipDataId"], e["equip"])
         ws.cell(r, hdr["Level"], e["level"])
@@ -140,6 +145,7 @@ def write_enhance(enh):
         ws.cell(r, hdr["RequiredMaterialId"], 0)
         ws.cell(r, hdr["RequiredMaterialCount"], 0)
     wb.save(path)
+    wb.close()
     print(f"EquipEnhanceData.xlsx: {len(enh)}행 (장비 {len(enh) // ENH_MAX}종 × +{ENH_MAX})")
 
 

@@ -364,7 +364,14 @@ public class UI_EquipmentPopup : UI_Popup
             list.Add(e);
         }
         foreach (var list in bySlot.Values)
-            list.Sort((a, b) => a.DataId.CompareTo(b.DataId));
+            list.Sort((a, b) =>
+            {
+                // 추가된 입문 장비도 지금 만들 수 있는 레벨 순서로 보여준다.
+                int aLevel = Managers.Game.GetRecipeFor(a.DataId)?.ReqLevel ?? int.MaxValue;
+                int bLevel = Managers.Game.GetRecipeFor(b.DataId)?.ReqLevel ?? int.MaxValue;
+                int levelOrder = aLevel.CompareTo(bLevel);
+                return levelOrder != 0 ? levelOrder : a.DataId.CompareTo(b.DataId);
+            });
 
         // 부위별 **대표 칸**(저작 노드 중 첫 번째)을 템플릿으로 삼는다.
         var template = new Dictionary<int, SlotView>();
