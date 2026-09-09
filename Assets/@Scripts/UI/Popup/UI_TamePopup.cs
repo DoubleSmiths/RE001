@@ -619,9 +619,13 @@ public class UI_TamePopup : UI_Popup
         if (go == null) return;
         foreach (var a in go.GetComponents<DOTweenAnimation>())
         {
-            if (a.id == id) { a.DORestart(); return; }
+            if (a.id != id) continue;
+            // 컴포넌트의 DORestart는 같은 오브젝트의 다른 모션까지 재시작한다.
+            // 필요한 저작 Tween만 준비하고 재생해 입장/유혹/성공 모션이 서로 간섭하지 않게 한다.
+            if (a.tween == null || !a.tween.IsActive()) a.CreateTween(false, false);
+            a.tween?.Restart();
+            return;
         }
-        go.GetComponent<DOTweenAnimation>()?.DORestart();
     }
 
     // 특정 id의 prefab DOTweenAnimation을 비활성화(스냅/자동재생 방지). 코드로 대체할 때 사용.
@@ -629,7 +633,14 @@ public class UI_TamePopup : UI_Popup
     {
         if (go == null) return;
         foreach (var a in go.GetComponents<DOTweenAnimation>())
-            if (a.id == id) { a.DOKill(); a.enabled = false; }
+        {
+            if (a.id != id) continue;
+            // DOKill은 같은 GameObject의 모든 Tween을 죽이므로 교체한 입장 모션만 직접 종료한다.
+            a.tween?.Kill();
+            a.tween = null;
+            a.autoGenerate = false;
+            a.enabled = false;
+        }
     }
 
     void PlayEmoj(Images id, string state)

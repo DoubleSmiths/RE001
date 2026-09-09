@@ -121,7 +121,7 @@ public class UI_Popup : UI_Base
 
     IEnumerator WaitAndDeactivate(GameObject go, float delay)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         if (go != null)
             go.SetActive(false);
         RefreshUI();

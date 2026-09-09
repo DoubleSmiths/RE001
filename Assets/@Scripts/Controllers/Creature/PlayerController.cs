@@ -137,6 +137,7 @@ public class PlayerController : CreatureController
         _critStreak = 0;
         _evadeStreak = 0;
         _abilityRunner?.OnBattleStart();   // 슬39: 전투 시작 발동조건
+        Managers.UI?.RefreshTimeScale();
     }
 
     // 능력 효과/회복 — 전투 중 HP 회복(RecoveryRate 적용). 회복 시 발동조건(OnHeal) 통지.
@@ -161,6 +162,7 @@ public class PlayerController : CreatureController
         State = Define.State.Idle;
         transform.DOKill();   // 진행 중인 DOMove(off-screen) 중단
         transform.position = _originalPos;
+        Managers.UI?.RefreshTimeScale();
     }
 
     // 마을 내 장소 이동(길드/연금공방/모험가협회 등) — 페이드 암전 중 호출.
@@ -180,6 +182,9 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void Update()
     {
+        // 모달 정지는 남은 공격/버프 시간을 보존한다. 실제 시간 물약 쿨타임도 여기서 함께 멈춘다.
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
+
         // 콤보 Tick — 항상 활성인 Player의 Update에서 구동(Managers.Update 플레이키 대비).
         // ComboManager.Tick은 프레임 디듑이 있어 다른 Update와 중복 호출돼도 1회만 처리됨.
         Managers.Combo?.Tick(Time.deltaTime);
@@ -203,6 +208,7 @@ public class PlayerController : CreatureController
     float _autoPotionCd;
     void UpdateAutoPotion()
     {
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         // (_autoPotionCd 감소는 Update에서 전투 여부와 무관하게 처리)
         var game = Managers.Game;
         if (game == null || !game.AutoPotionMemorized || !game.AutoPotionOn) return;
@@ -312,6 +318,7 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void AutoAttack()
     {
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         if (State == Define.State.Attack) return;
         // 기본 공속(100)과 능력·콤보·물약을 같은 단위로 합산한다. 이번 공격은 시작 시 배율로 마친다.
         float speedMul = Mathf.Max(MIN_PLAYER_ATTACK_SPEED_MULTIPLIER,

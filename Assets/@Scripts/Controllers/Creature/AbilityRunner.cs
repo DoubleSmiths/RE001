@@ -106,6 +106,8 @@ public class AbilityRunner : MonoBehaviour
 
     void Update()
     {
+        // deltaTime이 0이어도 준비된 시간 발동은 실행될 수 있으므로 정지 중에는 판정도 보류한다.
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         // 동행 교체나 같은 계열 능력 여러 개 기억으로 재사용 대기를 우회하지 않는다.
         _minionCooldown = Mathf.Max(0f, _minionCooldown - Time.deltaTime);
         // 임시 버프 만료
@@ -200,6 +202,7 @@ public class AbilityRunner : MonoBehaviour
 
     public bool CanUse(int id)
     {
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return false;
         if (_player == null || _player.State == State.Dead) return false;
         if (Managers.Ability == null || !Managers.Ability.IsEquipped(id)) return false;
         if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return false;

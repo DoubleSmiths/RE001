@@ -132,7 +132,7 @@ UI_Base ─┬─ UI_Scene    (씬 HUD: UI_GameScene, UI_BattleScene …)
 ```
 - 프리팹 자식 이름 ↔ `enum Images/Buttons/Texts` 이름이 **1:1**로 자동 바인딩된다 (`Bind<T>(typeof(...))` → `GetImage((int)Images.BG)`). 프리팹 자식 이름을 바꾸면 바인딩이 깨진다. 같은 프리팹 안에서 이름 중복 금지, 언리얼식 prefix(`Img_` `Btn_` `Txt_`) 사용.
 - 팝업은 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`로만 열고 닫는다 (직접 SetActive 금지).
-- **팝업은 게임을 멈추지 않는다** — `RefreshTimeScale()`은 현재 전부 주석 처리된 no-op다. `Time.timeScale` 관련 코드를 쓰기 전에 실제 구현을 확인할 것.
+- **전투 중 도감·마물 상세·포획·나의 미니몬은 전투를 정지한다.** 스택 어디에든 해당 창이 남으면 `UIManager.IsBattlePaused`가 유지되고 마지막 정지 사유 해제 때 이전 배율을 복원한다. 다른 팝업과 마을 진행은 유지한다. UI 연출은 독립 시간을 사용한다(ADR0026).
 - Toast / 관심 알림(`ShowAttractedPopup`)·경고는 팝업 스택을 쓰지 않고 자체 코루틴으로 소멸한다.
 - **UI 캔버스 위 파티클**: 월드 ParticleSystem은 Screen Space Camera 캔버스 위에 렌더되지 않는다 → 반드시 `UIFx.PlayParticle()` (UIParticle 래퍼) 경유.
 

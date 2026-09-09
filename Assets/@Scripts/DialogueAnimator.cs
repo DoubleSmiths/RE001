@@ -147,7 +147,7 @@ public class DialogueAnimator : MonoBehaviour
             yield return FadeArrowAlpha(arrow, minAlpha, maxAlpha, duration);
 
             //대기
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
         }
     }
 

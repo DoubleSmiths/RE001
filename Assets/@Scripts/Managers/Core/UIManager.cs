@@ -19,6 +19,12 @@ public class UIManager
 
     public event Action<int> OnTimeScaleChanged;
 
+    // 전투를 읽고 조작하는 모달은 월드 시간만 멈춘다. 중첩 팝업은 최초 복원값을 공유한다.
+    public bool IsBattlePaused { get; private set; }
+    bool _hasTimeScaleOverride;
+    bool _isClearing;
+    float _resumeTimeScale = 1f;
+
     public GameObject Root
     {
         get
@@ -115,6 +121,7 @@ public class UIManager
 
         GameObject go = Managers.Resource.Instantiate($"{name}");
         T popup = Util.GetOrAddComponent<T>(go);
+        ConfigurePopupAnimations(go);
         _popupStack.Push(popup);
 
         go.transform.SetParent(Root.transform);
@@ -122,6 +129,20 @@ public class UIManager
         RefreshTimeScale();
 
         return popup;
+    }
+
+    static void ConfigurePopupAnimations(GameObject root)
+    {
+        // Awake에서 이미 만든 Tween과, 비활성 자식이 나중에 생성할 Tween을 모두 처리한다.
+        // autoGenerate는 보존한다. 도감 슬롯의 사용하지 않는 저작 Tween을 되살리지 않는다.
+        foreach (DOTweenAnimation animation in root.GetComponentsInChildren<DOTweenAnimation>(true))
+        {
+            animation.isIndependentUpdate = true;
+            if (animation.tween != null && animation.tween.IsActive())
+                animation.tween.SetUpdate(true);
+        }
+        foreach (Animator animator in root.GetComponentsInChildren<Animator>(true))
+            animator.updateMode = AnimatorUpdateMode.UnscaledTime;
     }
 
     public void ClosePopupUI(UI_Popup popup)
@@ -167,6 +188,7 @@ public class UIManager
         GameObject go = Managers.Resource.Instantiate(nameof(UI_AttactedPopup), pooling: false);
         if (go == null) return null;
         var popup = Util.GetOrAddComponent<UI_AttactedPopup>(go);
+        ConfigurePopupAnimations(go);
         go.transform.SetParent(Root.transform, false);   // worldPositionStays=false: 프리펩 anchoredPos 보존(슬24 우측 안착)
         popup.SetInfo(dataId, storageFull);
         return popup;
@@ -178,6 +200,7 @@ public class UIManager
         GameObject go = Managers.Resource.Instantiate(nameof(UI_WarningPopup), pooling: false);
         if (go == null) return null;
         var popup = Util.GetOrAddComponent<UI_WarningPopup>(go);
+        ConfigurePopupAnimations(go);
         go.transform.SetParent(Root.transform, false);   // worldPositionStays=false: 프리펩 위치 보존
         popup.SetInfo(dataId);
         return popup;
@@ -188,6 +211,7 @@ public class UIManager
         string name = typeof(UI_Toast).Name;
         GameObject go = Managers.Resource.Instantiate($"{name}", pooling: false);
         UI_Toast popup = Util.GetOrAddComponent<UI_Toast>(go);
+        ConfigurePopupAnimations(go);
         popup.SetInfo(msg);
         _toastStack.Push(popup);
         go.transform.SetParent(Root.transform);
@@ -197,7 +221,7 @@ public class UIManager
 
     IEnumerator CoCloseToastUI()
     {
-       yield return new WaitForSeconds(3f);
+       yield return new WaitForSecondsRealtime(3f);
        CloseToastUI();
     }
 
@@ -219,26 +243,78 @@ public class UIManager
 
     public void Clear()
     {
-        CloseAllPopupUI();
-        Time.timeScale = 1;
-        _sceneUI = null;
+        _isClearing = true;
+        try
+        {
+            CloseAllPopupUI();
+        }
+        finally
+        {
+            // 씬 종료는 이전 씬의 정지 사유와 복원값을 다음 씬으로 넘기지 않는다.
+            _isClearing = false;
+            IsBattlePaused = false;
+            _isActiveSoulShop = false;
+            _hasTimeScaleOverride = false;
+            _resumeTimeScale = 1f;
+            _sceneUI = null;
+            ApplyTimeScale(1f);
+        }
     }
 
     public void RefreshTimeScale()
     {
+        // 이전 전체 팝업 정지 실험 코드는 참고용으로 보존한다. 현재 정책은 아래 스택 판정이 담당한다.
         //if (SceneManager.GetActiveScene().name != Define.Scene.GameScene.ToString())
         //{
         //    Time.timeScale = 1;
         //    return;
         //}
-
         //if (_popupStack.Count > 0 || IsActiveSoulShop == true)
         //    Time.timeScale = 0;
         //else
         //    Time.timeScale = 1;
-    
         //DOTween.timeScale = 1;
         //OnTimeScaleChanged?.Invoke((int)Time.timeScale);
+
+        if (_isClearing) return;
+        var player = Managers.Game?.Player;
+        bool hasBattleModal = false;
+        foreach (var popup in _popupStack)
+        {
+            if (popup == null) continue;
+            if (popup is UI_BestiaryPopup || popup is UI_MonsterDetailPopup
+                || popup is UI_TamePopup || popup is UI_MinionInfoPopup)
+            {
+                hasBattleModal = true;
+                break;
+            }
+        }
+        IsBattlePaused = player != null && player.InBattle && (hasBattleModal || _isActiveSoulShop);
+        bool shouldPause = IsBattlePaused || _isActiveSoulShop;
+        if (shouldPause)
+        {
+            if (!_hasTimeScaleOverride)
+            {
+                _resumeTimeScale = Time.timeScale;
+                _hasTimeScaleOverride = true;
+            }
+            ApplyTimeScale(0f);
+        }
+        else if (_hasTimeScaleOverride)
+        {
+            float resume = _resumeTimeScale;
+            _hasTimeScaleOverride = false;
+            _resumeTimeScale = 1f;
+            ApplyTimeScale(resume);
+        }
+    }
+
+    void ApplyTimeScale(float scale)
+    {
+        if (Time.timeScale == scale) return;
+        Time.timeScale = scale;
+        // 기존 이벤트 형식은 유지하되 실제 배율은 float 그대로 복원한다. DOTween 전역 배율은 소유하지 않는다.
+        OnTimeScaleChanged?.Invoke((int)scale);
     }
 
     #region 임시
@@ -249,14 +325,7 @@ public class UIManager
         set
         {
             _isActiveSoulShop = value;
-
-            if (_isActiveSoulShop == true)
-                Time.timeScale = 0;
-            else
-                Time.timeScale = 1;
-
-            DOTween.timeScale = 1;
-            OnTimeScaleChanged?.Invoke((int)Time.timeScale);
+            RefreshTimeScale();
         }
     }
 

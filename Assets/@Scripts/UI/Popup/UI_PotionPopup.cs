@@ -478,6 +478,8 @@ public class UI_PotionPopup : UI_Popup
 
     void UsePotion(Slot s)
     {
+        // 읽기 모달 아래에 물약창이 남아 있어도 정지 시간을 이용해 회복/버프를 쌓지 않는다.
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         s.count = Mathf.Max(0, s.count - 1);
         s.cooldown = s.cooldownMax;
 
@@ -533,6 +535,7 @@ public class UI_PotionPopup : UI_Popup
     void Update()
     {
         if (!gameObject.activeInHierarchy) return;
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         // 쿨타임 진행
         foreach (var s in _slots)
         {

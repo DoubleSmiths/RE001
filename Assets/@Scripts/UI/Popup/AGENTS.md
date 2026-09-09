@@ -36,7 +36,7 @@ UIManager 팝업 스택 위에서 동작하는 모달/비모달 팝업 20종이 
 - 새 팝업은 `UI_Popup` 상속 + `Awake() => Init();` + `base.Init()` 체크가 기본 골격. `Init()`에서 `BindImage/BindText/BindButton/BindObject(typeof(enum))`으로 프리팹 노드를 바인딩한다 — enum 멤버 이름은 프리팹 GameObject 이름과 완전 일치해야 하므로 프리팹의 오타(`OpenHelemtListBtn` 등)도 enum에 그대로 유지한다.
 - 열기/닫기는 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`로만. 예외는 비모달 알림 2종(`UI_AttactedPopup`, `UI_WarningPopup`)으로, 전투 중 게임을 멈추지 않기 위해 스택/timeScale을 쓰지 않고 `Managers.UI.ShowAttractedPopup`/`ShowWarningPopup`으로 직접 생성 후 스스로 `Managers.Resource.Destroy`한다.
 - 데이터 주입은 팝업 생성 직후 `SetInfo(...)` 호출 컨벤션. 시그니처는 팝업마다 다르다(위 표 참조).
-- 팝업은 현재 게임을 멈추지 않는다(`UIManager.RefreshTimeScale`은 no-op). UI 연출은 `WaitForSecondsRealtime`과 `.SetUpdate(true)`를 사용하며, 전투 정지 정책을 추가할 때는 실제 매니저 구현을 먼저 확인한다.
+- 전투 중 도감·마물 상세·포획·나의 미니몬이 스택에 있으면 전투를 정지한다(`UIManager.IsBattlePaused`, ADR0026). 다른 팝업과 마을 진행은 유지한다. UIManager가 팝업 Animator/저작 Tween을 독립 시간으로 설정하며, 코드 연출도 `WaitForSecondsRealtime`과 `.SetUpdate(true)`를 사용한다.
 - 진입/닫기 애니메이션: `_frameRT`에 프레임 RectTransform을 넣고 `OpenAnimation()` 호출, 배경 버튼에 `BindEvent(OnClickBG)` 연결(역방향 애니 후 닫기). 등장 방향은 `_openFromY/_closeToY`로 조정(예: SettingPopup은 +350).
 - 배경클릭 닫기는 오픈 후 0.5초 동안 잠김(`UI_Popup.IsCloseAllowed`, 기획서1 슬8) — `OnClickBG`가 자동 처리하므로 base를 쓰면 별도 코드 불필요. 커스텀 닫기 핸들러를 만들 때는 `IsCloseAllowed`를 직접 체크한다.
 - 언어 변경 대응(전 팝업 통일 패턴): 정적 라벨은 `RefreshTexts()`에 모으고 `Init()`에서 호출 + `Managers.Game.OnLanguageChanged += RefreshTexts` 구독, 반드시 `OnDestroy()`에서 해제. 텍스트는 `Util.Localize(key)` + `ApplyFont(tmp, FontType.UI)`. `Define.LocalizeKey`에 아직 없는 신규 키는 문자열 키로 `Util.Localize("...")` 호출(Tools/GenerateLocalizeKeys 재실행 시 상수로 교체 가능).
