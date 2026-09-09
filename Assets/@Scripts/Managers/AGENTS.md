@@ -64,3 +64,5 @@
 - 하위 매니저 경유: Newtonsoft.Json, Unity Addressables, DOTween, TextMeshPro, UnityEngine.Pool
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- DOTween 용량은 `BeforeSceneLoad` 초기화에서 설정한다. 씬에 배치된 Managers의 `Awake`가 `s_instance`를 먼저 채우면 lazy `Init()` 본문이 생략되므로 이 설정을 `Init()` 안으로 이동하지 않는다.

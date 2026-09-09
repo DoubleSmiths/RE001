@@ -62,6 +62,8 @@
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
 
+- `UI_BestiaryBox.prefab`의 저작 DOTweenAnimation 4개는 `autoGenerate=false`로 유지한다. 클릭·별·등급 연출은 `UI_BestiaryBox` 코드가 재생한다. 미재생 저작 Tween을 자동 생성하면 도감 503칸에서 대기 Tween 2012개가 추가된다.
+
 - `UI_Village1BtnGroup`의 Sequence/DelayedCall은 그룹을 target/link로 소유한다. `OnDestroy`에서 `base.OnDestroy()`를 호출해 자식 Tween도 종료한다. 지역 교체 뒤 이전 버튼 등장·알림·지연 해금 콜백이 실행되면 안 된다.
 
 - `UI_SkillBar`: 전투 기록 아래에 수동 능력 6칸과 선택 능력의 이름/상태를 표시한다. 전투 밖에서는 CanvasGroup 표시·입력을 함께 끄고, 팝업이 열리면 능력 입력을 차단한다. 스프라이트 없는 Filled Image는 채움 비율을 무시하므로 재사용 덮개는 실제 RectTransform 높이로 제어한다. 숫자는 덮개의 자식으로 넣지 않는다. 배치 상수·프레임·번역 키는 Define, 검증은 `_tools/verify_skillbar.cs`와 ADR 0021 참고.

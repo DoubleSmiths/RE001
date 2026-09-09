@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Define;
 
 public class Managers : MonoBehaviour
 {
@@ -53,7 +54,13 @@ public class Managers : MonoBehaviour
     //    RefreshStats에서 NullReference가 난다(실제로 그렇게 터뜨렸다).
     //    어떤 Awake보다 먼저 도는 지점에서 푼다.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    static void ResetShutdownFlag() => s_shuttingDown = false;
+    static void ResetShutdownFlag()
+    {
+        s_shuttingDown = false;
+        // 씬 Managers의 Awake가 lazy Init보다 먼저 오더라도 용량 설정은 반드시 수행한다.
+        // 기존 전 구간 실측 용량을 유지하되 어떤 UI가 Tween을 만들기 전에 적용한다.
+        DG.Tweening.DOTween.SetTweensCapacity(DOTWEEN_TWEENER_CAPACITY, DOTWEEN_SEQUENCE_CAPACITY);
+    }
 
     void OnDestroy()
     {
@@ -118,14 +125,6 @@ public class Managers : MonoBehaviour
         DontDestroyOnLoad(go);
         s_instance = go.GetComponent<Managers>();
 
-        // 트윈 용량을 처음부터 넉넉히 잡는다.
-        //  기본값 200에서 시작해 200->500->1250->3125로 **런타임에 세 번 재할당**되며
-        //  그때마다 경고가 찍혔다(대장간에서 망치질을 반복하면 바로 나온다).
-        //  재할당은 공짜가 아니고 로그도 지저분해진다 — DOTween이 권하는 대로 미리 정한다.
-        //  값은 실측이다 — 전 구간 플레이스루(몬스터 503마리 연속 처치)에서 DOTween이
-        //  스스로 3125/250 -> 3125/625 -> 7812/625까지 올렸다. **시퀀스(둘째 인자)가
-        //  먼저 터진다** — 트윈만 키우면 경고가 그대로 남는다.
-        DG.Tweening.DOTween.SetTweensCapacity(7812, 625);
         //s_instance._sound.Init();
         //s_instance._time = go.AddComponent<TimeManager>();
     }
