@@ -1,5 +1,15 @@
 # 포획 보상 및 Recovery 검증 — 2026-09-09
 
+## 2026-09-10 재검증 및 정정
+
+- **복구 반복 재현:** 플레이 → 창 닫기 후에도 백업이 남았으며 일반 재실행에서 `Recovering Scene Backups`와 `Assets/_Recovery/0 (24).unity`가 확인됐다. 아래 이전 기록의 창 닫기만으로 해결된다는 결론은 불완전했다.
+- **추가 수정:** `SceneBackupArchive`가 정상 종료 확정 이벤트에서 백업을 별도 GUID 폴더로 보존 이동한다. ADR0016 참조.
+- **종료 실측:** 플레이 후 정상 종료 로그에 `[SceneBackupArchive] 정상 종료 백업 보관`이 남았고 `Temp/__Backupscenes/0.backup`은 없어졌다. 보관된 파일의 SHA256은 종료 전 원본과 일치했다.
+- **일반 재시작 PASS:** 실행기와 강제 그래픽 API 옵션을 사용하지 않고 실행했다. 복구 안내/Recovery 씬 없이 `Assets/@Scenes/GameScene.unity`, `Direct3D11`, `isPlaying=false`를 확인했다.
+- **게임 회귀:** 컴파일 성공, 503/503 데이터 검사, 포획/대여/기억력/쿨타임/영구화/보상 복원/버프 회귀 PASS. 실제 UI 객체로 대여 능력의 기억중 배지 비표시, 점유 0, 공명도 25%, 미보유 180% 효과 미리보기 및 사용 권한 미부여를 추가 검증해 PASS.
+- **잔여 사항:** 시작 시 Package Manager `path undefined` 오류는 남아 있다. 팝업을 즉시 닫는 UI 검증에서 삭제된 대상을 참조하는 DOTween 경고가 발생했다. 별도 새 게임 시작→종료 검증에서는 플레이 오류/경고가 없었다. Android 연결 기기가 없어 실기기 검증은 미실시.
+- 세이브와 PlayerPrefs를 검사 직전 상태로 복원했다. 상세 증거는 `Documents/Verification-20260909-Gameplay/recheck-20260910/`에 보관한다.
+
 ## 변경
 
 - 고유능력 보상 데이터 누락 501종을 보완했다. 전체 503종에 보상을 연결했으며 새 효과는 7개 유형을 공유한다.

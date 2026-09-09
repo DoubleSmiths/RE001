@@ -7,6 +7,8 @@
 UnityEditor 전용 툴 디렉터리 (빌드에 미포함, 다수가 `#if UNITY_EDITOR` 가드). 핵심은 `DataTransformer` — 로컬 xlsx 또는 구글시트를 ExcelDataReader로 읽어 `Assets/@Resources/Data/JsonData/*.json`을 생성하는 시트→JSON 파이프라인이다(게임은 JSON만 읽음). 나머지는 Addressables 등록기, TMP/프리팹 일괄 변환기, 그리고 PlayMode 중 기획서 슬라이드별 UI/시스템을 검증하는 Test 메뉴(Battle/Bestiary/Popup/QuestVerify/Integration)와 여정 해금 연출 자동 녹화/이펙트 진단 도구(Record/FX)이다.
 
 ## Key Files
+`SceneBackupArchive.cs`는 정상 종료가 확정된 `EditorApplication.quitting`에서 남은 씬 백업을 `Documents/UnityRecovery/`로 보존 이동한다. 종료 취소·크래시에는 실행하지 않는다. ADR0016 참조.
+
 | File | Description |
 |------|-------------|
 | `DataTransformer.cs` | 시트→JSON 파서 (EditorWindow). 로컬 xlsx와 구글시트(GSHEET_* export URL) 양대 경로. `Tools/ParseExcel %#K`(로컬 7종), `Tools/ParseExcelFromGoogleSheets`, `Tools/ParseExtraData (스킬/장비/미니몬/물약/콤보)`(로컬 8종), `Tools/ParseExtraDataFromGoogleSheets`, `Tools/GenerateLocalizeKeys`(Define.cs의 LocalizeKey region 덮어쓰기), `Tools/DeleteGameData `(PlayerPrefs+SaveData.json 삭제) |

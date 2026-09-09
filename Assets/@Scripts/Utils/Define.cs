@@ -4,6 +4,11 @@ using static Util;
 
 public class Define
 {
+    #region Editor
+    public const string EDITOR_SCENE_BACKUP_FOLDER = "Temp/__Backupscenes";
+    public const string EDITOR_SCENE_ARCHIVE_FOLDER = "Documents/UnityRecovery";
+    #endregion
+
     #region Enum
     public enum State
     {
