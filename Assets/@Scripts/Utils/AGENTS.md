@@ -62,3 +62,4 @@
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
 
 - `ItemSourceGuide`는 실제 드롭·출현 조건과 여정의 서식지 매칭을 이용해 재료의 첫 획득 지역·마물을 조회한다. 출처가 없으면 데이터에 저작된 `FoundLocation`으로 돌아간다.
+- `ClassAbilityDescription`은 직업 능력의 현재·습득·다음 단계 효과를 `SkillData`와 `ClassAbility*` 번역 템플릿으로 생성한다. 다중 스탯 우선순위·단계 배율·발동 조건은 `AbilityManager`/`AbilityRunner`의 실제 적용과 일치시킨다.

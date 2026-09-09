@@ -141,10 +141,16 @@
       "SkillActiveType": "Passive",
       "StatType": "MaxHp",
       "StatBonus": 50.0,
-      "StatTypes": [],
-      "StatBonuses": [],
+      "StatTypes": [
+        "MaxHp",
+        "Def"
+      ],
+      "StatBonuses": [
+        50.0,
+        5.0
+      ],
       "MaxLevel": 5,
-      "MemoryCapacity": 4,
+      "MemoryCapacity": 2,
       "Story": "Skill5004StoryText",
       "Source": "Class",
       "RequiredMinionId": 0,

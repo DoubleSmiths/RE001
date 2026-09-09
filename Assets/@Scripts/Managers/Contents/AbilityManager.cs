@@ -411,6 +411,8 @@ public class AbilityManager
     public int GuaranteedCatchReduce => Mathf.Max(0, Mathf.RoundToInt(SumStatBonus("GuaranteedCatchReduce")));
     // 슬38 지원: 경험치 획득량 보너스(%). StatType "ExpGain". (PlayerController.GainExp가 조회)
     public float ExpGainBonus => SumStatBonus("ExpGain");
+    // 콤보 지속시간 보너스(%). 기억/망각과 능력 단계 변경은 다음 Tick부터 반영한다.
+    public float ComboKeepBonus => Mathf.Max(0f, SumStatBonus("ComboKeep"));
 
     // ── 효과 적용 ── 활성(기억+장비부여) 능력의 스탯 보너스를 크리처 스탯에 가산. (RefreshStats 말미에서 호출)
     public void ApplyTo(CreatureController c)

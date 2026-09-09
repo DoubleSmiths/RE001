@@ -135,7 +135,9 @@ public class ComboManager
         // 타이머 감소
         if (Combo <= 0 && CurrentTimer <= 0f) return;
 
-        CurrentTimer -= dt;
+        // 현재 채움량과 타격당 충전량은 유지하고 지속시간만 늘린다. 기억/망각 시 리필하지 않는다.
+        float keepBonus = Managers.Ability != null ? Managers.Ability.ComboKeepBonus : 0f;
+        CurrentTimer -= dt / (1f + keepBonus / Define.ABILITY_PERCENT_BASE);
         if (CurrentTimer <= 0f)
         {
             CurrentTimer = 0f;

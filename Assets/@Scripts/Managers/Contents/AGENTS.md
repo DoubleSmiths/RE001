@@ -66,4 +66,6 @@ RE001 게임 로직 전용 매니저 계층. 계정 세이브데이터(GameData)
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
 
+- `ComboKeep`는 콤보 지속시간 보너스(%)다. `AbilityManager.ComboKeepBonus`를 `ComboManager.Tick`이 매번 조회하여 감소량을 `dt / (1 + bonus / 100)`으로 적용한다. 기억/망각 시 현재 게이지를 채우지 않으며 HitGain/MaxTimer/정규화는 원래 값을 유지한다. 격리 검증: `_tools/verify_combo_keep.cs`.
+
 - 2026-09-09: 소유한 현재 동행의 고유능력은 `IsCompanionGranted`로 즉시 사용하며 영구 습득 목록에는 넣지 않는다. 공명도 100% 영구화, 로드 시 누락 보상 복원은 `RestoreMinionRewards`. 첫 지역 첫 관심/포획 보정은 MinMonData의 `FirstInterestKillCount`/`FirstCatchChance` 참조. 결정: `docs/decisions/0014-companion-ability-first-catch.md`.

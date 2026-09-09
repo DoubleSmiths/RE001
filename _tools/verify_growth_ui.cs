@@ -112,7 +112,7 @@ System.Collections.IEnumerator Run()
         if (Managers.Game.ClassProficiency != 99 || !seed.LearnedAbilities.SequenceEqual(beforeLearned))
             throw new System.Exception("Inspecting an unowned class skill consumed proficiency or learned it");
         var description = detail.GetComponentsInChildren<TMPro.TMP_Text>(true).Single(x => x.name == "LvEffectTxt_Real");
-        string expectedDescription = Managers.Ability.GetDesc(skillId);
+        string expectedDescription = ClassAbilityDescription.GetDescription(skillId);
         if (!description.isActiveAndEnabled || string.IsNullOrWhiteSpace(expectedDescription) || !description.text.Contains(expectedDescription))
             throw new System.Exception("Unowned class effect description not visible");
         var memory = detail.GetComponentsInChildren<UnityEngine.Transform>(true).Single(x => x.name == "GotMEM");

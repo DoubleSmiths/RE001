@@ -365,7 +365,13 @@ public class UI_SkillDetailPopup : UI_Popup
             //  0.55s 후 ClampPopupToCenter가 위로 올려 '훅 점프'가 생겼다. → 컴포넌트를 끄고 코드가 처음부터
             //  중앙 위치로 슬라이드인. (컴포넌트화하려면 prefab anim의 isFrom 스냅/클램프 충돌부터 해결 필요.)
             foreach (var anim in mainGo.GetComponentsInParent<DG.Tweening.DOTweenAnimation>(true))
+            {
+                // disabled 컴포넌트도 Awake에서 Tween을 생성할 수 있어 생성 자체와 기존 Tween을 함께 막는다.
+                anim.autoGenerate = false;
+                anim.autoPlay = false;
+                anim.DOKill();
                 anim.enabled = false;
+            }
         }
 
         GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
@@ -432,8 +438,10 @@ public class UI_SkillDetailPopup : UI_Popup
     //  '중앙 위치'를 계산하고, 그 위치로 직접 진입 슬라이드인(From y-120). 프리팹 진입 애니는 Init에서 꺼서 점프 없음.
     //  팝업 길이가 능력마다 달라도 항상 가운데. (_baseOrigin 기준 재계산이라 누적 없음)
     const float SAFE_CENTER_Y = -0.4f;   // 화면 사용영역 중심(상/하 HUD 고려, world). 약간 아래로(피드백)
-    void ClampPopupToCenter()
+    void ClampPopupToCenter(bool animate = true)
     {
+        // 닫기 중 갱신으로 종료 Tween의 완료 콜백을 취소하지 않는다.
+        if (_isClosing) return;
         var main = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SkillDetailPopupMain") as RectTransform;
         if (main == null) return;
         var titleRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "Title") as RectTransform;
@@ -453,6 +461,11 @@ public class UI_SkillDetailPopup : UI_Popup
         if (scale <= 0.0001f) { _frameOrigin = _baseOrigin; main.anchoredPosition = _frameOrigin; return; }
 
         _frameOrigin = _baseOrigin + new Vector2(0f, (SAFE_CENTER_Y - center) / scale);
+        if (!animate)
+        {
+            main.anchoredPosition = _frameOrigin;
+            return;
+        }
         // 중앙 위치로 직접 진입 슬라이드인 (점프 없음)
         main.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
         main.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
@@ -806,6 +819,7 @@ public class UI_SkillDetailPopup : UI_Popup
         ApplyEquipMaterial();
         RefreshAutoSize();
         ApplyBottomMargin();
+        ClampPopupToCenter(false);
     }
 
     // 슬52: 기억/망각 버튼 Punch (양쪽 공통).
@@ -984,11 +998,18 @@ public class UI_SkillDetailPopup : UI_Popup
             realT.gameObject.SetActive(showDesc);
             if (showDesc)
             {
-                string desc = Managers.Ability.GetDesc(SkillId);
-                string trig = BuildTriggerDesc(SkillId);
-                if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
-                // 슬51 버튼2: 다음 등급 미리보기 토글 시 "현재 ▶ 다음" 한 줄 추가
-                if (_previewNext) desc += BuildNextLevelPreview();
+                string desc;
+                if (Managers.Data.SkillDic.TryGetValue(SkillId, out var descriptionData)
+                    && descriptionData.Source == Define.AbilitySource.Class)
+                    desc = ClassAbilityDescription.GetDescription(SkillId, _previewNext);
+                else
+                {
+                    desc = Managers.Ability.GetDesc(SkillId);
+                    string trig = BuildTriggerDesc(SkillId);
+                    if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
+                    // 슬51 버튼2: 다음 등급 미리보기 토글 시 "현재 ▶ 다음" 한 줄 추가
+                    if (_previewNext) desc += BuildNextLevelPreview();
+                }
                 realT.text = desc;
                 // 슬46: 능력 설명 = 중앙 + 상단 정렬. 상단정렬이라 길어지면 아래로만 넘쳐 위(능력 등급)와 겹치지 않음.
                 realT.alignment = TMPro.TextAlignmentOptions.Top;
@@ -1436,6 +1457,7 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshBottomButtons();
         RefreshAutoSize();      // 슬46: 미리보기 줄 추가/제거에 맞춰 세로 사이즈 재조정
         ApplyBottomMargin();    // 슬51: 하단 UI를 SubFrame 밑으로 재정렬
+        ClampPopupToCenter(false);
     }
 
     // 슬51 버튼2: 다음 등급 수치 미리보기 한 줄 (StatBonus×Level 파생). 높으면 #00FF00, 낮으면 red.

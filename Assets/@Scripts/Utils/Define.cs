@@ -101,6 +101,7 @@ public class Define
     public const string ACTIVE_SKILL_FRAME_SPRITE = "11_orange_button_xs_empty";
     public const string COMBAT_ABILITY_READY_TEXT = "CombatAbilityReadyText";
     public const string GROWTH_CLASS_GUIDE_TEXT = "GrowthClassGuideText";
+    public const string CLASS_ABILITY_TEXT_PREFIX = "ClassAbility";
     public const string GROWTH_MATERIAL_HINT_TEXT = "GrowthMaterialHintText";
     public const string ITEM_LINK_PREFIX = "item:";
     public const float ITEM_SOURCE_RIGHT_INSET = 6f;

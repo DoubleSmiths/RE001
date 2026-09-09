@@ -1257,8 +1257,8 @@
     },
     {
       "TextKey": "Skill5004DescText",
-      "Kor": "최대 체력을 증가시킨다.",
-      "Eng": "Increases max HP."
+      "Kor": "최대 체력과 방어력이 오른다.",
+      "Eng": "Increases max HP and defense."
     },
     {
       "TextKey": "Skill5004StoryText",
@@ -1348,7 +1348,7 @@
     {
       "TextKey": "Skill5007DescText",
       "Kor": "전투 시작 시 일정 시간 물리 공격력이 증가한다.",
-      "Eng": "Physical attack rises for a while at battle start."
+      "Eng": "Increases physical attack briefly when entering a battle area."
     },
     {
       "TextKey": "Skill5008NameText",
@@ -4428,12 +4428,12 @@
     {
       "TextKey": "Skill5100NameText",
       "Kor": "선제의 감각",
-      "Eng": "선제의 감각"
+      "Eng": "First Strike Instinct"
     },
     {
       "TextKey": "Skill5100DescText",
       "Kor": "전투 시작 시 60% 확률로 공격력이 잠시 오른다",
-      "Eng": "전투 시작 시 60% 확률로 공격력이 잠시 오른다"
+      "Eng": "A 60% chance to briefly increase physical attack when entering a battle area."
     },
     {
       "TextKey": "Skill5101NameText",
@@ -4478,12 +4478,12 @@
     {
       "TextKey": "Skill5105NameText",
       "Kor": "연쇄 각성",
-      "Eng": "연쇄 각성"
+      "Eng": "Chain Awakening"
     },
     {
       "TextKey": "Skill5105DescText",
       "Kor": "연속 3회 치명타 시 큰 피해를 추가한다",
-      "Eng": "연속 3회 치명타 시 큰 피해를 추가한다"
+      "Eng": "Deals bonus damage after three consecutive critical hits."
     },
     {
       "TextKey": "Skill5106NameText",
@@ -4518,12 +4518,12 @@
     {
       "TextKey": "Skill5109NameText",
       "Kor": "그림자 걸음",
-      "Eng": "그림자 걸음"
+      "Eng": "Shadow Step"
     },
     {
       "TextKey": "Skill5109DescText",
       "Kor": "연속 3회 회피 시 회피율이 크게 오른다",
-      "Eng": "연속 3회 회피 시 회피율이 크게 오른다"
+      "Eng": "Briefly increases evasion after three consecutive dodges."
     },
     {
       "TextKey": "Skill5110NameText",
@@ -4558,12 +4558,12 @@
     {
       "TextKey": "Skill5113NameText",
       "Kor": "불굴",
-      "Eng": "불굴"
+      "Eng": "Indomitable"
     },
     {
       "TextKey": "Skill5113DescText",
-      "Kor": "치명상을 입을 때 40% 확률로 체력을 회복하며 버틴다",
-      "Eng": "치명상을 입을 때 40% 확률로 체력을 회복하며 버틴다"
+      "Kor": "치명 피해를 받기 직전 40% 확률로 체력을 회복한다.",
+      "Eng": "A 40% chance to restore HP just before taking an otherwise fatal hit."
     },
     {
       "TextKey": "Skill5114NameText",
@@ -4588,12 +4588,12 @@
     {
       "TextKey": "Skill5116NameText",
       "Kor": "각성",
-      "Eng": "각성"
+      "Eng": "Awakening"
     },
     {
       "TextKey": "Skill5116DescText",
       "Kor": "18초마다 공격력이 잠시 오른다",
-      "Eng": "18초마다 공격력이 잠시 오른다"
+      "Eng": "Briefly increases physical attack every 18 seconds while in battle."
     },
     {
       "TextKey": "Skill5117NameText",
@@ -4638,12 +4638,12 @@
     {
       "TextKey": "Skill5121NameText",
       "Kor": "잔상",
-      "Eng": "잔상"
+      "Eng": "Afterimage"
     },
     {
       "TextKey": "Skill5121DescText",
       "Kor": "17초마다 회피율이 잠시 오른다",
-      "Eng": "17초마다 회피율이 잠시 오른다"
+      "Eng": "Briefly increases evasion every 17 seconds while in battle."
     },
     {
       "TextKey": "Skill5122NameText",
@@ -4678,12 +4678,12 @@
     {
       "TextKey": "Skill5125NameText",
       "Kor": "강인함",
-      "Eng": "강인함"
+      "Eng": "Fortitude"
     },
     {
       "TextKey": "Skill5125DescText",
       "Kor": "최대 체력이 오른다",
-      "Eng": "최대 체력이 오른다"
+      "Eng": "Increases max HP."
     },
     {
       "TextKey": "Skill5126NameText",
@@ -4738,12 +4738,12 @@
     {
       "TextKey": "Skill5131NameText",
       "Kor": "민첩",
-      "Eng": "민첩"
+      "Eng": "Agility"
     },
     {
       "TextKey": "Skill5131DescText",
       "Kor": "회피율이 오른다",
-      "Eng": "회피율이 오른다"
+      "Eng": "Increases evasion."
     },
     {
       "TextKey": "Skill5132NameText",
@@ -4818,12 +4818,12 @@
     {
       "TextKey": "Skill5139NameText",
       "Kor": "각인",
-      "Eng": "각인"
+      "Eng": "Imprint"
     },
     {
       "TextKey": "Skill5139DescText",
       "Kor": "확정 포획에 필요한 횟수가 줄어든다",
-      "Eng": "확정 포획에 필요한 횟수가 줄어든다"
+      "Eng": "Reduces the number of attempts needed for a guaranteed capture."
     },
     {
       "TextKey": "Skill5140NameText",
@@ -4848,12 +4848,12 @@
     {
       "TextKey": "Skill5142NameText",
       "Kor": "연계 감각",
-      "Eng": "연계 감각"
+      "Eng": "Combo Instinct"
     },
     {
       "TextKey": "Skill5142DescText",
-      "Kor": "콤보 게이지가 더 오래 유지된다",
-      "Eng": "콤보 게이지가 더 오래 유지된다"
+      "Kor": "콤보 유지 시간이 늘어난다.",
+      "Eng": "Extends the time before a combo expires."
     },
     {
       "TextKey": "Skill5143NameText",
@@ -9249,6 +9249,141 @@
       "TextKey": "GrowthItemFoundLabelText",
       "Kor": "발견장소:",
       "Eng": "Found:"
+    },
+    {
+      "TextKey": "ClassAbilityCurrentFormat",
+      "Kor": "현재 {0}단계",
+      "Eng": "Current level {0}"
+    },
+    {
+      "TextKey": "ClassAbilityAcquisitionFormat",
+      "Kor": "습득 시 {0}단계",
+      "Eng": "Upon learning: level {0}"
+    },
+    {
+      "TextKey": "ClassAbilityNextFormat",
+      "Kor": "다음 {0}단계",
+      "Eng": "Next level {0}"
+    },
+    {
+      "TextKey": "ClassAbilityFlatStatFormat",
+      "Kor": "{0} +{1}",
+      "Eng": "{0} +{1}"
+    },
+    {
+      "TextKey": "ClassAbilityPercentPointFormat",
+      "Kor": "{0} +{1}%p",
+      "Eng": "{0} +{1} percentage points"
+    },
+    {
+      "TextKey": "ClassAbilityComboFormat",
+      "Kor": "콤보 유지 시간 +{0}%",
+      "Eng": "Combo duration +{0}%"
+    },
+    {
+      "TextKey": "ClassAbilityCaptureFormat",
+      "Kor": "확정 포획에 필요한 실패 횟수 -{0}",
+      "Eng": "Failures needed for a guaranteed catch -{0}"
+    },
+    {
+      "TextKey": "ClassAbilityChanceFormat",
+      "Kor": "{0}% 확률로 발동",
+      "Eng": "{0}% chance to activate"
+    },
+    {
+      "TextKey": "ClassAbilityIntervalFormat",
+      "Kor": "{0}, 재사용 대기 {1}초",
+      "Eng": "{0}, cooldown {1}s"
+    },
+    {
+      "TextKey": "ClassAbilityHealFormat",
+      "Kor": "HP {0} 회복",
+      "Eng": "Restore {0} HP"
+    },
+    {
+      "TextKey": "ClassAbilityDamageFormat",
+      "Kor": "추가 피해 {0}",
+      "Eng": "Deal {0} bonus damage"
+    },
+    {
+      "TextKey": "ClassAbilityHealRatioFormat",
+      "Kor": "{0}의 {1}%만큼 HP 회복",
+      "Eng": "Restore HP equal to {1}% of {0}"
+    },
+    {
+      "TextKey": "ClassAbilityDamageRatioFormat",
+      "Kor": "{0}의 {1}%만큼 추가 피해",
+      "Eng": "Deal bonus damage equal to {1}% of {0}"
+    },
+    {
+      "TextKey": "ClassAbilityDurationFormat",
+      "Kor": "{0} ({1}초)",
+      "Eng": "{0} ({1}s)"
+    },
+    {
+      "TextKey": "ClassAbilityUntilBattleEndFormat",
+      "Kor": "{0} (전투 종료까지)",
+      "Eng": "{0} (until battle ends)"
+    },
+    {
+      "TextKey": "ClassAbilityBattleStartText",
+      "Kor": "지역 전투 시작 시",
+      "Eng": "At the start of an area's battle"
+    },
+    {
+      "TextKey": "ClassAbilityConsecutiveCritFormat",
+      "Kor": "{0}회 연속 치명타 시",
+      "Eng": "After {0} consecutive critical hits"
+    },
+    {
+      "TextKey": "ClassAbilityConsecutiveEvadeFormat",
+      "Kor": "{0}회 연속 회피 시",
+      "Eng": "After {0} consecutive evades"
+    },
+    {
+      "TextKey": "ClassAbilityFatalDamageText",
+      "Kor": "치명적인 피해를 받기 직전",
+      "Eng": "Before taking lethal damage"
+    },
+    {
+      "TextKey": "ClassAbilityInBattleText",
+      "Kor": "전투 중 자동 발동",
+      "Eng": "Activates automatically in battle"
+    },
+    {
+      "TextKey": "ClassAbilityOutOfBattleText",
+      "Kor": "비전투 중 자동 발동",
+      "Eng": "Activates automatically outside battle"
+    },
+    {
+      "TextKey": "ClassAbilityAlwaysText",
+      "Kor": "항상 자동 발동",
+      "Eng": "Activates automatically at any time"
+    },
+    {
+      "TextKey": "ClassAbilityOrText",
+      "Kor": " 또는 ",
+      "Eng": " or "
+    },
+    {
+      "TextKey": "ClassAbilityMaxHpText",
+      "Kor": "최대 HP",
+      "Eng": "Max HP"
+    },
+    {
+      "TextKey": "ClassAbilityDefText",
+      "Kor": "방어력",
+      "Eng": "Defense"
+    },
+    {
+      "TextKey": "ClassAbilityEvasionText",
+      "Kor": "회피율",
+      "Eng": "Evasion"
+    },
+    {
+      "TextKey": "ClassAbilityPhysicalAtkText",
+      "Kor": "물리 공격력",
+      "Eng": "Physical attack"
     }
   ]
 }
