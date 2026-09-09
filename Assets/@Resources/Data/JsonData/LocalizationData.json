@@ -9194,6 +9194,31 @@
       "TextKey": "MinionAbility2600DescText",
       "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
       "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "CombatAbilityReadyText",
+      "Kor": "눌러서 사용",
+      "Eng": "Tap to use"
+    },
+    {
+      "TextKey": "CombatAbilityCooldownText",
+      "Kor": "재사용 대기",
+      "Eng": "Cooling down"
+    },
+    {
+      "TextKey": "CombatAbilityFullHpText",
+      "Kor": "체력이 가득합니다",
+      "Eng": "Health is full"
+    },
+    {
+      "TextKey": "CombatAbilityNoTargetText",
+      "Kor": "적을 기다리는 중",
+      "Eng": "Waiting for a target"
+    },
+    {
+      "TextKey": "CombatAbilityUnavailableText",
+      "Kor": "지금은 사용할 수 없습니다",
+      "Eng": "Unavailable"
     }
   ]
 }

@@ -91,6 +91,19 @@ public class Define
 
     // 액티브 스킬바 슬롯 수 (기획서 퀵슬롯 6칸).
     public const int ACTIVE_SKILL_SLOTS = 6;
+    public const int ACTIVE_SKILL_SLOT_SIZE = 26;
+    public const int ACTIVE_SKILL_SLOT_GAP = 2;
+    public const int ACTIVE_SKILL_BAR_Y = 99;
+    public const int ACTIVE_SKILL_ICON_INSET = 4;
+    public const int ACTIVE_SKILL_STATUS_HEIGHT = 7;
+    public const float ACTIVE_SKILL_STATUS_FONT_SIZE = 5.5f;
+    public const int ACTIVE_SKILL_COOLDOWN_FONT_SIZE = 10;
+    public const string ACTIVE_SKILL_FRAME_SPRITE = "11_orange_button_xs_empty";
+    public const string COMBAT_ABILITY_READY_TEXT = "CombatAbilityReadyText";
+    public const string COMBAT_ABILITY_COOLDOWN_TEXT = "CombatAbilityCooldownText";
+    public const string COMBAT_ABILITY_FULL_HP_TEXT = "CombatAbilityFullHpText";
+    public const string COMBAT_ABILITY_NO_TARGET_TEXT = "CombatAbilityNoTargetText";
+    public const string COMBAT_ABILITY_UNAVAILABLE_TEXT = "CombatAbilityUnavailableText";
     public const float ABILITY_PERCENT_BASE = 100f;
     public const string COMPANION_ABILITY_BORROWED_TEXT = "CompanionAbilityBorrowedText";
     public const string COMPANION_ABILITY_AVAILABLE_TEXT = "CompanionAbilityAvailableText";

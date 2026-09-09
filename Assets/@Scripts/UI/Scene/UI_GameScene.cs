@@ -1003,7 +1003,7 @@ public class UI_GameScene : UI_Scene
         player.OnBuffApplied += OnBuffApplied;
         player.OnBuffCleared += OnBuffCleared;
 
-        // 액티브 스킬바 — 최하단 탭 바로 위. 장착된 액티브 능력이 없으면 슬롯이 전부 꺼져 보이지 않는다.
+        // 액티브 스킬바 — 전투 기록 아래 독립된 행동 영역. 마을이나 수동 능력이 없을 때는 숨긴다.
         if (_skillBar == null && player.AbilityRunner != null)
         {
             var host = GetImage((int)Images.ButtomDisplayer);
