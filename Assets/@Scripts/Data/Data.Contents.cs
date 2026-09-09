@@ -419,6 +419,9 @@ namespace Data
         public MinMonGrade CritGrade;
         public int MaxTameCount;
         public float CatchChance;
+        // 첫 동행 체험까지의 대기만 제한한다. 0이면 기존 확률을 사용한다.
+        public int FirstInterestKillCount;
+        public float FirstCatchChance;
     }
 
     [Serializable]

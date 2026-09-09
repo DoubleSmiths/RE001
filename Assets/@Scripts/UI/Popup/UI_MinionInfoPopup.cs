@@ -238,6 +238,18 @@ public class UI_MinionInfoPopup : UI_Popup
             //  적용 시 글리프 깨짐 → 색(30FF00)만 적용. 폰트 프리셋 재제작 시 연결.
         }
 
+        // 능력 목록과 같은 아이콘으로 포획 보상을 식별한다.
+        int skillId = Managers.Ability.MinionSkillId(_dataId);
+        if (Managers.Data.SkillDic.TryGetValue(skillId, out var skill))
+        {
+            var icon = GetButton((int)Buttons.MinionUsingSkillIcon)?.image;
+            if (icon != null)
+            {
+                icon.sprite = Managers.Resource.Load<Sprite>(skill.IconLabel);
+                icon.preserveAspect = true;
+            }
+        }
+
         // 슬86: MinimonAbilityText (=SkillNameText) — UniqueSkillName 우선, 없으면 "-"
         var skillTxt = GetText((int)Texts.SkillNameText);
         if (skillTxt != null)
@@ -444,9 +456,17 @@ public class UI_MinionInfoPopup : UI_Popup
             _learnedLabel.enableWordWrapping = false;
         }
 
-        _learnedLabel.gameObject.SetActive(learned);
-        if (!learned) return;
-        _learnedLabel.text = Util.Localize(perfect ? Define.LocalizeKey.CompleteGetText : Define.LocalizeKey.ParticalGetText);
+        bool owned = Managers.MinMon.IsOwned(_dataId);
+        _learnedLabel.gameObject.SetActive(learned || owned);
+        if (!learned && !owned) return;
+        int skillId = Managers.Ability.MinionSkillId(_dataId);
+        string key = learned ? (perfect ? Define.LocalizeKey.CompleteGetText : Define.LocalizeKey.ParticalGetText)
+            : Managers.Ability.IsCompanionGranted(skillId) ? Define.COMPANION_ABILITY_BORROWED_TEXT
+            : Define.COMPANION_ABILITY_AVAILABLE_TEXT;
+        _learnedLabel.text = Util.Localize(key);
+        _learnedLabel.enableAutoSizing = true;
+        _learnedLabel.fontSizeMin = 3f;
+        _learnedLabel.fontSizeMax = 5f;
         _learnedLabel.color = perfect ? Util.HexToColor("FF0000") : Util.HexToColor("36FF00");
         ApplyFont(_learnedLabel, Define.FontType.UI);
     }
@@ -503,11 +523,13 @@ public class UI_MinionInfoPopup : UI_Popup
 
     void OnClickSummon()
     {
+        if (_resultAnimPlaying) return;
         if (!Managers.MinMon.IsOwned(_dataId)) return;
         // 슬19: 다른 미니몬과 동행 중이면 자동 해제 후 새로 지정 (MinMonManager.SetCompanion이 처리)
         Managers.MinMon.SetCompanion(_dataId);
         Debug.Log($"[MyMinimon] {_dataId} 동행 시작 (이전 동행 자동 해제)");
         RefreshSummonButton();
+        RefreshLearnedLabel();
 
         // 슬19: [나의 미니몬] 창에 Flash_USETHIS 효과 + [미니몬 기록]/[미니몬 도감] UI 동시 갱신
         SpawnFlash();
@@ -516,9 +538,11 @@ public class UI_MinionInfoPopup : UI_Popup
 
     void OnClickUnsummon()
     {
+        if (_resultAnimPlaying) return;
         Managers.MinMon.RemoveCompanion();
         Debug.Log($"[MyMinimon] {_dataId} 동행 해제");
         RefreshSummonButton();
+        RefreshLearnedLabel();
         RefreshOtherCompanionUI();
     }
 
@@ -565,7 +589,7 @@ public class UI_MinionInfoPopup : UI_Popup
     {
         _resultAnimPlaying = true;   // 슬20~22-d/g: 결과 Anim 끝날 때까지 닫기 차단
 
-        // 포획 결과창(첫 포획/재포획)에선 부르기/동행중 버튼 그룹 비표시 (미니몬 기록서 연 창에서만 노출)
+        // 결과 연출 중에는 버튼을 숨기고, 연출이 끝나면 곧바로 동행할 수 있게 한다.
         var btnGroup = GetObject((int)GameObjects.MinionInfoPopupButtonGroup);
         if (btnGroup != null) btnGroup.SetActive(false);
 
@@ -598,6 +622,10 @@ public class UI_MinionInfoPopup : UI_Popup
             yield return new WaitForSecondsRealtime(1.5f);
         }
         _resultAnimPlaying = false;
+        // 포획의 보상을 바로 써볼 수 있도록 결과 연출이 끝나면 기존 동행 버튼을 연다.
+        var btnGroup = GetObject((int)GameObjects.MinionInfoPopupButtonGroup);
+        if (btnGroup != null) btnGroup.SetActive(true);
+        RefreshSummonButton();
     }
 
     // 슬20: [나의 미니몬] 창 뒤에 GlowRays 표시 (포획으로 호출됐을 때만). 느린 회전 + 페이드 인.

@@ -24,6 +24,8 @@ public class AbilityRunner : MonoBehaviour
     readonly List<TempBuff> _buffs = new();               // 활성 임시 버프
 
     bool _inBattle;
+    float _minionCooldown;
+    float _minionCooldownDuration;
 
     public void Setup(PlayerController player) => _player = player;
 
@@ -44,12 +46,20 @@ public class AbilityRunner : MonoBehaviour
         _cooldowns.Clear();
     }
 
-    // RefreshStats가 스탯을 base+패시브로 리셋한 직후 호출 — 임시버프 추적만 비움(환불 X, 이미 리셋됨).
+    // 스탯 재계산 후에도 사용 중인 능력의 남은 버프는 유지한다. 해제된 능력만 제거한다.
     public void OnStatsReset()
     {
-        if (_player != null)
-            foreach (var b in _buffs) _player.RaiseBuffCleared(b.id);   // 슬40: 효과가 리셋됐으니 아이콘도 제거
-        _buffs.Clear();
+        for (int i = _buffs.Count - 1; i >= 0; i--)
+        {
+            var buff = _buffs[i];
+            if (Time.time < buff.expire && Managers.Ability.IsEquipped(buff.id))
+            {
+                AddStat(buff.stat, buff.value);
+                continue;
+            }
+            _buffs.RemoveAt(i);
+            if (_player != null) _player.RaiseBuffCleared(buff.id);
+        }
     }
 
     // ── 확률 발동 조건 통지 (PlayerController 훅에서 호출) ──
@@ -96,6 +106,8 @@ public class AbilityRunner : MonoBehaviour
 
     void Update()
     {
+        // 동행 교체나 같은 계열 능력 여러 개 기억으로 재사용 대기를 우회하지 않는다.
+        _minionCooldown = Mathf.Max(0f, _minionCooldown - Time.deltaTime);
         // 임시 버프 만료
         for (int i = _buffs.Count - 1; i >= 0; i--)
         {
@@ -165,22 +177,37 @@ public class AbilityRunner : MonoBehaviour
     }
 
     /// 남은 쿨타임(초). 0이면 사용 가능.
-    public float GetCooldownRemain(int id) => _cooldowns.TryGetValue(id, out var v) ? Mathf.Max(0f, v) : 0f;
+    public float GetCooldownRemain(int id)
+    {
+        if (IsMinionActive(id)) return _minionCooldown;
+        return _cooldowns.TryGetValue(id, out var v) ? Mathf.Max(0f, v) : 0f;
+    }
+
+    bool IsMinionActive(int id)
+    {
+        return Managers.Data.SkillDic.TryGetValue(id, out var d)
+            && d.Source == AbilitySource.Minion && d.TriggerType == AbilityTrigger.Active;
+    }
 
     /// 쿨 진행률 0~1 (1 = 다 참). 스킬바 필 게이지용.
     public float GetCooldownRatio(int id)
     {
         if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return 1f;
-        float total = Mathf.Max(0.1f, d.Cooldown);
+        float total = Mathf.Max(0.1f, IsMinionActive(id) && _minionCooldownDuration > 0f
+            ? _minionCooldownDuration : d.Cooldown);
         return Mathf.Clamp01(1f - GetCooldownRemain(id) / total);
     }
 
     public bool CanUse(int id)
     {
         if (_player == null || _player.State == State.Dead) return false;
+        if (Managers.Ability == null || !Managers.Ability.IsEquipped(id)) return false;
         if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return false;
         if (d.TriggerType != AbilityTrigger.Active) return false;
         if (!ContextOk(d.ActiveContext)) return false;
+        if (d.Effect == AbilityEffect.BonusDamage
+            && (_player.CurrentTarget == null || _player.CurrentTarget.State == State.Dead)) return false;
+        if (d.Effect == AbilityEffect.Heal && _player.Hp >= _player.MaxHp) return false;
         return GetCooldownRemain(id) <= 0f;
     }
 
@@ -190,7 +217,15 @@ public class AbilityRunner : MonoBehaviour
         if (!CanUse(id)) return false;
         var d = Managers.Data.SkillDic[id];
         ApplyEffect(d);
-        _cooldowns[id] = Mathf.Max(0.1f, d.Cooldown);
+        if (IsMinionActive(id))
+        {
+            _minionCooldown = Mathf.Max(0.1f, d.Cooldown);
+            _minionCooldownDuration = _minionCooldown;
+        }
+        else
+        {
+            _cooldowns[id] = Mathf.Max(0.1f, d.Cooldown);
+        }
         OnActiveSkillChanged?.Invoke();
         return true;
     }
@@ -205,7 +240,7 @@ public class AbilityRunner : MonoBehaviour
     void ApplyEffect(SkillData d)
     {
         int lv = Mathf.Max(1, Managers.Ability != null ? Managers.Ability.GetLevel(d.DataId) : 1);
-        float value = d.EffectValue * lv;
+        float value = GetEffectValue(d, lv);
 
         // 액티브 스킬은 전용 모션을 탄다. 효과 종류로 고른다 —
         //  때리는 스킬은 크게 휘두르고(Skill_Slash), 버프·회복은 자세를 잡는다(Skill_Cast).
@@ -247,6 +282,17 @@ public class AbilityRunner : MonoBehaviour
             Notify(AbilityCondition.AfterAbilityUse, d.DataId);
             _inAfterNotify = false;
         }
+    }
+
+    // 신규 미니몬 능력은 성장 후에도 유효하도록 공격력/체력 비율을 사용한다.
+    // EffectStat이 비어 있는 기존 공격·회복 데이터는 고정 수치 그대로 적용한다.
+    public float GetEffectValue(SkillData data, int level)
+    {
+        float value = data.EffectValue * Mathf.Max(1, level);
+        if (_player == null || data.Effect == AbilityEffect.Buff) return value;
+        if (data.EffectStat == "PhysicalAtk") return value * _player.FinalPhysicalAtk / ABILITY_PERCENT_BASE;
+        if (data.EffectStat == "MaxHp") return value * _player.MaxHp / ABILITY_PERCENT_BASE;
+        return value;
     }
 
     // 슬39/능력#4: 발동 VFX — EffectVfxLabel 지정 시 그 프리팹, 비면 효과별 기본 매핑(기등록 어드레서블).
@@ -316,6 +362,7 @@ public class AbilityRunner : MonoBehaviour
             case "MaxHp":       _player.MaxHp        += v; break;
             case "Evasion":     _player.Evasion     += v; break;
             case "CritDamage":  _player.CritDamage  += v; break;
+            case "PhysicalResist": _player.PhysicalResist += v; break;
         }
     }
 }

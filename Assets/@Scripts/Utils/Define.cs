@@ -86,6 +86,9 @@ public class Define
 
     // 액티브 스킬바 슬롯 수 (기획서 퀵슬롯 6칸).
     public const int ACTIVE_SKILL_SLOTS = 6;
+    public const float ABILITY_PERCENT_BASE = 100f;
+    public const string COMPANION_ABILITY_BORROWED_TEXT = "CompanionAbilityBorrowedText";
+    public const string COMPANION_ABILITY_AVAILABLE_TEXT = "CompanionAbilityAvailableText";
 
     // 확률 발동 조건 (슬39).
     public enum AbilityCondition

@@ -127,9 +127,38 @@ public class AbilityManager
     }
 
     // 착용/부여 포함 보유 판정 — 장비 착용 부여(무점유)도 보유/기억중 취급 (슬38).
-    public bool IsLearned(int id)  => Learned.Contains(id) || IsEquipGranted(id);
-    public bool IsEquipped(int id) => Equipped.Contains(id) || IsEquipGranted(id);
+    public bool IsLearned(int id)  => Learned.Contains(id) || IsEquipGranted(id) || IsCompanionGranted(id);
+    public bool IsEquipped(int id) => Equipped.Contains(id) || IsEquipGranted(id) || IsCompanionGranted(id);
     public bool IsTalent(int id)   => TryData(id, out var d) && d.MemoryCapacity <= 0; // 점유량 0 = 재능
+
+    // 첫 포획부터 동행의 능력을 체험한다. 영구 습득/기억 목록에는 쓰지 않는다.
+    public bool IsCompanionGranted(int id)
+    {
+        if (Managers.Game == null || Managers.MinMon == null || !TryData(id, out var d)) return false;
+        int companionId = Managers.Game.CompanionMinMonId;
+        return companionId > 0 && Managers.MinMon.IsOwned(companionId)
+            && d.Source == Define.AbilitySource.Minion
+            && id == MinionSkillId(companionId);
+    }
+
+    public void OnCompanionChanged()
+    {
+        Managers.Game.RefreshEarnedTabUnlocks();
+        RaiseChanged();
+    }
+
+    // 이전 버전에서 데이터 누락 때문에 못 받은 공명도 보상을 로드 시 복구한다.
+    public void RestoreMinionRewards()
+    {
+        foreach (var minion in Managers.Game.OwnedMinMons)
+        {
+            int id = MinionSkillId(minion.DataId);
+            if (Managers.MinMon.GetSyncRate(minion.DataId) < 1f || !TryData(id, out _)) continue;
+            int level = Managers.MinMon.IsAllSS(minion.DataId) ? 2 : 1;
+            if (!Learned.Contains(id) || GetLevel(id) < level)
+                LearnMinionUniqueSkill(minion.DataId, level);
+        }
+    }
 
     // ── 슬38 장비 능력 ──
     // 장비 착용으로 부여된 능력(무점유 — 착용 중에만 유효). Source=Equip && 해당 장비 착용 중.
@@ -149,7 +178,11 @@ public class AbilityManager
     {
         get
         {
-            var list = new List<int>(Equipped);
+            var list = new List<int>();
+            int companionSkill = MinionSkillId(Managers.Game.CompanionMinMonId);
+            if (IsCompanionGranted(companionSkill)) list.Add(companionSkill);
+            foreach (int id in Equipped)
+                if (!list.Contains(id)) list.Add(id);
             if (Managers.Data?.SkillDic != null)
                 foreach (var d in Managers.Data.SkillDic.Values)
                     if (!list.Contains(d.DataId) && IsEquipGranted(d.DataId))
@@ -323,7 +356,7 @@ public class AbilityManager
     {
         int id = MinionSkillId(creatureId);
         if (level <= 0 || !TryData(id, out _)) return;
-        bool firstTime = !IsLearned(id);
+        bool firstTime = !Learned.Contains(id);
         Learn(id);                                   // 보유 + (재능이면 자동장착)
         if (level > GetLevel(id)) SetLevel(id, level);
         if (firstTime) Debug.Log($"[Ability] 미니몬 고유기술 습득: {id} Lv.{GetLevel(id)}");
@@ -349,7 +382,7 @@ public class AbilityManager
     // 망각 시 점유량만큼 기억력 회복(목록에서 제거). 재능/장비 부여(무점유)는 망각 불가.
     public bool Forget(int id)
     {
-        if (IsTalent(id) || IsEquipGranted(id)) return false;
+        if (IsTalent(id) || IsEquipGranted(id) || IsCompanionGranted(id)) return false;
         if (!Equipped.Remove(id)) return false;
         Managers.Game.SaveGame();
         RaiseChanged();

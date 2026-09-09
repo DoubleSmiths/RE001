@@ -6679,6 +6679,2521 @@
       "TextKey": "EnhanceDurabilityRiskText",
       "Kor": "실패 시 내구도 감소량",
       "Eng": "DURABILITY LOSS ON FAILURE"
+    },
+    {
+      "TextKey": "CompanionAbilityBorrowedText",
+      "Kor": "동행 중 사용",
+      "Eng": "In use"
+    },
+    {
+      "TextKey": "CompanionAbilityAvailableText",
+      "Kor": "동행 시 사용",
+      "Eng": "Summon to use"
+    },
+    {
+      "TextKey": "MinionAbility2003DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2101DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2102DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2103DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2104DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2105DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2106DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2107DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2108DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2109DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2110DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2111DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2112DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2113DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2114DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2115DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2116DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2117DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2118DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2119DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2120DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2121DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2122DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2123DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2124DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2125DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2126DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2127DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2128DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2129DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2130DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2131DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2132DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2133DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2134DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2135DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2136DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2137DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2138DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2139DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2140DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2141DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2142DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2143DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2144DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2145DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2146DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2147DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2148DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2149DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2150DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2151DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2152DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2153DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2154DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2155DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2156DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2157DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2158DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2159DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2160DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2161DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2162DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2163DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2164DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2165DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2166DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2167DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2168DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2169DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2170DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2171DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2172DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2173DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2174DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2175DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2176DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2177DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2178DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2179DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2180DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2181DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2182DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2183DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2184DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2185DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2186DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2187DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2188DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2189DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2190DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2191DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2192DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2193DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2194DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2195DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2196DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2197DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2198DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2199DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2200DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2201DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2202DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2203DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2204DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2205DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2206DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2207DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2208DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2209DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2210DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2211DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2212DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2213DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2214DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2215DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2216DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2217DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2218DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2219DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2220DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2221DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2222DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2223DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2224DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2225DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2226DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2227DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2228DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2229DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2230DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2231DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2232DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2233DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2234DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2235DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2236DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2237DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2238DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2239DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2240DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2241DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2242DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2243DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2244DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2245DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2246DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2247DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2248DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2249DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2250DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2251DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2252DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2253DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2254DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2255DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2256DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2257DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2258DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2259DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2260DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2261DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2262DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2263DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2264DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2265DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2266DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2267DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2268DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2269DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2270DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2271DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2272DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2273DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2274DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2275DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2276DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2277DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2278DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2279DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2280DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2281DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2282DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2283DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2284DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2285DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2286DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2287DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2288DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2289DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2290DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2291DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2292DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2293DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2294DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2295DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2296DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2297DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2298DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2299DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2300DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2301DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2302DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2303DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2304DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2305DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2306DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2307DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2308DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2309DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2310DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2311DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2312DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2313DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2314DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2315DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2316DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2317DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2318DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2319DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2320DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2321DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2322DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2323DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2324DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2325DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2326DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2327DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2328DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2329DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2330DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2331DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2332DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2333DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2334DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2335DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2336DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2337DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2338DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2339DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2340DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2341DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2342DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2343DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2344DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2345DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2346DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2347DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2348DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2349DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2350DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2351DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2352DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2353DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2354DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2355DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2356DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2357DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2358DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2359DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2360DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2361DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2362DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2363DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2364DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2365DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2366DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2367DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2368DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2369DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2370DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2371DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2372DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2373DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2374DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2375DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2376DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2377DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2378DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2379DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2380DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2381DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2382DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2383DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2384DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2385DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2386DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2387DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2388DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2389DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2390DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2391DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2392DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2393DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2394DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2395DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2396DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2397DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2398DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2399DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2400DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2401DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2402DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2403DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2404DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2405DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2406DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2407DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2408DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2409DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2410DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2411DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2412DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2413DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2414DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2415DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2416DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2417DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2418DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2419DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2420DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2421DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2422DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2423DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2424DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2425DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2426DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2427DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2428DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2429DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2430DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2431DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2432DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2433DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2434DescText",
+      "Kor": "8초 동안 명중률이 20%p 오른다.\n재사용 14초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 20 percentage points of accuracy for 8 seconds.\nCooldown: 14s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2435DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2436DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2437DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2438DescText",
+      "Kor": "8초 동안 공격속도가 30%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 30 percentage points of attack speed for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2439DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2440DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2441DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2442DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2443DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2444DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2445DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2446DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2447DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2448DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2449DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2450DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2451DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2452DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2453DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2454DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2455DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2456DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2457DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2458DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2459DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2460DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2461DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2462DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2463DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2464DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2465DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2466DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2467DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2468DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2469DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2470DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2471DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2472DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2473DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2474DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2475DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2476DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2477DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2478DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2479DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2480DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2481DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2482DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2483DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2484DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2485DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2486DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2487DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2488DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2489DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2490DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2491DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2492DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2493DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2494DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2495DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2496DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2497DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2498DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2499DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2500DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2501DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2502DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2503DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2504DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2505DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2506DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2507DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2508DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2509DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2510DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2511DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2512DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2513DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2514DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2515DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2516DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2517DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2518DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2519DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2520DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2521DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2522DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2523DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2524DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2525DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2526DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2527DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2528DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2529DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2530DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2531DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2532DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2533DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2534DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2535DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2536DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2537DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2538DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2539DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2540DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2541DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2542DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2543DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2544DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2545DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2546DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2547DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2548DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2549DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2550DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2551DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2552DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2553DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2554DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2555DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2556DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2557DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2558DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2559DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2560DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2561DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2562DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2563DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2564DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2565DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2566DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2567DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2568DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2569DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2570DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2571DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2572DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2573DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2574DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2575DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2576DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2577DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2578DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2579DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2580DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2581DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2582DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2583DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2584DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2585DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2586DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2587DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2588DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2589DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2590DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2591DescText",
+      "Kor": "8초 동안 회피율이 18%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 18 percentage points of evasion for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2592DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2593DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2594DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2595DescText",
+      "Kor": "물리 공격력의 180%만큼 확정 추가 피해를 준다.\n재사용 12초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 180% of physical attack.\nCooldown: 12s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2596DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2597DescText",
+      "Kor": "최대 체력의 18%를 회복한다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Restore 18% of maximum HP.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2598DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2599DescText",
+      "Kor": "물리 공격력의 300%만큼 확정 추가 피해를 준다.\n재사용 20초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Deal guaranteed bonus damage equal to 300% of physical attack.\nCooldown: 20s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
+    },
+    {
+      "TextKey": "MinionAbility2600DescText",
+      "Kor": "8초 동안 물리 저항이 25%p 오른다.\n재사용 18초(미니몬 능력끼리 공유). 단계마다 효과량 증가.\n동행 중 사용 가능. 공명도 100%에서 영구 습득.",
+      "Eng": "Gain 25 percentage points of physical resistance for 8 seconds.\nCooldown: 18s, shared by minion abilities. Effect scales with ability level.\nAvailable while accompanying. Permanently learned at 100% resonance."
     }
   ]
 }

@@ -1,0 +1,108 @@
+// 별도 검증 세이브의 마을에서 실행. 실제 매니저/플레이어를 사용하되 저장 파일 쓰기는 차단한다.
+var game = Managers.Game;
+var player = game.Player;
+if (player == null) throw new System.Exception("Player not ready");
+var runner = player.AbilityRunner;
+var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+var dataField = typeof(GameManager).GetField("_gameData", flags);
+var pathField = typeof(GameManager).GetField("_path", flags);
+var original = dataField.GetValue(game);
+var originalPath = pathField.GetValue(game);
+float originalHp = player.Hp;
+float interestRate = Managers.Data.CreatureDic[2003].InterestRate;
+var failures = new System.Collections.Generic.List<string>();
+void Check(bool pass, string message) { if (!pass) failures.Add(message); }
+try
+{
+    pathField.SetValue(game, null);
+    dataField.SetValue(game, new GameData());
+    player.StopBattle();
+    player.RefreshStats();
+    var ability = Managers.Ability;
+    var minion = Managers.MinMon;
+    Check(Managers.Data.MinMonDic.Keys.All(id => Managers.Data.SkillDic.ContainsKey(id + 4000)), "All minions have real rewards");
+    Managers.Data.CreatureDic[2003].InterestRate = 0f;
+    minion.DebugSetKillCount(2003, 2);
+    Check(minion.RollInterest(2003) == MinMonManager.InterestResult.NotInterested, "No guaranteed interest before threshold");
+    minion.DebugSetKillCount(2003, 3);
+    game.InterestedMinMons.AddRange(new[] { 2001, 2002 });
+    Check(minion.RollInterest(2003) == MinMonManager.InterestResult.StorageFull, "Guaranteed interest respects storage capacity");
+    game.InterestedMinMons.Clear();
+    Check(minion.RollInterest(2003) == MinMonManager.InterestResult.Added, "Third kill guarantees first interest");
+    Check(minion.IsCatchGuaranteed(2003) && minion.TryCatch(2003), "First catch guaranteed in UI and runtime");
+    Check(minion.GetCaughtCount(2003) == 1 && !minion.IsInterested(2003), "Capture consumes interest exactly once");
+    Check(minion.GetCatchChance(2003) == Managers.Data.MinMonDic[2003].CatchChance, "Repeat catch uses original chance");
+    int memory = ability.UsedMemory;
+    player.Hp = player.MaxHp / 2f;
+    float hp = player.Hp;
+    minion.SetCompanion(2003);
+    Check(ability.IsCompanionGranted(6003) && ability.IsEquipped(6003), "Owned companion grants ability immediately");
+    Check(!game.LearnedAbilities.Contains(6003) && !game.EquippedAbilities.Contains(6003), "Borrowing does not persist learning or memorization");
+    Check(ability.UsedMemory == memory && player.Hp == hp, "Borrowing consumes no memory and does not heal");
+    Check(runner.ActiveSkillIds.FirstOrDefault() == 6003, "Companion active skill comes first");
+    Check(game.IsBtmButtonUnlocked(Define.TabType.Skill), "Borrowed skill unlocks skill book");
+    minion.SetCompanion(2102);
+    Check(game.CompanionMinMonId == 2003, "Unowned minion cannot be summoned");
+    runner.OnBattleStart();
+    Check(!runner.UseSkill(6003) && runner.GetCooldownRemain(6003) == 0f, "No-target attack does not spend cooldown");
+    Check(!runner.UseSkill(5200), "Unmemorized skill cannot be used");
+    minion.AddMinMon(2101);
+    minion.SetCompanion(2101);
+    hp = player.Hp;
+    Check(runner.UseSkill(6101), "Borrowed recovery can be used");
+    Check(player.Hp > hp && runner.GetCooldownRemain(6101) > 0f, "Recovery changes HP and starts cooldown");
+    minion.SetCompanion(2003);
+    Check(runner.GetCooldownRemain(6003) > 0f, "Switching companion preserves shared cooldown");
+    minion.RemoveCompanion();
+    Check(!ability.IsLearned(6003) && !ability.ActiveAbilityIds.Contains(6003), "Unmastered borrowed ability disappears on dismissal");
+    for (int i = 0; i < 3; i++) minion.AddMinMon(2003);
+    Check(game.LearnedAbilities.Contains(6003), "Fourth capture permanently learns ability");
+    Check(ability.Memorize(6003), "Mastered ability can be memorized without companion");
+    memory = ability.UsedMemory;
+    minion.SetCompanion(2003);
+    Check(ability.ActiveAbilityIds.Count(id => id == 6003) == 1, "Permanent and borrowed effects do not duplicate");
+    Check(ability.UsedMemory == memory, "Switching does not refund already memorized ability");
+    minion.RemoveCompanion();
+    Check(ability.IsEquipped(6003) && ability.Forget(6003), "Memorized ability remains usable after dismissal and can be forgotten");
+    minion.DebugSetCaughtCount(2102, 4);
+    ability.RestoreMinionRewards();
+    Check(game.LearnedAbilities.Contains(6102), "Old save receives missing mastery reward");
+    ability.RestoreMinionRewards();
+    Check(game.LearnedAbilities.Count(id => id == 6102) == 1, "Reward restoration is idempotent");
+    minion.AddMinMon(2001);
+    minion.SetCompanion(2001);
+    float beforeMax = player.MaxHp;
+    minion.DebugSetCaughtCount(2001, 3);
+    foreach (int stat in new[] { 0, 1, 2 }) minion.DebugSetGrade(2001, stat, MinMonManager.GRADE_MAX);
+    minion.AddMinMon(2001);
+    Check(ability.GetLevel(6001) == 2 && player.MaxHp == beforeMax + Managers.Data.SkillDic[6001].StatBonus,
+        "Recapture mastery upgrade immediately changes passive stats");
+    var d = Managers.Data.SkillDic[6003];
+    Check(UnityEngine.Mathf.Approximately(runner.GetEffectValue(d, 1), player.FinalPhysicalAtk * 1.8f), "Attack scales with player strength");
+    Check(runner.GetEffectValue(Managers.Data.SkillDic[5200], 1) == 40f, "Legacy fixed damage remains fixed");
+    Check(ability.GetRoles(6003).Contains(AbilityManager.Role.Skill) && ability.GetRoles(6101).Contains(AbilityManager.Role.Def), "Attack and recovery have correct roles");
+    var haste = Managers.Data.SkillDic.Values.First(s => s.Source == Define.AbilitySource.Minion && s.TriggerType == Define.AbilityTrigger.Active && s.Effect == Define.AbilityEffect.Buff && s.EffectStat == "AtkSpeed");
+    minion.AddMinMon(haste.DataId - 4000);
+    minion.SetCompanion(haste.DataId - 4000);
+    typeof(AbilityRunner).GetField("_minionCooldown", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).SetValue(runner, 0f);
+    float baseSpeed = player.AtkSpeed;
+    Check(runner.UseSkill(haste.DataId), "Haste activates");
+    float buffedSpeed = player.AtkSpeed;
+    Check(buffedSpeed > baseSpeed, "Haste changes actual attack speed");
+    minion.AddMinMon(2102);
+    Check(player.AtkSpeed == buffedSpeed, "Unrelated mastery reward preserves active buff");
+    minion.RemoveCompanion();
+    Check(player.AtkSpeed == baseSpeed, "Dismissing borrowed ability removes its buff");
+}
+finally
+{
+    runner.OnBattleEnd();
+    Managers.Data.CreatureDic[2003].InterestRate = interestRate;
+    Managers.UI.CloseAllPopupUI();
+    dataField.SetValue(game, original);
+    pathField.SetValue(game, originalPath);
+    player.RefreshStats(false);
+    player.Hp = UnityEngine.Mathf.Min(originalHp, player.MaxHp);
+}
+if (failures.Count > 0) throw new System.Exception(string.Join("; ", failures));
+return "PASS: capture pacing, companion loan, memory, shared cooldown, mastery, migration, level scaling, roles";

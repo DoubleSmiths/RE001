@@ -500,6 +500,8 @@ public class UI_SkillDetailPopup : UI_Popup
     {
         if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return "";
         if (d.TriggerType == Define.AbilityTrigger.None) return "";
+        // 미니몬 액티브 설명은 효과 비율·공유 쿨타임까지 데이터에 표시한다.
+        if (d.TriggerType == Define.AbilityTrigger.Active && d.Source == Define.AbilitySource.Minion) return "";
 
         string eff = EffectDesc(d);
         if (d.TriggerType == Define.AbilityTrigger.Probability)
@@ -672,6 +674,8 @@ public class UI_SkillDetailPopup : UI_Popup
         bool talent   = Managers.Ability.IsTalent(SkillId);
         bool equipped = Managers.Ability.IsEquipped(SkillId);
         int cap = Managers.Data.SkillDic.TryGetValue(SkillId, out var d) ? d.MemoryCapacity : 0;
+        if (Managers.Ability.IsCompanionGranted(SkillId) && !Managers.Game.EquippedAbilities.Contains(SkillId))
+            cap = 0;
 
         // 슬44: 기억력 점유량 (재능=0이면 "?" 색 #FDF6A6). 외곽선(C0AA70)은 prefab 머티리얼 프리셋 소관.
         SetText(Texts.Txt_GotMEM_01, talent ? "<color=#FDF6A6>?</color>" : cap.ToString());
@@ -693,7 +697,12 @@ public class UI_SkillDetailPopup : UI_Popup
 
         string btnLabel;
         bool interactable;
-        if (equipGranted)
+        if (Managers.Ability.IsCompanionGranted(SkillId))
+        {
+            btnLabel = Util.Localize(Define.COMPANION_ABILITY_BORROWED_TEXT);
+            interactable = false;
+        }
+        else if (equipGranted)
         {
             // 장비 착용 부여(무점유) — 망각 불가 → "기억중" 표기 + 비활성.
             //  (게이지 점유 표기는 UsedMemory 기반이라 무점유가 자동 반영됨)
@@ -738,7 +747,7 @@ public class UI_SkillDetailPopup : UI_Popup
     void OnClickMemorize()
     {
         // 장비 착용 부여(무점유)는 망각 불가 (BindEvent는 Button.interactable을 무시하므로 코드 가드)
-        if (Managers.Ability.IsEquipGranted(SkillId)) return;
+        if (Managers.Ability.IsEquipGranted(SkillId) || Managers.Ability.IsCompanionGranted(SkillId)) return;
 
         // 미보유 → 출처별 습득 시도 (NPC 재료 소모 / 축성)
         if (!Managers.Ability.IsLearned(SkillId)) { TryAcquire(); return; }
@@ -890,7 +899,8 @@ public class UI_SkillDetailPopup : UI_Popup
         // 슬45: 이름 바 위 상태 배지(MasterAndMEMGroup) — 최대등급=완벽숙달(FF00F5) / 기억중=기억중 / 재능=재능(둘 다 파랑 3BA6FF).
         //  최대등급과 기억중(재능)은 독립 조건 → 둘 다 성립하면 둘 다 표시(좌우로 분리). 둘 다 같은 위치라 겹침 방지.
         bool showMaster = atMax;
-        bool showMemBadge = talent || (owned && equipped);
+        bool showMemBadge = talent || (owned && equipped &&
+            (!Managers.Ability.IsCompanionGranted(SkillId) || Managers.Game.EquippedAbilities.Contains(SkillId)));
         var mIcon   = GetImage((int)Images.MasterIcon)?.rectTransform;
         var memIcon = GetImage((int)Images.MemorizedIcon)?.rectTransform;
         if (!_badgeBaseCached && mIcon != null) { _badgeBaseX = mIcon.anchoredPosition.x; _badgeBaseCached = true; }
@@ -915,8 +925,8 @@ public class UI_SkillDetailPopup : UI_Popup
         SetActive(GetObject((int)GameObjects.GotMEM), owned && !talent);
         SetActive(GetTextGo((int)Texts.NoMEM),        talent);
 
-        // 습득 필요(Lv0Text) — 미보유 시
-        SetActive(GetTextGo((int)Texts.Lv0Text), !owned);
+        // 미니몬은 포획 전에 능력 효과를 미리 보여준다.
+        SetActive(GetTextGo((int)Texts.Lv0Text), !owned && sd?.Source != Define.AbilitySource.Minion);
 
         // 슬43/45: 능력이 [재능]이거나 기억(사용)중이면 아이콘 배경 Active_Ef(빛 sweep 루프) 활성.
         //  (모션/색은 prefab authored 이펙트 유지 — 코드는 토글만. UI_SkillBookSkill.cs와 동일 패턴)
@@ -963,13 +973,14 @@ public class UI_SkillDetailPopup : UI_Popup
             ApplyFont(lvT, Define.FontType.UI);
         }
 
-        // 능력 설명(mechanics) — GetDesc + 발동조건 한 줄. 미보유 시 "- 습득 필요 -"(Lv0Text)가 대체하므로 숨김.
-        bool owned = Managers.Ability.IsLearned(SkillId);
+        // 미니몬은 발견 후 어떤 전투 보상을 얻는지 확인할 수 있다.
+        bool showDesc = Managers.Ability.IsLearned(SkillId) ||
+            (Managers.Data.SkillDic.TryGetValue(SkillId, out var data) && data.Source == Define.AbilitySource.Minion);
         var realT = GetText((int)Texts.LvEffectTxt_Real);
         if (realT != null)
         {
-            realT.gameObject.SetActive(owned);
-            if (owned)
+            realT.gameObject.SetActive(showDesc);
+            if (showDesc)
             {
                 string desc = Managers.Ability.GetDesc(SkillId);
                 string trig = BuildTriggerDesc(SkillId);
@@ -1313,23 +1324,22 @@ public class UI_SkillDetailPopup : UI_Popup
         int  rec     = Managers.MinMon.GetRecordRate(minionId);   // 0..100
         bool owned   = Managers.MinMon.IsOwned(minionId);
         bool allSS   = Managers.MinMon.IsAllSS(minionId);
-        int  star    = Managers.MinMon.GetStarGrade(minionId);
+        int sync = Mathf.RoundToInt(Managers.MinMon.GetSyncRate(minionId) * Define.ABILITY_PERCENT_BASE);
         // 슬48: 상호작용 = 기록도>0 또는 보유 (0%+미보유만 X). 텍스트/잠금 노출은 동일 기준.
         bool unlocked = rec > 0 || owned;
 
-        // 슬48: 기록도 텍스트 + 색 (0=red / 0<x<100=orange / 100=#00FF00). 'lime' TMP 미지원 → #00FF00.
-        string rc = rec <= 0 ? "red" : rec >= 100 ? "#00FF00" : "orange";
+        // 영구 습득 조건은 처치 기록도가 아니라 포획 공명도다.
+        string rc = sync <= 0 ? "red" : sync >= Define.ABILITY_PERCENT_BASE ? "#00FF00" : "orange";
         var recT = GetText((int)Texts.Txt_ReqMinionBox_07);
-        if (recT != null) { recT.text = $"<color={rc}>{rec}</color>/100"; SetActive(recT.gameObject, unlocked); }
+        if (recT != null) { recT.text = $"<color={rc}>{sync}%</color>"; SetActive(recT.gameObject, unlocked); }
 
-        // 슬48: 기록도 아래 부가 텍스트(Txt_ReqMinionBox_05) — 2단계 이상=Minimon_MaxRank_Text("최상등급"),
-        //  1단계=Req_Minimon_SubText(문구는 "최상등급"으로 동일 — 사용자 결정). 색은 둘 다 AllSS=#00FF00 / 그외 #909090.
+        // 현재 진행도가 어떤 조건인지 짧게 표시한다.
         var subT = GetText((int)Texts.Txt_ReqMinionBox_05);
         if (subT != null)
         {
             SetActive(subT.gameObject, unlocked);
-            subT.text = Util.Localize(star >= 2 ? Define.LocalizeKey.Minimon_MaxRank_Text : Define.LocalizeKey.Req_Minimon_SubText);
-            SetTextColor(subT, allSS ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
+            subT.text = Util.Localize(Define.LocalizeKey.LinkText);
+            SetTextColor(subT, sync >= Define.ABILITY_PERCENT_BASE ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
         }
 
         // 슬48: 미니몬 이미지 = 도감 ICON과 동일(CreatureData.IconLabel) 데이터 연결.
@@ -1347,12 +1357,12 @@ public class UI_SkillDetailPopup : UI_Popup
         }
 
         // 슬48: 우상단 체크 ICON 2개(Checkmark_01) — 조건 성립마다 하나씩 #0AFF00 점등, 기본 #BEBEBE(a150).
-        //  Img_ReqMinionBox_06 = 기록도 100% / Img_ReqMinionBox_04 = 능력치 모두 SS. (이전 GlowMask_18/30 오매핑 수정)
+        //  Img_ReqMinionBox_06 = 공명도 100% / Img_ReqMinionBox_04 = 능력치 모두 SS.
         Color32 chkOn  = new Color32(0x0A, 0xFF, 0x00, 0xFF);
         Color32 chkOff = new Color32(0xBE, 0xBE, 0xBE, 150);
         var chk1 = GetImage((int)Images.Img_ReqMinionBox_06);
         var chk2 = GetImage((int)Images.Img_ReqMinionBox_04);
-        if (chk1 != null) { SetActive(chk1.gameObject, unlocked); chk1.color = (rec >= 100) ? (Color)chkOn : (Color)chkOff; }
+        if (chk1 != null) { SetActive(chk1.gameObject, unlocked); chk1.color = (sync >= Define.ABILITY_PERCENT_BASE) ? (Color)chkOn : (Color)chkOff; }
         if (chk2 != null) { SetActive(chk2.gameObject, unlocked); chk2.color = allSS ? (Color)chkOn : (Color)chkOff; }
 
         // 잠금 오버레이("?" + "미니몬 또는 기록도 필요") — 미해금 시 표시

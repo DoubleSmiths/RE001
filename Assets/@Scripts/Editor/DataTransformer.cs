@@ -953,6 +953,8 @@ public class DataTransformer : EditorWindow
             d.CritGrade     = ConvertValue<MinMonGrade>(C(row, 11));
             d.MaxTameCount  = ConvertValue<int>(C(row, 12));
             d.CatchChance   = ConvertValue<float>(C(row, 13));
+            d.FirstInterestKillCount = ConvertValue<int>(C(row, 14));
+            d.FirstCatchChance = ConvertValue<float>(C(row, 15));
             loader.minMons.Add(d);
         }
         WriteJsonStr("MinMonData", loader);

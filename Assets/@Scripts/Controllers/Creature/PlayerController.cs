@@ -97,13 +97,23 @@ public class PlayerController : CreatureController
     }
 
     bool _companionSubscribed;
+    bool _abilitySubscribed;
 
     void OnDestroy()
     {
         if (Managers.MinMon != null) Managers.MinMon.OnCompanionChanged -= OnCompanionChanged;
+        if (Managers.MinMon != null) Managers.MinMon.OnMinMonAdded -= OnMinMonAdded;
+        if (Managers.Ability != null) Managers.Ability.OnAbilityChanged -= OnAbilityChanged;
     }
 
     void OnCompanionChanged(int id) => RefreshCompanion();
+
+    void OnAbilityChanged() => RefreshStats(false);
+
+    void OnMinMonAdded(int id)
+    {
+        if (id == _companionId && _companion != null) _companion.RefreshStats();
+    }
 
     // 동행 미니몬 스폰/해제 동기화. CompanionMinMonId가 유효하면 발치에 스폰, -1이면 해제.
     public void RefreshCompanion()
@@ -545,7 +555,7 @@ public class PlayerController : CreatureController
 
         // 슬38: 장착(기억)된 능력의 스탯 보너스 가산
         Managers.Ability?.ApplyTo(this);
-        // 슬39: 스탯이 base+패시브로 리셋됐으니 런너의 임시 버프 추적도 비움(중복 환불 방지)
+        // 재계산된 스탯에 아직 사용 중인 능력의 임시 버프를 다시 적용한다.
         _abilityRunner?.OnStatsReset();
 
         Hp = fullHeal ? MaxHp : Mathf.Min(Hp, MaxHp);
@@ -563,9 +573,15 @@ public class PlayerController : CreatureController
             if (!_companionSubscribed)
             {
                 Managers.MinMon.OnCompanionChanged += OnCompanionChanged;
+                Managers.MinMon.OnMinMonAdded += OnMinMonAdded;
                 _companionSubscribed = true;
             }
             RefreshCompanion();
+        }
+        if (!_abilitySubscribed && Managers.Ability != null)
+        {
+            Managers.Ability.OnAbilityChanged += OnAbilityChanged;
+            _abilitySubscribed = true;
         }
     }
 

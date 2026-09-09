@@ -68,3 +68,5 @@
 - **DOTween** (`DG.Tweening`) — CreatureController 피격 색 플래시(`DOColor`), `DOKill`, PlayerController `transform.DOKill()`
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- 2026-09-09: 액티브 미니몬 능력은 교체 후에도 공유 쿨타임을 유지한다. `OnStatsReset`은 아직 장착 중인 능력의 만료 전 버프를 재적용하고 해제된 능력 버프만 제거한다. `PlayerController`는 능력 변경 시 HP를 회복하지 않고 스탯을 갱신한다.

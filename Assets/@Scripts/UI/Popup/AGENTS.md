@@ -83,3 +83,5 @@ UIManager 팝업 스택 위에서 동작하는 모달/비모달 팝업 20종이 
 - **UnityEngine.UI** — Image/Button/Slider/ScrollRect
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- 2026-09-09: 첫 발견부터 미니몬 능력 효과를 미리 보여준다. `UI_MinionInfoPopup`은 포획 결과 연출 종료 후 부르기 버튼을 표시한다. 동행 중인 대여 능력은 별도 기억/망각 불가이며 설명과 버튼에 동행 상태를 표시한다. 공명도 100% 영구 습득 규칙은 유지한다.

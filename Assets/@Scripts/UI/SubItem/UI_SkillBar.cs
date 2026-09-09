@@ -93,12 +93,14 @@ public class UI_SkillBar : MonoBehaviour
         }
 
         if (_runner != null) _runner.OnActiveSkillChanged += Refresh;
+        if (Managers.Ability != null) Managers.Ability.OnAbilityChanged += Refresh;
         Refresh();
     }
 
     void OnDestroy()
     {
         if (_runner != null) _runner.OnActiveSkillChanged -= Refresh;
+        if (Managers.Ability != null) Managers.Ability.OnAbilityChanged -= Refresh;
     }
 
     static GameObject NewChild(Transform parent, string name, float w, float h)
@@ -127,6 +129,10 @@ public class UI_SkillBar : MonoBehaviour
             slot.skillId = has ? ids[i] : -1;
             slot.root.SetActive(has);
             if (!has) continue;
+
+            // 첫 동행 한 칸도 화면 중앙에서 찾을 수 있게 현재 능력 수로 정렬한다.
+            slot.root.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2((i - (ids.Count - 1) * 0.5f) * (SLOT_SIZE + SLOT_GAP), 0f);
 
             if (Managers.Data.SkillDic.TryGetValue(slot.skillId, out var d))
                 slot.icon.sprite = Managers.Resource.Load<Sprite>(d.IconLabel);

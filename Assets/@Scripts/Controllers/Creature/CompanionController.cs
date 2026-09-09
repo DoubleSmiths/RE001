@@ -57,6 +57,11 @@ public class CompanionController : CreatureController
         State = Define.State.Idle;
     }
 
+    public void RefreshStats()
+    {
+        ApplyStats(_minionId);
+    }
+
     void ApplyStats(int minionId)
     {
         var mm = Managers.MinMon;

@@ -513,7 +513,9 @@ public class GameManager
 
         if (_gameData.OwnedEquipments.Count > 0)      UnlockBtmButton(Define.TabType.Equipment);
         if (LearnedAbilities.Count > 0
-            || _gameData.EquippedAbilities.Count > 0) UnlockBtmButton(Define.TabType.Skill);
+            || _gameData.EquippedAbilities.Count > 0
+            || Managers.Ability.IsCompanionGranted(Managers.Ability.MinionSkillId(CompanionMinMonId)))
+            UnlockBtmButton(Define.TabType.Skill);
         if (DiscoveredMonsterIds.Count > 0)           UnlockBtmButton(Define.TabType.Bestiary);
 
         return before != _gameData.UnlockedBtmButtons;
@@ -1612,6 +1614,7 @@ public class GameManager
 
         EnsurePotionState();
         RebuildEquippedFromOwned();   // 장착 딕셔너리를 보유 리스트 참조로 재구성
+        Managers.Ability.RestoreMinionRewards();
 
         return true;
     }
