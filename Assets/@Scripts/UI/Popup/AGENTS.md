@@ -84,6 +84,8 @@ UIManager 팝업 스택 위에서 동작하는 모달/비모달 팝업 20종이 
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
 
+- `UI_BestiaryPopup`는 지역 헤더 전체와 기존 스크롤 높이를 유지하면서 Viewport 위아래 한 행 여유 안의 지역만 마물 칸을 생성한다. 첫 가시 지역은 SetInfo 안에서 채우며, 스크롤·화면 크기 변경 시 재계산한다. 화면 밖의 FindBox는 null이지만 등급/완성도 갱신은 계속 진행하고, 재진입 시 최신 데이터를 표시한다. 언어 변경은 25개 지역명을 포함하며 ScrollRect·언어 이벤트는 OnDestroy에서 해제한다.
+
 - 2026-09-10: 해금 안내는 마을 버튼에 로드된 Sprite를 받으며 문자열 SetInfo도 호환한다. 본문은 부모 폭 안에서 줄바꿈하고 언어 변경 시 제목/본문/폰트를 함께 갱신한다. 이전 타이핑 코루틴·Tween을 종료하고 새 문장의 알파 배열을 독립적으로 캡처한다.
 
 - 2026-09-10: 장비 목록은 제작 요구 레벨 후 DataId로 정렬한다. 제작 상세 본문의 재료 링크는 `UI_ItemLinkHandler`로 아이템 상세를 열며 상위 ScrollRect의 드래그를 유지한다. 아이템 출처는 `ItemSourceGuide`로 층·마물을 표시하고 열린 상태의 언어 변경에 대응한다.

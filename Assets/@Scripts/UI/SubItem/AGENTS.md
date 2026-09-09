@@ -62,6 +62,8 @@
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
 
+- `UI_Bestiary`는 지역 헤더와 전체 마물 수에 맞는 Grid 높이를 항상 유지한다. 화면 근처에서만 `SetBoxesVisible(true)`로 칸을 만들고, 벗어나면 Tween 정리·비활성화 후 Resource.Destroy한다. 높이는 저작된 cell/spacing/padding 및 실제 폭에서 계산하며, 재진입한 칸은 현재 기록도·별·동행과 언어 폰트를 다시 적용한다.
+
 - `UI_BestiaryBox.prefab`의 저작 DOTweenAnimation 4개는 `autoGenerate=false`로 유지한다. 클릭·별·등급 연출은 `UI_BestiaryBox` 코드가 재생한다. 미재생 저작 Tween을 자동 생성하면 도감 503칸에서 대기 Tween 2012개가 추가된다.
 
 - `UI_Village1BtnGroup`의 Sequence/DelayedCall은 그룹을 target/link로 소유한다. `OnDestroy`에서 `base.OnDestroy()`를 호출해 자식 Tween도 종료한다. 지역 교체 뒤 이전 버튼 등장·알림·지연 해금 콜백이 실행되면 안 된다.

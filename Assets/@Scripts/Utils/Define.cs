@@ -120,6 +120,7 @@ public class Define
     public const float ABILITY_PERCENT_BASE = 100f;
     public const float MIN_PLAYER_ATTACK_SPEED_MULTIPLIER = 0.1f;
     public const int DOTWEEN_TWEENER_CAPACITY = 7812;
+    public const float BESTIARY_LAYOUT_EPSILON = 0.001f;
     public const int DOTWEEN_SEQUENCE_CAPACITY = 625;
     public const string COMPANION_ABILITY_BORROWED_TEXT = "CompanionAbilityBorrowedText";
     public const string COMPANION_ABILITY_AVAILABLE_TEXT = "CompanionAbilityAvailableText";

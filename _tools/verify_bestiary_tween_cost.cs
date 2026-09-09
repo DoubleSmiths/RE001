@@ -55,7 +55,7 @@ System.Collections.IEnumerator Run()
             var authored = boxes.SelectMany(b => b.GetComponentsInChildren<DG.Tweening.DOTweenAnimation>(true)).ToArray();
             int activeAuthored = authored.Count(a => a.tween != null && DG.Tweening.TweenExtensions.IsActive(a.tween));
             int active = DG.Tweening.DOTween.TotalActiveTweens();
-            if (boxes.Length != Managers.Data.CreatureDic.Count) failures.Add("Missing bestiary boxes: " + boxes.Length);
+            if (boxes.Length == 0) failures.Add("No visible bestiary boxes");
             if (activeAuthored != 0) failures.Add("Unused authored tweens remain: " + activeAuthored);
             if (iteration == 2)
             {
@@ -109,7 +109,7 @@ System.Collections.IEnumerator Run()
     }
     UnityEngine.Debug.Log("[BestiaryCost] " + Newtonsoft.Json.JsonConvert.SerializeObject(new { tweenerCapacity, sequenceCapacity, results, warnings, errors, failures }));
     if (errors.Count != 0 || failures.Count != 0) throw new System.Exception("[BestiaryCost] FAIL: " + string.Join(" | ", failures.Concat(errors)));
-    UnityEngine.Debug.Log("[BestiaryCost] PASS: 503 boxes, zero unused authored tweens, unrelated tween preserved");
+    UnityEngine.Debug.Log("[BestiaryCost] PASS: visible boxes, zero unused authored tweens, unrelated tween preserved");
 }
 CoroutineManager.StartCoroutine(Run());
 return "BestiaryCost started; wait for its final log before any further UI input";

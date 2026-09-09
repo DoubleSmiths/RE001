@@ -8,6 +8,14 @@ using Sequence = DG.Tweening.Sequence;
 
 public class UI_BestiaryPopup : UI_Popup
 {
+    readonly List<UI_Bestiary> _regions = new();
+    readonly List<string> _regionNameKeys = new();
+    ScrollRect _scroll;
+    Vector2 _lastViewportSize;
+    Vector2 _lastContentPosition;
+    float _lastContentWidth;
+    bool _refreshingRegions;
+
     #region Enum
 
     enum Images
@@ -448,6 +456,10 @@ public class UI_BestiaryPopup : UI_Popup
             Managers.MinMon.OnCompanionChanged += OnCompanionChangedRefresh;
         }
 
+        _scroll = GetComponentInChildren<ScrollRect>(true);
+        if (_scroll != null) _scroll.onValueChanged.AddListener(OnScrollChanged);
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += OnLanguageChanged;
+
         return true;
     }
 
@@ -472,8 +484,13 @@ public class UI_BestiaryPopup : UI_Popup
         Transform content = GetObject((int)GameObjects.Content).transform;
 
         // prefab에 박혀있는 템플릿 UI_Bestiary 포함 기존 자식 제거
+        _regions.Clear();
+        _regionNameKeys.Clear();
         for (int i = content.childCount - 1; i >= 0; i--)
+        {
+            content.GetChild(i).gameObject.SetActive(false);
             Managers.Resource.Destroy(content.GetChild(i).gameObject);
+        }
         //ClearChildren(content);
         
         foreach (var (region, monsterIds) in BuildRegionSections())
@@ -491,8 +508,14 @@ public class UI_BestiaryPopup : UI_Popup
             }
 
             UI_Bestiary bestiary = Managers.UI.MakeSubItem<UI_Bestiary>(content, pooling: false);
-            bestiary.SetInfo(Util.Localize(region), monsters, OnClickMonster); // 슬3: PlaceName 로컬라이즈
+            bestiary.SetInfo(Util.Localize(region), monsters, OnClickMonster, deferBoxes: true); // 슬3: PlaceName 로컬라이즈
+            _regions.Add(bestiary);
+            _regionNameKeys.Add(region);
         }
+
+        // 헤더/전체 높이를 확정하고 첫 화면의 칸도 같은 프레임에 채운다.
+        Canvas.ForceUpdateCanvases();
+        RefreshVisibleRegions(rebuildLayout: true);
 
         RefreshCompletionNumber();
         ApplyCompletionStarAnim();
@@ -503,10 +526,106 @@ public class UI_BestiaryPopup : UI_Popup
         //  Amount 0.8s (Move isFrom OutBack). 코드 인트로(CoMinimonButtonIntro)는 충돌하므로 미사용.
     }
 
+    void OnLanguageChanged()
+    {
+        GetText((int)Texts.BestiaryPopupTitleText).text = Util.Localize(Define.LocalizeKey.BeastiaryText);
+        GetText((int)Texts.BestiaryCompletionTitleText).text = Util.Localize(Define.LocalizeKey.CompletionText);
+        for (int i = 0; i < _regions.Count; i++)
+            _regions[i].RefreshRegionName(Util.Localize(_regionNameKeys[i]));
+        RefreshSkills();
+        RefreshMinimonText();
+    }
+
+    void OnScrollChanged(Vector2 position) => RefreshVisibleRegions();
+
+    void LateUpdate()
+    {
+        if (_scroll == null || _scroll.viewport == null || _regions.Count == 0) return;
+        bool resized = _lastViewportSize != _scroll.viewport.rect.size
+            || !Mathf.Approximately(_lastContentWidth, _scroll.content.rect.width);
+        if (resized || _lastContentPosition != _scroll.content.anchoredPosition)
+            RefreshVisibleRegions(resized);
+    }
+
+    void RefreshVisibleRegions(bool rebuildLayout = false)
+    {
+        if (_refreshingRegions || _scroll == null || _scroll.viewport == null || _regions.Count == 0) return;
+        _refreshingRegions = true;
+        try
+        {
+            RectTransform content = _scroll.content;
+            rebuildLayout |= _lastViewportSize != _scroll.viewport.rect.size
+                || !Mathf.Approximately(_lastContentWidth, content.rect.width);
+            if (rebuildLayout)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+                bool heightChanged = false;
+                foreach (var region in _regions)
+                    heightChanged |= region.RefreshReservedHeight();
+                if (heightChanged) LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            }
+
+            Rect viewport = _scroll.viewport.rect;
+            // Content는 Viewport의 직계 자식이다. 공통 팝업의 진입 위치/스케일과 무관한 좌표로 비교한다.
+            Matrix4x4 contentToViewport = Matrix4x4.TRS(content.localPosition, content.localRotation, content.localScale);
+            foreach (var region in _regions)
+            {
+                var rect = (RectTransform)region.transform;
+                Matrix4x4 regionToViewport = contentToViewport * Matrix4x4.TRS(rect.localPosition, rect.localRotation, rect.localScale);
+                Rect bounds = rect.rect;
+                float bottom = float.PositiveInfinity;
+                float top = float.NegativeInfinity;
+                for (int corner = 0; corner < 4; corner++)
+                {
+                    var point = new Vector3((corner & 1) == 0 ? bounds.xMin : bounds.xMax,
+                        (corner & 2) == 0 ? bounds.yMin : bounds.yMax, 0f);
+                    float y = regionToViewport.MultiplyPoint3x4(point).y;
+                    bottom = Mathf.Min(bottom, y);
+                    top = Mathf.Max(top, y);
+                }
+                float margin = region.RowStride;
+                region.SetBoxesVisible(top >= viewport.yMin - margin && bottom <= viewport.yMax + margin);
+            }
+            _lastViewportSize = _scroll.viewport.rect.size;
+            _lastContentWidth = content.rect.width;
+            _lastContentPosition = content.anchoredPosition;
+        }
+        finally
+        {
+            _refreshingRegions = false;
+        }
+    }
+
     // 슬28~29: [미니몬 잡기!] 버튼 상태. 포획 가능 창고(InterestedMinMons) 유무에 따라 변화.
     //  창고 1마리 이상: 타이틀 "!" + 슬라임 표시 + Emoj_Exclamation + interactable
     //  창고 비어있음  : 타이틀 "?" + 슬라임 숨김 + Emoj_Question   + non-interactable
     void RefreshMinimonButton()
+    {
+        int count = Managers.MinMon != null ? Managers.MinMon.InterestedMinMons.Count : 0;
+        bool has = count > 0;
+
+        RefreshMinimonText();
+
+        // 슬29: 있음 → 슬라임(+자식 MinimonEmoj=Exclamation) 표시 / 없음 → MinimonNoExistImg(=Question) 표시.
+        //  MinimonEmoj는 슬라임의 자식, MinimonNoExistImg는 별도 노드. 각자 Emoj 컨트롤러를 가진다.
+        var slime = GetImage((int)Images.MinimonExistImg);
+        if (slime != null) { slime.enabled = true; slime.gameObject.SetActive(has); }
+
+        // 슬28#4/29: Emoj(느낌표/물음표)는 MinimonAmountTxt(prefab Move delay 0.8s)와 같은 타이밍에 등장+클립 재생.
+        //  클립이 0.9s non-loop라 0s에 바로 켜면 등장 전에 끝나버린다 → 우선 둘 다 숨김 후 0.8초 뒤 활성+재생.
+        var noSlime = GetImage((int)Images.MinimonNoExistImg);
+        if (noSlime != null) noSlime.gameObject.SetActive(false);
+        var emojOn = GetImage((int)Images.MinimonEmoj);
+        if (emojOn != null) emojOn.gameObject.SetActive(false);
+        if (_emojCo != null) StopCoroutine(_emojCo);
+        _emojCo = StartCoroutine(CoShowMinimonEmoj(has));
+
+        // 슬29: Button interactive
+        var btn = GetButton((int)Buttons.MinimonBtn);
+        if (btn != null) btn.interactable = has;
+    }
+
+    void RefreshMinimonText()
     {
         int count = Managers.MinMon != null ? Managers.MinMon.InterestedMinMons.Count : 0;
         bool has = count > 0;
@@ -527,24 +646,6 @@ public class UI_BestiaryPopup : UI_Popup
             // 슬28: MinimonAmountTxt 외곽선 B94748 (offset 0.5,-0.5)은 프리펩 머티리얼 프리셋
             //  PF_Stardust_AmountOutline.mat(TMP Underlay)로 적용됨. (NicerOutline/legacy Outline은 TMP서 미동작)
         }
-
-        // 슬29: 있음 → 슬라임(+자식 MinimonEmoj=Exclamation) 표시 / 없음 → MinimonNoExistImg(=Question) 표시.
-        //  MinimonEmoj는 슬라임의 자식, MinimonNoExistImg는 별도 노드. 각자 Emoj 컨트롤러를 가진다.
-        var slime = GetImage((int)Images.MinimonExistImg);
-        if (slime != null) { slime.enabled = true; slime.gameObject.SetActive(has); }
-
-        // 슬28#4/29: Emoj(느낌표/물음표)는 MinimonAmountTxt(prefab Move delay 0.8s)와 같은 타이밍에 등장+클립 재생.
-        //  클립이 0.9s non-loop라 0s에 바로 켜면 등장 전에 끝나버린다 → 우선 둘 다 숨김 후 0.8초 뒤 활성+재생.
-        var noSlime = GetImage((int)Images.MinimonNoExistImg);
-        if (noSlime != null) noSlime.gameObject.SetActive(false);
-        var emojOn = GetImage((int)Images.MinimonEmoj);
-        if (emojOn != null) emojOn.gameObject.SetActive(false);
-        if (_emojCo != null) StopCoroutine(_emojCo);
-        _emojCo = StartCoroutine(CoShowMinimonEmoj(has));
-
-        // 슬29: Button interactive
-        var btn = GetButton((int)Buttons.MinimonBtn);
-        if (btn != null) btn.interactable = has;
     }
 
     // 슬28#4/29: Emoj(느낌표/물음표)를 MinimonAmountTxt(prefab Move delay 0.8s)와 같은 타이밍에 등장+재생.
@@ -841,17 +942,18 @@ public class UI_BestiaryPopup : UI_Popup
     // 슬19: 외부(나의 미니몬 부르기)에서 동행 변경 시 모든 도감 박스의 동행 frame색/Active Ef 갱신
     public void RefreshCompanionVisuals()
     {
-        Transform content = GetObject((int)GameObjects.Content).transform;
-        foreach (var b in content.GetComponentsInChildren<UI_BestiaryBox>(true))
-            b.RefreshCompanionVisual();
+        foreach (var region in _regions)
+            region.RefreshCompanionVisuals();
     }
 
     // Content 안 인스턴스화된 박스 중 dataId 일치하는 것 탐색
     UI_BestiaryBox FindBox(int dataId)
     {
-        Transform content = GetObject((int)GameObjects.Content).transform;
-        foreach (var b in content.GetComponentsInChildren<UI_BestiaryBox>(true))
-            if (b.DataId == dataId) return b;
+        foreach (var region in _regions)
+        {
+            UI_BestiaryBox box = region.FindBox(dataId);
+            if (box != null) return box;
+        }
         return null;
     }
 
@@ -864,6 +966,8 @@ public class UI_BestiaryPopup : UI_Popup
 
     public override void OnDestroy()
     {
+        if (_scroll != null) _scroll.onValueChanged.RemoveListener(OnScrollChanged);
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged -= OnLanguageChanged;
         if (Managers.MinMon != null)
         {
             Managers.MinMon.OnInterestChanged -= RefreshMinimonButton;
