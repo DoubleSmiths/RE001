@@ -1660,6 +1660,7 @@ public class Define
     public const string BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE = "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE";
 
     // Village1 Build Btn Group
+    public const int FIRST_GUILD_QUEST_ID = 1;
     public const string VILLAGE1_GUILD_TALK_VFX = "VILLAGE1_GUILD_TALK_VFX";
     public const string VILLAGE1_GUILD_QUEST_VFX = "VILLAGE1_GUILD_QUEST_VFX";
     public const string GUILD_EXIT_QUEST_VFX = "GUILD_EXIT_QUEST_VFX";

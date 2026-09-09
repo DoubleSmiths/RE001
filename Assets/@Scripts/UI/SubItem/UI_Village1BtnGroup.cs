@@ -1273,7 +1273,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         // 슬라이드 30: 메인 퀘스트 [1] 시에만 [대화] 버튼으로 퀘스트 진행.
         // 그 외에는 GuildNormalText에서 한 줄 랜덤 선택하여 잡담 대사 재생.
-        bool isFirstQuest = Managers.Quest.CurrentQuestID == 1;
+        bool isFirstQuest = Managers.Quest.CurrentQuestID == FIRST_GUILD_QUEST_ID;
 
         string groupKey = isFirstQuest
             ? Managers.Quest.GetCurrentDialogueID()   // "GuildQuest1Text"
@@ -1371,6 +1371,13 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickVillage1GuildQuestButton()
     {
+        // 처음 임무를 받으러 온 플레이어가 [임무]를 눌러도 같은 안내를 시작한다.
+        if (Managers.Quest.CurrentQuestID == FIRST_GUILD_QUEST_ID)
+        {
+            OnClickVillage1GuildTalkButton();
+            return;
+        }
+
         // 완료 보고 퀘스트 진행 중이면 퀘스트 전용 대사 + 종료 시 진행 트리거,
         // 그 외에는 잡담 대사(GuildNormalText) 한 줄 랜덤.
         //
