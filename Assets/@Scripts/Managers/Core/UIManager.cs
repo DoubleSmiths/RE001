@@ -147,6 +147,7 @@ public class UIManager
 
         UI_Popup popup = _popupStack.Pop();
         System.Type closedType = popup.GetType();
+        popup.StopAnimations();
         Managers.Resource.Destroy(popup.gameObject);
         popup = null;
         _order--;

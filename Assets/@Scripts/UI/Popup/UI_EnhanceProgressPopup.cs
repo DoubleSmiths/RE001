@@ -319,9 +319,9 @@ public class UI_EnhanceProgressPopup : UI_Popup
                 PopImpactFx();
 
                 DOVirtual.DelayedCall(CHARGE_TO_FULL,
-                    () => PlayAuthored(GameObjects.SuccessFlash, "2")).SetUpdate(true);   // →1.0 / 0.3초
+                    () => PlayAuthored(GameObjects.SuccessFlash, "2")).SetTarget(this).SetLink(gameObject).SetUpdate(true);   // →1.0 / 0.3초
                 DOVirtual.DelayedCall(CHARGE_TO_OUT,
-                    () => PlayAuthored(GameObjects.SuccessFlash, "3")).SetUpdate(true);   // →0 / 0.5초
+                    () => PlayAuthored(GameObjects.SuccessFlash, "3")).SetTarget(this).SetLink(gameObject).SetUpdate(true);   // →0 / 0.5초
                 break;
 
             // 결과 확정 — 백열이 계단 한 칸 뛰고, 아이콘이 한 번 더 튄다
@@ -330,7 +330,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
                 PlayAuthoredSelf(GameObjects.Icon, "6");             // →(0,80) / 0.3초 OutBack
                 PopSuccessRing();                                // 모루 위에 흰 링 + X자 섬광
                 DOVirtual.DelayedCall(PEAK_TO_DARK,
-                    () => PlayBgStep("53")).SetUpdate(true);                              // →검정 / 1.8초
+                    () => PlayBgStep("53")).SetTarget(this).SetLink(gameObject).SetUpdate(true);                              // →검정 / 1.8초
                 break;
 
             case "Fail":
@@ -521,7 +521,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
         // ⚠️ 저작 트윈 id"1"은 옛 이름을 아래로 밀어내지만 **알파를 0으로 만들지는 않는다** —
         //    그대로 두면 "+1 여행자의 검" 밑에 "여행자의 검"이 회색으로 남아 두 줄이 된다
         //    (원작은 강화된 이름 한 줄뿐이다). 밀려난 뒤 확실히 지운다.
-        DOVirtual.DelayedCall(NAME_PUSH_OUT, () => HideText(Texts.Txt_SuccessTxtGroup_03))
+        DOVirtual.DelayedCall(NAME_PUSH_OUT, () => HideText(Texts.Txt_SuccessTxtGroup_03)).SetTarget(this).SetLink(gameObject)
                  .SetUpdate(true);
 
         // ── ③ +0.25s : 능력치 표가 오른쪽에서 밀려 들어온다 ──
@@ -750,7 +750,7 @@ public class UI_EnhanceProgressPopup : UI_Popup
         DOVirtual.DelayedCall(ARROW_FLASH, () =>
         {
             if (t != null) t.text = ArrowRow("▷");
-        }).SetUpdate(true);
+        }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
     }
 
     // 표 글자가 원본의 3분의 2 크기였다 — 행 간격 실측 13.7px 대 원본 19~20px.

@@ -314,7 +314,7 @@ public class UI_EnhacePopup : UI_Popup
             if (flameGo == null) return;
             flameGo.SetActive(true);
             flameGo.GetComponent<Animator>()?.Play("Flame_Start", 0, 0f);   // 처음부터 확실히
-        }).SetUpdate(true);
+        }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
     }
     const float INTRO_FADE = 0.28f;
 
@@ -820,7 +820,7 @@ public class UI_EnhacePopup : UI_Popup
         _colArrow.color = Util.HexToColor(PREVIEW_ARROW_HEX);
         _colArrow.text  = PreviewArrowRow("▶");            // 나타나는 한 순간만 속이 찬다
         DOVirtual.DelayedCall(PREVIEW_FLASH,
-            () => { if (_colArrow != null) _colArrow.text = PreviewArrowRow("▷"); }).SetUpdate(true);
+            () => { if (_colArrow != null) _colArrow.text = PreviewArrowRow("▷"); }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
         yield return new WaitForSecondsRealtime(PREVIEW_STAGGER);
 
         PlayAuthoredNode("Text_3", "");                    // ④ 이후값

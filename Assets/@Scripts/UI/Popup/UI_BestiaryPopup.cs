@@ -783,7 +783,7 @@ public class UI_BestiaryPopup : UI_Popup
         Transform monTr   = box != null ? box.MonsterIconTr : null;
 
         // 0.1초 간격 순차: a.기술 b.미니몬 c.완성도 보라별 d.그 밑 숫자
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.AppendCallback(() => { PunchScale(skillTr); SpawnFlash(skillTr); });
         seq.AppendInterval(0.1f);
         seq.AppendCallback(() => { PunchScale(monTr); SpawnFlash(monTr); });
@@ -832,7 +832,7 @@ public class UI_BestiaryPopup : UI_Popup
         fx.transform.localPosition = Vector3.zero;
         fx.transform.localScale = Vector3.one;
         // 팝업은 timeScale 0이라 unscaled로 정리
-        DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true);
+        DOVirtual.DelayedCall(1f, () => { if (fx != null) Managers.Resource.Destroy(fx); }, true).SetTarget(this).SetLink(gameObject);
     }
 
     // 슬6/도감#6: 동행 변경 이벤트 핸들러 → 도감 박스 동행 표시 갱신 (OnCompanionChanged는 Action<int>)

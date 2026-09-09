@@ -196,7 +196,7 @@ public class UI_CustomOrderPopup : UI_Popup
             {
                 if (_talkText == null) return;
                 _typing.PlayTyping(_talkText, "\"무엇을 만들어드릴까요?\"", DialogueEmotion.Normal);
-            }).SetUpdate(true);
+            }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
         }
 
         // BlackBG fade (slide 8: Duration 0.3, OutQuad, target alpha 220/255)
@@ -233,7 +233,7 @@ public class UI_CustomOrderPopup : UI_Popup
         alchRT.DOKill();
 
         // Rewind: 진입과 반대로 y -120으로 내려가며 사라짐
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(frameRT.DOAnchorPos(FRAME_ORIGIN + new Vector2(0f, FRAME_FROM_Y), 0.3f).SetEase(Ease.InBack));
         seq.Join(alchRT.DOAnchorPos(ALCH_ORIGIN + new Vector2(ALCH_SLIDE_OFFSET_X, 0f), 0.25f).SetEase(Ease.InBack));
         seq.OnComplete(() => Managers.UI.ClosePopupUI());
@@ -317,7 +317,7 @@ public class UI_CustomOrderPopup : UI_Popup
         lockImgTr.localScale = Vector3.one;
         lockImgTr.anchoredPosition = lockImgAnchorOrigin;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.AppendInterval(0.5f);                                   // Delay
         seq.AppendCallback(() =>                                    // Shake/Position
             lockImgTr.DOShakeAnchorPos(0.7f, new Vector3(1f, 1f, 0f), vibrato: 48, randomness: 59f)

@@ -568,7 +568,7 @@ public class UI_MinionInfoPopup : UI_Popup
         fx.transform.localPosition = Vector3.zero;
         fx.transform.localScale = Vector3.one;
 
-        DOVirtual.DelayedCall(1f, () => { if (maskGo != null) Destroy(maskGo); }, true);
+        DOVirtual.DelayedCall(1f, () => { if (maskGo != null) Destroy(maskGo); }, true).SetTarget(this).SetLink(gameObject);
     }
 
     // 슬19: 부르기/동행 변경 시 열려있는 [미니몬 기록]/[미니몬 도감]의 동행 UI도 함께 갱신

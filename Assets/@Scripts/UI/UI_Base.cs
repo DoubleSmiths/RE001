@@ -33,8 +33,28 @@ public abstract class UI_Base : MonoBehaviour
 
     public virtual void OnDestroy()
     {
+        StopAnimations();
         if (Managers.Game != null)
             Managers.Game.OnLanguageChanged -= RefreshAllFonts;
+    }
+
+    public void StopAnimations()
+    {
+        // 트윈 콜백 안에서 닫히면 OnKill이 프레임 끝까지 지연될 수 있다.
+        // 저작된 애니메이션은 참조도 즉시 비워 OnDisable의 Rewind가 죽은 트윈을 읽지 않게 한다.
+        foreach (DOTweenAnimation animation in GetComponentsInChildren<DOTweenAnimation>(true))
+            animation.DOKill();
+
+        // 비활성 자식까지 종료하되 완료 콜백은 실행하지 않는다.
+        foreach (Component component in GetComponentsInChildren<Component>(true))
+        {
+            if (component == null) continue;
+
+            DOTween.Kill(component, false);
+            // 프리팹의 DOTweenAnimation은 컴포넌트 대신 GameObject를 대상으로 삼는다.
+            if (component is Transform)
+                DOTween.Kill(component.gameObject, false);
+        }
     }
 
     // ────────────────────────────────────────
@@ -167,21 +187,21 @@ public abstract class UI_Base : MonoBehaviour
 
     public void FadeIn(Image image, Action onComplete = null)
     {
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(image).SetLink(image.gameObject).SetUpdate(true);
         seq.Append(image.DOFade(0f, 1f).SetUpdate(true));
         seq.OnComplete(() => onComplete?.Invoke());
     }
 
     public void FadeOut(Image image, Action onComplete = null)
     {
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(image).SetLink(image.gameObject).SetUpdate(true);
         seq.Append(image.DOFade(1f, 1f).SetUpdate(true));
         seq.OnComplete(() => onComplete?.Invoke());
     }
 
     public void FadeInOut(Image image, Action onComplete = null)
     {
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(image).SetLink(image.gameObject).SetUpdate(true);
         seq.Append(image.DOFade(1f, 0.4f).SetEase(Ease.InQuad).SetUpdate(true));
         seq.AppendInterval(0.15f);
         seq.Append(image.DOFade(0f, 0.5f).SetEase(Ease.InQuad).SetUpdate(true));

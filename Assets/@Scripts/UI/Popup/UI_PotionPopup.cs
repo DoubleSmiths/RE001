@@ -360,7 +360,7 @@ public class UI_PotionPopup : UI_Popup
         lockIconTr.localScale = Vector3.one;
         lockIconTr.anchoredPosition = lockOriginPos;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
 
         // Delay 0.5s
         seq.AppendInterval(0.5f);
@@ -425,7 +425,7 @@ public class UI_PotionPopup : UI_Popup
         if (_boxAnim != null)
         {
             _boxAnim.DOPlayBackwards();
-            DG.Tweening.DOVirtual.DelayedCall(_boxAnim.duration, () => Managers.UI.ClosePopupUI(), ignoreTimeScale: true);
+            DG.Tweening.DOVirtual.DelayedCall(_boxAnim.duration, () => Managers.UI.ClosePopupUI(), ignoreTimeScale: true).SetTarget(this).SetLink(gameObject);
         }
         else
         {

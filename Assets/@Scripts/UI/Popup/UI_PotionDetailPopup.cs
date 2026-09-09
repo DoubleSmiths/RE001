@@ -837,7 +837,7 @@ public class UI_PotionDetailPopup : UI_Popup
     void StartBlink()
     {
         StopBlink();
-        _blinkSeq = DOTween.Sequence().SetUpdate(true).SetLoops(-1);
+        _blinkSeq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true).SetLoops(-1);
         // 이름/단계/능력치 라벨 알파 점멸 (OutSine 0.5s in / 0.5s out)
         var targets = BlinkTargets();
         foreach (var t in targets)
@@ -882,7 +882,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         _craftBusy = true;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(_myFrameRT.DOShakeAnchorPos(1.1f, strength: new Vector3(1.5f, 0f, 0f), vibrato: 21, randomness: 0f).SetEase(Ease.OutQuad));
         seq.AppendCallback(() => { SpawnCraftFX(); SpawnCraftFlash(); Managers.Sound?.PlaySFX("SFX_PotionUpgrade"); });   // S40: FX + 흰 플래시 + 제작음
         seq.Append(_myFrameRT.DOPunchScale(new Vector3(0.2f, 0.2f, 1f), 0.3f, vibrato: 4, elasticity: 1f).SetEase(Ease.OutQuad));
@@ -942,7 +942,7 @@ public class UI_PotionDetailPopup : UI_Popup
         img.color = new Color(1f, 1f, 1f, 0f);
 
         // 0 → 0.85 빠르게(0.08s) → 0 페이드(0.3s)
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(img.DOFade(0.85f, 0.08f).SetEase(Ease.OutQuad));
         seq.Append(img.DOFade(0f, 0.3f).SetEase(Ease.InQuad));
         seq.OnComplete(() => { if (go != null) Destroy(go); });
@@ -1007,7 +1007,7 @@ public class UI_PotionDetailPopup : UI_Popup
         StopBlink();
         _myFrameRT.DOKill();
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(_myFrameRT.DOAnchorPos(_frameOrigin + new Vector2(0f, FRAME_FROM_Y), 0.3f).SetEase(Ease.InBack));
         seq.OnComplete(() => Managers.UI.ClosePopupUI());
     }
