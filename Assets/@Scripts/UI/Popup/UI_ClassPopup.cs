@@ -59,6 +59,7 @@ public class UI_ClassPopup : UI_Popup
         public Image LvlBg;             // 레벨 컨테이너 배경
         public Image LvlFrame;          // Img_LvlIcon_* (HP_MP_little_frame)
         public TMP_Text LvlTxt;         // Txt_LvlIcon_*
+        public float LvlFontSize = -1f; // 저작된 레벨 글자 크기(미보유 이름은 줄여 쓰므로 되돌릴 때 필요)
     }
 
     // 프리팹에 저작된 슬롯은 7개(SkillBookSkill_0~6)지만 직업 능력은 그보다 많다(현재 12개).
@@ -273,10 +274,22 @@ public class UI_ClassPopup : UI_Popup
             ApplyFont(s.MemTxt, FontType.UI);
         }
 
-        // 레벨(단계) — 보유 시에만. 색 규칙은 UI_SkillBookSkill과 동일(<최대=흰/노랑, =최대=magenta 계열).
-        SetActiveSafe(s.LvlGroup, owned);
+        // 레벨(단계) — 보유 시. 색 규칙은 UI_SkillBookSkill과 동일(<최대=흰/노랑, =최대=magenta 계열).
+        //  미보유면 같은 칸에 **능력 이름**을 보여준다 — 잠금 아이콘만 있어 무엇인지 알려면 하나씩 열어 봐야 했다.
+        SetActiveSafe(s.LvlGroup, owned || d != null);
+        if (!owned && d != null && s.LvlTxt != null)
+        {
+            if (s.LvlFrame != null) s.LvlFrame.color = Color.white;
+            if (s.LvlBg != null)    s.LvlBg.color    = Util.HexToColor("000000");
+            if (s.LvlFontSize < 0f) s.LvlFontSize = s.LvlTxt.fontSize;
+            s.LvlTxt.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+            ApplyFont(s.LvlTxt, FontType.UI);
+            s.LvlTxt.fontSize = s.LvlFontSize * LOCKED_NAME_SCALE;
+            s.LvlTxt.text = FitWidth(s.LvlTxt, Util.Localize(d.Name));   // 긴 영문 이름은 뒤를 잘라 ".."
+        }
         if (owned)
         {
+            if (s.LvlTxt != null && s.LvlFontSize > 0f) s.LvlTxt.fontSize = s.LvlFontSize;
             if (s.LvlFrame != null) s.LvlFrame.color = maxed ? Util.HexToColor("FF00F5") : Color.white;
             if (s.LvlBg != null)    s.LvlBg.color    = maxed ? Util.HexToColor("3C143A") : Util.HexToColor("000000");
             if (s.LvlTxt != null)
@@ -287,6 +300,23 @@ public class UI_ClassPopup : UI_Popup
                 ApplyFont(s.LvlTxt, FontType.UI);
             }
         }
+    }
+
+    const float LOCKED_NAME_SCALE = 0.75f;   // 이름은 레벨 표기보다 길어 조금 작게(더 작으면 픽셀 폰트가 뭉개진다)
+
+    // 칸 너비에 맞춰 뒤를 잘라 ".." 을 붙인다(자동 크기+Ellipsis 는 칸 높이가 낮아 글자가 통째로 사라졌다).
+    static string FitWidth(TMP_Text t, string text)
+    {
+        // 레벨 글자는 너비 0 인 글상자(넘침 표시)라 배지(부모) 너비를 기준으로 한다.
+        float w = t.rectTransform.rect.width;
+        if (w <= 0f && t.transform.parent is RectTransform badge) w = badge.rect.width - 1f;
+        if (w <= 0f || t.GetPreferredValues(text).x <= w) return text;
+        for (int n = text.Length - 1; n > 0; n--)
+        {
+            string cut = text.Substring(0, n).TrimEnd() + "..";
+            if (t.GetPreferredValues(cut).x <= w) return cut;
+        }
+        return text;
     }
 
     // 숙련도를 쓰기 전에 효과를 비교할 수 있도록 미보유 능력도 상세 창으로 연다.
