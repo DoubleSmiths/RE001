@@ -6,14 +6,16 @@
 
 | 확인 대상 | 결과 |
 |---|---|
-| 런타임 코드 `Assets/@Scripts` (Editor 제외) | `UnityWebRequest`, `HttpClient`, `WebClient`, `Socket`, Analytics, Ads, Purchasing, Firebase, 광고 ID, 위치·카메라·마이크 API 사용이 **0건**이다. 예외는 `UI/Scene/UI_AreaBtnGroup.cs:3`의 `using System.Net.Http.Headers;` 한 줄뿐이고, 이를 쓰는 코드는 없다. 지워도 된다 |
+| 런타임 코드 `Assets/@Scripts` (Editor 제외) | `UnityWebRequest`, `HttpClient`, `WebClient`, `Socket`, Analytics, Ads, Purchasing, Firebase, 광고 ID, 위치·카메라·마이크 API 사용이 **0건**이다. 쓰지 않던 `using System.Net.Http.Headers;`(`UI_AreaBtnGroup.cs`)는 2026-09-29 지웠다 |
 | 에디터 전용 네트워크 코드 | `Editor/DataTransformer`의 WebClient(구글 시트, 폐기된 경로), unity-cli connector(`includePlatforms: ["Editor"]`). 빌드에 들어가지 않는다 |
 | 패키지 (`Packages/manifest.json`) | 광고·결제·분석·로그인 SDK가 없다. UIParticle, UI Extensions, DOTween은 통신하지 않는다 |
-| `ProjectSettings/UnityConnectSettings.asset` | Analytics `0`, Ads `0`, Purchasing `0`, PerformanceReporting `0`, CrashReporting `m_EnableCloudDiagnosticsReporting: 0`. **그러나** `m_Enabled: 1`(커밋되지 않은 변경, 커밋본은 `0`)이고 `InsightsSettings.m_EngineDiagnosticsEnabled: 1`이다. 또 `ProjectSettings.asset`에 `cloudProjectId`가 설정돼 있다 |
-| `ProjectSettings.asset` | `submitAnalytics: 1`. 숨은 레거시 하드웨어 통계 플래그다. Unity 포럼 답변에 따르면 Analytics를 끄면 함께 꺼진다. 네트워크 모니터로 확인한다 |
+| `ProjectSettings/UnityConnectSettings.asset` | Analytics `0`, Ads `0`, Purchasing `0`, PerformanceReporting `0`, CrashReporting `m_EnableCloudDiagnosticsReporting: 0`, 최상위 `m_Enabled: 0`, `InsightsSettings.m_EngineDiagnosticsEnabled: 0`(2026-09-29 커밋 `2b5ebcc0` 에서 끔). `ProjectSettings.asset` 의 `cloudProjectId` 는 연결 정보로 남아 있다 |
+| `ProjectSettings.asset` | `submitAnalytics: 1`. 숨은 레거시 하드웨어 통계 플래그다. Unity 포럼 답변에 따르면 Analytics를 끄면 함께 꺼진다. 아래 네트워크 실측에서 전송 0건 |
 | 9월 9일 APK (`Builds/Android/RE001.apk`, aapt2) | 권한은 `INTERNET` 하나다. Unity가 자동으로 넣는다. 나머지는 Android 기본 `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`이다. `AD_ID` 권한은 없다. `android:allowBackup`은 지정하지 않았다(기본값 true) |
+| 2026-09-29 AAB (`Builds/Android/MinimonQuest.aab`, bundletool) | 권한은 같다: `INTERNET`(Addressables 때문에 Unity 자동) + `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. `AD_ID` 없음 |
+| 2026-09-29 Windows 빌드 실행(타이틀 → 게임 씬, 45초) | 프로세스의 TCP 연결·UDP 엔드포인트 **0건**(`Get-NetTCPConnection`/`Get-NetUDPEndpoint` 1초 간격). 외부 전송이 없다 |
 
-**전제: Unity Diagnostics를 끈다.** `Edit > Project Settings > Services > Diagnostics`를 Disabled로 두고, Build Profiles 재정의도 확인한다. Unity 문서에 따르면 Unity Cloud에 연결된 6.2+ 프로젝트는 기본 켜짐이다. 수집 항목은 충돌 로그, 원격 측정, 구성 메타데이터다. 끄지 않으면 A안이 거짓 신고가 된다.
+**전제: Unity Diagnostics를 끈다(2026-09-29 적용 — 위 표).** `Edit > Project Settings > Services > Diagnostics`를 Disabled로 두고, Build Profiles 재정의도 확인한다. Unity 문서에 따르면 Unity Cloud에 연결된 6.2+ 프로젝트는 기본 켜짐이다. 수집 항목은 충돌 로그, 원격 측정, 구성 메타데이터다. 끄지 않으면 A안이 거짓 신고가 된다.
 
 ## A안 — Diagnostics를 끈 경우 (권장)
 
@@ -65,8 +67,8 @@ Unity가 수집 항목을 구체적으로 공개하지 않아 정확히 신고�
 
 ## 제출 전 재확인
 
-- [ ] 최종 AAB의 권한 목록: `aapt2 dump permissions <apk>` 또는 Play Console의 App bundle explorer. `INTERNET` 외에 새 권한이 생기면 이 문서를 고친다.
-- [ ] Diagnostics를 끈 빌드를 실기기로 1회 실행하고 네트워크 모니터링으로 전송이 0건인지 확인한다. Android는 PCAPdroid 같은 도구, Windows는 리소스 모니터의 네트워크 탭을 쓴다.
+- [x] 최종 AAB의 권한 목록(2026-09-29 확인, 위 표): `aapt2 dump permissions <apk>` 또는 Play Console의 App bundle explorer. `INTERNET` 외에 새 권한이 생기면 이 문서를 고친다.
+- [ ] Diagnostics를 끈 빌드를 실기기로 1회 실행하고 네트워크 모니터링으로 전송이 0건인지 확인한다. Android는 PCAPdroid 같은 도구를 쓴다. (Windows 빌드는 2026-09-29 0건 확인 — 위 표. 출시용 AAB 로 안드로이드에서 한 번 더.)
 - [ ] SDK(광고, 결제, 분석, Steamworks 등)를 추가하면 이 양식을 다시 작성한다. Google은 SDK가 하는 수집·공유까지 앱 책임으로 본다.
 
 출처: [Data safety 도움말](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en) · [사용자 데이터 정책(개인정보처리방침 게시 위치)](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en) · [Unity Diagnostics 설정](https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/editor-settings-reference/comp-manager-group/diagnostics-settings) · [Unity Developer Data 수집 설정](https://docs.unity.com/en-us/cloud/developer-data-framework/data-collection-settings) · [Disable HW Statistics 포럼 답변](https://discussions.unity.com/t/does-disable-hw-statistics-option-also-disable-analytics/731757/22)
