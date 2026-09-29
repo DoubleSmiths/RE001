@@ -107,6 +107,7 @@ public class UIManager
 
         GameObject go = Managers.Resource.Instantiate($"{name}");
         T sceneUI = Util.GetOrAddComponent<T>(go);
+        ConfigureWheelScroll(go);
         _sceneUI = sceneUI;
 
         go.transform.SetParent(Root.transform);
@@ -122,6 +123,7 @@ public class UIManager
         GameObject go = Managers.Resource.Instantiate($"{name}");
         T popup = Util.GetOrAddComponent<T>(go);
         ConfigurePopupAnimations(go);
+        ConfigureWheelScroll(go);
         _popupStack.Push(popup);
 
         go.transform.SetParent(Root.transform);
@@ -143,6 +145,16 @@ public class UIManager
         }
         foreach (Animator animator in root.GetComponentsInChildren<Animator>(true))
             animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+    }
+
+    // PC 마우스 휠: ScrollRect 기본 감도 1 이면 한 칸에 6 단위(InputSystemUIInputModule.scrollDeltaPerTick)만 움직여
+    //  도감(목록 5,133 / 화면 167)을 한 화면 넘기는 데 휠 28칸이 들었다. 터치 드래그와는 무관하다.
+    const float MIN_WHEEL_SENSITIVITY = 8f;   // 한 칸 = 48 단위 ≈ 목록 화면의 1/3
+
+    static void ConfigureWheelScroll(GameObject root)
+    {
+        foreach (ScrollRect scroll in root.GetComponentsInChildren<ScrollRect>(true))
+            scroll.scrollSensitivity = Mathf.Max(scroll.scrollSensitivity, MIN_WHEEL_SENSITIVITY);
     }
 
     public void ClosePopupUI(UI_Popup popup)
