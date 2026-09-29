@@ -37,15 +37,16 @@ Minimon Quest
 Tame monsters as companions and fill a 503-monster bestiary. Offline pixel RPG.
 ```
 
-### 자세한 설명 (KO) — 799자 / 4000
+### 자세한 설명 (KO) — 832자 / 4000
 <!-- id:gp_full_ko -->
 ```text
 미니몬 퀘스트는 황야를 누비며 마물과 싸우고, 만난 마물을 길들여 동료로 삼는 세로 화면 픽셀 RPG입니다.
 
 나에게 관심을 보인 마물은 유혹해 길들이면 미니몬이 됩니다. 미니몬을 동행으로 데려가면 곁에서 함께 싸우고, 자신의 고유 능력을 빌려줍니다.
 
-■ 가볍게 즐기는 실시간 전투
-· 사이드뷰 자동 전투 — 다가오는 마물과 알아서 싸웁니다
+■ 누르면 베는 실시간 전투
+· 화면을 누를 때마다 베는 사이드뷰 전투 — 멈칫하는 타격감, 방패로 막고 패링
+· 바쁠 땐 AUTO 로 맡겨 두세요
 · 타격을 이어 공세 단계를 올리고 치명타로 큰 피해를 노리세요
 · 미니몬 능력은 원하는 순간에 직접 발동
 
@@ -78,15 +79,16 @@ Tame monsters as companions and fill a 503-monster bestiary. Offline pixel RPG.
 · 한국어 / English 지원
 ```
 
-### Full description (EN) — 1559 chars / 4000
+### Full description (EN) — 1645 chars / 4000
 <!-- id:gp_full_en -->
 ```text
 Minimon Quest is a portrait pixel-art RPG: fight your way across the wilds and tame the monsters you meet.
 
 Monsters that take an interest in you can be lured and tamed into Minimons. Bring one along as a companion and it fights at your side and lends you its unique ability.
 
-■ Easygoing real-time combat
-· Side-view auto battles: your adventurer takes on whatever comes near
+■ Tap-to-strike real-time combat
+· Every tap is a sword strike in side-view battles, with punchy hit-stop, shield blocks and parries
+· Busy? Switch on AUTO and let your adventurer fight
 · Keep landing hits to raise your combo stage and go for big critical hits
 · Trigger Minimon abilities yourself when the moment is right
 
@@ -144,7 +146,7 @@ Monsters that take an interest in you can be lured and tamed into Minimons. Brin
 Fight across the wilds, then tame the monsters that take an interest in you and bring them along as Minimon companions. A portrait pixel-art RPG with a 503-monster bestiary, Memory-based builds, gear crafting and +9 enhancement, 300 levels, and up to 8 hours of rewards while you're away.
 ```
 
-### About This Game (KO) — 630자
+### About This Game (KO) — 673자
 <!-- id:st_about_ko -->
 ```text
 미니몬 퀘스트는 황야를 누비며 마물과 싸우고, 만난 마물을 길들여 동료로 삼는 세로 화면 픽셀 RPG입니다.
@@ -152,7 +154,7 @@ Fight across the wilds, then tame the monsters that take an interest in you and 
 나에게 관심을 보인 마물은 유혹해 길들이면 미니몬이 됩니다. 미니몬을 동행으로 데려가면 곁에서 함께 싸우고, 자신의 고유 능력을 빌려줍니다. 공명도 100%를 달성하면 그 능력을 영구히 익힐 수 있습니다.
 
 [전투]
-사이드뷰 자동 전투에서 타격을 이어 공세 단계를 올리고 치명타를 노리세요. 미니몬 능력은 원하는 순간에 직접 발동합니다.
+화면을 눌러 베는 사이드뷰 전투에서 타격을 이어 공세 단계를 올리고 치명타를 노리세요. 공격 예고가 뜨면 방패로 막고, 바쁠 땐 AUTO 로 맡기세요. 미니몬 능력은 원하는 순간에 직접 발동합니다.
 
 [수집]
 마물 503종이 도감을 기다립니다. 처치할수록 기록이 쌓이고, 관심을 보인 마물은 길들일 수 있습니다.
@@ -169,7 +171,7 @@ Fight across the wilds, then tame the monsters that take an interest in you and 
 · 한국어 / English
 ```
 
-### About This Game (EN) — 1240 chars
+### About This Game (EN) — 1338 chars
 <!-- id:st_about_en -->
 ```text
 Minimon Quest is a portrait pixel-art RPG: fight your way across the wilds and tame the monsters you meet.
@@ -177,7 +179,7 @@ Minimon Quest is a portrait pixel-art RPG: fight your way across the wilds and t
 Monsters that take an interest in you can be lured and tamed into Minimons. Bring one along as a companion and it fights at your side and lends you its unique ability. Reach 100% Link and that ability is yours for good.
 
 [Combat]
-Keep landing hits in side-view auto battles to raise your combo stage and go for critical hits. Trigger Minimon abilities yourself when the moment is right.
+Tap to strike in side-view battles and keep landing hits to raise your combo stage and go for critical hits. Raise your shield when an attack is telegraphed, or switch on AUTO when you're busy. Trigger Minimon abilities yourself when the moment is right.
 
 [Collect]
 503 monsters are waiting for your bestiary. Every defeat adds to your records, and the monsters that take an interest in you can be tamed.
