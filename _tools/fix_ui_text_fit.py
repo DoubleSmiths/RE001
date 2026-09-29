@@ -13,6 +13,9 @@ XLSX = "Assets/@Resources/Data/Excel/LocalizationData.xlsx"
 OVERRIDES = {
     "ForgeDurabilityText": ("DURABILITY", "DUR.",
                             "대장간 수리 칸 'DURABILITY 110/110' 이 옆 칸(강화)까지 넘침 (1080x2340 캡처, 2026-09-29)"),
+    "DescriptionText": ("DESCRIP", "DESC.",
+                        "물약 상세 전환 버튼·장비 상세 절 제목. 칸에 맞추려고 잘라 둔 'DESCRIP' 가 잘린 단어로 보였다 "
+                        "— 관례적인 줄임표로 (1080x2640 캡처, 2026-09-29)"),
     "AbilityDetails_TitleText": ("ABILITY DETAILS", "ABILITY INFO",
                                  "능력 정보 창 제목이 붉은 제목판(폭 63) 양쪽으로 한 글자씩 넘침. 한국어도 '능력 정보' "
                                  "(1080x2640 캡처, 2026-09-29)"),

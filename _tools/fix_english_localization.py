@@ -119,8 +119,9 @@ SKILL_ENG = {
     'Skill5013StoryText': 'The mark of one who walked more than one path.',
     'Skill5014StoryText': 'Walking two diverging paths side by side.',
     'Skill5015StoryText': 'The one you meet at the end of every road.',
-    # ── 물약 (한글 원문이 이미 "[아직 내용이 없습니다.]" 자리표시자) ──
-    'SPDPotion2DescText': '[No description yet.]',
+    # ── 물약 — 원래 한/영 모두 "[아직 내용이 없습니다.]" 자리표시자였다. 2026-09-29 신속물약 1단계 설명의
+    #    말투를 이어 한/영 설명을 새로 썼다(한글은 시트에 직접). 여기 값은 그 영문과 같아야 --check 가 통과한다.
+    'SPDPotion2DescText': "A stronger brew than the budget one.\nYour steps feel lighter\nand your heart beats a little faster.\n\nStill that suspicious yellow.\nThis time, I didn't ask.",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -223,6 +224,10 @@ LITERAL_KEYS = [
     ('InfoBtnText', '정보', 'INFO'),
     ('PotionUpgradeText', '물약개선', 'UPGRADE'),
     ('CustomOrderGreetingText', '"무엇을 만들어드릴까요?"', '"What shall I brew for you?"'),
+    # 물약 단계 — 예전엔 '{단계}{RankText}' 를 이어 붙여 영어가 '1RANK' 로 나왔다
+    ('RankFormat', '{0}단계', 'RANK {0}'),
+    # 물약 상세 전환 버튼(폭 30) — 'REQ. ITEMS' 는 버튼 밖으로 넘친다. 절 제목(ItemNeededText)은 그대로 둔다
+    ('SwitchToItemsText', '필요 재료', 'ITEMS'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

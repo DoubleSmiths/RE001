@@ -28,7 +28,7 @@
     {
       "TextKey": "DescriptionText",
       "Kor": "설명",
-      "Eng": "DESCRIP"
+      "Eng": "DESC."
     },
     {
       "TextKey": "NextInfoText",
@@ -978,7 +978,7 @@
     {
       "TextKey": "ItemRegularPermitDescText",
       "Kor": "모험가 협회에서 발급받은 통행증.\n\n임시 통행증에 정식 인증 인장을 덧붙였다.\n진짜 그냥 위에 덧붙여서 잘못하면 \n떨어질 것 같다.\n이런 게 인증이 된다고...?",
-      "Eng": "A pass issued by the guild.\n\nAn official certification seal \nis added to the temporary pass.\nOne wrong move, and it ooks\nlike it will fall apart.\nCan this really be used as a pass?"
+      "Eng": "A pass issued by the guild.\n\nAn official certification seal \nis added to the temporary pass.\nOne wrong move, and it looks\nlike it will fall apart.\nCan this really be used as a pass?"
     },
     {
       "TextKey": "HPPotion1DescText",
@@ -1002,8 +1002,8 @@
     },
     {
       "TextKey": "SPDPotion2DescText",
-      "Kor": "[아직 내용이 없습니다.]",
-      "Eng": "[No description yet.]"
+      "Kor": "보급형보다 한층 진해진 신속 물약.\n마시면 발걸음이 가볍고\n심장이 조금 빨리 뛴다.\n\n색은 여전히 수상한 노란색이다.\n이번엔 굳이 물어보지 않았다.",
+      "Eng": "A stronger brew than the budget one.\nYour steps feel lighter\nand your heart beats a little faster.\n\nStill that suspicious yellow.\nThis time, I didn't ask."
     },
     {
       "TextKey": "ComboText",
@@ -9764,6 +9764,16 @@
       "TextKey": "CustomOrderGreetingText",
       "Kor": "\"무엇을 만들어드릴까요?\"",
       "Eng": "\"What shall I brew for you?\""
+    },
+    {
+      "TextKey": "RankFormat",
+      "Kor": "{0}단계",
+      "Eng": "RANK {0}"
+    },
+    {
+      "TextKey": "SwitchToItemsText",
+      "Kor": "필요 재료",
+      "Eng": "ITEMS"
     }
   ]
 }
