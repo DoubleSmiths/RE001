@@ -238,6 +238,17 @@ LITERAL_KEYS = [
     ('TrainingRowFormat', '{0}  Lv.{1}  +{2}%', '{0}  Lv.{1}  +{2}%'),
     ('TrainingCostFormat', '{0:N0} 골드', '{0:N0} G'),
     ('TrainingMaxText', '상한', 'MAX'),
+    # v2 스테이지·보스(ADR0030) — UI_StageBar / UI_BattleBtnGroup. 알림은 UI_Toast 한 줄에 들어가게 짧게
+    ('StageLabelFormat', '{0}-{1}  {2}', '{0}-{1}  {2}'),
+    ('StageKillFormat', '처치 {0}/{1}', 'KILLS {0}/{1}'),
+    ('StageBossNextText', '다음은 보스!', 'BOSS NEXT!'),
+    ('StageBossChallengeText', '눌러서 보스 도전', 'TAP TO FIGHT THE BOSS'),
+    ('StageBossTimerFormat', '보스 {0:0.0}초', 'BOSS {0:0.0}s'),
+    ('BossAppearText', '보스 출현!', 'BOSS INCOMING!'),
+    ('StageClearFormat', '스테이지 돌파! 크리스탈 +{0}', 'STAGE CLEAR! +{0} CRYSTALS'),
+    ('BossDefeatText', '보스 처치!', 'BOSS DEFEATED!'),
+    ('BossFailText', '보스를 놓쳤다! 훈련 후 재도전', 'BOSS ESCAPED! TRAIN UP'),
+    ('StageNextLockedFormat', '다음 스테이지: {0}', 'NEXT STAGE: {0}'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

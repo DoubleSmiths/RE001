@@ -17,6 +17,16 @@ public class MonsterController : CreatureController
     bool _hasEngaged;
     public bool HasEngaged => _hasEngaged;
 
+    // 처치 보상 — 데이터 값으로 시작하고, 스테이지 보스는 MakeStageBoss 가 덮어쓴다.
+    float _rewardExp;
+    int   _rewardGold;
+
+    // v2 스테이지 보스(ADR0030)
+    public bool IsStageBoss { get; private set; }
+    public event System.Action OnDied;   // 실제로 쓰러졌을 때만(귀환·보스 퇴각으로 치워질 때는 아님)
+    bool _retreating;
+    const float RETREAT_FADE = 0.6f;
+
     public override bool Init()
     {
         if (!base.Init()) return false;
@@ -48,6 +58,8 @@ public class MonsterController : CreatureController
         DamageFontYOffset  = _data.DamageFontYOffset;
         if (System.Enum.TryParse(_data.Rarity, true, out CreatureRarity r))
             Rarity = r;
+        _rewardExp  = _data.TotalExp;
+        _rewardGold = _data.RewardGold;
 
         // 범용 몬스터 프리팹: 데이터(AnimController)로 외형/애니 런타임 교체.
         //  비어있으면 프리팹 기본 컨트롤러 유지(슬라임). CompanionController.ApplyPetAnimator와 동일 패턴.
@@ -69,9 +81,44 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     const float GROUND_SCROLL_SPEED = 5f;   // 슬라이드 58 — Ground Layer Speed = 5
 
+    // 능력치·보상·크기를 보스로 바꾼다. 몬스터는 풀링하지 않아(스폰마다 새 인스턴스) 되돌릴 필요가 없다.
+    public void MakeStageBoss(float maxHp, float atk, float matk, float def, float scale, float rewardExp, int rewardGold)
+    {
+        IsStageBoss = true;
+        MaxHp       = maxHp;
+        Hp          = maxHp;
+        PhysicalAtk = atk;
+        MagicAtk    = matk;
+        Def         = def;
+        Rarity      = CreatureRarity.Boss;   // HP 바가 우두머리 모양(색·크기·재질)이 된다
+        _rewardExp  = rewardExp;
+        _rewardGold = rewardGold;
+        transform.localScale *= scale;
+        DamageFontYOffset    *= scale;
+        gameObject.AddComponent<BossOutline>();
+    }
+
+    // 제한 시간 초과 — 싸움을 멈추고 흐려지며 사라진다(보상 없음). 교전이 풀려 플레이어는 다시 달린다.
+    public void Retreat()
+    {
+        if (State == Define.State.Dead || _retreating) return;
+        _retreating = true;
+        _hasEngaged = false;
+        StopAllCoroutines();
+        foreach (var col in GetComponents<Collider2D>()) col.enabled = false;
+        _rb.linearVelocity = Vector2.zero;
+        State = Define.State.Idle;
+        if (_sprite != null)
+        {
+            _sprite.DOKill();   // 피격 색 트윈이 알파를 1로 되돌리지 않게
+            _sprite.DOFade(0f, RETREAT_FADE).SetLink(gameObject);   // 금빛 테두리도 본체 알파를 따라간다
+        }
+        StartCoroutine(CoDestroyAfterDie(RETREAT_FADE));
+    }
+
     void FixedUpdate()
     {
-        if (State == Define.State.Dead) return;
+        if (State == Define.State.Dead || _retreating) return;
         if (_target == null) return;
 
         // 플레이어 쪽을 보게 한다. FlipToward는 만들어만 두고 아무 데서도 부르지 않아서
@@ -182,6 +229,7 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     public override void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
+        if (_retreating) return;   // 물러나는 보스를 동행 미니몬이 마저 잡아 보상이 나가지 않게
         base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
@@ -239,9 +287,10 @@ public class MonsterController : CreatureController
         // 보상
         if (_target != null)
         {
-            if (_data != null) Managers.Game.Gold += _data.RewardGold;
-            _target.GainExp(_data?.TotalExp ?? 0f);
+            if (_data != null) Managers.Game.Gold += _rewardGold;
+            _target.GainExp(_rewardExp);
         }
+        OnDied?.Invoke();
 
         // 아이템 드롭
         if (_data != null && _data.DropItemId > 0 && Random.value <= _data.DropChance)

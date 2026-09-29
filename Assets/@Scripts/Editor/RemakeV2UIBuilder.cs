@@ -87,6 +87,97 @@ public static class RemakeV2UIBuilder
         }
     }
 
+    // 스테이지 막대: HUD(UI_GameScene) 게임 화면 왼쪽 위 — 버프 줄(위에서 24~34) 바로 아래, 퀘스트 추적기(x 122~) 왼쪽,
+    //  보스 HP 바(1.3배, 위에서 50~) 위. 높이 14 안에 이름·게이지 두 줄.
+    //  배경은 퀘스트 추적기의 줄 그림, 게이지는 플레이어 EXP 막대, 보스 타이머는 HP 막대 채움을 복제한다.
+    const string GAME_SCENE = "Assets/@Resources/Prefab/UI/Scene/UI_GameScene.prefab";
+    static readonly Vector2 STAGE_BAR_POS  = new Vector2(2f, -32f);
+    static readonly Vector2 STAGE_BAR_SIZE = new Vector2(104f, 14f);
+
+    [MenuItem("Tools/Remake V2/Build Stage Bar")]
+    public static void BuildStageBar()
+    {
+        GameObject root = PrefabUtility.LoadPrefabContents(GAME_SCENE);
+        try
+        {
+            Transform frame = Find(root.transform, "In-Frame");
+            Transform old = Find(root.transform, "StageBar", false);
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+
+            var bar = new GameObject("StageBar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            bar.SetParent(frame, false);
+            bar.anchorMin = bar.anchorMax = bar.pivot = new Vector2(0f, 1f);
+            bar.anchoredPosition = STAGE_BAR_POS;
+            bar.sizeDelta = STAGE_BAR_SIZE;
+            var bg = bar.GetComponent<Image>();
+            bg.sprite = Find(root.transform, "Img_Main_QuestFollow_01").GetComponent<Image>().sprite;
+            bg.color = new Color(0f, 0f, 0f, 0.45f);
+
+            var name = (RectTransform)Object.Instantiate(Find(root.transform, "Quest_NeedItemNameTxt").gameObject, bar).transform;
+            name.name = "StageNameTxt";
+            name.anchorMin = new Vector2(0f, 1f);
+            name.anchorMax = Vector2.one;
+            name.pivot = new Vector2(0.5f, 1f);
+            name.anchoredPosition = new Vector2(0f, -0.8f);
+            name.sizeDelta = new Vector2(-6f, 5.5f);
+            var nameTmp = name.GetComponent<TMP_Text>();
+            nameTmp.alignment = TextAlignmentOptions.Center;
+            nameTmp.textWrappingMode = TextWrappingModes.NoWrap;
+            nameTmp.enableAutoSizing = true;   // 긴 영문 지역명(“Collapsed Tunnel Depths”)도 한 줄에
+            nameTmp.fontSizeMin = 4f;
+            nameTmp.fontSizeMax = 6f;
+
+            var gauge = (RectTransform)Object.Instantiate(Find(root.transform, "PlayerEXPBarGroup").gameObject, bar).transform;
+            gauge.name = "StageGauge";
+            gauge.anchorMin = Vector2.zero;
+            gauge.anchorMax = new Vector2(1f, 0f);
+            gauge.pivot = new Vector2(0.5f, 0f);
+            gauge.anchoredPosition = new Vector2(0f, 0.8f);
+            gauge.sizeDelta = new Vector2(-6f, 6.2f);
+            Rename(gauge, "PlayerEXPBarFrame", "StageGaugeFrame");
+            Rename(gauge, "PlayerEXPBarGuageBox", "StageGaugeBox");
+            Rename(gauge, "PlayerEXPBarGuage", "StageGaugeFill");
+            Object.DestroyImmediate(Find(gauge, "PlayerEXPTextFlat").gameObject);
+
+            // 보스 제한 시간 — HP 막대의 빨간 채움을 같은 칸에 겹쳐 두고 보스전에만 켠다
+            Transform box = Find(gauge, "StageGaugeBox");
+            var bossFill = (RectTransform)Object.Instantiate(Find(root.transform, "PlayerHPBarGuage").gameObject, box).transform;
+            bossFill.name = "StageGaugeBossFill";
+            bossFill.anchorMin = Vector2.zero;
+            bossFill.anchorMax = Vector2.one;
+            bossFill.anchoredPosition = Vector2.zero;
+            bossFill.sizeDelta = Vector2.zero;
+            bossFill.gameObject.SetActive(false);
+
+            var count = (RectTransform)Find(gauge, "PlayerEXPTextPercent");
+            count.name = "StageCountTxt";
+            count.SetAsLastSibling();   // 채움 위에 그린다
+            count.anchorMin = Vector2.zero;
+            count.anchorMax = Vector2.one;
+            count.pivot = new Vector2(0.5f, 0.5f);
+            count.anchoredPosition = Vector2.zero;
+            count.sizeDelta = Vector2.zero;
+            var countTmp = count.GetComponent<TMP_Text>();
+            countTmp.alignment = TextAlignmentOptions.Center;
+            countTmp.fontSize = 6f;
+
+            // 원본에 딸린 동작 부품은 떼어 낸다 — ContentSizeFitter 는 폭을 제멋대로 바꾸고, Slider 는 채움 칸의
+            //  앵커를 직접 움직이며(여기선 fillAmount 로 그린다), Animator 는 EXP 글자용 연출이다.
+            foreach (var c in bar.GetComponentsInChildren<ContentSizeFitter>(true)) Object.DestroyImmediate(c);
+            foreach (var c in bar.GetComponentsInChildren<Slider>(true)) Object.DestroyImmediate(c);
+            foreach (var c in bar.GetComponentsInChildren<Animator>(true)) Object.DestroyImmediate(c);
+
+            bar.gameObject.AddComponent<UI_StageBar>();
+
+            PrefabUtility.SaveAsPrefabAsset(root, GAME_SCENE);
+            Debug.Log("[RemakeV2] 스테이지 막대 조립 완료 — UI_GameScene/In-Frame/StageBar");
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
     static void Align(RectTransform rt, Vector2 anchor, float x, TextAlignmentOptions alignment)
     {
         rt.anchorMin = rt.anchorMax = rt.pivot = anchor;

@@ -95,6 +95,12 @@ public class GameData
     public int[]  StatInvest  = new int[4];
     // v2 훈련(골드 강화) 단계. 0=공격% 1=체력% 2=방어% 3=치명피해%p (ADR0030)
     public int[]  TrainingLevels = new int[4];
+    // v2 스테이지·보스(ADR0030). 처치 수는 StageNodeId 노드의 것 — 다른 노드로 가면 0부터 센다.
+    //  돌파한 노드는 첫 돌파 크리스탈을 다시 주지 않는다. 보스에게 지면 자동 도전이 꺼진다(막대를 눌러 다시 켠다).
+    public int       StageNodeId;
+    public int       StageKillCount;
+    public List<int> ClearedStages = new List<int>();
+    public bool      BossAutoChallenge = true;
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -704,7 +710,9 @@ public class GameManager
     {
         _inBattleArea = inBattle;
         _idleKillProgress = 0f;
+        OnStageChanged?.Invoke();   // 스테이지 막대는 전투 구역에서만 보인다
     }
+    public bool InBattleArea => _inBattleArea;
 
     /// <summary>Managers.Update에서 매 프레임 호출. 전투 밖일 때만 누적한다.</summary>
     public void TickIdle(float deltaTime)
@@ -765,7 +773,7 @@ public class GameManager
     public event System.Action<OfflineReward, string> OnIdleBatch;
 
     /// <summary>해당 전투 노드에 출현하는 몬스터의 평균 경험치·골드.</summary>
-    bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)
+    public bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)
     {
         avgExp = 0f; avgGold = 0f;
         if (Managers.Data?.TravelNodeDic == null) return false;
@@ -1257,6 +1265,133 @@ public class GameManager
         p.MaxHp       *= 1f + TrainingBonus(TrainingStat.Health) / 100f;
         p.Def         *= 1f + TrainingBonus(TrainingStat.Defense) / 100f;
         p.CritDamage  += TrainingBonus(TrainingStat.CritDamage);
+    }
+    #endregion
+
+    #region 스테이지·보스 (v2 — 10마리 → 보스 → 다음, ADR0030)
+    // 사냥터(전투 노드 125곳) = 스테이지 '필드-층'(1-1 ~ 25-5). 정해진 수를 잡으면 보스, 보스를 잡으면 첫 돌파 크리스탈.
+    //  규칙·저장은 여기, 전투 흐름(스폰·제한 시간)은 UI_BattleBtnGroup, 표시는 UI_StageBar.
+    public event Action OnStageChanged;
+
+    public int  StageKillsToBoss => Mathf.Max(1, Mathf.RoundToInt(Managers.Data.Balance(BalanceKey.STAGE_KILLS_TO_BOSS, 10f)));
+    public int  StageKills(int nodeId) => _gameData.StageNodeId == nodeId ? _gameData.StageKillCount : 0;
+    public bool IsBossReady(int nodeId) => StageKills(nodeId) >= StageKillsToBoss;
+    public bool IsStageCleared(int nodeId) => _gameData.ClearedStages.Contains(nodeId);
+
+    public bool BossAutoChallenge
+    {
+        get => _gameData.BossAutoChallenge;
+        set
+        {
+            if (_gameData.BossAutoChallenge == value) return;
+            _gameData.BossAutoChallenge = value;
+            SaveGame();
+            OnStageChanged?.Invoke();
+        }
+    }
+
+    public void AddStageKill(int nodeId)
+    {
+        if (_gameData.StageNodeId != nodeId) { _gameData.StageNodeId = nodeId; _gameData.StageKillCount = 0; }
+        if (_gameData.StageKillCount >= StageKillsToBoss) return;   // 보스를 기다리는 동안은 더 세지 않는다
+        _gameData.StageKillCount++;
+        SaveGame();
+        OnStageChanged?.Invoke();
+    }
+
+    // 보스 처치 — 첫 돌파면 크리스탈을 주고 그 양을, 이미 돌파한 곳이면 0 을 돌려준다.
+    public int ClearStage(int nodeId)
+    {
+        int crystals = 0;
+        if (!_gameData.ClearedStages.Contains(nodeId))
+        {
+            _gameData.ClearedStages.Add(nodeId);
+            crystals = StageFirstClearCrystals(nodeId);
+            Crystal += crystals;
+        }
+        _gameData.StageKillCount = 0;
+        SaveGame();
+        OnStageChanged?.Invoke();
+        return crystals;
+    }
+
+    // 시간 초과·사망 — 처치 수를 비우고 자동 도전을 끈다(같은 벽에 30초씩 계속 부딪히지 않게).
+    //  스테이지 막대를 누르면 다시 켜진다 — 그 사이 훈련으로 강해지라는 신호다.
+    public void FailStage(int nodeId)
+    {
+        if (_gameData.StageNodeId == nodeId) _gameData.StageKillCount = 0;
+        _gameData.BossAutoChallenge = false;
+        SaveGame();
+        OnStageChanged?.Invoke();
+    }
+
+    public int StageFirstClearCrystals(int nodeId)
+    {
+        if (!TryGetStageNumber(nodeId, out int field, out _)) return 0;
+        var d = Managers.Data;
+        return Mathf.RoundToInt(d.Balance(BalanceKey.BOSS_FIRST_CRYSTAL_BASE, 20f)
+                              + d.Balance(BalanceKey.BOSS_FIRST_CRYSTAL_PER_FIELD, 2f) * field);
+    }
+
+    // 보스전 진행 상태(저장 안 함) — UI_BattleBtnGroup 이 쓰고 UI_StageBar 가 읽는다.
+    public bool  BossFightActive { get; private set; }
+    public float BossTimeLeft    { get; private set; }
+    public float BossTimeLimit   { get; private set; }
+
+    public void SetBossFight(bool active, float left = 0f, float limit = 0f)
+    {
+        bool changed = BossFightActive != active;
+        BossFightActive = active;
+        BossTimeLeft    = left;
+        BossTimeLimit   = limit;
+        if (changed) OnStageChanged?.Invoke();
+    }
+
+    // 스테이지 순서 = 전투 노드 Id 오름차순(21010, 21020 … 25450). 같은 부모의 층은 Id 가 이어져 있다.
+    List<int> _stageOrder;
+    List<int> StageOrder
+    {
+        get
+        {
+            if (_stageOrder != null || Managers.Data?.TravelNodeDic == null) return _stageOrder ?? new List<int>();
+            var order = new List<int>();
+            foreach (var n in Managers.Data.TravelNodeDic.Values)
+                if (string.Equals(n.AreaType, nameof(AreaType.Battle), StringComparison.OrdinalIgnoreCase)) order.Add(n.Id);
+            order.Sort();
+            return _stageOrder = order;
+        }
+    }
+
+    // 필드 = 부모 노드가 몇 번째인지(1~25), 층 = 그 부모 안에서 몇 번째인지(1~5).
+    public bool TryGetStageNumber(int nodeId, out int field, out int floor)
+    {
+        field = floor = 0;
+        var nodes = Managers.Data?.TravelNodeDic;
+        if (nodes == null) return false;
+        int lastParent = int.MinValue;
+        foreach (int id in StageOrder)
+        {
+            int parent = nodes[id].ParentId;
+            if (parent != lastParent) { field++; floor = 0; lastParent = parent; }
+            floor++;
+            if (id == nodeId) return true;
+        }
+        field = floor = 0;
+        return false;
+    }
+
+    public int NextStage(int nodeId)
+    {
+        var order = StageOrder;
+        int i = order.IndexOf(nodeId);
+        return i >= 0 && i + 1 < order.Count ? order[i + 1] : 0;
+    }
+
+    public string StageLabel(int nodeId)
+    {
+        if (!TryGetStageNumber(nodeId, out int field, out int floor)) return "";
+        string name = Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var node) ? Util.Localize(node.Name) : "";
+        return string.Format(Util.Localize("StageLabelFormat"), field, floor, name);
     }
     #endregion
 
@@ -1888,6 +2023,7 @@ public class GameManager
         d.DiscoveredMonsterIds ??= new List<int>();
         d.MetQuestConditions   ??= new List<int>();
         d.UnlockedBtnIds       ??= new List<string>();
+        d.ClearedStages        ??= new List<int>();
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

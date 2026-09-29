@@ -81,9 +81,9 @@
       "Desc": "첫 돌파 크리스탈 필드당 가산"
     },
     {
-      "Key": "BOSS_REPEAT_GOLD_KILLS",
+      "Key": "BOSS_REWARD_KILLS",
       "Value": 10.0,
-      "Desc": "재돌파 골드 = 처치 골드 × 이 값"
+      "Desc": "보스 처치 보상 = 일반 처치 N마리 몫의 경험치·골드(매번). 첫 돌파는 크리스탈을 더 준다"
     },
     {
       "Key": "ATTACK_TELEGRAPH",

@@ -9819,6 +9819,56 @@
       "TextKey": "TrainingMaxText",
       "Kor": "상한",
       "Eng": "MAX"
+    },
+    {
+      "TextKey": "StageLabelFormat",
+      "Kor": "{0}-{1}  {2}",
+      "Eng": "{0}-{1}  {2}"
+    },
+    {
+      "TextKey": "StageKillFormat",
+      "Kor": "처치 {0}/{1}",
+      "Eng": "KILLS {0}/{1}"
+    },
+    {
+      "TextKey": "StageBossNextText",
+      "Kor": "다음은 보스!",
+      "Eng": "BOSS NEXT!"
+    },
+    {
+      "TextKey": "StageBossChallengeText",
+      "Kor": "눌러서 보스 도전",
+      "Eng": "TAP TO FIGHT THE BOSS"
+    },
+    {
+      "TextKey": "StageBossTimerFormat",
+      "Kor": "보스 {0:0.0}초",
+      "Eng": "BOSS {0:0.0}s"
+    },
+    {
+      "TextKey": "BossAppearText",
+      "Kor": "보스 출현!",
+      "Eng": "BOSS INCOMING!"
+    },
+    {
+      "TextKey": "StageClearFormat",
+      "Kor": "스테이지 돌파! 크리스탈 +{0}",
+      "Eng": "STAGE CLEAR! +{0} CRYSTALS"
+    },
+    {
+      "TextKey": "BossDefeatText",
+      "Kor": "보스 처치!",
+      "Eng": "BOSS DEFEATED!"
+    },
+    {
+      "TextKey": "BossFailText",
+      "Kor": "보스를 놓쳤다! 훈련 후 재도전",
+      "Eng": "BOSS ESCAPED! TRAIN UP"
+    },
+    {
+      "TextKey": "StageNextLockedFormat",
+      "Kor": "다음 스테이지: {0}",
+      "Eng": "NEXT STAGE: {0}"
     }
   ]
 }

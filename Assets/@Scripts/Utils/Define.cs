@@ -1856,7 +1856,7 @@ public class Define
         public const string BOSS_TIME_LIMIT              = "BOSS_TIME_LIMIT";
         public const string BOSS_FIRST_CRYSTAL_BASE      = "BOSS_FIRST_CRYSTAL_BASE";
         public const string BOSS_FIRST_CRYSTAL_PER_FIELD = "BOSS_FIRST_CRYSTAL_PER_FIELD";
-        public const string BOSS_REPEAT_GOLD_KILLS       = "BOSS_REPEAT_GOLD_KILLS";
+        public const string BOSS_REWARD_KILLS            = "BOSS_REWARD_KILLS";
         // 가드·패링
         public const string ATTACK_TELEGRAPH       = "ATTACK_TELEGRAPH";
         public const string GUARD_DURATION         = "GUARD_DURATION";

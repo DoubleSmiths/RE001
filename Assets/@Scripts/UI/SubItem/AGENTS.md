@@ -9,7 +9,7 @@
 ## Key Files
 | File | Description |
 |------|-------------|
-| `UI_BattleBtnGroup.cs` | 전투 구역 전체 UI 그룹(`UI_AreaBtnGroup` 상속). ComboManager 이벤트 구독으로 콤보 게이지/Rank 색/버프 표시, 전투 기록(mm:ss.ss 타이머 + Smooth 보간 피해/회복량), 드롭 아이템 리스트(`MonsterController.OnItemDropped` → `UI_BattleDropItem` 생성/등급순 정렬), 몬스터 스폰 코루틴(`CoBattleLoop`), 귀환(2단계 확인)/여정 버튼. `PlayEnterAnimation()` 오버라이드에서 `StartBattle()` 호출, `BeginExitTransit()`으로 퇴장 연출 |
+| `UI_BattleBtnGroup.cs` | 전투 구역 전체 UI 그룹(`UI_AreaBtnGroup` 상속). ComboManager 이벤트 구독으로 콤보 게이지/Rank 색/버프 표시, 전투 기록(mm:ss.ss 타이머 + Smooth 보간 피해/회복량), 드롭 아이템 리스트(`MonsterController.OnItemDropped` → `UI_BattleDropItem` 생성/등급순 정렬), 몬스터 스폰 코루틴(`CoBattleLoop`), 귀환(2단계 확인)/여정 버튼. `PlayEnterAnimation()` 오버라이드에서 `StartBattle()` 호출, `BeginExitTransit()`으로 퇴장 연출. v2 스테이지: 처치마다 `GameManager.AddStageKill`, 처치 수가 차고 자동 도전이면 `CoStageBoss`(보스 스폰·30초 제한·첫 돌파 시 다음 스테이지로 자동 이동, 실패 시 퇴각) |
 | `UI_BattleDropItem.cs` | 전투 중 드롭 아이템 슬롯 1칸. `SetInfo(dataId, initialCount)`로 아이콘/등급(Glow 색·Exceptional+ 파티클)/카운트 세팅, `AddCount(by)`로 중복 획득 시 카운트 증가 + prefab DOTweenAnimation 재생. `Grade`/`DataId` 프로퍼티는 부모(UI_BattleBtnGroup)의 등급순 정렬에 사용 |
 | `UI_Bestiary.cs` | 마물 도감의 "지역 한 덩어리"(지역명 + 몬스터 박스 그리드). `SetInfo(regionName, List<CreatureData>, onClickMonster)`가 기존 자식 제거 후 `MakeSubItem<UI_BestiaryBox>`로 박스를 채움. UI_BestiaryPopup의 Content 안에서 지역 수만큼 생성됨 |
 | `UI_BestiaryBox.cs` | 도감 몬스터 1칸. `SetInfo(CreatureData, onClick)`이 기록도(`UI_BestiaryPopup.GetRecordRate`) 기준 3분류: 0%="?"잠금(클릭 불가), 10%미만=검정 실루엣+초록 Glow, 10%이상=풀컬러+Rarity Glow. 별등급 무한 DOPunchRotation, 동행 미니몬이면 frame 색 FF00CB + "Active Ef" prefab 부착(`RefreshCompanionVisual`) |
@@ -22,13 +22,15 @@
 | `UI_MonsterHPBar.cs` | 화면 상단 몬스터 HP 바. `SetInfo(MonsterController)`가 이름 Localize + `monster.OnHpChanged` 구독(HP 0 이하 시 `PlayCloseAnimation`=DOPlayBackwards 후 Destroy). 희귀도별 색(FFD400/FF4300)·스케일(1.15/1.3)·Material(Path_Image_Knight/BeastLord) 적용. UI_BattleBtnGroup이 몬스터 조우(OnEngaged) 시 `MakeSubItem`으로 생성 |
 | `UI_MonsterItemDropListBox.cs` | 미니몬 기록(UI_MonsterDetailPopup)의 전리품 1칸. `SetInfo(ItemData, count, chance, unlocked)` — 미해금이면 "?" + Glow 0F0F0F, 해금이면 아이콘 + 등급 Glow + `x{count} {chance:0.#}%` 표기 |
 | `UI_SkillBookSkill.cs` | 능력 목록(UI_SkillBookPopup)의 능력 아이콘 1칸. `SetInfo(abilityId, onClick)` — `Managers.Ability.IsTalent/IsEquipped/GetLevel`로 재능·기억중이면 "기억중" 배지 + Active_Ef, 레벨은 rich-text로 숫자만 색(최대=#FF00FF, 미만=#B9B900). 클릭 시 루트 DOTweenAnimation 재생 후 콜백 |
+| `UI_StageBar.cs` | v2 스테이지 막대(ADR0030) — UI_GameScene `In-Frame/StageBar`에 붙는다(빌더 `Tools/Remake V2/Build Stage Bar`). 전투 구역에서만 보이며(`GameManager.InBattleArea`) `3-2 지역명` + 처치 N/10, 보스전엔 남은 시간(빨간 채움). 보스에게 져서 자동 도전이 꺼지면 금색으로 깜빡이고 누르면 `BossAutoChallenge=true`. 돌파한 스테이지는 이름이 금색. 값이 바뀐 칸만 다시 쓴다 |
 | `UI_TownSelectButton.cs` | UI_TravelPopup의 마을 선택 버튼. `SetInfo(TravelNodeData, isCurrentLocation)` — 현재 위치면 interactable off + "현재 위치" 라벨 표시. `SetSelected`는 EFrame 토글 + 배경색 스왑(FFC500 선택/959595 기본). `RefreshQuestVFX` 동일 패턴. Init에 TODO 다수 잔존 |
+| `UI_TrainingPanel.cs` | v2 훈련 패널(ADR0030) — UI_CharacterPopup `TrainingFrame`에 붙는다(빌더 `Tools/Remake V2/Build Training Panel`). 줄을 누르면 `GameManager.TryTrain` 1단계, 누르고 있으면 0.35초 뒤 0.07초마다 연속. 골드 부족·상한이면 줄을 흐리게 |
 | `UI_Village1BtnGroup.cs` | 마을(Village1) 구역 전체 UI 그룹(`UI_AreaBtnGroup` 상속). Main/Guild/Alchemy/Monastery 4개 하위 버튼 그룹을 DOTween Sequence(페이드 + 버튼 순차 등장)로 전환하며 `SwitchBG`로 배경 prefab 교체, `Managers.Game.LastVillage1Group`으로 마지막 그룹 복원. 퀘스트 notify는 `s_notifyBindings` 정적 테이블(BtnID→VFX/NewTxt 매핑)로 일괄 갱신, 버튼 해금은 `OnBtnUnlocked`→`UnlockButtonAnim`(TravelButton/AlchemyButton) 또는 silent 토글(CustomOrder). NPC 대화(`UI_DialoguePopup`)/제작의뢰(`UI_CustomOrderPopup`)/여정(`UI_TravelPopup`) 팝업 진입점 |
 
 ## For AI Agents
 
 ### Working In This Directory
-- **상속 베이스**: 13개 클래스는 `UI_Base` 직접 상속. `UI_BattleBtnGroup`·`UI_Village1BtnGroup`만 `UI_AreaBtnGroup`(../Scene/) 상속 — 이 둘은 리스트 아이템이 아니라 UI_GameScene이 구역 전환 시 통째로 갈아끼우는 화면 하단 버튼 그룹이며, `Setup(UI_GameScene)`으로 `_gameScene` 참조를 받고 `PlayEnterAnimation()` 진입 콜백을 오버라이드할 수 있다. 프로젝트에 `UI_SubItem` 클래스는 존재하지 않는다.
+- **상속 베이스**: 15개 클래스는 `UI_Base` 직접 상속. `UI_BattleBtnGroup`·`UI_Village1BtnGroup`만 `UI_AreaBtnGroup`(../Scene/) 상속 — 이 둘은 리스트 아이템이 아니라 UI_GameScene이 구역 전환 시 통째로 갈아끼우는 화면 하단 버튼 그룹이며, `Setup(UI_GameScene)`으로 `_gameScene` 참조를 받고 `PlayEnterAnimation()` 진입 콜백을 오버라이드할 수 있다. 프로젝트에 `UI_SubItem` 클래스는 존재하지 않는다.
 - **Init 계약**: `Init()`은 `if (base.Init() == false) return false;` 가드로 시작하고 `BindImage/BindText/BindButton/BindObject(typeof(enum))`으로 prefab 자식을 enum 이름으로 바인딩한다. **enum 멤버 이름 = prefab GameObject 이름**이므로 enum 순서/이름 변경은 prefab과 동기화 필수 (`UI_BattleBtnGroup.ApplyBattleTexts`는 enum 인덱스 하드코딩까지 있음: `i == 0 || i == 1 || ...`).
 - **SetInfo 패턴**: 생성 직후 부모가 `SetInfo(...)`를 호출해 데이터를 주입한다. Awake보다 먼저 불릴 수 있어 `SetInfo` 첫 줄에서 `Init()`을 재호출하는 파일이 많다 (`UI_FieldSelectButton`, `UI_MapSelectButton`, `UI_TownSelectButton`, `UI_BattleDropItem`은 `if (!_init) Init()`).
 - **생성 경로**: 리스트 아이템은 `Managers.UI.MakeSubItem<T>(parent)`(예: UI_Bestiary→UI_BestiaryBox, UI_BattleBtnGroup→UI_MonsterHPBar) 또는 `Managers.Resource.Instantiate("prefab명", parent)`(UI_BattleDropItem). 부모 컨테이너는 prefab에 박힌 샘플 자식을 먼저 제거하고 채우는 관례가 있다 (UI_Bestiary, UI_BattleBtnGroup.BindDropListUI).

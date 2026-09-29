@@ -907,9 +907,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             PlayerController player = Managers.Game.Player;
             if (player == null) yield break;
 
-            // 데이터 드리븐: 현재 지역의 Habitat/EncounterRate로 슬라임/고블린 등 가중 랜덤 선택.
-            int dataId = Managers.Object.PickFieldMonsterId(2001);
-
             // Y는 지면 상수 하나. 플레이어 y를 따라가게 두면 플레이어가 어긋난 순간
             //  몬스터까지 같이 떠오른다(실제로 그렇게 둘 다 공중에 떠 있었다).
             Vector3 spawnPos = new Vector3(
@@ -917,22 +914,124 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 Define.GROUND_Y,
                 0f);
 
-            MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
-            if (mc != null)
+            // v2 스테이지(ADR0030): 정해진 수를 잡았고 자동 도전이 켜져 있으면 이번엔 보스.
+            int nodeId = Managers.Game.CurrentTravelAreaId;
+            if (Managers.Game.BossAutoChallenge && Managers.Game.IsBossReady(nodeId))
             {
-                // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
-                // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
-                mc.OnEngaged += () =>
-                {
-                    Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
-                    StartBattleLog(mc);
-                };
+                yield return CoStageBoss(nodeId, spawnPos, monsterRoot);
+                if (_stageAdvancing) yield break;   // 다음 스테이지로 이동 중 — 이 그룹은 곧 교체된다
             }
-            yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            else
+            {
+                // 데이터 드리븐: 현재 지역의 Habitat/EncounterRate로 슬라임/고블린 등 가중 랜덤 선택.
+                int dataId = Managers.Object.PickFieldMonsterId(2001);
+                MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
+                if (mc != null)
+                {
+                    // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
+                    // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
+                    mc.OnEngaged += () =>
+                    {
+                        Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
+                        StartBattleLog(mc);
+                    };
+                    mc.OnDied += () => Managers.Game.AddStageKill(nodeId);
+                }
+                yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            }
 
             // 다음 몬스터까지 6초
             yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
         }
+    }
+
+    // ────────────────────────────────────────
+    //  v2 스테이지 보스 (ADR0030, 설계서 4.3)
+    //    - 보스 출현 알림 + 보스 곡. 제한 시간은 맞붙은 뒤부터 잰다(걸어오는 시간은 빼 준다).
+    //    - 처치: 첫 돌파면 크리스탈 + 다음 스테이지로 자동 이동, 이미 돌파한 곳이면 보상만 받고 머문다.
+    //    - 시간 초과: 보스가 물러나고 처치 수는 0, 자동 도전이 꺼진다. 쓰러지면 같은 실패(귀환은 PlayerController).
+    // ────────────────────────────────────────
+    const string FIELD_BGM = "BGM_BWF";            // UI_GameScene.SwapAreaBtnGroup 의 전투 구역 곡
+    const string BOSS_BGM  = "BGM_Boss";
+    const float  STAGE_ADVANCE_DELAY = 1.5f;       // 돌파 알림을 읽을 틈을 두고 다음 스테이지로
+    bool _stageAdvancing;
+
+    System.Collections.IEnumerator CoStageBoss(int nodeId, Vector3 spawnPos, Transform monsterRoot)
+    {
+        MonsterController boss = Managers.Object.SpawnStageBoss(nodeId, spawnPos);
+        if (boss == null)
+        {
+            Debug.LogWarning($"[Stage] 노드 {nodeId} 에 보스로 세울 몬스터가 없다 — 처치 수만 비운다");
+            Managers.Game.FailStage(nodeId);
+            yield break;
+        }
+
+        bool killed = false;
+        UI_MonsterHPBar bar = null;
+        boss.OnDied += () => killed = true;
+        boss.OnEngaged += () =>
+        {
+            bar = Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform);
+            bar.SetInfo(boss);
+            StartBattleLog(boss);
+        };
+
+        Managers.UI.ShowToast(Util.Localize("BossAppearText"));
+        Managers.Sound?.PlayBgm(BOSS_BGM);
+
+        // 전투 정지(도감 등) 중엔 Time.deltaTime 이 0 이라 제한 시간도 멈춘다.
+        float limit = Managers.Data.Balance(BalanceKey.BOSS_TIME_LIMIT, 30f);
+        float left  = limit;
+        PlayerController player = Managers.Game.Player;
+        bool playerDown = false;
+        Managers.Game.SetBossFight(true, left, limit);
+        while (!killed && left > 0f)
+        {
+            if (boss == null) break;   // 다른 경로로 치워졌다
+            if (player == null || player.State == State.Dead) { playerDown = true; break; }
+            if (boss.HasEngaged) left -= Time.deltaTime;
+            Managers.Game.SetBossFight(true, Mathf.Max(0f, left), limit);
+            yield return null;
+        }
+        Managers.Game.SetBossFight(false);
+
+        if (!killed)
+        {
+            Managers.Game.FailStage(nodeId);
+            Managers.UI.ShowToast(Util.Localize("BossFailText"));
+            if (playerDown) yield break;   // 마을 귀환이 몬스터·HP 바·곡을 정리한다
+
+            if (boss != null) boss.Retreat();
+            if (bar != null) bar.PlayCloseAnimation();
+            Managers.Sound?.PlayBgm(FIELD_BGM);
+            yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            yield break;
+        }
+
+        int crystals = Managers.Game.ClearStage(nodeId);
+        Managers.UI.ShowToast(crystals > 0
+            ? string.Format(Util.Localize("StageClearFormat"), crystals)
+            : Util.Localize("BossDefeatText"));
+        Managers.Sound?.PlayBgm(FIELD_BGM);
+        yield return new WaitUntil(() => monsterRoot.childCount == 0);
+
+        // 이미 돌파한 곳에서는 머문다 — 포획·재료 파밍 자리를 멋대로 옮기지 않는다.
+        if (crystals <= 0) yield break;
+        int next = Managers.Game.NextStage(nodeId);
+        if (next <= 0) yield break;   // 마지막 스테이지
+        string lockReason = Managers.Game.GetTravelLockReason(next);
+        if (!string.IsNullOrEmpty(lockReason))
+        {
+            Managers.UI.ShowToast(string.Format(Util.Localize("StageNextLockedFormat"), lockReason));
+            yield break;
+        }
+
+        yield return new WaitForSeconds(STAGE_ADVANCE_DELAY);
+        var scene = Managers.UI.SceneUI as UI_GameScene;
+        if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle)) yield break;
+        _stageAdvancing = true;
+        Managers.Game.CurrentTravelAreaId = next;   // 스폰 지역은 이 값으로 정해진다 — 전환보다 먼저
+        scene.EnterAreaWithFade(AreaType.Battle);
     }
 
     void EndBattle()
@@ -951,6 +1050,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             StopCoroutine(_battleCoroutine);
             _battleCoroutine = null;
         }
+        // 보스전 도중 귀환·이동하면 루프가 멈춰 끝 처리가 안 돈다 — 스테이지 막대가 타이머를 계속 보이지 않게.
+        //  (처치 수는 그대로라 다시 오면 곧바로 보스가 나온다)
+        Managers.Game?.SetBossFight(false);
 
         // 정리 경로에서는 **있을 때만** 가져온다. lazy 게터를 쓰면 씬을 닫는 도중 @Monster를
         //  새로 만들어 "Some objects were not cleaned up when closing the scene" 에러가 난다.
