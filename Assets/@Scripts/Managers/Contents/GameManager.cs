@@ -1632,7 +1632,8 @@ public class GameManager
     //  기록은 임시 파일에 다 쓴 뒤 이름을 바꾸고, 직전 정상본은 .bak 으로 남긴다.
     //  쓰는 도중 앱이 죽어도 온전한 파일 하나는 반드시 남는다.
     public const int SAVE_VERSION = 1;
-    const float SAVE_FLUSH_INTERVAL = 2f;
+    const float SAVE_FLUSH_INTERVAL = 3f;
+    const int SAVE_READ_RETRIES = 3;
 
     public static string SavePath => Application.persistentDataPath + "/SaveData.json";
 
@@ -1677,7 +1678,14 @@ public class GameManager
         try
         {
             _gameData.SaveVersion = SAVE_VERSION;
-            File.WriteAllText(tmp, JsonConvert.SerializeObject(_gameData, s_saveJson));
+            // 이름을 바꾸기 전에 디스크까지 내린다(fsync). 안 하면 전원이 나갔을 때 방금 이름 바꾼 본 파일과
+            //  2~3초 전 .bak 이 둘 다 빈 파일일 수 있다(ext4 지연 할당).
+            byte[] bytes = new System.Text.UTF8Encoding(false).GetBytes(JsonConvert.SerializeObject(_gameData, s_saveJson));
+            using (var fs = new FileStream(tmp, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                fs.Write(bytes, 0, bytes.Length);
+                fs.Flush(true);
+            }
             if (File.Exists(_path))
             {
                 if (File.Exists(bak)) File.Delete(bak);
@@ -1693,11 +1701,20 @@ public class GameManager
         }
     }
 
-    /// <summary>세이브 파일 일체 삭제(에디터 초기화 메뉴용). 손상 격리본은 남긴다.</summary>
+    /// <summary>세이브 파일 일체 삭제(에디터 초기화 메뉴용). 손상 격리본은 남긴다.
+    /// 플레이 중이면 이번 세션의 저장도 멈춘다 — 안 그러면 모아 쓰기·종료 저장이 곧바로 다시 써서
+    /// "다시 Play = 첫 실행" 이 성립하지 않는다.</summary>
     public static void DeleteSaveFiles()
     {
+        if (Application.isPlaying) Managers.Game?.StopSavingThisSession();
         foreach (string f in new[] { SavePath, SavePath + ".tmp", SavePath + ".bak" })
             if (File.Exists(f)) File.Delete(f);
+    }
+
+    public void StopSavingThisSession()
+    {
+        _path = null;
+        _saveDirty = false;
     }
 
     public bool LoadGame()
@@ -1705,13 +1722,24 @@ public class GameManager
         // 본 파일 → (본 파일이 이름 바꾸기 도중 사라졌다면) 임시 파일 → 직전 백업 순으로 읽는다.
         //  읽을 수 없는 파일은 지우지 않고 옆으로 치운다 — 예전엔 예외가 그대로 새어 나가
         //  빈 데이터가 손상된 세이브를 덮어썼다.
+        if (_path == null) return false;
+
         GameData data = null;
         foreach (string candidate in new[] { _path, _path + ".tmp", _path + ".bak" })
         {
             if (!File.Exists(candidate)) continue;
+            string json = ReadWithRetry(candidate);
+            if (json == null)
+            {
+                // 파일은 있는데 못 읽는다(백신·클라우드 동기화가 잠금 등) — 손상이 아니다. 격리·새 게임 저장으로
+                //  멀쩡한 세이브를 밀어내지 않도록 이번 세션은 저장하지 않는다. 다음 실행에서 정상적으로 읽힌다.
+                Debug.LogError($"[Save] {Path.GetFileName(candidate)} 를 읽을 수 없어 이번 세션은 저장하지 않습니다.");
+                StopSavingThisSession();
+                return false;
+            }
             try
             {
-                data = JsonConvert.DeserializeObject<GameData>(File.ReadAllText(candidate), s_saveJson);
+                data = JsonConvert.DeserializeObject<GameData>(json, s_saveJson);
             }
             catch (Exception e)
             {
@@ -1735,6 +1763,17 @@ public class GameManager
         Managers.Ability.RestoreMinionRewards();
 
         return true;
+    }
+
+    static string ReadWithRetry(string path)
+    {
+        for (int i = 0; i < SAVE_READ_RETRIES; i++)
+        {
+            try { return File.ReadAllText(path); }
+            catch (IOException) { System.Threading.Thread.Sleep(100); }
+            catch (UnauthorizedAccessException) { System.Threading.Thread.Sleep(100); }
+        }
+        return null;
     }
 
     static void QuarantineSave(string path)

@@ -212,6 +212,9 @@ public class UIManager
         GameObject go = Managers.Resource.Instantiate($"{name}", pooling: false);
         UI_Toast popup = Util.GetOrAddComponent<UI_Toast>(go);
         ConfigurePopupAnimations(go);
+        // Screen Space - Camera 인데 카메라가 비어 있으면 Overlay 처럼 화면 전체(레터박스 여백 포함)에 그려진다.
+        var canvas = go.GetComponent<Canvas>();
+        if (canvas != null && canvas.worldCamera == null) canvas.worldCamera = Camera.main;
         popup.SetInfo(msg);
         _toastStack.Push(popup);
         go.transform.SetParent(Root.transform);

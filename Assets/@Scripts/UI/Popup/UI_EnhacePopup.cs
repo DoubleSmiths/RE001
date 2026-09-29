@@ -931,4 +931,11 @@ public class UI_EnhacePopup : UI_Popup
         _isClosing = true;
         Managers.UI.ClosePopupUI();
     }
+
+    // 닫기 버튼이 Button.onClick 으로 연결돼 공용 뒤로가기 탐색에 걸리지 않는다 — 같은 닫기 규칙을 쓴다.
+    public override bool OnBackPressed()
+    {
+        OnClickClose();
+        return true;
+    }
 }

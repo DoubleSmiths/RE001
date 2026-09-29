@@ -410,13 +410,9 @@ public static class IntegrationTestMenu
     [MenuItem("Test/Integration/Save - 세이브 데이터 삭제 (재시작 필요)", false, 501)]
     static void DeleteSave()
     {
-        string path = GameManager.SavePath;
-        if (System.IO.File.Exists(path))
-        {
-            GameManager.DeleteSaveFiles();   // 본 파일만 지우면 .bak 에서 복구된다
-            Debug.Log($"[Save] 삭제 완료: {path}  — Play 다시 누르면 첫 실행 상태");
-        }
-        else Debug.Log("[Save] 파일 없음");
+        // 본 파일이 없어도 .bak/.tmp 가 남아 있으면 다음 Play 에서 복구되므로 조건 없이 전부 지운다.
+        GameManager.DeleteSaveFiles();
+        Debug.Log($"[Save] 삭제 완료: {GameManager.SavePath}  — Play 다시 누르면 첫 실행 상태");
     }
 
     [MenuItem("Test/Integration/Save - 세이브 위치 열기", false, 502)]

@@ -99,7 +99,7 @@ public class UI_Popup : UI_Base
     static int BackRank(string name)
     {
         string n = name.ToLowerInvariant();
-        if (n.Contains("xbutton") || n.Contains("exit") || n.Contains("close")) return 1;
+        if (n.Contains("xbutton") || n.Contains("exit") || n.Contains("close") || n.Contains("cancel")) return 1;
         if (n.EndsWith("background")) return 2;
         return int.MaxValue;
     }

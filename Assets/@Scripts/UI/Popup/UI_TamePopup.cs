@@ -554,7 +554,12 @@ public class UI_TamePopup : UI_Popup
         Managers.UI.ShowPopupUI<UI_MinionInfoPopup>().SetInfo(_dataId);
     }
 
-    void OnClickExit() => OnClickBG();
+    // 연출 중(특히 만드라고라를 이미 쓴 뒤 포획 판정 전)에 나가면 아이템만 사라졌다 — 뒤로가기가 생기며 쉬워졌다.
+    void OnClickExit()
+    {
+        if (_busy) return;
+        OnClickBG();
+    }
 
     // ─────────────────────────────────────────────
     // 표기
