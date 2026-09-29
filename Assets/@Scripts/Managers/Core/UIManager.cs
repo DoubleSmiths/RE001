@@ -241,6 +241,55 @@ public class UIManager
         return _popupStack.Count;
     }
 
+    #region Back (안드로이드 뒤로가기 / PC ESC)
+    // 순서: 맨 위 팝업 닫기 → 건물 나가기·전투 귀환(화면의 그 버튼을 누른 것과 동일) →
+    //  최상위 화면에서는 안드로이드는 "한 번 더 누르면 종료", PC 는 설정창(종료 버튼 포함).
+    const float BACK_QUIT_WINDOW = 2f;
+    float _lastRootBackTime = -10f;
+
+    public void OnBackPressed()
+    {
+        if (_popupStack.Count > 0)
+        {
+            _popupStack.Peek().OnBackPressed();
+            return;
+        }
+
+        if (_sceneUI != null && ClickSceneBackButton())
+            return;
+
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Time.unscaledTime - _lastRootBackTime <= BACK_QUIT_WINDOW)
+            {
+                Managers.Game?.FlushSave();
+                Application.Quit();
+                return;
+            }
+            _lastRootBackTime = Time.unscaledTime;
+            ShowToast(Util.Localize("BackAgainToQuitText"));
+            return;
+        }
+
+        ShowPopupUI<UI_SettingPopup>();
+    }
+
+    bool ClickSceneBackButton()
+    {
+        UI_EventHandler exit = null, ret = null;
+        foreach (var h in _sceneUI.GetComponentsInChildren<UI_EventHandler>(false))
+        {
+            if (h.OnClickHandler == null) continue;
+            if (exit == null && h.name.EndsWith("ExitButton")) exit = h;       // 건물 안: 나가기
+            else if (ret == null && h.name == "ReturnButton") ret = h;         // 전투: 귀환(2단계 확인 내장)
+        }
+        var target = exit != null ? exit : ret;
+        if (target == null) return false;
+        target.OnPointerClick(new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current));
+        return true;
+    }
+    #endregion
+
     public void Clear()
     {
         _isClearing = true;

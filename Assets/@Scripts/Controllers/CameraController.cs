@@ -1,27 +1,82 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
+// 세로 화면 비율(1440x3040) 고정 — 화면비가 다르면 위아래나 좌우에 검은 여백을 둔다.
+//  UI 캔버스는 전부 Screen Space - Camera(메인 카메라)라 카메라 영역 안에 같이 갇힌다.
+//
+//  · 씬마다 메인 카메라에 자동으로 붙는다(예전엔 GameScene 에만 있어 타이틀이 16:9 로 늘어났다).
+//  · 창 크기 변경·전체화면 전환·회전 때 다시 계산한다(예전엔 Start 에서 한 번뿐).
+//  · URP 는 OnPreCull 을 부르지 않아 예전 GL.Clear 여백 지우기가 돌지 않았다 — 여백엔 이전 프레임
+//    찌꺼기가 남았다. 아무것도 그리지 않고 화면 전체를 검게 지우는 카메라를 뒤에 하나 둔다.
 public class FixedResolution : MonoBehaviour
 {
-    void Start()
+    public const float TARGET_ASPECT = 1440f / 3040f;
+
+    Camera _camera;
+    int _width, _height;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void Boot()
     {
-        Camera camera = GetComponent<Camera>();
-        Rect rect = camera.rect;
-        float scaleheight = ((float)Screen.width / Screen.height) / ((float)1440 / 3040); // (가로 / 세로)
-        float scalewidth = 1f / scaleheight;
-        if (scaleheight < 1)
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        AttachToMainCamera();
+    }
+
+    static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => AttachToMainCamera();
+
+    static void AttachToMainCamera()
+    {
+        Camera cam = Camera.main;
+        if (cam != null && cam.GetComponent<FixedResolution>() == null)
+            cam.gameObject.AddComponent<FixedResolution>();
+    }
+
+    void Awake()
+    {
+        _camera = GetComponent<Camera>();
+        CreateBarCamera();
+        Apply();
+    }
+
+    void Update()
+    {
+        if (Screen.width != _width || Screen.height != _height)
+            Apply();
+    }
+
+    void Apply()
+    {
+        _width = Screen.width;
+        _height = Screen.height;
+        if (_camera == null || _width <= 0 || _height <= 0) return;
+
+        float scale = ((float)_width / _height) / TARGET_ASPECT;
+        Rect rect = new Rect(0f, 0f, 1f, 1f);
+        if (scale < 1f)
         {
-            rect.height = scaleheight;
-            rect.y = (1f - scaleheight) / 2f;
+            rect.height = scale;                  // 화면이 더 길다 → 위아래 여백
+            rect.y = (1f - scale) / 2f;
         }
         else
         {
-            rect.width = scalewidth;
-            rect.x = (1f - scalewidth) / 2f;
+            rect.width = 1f / scale;              // 화면이 더 넓다(PC) → 좌우 여백
+            rect.x = (1f - rect.width) / 2f;
         }
-        camera.rect = rect;
+        _camera.rect = rect;
     }
 
-    void OnPreCull() => GL.Clear(true, true, Color.black);
+    void CreateBarCamera()
+    {
+        var go = new GameObject("@LetterboxCamera");
+        go.transform.SetParent(transform, false);
+        var bar = go.AddComponent<Camera>();
+        bar.cullingMask = 0;
+        bar.clearFlags = CameraClearFlags.SolidColor;
+        bar.backgroundColor = Color.black;
+        bar.depth = _camera.depth - 100;
+        bar.useOcclusionCulling = false;
+        bar.allowHDR = false;
+        bar.allowMSAA = false;
+    }
 }

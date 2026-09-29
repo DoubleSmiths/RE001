@@ -60,7 +60,29 @@ public class Managers : MonoBehaviour
         // 씬 Managers의 Awake가 lazy Init보다 먼저 오더라도 용량 설정은 반드시 수행한다.
         // 기존 전 구간 실측 용량을 유지하되 어떤 UI가 Tween을 만들기 전에 적용한다.
         DG.Tweening.DOTween.SetTweensCapacity(DOTWEEN_TWEENER_CAPACITY, DOTWEEN_SEQUENCE_CAPACITY);
+
+        // 플레이어 빌드 공통 — 안드로이드 기본 30fps, 방치 전투를 보는 중 화면 꺼짐,
+        //  릴리스 빌드의 Debug.Log 출력 비용(경고·에러는 남겨 둔다).
+        Application.targetFrameRate = 60;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        if (!Debug.isDebugBuild)
+            Debug.unityLogger.filterLogType = LogType.Warning;
+
+#if UNITY_STANDALONE && !UNITY_EDITOR
+        // PC 첫 실행: 세로 창을 모니터 높이의 85% 로 연다(고정 기본값은 1080p 에서 작업표시줄에 걸리거나
+        //  4K 에서 너무 작다). 이후엔 Unity 가 마지막 창 크기·전체화면 여부를 기억한다.
+        if (!PlayerPrefs.HasKey(PC_WINDOW_INIT_KEY))
+        {
+            PlayerPrefs.SetInt(PC_WINDOW_INIT_KEY, 1);
+            PlayerPrefs.Save();
+            int h = Mathf.RoundToInt(Display.main.systemHeight * 0.85f);
+            int w = Mathf.RoundToInt(h * FixedResolution.TARGET_ASPECT);
+            Screen.SetResolution(w, h, FullScreenMode.Windowed);
+        }
+#endif
     }
+
+    const string PC_WINDOW_INIT_KEY = "PC_WINDOW_INIT";
 
     void OnDestroy()
     {
@@ -80,6 +102,10 @@ public class Managers : MonoBehaviour
 
         // 세터들이 표시만 해 둔 저장을 주기적으로 한 번에 기록
         _game?.TickSave(Time.unscaledDeltaTime);
+
+        // 안드로이드 뒤로가기 = KeyCode.Escape. 데이터 준비(타이틀 프리로드) 전에는 받지 않는다.
+        if (Input.GetKeyDown(KeyCode.Escape) && _data.LocalizationDic.Count > 0)
+            _ui.OnBackPressed();
     }
 
     // 방치 보상 기준 시각 기록. 모바일은 종료 대신 일시정지로 빠지는 경우가 많아 둘 다 건다.
