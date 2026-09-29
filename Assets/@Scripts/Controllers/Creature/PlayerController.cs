@@ -774,6 +774,8 @@ public class PlayerController : CreatureController
         Managers.Relic?.ApplyTo(this);
         // v2 마을 사람들(ADR0036) — 연금술사 호감도만큼 회복력
         Managers.Bond?.ApplyTo(this);
+        // v2 시련(ADR0037) — 통과한 단계만큼 공격·체력 영구 배수
+        Managers.Promotion?.ApplyTo(this);
         // v2 핫타임 공격력 +20%(광고·크리스탈, 30분)
         Managers.Shop?.ApplyHotTime(this);
         // 재계산된 스탯에 아직 사용 중인 능력의 임시 버프를 다시 적용한다.

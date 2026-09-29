@@ -399,6 +399,81 @@
       "Key": "BOND_PERK_SHOPKEEPER",
       "Value": 2.0,
       "Desc": "상점 주인 호감도 단계당 마을 상점 가격 -%"
+    },
+    {
+      "Key": "PROMO_MAX_TIER",
+      "Value": 10.0,
+      "Desc": "시련 최대 단계"
+    },
+    {
+      "Key": "PROMO_LEVEL_STEP",
+      "Value": 30.0,
+      "Desc": "시련 N단계 도전 레벨 = 이 값 × N"
+    },
+    {
+      "Key": "PROMO_ATK_MULT",
+      "Value": 1.1,
+      "Desc": "시련 단계당 공격력 배수(단계만큼 거듭제곱)"
+    },
+    {
+      "Key": "PROMO_HP_MULT",
+      "Value": 1.1,
+      "Desc": "시련 단계당 최대 체력 배수(단계만큼 거듭제곱)"
+    },
+    {
+      "Key": "PROMO_BOSS_MULT",
+      "Value": 1.5,
+      "Desc": "시험관 = 사냥하던 스테이지 보스 능력치 × 이 값"
+    },
+    {
+      "Key": "PROMO_TIME_LIMIT",
+      "Value": 45.0,
+      "Desc": "시련 제한 시간(초, 맞붙은 뒤부터)"
+    },
+    {
+      "Key": "PROMO_CRYSTAL",
+      "Value": 50.0,
+      "Desc": "시련 통과 크리스탈 = 이 값 × 새 단계"
+    },
+    {
+      "Key": "ABYSS_START_MULT",
+      "Value": 1.2,
+      "Desc": "심연 1층 = 마지막 스테이지 몬스터 × 이 값"
+    },
+    {
+      "Key": "ABYSS_FLOOR_MULT",
+      "Value": 1.08,
+      "Desc": "심연 한 층마다 능력치·보상 배수"
+    },
+    {
+      "Key": "ABYSS_KILLS_PER_FLOOR",
+      "Value": 5.0,
+      "Desc": "심연 보통 층 처치 수"
+    },
+    {
+      "Key": "ABYSS_BOSS_EVERY",
+      "Value": 10.0,
+      "Desc": "심연 보스 층 간격"
+    },
+    {
+      "Key": "ABYSS_BOSS_MULT",
+      "Value": 1.5,
+      "Desc": "심연 보스 = 마지막 스테이지 보스 × 층 배수 × 이 값"
+    },
+    {
+      "Key": "ABYSS_BOSS_TIME",
+      "Value": 30.0,
+      "Desc": "심연 보스 제한 시간(초)"
+    },
+    {
+      "Key": "ABYSS_CRYSTAL_PER_FLOOR",
+      "Value": 5.0,
+      "Desc": "심연 처음 넘긴 층마다 크리스탈"
+    },
+    {
+      "Key": "ABYSS_BOSS_CRYSTAL_MULT",
+      "Value": 5.0,
+      "Desc": "심연 보스 층 크리스탈 배수"
     }
   ]
 }

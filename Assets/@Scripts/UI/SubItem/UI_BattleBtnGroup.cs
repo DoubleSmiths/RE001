@@ -838,8 +838,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         PlayerController player = Managers.Game.Player;
         if (player == null) return;
         player.StartBattle();
-        // v2 요일 던전(ADR0034) — 입장 예약이 있으면 사냥 대신 타임어택
-        _battleCoroutine = StartCoroutine(Managers.Dungeon != null && Managers.Dungeon.Begin() ? CoDungeon() : CoBattleLoop());
+        // v2 요일 던전(ADR0034)·시련·심연(ADR0037) — 입장 예약이 있으면 그 판, 없으면 사냥
+        System.Collections.IEnumerator loop =
+              Managers.Promotion != null && Managers.Promotion.Begin() ? CoPromotion()
+            : Managers.Abyss     != null && Managers.Abyss.Begin()     ? CoAbyss()
+            : Managers.Dungeon   != null && Managers.Dungeon.Begin()   ? CoDungeon()
+            : CoBattleLoop();
+        _battleCoroutine = StartCoroutine(loop);
     }
 
     // 맞붙는 순간 HP 바 + 전투 기록(사냥·던전 공통)
@@ -964,6 +969,50 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     const float  STAGE_ADVANCE_DELAY = 1.5f;       // 돌파 알림을 읽을 틈을 두고 다음 스테이지로
     bool _stageAdvancing;
 
+    // 보스 한 판(스테이지 보스·시련·심연 보스 공용) — 알림·보스 곡·체력 채움·HP 바, 제한 시간은 맞붙은 뒤부터 잰다.
+    //  전투 정지(도감 등) 중엔 Time.deltaTime 이 0 이라 제한 시간도 멈춘다. 결과는 _bossKilled / _bossPlayerDown 에 남긴다
+    //  (코루틴은 값을 돌려주지 못한다). 지면 보스는 물러나고(쓰러진 뒤 동행 미니몬이 마저 잡아 보상이 나가지 않게),
+    //  플레이어가 쓰러진 게 아니면 HP 바를 닫고 사냥 곡으로 돌린다(쓰러졌으면 마을 귀환이 정리한다).
+    bool _bossKilled, _bossPlayerDown;
+
+    System.Collections.IEnumerator CoFightBoss(MonsterController boss, float limit, string appearText)
+    {
+        _bossKilled = _bossPlayerDown = false;
+        UI_MonsterHPBar bar = null;
+        boss.OnDied += () => _bossKilled = true;
+        boss.OnEngaged += () =>
+        {
+            bar = Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform);
+            bar.SetInfo(boss);
+            StartBattleLog(boss);
+        };
+
+        Managers.UI.ShowToast(appearText);
+        Managers.Sound?.PlayBgm(BGM_BOSS);
+        PlayerController player = Managers.Game.Player;
+        if (player != null) player.RefillHp();   // 보스전은 가득 찬 체력으로 — 벽은 제한 시간이다
+
+        float left = limit;
+        Managers.Game.SetBossFight(true, left, limit);
+        while (!_bossKilled && left > 0f)
+        {
+            if (boss == null) break;   // 다른 경로로 치워졌다
+            if (player == null || player.State == State.Dead) { _bossPlayerDown = true; break; }
+            if (boss.HasEngaged) left -= Time.deltaTime;
+            Managers.Game.SetBossFight(true, Mathf.Max(0f, left), limit);
+            yield return null;
+        }
+        Managers.Game.SetBossFight(false);
+
+        if (!_bossKilled)
+        {
+            if (boss != null) boss.Retreat();
+            if (_bossPlayerDown) yield break;
+            if (bar != null) bar.PlayCloseAnimation();
+        }
+        Managers.Sound?.PlayBgm(BGM_BATTLE);
+    }
+
     System.Collections.IEnumerator CoStageBoss(int nodeId, Vector3 spawnPos, Transform monsterRoot)
     {
         MonsterController boss = Managers.Object.SpawnStageBoss(nodeId, spawnPos);
@@ -974,45 +1023,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             yield break;
         }
 
-        bool killed = false;
-        UI_MonsterHPBar bar = null;
-        boss.OnDied += () => killed = true;
-        boss.OnEngaged += () =>
-        {
-            bar = Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform);
-            bar.SetInfo(boss);
-            StartBattleLog(boss);
-        };
-
-        Managers.UI.ShowToast(Util.Localize("BossAppearText"));
-        Managers.Sound?.PlayBgm(BGM_BOSS);
-        PlayerController player = Managers.Game.Player;
-        if (player != null) player.RefillHp();   // 보스전은 가득 찬 체력으로 — 벽은 제한 시간이다
-
-        // 전투 정지(도감 등) 중엔 Time.deltaTime 이 0 이라 제한 시간도 멈춘다.
-        float limit = Managers.Data.Balance(BalanceKey.BOSS_TIME_LIMIT, 30f);
-        float left  = limit;
-        bool playerDown = false;
-        Managers.Game.SetBossFight(true, left, limit);
-        while (!killed && left > 0f)
-        {
-            if (boss == null) break;   // 다른 경로로 치워졌다
-            if (player == null || player.State == State.Dead) { playerDown = true; break; }
-            if (boss.HasEngaged) left -= Time.deltaTime;
-            Managers.Game.SetBossFight(true, Mathf.Max(0f, left), limit);
-            yield return null;
-        }
-        Managers.Game.SetBossFight(false);
-
+        yield return CoFightBoss(boss, Managers.Data.Balance(BalanceKey.BOSS_TIME_LIMIT, 30f), Util.Localize("BossAppearText"));
+        bool killed = _bossKilled;
         if (!killed)
         {
             Managers.Game.FailStage(nodeId);
             Managers.UI.ShowToast(Util.Localize("BossFailText"));
-            if (boss != null) boss.Retreat();   // 쓰러진 뒤 동행 미니몬이 마저 잡아 보상이 나가지 않게 여기서도 물린다
-            if (playerDown) yield break;         // 마을 귀환이 HP 바·곡을 정리한다
-
-            if (bar != null) bar.PlayCloseAnimation();
-            Managers.Sound?.PlayBgm(BGM_BATTLE);
+            if (_bossPlayerDown) yield break;         // 마을 귀환이 HP 바·곡을 정리한다
             yield return new WaitUntil(() => monsterRoot.childCount == 0);
             yield break;
         }
@@ -1021,7 +1038,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         Managers.UI.ShowToast(firstClear
             ? string.Format(Util.Localize("StageClearFormat"), crystals)
             : Util.Localize("BossDefeatText"));
-        Managers.Sound?.PlayBgm(BGM_BATTLE);
         yield return new WaitUntil(() => monsterRoot.childCount == 0);
 
         // 다음 스테이지가 아직 안 깬 곳이고 열려 있으면 그리로 간다(개척). 이미 깬 곳으로는 옮기지 않는다 —
@@ -1101,9 +1117,92 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _battleCoroutine = StartCoroutine(CoBattleLoop());   // 그 스테이지에서 사냥을 이어 간다
     }
 
+    // ────────────────────────────────────────
+    //  v2 시련(승급 시험, ADR0037, 설계서 4.11) — 요구 레벨 스테이지(ExamNode)의 보스를 PROMO_BOSS_MULT 배로 키운 시험관, PROMO_TIME_LIMIT 초.
+    //   싸우는 곳은 사냥하던 스테이지. 이기면 단계 +1(공격·체력 영구 배수), 지면 물러난다. 끝나면 그 스테이지에서 사냥을 이어 간다.
+    // ────────────────────────────────────────
+    System.Collections.IEnumerator CoPromotion()
+    {
+        var promo = Managers.Promotion;
+        Transform monsterRoot = Managers.Object.MonsterTransform;
+        // 시험관이 나오기 전 1초도 막대는 시련 타이머(가득) — 사냥 스테이지의 '보스 도전' 깜빡임이 끼지 않게
+        Managers.Game.SetBossFight(true, promo.TimeLimit, promo.TimeLimit);
+        yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
+        PlayerController player = Managers.Game.Player;
+        if (player == null) yield break;   // 그룹이 사라지는 중 — EndBattle 이 막대·시련을 정리한다
+        var pos = new Vector3(player.transform.position.x + MONSTER_SPAWN_OFFSET_X, Define.GROUND_Y, 0f);
+        MonsterController boss = Managers.Object.SpawnStageBoss(promo.ExamNode, pos);
+        if (boss == null)
+        {
+            Managers.Game.SetBossFight(false);
+            promo.Finish(false);
+            _battleCoroutine = StartCoroutine(CoBattleLoop());
+            yield break;
+        }
+        boss.ScaleStats(promo.BossMult);
+
+        yield return CoFightBoss(boss, promo.TimeLimit,
+            string.Format(Util.Localize("PromotionStartFormat"), promo.NextTier, Mathf.RoundToInt(promo.TimeLimit)));
+        promo.Finish(_bossKilled);
+        if (_bossPlayerDown) yield break;
+        yield return new WaitUntil(() => monsterRoot.childCount == 0);
+        _battleCoroutine = StartCoroutine(CoBattleLoop());
+    }
+
+    // ────────────────────────────────────────
+    //  v2 심연 (ADR0037, 설계서 4.11) — 마지막 스테이지 몬스터를 층 배수로 키워 끝없이. 층마다 ABYSS_KILLS_PER_FLOOR 마리,
+    //   ABYSS_BOSS_EVERY 층마다 보스(놓치면 끝). 쓰러지거나 귀환하면 EndBattle 이 끝낸다. 처치 보상도 층 배수만큼.
+    // ────────────────────────────────────────
+    System.Collections.IEnumerator CoAbyss()
+    {
+        var abyss = Managers.Abyss;
+        Transform monsterRoot = Managers.Object.MonsterTransform;
+        float spawnDelay = Managers.Data.Balance(BalanceKey.DUNGEON_SPAWN_DELAY, 0.3f);
+        Managers.UI.ShowToast(string.Format(Util.Localize("AbyssStartFormat"), abyss.Best));
+        yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
+
+        while (abyss.IsRunning)
+        {
+            PlayerController player = Managers.Game.Player;
+            if (player == null || player.State == State.Dead) yield break;   // 마을 귀환 → EndBattle 이 끝낸다
+            var pos = new Vector3(player.transform.position.x + DUNGEON_SPAWN_OFFSET_X, Define.GROUND_Y, 0f);
+            float mult = abyss.FloorMult(abyss.Floor);
+
+            if (abyss.IsBossFloor)
+            {
+                MonsterController boss = Managers.Object.SpawnStageBoss(abyss.Node, pos);
+                if (boss == null) { abyss.Finish(); break; }
+                boss.ScaleStats(mult * abyss.BossMult, mult);
+                yield return CoFightBoss(boss, abyss.BossTime, string.Format(Util.Localize("AbyssBossFormat"), abyss.Floor));
+                if (!_bossKilled) { abyss.Finish(); break; }
+                abyss.NextFloor();
+                yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            }
+            else
+            {
+                MonsterController mc = Managers.Object.SpawnMonster(Managers.Object.PickFieldMonsterId(2001), pos);
+                if (mc != null)
+                {
+                    mc.ScaleStats(mult, mult);
+                    ShowHpBarOnEngage(mc);
+                    mc.OnDied += abyss.AddKill;
+                }
+                yield return new WaitUntil(() => monsterRoot.childCount == 0 || !abyss.IsRunning);
+            }
+            yield return new WaitForSeconds(spawnDelay);
+        }
+
+        if (_bossPlayerDown) yield break;
+        yield return new WaitForSeconds(DUNGEON_AFTER_DELAY);
+        yield return new WaitUntil(() => monsterRoot.childCount == 0);
+        _battleCoroutine = StartCoroutine(CoBattleLoop());   // 마지막 스테이지에서 사냥을 이어 간다
+    }
+
     void EndBattle()
     {
         Managers.Dungeon?.Finish();   // 던전 도중 쓰러짐·귀환·이동 — 그때까지 잡은 만큼(여러 번 불려도 한 번)
+        Managers.Promotion?.Finish(false);   // 시련 도중 귀환·쓰러짐은 실패(ADR0037)
+        Managers.Abyss?.Finish();
         // ⚠️ `Player?.` 를 쓰면 안 된다. Unity에서 파괴된 오브젝트는 C# null이 아니라
         //  "fake null"이라 널 조건 연산자를 그대로 통과하고, 그 뒤 접근에서
         //  MissingReferenceException이 난다(씬 전환·플레이 종료 시 실제로 발생했다).

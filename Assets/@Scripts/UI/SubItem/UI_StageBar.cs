@@ -5,6 +5,7 @@ using static Define;
 //  전투 구역에서만 보인다. 사냥 중엔 '1-5 산들바람 숲 심층' + 처치 수, 보스전엔 남은 시간(빨간 막대).
 //  보스에게 져서 자동 도전이 꺼지면 막대가 금색으로 깜빡이고, 누르면 다음 몬스터 대신 보스가 나온다.
 //  이미 돌파한 스테이지는 이름이 금색이다. 요일 던전(ADR0034) 중엔 던전 이름 + 남은 시간(빨간 막대) + 처치 수.
+//  심연(ADR0037) 중엔 '심연 N층' + 그 층 처치 수(보스 층은 보스 타이머), 시련 중엔 '시련 N단계' + 보스 타이머.
 public class UI_StageBar : UI_Base
 {
     enum Texts
@@ -19,7 +20,7 @@ public class UI_StageBar : UI_Base
         StageGaugeBossFill,   // 보스 남은 시간(빨강 — 원래 HP 막대 그림)
     }
 
-    enum Mode { Hunting, BossNext, ChallengeReady, BossFight, Dungeon }
+    enum Mode { Hunting, BossNext, ChallengeReady, BossFight, Dungeon, Abyss }
 
     static readonly Color NAME_CLEARED = new Color32(0xFF, 0xE0, 0x8A, 0xFF);
     static readonly Color TEXT_READY   = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
@@ -27,7 +28,7 @@ public class UI_StageBar : UI_Base
     const float BLINK_HZ = 2f;      // 도전 대기 깜빡임 — 켜짐/꺼짐 두 단계만(매 프레임 색을 바꾸면 HUD 캔버스가 매번 다시 배칭된다)
 
     CanvasGroup _group;
-    int  _shownNode = -1, _shownKills = -1, _shownTenths = -1;
+    int  _shownNode = -1, _shownKills = -1, _shownTenths = -1, _shownFloor = -1, _shownTier = -1;
     Mode _shownMode = (Mode)(-1);
     bool _dirty = true;
     bool _shown = true;
@@ -81,6 +82,7 @@ public class UI_StageBar : UI_Base
     {
         if (Managers.Dungeon != null && Managers.Dungeon.IsRunning) return Mode.Dungeon;
         if (g.BossFightActive) return Mode.BossFight;
+        if (Managers.Abyss != null && Managers.Abyss.IsRunning) return Mode.Abyss;
         if (!g.IsBossReady(node)) return Mode.Hunting;
         return g.BossAutoChallenge ? Mode.BossNext : Mode.ChallengeReady;
     }
@@ -93,7 +95,11 @@ public class UI_StageBar : UI_Base
 
         int node = g.CurrentTravelAreaId;
         Mode mode = CurrentMode(g, node);
-        bool show = g.InBattleArea && (mode == Mode.Dungeon || g.TryGetStageNumber(node, out _, out _));
+        var abyss = Managers.Abyss;
+        var promo = Managers.Promotion;
+        int floor = abyss != null && abyss.IsRunning ? abyss.Floor : 0;      // 심연 층(아니면 0)
+        int tier  = promo != null && promo.IsRunning ? promo.NextTier : 0;   // 시련 단계(아니면 0)
+        bool show = g.InBattleArea && (mode == Mode.Dungeon || floor > 0 || g.TryGetStageNumber(node, out _, out _));
         if (show != _shown)
         {
             _shown = show;
@@ -103,16 +109,22 @@ public class UI_StageBar : UI_Base
         if (!show) return;
 
         var dungeon = Managers.Dungeon;
-        int kills  = mode == Mode.Dungeon ? dungeon.RunKills : g.StageKills(node);
+        int kills  = mode == Mode.Dungeon ? dungeon.RunKills : mode == Mode.Abyss ? abyss.FloorKills : g.StageKills(node);
         int tenths = mode == Mode.BossFight ? Mathf.CeilToInt(g.BossTimeLeft * 10f)
                    : mode == Mode.Dungeon   ? Mathf.CeilToInt(dungeon.TimeLeft * 10f) : 0;
 
-        if (_dirty || node != _shownNode || mode != _shownMode)
+        if (_dirty || node != _shownNode || mode != _shownMode || floor != _shownFloor || tier != _shownTier)
         {
             var name = GetText((int)Texts.StageNameTxt);
             if (mode == Mode.Dungeon)
             {
                 name.text  = Util.Localize(DungeonManager.NAME_KEYS[(int)dungeon.RunKind]);
+                name.color = NAME_CLEARED;
+            }
+            else if (floor > 0 || tier > 0)
+            {
+                name.text  = floor > 0 ? string.Format(Util.Localize("AbyssHudFormat"), floor)
+                                       : string.Format(Util.Localize("PromotionHudFormat"), tier);
                 name.color = NAME_CLEARED;
             }
             else
@@ -135,7 +147,7 @@ public class UI_StageBar : UI_Base
             }
         }
 
-        _shownNode = node; _shownMode = mode; _shownKills = kills; _shownTenths = tenths;
+        _shownNode = node; _shownMode = mode; _shownKills = kills; _shownTenths = tenths; _shownFloor = floor; _shownTier = tier;
         _dirty = false;
     }
 
@@ -163,6 +175,11 @@ public class UI_StageBar : UI_Base
                 var d = Managers.Dungeon;
                 boss.fillAmount = d.TimeLimit > 0f ? d.TimeLeft / d.TimeLimit : 0f;
                 text.text = string.Format(Util.Localize("DungeonHudFormat"), tenths / 10f, kills);
+                break;
+            case Mode.Abyss:
+                int perFloor = Managers.Abyss.KillsPerFloor;
+                fill.fillAmount = (float)kills / perFloor;
+                text.text = string.Format(Util.Localize("StageKillFormat"), kills, perFloor);
                 break;
             case Mode.BossNext:
                 fill.fillAmount = 1f;

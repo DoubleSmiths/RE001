@@ -184,6 +184,9 @@ public class GameData
     public RelicSaveData Relic = new RelicSaveData();
     // v2 마을 사람들
     public BondSaveData Bond = new BondSaveData();
+    // v2 시련(승급 시험) 단계 · 심연 최고 층(ADR0037)
+    public int PromotionTier;
+    public int AbyssBest;
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -1508,6 +1511,35 @@ public class GameManager
     public DungeonSaveData DungeonSave => _gameData.Dungeon;
     public RelicSaveData   RelicSave   => _gameData.Relic;
     public BondSaveData    BondSave    => _gameData.Bond;
+
+    // v2 시련(승급 시험)·심연(ADR0037)
+    public int PromotionTier
+    {
+        get => _gameData.PromotionTier;
+        set { _gameData.PromotionTier = Mathf.Max(0, value); SaveGame(); }
+    }
+    public int AbyssBest
+    {
+        get => _gameData.AbyssBest;
+        set { _gameData.AbyssBest = Mathf.Max(0, value); SaveGame(); }
+    }
+    public int  LastStageNode    => StageOrder.Count > 0 ? StageOrder[StageOrder.Count - 1] : 0;
+    public bool AllStagesCleared => StageOrder.Count > 0 && StageOrder.TrueForAll(IsStageCleared);   // 여정 잠금은 레벨·퀘스트라 건너뛴 스테이지가 있을 수 있다
+
+    // 레벨 조건(LEVEL_REQUIRED)이 이 레벨 이하인 마지막 스테이지 — 시련 시험관의 능력치 기준(ADR0037)
+    public int StageForLevel(int level)
+    {
+        int best = FirstStageNode;
+        foreach (int id in StageOrder)
+        {
+            int need = 0;
+            if (Managers.Data.TravelConditionDic != null && Managers.Data.TravelConditionDic.TryGetValue(id, out var conds))
+                foreach (var c in conds)
+                    if (c.Type == "LEVEL_REQUIRED") need = Mathf.Max(need, c.Value);
+            if (need <= level) best = id;
+        }
+        return best;
+    }
     public int LastBattleAreaId => _gameData.LastBattleAreaId;
     public int FirstStageNode => StageOrder.Count > 0 ? StageOrder[0] : 0;
 
@@ -2193,6 +2225,8 @@ public class GameManager
         d.Bond.Gifts            = Fit(d.Bond.Gifts, 5);
         d.Bond.Requests        ??= new List<BondRequest>();
         d.Bond.Requests.RemoveAll(r => r == null);
+        d.PromotionTier         = Mathf.Max(0, d.PromotionTier);   // 시련(ADR0037) — 위쪽은 PromotionManager 가 MaxTier 로 자른다
+        d.AbyssBest             = Mathf.Max(0, d.AbyssBest);
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

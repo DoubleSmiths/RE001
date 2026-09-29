@@ -1971,6 +1971,22 @@ public class Define
         public const string BOND_PERK_BLACKSMITH        = "BOND_PERK_BLACKSMITH";
         public const string BOND_PERK_PRIEST            = "BOND_PERK_PRIEST";
         public const string BOND_PERK_SHOPKEEPER        = "BOND_PERK_SHOPKEEPER";
+        // 시련(승급 시험)·심연(ADR0037)
+        public const string PROMO_MAX_TIER          = "PROMO_MAX_TIER";
+        public const string PROMO_LEVEL_STEP        = "PROMO_LEVEL_STEP";
+        public const string PROMO_ATK_MULT          = "PROMO_ATK_MULT";
+        public const string PROMO_HP_MULT           = "PROMO_HP_MULT";
+        public const string PROMO_BOSS_MULT         = "PROMO_BOSS_MULT";
+        public const string PROMO_TIME_LIMIT        = "PROMO_TIME_LIMIT";
+        public const string PROMO_CRYSTAL           = "PROMO_CRYSTAL";
+        public const string ABYSS_START_MULT        = "ABYSS_START_MULT";
+        public const string ABYSS_FLOOR_MULT        = "ABYSS_FLOOR_MULT";
+        public const string ABYSS_KILLS_PER_FLOOR   = "ABYSS_KILLS_PER_FLOOR";
+        public const string ABYSS_BOSS_EVERY        = "ABYSS_BOSS_EVERY";
+        public const string ABYSS_BOSS_MULT         = "ABYSS_BOSS_MULT";
+        public const string ABYSS_BOSS_TIME         = "ABYSS_BOSS_TIME";
+        public const string ABYSS_CRYSTAL_PER_FLOOR = "ABYSS_CRYSTAL_PER_FLOOR";
+        public const string ABYSS_BOSS_CRYSTAL_MULT = "ABYSS_BOSS_CRYSTAL_MULT";
     }
     #endregion
 

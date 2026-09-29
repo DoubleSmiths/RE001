@@ -99,6 +99,8 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Dungeon != null) Managers.Dungeon.OnChanged += Refresh;
         if (Managers.Relic != null) Managers.Relic.OnChanged += Refresh;
         if (Managers.Bond != null) Managers.Bond.OnChanged += Refresh;
+        if (Managers.Promotion != null) Managers.Promotion.OnChanged += Refresh;
+        if (Managers.Abyss != null) Managers.Abyss.OnChanged += Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged += Refresh;
@@ -123,6 +125,8 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Dungeon != null) Managers.Dungeon.OnChanged -= Refresh;
         if (Managers.Relic != null) Managers.Relic.OnChanged -= Refresh;
         if (Managers.Bond != null) Managers.Bond.OnChanged -= Refresh;
+        if (Managers.Promotion != null) Managers.Promotion.OnChanged -= Refresh;
+        if (Managers.Abyss != null) Managers.Abyss.OnChanged -= Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged -= Refresh;
@@ -163,8 +167,9 @@ public class UI_MissionPopup : UI_Popup
             _tabTexts[i].text  = Util.Localize(TAB_KEYS[i]);
             _tabTexts[i].color = (int)_tab == i ? TAB_ON : TAB_OFF;
         }
-        // 오늘 무료 입장이 남은 던전이 있으면 탭 이름 옆에 빨간 '!'
-        if ((int)Tab.Dungeon < _tabTexts.Count && Managers.Dungeon != null && Managers.Dungeon.HasFreeEntry)
+        // 오늘 무료 입장이 남은 던전이나 도전할 수 있는 시련(ADR0037)이 있으면 탭 이름 옆에 빨간 '!'
+        if ((int)Tab.Dungeon < _tabTexts.Count && ((Managers.Dungeon != null && Managers.Dungeon.HasFreeEntry)
+                                                   || (Managers.Promotion != null && Managers.Promotion.IsChallengeReady)))
             _tabTexts[(int)Tab.Dungeon].text += TAB_ALERT;
         if ((int)Tab.Town < _tabTexts.Count && Managers.Bond != null && Managers.Bond.HasReady)
             _tabTexts[(int)Tab.Town].text += TAB_ALERT;
@@ -427,18 +432,34 @@ public class UI_MissionPopup : UI_Popup
                 SetRow(n++, left, Crystal(d.CrystalCost), CrystalColor(d.CrystalCost), 1f, () => EnterDungeon(kind, DungeonManager.Pay.Crystal));
         }
         SetRow(n++, string.Format(Util.Localize("DungeonHelpFormat"), Mathf.RoundToInt(d.TimeLimit)), "", TEXT_DONE, 1f, null);
+
+        // 시련(ADR0037) — 레벨 PROMO_LEVEL_STEP 마다 한 단계, 통과하면 공격·체력 영구 배수
+        var pm = Managers.Promotion;
+        string trial = string.Format(Util.Localize("PromotionRowFormat"), pm.Tier, pm.AtkMult(pm.Tier));
+        if (pm.IsMax)             SetRow(n++, trial, Util.Localize("PromotionMaxText"), TEXT_DONE, 1f, null);
+        else if (pm.CanChallenge) SetRow(n++, trial, Util.Localize("PromotionChallengeText"), TEXT_READY, 1f, () => EnterBattle(pm.TryEnter));
+        else                      SetRow(n++, trial, string.Format(Util.Localize("PromotionReqFormat"), pm.RequiredLevel(pm.NextTier)), TEXT_DONE, 1f, null);
+        // 심연(ADR0037) — 모든 스테이지를 돌파하면 열리는 끝없는 층
+        var ab = Managers.Abyss;
+        string abyss = string.Format(Util.Localize("AbyssRowFormat"), ab.Best);
+        if (ab.IsUnlocked) SetRow(n++, abyss, Util.Localize("PromotionChallengeText"), TEXT_READY, 1f, () => EnterBattle(ab.TryEnter));
+        else               SetRow(n++, abyss, Util.Localize("AbyssLockedText"), TEXT_DONE, ROW_DONE_ALPHA, null);
         return n;
     }
 
     // 값을 치르고 창을 닫은 뒤 전투로 — 새 전투 그룹이 뜨면서 던전이 시작된다(UI_BattleBtnGroup.CoDungeon)
     void EnterDungeon(DungeonKind k, DungeonManager.Pay pay)
+        => EnterBattle(() => Managers.Dungeon.TryEnter(k, pay),
+            pay == DungeonManager.Pay.Crystal && Managers.Game.Crystal < Managers.Dungeon.CrystalCost ? "NotEnoughCrystalText" : "DungeonBusyText");
+
+    // 입장 예약(요일 던전·승급 시험·심연) 후 창을 닫고 전투로 — 새 전투 그룹의 StartBattle 이 예약된 판을 시작한다
+    void EnterBattle(Func<bool> tryEnter, string failKey = "DungeonBusyText")
     {
         var scene = Managers.UI.SceneUI as UI_GameScene;
-        if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle) || !Managers.Dungeon.TryEnter(k, pay))
+        if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle) || !tryEnter())
         {
             Managers.Sound?.PlaySFX("SFX_Fail");
-            Managers.UI.ShowToast(Util.Localize(pay == DungeonManager.Pay.Crystal && Managers.Game.Crystal < Managers.Dungeon.CrystalCost
-                ? "NotEnoughCrystalText" : "DungeonBusyText"));
+            Managers.UI.ShowToast(Util.Localize(failKey));
             return;
         }
         Managers.Sound?.PlaySFX("SFX_Success2");

@@ -80,6 +80,9 @@ public class DungeonManager
     public bool TryEnter(DungeonKind k, Pay pay)
     {
         if (IsRunning || _pending) return false;
+        // 시련·심연(ADR0037)과 한꺼번에 예약하지 않는다 — 새 전투 그룹은 하나만 시작한다
+        if (Managers.Promotion != null && (Managers.Promotion.IsPending || Managers.Promotion.IsRunning)) return false;
+        if (Managers.Abyss != null && (Managers.Abyss.IsPending || Managers.Abyss.IsRunning)) return false;
         int node = PickNode();
         if (node <= 0) return false;
         bool paid;

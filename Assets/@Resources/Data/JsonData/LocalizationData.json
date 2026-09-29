@@ -10182,8 +10182,8 @@
     },
     {
       "TextKey": "DungeonTitleText",
-      "Kor": "요일 던전",
-      "Eng": "DAILY DUNGEONS"
+      "Kor": "던전",
+      "Eng": "DUNGEONS"
     },
     {
       "TextKey": "DungeonGoldText",
@@ -10629,6 +10629,76 @@
       "TextKey": "MissionBondFormat",
       "Kor": "배달 의뢰 {0}건",
       "Eng": "Errands x{0}"
+    },
+    {
+      "TextKey": "PromotionRowFormat",
+      "Kor": "시련 {0}단계 · 공격·체력 ×{1:0.##}",
+      "Eng": "TRIAL RANK {0} · ATK/HP x{1:0.##}"
+    },
+    {
+      "TextKey": "PromotionReqFormat",
+      "Kor": "Lv.{0} 필요",
+      "Eng": "NEEDS Lv.{0}"
+    },
+    {
+      "TextKey": "PromotionChallengeText",
+      "Kor": "도전",
+      "Eng": "CHALLENGE"
+    },
+    {
+      "TextKey": "PromotionMaxText",
+      "Kor": "최고 단계",
+      "Eng": "MAX RANK"
+    },
+    {
+      "TextKey": "PromotionHudFormat",
+      "Kor": "시련 {0}단계",
+      "Eng": "TRIAL {0}"
+    },
+    {
+      "TextKey": "PromotionStartFormat",
+      "Kor": "시련 {0}단계! {1}초 안에 시험관을 쓰러뜨려라",
+      "Eng": "TRIAL {0}! DEFEAT THE EXAMINER IN {1}s"
+    },
+    {
+      "TextKey": "PromotionPassFormat",
+      "Kor": "시련 {0}단계 통과! 공격·체력 ×{1:0.##}",
+      "Eng": "TRIAL {0} PASSED! ATK/HP x{1:0.##}"
+    },
+    {
+      "TextKey": "PromotionFailText",
+      "Kor": "시련 실패 — 더 강해져서 다시 도전",
+      "Eng": "TRIAL FAILED - GET STRONGER AND RETRY"
+    },
+    {
+      "TextKey": "AbyssRowFormat",
+      "Kor": "심연 · 최고 {0}층",
+      "Eng": "ABYSS · BEST F{0}"
+    },
+    {
+      "TextKey": "AbyssLockedText",
+      "Kor": "전 스테이지 돌파",
+      "Eng": "CLEAR ALL STAGES"
+    },
+    {
+      "TextKey": "AbyssHudFormat",
+      "Kor": "심연 {0}층",
+      "Eng": "ABYSS F{0}"
+    },
+    {
+      "TextKey": "AbyssStartFormat",
+      "Kor": "심연으로 (최고 {0}층)",
+      "Eng": "INTO THE ABYSS (BEST F{0})"
+    },
+    {
+      "TextKey": "AbyssBossFormat",
+      "Kor": "심연 {0}층 수문장!",
+      "Eng": "ABYSS F{0} GUARDIAN!"
+    },
+    {
+      "TextKey": "AbyssResultFormat",
+      "Kor": "심연 {0}층에서 멈췄다 · 최고 {1}층 · 크리스탈 +{2}",
+      "Eng": "STOPPED AT F{0} · BEST F{1} · +{2} CRYSTALS"
     }
   ]
 }

@@ -165,6 +165,22 @@ public class MonsterController : CreatureController
         gameObject.AddComponent<BossOutline>();
     }
 
+    // v2 시련·심연(ADR0037) — 능력치와 처치 보상을 배수만큼 키운다(몬스터는 풀링하지 않아 되돌릴 필요가 없다).
+    //  방어는 √배수 — 피해에서 그대로 빼는 값(BattleMath)이라 같은 배수로 키우면 깊은 층에서 '피해 1' 벽이 된다.
+    //  골드는 상한 — 끝없는 층에서 int 를 넘으면 음수가 되어 골드가 사라진다(핫타임·유물 배수를 곱해도 int 안).
+    const float MAX_REWARD_GOLD = int.MaxValue / 16f;
+
+    public void ScaleStats(float statMult, float rewardMult = 1f)
+    {
+        MaxHp       *= statMult;
+        Hp           = MaxHp;
+        PhysicalAtk *= statMult;
+        MagicAtk    *= statMult;
+        Def         *= Mathf.Sqrt(statMult);
+        _rewardExp  *= rewardMult;
+        _rewardGold  = Mathf.RoundToInt(Mathf.Min(_rewardGold * rewardMult, MAX_REWARD_GOLD));
+    }
+
     // 제한 시간 초과 — 싸움을 멈추고 흐려지며 사라진다(보상 없음). 교전이 풀려 플레이어는 다시 달린다.
     public void Retreat()
     {

@@ -19,6 +19,8 @@ public class Managers : MonoBehaviour
     DungeonManager  _dungeon  = new DungeonManager();   // v2 요일 던전(ADR0034)
     RelicManager    _relic    = new RelicManager();     // v2 유물 소환(ADR0035)
     BondManager     _bond     = new BondManager();      // v2 마을 사람들(ADR0036)
+    PromotionManager _promotion = new PromotionManager(); // v2 시련(승급 시험, ADR0037)
+    AbyssManager    _abyss    = new AbyssManager();     // v2 심연(ADR0037)
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -33,6 +35,8 @@ public class Managers : MonoBehaviour
     public static DungeonManager  Dungeon  { get { return Instance?._dungeon; } }
     public static RelicManager    Relic    { get { return Instance?._relic; } }
     public static BondManager     Bond     { get { return Instance?._bond; } }
+    public static PromotionManager Promotion { get { return Instance?._promotion; } }
+    public static AbyssManager    Abyss    { get { return Instance?._abyss; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 
