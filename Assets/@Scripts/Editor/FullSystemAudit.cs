@@ -615,13 +615,19 @@ public static class FullSystemAudit
             if (ids.Count == 0) fail.Add("[액티브] 장착했는데 스킬바 슬롯이 비어 있다");
             else
             {
-                Managers.Game.Player.StartBattle();
+                var player = Managers.Game.Player;
+                player.StartBattle();
+                // 회복 능력은 HP 가 가득하면 막히는 게 설계다(스킬바 'HP 가득' 문구). 앞 검사가 HP 를 채워 두면
+                //  첫 칸(6001 회복)이 정상적으로 거절돼 '발동 실패'로 오탐했다 → HP 를 깎아 조건을 만든다.
+                float hpBefore = player.Hp;
+                player.Hp = Mathf.Max(1f, player.MaxHp * 0.5f);
                 int id = ids[0];
-                if (!runner.UseSkill(id)) fail.Add($"[액티브] {id} 발동 실패(전투 중·쿨 0인데)");
+                if (!runner.UseSkill(id)) fail.Add($"[액티브] {id} 발동 실패(전투 중·쿨 0·HP 50%인데)");
                 else if (runner.GetCooldownRemain(id) <= 0f) fail.Add($"[액티브] {id} 발동 후 쿨이 안 걸린다");
                 else if (runner.UseSkill(id)) fail.Add($"[액티브] {id} 쿨 중인데 재발동된다");
                 else note.Add($"액티브 스킬: {activeCount}종 / 슬롯 {ids.Count}칸 / 발동·쿨 차단 확인");
-                Managers.Game.Player.StopBattle();
+                player.Hp = hpBefore;
+                player.StopBattle();
             }
         }
         yield return null;
