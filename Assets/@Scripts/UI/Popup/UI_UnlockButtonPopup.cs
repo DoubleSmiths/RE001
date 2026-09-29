@@ -204,6 +204,13 @@ public class UI_UnlockButtonPopup : UI_Popup
         colors[vertexIndex + 3].a = a;
     }
 
+    // 뒤로가기 = 화면을 누른 것과 같다(타이핑 중이면 넘기고, 끝났으면 닫는다). 닫기 버튼이 없어 공용 탐색에 안 걸린다.
+    public override bool OnBackPressed()
+    {
+        OnClickContent();
+        return true;
+    }
+
     public void OnClickContent()
     {
         // DialoguePopup 패턴: 타이핑 진행 중에는 모든 글자 즉시 표시(스킵), 완료 상태에서만 팝업 닫기.
