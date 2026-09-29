@@ -191,6 +191,7 @@ public class UI_PotionDetailPopup : UI_Popup
     Image _bg;
     Image _potionImg;
     TMP_Text _nameText;
+    float _nameFontSize;
     TMP_Text _rankText, _nextRankText;
     TMP_Text _flatHeal, _flatHealN;
     TMP_Text _pHeal, _pHealN;
@@ -256,6 +257,7 @@ public class UI_PotionDetailPopup : UI_Popup
         // 물약 이미지 & 헤더
         _potionImg    = GetImage((int)Images.PotionDetailPopupPotionImg);
         _nameText     = GetText((int)Texts.PotionDetailPopupPotionName);
+        _nameFontSize = _nameText.fontSize;
         _rankText     = GetText((int)Texts.RankText);
         _nextRankText = GetText((int)Texts.NextLevel_RankText);
 
@@ -483,6 +485,19 @@ public class UI_PotionDetailPopup : UI_Popup
         return Managers.Game.Language == Define.Language.Korean ? entry.Kor : entry.Eng;
     }
 
+    // 영문 이름(최대 20자, BUDGET RECOV. POTION)이 이름판 마스크(폭 80)를 넘어 양 끝 글자가 잘렸다.
+    //  판 폭에 맞춰 글자를 줄인다. 매번 원래 크기에서 다시 재서 단계 미리보기를 오가도 계속 작아지지 않는다.
+    const float NAME_PADDING = 4f;
+
+    void SetName(string name)
+    {
+        _nameText.text = name;
+        _nameText.fontSize = _nameFontSize;
+        float max = ((RectTransform)_nameText.transform.parent).rect.width - NAME_PADDING;
+        float w = _nameText.GetPreferredValues(name).x;
+        if (w > max) _nameText.fontSize = _nameFontSize * max / w;
+    }
+
     void ApplyData(PotionView data)
     {
         // 종류에 맞춰 텍스트 그룹 전환
@@ -490,7 +505,7 @@ public class UI_PotionDetailPopup : UI_Popup
         _hpTextsGroup.SetActive(isHP);
         _spdTextsGroup.SetActive(!isHP);
 
-        _nameText.text = Localize(data.Name);
+        SetName(Localize(data.Name));
         _rankText.text = $"{data.Step}{Localize(LocalizeKey.RankText)}";
         _rankText.color = Color.white;
 
@@ -761,7 +776,7 @@ public class UI_PotionDetailPopup : UI_Popup
         if (curr == null) return;
 
         // 이름/단계/아이콘은 다음 값으로 교체. 단, 변경부 하이라이트 및 점멸 적용.
-        _nameText.text = Localize(next.Name);
+        SetName(Localize(next.Name));
         _rankText.text = $"{next.Step}{Localize(LocalizeKey.RankText)}";
         _rankText.color = next.Grade != curr.Grade
             ? new Color32(0x00, 0xFF, 0x00, 0xFF)
