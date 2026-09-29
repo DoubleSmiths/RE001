@@ -9882,8 +9882,8 @@
     },
     {
       "TextKey": "GuardHintText",
-      "Kor": "'!'가 뜨면 화면을 눌러 막기\n딱 맞추면 패링!",
-      "Eng": "TAP WHEN \"!\" SHOWS TO BLOCK\nPERFECT TIMING = PARRY!"
+      "Kor": "'!'가 뜨면 방패 버튼으로 막기\n딱 맞추면 패링!",
+      "Eng": "SHIELD WHEN \"!\" SHOWS\nPERFECT TIMING = PARRY!"
     },
     {
       "TextKey": "MissionTitleText",
@@ -10154,6 +10154,26 @@
       "TextKey": "ShopTitleText",
       "Kor": "상점",
       "Eng": "SHOP"
+    },
+    {
+      "TextKey": "TapHintText",
+      "Kor": "화면을 누르면 공격! 연타로 몰아치자",
+      "Eng": "TAP TO ATTACK! KEEP TAPPING!"
+    },
+    {
+      "TextKey": "AutoBattleText",
+      "Kor": "AUTO",
+      "Eng": "AUTO"
+    },
+    {
+      "TextKey": "AutoBattleOnText",
+      "Kor": "자동 전투 켬 - 누르면 더 빨리 벤다",
+      "Eng": "AUTO ON - TAP TO STRIKE FASTER"
+    },
+    {
+      "TextKey": "AutoBattleOffText",
+      "Kor": "자동 전투 끔 - 눌러서 공격",
+      "Eng": "AUTO OFF - TAP TO ATTACK"
     }
   ]
 }

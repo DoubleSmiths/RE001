@@ -42,7 +42,7 @@ public class PlayerController : CreatureController
     // 동행 미니몬 타격을 콤보(공세 게이지)에 누적 — 타격으로 침(슬)
     public void NotifyCompanionHit(float damage) => OnHitLanded?.Invoke(damage);
 
-    // 슬42: 신속물약 — 일정 시간 공격속도(공격쿨타임 단축) 버프. AutoAttack의 effectiveCooldown에 가산.
+    // 슬42: 신속물약 — 일정 시간 공격속도(공격쿨타임 단축) 버프. UpdateAttack 의 공격속도 배율에 가산.
     public float PotionAtkSpeedBonus { get; private set; }
     Coroutine _potionSpeedCo;
     public void ApplySpeedBuff(float bonusPct, float duration)
@@ -157,6 +157,9 @@ public class PlayerController : CreatureController
     {
         _inBattle = false;
         _guardStart = -999f;
+        _tapQueuedAt = -999f;
+        _nextSwingAt = 0f;
+        ClearHitStop();
         if (_sprite != null) { _sprite.DOKill(); _sprite.color = Color.white; }
         _abilityRunner?.OnBattleEnd();   // 슬39: 전투 종료 — 임시 버프/쿨 정리
         Hp = MaxHp;
@@ -168,7 +171,7 @@ public class PlayerController : CreatureController
     }
 
     #region 가드·패링 (v2 — Postknight 식 손맛, ADR0030)
-    // 막기 입력(UI_GuardInput: 전투 화면 탭 / Space)을 누른 순간부터 GUARD_DURATION 동안 막는다.
+    // 막기 입력(UI_BattleInput: 방패 버튼 / X·Shift — 화면 탭은 공격이다, ADR0033)을 누른 순간부터 GUARD_DURATION 동안 막는다.
     //  처음 PARRY_WINDOW 안에 공격이 닿으면 패링 — 피해 0, 적 기절, 확정 치명 반격, 콤보 가산.
     //  나머지 구간이면 막기 — 피해 감소. 한 번 막으면 끝이고 재사용 대기(GUARD_COOLDOWN)로 연타를 막는다.
     //  아무것도 안 누르면 예전처럼 맞는다 — 손을 쓰면 확실히 이득, 안 써도 벌은 없다.
@@ -242,9 +245,9 @@ public class PlayerController : CreatureController
 
     IEnumerator CoParryCounter(MonsterController target)
     {
-        if (_anim != null) _anim.speed = 0f;
+        HitStop(PARRY_HITSTOP);
+        CameraShake.Play(SHAKE_CRIT);
         yield return new WaitForSecondsRealtime(PARRY_HITSTOP);
-        if (_anim != null) _anim.speed = 1f;
         if (target == null || target.State == Define.State.Dead || State == Define.State.Dead) yield break;
 
         PlayMotion("Attack", 1.5f);
@@ -254,7 +257,18 @@ public class PlayerController : CreatureController
         BattleMath.DamageResult result = BattleMath.Resolve(this, target, AttackType.Physical, guaranteedCrit: true);
         DmgAmp = prevDmgAmp;
         target.TakeHit(result, this);
+        if (result.Hit) Impact(target, true);
         OnHitLanded?.Invoke(result.FinalDamage);
+    }
+
+    // 막기 재사용 대기 남은 비율(1=방금 막음 → 0=다시 막을 수 있음) — 방패 버튼의 어둡게 덮는 칸
+    public float GuardCooldownNormalized
+    {
+        get
+        {
+            float cd = Managers.Data.Balance(BalanceKey.GUARD_COOLDOWN, 1f);
+            return cd > 0f ? Mathf.Clamp01((_guardReadyAt - Time.time) / cd) : 0f;
+        }
     }
     #endregion
 
@@ -265,7 +279,7 @@ public class PlayerController : CreatureController
     {
         transform.DOKill();
         if (_onHitCo != null) StopCoroutine(_onHitCo);
-        _anim.speed = 1f;
+        SetAnimSpeed(1f);
         transform.position = _originalPos;
         State = Define.State.Idle;   // setter가 CrossFade(Idle)로 Escape 애니 덮음
     }
@@ -292,7 +306,7 @@ public class PlayerController : CreatureController
         if (!_inBattle) return;
 
         UpdateEngagementVisuals();
-        AutoAttack();
+        UpdateAttack();
         UpdateAutoPotion();
     }
 
@@ -341,11 +355,12 @@ public class PlayerController : CreatureController
 
     // 슬라이드 57/58 — 몬스터 AtkRange 진입 여부에 따라:
     //   · 미engaged: BG scroll on, Player Run (Moving)
-    //   · engaged:   BG scroll off, Player Idle (AutoAttack가 Attack로 전환)
+    //   · engaged:   BG scroll off, Player Idle (UpdateAttack 이 Attack로 전환)
     //
     // 몬스터 사망 직후엔 곧장 이동하지 않고 VICTORY_PAUSE_DURATION만큼 Idle + BG 정지 유지.
     // engaged → !engaged 전환 순간을 잡아 _victoryPauseUntil을 set하는 방식.
-    const float VICTORY_PAUSE_DURATION = 2f;
+    //  탭 공격(ADR0033)에서는 2초가 손을 놓고 기다리는 시간이라 0.8초로 줄였다(쓰러지는 모션·보상 글자를 볼 만큼).
+    const float VICTORY_PAUSE_DURATION = 0.8f;
     bool  _wasEngaged;
     float _victoryPauseUntil = -999f;
 
@@ -407,41 +422,117 @@ public class PlayerController : CreatureController
     }
 
     // ────────────────────────────────────────
-    //  자동 공격
+    //  공격 — 탭 공격 + 자동 전투 (v2, ADR0033)
     // ────────────────────────────────────────
-    void AutoAttack()
+    //  전투 화면을 누르면(UI_BattleInput) 한 번 벤다. 연타 상한은 공격속도로 줄어드는 최소 간격(TAP_ATTACK_INTERVAL)이고,
+    //  베는 중에 누른 입력은 TAP_INPUT_BUFFER 동안 기억했다가 끝나는 즉시 이어 벤다(씹히지 않게).
+    //  탭 공격은 클립을 칼을 들어 올린 자세부터 틀어 누르자마자 내려친다. 적이 없으면 허공을 벤다(누르면 늘 반응한다).
+    //  자동 전투(AUTO)를 켜 두면 예전 주기(AtkCooldown)로 알아서 베고, 누르면 그보다 훨씬 빨리 벤다 — 손을 쓰면 확실히 이득.
+    float _tapQueuedAt = -999f;
+    float _nextSwingAt;
+    bool  _swingHitDone;
+    float _lastHitStop;
+    float _attackClipLength = -1f;
+
+    public bool RequestAttack()
+    {
+        if (!_inBattle || State == Define.State.Dead) return false;
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return false;
+        _tapQueuedAt = Time.time;
+        return true;
+    }
+
+    // 기본 공속(100)과 능력·콤보·물약을 같은 단위로 합산한다. 이번 공격은 시작 시 배율로 마친다.
+    float AttackSpeedMul => Mathf.Max(MIN_PLAYER_ATTACK_SPEED_MULTIPLIER,
+        (AtkSpeed + ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / ABILITY_PERCENT_BASE);
+
+    void UpdateAttack()
     {
         if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
-        if (State == Define.State.Attack) return;
-        // 기본 공속(100)과 능력·콤보·물약을 같은 단위로 합산한다. 이번 공격은 시작 시 배율로 마친다.
-        float speedMul = Mathf.Max(MIN_PLAYER_ATTACK_SPEED_MULTIPLIER,
-            (AtkSpeed + ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / ABILITY_PERCENT_BASE);
-        float effectiveCooldown = AtkCooldown / speedMul;
-        if (Time.time < _lastAtkTime + effectiveCooldown) return;
+        if (Time.time < _nextSwingAt) return;   // 베는 중
 
-        // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster를 찾아 공격.
-        // 거리 폴링은 콜라이더 사이즈와 어긋날 수 있어 HasEngaged flag로 통일.
+        float speedMul = AttackSpeedMul;
+        // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster를 찾아 공격. 거리 폴링 대신 HasEngaged flag로 통일.
         MonsterController target = FindEngagedMonster();
-        if (target == null) return;
 
-        _lastAtkTime = Time.time;
-        _attackTarget = target;         // 슬라이드 61 — 키프레임 시점에 데미지 적용하기 위해 락온
+        if (Time.time - _tapQueuedAt <= Managers.Data.Balance(BalanceKey.TAP_INPUT_BUFFER, 0.25f))
+        {
+            _tapQueuedAt = -999f;
+            StartSwing(target, Managers.Data.Balance(BalanceKey.TAP_ATTACK_INTERVAL, 0.28f) / speedMul, TAP_SWING_START);
+            return;
+        }
+
+        if (target == null || Managers.Game == null || !Managers.Game.AutoBattle) return;
+        float cooldown = AtkCooldown / speedMul;
+        if (Time.time < _lastAtkTime + cooldown) return;
+        StartSwing(target, cooldown, 0f);
+    }
+
+    // 한 번 베기: duration 동안 클립을 startNormalized 부터 끝까지 튼다. 칼이 닿는 시각(ATTACK_IMPACT_TIME)에 판정한다.
+    //  판정은 코드가 잡는다 — 클립의 AttackTrigger 이벤트도 같은 함수로 들어오지만 한 번 베기에 한 번만 맞는다(_swingHitDone).
+    void StartSwing(MonsterController target, float duration, float startNormalized)
+    {
+        duration = Mathf.Max(0.05f, duration);
+        float clipLen = AttackClipLength();
+        float startTime = clipLen * startNormalized;
+        float animSpeed = Mathf.Max(0.1f, (clipLen - startTime) / duration);
+        float hitDelay = Mathf.Max(0f, (ATTACK_IMPACT_TIME - startTime) / animSpeed);
+
+        _lastAtkTime  = Time.time;
+        _nextSwingAt  = Time.time + duration;
+        _attackTarget = target;         // 슬라이드 61 — 판정 시점에 데미지 적용하기 위해 락온(없으면 허공 베기)
+        _swingHitDone = false;
+        _lastHitStop  = 0f;
         // 이전 Idle 피격의 복귀가 새 공격을 중간에 Idle로 덮어쓰지 않게 한다.
         if (_onHitCo != null)
         {
             StopCoroutine(_onHitCo);
             _onHitCo = null;
         }
-        State = Define.State.Attack;
-        // 공격속도만큼 Attack 애니 재생속도를 올려 키프레임(AttackTrigger)과 클립 종료가 함께 빨라지도록.
-        if (_anim != null) _anim.speed = speedMul;
+        PlayStateClip(Define.State.Attack, "Attack", startNormalized);
+        SetAnimSpeed(animSpeed);
 
-        // 명중/회피 dice + BattleMath.Resolve + TakeHit는 Attack.anim의 키프레임 이벤트
-        // (AttackTrigger, 0.5s)에서 호출된다. 일반 피격은 진행 중인 공격을 끊지 않는다(ADR0024).
-
+        // 일반 피격은 진행 중인 공격을 끊지 않는다(ADR0024).
         if (_attackResetCo != null) StopCoroutine(_attackResetCo);
-        // Attack 상태 지속도 공격속도만큼 단축 — 클립 길이가 병목이 되지 않도록.
-        _attackResetCo = StartCoroutine(CoResetStateAfterAttack(ATTACK_CLIP_LENGTH / speedMul));
+        _attackResetCo = StartCoroutine(CoSwing(hitDelay, duration - hitDelay));
+    }
+
+    IEnumerator CoSwing(float hitDelay, float recover)
+    {
+        if (hitDelay > 0f) yield return new WaitForSeconds(hitDelay);
+        AttackTrigger();
+        // 맞은 순간 멈칫한 만큼 휘두르기 끝과 다음 베기도 뒤로 민다(박자가 멈칫을 포함하게)
+        if (_lastHitStop > 0f) _nextSwingAt += _lastHitStop;
+        yield return new WaitForSeconds(Mathf.Max(0f, recover) + _lastHitStop);
+        _attackResetCo = null;
+        SetAnimSpeed(1f);   // 애니 재생속도 원복
+
+        if (State == Define.State.Dead) yield break;
+        if (State == Define.State.Attack)   // 그 사이 OnHit/Idle 등으로 바뀌었으면 건드리지 않음
+            State = Define.State.Idle;
+    }
+
+    float AttackClipLength()
+    {
+        if (_attackClipLength > 0f) return _attackClipLength;
+        _attackClipLength = ATTACK_CLIP_LENGTH;
+        var rc = _anim != null ? _anim.runtimeAnimatorController : null;
+        if (rc != null)
+            foreach (var c in rc.animationClips)
+                if (c != null && c.name == "Attack") { _attackClipLength = c.length; break; }
+        return _attackClipLength;
+    }
+
+    // 칼이 닿은 순간의 손맛 — 둘 다 멈칫(히트스톱), 화면 흔들림, 적이 뒤로 밀림. 치명타·마무리 일격일수록 세다.
+    //  (흰 번쩍임·찌그러짐은 맞은 쪽 MonsterController 가 모든 타격에 한다 — 동행 미니몬 타격 포함)
+    void Impact(MonsterController target, bool crit)
+    {
+        bool kill = target.State == Define.State.Dead;
+        _lastHitStop = kill ? HIT_STOP_KILL : crit ? HIT_STOP_CRIT : HIT_STOP_NORMAL;
+        HitStop(_lastHitStop);
+        target.HitStop(_lastHitStop);
+        CameraShake.Play(kill ? SHAKE_KILL : crit ? SHAKE_CRIT : SHAKE_NORMAL);
+        target.Knockback(kill || crit ? KNOCKBACK_CRIT : KNOCKBACK_NORMAL);
     }
 
     Coroutine _attackResetCo;
@@ -465,21 +556,10 @@ public class PlayerController : CreatureController
         return null;
     }
 
-    // 슬라이드 65 — Attack Anim 길이 1초 고정 (Player 직업별 예외는 후속).
+    // 슬라이드 65 — Attack Anim 길이 1초(컨트롤러에 클립이 없을 때의 폴백. 실제 길이는 AttackClipLength 가 읽는다).
     // IsName 폴링 방식은 CrossFade 직후 transition 중에 false를 반환해 1프레임 만에 빠지는 케이스가 있어
-    // 시간 기반 대기로 단순화한다. OnHit 등 다른 이벤트가 State를 바꿨으면 Idle로 되돌리지 않는다.
+    // 시간 기반 대기로 단순화한다. OnHit 등 다른 이벤트가 State를 바꿨으면 Idle로 되돌리지 않는다(CoSwing).
     const float ATTACK_CLIP_LENGTH = 1.0f;
-
-    IEnumerator CoResetStateAfterAttack(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        _attackResetCo = null;
-        if (_anim != null) _anim.speed = 1f;   // 애니 재생속도 원복
-
-        if (State == Define.State.Dead) yield break;
-        if (State == Define.State.Attack)   // 그 사이 OnHit/Idle 등으로 바뀌었으면 건드리지 않음
-            State = Define.State.Idle;
-    }
 
     // ────────────────────────────────────────
     //  HP / EXP
@@ -521,7 +601,7 @@ public class PlayerController : CreatureController
     //  · 공격 중에는 피해·소리는 유지하고 타격 키프레임까지 공격 모션을 마친다.
     //  · 그 외 상태에서는 OnHit Anim을 처음부터 재생
     //  · OnHit 클립 길이 0.35s (슬라이드 65 고정)
-    //  · OnHit 끝나면 Idle로 복귀 → AutoAttack이 자연 재개 (cooldown 끝나는 대로 Attack)
+    //  · OnHit 끝나면 Idle로 복귀 → UpdateAttack 이 자연 재개 (탭 입력·자동 전투 주기대로 Attack)
     //  · OnHit 도중 또 피격 시 OnHit 처음부터 재시작 (CrossFade normalizedTime 0)
     protected override void PlayHitFeedback()
     {
@@ -530,7 +610,7 @@ public class PlayerController : CreatureController
 
         Managers.Sound?.PlaySFX("Sound_PlayeronHit");   // 플레이어 피격
         if (State == Define.State.Attack) return;
-        _anim.speed = 1f;   // 공격속도 버프로 올렸던 애니 속도 원복(피격 연출은 정상 속도)
+        SetAnimSpeed(1f);   // 공격속도 버프로 올렸던 애니 속도 원복(피격 연출은 정상 속도)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
 
         if (_onHitCo != null) StopCoroutine(_onHitCo);
@@ -766,12 +846,15 @@ public class PlayerController : CreatureController
 
     public void AttackTrigger()
     {
+        if (_swingHitDone) return;                      // 한 번 베기에 한 번만(코드 판정 + 클립 이벤트)
+        if (State != Define.State.Attack) return;       // OnHit/Idle로 바뀌었으면 무시
+        _swingHitDone = true;
+
+        Managers.Sound?.PlaySFX("Sound_PlayerAttack");   // 플레이어 공격(허공을 베도 칼 소리는 난다)
         if (_attackTarget == null) return;
         if (_attackTarget.State == Define.State.Dead) return;
-        if (State != Define.State.Attack) return;       // OnHit/Idle로 바뀌었으면 무시
         if (!_attackTarget.HasEngaged) return;          // engagement가 풀렸으면 silent miss
 
-        Managers.Sound?.PlaySFX("Sound_PlayerAttack");   // 플레이어 공격
         // 슬39: 공격 시 발동조건
         _abilityRunner?.Notify(Define.AbilityCondition.OnAttack);
 
@@ -786,6 +869,7 @@ public class PlayerController : CreatureController
         // 타격(명중) 성공 시에만 콤보 누적
         if (result.Hit)
         {
+            Impact(_attackTarget, result.IsCrit);
             OnHitLanded?.Invoke(result.FinalDamage);
             // 슬39: 타격/치명타 발동조건
             _abilityRunner?.Notify(Define.AbilityCondition.OnHit);

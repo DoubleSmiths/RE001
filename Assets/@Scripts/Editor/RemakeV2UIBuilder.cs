@@ -178,39 +178,121 @@ public static class RemakeV2UIBuilder
         }
     }
 
-    // 막기 입력 칸: 게임 화면(재화 줄 아래 ~ 지면 아래 캐릭터 상태 줄 위)을 덮는 투명 Image.
-    //  In-Frame 의 첫 자식으로 둬서 다른 HUD 가 전부 그 위에 그려지고 먼저 눌린다.
+    // 전투 입력(ADR0033): 게임 화면(재화 줄 아래 ~ 지면 아래 캐릭터 상태 줄 위)을 덮는 묶음.
+    //  탭 칸(투명 Image, 누르면 공격) + 왼쪽 아래 AUTO + 오른쪽 아래 방패(막기, 재사용 대기 원형 덮개).
+    //  In-Frame 의 첫 자식으로 둬서 다른 HUD 가 전부 그 위에 그려지고 먼저 눌린다. 버튼은 탭 칸의 형제다(UI_BattleInput 주석).
+    //  그림은 _tools/gen_battle_buttons.py 가 만든다. 예전 막기 칸(GuardTapArea)이 있으면 지운다.
     static readonly Vector2 GUARD_AREA_POS  = new Vector2(0f, -19f);
     const float GUARD_AREA_HEIGHT = 158f;
+    const string GUARD_BTN_SPRITE = "Assets/@Resources/Sprite/UI/Battle/Btn_Guard.png";
+    const string AUTO_BTN_SPRITE  = "Assets/@Resources/Sprite/UI/Battle/Btn_Auto.png";
+    static readonly Vector2 GUARD_BTN_POS  = new Vector2(-3f, 3f);    // 오른쪽 아래 구석 — 절반은 지면 아래 흙 띠(아래서 7까지)라 몬스터를 덜 가린다
+    static readonly Vector2 GUARD_BTN_SIZE = new Vector2(30f, 30f);
+    static readonly Vector2 AUTO_BTN_POS   = new Vector2(3f, 3f);     // 왼쪽 아래 구석
+    static readonly Vector2 AUTO_BTN_SIZE  = new Vector2(26f, 11f);
 
-    [MenuItem("Tools/Remake V2/Build Guard Input")]
-    public static void BuildGuardInput()
+    [MenuItem("Tools/Remake V2/Build Battle Input")]
+    public static void BuildBattleInput()
     {
+        PreparePixelSprite(GUARD_BTN_SPRITE);
+        PreparePixelSprite(AUTO_BTN_SPRITE);
+
         GameObject root = PrefabUtility.LoadPrefabContents(GAME_SCENE);
         try
         {
             Transform frame = Find(root.transform, "In-Frame");
-            Transform old = Find(root.transform, "GuardTapArea", false);
-            if (old != null) Object.DestroyImmediate(old.gameObject);
+            foreach (string n in new[] { "GuardTapArea", "BattleInput" })
+            {
+                Transform old = Find(root.transform, n, false);
+                if (old != null) Object.DestroyImmediate(old.gameObject);
+            }
 
-            var area = new GameObject("GuardTapArea", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
-            area.SetParent(frame, false);
-            area.SetAsFirstSibling();
-            area.anchorMin = new Vector2(0f, 1f);
-            area.anchorMax = Vector2.one;
-            area.pivot = new Vector2(0.5f, 1f);
-            area.anchoredPosition = GUARD_AREA_POS;
-            area.sizeDelta = new Vector2(0f, GUARD_AREA_HEIGHT);
-            area.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0f);   // 보이지 않지만 누름은 받는다
-            area.gameObject.AddComponent<UI_GuardInput>();
+            var group = new GameObject("BattleInput", typeof(RectTransform)).GetComponent<RectTransform>();
+            group.SetParent(frame, false);
+            group.SetAsFirstSibling();
+            group.anchorMin = new Vector2(0f, 1f);
+            group.anchorMax = Vector2.one;
+            group.pivot = new Vector2(0.5f, 1f);
+            group.anchoredPosition = GUARD_AREA_POS;
+            group.sizeDelta = new Vector2(0f, GUARD_AREA_HEIGHT);
+
+            var tap = NewImage("BattleTapArea", group);
+            tap.anchorMin = Vector2.zero;
+            tap.anchorMax = Vector2.one;
+            tap.offsetMin = tap.offsetMax = Vector2.zero;
+            tap.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0f);   // 보이지 않지만 누름은 받는다
+
+            var auto = NewImage("BattleAutoBtn", group);
+            auto.anchorMin = auto.anchorMax = auto.pivot = Vector2.zero;
+            auto.anchoredPosition = AUTO_BTN_POS;
+            auto.sizeDelta = AUTO_BTN_SIZE;
+            auto.GetComponent<Image>().sprite = AssetDatabase.LoadAssetAtPath<Sprite>(AUTO_BTN_SPRITE);
+            var label = (RectTransform)Object.Instantiate(Find(root.transform, "MainGoldText").gameObject, auto).transform;
+            label.name = "BattleAutoTxt";
+            label.anchorMin = Vector2.zero;
+            label.anchorMax = Vector2.one;
+            label.pivot = new Vector2(0.5f, 0.5f);
+            label.offsetMin = label.offsetMax = Vector2.zero;
+            foreach (var c in label.GetComponents<ContentSizeFitter>()) Object.DestroyImmediate(c);
+            var tmp = label.GetComponent<TMP_Text>();
+            tmp.text = "AUTO";
+            tmp.enableAutoSizing = false;
+            tmp.fontSize = 6f;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.raycastTarget = false;
+
+            var guard = NewImage("BattleGuardBtn", group);
+            guard.anchorMin = guard.anchorMax = guard.pivot = new Vector2(1f, 0f);
+            guard.anchoredPosition = GUARD_BTN_POS;
+            guard.sizeDelta = GUARD_BTN_SIZE;
+            var guardSprite = AssetDatabase.LoadAssetAtPath<Sprite>(GUARD_BTN_SPRITE);
+            guard.GetComponent<Image>().sprite = guardSprite;
+            var cool = NewImage("BattleGuardCool", guard);
+            cool.anchorMin = Vector2.zero;
+            cool.anchorMax = Vector2.one;
+            cool.offsetMin = cool.offsetMax = Vector2.zero;
+            var coolImg = cool.GetComponent<Image>();
+            coolImg.sprite = guardSprite;   // 같은 원 모양으로 어둡게 덮는다
+            coolImg.color = new Color(0f, 0f, 0f, 0.6f);
+            coolImg.type = Image.Type.Filled;
+            coolImg.fillMethod = Image.FillMethod.Radial360;
+            coolImg.fillOrigin = (int)Image.Origin360.Top;
+            coolImg.fillClockwise = false;
+            coolImg.fillAmount = 0f;
+            coolImg.raycastTarget = false;
+
+            group.gameObject.AddComponent<UI_BattleInput>();
 
             PrefabUtility.SaveAsPrefabAsset(root, GAME_SCENE);
-            Debug.Log("[RemakeV2] 막기 입력 칸 조립 완료 — UI_GameScene/In-Frame/GuardTapArea");
+            Debug.Log("[RemakeV2] 전투 입력 조립 완료 — UI_GameScene/In-Frame/BattleInput (탭·AUTO·방패)");
         }
         finally
         {
             PrefabUtility.UnloadPrefabContents(root);
         }
+    }
+
+    static RectTransform NewImage(string name, Transform parent)
+    {
+        var rt = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+        rt.SetParent(parent, false);
+        return rt;
+    }
+
+    // 도트 그림 — 흐려지지 않게 Point, 색이 뭉개지지 않게 무압축
+    static void PreparePixelSprite(string path)
+    {
+        AssetDatabase.ImportAsset(path);
+        var ti = (TextureImporter)AssetImporter.GetAtPath(path);
+        if (ti == null) throw new System.Exception($"[RemakeV2] '{path}' 없음 — python _tools/gen_battle_buttons.py 먼저");
+        ti.textureType = TextureImporterType.Sprite;
+        ti.spriteImportMode = SpriteImportMode.Single;
+        ti.filterMode = FilterMode.Point;
+        ti.textureCompression = TextureImporterCompression.Uncompressed;
+        ti.mipmapEnabled = false;
+        ti.alphaIsTransparency = true;
+        ti.SaveAndReimport();
     }
 
     // ── 미션·출석 창 ──

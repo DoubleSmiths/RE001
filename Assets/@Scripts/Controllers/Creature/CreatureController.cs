@@ -127,7 +127,7 @@ public abstract class CreatureController : BaseController
             foreach (var c in rc.animationClips)
                 if (c != null && c.name == stateName) { len = c.length; break; }
 
-        _anim.speed = Mathf.Max(0.1f, speed);
+        SetAnimSpeed(Mathf.Max(0.1f, speed));
         _anim.CrossFade(stateName, 0.05f, -1, 0f);
 
         if (_motionCo != null) StopCoroutine(_motionCo);
@@ -138,9 +138,58 @@ public abstract class CreatureController : BaseController
     {
         yield return new WaitForSeconds(wait);
         _motionCo = null;
-        _anim.speed = 1f;
+        SetAnimSpeed(1f);
         if (State != Define.State.Dead) ReplayStateAnimation();
     }
+
+    /// <summary>
+    /// 상태를 바꾸면서 그 클립을 **섞지 않고 즉시** 정해진 지점부터 튼다(탭 공격 — 누르는 순간 반응해야 한다).
+    /// State 세터는 0.1초 CrossFade 라 스프라이트가 절반쯤 지나서야 바뀐다. 돌던 일회성 모션은 끊는다.
+    /// </summary>
+    protected void PlayStateClip(Define.State state, string clip, float normalizedTime)
+    {
+        if (_motionCo != null) { StopCoroutine(_motionCo); _motionCo = null; }
+        _state = state;
+        if (_anim != null) _anim.Play(clip, 0, normalizedTime);
+    }
+
+    #region 히트스톱 (타격감, ADR0033)
+    //  맞는 순간 때린 쪽·맞은 쪽 애니메이터를 잠깐 멈춘다(전역 timeScale 은 UIManager 가 전투 정지에 쓰므로 건드리지 않는다).
+    //  애니 속도를 바꾸는 코드는 전부 SetAnimSpeed 를 거친다 — 멈춘 동안 들어온 속도는 기억했다가 풀릴 때 적용한다.
+    float _animSpeed = 1f;
+    float _hitStopEnd = -1f;
+    int   _hitStopToken;
+
+    protected bool InHitStop => _hitStopEnd > 0f;
+
+    protected void SetAnimSpeed(float speed)
+    {
+        _animSpeed = speed;
+        if (_anim != null && !InHitStop) _anim.speed = speed;
+    }
+
+    public void HitStop(float seconds)
+    {
+        if (_anim == null || seconds <= 0f) return;
+        float now = Time.unscaledTime;
+        _hitStopEnd = Mathf.Max(_hitStopEnd, now + seconds);
+        int token = ++_hitStopToken;
+        _anim.speed = 0f;
+        // 가장 늦게 걸린 멈칫의 콜백만 푼다(겹치면 긴 쪽 끝에서 한 번)
+        DOVirtual.DelayedCall(_hitStopEnd - now, () => { if (token == _hitStopToken) ClearHitStop(); }, ignoreTimeScale: true)
+            .SetLink(gameObject);
+    }
+
+    protected void ClearHitStop()
+    {
+        _hitStopToken++;
+        _hitStopEnd = -1f;
+        if (_anim != null) _anim.speed = _animSpeed;
+    }
+    #endregion
+
+    // 타격 이펙트를 띄울 몸 한가운데 — 발(pivot)에 띄우면 땅바닥에서 불꽃이 튀었다. 몬스터는 실제 그림 크기로 덮어쓴다.
+    public virtual Vector3 HitPoint => transform.position + Vector3.up;
 
     public override bool Init()
     {
@@ -201,7 +250,7 @@ public abstract class CreatureController : BaseController
                 // 치명타 시 추가: Crit Effect (피격자 위치) + "Critical!" callout (공격자 위치)
                 if (result.IsCrit)
                 {
-                    Managers.Object.ShowCriHitEffect(transform.position);
+                    Managers.Object.ShowCriHitEffect(HitPoint);
 
                     Managers.Object.ShowCritEffect(attacker.transform.position);
                     Vector3 attackerFontPos = attacker.transform.position + Vector3.up * (attacker.DamageFontYOffset + CRIT_CALLOUT_RAISE);
@@ -210,7 +259,7 @@ public abstract class CreatureController : BaseController
                 else
                 {
 
-                    Managers.Object.ShowHitEffect(transform.position);
+                    Managers.Object.ShowHitEffect(HitPoint);
                 }
             }
         }

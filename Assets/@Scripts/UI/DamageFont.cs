@@ -12,6 +12,8 @@ using UnityEngine;
 //
 // Anim: Fade(0→1) + Scale(1.2→1, OutBack) Duration 0.3 → 1.5초 위로 이동 + FadeOut(InQuint).
 //       Miss는 Scale 조정 없음.
+// 탭 공격(ADR0033): 초당 3번씩 숫자가 뜨므로 곧바로 보이고(알파 1) 크게 튀었다가(1.6배, 치명 2배) 0.9초에 걷힌다.
+//       같은 자리에 겹쳐 읽히지 않게 숫자(일반·치명·회복)는 좌우로 조금씩 흩는다. 알림 글자(치명타!·빗나감)는 제자리.
 public enum DamageFontMode
 {
     Normal,
@@ -23,9 +25,13 @@ public enum DamageFontMode
 
 public class DamageFont : MonoBehaviour
 {
-    const float SPAWN_DURATION = 0.3f;
-    const float RISE_DURATION  = 1.5f;
-    const float RISE_HEIGHT    = 0.8f;
+    const float SPAWN_DURATION = 0.15f;
+    const float RISE_DURATION  = 0.9f;
+    const float RISE_HEIGHT    = 0.9f;
+    const float POP_SCALE      = 1.6f;
+    const float CRIT_POP_SCALE = 2.0f;
+    const float JITTER_X       = 0.35f;
+    const float JITTER_Y       = 0.25f;
 
     static bool s_warnedCritSprite;   // 없는 스프라이트 경고는 1회만
 
@@ -43,13 +49,15 @@ public class DamageFont : MonoBehaviour
         // 풀에서 꺼낸 직후 잔상 정리
         DOTween.Kill(this);
 
+        bool number = mode == DamageFontMode.Normal || mode == DamageFontMode.Critical || mode == DamageFontMode.Heal;
+        if (number) pos += new Vector2(Random.Range(-JITTER_X, JITTER_X), Random.Range(0f, JITTER_Y));
         transform.position = pos;
         transform.rotation = Quaternion.identity;
         transform.localScale = Vector3.one;
 
         _text.text  = display;
         _text.color = Color.white;   // alpha multiplier (gradient 위에 곱함)
-        _text.alpha = 0f;
+        _text.alpha = number ? 1f : 0f;   // 숫자는 맞은 순간 바로 보인다
 
         ApplyStyle(mode);
         DoAnimation(mode);
@@ -161,7 +169,8 @@ public class DamageFont : MonoBehaviour
         Vector3 startPos = transform.position;
         Vector3 endPos   = startPos + Vector3.up * RISE_HEIGHT;
 
-        transform.localScale = useScale ? Vector3.one * 1.2f : Vector3.one;
+        transform.localScale = !useScale ? Vector3.one
+            : Vector3.one * (mode == DamageFontMode.Critical ? CRIT_POP_SCALE : POP_SCALE);
 
         bool hasCritAdditive = (mode == DamageFontMode.Critical) && _critAdditive != null;
 

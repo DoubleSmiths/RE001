@@ -11,8 +11,10 @@ public class MonsterController : CreatureController
 
     // 슬라이드 49: 전투 드롭 통지 (dataId, count) — AddItem 와 별도로 UI 리스트 용.
     public static event System.Action<int, int> OnItemDropped;
-    // v2 공격 예고('!')가 떴다 — UI_GuardInput 이 처음 한 번 막기 도움말을 띄운다(ADR0030).
+    // v2 공격 예고('!')가 떴다 — UI_BattleInput 이 처음 한 번 막기 도움말을 띄우고 방패 버튼을 들썩인다(ADR0030/0033).
     public static event System.Action OnAttackTelegraph;
+    // 어떤 몬스터든 플레이어와 맞붙었다 — UI_BattleInput 이 첫 전투에 '눌러서 공격' 도움말을 띄운다(ADR0033).
+    public static event System.Action OnAnyEngaged;
 
     Data.CreatureData _data;
     PlayerController  _target;
@@ -70,7 +72,53 @@ public class MonsterController : CreatureController
             var ctrl = Managers.Resource.Load<RuntimeAnimatorController>(_data.AnimController);
             if (ctrl != null) _anim.runtimeAnimatorController = ctrl;
         }
+        // 첫 프레임 스프라이트를 지금 입힌다 — 몸 크기(FitBody)를 재려면 프리팹 기본(슬라임) 그림이 아니라 이 몬스터 그림이어야 한다
+        if (_anim != null && _anim.runtimeAnimatorController != null) _anim.Update(0f);
+        _bodyFitted = false;
     }
+
+    // ── 몸 크기 (ADR0033) ──
+    //  아키타입 그림은 6×4 캔버스에 그려져 스프라이트 경계가 실제 몸보다 훨씬 크다. 스프라이트 메시(Tight)는 불투명 영역만 덮으므로
+    //  그 꼭짓점으로 실제 몸을 잰다. 충돌 상자를 몸 폭에 맞춰야 맞붙을 때 몸이 플레이어를 파고들지 않고(예전엔 1칸 폭 고정이라
+    //  큰 몬스터가 플레이어 칼·다리를 덮었다), 타격 불꽃도 발바닥이 아니라 몸 한가운데에 튄다.
+    const float BODY_COLLIDER_WIDTH = 0.8f;   // 몸 폭 대비 충돌 폭 — 살짝 겹쳐야 맞닿아 보인다
+    //  원형 그림은 키를 전부 2칸(128px)에 맞춰 뽑아서 납작하고 긴 것(슬라임 3.8칸, 지네 5칸, 도마뱀 4.5칸)이 화면 절반을 덮었다.
+    //  몸 면적이 이 값을 넘으면 면적이 같아지도록 줄인다 — 키 큰 인간형(1.3~2칸 폭)은 그대로, 키우지는 않는다.
+    const float BODY_TARGET_AREA = 3.6f;
+    const float DAMAGE_FONT_ABOVE_HEAD = 0.5f;
+    bool    _bodyFitted;
+    Vector2 _bodyCenterLocal = new Vector2(0f, 1f);
+
+    void FitBody()
+    {
+        _bodyFitted = true;
+        Sprite s = _sprite != null ? _sprite.sprite : null;
+        if (s == null) return;
+        Vector2[] v = s.vertices;
+        if (v == null || v.Length == 0) return;
+        float minX = v[0].x, maxX = v[0].x, minY = v[0].y, maxY = v[0].y;
+        foreach (var p in v)
+        {
+            minX = Mathf.Min(minX, p.x); maxX = Mathf.Max(maxX, p.x);
+            minY = Mathf.Min(minY, p.y); maxY = Mathf.Max(maxY, p.y);
+        }
+        _bodyCenterLocal = new Vector2((minX + maxX) * 0.5f, (minY + maxY) * 0.5f);
+
+        float area = (maxX - minX) * (maxY - minY);
+        if (area > BODY_TARGET_AREA) transform.localScale *= Mathf.Sqrt(BODY_TARGET_AREA / area);
+        // 데미지 숫자·머리 위 이모지는 실제 머리 위에 — 데이터의 고정 높이(2.5)는 몸이 작으면 허공에 떴다
+        DamageFontYOffset = maxY * transform.localScale.y + DAMAGE_FONT_ABOVE_HEAD;
+
+        var box = GetComponent<BoxCollider2D>();
+        if (box == null) return;
+        float width = Mathf.Clamp((maxX - minX) * BODY_COLLIDER_WIDTH, 0.5f, 3.5f);
+        box.size   = new Vector2(width, box.size.y);
+        box.offset = new Vector2(LocalX(_bodyCenterLocal.x), box.offset.y);
+    }
+
+    float LocalX(float x) => _sprite != null && _sprite.flipX ? -x : x;
+
+    public override Vector3 HitPoint => transform.TransformPoint(new Vector3(LocalX(_bodyCenterLocal.x), _bodyCenterLocal.y, 0f));
 
     void Start()
     {
@@ -144,6 +192,7 @@ public class MonsterController : CreatureController
         //  몬스터가 전부 원본 그림 방향(오른쪽)으로 서 있었다 — 플레이어는 왼쪽에 있으니
         //  다가오면서도 등을 보이는 상태였다.
         FlipToward(_target.transform.position.x);
+        if (!_bodyFitted) FitBody();   // 방향이 정해진 뒤에 잰다(충돌 상자 중심이 좌우로 뒤집힌다)
 
         if (_hasEngaged)
             TryAttack();
@@ -160,17 +209,24 @@ public class MonsterController : CreatureController
 
         _hasEngaged = true;
         _rb.linearVelocity = Vector2.zero;     // 충돌 즉시 정지
+        // 맞붙은 뒤로는 물리로 밀고 당기지 않는다 — 밀림·돌진 연출이 위치를 직접 움직인다(물리가 되밀면 떨린다)
+        _rb.bodyType = RigidbodyType2D.Kinematic;
+        _homeX = transform.position.x;
+        // 다가오던 걸음을 멈춘다. 예전엔 State 가 Moving 으로 남아 첫 공격까지 제자리에서 계속 걸었다.
+        if (State == Define.State.Moving) State = Define.State.Idle;
         // 조우 즉시 공격하지 않고 MonsterAttackDelay만큼 대기 후 첫 공격이 발사되도록.
         _lastAtkTime = Time.time;
         OnEngaged?.Invoke();                   // HP Bar 호출 등
+        OnAnyEngaged?.Invoke();
     }
 
-    // 슬라이드 58 — 몬스터는 Ground와 같은 속도(-5)로 좌측 이동.
+    // 슬라이드 58 — 몬스터는 Ground 스크롤(-5)에 더해 제 발로 걸어온다(MONSTER_WALK_SPEED).
+    //  땅과 똑같은 속도면 땅 위에 멈춰 선 채 걷는 모션만 돌아 제자리걸음(러닝머신)으로 보였다.
     // engaged 전까지만 호출됨. 충돌 시 OnCollisionEnter2D가 vel=0으로 정지시킴.
     void ScrollLeft()
     {
         if (State == Define.State.Attack) return;
-        _rb.linearVelocity = new Vector2(-GROUND_SCROLL_SPEED, _rb.linearVelocity.y);
+        _rb.linearVelocity = new Vector2(-(GROUND_SCROLL_SPEED + MONSTER_WALK_SPEED), _rb.linearVelocity.y);
         // 다가오는 동안은 이동 모션. 예전엔 Idle로 고정했는데, 그건 슬라임 애니메이터에
         //  "Run"이 없어서 어쩔 수 없었던 것이다. 아키타입 애니메이터에는 Run이 있으므로
         //  실제로 걸어오는 게 보인다. (Run이 없는 레거시 애니메이터는 CrossFade가 무시되고
@@ -216,12 +272,52 @@ public class MonsterController : CreatureController
 
     const float ATTACK_HIT_DELAY = 0.25f;   // Attack 모션에서 타격이 닿는 시점
     const float ATTACK_RECOVER   = 0.15f;   // 타격 후 Idle 복귀까지(클립이 더 길면 클립을 따른다)
+    const float LUNGE_OUT  = 0.07f;         // 내딛는 시간 — 다 내디딘 순간이 타격
+    const float LUNGE_BACK = 0.16f;
     bool _attackHitDone;
+
+    // ── 밀림·돌진 (ADR0033) ── 맞붙은 자리(_homeX) 기준으로 dx 만큼 갔다가 돌아온다. 새로 걸면 앞의 것을 끊고 지금 자리에서 다시.
+    float _homeX;
+    Tween _nudgeTween, _punchTween;
+
+    void Nudge(float dx, float outTime, float backTime)
+    {
+        if (!_hasEngaged || _retreating) return;
+        _nudgeTween?.Kill();
+        _nudgeTween = DOTween.Sequence()
+            .Append(transform.DOMoveX(_homeX + dx, outTime).SetEase(Ease.OutQuad))
+            .Append(transform.DOMoveX(_homeX, backTime).SetEase(Ease.InOutQuad))
+            .SetLink(gameObject);
+    }
+
+    // 플레이어 칼에 밀린다. 마지막 일격이면 돌아오지 않고 그대로 날아가 쓰러진다.
+    public void Knockback(float distance)
+    {
+        if (!_hasEngaged || _retreating) return;
+        if (State == Define.State.Dead)
+        {
+            _nudgeTween?.Kill();
+            _nudgeTween = transform.DOMoveX(transform.position.x + distance * 2f, 0.25f).SetEase(Ease.OutCubic).SetLink(gameObject);
+            return;
+        }
+        Nudge(distance, 0.05f, 0.18f);
+    }
+
+    // 맞을 때마다 하얗게 번쩍이고 찌그러진다(치명타·일반 공통, 동행 미니몬 타격 포함). 공격 모션 중에도 한다 — 모션은 끊지 않는다.
+    void PlayImpactFlash()
+    {
+        HitFlash.Play(gameObject, HIT_FLASH_SECONDS);
+        _punchTween?.Complete();
+        _punchTween = transform.DOPunchScale(new Vector3(0.12f, -0.1f, 0f), 0.16f, 1, 0f).SetLink(gameObject);
+    }
 
     IEnumerator CoAttack()
     {
         _attackHitDone = false;
-        yield return new WaitForSeconds(ATTACK_HIT_DELAY);
+        // 타격 직전에 앞으로 내딛는다 — 제자리에서 모션만 돌면 언제 맞는지 읽히지 않는다
+        yield return new WaitForSeconds(ATTACK_HIT_DELAY - LUNGE_OUT);
+        if (State == Define.State.Attack) Nudge(-MONSTER_LUNGE, LUNGE_OUT, LUNGE_BACK);
+        yield return new WaitForSeconds(LUNGE_OUT);
         AttackTrigger();
 
         // ⚠️ 0.25+0.15=0.40초 뒤에 Idle로 넘기는데 아키타입 Attack 클립은 0.46초다.
@@ -277,7 +373,7 @@ public class MonsterController : CreatureController
         _stunnedUntil = Time.time + seconds;
         _lastAtkTime  = _stunnedUntil;
         _telegraphed  = false;
-        if (_anim != null) _anim.speed = 0f;
+        SetAnimSpeed(0f);
         PlayEmoj("Emoj_Sweat", seconds, EMOJ_ABOVE_DAMAGE);
         StartCoroutine(CoEndStun(seconds));
     }
@@ -285,7 +381,7 @@ public class MonsterController : CreatureController
     IEnumerator CoEndStun(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        if (_anim != null) _anim.speed = 1f;
+        if (State != Define.State.Dead) SetAnimSpeed(1f);
     }
 
     // ────────────────────────────────────────
@@ -298,21 +394,21 @@ public class MonsterController : CreatureController
             result.FinalDamage = Mathf.RoundToInt(result.FinalDamage * Managers.Data.Balance(BalanceKey.STUN_DAMAGE_TAKEN_MULT, 1.5f));
         base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
+        if (result.Hit) PlayImpactFlash();   // 마지막 일격에도 번쩍인다(사망 처리는 PlayHitFeedback 을 건너뛴다)
     }
 
-    // 슬라이드 64 — Attack Anim 도중 피격 시 OnHit 처리는 하되 OnHit Anim/색 변환 없음.
+    // 슬라이드 64 — Attack Anim 도중 피격 시 OnHit 처리는 하되 OnHit Anim 없음(공격 모션을 끊지 않는다).
+    //  예전 0.3+0.3초 붉은 물들임은 흰 번쩍임(PlayImpactFlash)으로 바꿨다 — 연타하면 내내 검붉게 남았다(ADR0033).
     // (OnHit 처리 = HP 차감 등은 base.TakeHit에서 이미 끝남)
     protected override void PlayHitFeedback()
     {
         if (State == Define.State.Dead) return;
-        if (State == Define.State.Attack) return;
         Managers.Sound?.PlaySFX(_data != null ? _data.OnHitSfx : "Slime_OnHit");   // 몬스터 피격 (데이터 드리븐)
+        if (State == Define.State.Attack || IsStunned) return;
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
 
         if (_onHitAnimCo != null) StopCoroutine(_onHitAnimCo);
         _onHitAnimCo = StartCoroutine(CoReturnAfterOnHit());
-
-        base.PlayHitFeedback();
     }
 
     Coroutine _onHitAnimCo;
@@ -346,7 +442,7 @@ public class MonsterController : CreatureController
     //   5. Die clip 종료 후 풀 반환
     protected override void OnDead()
     {
-        if (_anim != null) _anim.speed = 1f;   // 기절(애니메이터 정지) 중에 쓰러져도 사망 모션은 재생한다
+        SetAnimSpeed(1f);   // 기절(애니메이터 정지) 중에 쓰러져도 사망 모션은 재생한다(마무리 멈칫이 풀리면)
         base.OnDead();
         Managers.Sound?.PlaySFX(_data != null ? _data.DieSfx : "Slime_Die");   // 몬스터 사망 (데이터 드리븐, 슬167)
         _rb.linearVelocity = Vector2.zero;
@@ -404,9 +500,19 @@ public class MonsterController : CreatureController
         StartCoroutine(CoDestroyAfterDie(Mathf.Max(0.5f, ClipLength("Die", 0.5f) + 0.1f)));
     }
 
+    // 쓰러진 모습이 뚝 사라지지 않게 마지막 DEATH_FADE 초 동안 흐려진다(퇴각은 이미 흐려지는 중이라 그대로 둔다).
+    const float DEATH_FADE = 0.25f;
+
     IEnumerator CoDestroyAfterDie(float delay)
     {
-        yield return new WaitForSeconds(delay);
+        if (!_retreating && _sprite != null)
+        {
+            yield return new WaitForSeconds(Mathf.Max(0f, delay - DEATH_FADE));
+            _sprite.DOFade(0f, DEATH_FADE).SetLink(gameObject);
+            yield return new WaitForSeconds(DEATH_FADE);
+        }
+        else
+            yield return new WaitForSeconds(delay);
         Managers.Resource.Destroy(gameObject);
     }
 
@@ -435,24 +541,12 @@ public class MonsterController : CreatureController
         var an = go.AddComponent<Animator>();
         an.runtimeAnimatorController = ctrl;
         an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        // Emoj_Sweat 클립에 원본 에셋의 'TriggerUnityEvent' 이벤트가 박혀 있다 — 받을 곳이 없는 빈 오브젝트라
+        //  기절시킬 때마다 "has no receiver" 빨간 에러가 났다. 이모지는 이벤트를 쓰지 않는다.
+        an.fireEvents = false;
         an.Play(state, 0, 0f);
 
         Destroy(go, seconds);
     }
 
-    // ────────────────────────────────────────
-    //  넉백
-    // ────────────────────────────────────────
-    public void KnockBack(Vector2 dir, float force)
-    {
-        StartCoroutine(CoKnockBack(dir, force));
-    }
-
-    IEnumerator CoKnockBack(Vector2 dir, float force)
-    {
-        _rb.AddForce(dir * force, ForceMode2D.Impulse);
-        yield return new WaitForSeconds(0.15f);
-        if (_rb != null)
-            _rb.linearVelocity = Vector2.zero;
-    }
 }

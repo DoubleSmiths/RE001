@@ -129,6 +129,9 @@ public class GameData
     public bool      BossAutoChallenge = true;
     // v2 가드·패링 도움말을 이미 보여 줬는가(첫 공격 예고 '!' 때 한 번)
     public bool      GuardHintSeen;
+    // v2 탭 공격(ADR0033): 자동 전투 켬 여부, 첫 전투 '눌러서 공격' 도움말을 보여 줬는가
+    public bool      AutoBattle;
+    public bool      TapHintSeen;
     // v2 미션·출석
     public MissionSaveData Missions = new MissionSaveData();
     // v2 상점·광고·월정액
@@ -1454,6 +1457,26 @@ public class GameManager
     {
         get => _gameData.GuardHintSeen;
         set { _gameData.GuardHintSeen = value; SaveGame(); }
+    }
+
+    // v2 탭 공격(ADR0033) — 켜 두면 예전처럼 알아서 베고(AtkCooldown), 누르면 그보다 빨리 벤다.
+    public event Action OnAutoBattleChanged;
+    public bool AutoBattle
+    {
+        get => _gameData.AutoBattle;
+        set
+        {
+            if (_gameData.AutoBattle == value) return;
+            _gameData.AutoBattle = value;
+            SaveGame();
+            OnAutoBattleChanged?.Invoke();
+        }
+    }
+
+    public bool TapHintSeen
+    {
+        get => _gameData.TapHintSeen;
+        set { _gameData.TapHintSeen = value; SaveGame(); }
     }
 
     public string StageLabel(int nodeId)

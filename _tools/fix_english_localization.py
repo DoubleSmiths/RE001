@@ -249,10 +249,15 @@ LITERAL_KEYS = [
     ('BossDefeatText', '보스 처치!', 'BOSS DEFEATED!'),
     ('BossFailText', '보스를 놓쳤다! 훈련 후 재도전', 'BOSS ESCAPED! TRAIN UP'),
     ('StageNextLockedFormat', '다음 스테이지: {0}', 'NEXT STAGE: {0}'),
-    # v2 가드·패링(ADR0030) — PlayerController / UI_GuardInput
+    # v2 가드·패링(ADR0030) — PlayerController / UI_BattleInput(방패 버튼, ADR0033)
     ('ParryText', '패링!', 'PARRY!'),
     ('BlockText', '막기', 'BLOCK'),
-    ('GuardHintText', '\'!\'가 뜨면 화면을 눌러 막기\n딱 맞추면 패링!', 'TAP WHEN "!" SHOWS TO BLOCK\nPERFECT TIMING = PARRY!'),
+    ('GuardHintText', '\'!\'가 뜨면 방패 버튼으로 막기\n딱 맞추면 패링!', 'SHIELD WHEN "!" SHOWS\nPERFECT TIMING = PARRY!'),
+    # v2 탭 공격(ADR0033) — UI_BattleInput
+    ('TapHintText', '화면을 누르면 공격! 연타로 몰아치자', 'TAP TO ATTACK! KEEP TAPPING!'),
+    ('AutoBattleText', 'AUTO', 'AUTO'),
+    ('AutoBattleOnText', '자동 전투 켬 - 누르면 더 빨리 벤다', 'AUTO ON - TAP TO STRIKE FASTER'),
+    ('AutoBattleOffText', '자동 전투 끔 - 눌러서 공격', 'AUTO OFF - TAP TO ATTACK'),
     # v2 미션·출석(ADR0030) — UI_MissionPopup / MissionData.TitleKey({0} = 목표)
     ('MissionTitleText', '미션', 'MISSIONS'),
     ('MissionDailyTabText', '일일', 'DAILY'),

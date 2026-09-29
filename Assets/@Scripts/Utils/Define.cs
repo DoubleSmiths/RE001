@@ -1916,7 +1916,28 @@ public class Define
         public const string MONTHLY_DAILY_CRYSTAL       = "MONTHLY_DAILY_CRYSTAL";
         public const string MONTHLY_OFFLINE_BONUS_HOURS = "MONTHLY_OFFLINE_BONUS_HOURS";
         public const string CRYSTAL_FIRST_BUY_MULT      = "CRYSTAL_FIRST_BUY_MULT";
+        // 탭 공격(ADR0033)
+        public const string TAP_ATTACK_INTERVAL = "TAP_ATTACK_INTERVAL";
+        public const string TAP_INPUT_BUFFER    = "TAP_INPUT_BUFFER";
     }
+    #endregion
+
+    #region Hit Feel (타격감 — 탭 공격, ADR0033)
+    // 연출 상수(게임 수치 아님). 멈칫은 실시간 초, 흔들림·밀림은 월드 단위.
+    public const float HIT_STOP_NORMAL   = 0.05f;
+    public const float HIT_STOP_CRIT     = 0.09f;
+    public const float HIT_STOP_KILL     = 0.13f;
+    public const float SHAKE_NORMAL      = 0.06f;
+    public const float SHAKE_CRIT        = 0.14f;
+    public const float SHAKE_KILL        = 0.2f;
+    public const float SHAKE_DURATION    = 0.14f;
+    public const float HIT_FLASH_SECONDS = 0.1f;
+    public const float KNOCKBACK_NORMAL  = 0.15f;
+    public const float KNOCKBACK_CRIT    = 0.3f;
+    public const float MONSTER_LUNGE     = 0.35f;   // 몬스터가 칠 때 앞으로 내딛는 거리
+    public const float MONSTER_WALK_SPEED = 1.5f;   // 다가올 때 땅 대비 걷는 속도(땅과 같은 속도면 제자리걸음으로 보였다)
+    public const float TAP_SWING_START   = 0.235f;  // 탭 공격은 공격 클립의 들어 올린 자세(정규화 시간)부터 — 누르자마자 내려친다
+    public const float ATTACK_IMPACT_TIME = 0.5f;   // 플레이어 Attack 클립에서 칼이 닿는 시각(초, 클립의 AttackTrigger 이벤트와 같다)
     #endregion
 
     #region Ground (접지)

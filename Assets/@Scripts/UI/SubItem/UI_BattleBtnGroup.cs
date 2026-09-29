@@ -840,10 +840,10 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         _battleCoroutine = StartCoroutine(CoBattleLoop());
     }
 
-    // 슬라이드 58 — Player Run anim 시작 직후부터 4초 뒤 첫 몬스터 spawn,
-    //               Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 4초 → 다음 spawn.
+    // 슬라이드 58 — Player Run anim 시작 직후 첫 몬스터 spawn, Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 대기 → 다음 spawn.
+    //  탭 공격(ADR0033)에서는 손을 놓고 기다리는 시간이 곧 지루함이라 대기를 2초 → 1초로 줄였다.
     // Y는 monster prefab 별 sprite pivot에 따라 다르므로 CreatureData.SpawnY로 분리.
-    const float MONSTER_SPAWN_DELAY = 2f;
+    const float MONSTER_SPAWN_DELAY = 1f;
     const float MONSTER_SPAWN_OFFSET_X = 12f;
 
     // (구) 전투 배경은 CH1BG 하나를 전 지역이 공유해서, 지역별 **색조**로만 구분했다.
@@ -942,7 +942,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 yield return new WaitUntil(() => monsterRoot.childCount == 0);
             }
 
-            // 다음 몬스터까지 6초
+            // 다음 몬스터까지 MONSTER_SPAWN_DELAY
             yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
         }
     }

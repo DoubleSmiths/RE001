@@ -194,6 +194,16 @@
       "Key": "CRYSTAL_FIRST_BUY_MULT",
       "Value": 2.0,
       "Desc": "크리스탈 상품 종류별 첫 구매 배수"
+    },
+    {
+      "Key": "TAP_ATTACK_INTERVAL",
+      "Value": 0.28,
+      "Desc": "탭 공격 최소 간격(초, 공격속도 100% 기준 — 공속이 오르면 줄어든다). 자동 전투 주기는 AtkCooldown 1초"
+    },
+    {
+      "Key": "TAP_INPUT_BUFFER",
+      "Value": 0.25,
+      "Desc": "베는 중에 누른 입력을 기억하는 시간(초) — 끝나는 즉시 이어 벤다"
     }
   ]
 }

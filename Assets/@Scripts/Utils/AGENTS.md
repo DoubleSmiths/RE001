@@ -12,6 +12,7 @@
 | `Define.cs` | 전역 enum 30여 종 + `LocalizeKey` 자동생성 static class + NotifyKey/UnlockKey 상수 + 아이템 ID 대역(`ITEM_ID_MIN=10000` 등) + 색상 HEX 상수 |
 | `BattleMath.cs` | `BattleMath.Resolve(attacker, defender, attackType, skillMul)` — 명중 dice → BASE(크리) → 저항/방어 감산 → 피해증폭×Random(0.8~1.2), floor 1. `DamageResult` struct 반환. `FromRawDamage()` 헬퍼, `DebugForcePlayerCritical` 에디터 토글(Ctrl+Shift+C) |
 | `Util.cs` | `GetOrAddComponent<T>`, `FindChild<T>(recursive)`, `Localize(key)`(LocalizationDic + 현재 Language), `HexToColor`, `ParseEnum<T>`, `FormatStat`(슬18 표기규칙), `GetGradeColor(EquipGrade)`, `SetTMPOutline/SetTMPUnderlay`, `RandomPointInAnnulus` |
+| `CameraShake.cs` | 타격 카메라 흔들림(ADR0033) `CameraShake.Play(세기, 시간)`. 설정 `IsShakeOn` 을 따르고, 겹치면 앞 흔들림을 끊고 원위치에서 다시(위치 누적 방지), 실시간(SetUpdate). HUD 캔버스는 Screen Space - Camera 라 월드만 흔들린다 |
 | `Extension.cs` | GameObject/BaseController 확장 — `GetOrAddComponent`, `BindEvent`(UI_Base.BindEvent 위임), `IsValid`, `DestroyChilds`(Managers.Resource.Destroy 사용), `IList.Shuffle` |
 | `UI_ParticlePlay.cs` | OnEnable 시 `UIParticleSystem.DOPlay()` 호출하는 소형 MonoBehaviour (unity-ui-extensions + DOTween) |
 
