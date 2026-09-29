@@ -22,6 +22,7 @@ public class UI_SkillBar : MonoBehaviour
         public Image cooldownMask;   // 남은 비율만큼 위에서 덮는다.
         public TMP_Text remainText;
         public int skillId = -1;
+        public int shownRemain = -1;  // 남은 초가 바뀔 때만 다시 쓴다(매 프레임 ToString 가비지 방지)
     }
 
     static readonly Color COLOR_READY = Color.white;
@@ -213,7 +214,13 @@ public class UI_SkillBar : MonoBehaviour
             slot.cooldownMask.enabled = remain > 0f;
             slot.icon.color = ready ? COLOR_READY : COLOR_COOL;
             slot.frame.color = slot.skillId == _selectedSkillId ? COLOR_READY : COLOR_COOL;
-            slot.remainText.text = remain > 0f ? Mathf.CeilToInt(remain).ToString() : "";
+            int secs = remain > 0f ? Mathf.CeilToInt(remain) : 0;
+            if (secs != slot.shownRemain)
+            {
+                slot.shownRemain = secs;
+                if (secs > 0) slot.remainText.SetText("{0}", secs);
+                else slot.remainText.text = "";
+            }
         }
         RefreshStatus(player);
     }

@@ -659,24 +659,33 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             s.transform.SetSiblingIndex(idx++);
     }
 
+    // 매 프레임 불린다 — 값이 바뀐 칸만, 문자열을 만들지 않는 SetText 인자 방식으로 쓴다.
+    //  예전엔 4칸을 매 프레임 새 문자열로 다시 써서 전투 내내 프레임당 약 1.3KB 가비지와 TMP 재배치 4회가 났다
+    //  (프로파일러 GC.Alloc 의 유일한 게임 코드 출처였다).
+    int _shownCentis = -1, _shownDealt = -1, _shownTaken = -1, _shownHeal = -1;
+
     void RefreshLogTexts()
     {
-        var timeTmp = GetText((int)Texts.BattleTimeNum);
-        if (timeTmp != null)
+        // 센티초 단위 정수로 환산 후 분/초/센티초 분해 — float 포맷 rounding 회피.
+        int centis = Mathf.Max(0, Mathf.FloorToInt(_logTime * 100f));
+        if (centis != _shownCentis)
         {
-            // 센티초 단위 정수로 환산 후 분/초/센티초 분해 — float 포맷 rounding 회피.
-            int centis = Mathf.Max(0, Mathf.FloorToInt(_logTime * 100f));
-            int min    = centis / 6000;
-            int sec    = (centis / 100) % 60;
-            int cs     = centis % 100;
-            timeTmp.text = $"{min:00}:{sec:00}.{cs:00}";
+            var timeTmp = GetText((int)Texts.BattleTimeNum);
+            if (timeTmp != null) timeTmp.SetText("{0:00}:{1:00}.{2:00}", centis / 6000, (centis / 100) % 60, centis % 100);
+            _shownCentis = centis;
         }
-        var dealtTmp = GetText((int)Texts.DmgDealtNum);
-        if (dealtTmp != null) dealtTmp.text = Mathf.RoundToInt(Mathf.Max(0f, _logDealtDisplay)).ToString();
-        var takenTmp = GetText((int)Texts.DmgTakenNum);
-        if (takenTmp != null) takenTmp.text = Mathf.RoundToInt(Mathf.Max(0f, _logTakenDisplay)).ToString();
-        var healTmp  = GetText((int)Texts.HPRestoredNum);
-        if (healTmp  != null) healTmp.text  = Mathf.RoundToInt(Mathf.Max(0f, _logHealDisplay)).ToString();
+        SetLogNumber(Texts.DmgDealtNum, _logDealtDisplay, ref _shownDealt);
+        SetLogNumber(Texts.DmgTakenNum, _logTakenDisplay, ref _shownTaken);
+        SetLogNumber(Texts.HPRestoredNum, _logHealDisplay, ref _shownHeal);
+    }
+
+    void SetLogNumber(Texts id, float value, ref int shown)
+    {
+        int v = Mathf.RoundToInt(Mathf.Max(0f, value));
+        if (v == shown) return;
+        shown = v;
+        var tmp = GetText((int)id);
+        if (tmp != null) tmp.SetText("{0}", v);
     }
 
     // ── 에디터 테스트용: ATTACKBTN 클릭 시 타격 시뮬 ──
