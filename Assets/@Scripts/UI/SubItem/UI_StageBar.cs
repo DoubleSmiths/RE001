@@ -4,7 +4,7 @@ using static Define;
 // v2 스테이지 막대(ADR0030, 설계서 4.3) — UI_GameScene 의 StageBar 에 붙는다(빌더: Tools/Remake V2/Build Stage Bar).
 //  전투 구역에서만 보인다. 사냥 중엔 '1-5 산들바람 숲 심층' + 처치 수, 보스전엔 남은 시간(빨간 막대).
 //  보스에게 져서 자동 도전이 꺼지면 막대가 금색으로 깜빡이고, 누르면 다음 몬스터 대신 보스가 나온다.
-//  이미 돌파한 스테이지는 이름이 금색이다.
+//  이미 돌파한 스테이지는 이름이 금색이다. 요일 던전(ADR0034) 중엔 던전 이름 + 남은 시간(빨간 막대) + 처치 수.
 public class UI_StageBar : UI_Base
 {
     enum Texts
@@ -19,7 +19,7 @@ public class UI_StageBar : UI_Base
         StageGaugeBossFill,   // 보스 남은 시간(빨강 — 원래 HP 막대 그림)
     }
 
-    enum Mode { Hunting, BossNext, ChallengeReady, BossFight }
+    enum Mode { Hunting, BossNext, ChallengeReady, BossFight, Dungeon }
 
     static readonly Color NAME_CLEARED = new Color32(0xFF, 0xE0, 0x8A, 0xFF);
     static readonly Color TEXT_READY   = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
@@ -79,6 +79,7 @@ public class UI_StageBar : UI_Base
 
     static Mode CurrentMode(GameManager g, int node)
     {
+        if (Managers.Dungeon != null && Managers.Dungeon.IsRunning) return Mode.Dungeon;
         if (g.BossFightActive) return Mode.BossFight;
         if (!g.IsBossReady(node)) return Mode.Hunting;
         return g.BossAutoChallenge ? Mode.BossNext : Mode.ChallengeReady;
@@ -91,7 +92,8 @@ public class UI_StageBar : UI_Base
         if (g == null) return;
 
         int node = g.CurrentTravelAreaId;
-        bool show = g.InBattleArea && g.TryGetStageNumber(node, out _, out _);
+        Mode mode = CurrentMode(g, node);
+        bool show = g.InBattleArea && (mode == Mode.Dungeon || g.TryGetStageNumber(node, out _, out _));
         if (show != _shown)
         {
             _shown = show;
@@ -100,15 +102,24 @@ public class UI_StageBar : UI_Base
         }
         if (!show) return;
 
-        Mode mode  = CurrentMode(g, node);
-        int kills  = g.StageKills(node);
-        int tenths = mode == Mode.BossFight ? Mathf.CeilToInt(g.BossTimeLeft * 10f) : 0;
+        var dungeon = Managers.Dungeon;
+        int kills  = mode == Mode.Dungeon ? dungeon.RunKills : g.StageKills(node);
+        int tenths = mode == Mode.BossFight ? Mathf.CeilToInt(g.BossTimeLeft * 10f)
+                   : mode == Mode.Dungeon   ? Mathf.CeilToInt(dungeon.TimeLeft * 10f) : 0;
 
-        if (_dirty || node != _shownNode)
+        if (_dirty || node != _shownNode || mode != _shownMode)
         {
             var name = GetText((int)Texts.StageNameTxt);
-            name.text  = g.StageLabel(node);
-            name.color = g.IsStageCleared(node) ? NAME_CLEARED : Color.white;
+            if (mode == Mode.Dungeon)
+            {
+                name.text  = Util.Localize(DungeonManager.NAME_KEYS[(int)dungeon.RunKind]);
+                name.color = NAME_CLEARED;
+            }
+            else
+            {
+                name.text  = g.StageLabel(node);
+                name.color = g.IsStageCleared(node) ? NAME_CLEARED : Color.white;
+            }
         }
 
         if (_dirty || node != _shownNode || mode != _shownMode || kills != _shownKills || tenths != _shownTenths)
@@ -135,7 +146,7 @@ public class UI_StageBar : UI_Base
         var boss = GetImage((int)Images.StageGaugeBossFill);
         var text = GetText((int)Texts.StageCountTxt);
 
-        bool fighting = mode == Mode.BossFight;
+        bool fighting = mode == Mode.BossFight || mode == Mode.Dungeon;
         bool waiting  = mode == Mode.BossNext || mode == Mode.ChallengeReady;
         fill.gameObject.SetActive(!fighting);
         boss.gameObject.SetActive(fighting);
@@ -147,6 +158,11 @@ public class UI_StageBar : UI_Base
             case Mode.BossFight:
                 boss.fillAmount = g.BossTimeLimit > 0f ? g.BossTimeLeft / g.BossTimeLimit : 0f;
                 text.text = string.Format(Util.Localize("StageBossTimerFormat"), tenths / 10f);
+                break;
+            case Mode.Dungeon:
+                var d = Managers.Dungeon;
+                boss.fillAmount = d.TimeLimit > 0f ? d.TimeLeft / d.TimeLimit : 0f;
+                text.text = string.Format(Util.Localize("DungeonHudFormat"), tenths / 10f, kills);
                 break;
             case Mode.BossNext:
                 fill.fillAmount = 1f;

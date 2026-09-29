@@ -10174,6 +10174,86 @@
       "TextKey": "AutoBattleOffText",
       "Kor": "자동 전투 끔 - 눌러서 공격",
       "Eng": "AUTO OFF - TAP TO ATTACK"
+    },
+    {
+      "TextKey": "MissionDungeonTabText",
+      "Kor": "던전",
+      "Eng": "DUNGEON"
+    },
+    {
+      "TextKey": "DungeonTitleText",
+      "Kor": "요일 던전",
+      "Eng": "DAILY DUNGEONS"
+    },
+    {
+      "TextKey": "DungeonGoldText",
+      "Kor": "골드 던전",
+      "Eng": "GOLD DUNGEON"
+    },
+    {
+      "TextKey": "DungeonExpText",
+      "Kor": "경험치 던전",
+      "Eng": "EXP DUNGEON"
+    },
+    {
+      "TextKey": "DungeonMatText",
+      "Kor": "재료 던전",
+      "Eng": "MATERIAL DUNGEON"
+    },
+    {
+      "TextKey": "DungeonTodayFormat",
+      "Kor": "오늘 {0}배",
+      "Eng": "TODAY x{0}"
+    },
+    {
+      "TextKey": "DungeonBestFormat",
+      "Kor": "최고 {0}",
+      "Eng": "BEST {0}"
+    },
+    {
+      "TextKey": "DungeonFreeFormat",
+      "Kor": "입장 {0}/{1}",
+      "Eng": "ENTER {0}/{1}"
+    },
+    {
+      "TextKey": "DungeonHelpFormat",
+      "Kor": "{0}초 동안 잡은 만큼 보상 · 빨리 누를수록 많이 잡는다",
+      "Eng": "REWARDS FOR EVERY KILL IN {0}s - TAP FAST"
+    },
+    {
+      "TextKey": "DungeonHudFormat",
+      "Kor": "남은 {0:0.0}초 · {1}마리",
+      "Eng": "{0:0.0}s · {1} KILLS"
+    },
+    {
+      "TextKey": "DungeonStartFormat",
+      "Kor": "{0} 시작! {1}초",
+      "Eng": "{0} - {1}s!"
+    },
+    {
+      "TextKey": "DungeonResultFormat",
+      "Kor": "{0} 끝! {1}마리 · {2}",
+      "Eng": "{0} DONE! {1} KILLS · {2}"
+    },
+    {
+      "TextKey": "DungeonMatRewardFormat",
+      "Kor": "재료 {0}개 · 만드라고라 {1}",
+      "Eng": "{0} MATERIALS · {1} MANDRAKE"
+    },
+    {
+      "TextKey": "DungeonBusyText",
+      "Kor": "지금은 들어갈 수 없다",
+      "Eng": "CANNOT ENTER RIGHT NOW"
+    },
+    {
+      "TextKey": "RewardExpFormat",
+      "Kor": "경험치 {0:N0}",
+      "Eng": "{0:N0} EXP"
+    },
+    {
+      "TextKey": "MissionDungeonFormat",
+      "Kor": "요일 던전 {0}회",
+      "Eng": "Dungeon runs x{0}"
     }
   ]
 }

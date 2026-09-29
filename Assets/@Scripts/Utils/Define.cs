@@ -267,6 +267,15 @@ public class Define
         ReachLevel,      // 진행 = 현재 레벨(계산값, 가이드)
         Discover,        // 진행 = 발견한 몬스터 수(계산값, 가이드)
         Attendance,
+        DungeonClear,    // v2 요일 던전을 끝까지 치렀다(ADR0034)
+    }
+
+    // v2 요일 던전(ADR0034, 설계서 4.8) — 순서가 DungeonSaveData 배열 칸이다
+    public enum DungeonKind
+    {
+        Gold,
+        Exp,
+        Material,
     }
 
     // v2 핫타임(ADR0030, 설계서 4.6) — 광고 또는 크리스탈로 30분 켠다
@@ -1919,6 +1928,17 @@ public class Define
         // 탭 공격(ADR0033)
         public const string TAP_ATTACK_INTERVAL = "TAP_ATTACK_INTERVAL";
         public const string TAP_INPUT_BUFFER    = "TAP_INPUT_BUFFER";
+        // 요일 던전(ADR0034)
+        public const string DUNGEON_TIME           = "DUNGEON_TIME";
+        public const string DUNGEON_FREE_PER_DAY   = "DUNGEON_FREE_PER_DAY";
+        public const string DUNGEON_ADS_PER_DAY    = "DUNGEON_ADS_PER_DAY";
+        public const string DUNGEON_CRYSTAL_COST   = "DUNGEON_CRYSTAL_COST";
+        public const string DUNGEON_GOLD_MULT      = "DUNGEON_GOLD_MULT";
+        public const string DUNGEON_EXP_MULT       = "DUNGEON_EXP_MULT";
+        public const string DUNGEON_MAT_MULT       = "DUNGEON_MAT_MULT";
+        public const string DUNGEON_MANDRAKE_KILLS = "DUNGEON_MANDRAKE_KILLS";
+        public const string DUNGEON_TODAY_MULT     = "DUNGEON_TODAY_MULT";
+        public const string DUNGEON_SPAWN_DELAY    = "DUNGEON_SPAWN_DELAY";
     }
     #endregion
 

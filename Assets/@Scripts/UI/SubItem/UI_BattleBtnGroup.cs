@@ -837,7 +837,20 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         PlayerController player = Managers.Game.Player;
         if (player == null) return;
         player.StartBattle();
-        _battleCoroutine = StartCoroutine(CoBattleLoop());
+        // v2 요일 던전(ADR0034) — 입장 예약이 있으면 사냥 대신 타임어택
+        _battleCoroutine = StartCoroutine(Managers.Dungeon != null && Managers.Dungeon.Begin() ? CoDungeon() : CoBattleLoop());
+    }
+
+    // 맞붙는 순간 HP 바 + 전투 기록(사냥·던전 공통)
+    void ShowHpBarOnEngage(MonsterController mc)
+    {
+        // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
+        // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
+        mc.OnEngaged += () =>
+        {
+            Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
+            StartBattleLog(mc);
+        };
     }
 
     // 슬라이드 58 — Player Run anim 시작 직후 첫 몬스터 spawn, Player 기준 +12 X (화면 밖 오른쪽). 이후 사망 → 대기 → 다음 spawn.
@@ -930,13 +943,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
                 if (mc != null)
                 {
-                    // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
-                    // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
-                    mc.OnEngaged += () =>
-                    {
-                        Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
-                        StartBattleLog(mc);
-                    };
+                    ShowHpBarOnEngage(mc);
                     mc.OnDied += () => Managers.Game.AddStageKill(nodeId);
                 }
                 yield return new WaitUntil(() => monsterRoot.childCount == 0);
@@ -1038,8 +1045,64 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         scene.EnterAreaWithFade(AreaType.Battle);
     }
 
+    // ────────────────────────────────────────
+    //  v2 요일 던전 (ADR0034, 설계서 4.8)
+    //    - 사냥하던 스테이지 몬스터를 한 마리씩 가깝게(DUNGEON_SPAWN_OFFSET_X) 빨리(DUNGEON_SPAWN_DELAY) 불러
+    //      DUNGEON_TIME 초 동안 잡는다. 처치는 스테이지 처치 수에 세지 않는다(보스가 끼어들지 않는다).
+    //    - 시간이 다 되면 남은 몬스터는 물러나고 보상(DungeonManager.Finish) 뒤 그 스테이지에서 사냥을 이어 간다.
+    //    - 쓰러지거나 귀환·이동하면 EndBattle 이 그때까지 잡은 만큼 정산한다.
+    // ────────────────────────────────────────
+    const float DUNGEON_SPAWN_OFFSET_X = 9f;
+    const float DUNGEON_AFTER_DELAY    = 1.5f;   // 결과 알림을 읽을 틈
+
+    System.Collections.IEnumerator CoDungeon()
+    {
+        var dungeon = Managers.Dungeon;
+        Transform monsterRoot = Managers.Object.MonsterTransform;
+        float spawnDelay = Managers.Data.Balance(BalanceKey.DUNGEON_SPAWN_DELAY, 0.3f);
+        Managers.UI.ShowToast(string.Format(Util.Localize("DungeonStartFormat"),
+            Util.Localize(DungeonManager.NAME_KEYS[(int)dungeon.RunKind]), Mathf.RoundToInt(dungeon.TimeLimit)));
+
+        float nextSpawn = 0f;
+        while (dungeon.IsRunning && dungeon.TimeLeft > 0f)
+        {
+            PlayerController player = Managers.Game.Player;
+            if (player == null || player.State == State.Dead) yield break;   // 마을 귀환 → EndBattle 이 정산한다
+            dungeon.TimeLeft = Mathf.Max(0f, dungeon.TimeLeft - Time.deltaTime);   // 전투 정지(도감 등) 중엔 deltaTime 0
+
+            if (monsterRoot.childCount == 0 && (nextSpawn -= Time.deltaTime) <= 0f)
+            {
+                var pos = new Vector3(player.transform.position.x + DUNGEON_SPAWN_OFFSET_X, Define.GROUND_Y, 0f);
+                MonsterController mc = Managers.Object.SpawnMonster(Managers.Object.PickFieldMonsterId(2001), pos);
+                if (mc != null)
+                {
+                    ShowHpBarOnEngage(mc);
+                    int id = mc.DataId;
+                    mc.OnDied += () => dungeon.AddKill(id);
+                }
+                nextSpawn = spawnDelay;
+            }
+            yield return null;
+        }
+
+        // 시간 초과 — 싸우던 몬스터는 물러난다(보상 없음)
+        for (int i = monsterRoot.childCount - 1; i >= 0; i--)
+        {
+            var m = monsterRoot.GetChild(i).GetComponent<MonsterController>();
+            if (m != null && m.State != State.Dead) m.Retreat();
+        }
+        foreach (var bar in Managers.UI.SceneUI.GetComponentsInChildren<UI_MonsterHPBar>(false))
+            bar.PlayCloseAnimation();
+        dungeon.Finish();
+
+        yield return new WaitForSeconds(DUNGEON_AFTER_DELAY);
+        yield return new WaitUntil(() => monsterRoot.childCount == 0);
+        _battleCoroutine = StartCoroutine(CoBattleLoop());   // 그 스테이지에서 사냥을 이어 간다
+    }
+
     void EndBattle()
     {
+        Managers.Dungeon?.Finish();   // 던전 도중 쓰러짐·귀환·이동 — 그때까지 잡은 만큼(여러 번 불려도 한 번)
         // ⚠️ `Player?.` 를 쓰면 안 된다. Unity에서 파괴된 오브젝트는 C# null이 아니라
         //  "fake null"이라 널 조건 연산자를 그대로 통과하고, 그 뒤 접근에서
         //  MissingReferenceException이 난다(씬 전환·플레이 종료 시 실제로 발생했다).

@@ -39,7 +39,8 @@ public class UI_MissionShortcut : UI_Base
         _poll = POLL_INTERVAL;
         bool show = _tab == UI_MissionPopup.Tab.Shop
             ? Managers.Shop != null && Managers.Shop.HasFreeReward          // 상점 버튼: 무료 크리스탈·월정액·오프라인 2배
-            : Managers.Mission != null && Managers.Mission.HasClaimable;   // 미션 버튼: 완료한 미션·출석
+            : (Managers.Mission != null && Managers.Mission.HasClaimable)   // 미션 버튼: 완료한 미션·출석
+              || (Managers.Dungeon != null && Managers.Dungeon.HasFreeEntry);  //  + 오늘 무료 입장이 남은 요일 던전(ADR0034)
         if (_badge != null && _badge.activeSelf != show) _badge.SetActive(show);
     }
 }

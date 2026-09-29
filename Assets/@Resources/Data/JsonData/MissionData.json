@@ -65,10 +65,20 @@
       "Kind": "Daily",
       "Order": 7,
       "Event": "DailyChest",
-      "Goal": 6,
+      "Goal": 7,
       "RewardType": "Crystal",
       "RewardValue": 40,
       "TitleKey": "MissionDailyChestText"
+    },
+    {
+      "DataId": 1008,
+      "Kind": "Daily",
+      "Order": 8,
+      "Event": "DungeonClear",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 10,
+      "TitleKey": "MissionDungeonFormat"
     },
     {
       "DataId": 2001,
@@ -123,7 +133,7 @@
     {
       "DataId": 3001,
       "Kind": "Guide",
-      "Order": 1,
+      "Order": 10,
       "Event": "Train",
       "Goal": 1,
       "RewardType": "Crystal",
@@ -133,7 +143,7 @@
     {
       "DataId": 3002,
       "Kind": "Guide",
-      "Order": 2,
+      "Order": 20,
       "Event": "BossClear",
       "Goal": 1,
       "RewardType": "Crystal",
@@ -143,7 +153,7 @@
     {
       "DataId": 3003,
       "Kind": "Guide",
-      "Order": 3,
+      "Order": 30,
       "Event": "Parry",
       "Goal": 1,
       "RewardType": "Crystal",
@@ -153,7 +163,7 @@
     {
       "DataId": 3004,
       "Kind": "Guide",
-      "Order": 4,
+      "Order": 40,
       "Event": "ReachLevel",
       "Goal": 10,
       "RewardType": "Crystal",
@@ -163,7 +173,7 @@
     {
       "DataId": 3005,
       "Kind": "Guide",
-      "Order": 5,
+      "Order": 50,
       "Event": "NewStage",
       "Goal": 3,
       "RewardType": "Crystal",
@@ -173,7 +183,7 @@
     {
       "DataId": 3006,
       "Kind": "Guide",
-      "Order": 6,
+      "Order": 60,
       "Event": "CaptureTry",
       "Goal": 1,
       "RewardType": "Crystal",
@@ -183,7 +193,7 @@
     {
       "DataId": 3007,
       "Kind": "Guide",
-      "Order": 7,
+      "Order": 70,
       "Event": "Discover",
       "Goal": 10,
       "RewardType": "Crystal",
@@ -193,7 +203,7 @@
     {
       "DataId": 3008,
       "Kind": "Guide",
-      "Order": 8,
+      "Order": 80,
       "Event": "Enhance",
       "Goal": 1,
       "RewardType": "Crystal",
@@ -203,7 +213,7 @@
     {
       "DataId": 3009,
       "Kind": "Guide",
-      "Order": 9,
+      "Order": 90,
       "Event": "ReachLevel",
       "Goal": 20,
       "RewardType": "Crystal",
@@ -213,7 +223,7 @@
     {
       "DataId": 3010,
       "Kind": "Guide",
-      "Order": 10,
+      "Order": 100,
       "Event": "NewStage",
       "Goal": 5,
       "RewardType": "Crystal",
@@ -223,7 +233,7 @@
     {
       "DataId": 3011,
       "Kind": "Guide",
-      "Order": 11,
+      "Order": 110,
       "Event": "Train",
       "Goal": 50,
       "RewardType": "Crystal",
@@ -233,7 +243,7 @@
     {
       "DataId": 3012,
       "Kind": "Guide",
-      "Order": 12,
+      "Order": 120,
       "Event": "Discover",
       "Goal": 20,
       "RewardType": "Crystal",
@@ -243,7 +253,7 @@
     {
       "DataId": 3013,
       "Kind": "Guide",
-      "Order": 13,
+      "Order": 130,
       "Event": "ReachLevel",
       "Goal": 30,
       "RewardType": "Crystal",
@@ -253,7 +263,7 @@
     {
       "DataId": 3014,
       "Kind": "Guide",
-      "Order": 14,
+      "Order": 140,
       "Event": "BossClear",
       "Goal": 10,
       "RewardType": "Crystal",
@@ -263,7 +273,7 @@
     {
       "DataId": 3015,
       "Kind": "Guide",
-      "Order": 15,
+      "Order": 150,
       "Event": "NewStage",
       "Goal": 10,
       "RewardType": "Crystal",
@@ -273,7 +283,7 @@
     {
       "DataId": 3016,
       "Kind": "Guide",
-      "Order": 16,
+      "Order": 160,
       "Event": "Parry",
       "Goal": 20,
       "RewardType": "Crystal",
@@ -283,7 +293,7 @@
     {
       "DataId": 3017,
       "Kind": "Guide",
-      "Order": 17,
+      "Order": 170,
       "Event": "ReachLevel",
       "Goal": 40,
       "RewardType": "Crystal",
@@ -293,7 +303,7 @@
     {
       "DataId": 3018,
       "Kind": "Guide",
-      "Order": 18,
+      "Order": 180,
       "Event": "Discover",
       "Goal": 50,
       "RewardType": "Crystal",
@@ -303,7 +313,7 @@
     {
       "DataId": 3019,
       "Kind": "Guide",
-      "Order": 19,
+      "Order": 190,
       "Event": "Enhance",
       "Goal": 10,
       "RewardType": "Crystal",
@@ -313,7 +323,7 @@
     {
       "DataId": 3020,
       "Kind": "Guide",
-      "Order": 20,
+      "Order": 200,
       "Event": "NewStage",
       "Goal": 15,
       "RewardType": "Crystal",
@@ -323,7 +333,7 @@
     {
       "DataId": 3021,
       "Kind": "Guide",
-      "Order": 21,
+      "Order": 210,
       "Event": "ReachLevel",
       "Goal": 50,
       "RewardType": "Crystal",
@@ -333,7 +343,7 @@
     {
       "DataId": 3022,
       "Kind": "Guide",
-      "Order": 22,
+      "Order": 220,
       "Event": "Train",
       "Goal": 300,
       "RewardType": "Crystal",
@@ -343,7 +353,7 @@
     {
       "DataId": 3023,
       "Kind": "Guide",
-      "Order": 23,
+      "Order": 230,
       "Event": "BossClear",
       "Goal": 50,
       "RewardType": "Crystal",
@@ -353,7 +363,7 @@
     {
       "DataId": 3024,
       "Kind": "Guide",
-      "Order": 24,
+      "Order": 240,
       "Event": "NewStage",
       "Goal": 25,
       "RewardType": "Crystal",
@@ -363,7 +373,7 @@
     {
       "DataId": 3025,
       "Kind": "Guide",
-      "Order": 25,
+      "Order": 250,
       "Event": "ReachLevel",
       "Goal": 70,
       "RewardType": "Crystal",
@@ -373,7 +383,7 @@
     {
       "DataId": 3026,
       "Kind": "Guide",
-      "Order": 26,
+      "Order": 260,
       "Event": "Discover",
       "Goal": 100,
       "RewardType": "Crystal",
@@ -383,7 +393,7 @@
     {
       "DataId": 3027,
       "Kind": "Guide",
-      "Order": 27,
+      "Order": 270,
       "Event": "Parry",
       "Goal": 100,
       "RewardType": "Crystal",
@@ -393,7 +403,7 @@
     {
       "DataId": 3028,
       "Kind": "Guide",
-      "Order": 28,
+      "Order": 280,
       "Event": "NewStage",
       "Goal": 35,
       "RewardType": "Crystal",
@@ -403,7 +413,7 @@
     {
       "DataId": 3029,
       "Kind": "Guide",
-      "Order": 29,
+      "Order": 290,
       "Event": "ReachLevel",
       "Goal": 100,
       "RewardType": "Crystal",
@@ -413,7 +423,7 @@
     {
       "DataId": 3030,
       "Kind": "Guide",
-      "Order": 30,
+      "Order": 300,
       "Event": "CaptureTry",
       "Goal": 30,
       "RewardType": "Crystal",
@@ -423,7 +433,7 @@
     {
       "DataId": 3031,
       "Kind": "Guide",
-      "Order": 31,
+      "Order": 310,
       "Event": "NewStage",
       "Goal": 50,
       "RewardType": "Crystal",
@@ -433,7 +443,7 @@
     {
       "DataId": 3032,
       "Kind": "Guide",
-      "Order": 32,
+      "Order": 320,
       "Event": "ReachLevel",
       "Goal": 130,
       "RewardType": "Crystal",
@@ -443,7 +453,7 @@
     {
       "DataId": 3033,
       "Kind": "Guide",
-      "Order": 33,
+      "Order": 330,
       "Event": "Discover",
       "Goal": 200,
       "RewardType": "Crystal",
@@ -453,7 +463,7 @@
     {
       "DataId": 3034,
       "Kind": "Guide",
-      "Order": 34,
+      "Order": 340,
       "Event": "NewStage",
       "Goal": 65,
       "RewardType": "Crystal",
@@ -463,7 +473,7 @@
     {
       "DataId": 3035,
       "Kind": "Guide",
-      "Order": 35,
+      "Order": 350,
       "Event": "ReachLevel",
       "Goal": 170,
       "RewardType": "Crystal",
@@ -473,7 +483,7 @@
     {
       "DataId": 3036,
       "Kind": "Guide",
-      "Order": 36,
+      "Order": 360,
       "Event": "NewStage",
       "Goal": 80,
       "RewardType": "Crystal",
@@ -483,7 +493,7 @@
     {
       "DataId": 3037,
       "Kind": "Guide",
-      "Order": 37,
+      "Order": 370,
       "Event": "ReachLevel",
       "Goal": 210,
       "RewardType": "Crystal",
@@ -493,7 +503,7 @@
     {
       "DataId": 3038,
       "Kind": "Guide",
-      "Order": 38,
+      "Order": 380,
       "Event": "NewStage",
       "Goal": 100,
       "RewardType": "Crystal",
@@ -503,7 +513,7 @@
     {
       "DataId": 3039,
       "Kind": "Guide",
-      "Order": 39,
+      "Order": 390,
       "Event": "ReachLevel",
       "Goal": 250,
       "RewardType": "Crystal",
@@ -513,12 +523,22 @@
     {
       "DataId": 3040,
       "Kind": "Guide",
-      "Order": 40,
+      "Order": 400,
       "Event": "NewStage",
       "Goal": 125,
       "RewardType": "Crystal",
       "RewardValue": 200,
       "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3101,
+      "Kind": "Guide",
+      "Order": 25,
+      "Event": "DungeonClear",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionDungeonFormat"
     },
     {
       "DataId": 4001,

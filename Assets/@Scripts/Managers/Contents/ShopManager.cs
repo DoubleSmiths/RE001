@@ -36,7 +36,7 @@ public static class IapService
 //  세이브: GameData.Shop(ShopSaveData). 광고 횟수는 기기 현지 날짜로 하루마다 비운다.
 public class ShopManager
 {
-    public const string AD_HOT = "hot_", AD_FREE_CRYSTAL = "free_crystal", AD_OFFLINE = "offline_double";
+    public const string AD_HOT = "hot_", AD_FREE_CRYSTAL = "free_crystal", AD_OFFLINE = "offline_double", AD_DUNGEON = "dungeon_";
     const int BUFF_KEY_HOT = -200;   // 버프 아이콘 키 — 물약(-100)과 겹치지 않게, 종류별 -200/-201/-202
     const int HOT_KINDS = 3;
 
@@ -131,7 +131,8 @@ public class ShopManager
     }
 
     // 광고를 보고 보상 — 한도가 남아 있을 때만. 모의 광고는 즉시 끝나 결과를 바로 돌려준다(실제 SDK 는 OnChanged 로 본다).
-    bool WatchAd(string placement, int perDay, Action onReward)
+    //  요일 던전의 광고 입장(DungeonManager)도 이 길을 쓴다 — 하루 횟수 세기·광고 제거 상품이 한곳에서 처리된다.
+    public bool WatchAd(string placement, int perDay, Action onReward)
     {
         if (!AdService.Available || AdLeft(placement, perDay) <= 0) return false;
         bool rewarded = false;
@@ -200,7 +201,7 @@ public class ShopManager
         return true;
     }
 
-    static bool SpendCrystal(int cost)
+    public static bool SpendCrystal(int cost)
     {
         if (Managers.Game.Crystal < cost) return false;
         Managers.Game.Crystal -= cost;

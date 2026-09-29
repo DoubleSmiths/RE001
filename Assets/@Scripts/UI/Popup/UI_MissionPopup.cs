@@ -10,6 +10,7 @@ using static Define;
 //  줄을 누르면 받는다(받을 수 있을 때만). 진행·주기 초기화는 MissionManager, 상점·광고·핫타임은 ShopManager 가 맡는다.
 //  상점 탭: 핫타임 3종(광고가 남았으면 광고, 아니면 크리스탈), 무료 크리스탈·오프라인 2배(광고), 월정액 매일 보상,
 //  만드라고라(크리스탈), 인앱 상품. 광고·결제 줄은 모의가 되는 빌드(에디터·개발)에서만 보인다(AdService/IapService).
+//  던전 탭(ADR0034): 요일 던전 3종 — 무료 입장이 남았으면 입장, 없으면 광고, 그다음 크리스탈. 누르면 창을 닫고 전투로 간다.
 public class UI_MissionPopup : UI_Popup
 {
     #region Enum
@@ -39,9 +40,9 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
-    public enum Tab { Daily, Weekly, Guide, Attendance, Shop }
+    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
 
-    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText" };
+    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText" };
     static readonly string[] HOT_KEYS = { "HotGoldText", "HotExpText", "HotAtkText" };   // HotTime 순서
     static readonly Color TAB_ON      = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color TAB_OFF     = new Color32(0xB8, 0xB8, 0xB8, 0xFF);
@@ -51,6 +52,7 @@ public class UI_MissionPopup : UI_Popup
     const float ROW_DONE_ALPHA   = 0.55f;
     const int   GUIDE_PREVIEW    = 2;       // 가이드 다음 단계 미리보기 수
     const float SHOP_TICK        = 1f;      // 상점 탭: 핫타임 남은 시간 갱신 주기(초)
+    const string TAB_ALERT       = "<color=#FF6A6A>!</color>";
     float _shopTick;
 
     Tab _tab;
@@ -91,6 +93,7 @@ public class UI_MissionPopup : UI_Popup
 
         if (Managers.Mission != null) Managers.Mission.OnChanged += Refresh;
         if (Managers.Shop != null) Managers.Shop.OnChanged += Refresh;
+        if (Managers.Dungeon != null) Managers.Dungeon.OnChanged += Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged += Refresh;
@@ -112,6 +115,7 @@ public class UI_MissionPopup : UI_Popup
     {
         if (Managers.Mission != null) Managers.Mission.OnChanged -= Refresh;
         if (Managers.Shop != null) Managers.Shop.OnChanged -= Refresh;
+        if (Managers.Dungeon != null) Managers.Dungeon.OnChanged -= Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged -= Refresh;
@@ -141,15 +145,18 @@ public class UI_MissionPopup : UI_Popup
         var mission = Managers.Mission;
         if (mission == null) return;
 
-        GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : "MissionTitleText");
+        GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText" : "MissionTitleText");
         GetText((int)Texts.ClaimAllTxt).text = Util.Localize("MissionClaimAllText");
-        // 상점 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제라 한꺼번에 누르면 안 된다
-        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop);
-        for (int i = 0; i < _tabTexts.Count; i++)
+        // 상점·던전 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장이라 한꺼번에 누르면 안 된다
+        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon);
+        for (int i = 0; i < _tabTexts.Count && i < TAB_KEYS.Length; i++)
         {
             _tabTexts[i].text  = Util.Localize(TAB_KEYS[i]);
             _tabTexts[i].color = (int)_tab == i ? TAB_ON : TAB_OFF;
         }
+        // 오늘 무료 입장이 남은 던전이 있으면 탭 이름 옆에 빨간 '!'
+        if ((int)Tab.Dungeon < _tabTexts.Count && Managers.Dungeon != null && Managers.Dungeon.HasFreeEntry)
+            _tabTexts[(int)Tab.Dungeon].text += TAB_ALERT;
 
         int n = 0;
         switch (_tab)
@@ -161,6 +168,7 @@ public class UI_MissionPopup : UI_Popup
                 for (int d = 0; d < MissionManager.ATTENDANCE_DAYS; d++) AttendanceRow(n++, d);
                 break;
             case Tab.Shop: n = ShopRows(); break;
+            case Tab.Dungeon: n = DungeonRows(); break;
         }
         for (int i = n; i < _rows.Count; i++) _rows[i].SetActive(false);
 
@@ -173,7 +181,7 @@ public class UI_MissionPopup : UI_Popup
     // 지금 탭에서 받을 수 있는 줄을 전부 받는다(가이드는 받으면 다음 단계가 열리니 더 없을 때까지).
     void OnClickClaimAll()
     {
-        if (_tab == Tab.Shop) return;
+        if (_tab == Tab.Shop || _tab == Tab.Dungeon) return;
         bool got = false;
         for (int guard = 0; guard < 64; guard++)
         {
@@ -320,6 +328,46 @@ public class UI_MissionPopup : UI_Popup
     static string Crystal(int cost) => string.Format(Util.Localize("RewardCrystalFormat"), cost);
     static Color CrystalColor(int cost) => Managers.Game.Crystal >= cost ? TEXT_REWARD : TEXT_DONE;
     static string Clock(TimeSpan t) => t.TotalHours >= 1 ? $"{(int)t.TotalHours}:{t.Minutes:00}:{t.Seconds:00}" : $"{t.Minutes:00}:{t.Seconds:00}";
+    #endregion
+
+    #region 던전 탭 (ADR0034)
+    int DungeonRows()
+    {
+        var d = Managers.Dungeon;
+        int n = 0;
+        foreach (DungeonKind k in Enum.GetValues(typeof(DungeonKind)))
+        {
+            string left = Util.Localize(DungeonManager.NAME_KEYS[(int)k]);
+            if (k == DungeonManager.Today) left += "  " + string.Format(Util.Localize("DungeonTodayFormat"), d.Mult(k));
+            if (d.Best(k) > 0)             left += "  " + string.Format(Util.Localize("DungeonBestFormat"), d.Best(k));
+            var kind = k;
+            int free = d.FreeLeft(k), ads = d.AdLeft(k);
+            if (free > 0)
+                SetRow(n++, left, string.Format(Util.Localize("DungeonFreeFormat"), free, d.FreePerDay), TEXT_READY, 1f, () => EnterDungeon(kind, DungeonManager.Pay.Free));
+            else if (AdService.Available && ads > 0)
+                SetRow(n++, left, string.Format(Util.Localize("AdWatchFormat"), ads), TEXT_READY, 1f, () => EnterDungeon(kind, DungeonManager.Pay.Ad));
+            else
+                SetRow(n++, left, Crystal(d.CrystalCost), CrystalColor(d.CrystalCost), 1f, () => EnterDungeon(kind, DungeonManager.Pay.Crystal));
+        }
+        SetRow(n++, string.Format(Util.Localize("DungeonHelpFormat"), Mathf.RoundToInt(d.TimeLimit)), "", TEXT_DONE, 1f, null);
+        return n;
+    }
+
+    // 값을 치르고 창을 닫은 뒤 전투로 — 새 전투 그룹이 뜨면서 던전이 시작된다(UI_BattleBtnGroup.CoDungeon)
+    void EnterDungeon(DungeonKind k, DungeonManager.Pay pay)
+    {
+        var scene = Managers.UI.SceneUI as UI_GameScene;
+        if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle) || !Managers.Dungeon.TryEnter(k, pay))
+        {
+            Managers.Sound?.PlaySFX("SFX_Fail");
+            Managers.UI.ShowToast(Util.Localize(pay == DungeonManager.Pay.Crystal && Managers.Game.Crystal < Managers.Dungeon.CrystalCost
+                ? "NotEnoughCrystalText" : "DungeonBusyText"));
+            return;
+        }
+        Managers.Sound?.PlaySFX("SFX_Success2");
+        Managers.UI.CloseAllPopupUI();
+        scene.EnterAreaWithFade(AreaType.Battle);
+    }
     #endregion
 
     void Claim(Data.MissionData m)

@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXCEL = os.path.join(ROOT, 'Assets', '@Resources', 'Data', 'Excel')
 
 # 미션 이벤트 이름은 Define.MissionEvent 와 같아야 한다.
-#  KillMonster BossClear NewStage Train CaptureTry Enhance Parry DailyAllClear DailyChest ReachLevel Discover Attendance
+#  KillMonster BossClear NewStage Train CaptureTry Enhance Parry DailyAllClear DailyChest ReachLevel Discover Attendance DungeonClear
 TITLE = {
     'KillMonster':   'MissionKillFormat',
     'BossClear':     'MissionBossFormat',
@@ -32,9 +32,11 @@ TITLE = {
     'ReachLevel':    'MissionLevelFormat',
     'Discover':      'MissionDiscoverFormat',
     'Attendance':    'AttendanceDayFormat',
+    'DungeonClear':  'MissionDungeonFormat',
 }
 
-# 일일 — 크리스탈 60 + 완료 상자 40 (설계서 4.5)
+# 일일 — 크리스탈 70 + 완료 상자 40 (설계서 4.5)
+#  요일 던전(ADR0034)은 상자 뒤에 붙였다 — DataId 는 순번이라 가운데 끼우면 오늘 받은 상자(1007)가 다른 미션이 된다.
 DAILY = [
     ('KillMonster', 300, 'Crystal', 15),
     ('BossClear',     1, 'Crystal', 10),
@@ -42,7 +44,8 @@ DAILY = [
     ('CaptureTry',    1, 'Crystal',  5),
     ('Enhance',       1, 'Crystal', 10),
     ('Parry',        10, 'Crystal', 10),
-    ('DailyChest',    6, 'Crystal', 40),   # 위 6개를 모두 받으면 열린다
+    ('DailyChest',    7, 'Crystal', 40),   # 다른 일일 7개를 모두 받으면 열린다
+    ('DungeonClear',  1, 'Crystal', 10),
 ]
 # 주간 — 크리스탈 300
 WEEKLY = [
@@ -63,6 +66,11 @@ GUIDE = [
     ('NewStage', 50, 150), ('ReachLevel', 130, 150), ('Discover', 200, 150), ('NewStage', 65, 150), ('ReachLevel', 170, 170),
     ('NewStage', 80, 170), ('ReachLevel', 210, 180), ('NewStage', 100, 200), ('ReachLevel', 250, 200), ('NewStage', 125, 200),
 ]
+# 가이드 사이에 나중에 끼운 단계 — (DataId, Order, 이벤트, 목표, 크리스탈). 기존 단계는 Order = 번호×10 이라 그 사이에 들어간다.
+#  DataId 를 따로 둬서 받은 기록(Claimed = DataId)이 밀리지 않는다. 이미 지나간 유저에겐 이 단계가 다음 가이드로 뜬다(새 기능 안내).
+GUIDE_EXTRA = [
+    (3101, 25, 'DungeonClear', 1, 30),   # 요일 던전(ADR0034) — 보스 1회 다음
+]
 # 출석 7일 반복: 50 → 50 → 만드라고라 2 → 100 → 50 → 50 → 300
 ATTENDANCE = [('Crystal', 50), ('Crystal', 50), ('Mandrake', 2), ('Crystal', 100), ('Crystal', 50), ('Crystal', 50), ('Crystal', 300)]
 
@@ -80,7 +88,9 @@ def mission_rows():
     for i, (ev, goal, rt, rv) in enumerate(WEEKLY, 1):
         rows.append((2000 + i, 'Weekly', i, ev, goal, rt, rv, TITLE[ev]))
     for i, (ev, goal, rv) in enumerate(GUIDE, 1):
-        rows.append((3000 + i, 'Guide', i, ev, goal, 'Crystal', rv, TITLE[ev]))
+        rows.append((3000 + i, 'Guide', i * 10, ev, goal, 'Crystal', rv, TITLE[ev]))
+    for data_id, order, ev, goal, rv in GUIDE_EXTRA:
+        rows.append((data_id, 'Guide', order, ev, goal, 'Crystal', rv, TITLE[ev]))
     for i, (rt, rv) in enumerate(ATTENDANCE, 1):
         rows.append((4000 + i, 'Attendance', i, 'Attendance', i, rt, rv, TITLE['Attendance']))
     return rows
@@ -139,7 +149,7 @@ def main():
     daily = sum(r[6] for r in mission_rows() if r[1] == 'Daily')
     weekly = sum(r[6] for r in mission_rows() if r[1] == 'Weekly')
     guide = sum(r[6] for r in mission_rows() if r[1] == 'Guide')
-    print(f'일일 크리스탈 {daily} (상자 포함) · 주간 {weekly} · 가이드 {len(GUIDE)}단계 합계 {guide} · 출석 7일 {ATTENDANCE}')
+    print(f'일일 크리스탈 {daily} (상자 포함) · 주간 {weekly} · 가이드 {len(GUIDE) + len(GUIDE_EXTRA)}단계 합계 {guide} · 출석 7일 {ATTENDANCE}')
 
     ok = True
     for path, header, rows, sheet in targets:

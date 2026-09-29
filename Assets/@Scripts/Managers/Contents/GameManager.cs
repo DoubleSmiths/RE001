@@ -98,6 +98,15 @@ public class ShopSaveData
     public bool AdFree;                                                // 광고 제거 — 광고 없이 즉시 보상
 }
 
+// v2 요일 던전(ADR0034). 배열 칸 = DungeonKind 순서. 무료 입장 수는 DayKey(yyyyMMdd)가 바뀌면 비운다.
+[Serializable]
+public class DungeonSaveData
+{
+    public int   DayKey;
+    public int[] Used      = new int[3];   // 오늘 쓴 무료 입장
+    public int[] BestKills = new int[3];   // 한 번에 가장 많이 잡은 수
+}
+
 // ──────────────────────────────────────────────
 //  세이브 데이터
 // ──────────────────────────────────────────────
@@ -136,6 +145,8 @@ public class GameData
     public MissionSaveData Missions = new MissionSaveData();
     // v2 상점·광고·월정액
     public ShopSaveData Shop = new ShopSaveData();
+    // v2 요일 던전
+    public DungeonSaveData Dungeon = new DungeonSaveData();
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -1452,6 +1463,9 @@ public class GameManager
 
     public MissionSaveData MissionSave => _gameData.Missions;
     public ShopSaveData    ShopSave    => _gameData.Shop;
+    public DungeonSaveData DungeonSave => _gameData.Dungeon;
+    public int LastBattleAreaId => _gameData.LastBattleAreaId;
+    public int FirstStageNode => StageOrder.Count > 0 ? StageOrder[0] : 0;
 
     public bool GuardHintSeen
     {
@@ -2125,6 +2139,9 @@ public class GameManager
         d.Shop.HotUntil         = Fit(d.Shop.HotUntil, 3);
         d.Shop.AdViews         ??= new Dictionary<string, int>();
         d.Shop.Purchased       ??= new List<string>();
+        d.Dungeon              ??= new DungeonSaveData();   // v2 요일 던전 이전 세이브엔 없다
+        d.Dungeon.Used          = Fit(d.Dungeon.Used, 3);
+        d.Dungeon.BestKills     = Fit(d.Dungeon.BestKills, 3);
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

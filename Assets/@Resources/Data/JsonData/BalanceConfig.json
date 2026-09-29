@@ -204,6 +204,56 @@
       "Key": "TAP_INPUT_BUFFER",
       "Value": 0.25,
       "Desc": "베는 중에 누른 입력을 기억하는 시간(초) — 끝나는 즉시 이어 벤다"
+    },
+    {
+      "Key": "DUNGEON_TIME",
+      "Value": 60.0,
+      "Desc": "요일 던전 제한 시간(초)"
+    },
+    {
+      "Key": "DUNGEON_FREE_PER_DAY",
+      "Value": 2.0,
+      "Desc": "요일 던전 종류별 하루 무료 입장"
+    },
+    {
+      "Key": "DUNGEON_ADS_PER_DAY",
+      "Value": 1.0,
+      "Desc": "요일 던전 종류별 하루 광고 입장"
+    },
+    {
+      "Key": "DUNGEON_CRYSTAL_COST",
+      "Value": 30.0,
+      "Desc": "요일 던전 크리스탈 입장 값(횟수 제한 없음)"
+    },
+    {
+      "Key": "DUNGEON_GOLD_MULT",
+      "Value": 10.0,
+      "Desc": "골드 던전: 처치당 보너스 = 그 스테이지 평균 골드 × 이 값(보통 처치 보상은 따로)"
+    },
+    {
+      "Key": "DUNGEON_EXP_MULT",
+      "Value": 10.0,
+      "Desc": "경험치 던전: 처치당 보너스 = 그 스테이지 평균 경험치 × 이 값"
+    },
+    {
+      "Key": "DUNGEON_MAT_MULT",
+      "Value": 3.0,
+      "Desc": "재료 던전: 잡은 몬스터의 재료 드롭 × 이 값(확정)"
+    },
+    {
+      "Key": "DUNGEON_MANDRAKE_KILLS",
+      "Value": 20.0,
+      "Desc": "재료 던전: 이 수만큼 잡을 때마다 만드라고라 1"
+    },
+    {
+      "Key": "DUNGEON_TODAY_MULT",
+      "Value": 1.5,
+      "Desc": "오늘의 던전(요일마다 한 종류) 보상 배수"
+    },
+    {
+      "Key": "DUNGEON_SPAWN_DELAY",
+      "Value": 0.3,
+      "Desc": "던전에서 몬스터가 쓰러진 뒤 다음이 나오기까지(초)"
     }
   ]
 }

@@ -16,6 +16,7 @@ public class Managers : MonoBehaviour
     ComboManager    _combo    = new ComboManager();
     MissionManager  _mission  = new MissionManager();   // v2 미션·출석(ADR0030)
     ShopManager     _shop     = new ShopManager();      // v2 상점·핫타임·월정액(ADR0030)
+    DungeonManager  _dungeon  = new DungeonManager();   // v2 요일 던전(ADR0034)
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -27,6 +28,7 @@ public class Managers : MonoBehaviour
     public static ComboManager    Combo    { get { return Instance?._combo; } }
     public static MissionManager  Mission  { get { return Instance?._mission; } }
     public static ShopManager     Shop     { get { return Instance?._shop; } }
+    public static DungeonManager  Dungeon  { get { return Instance?._dungeon; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 
