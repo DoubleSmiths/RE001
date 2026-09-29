@@ -79,9 +79,19 @@ public class UI_Toast : UI_Base
     {
         // 메시지 변경
         transform.localScale = Vector3.one;
-        GetText((int)Texts.StageTitle_Txt).text = msg;
+        var tmp = GetText((int)Texts.StageTitle_Txt);
+        // 긴 알림(던전 결과 '골드 던전 끝! 28마리 · 골드 2,450' 등)이 화면 폭을 넘어 잘렸다 — 칸에 맞춰 줄인다(최대 = 원래 크기)
+        if (!tmp.enableAutoSizing)
+        {
+            tmp.fontSizeMax = tmp.fontSize;
+            tmp.fontSizeMin = tmp.fontSize * TOAST_MIN_FONT_RATIO;
+            tmp.enableAutoSizing = true;
+        }
+        tmp.text = msg;
         Refresh();
     }
+
+    const float TOAST_MIN_FONT_RATIO = 0.5f;
 
     void Refresh()
     {
