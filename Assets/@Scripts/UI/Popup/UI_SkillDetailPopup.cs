@@ -509,6 +509,7 @@ public class UI_SkillDetailPopup : UI_Popup
     }
 
     // ── 슬39: 발동조건/효과 설명 ──
+    //  문구는 전부 LocalizationData 키. 한/영 어순이 달라 조각을 이어 붙이지 않고 서식({0})째로 둔다.
     string BuildTriggerDesc(int id)
     {
         if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return "";
@@ -522,38 +523,41 @@ public class UI_SkillDetailPopup : UI_Popup
             string conds = "";
             if (d.Conditions != null)
                 for (int i = 0; i < d.Conditions.Count; i++)
-                    conds += (i > 0 ? " / " : "") + CondKor(d.Conditions[i], d.ConditionValue);
-            return $"<color=#FFD24A>[{conds}]</color> {d.ProcChance:0}% 확률로 {eff}";
+                    conds += (i > 0 ? " / " : "") + CondText(d.Conditions[i], d.ConditionValue);
+            return $"<color=#FFD24A>[{conds}]</color> " + string.Format(Util.Localize(Define.LocalizeKey.AbilityTriggerChanceFormat), d.ProcChance, eff);
         }
         // Time
-        return $"<color=#FFD24A>[{ContextKor(d.ActiveContext)}]</color> {d.Cooldown:0.#}초마다 {eff}";
+        return $"<color=#FFD24A>[{ContextText(d.ActiveContext)}]</color> " + string.Format(Util.Localize(Define.LocalizeKey.AbilityTriggerIntervalFormat), d.Cooldown, eff);
     }
 
-    static string CondKor(Define.AbilityCondition c, float p)
+    static string CondText(Define.AbilityCondition c, float p)
     {
         switch (c)
         {
-            case Define.AbilityCondition.BattleStart: return "전투 시작 시";
-            case Define.AbilityCondition.OnAttack:    return "공격 시";
-            case Define.AbilityCondition.AfterAttack: return "공격 후";
-            case Define.AbilityCondition.OnHit:       return "타격 시";
-            case Define.AbilityCondition.OnCrit:      return "치명타 시";
-            case Define.AbilityCondition.OnMiss:      return "공격이 빗나갈 시";
-            case Define.AbilityCondition.SelfEvade:   return "회피 시";
-            case Define.AbilityCondition.OnDamaged:   return "피격 시";
-            case Define.AbilityCondition.OnHeal:      return "체력 회복 시";
-            case Define.AbilityCondition.LowHp:       return $"HP {p:0}% 이하 시";
+            case Define.AbilityCondition.BattleStart: return Util.Localize(Define.LocalizeKey.AbilityCondBattleStartText);
+            case Define.AbilityCondition.OnAttack:    return Util.Localize(Define.LocalizeKey.AbilityCondOnAttackText);
+            case Define.AbilityCondition.AfterAttack: return Util.Localize(Define.LocalizeKey.AbilityCondAfterAttackText);
+            case Define.AbilityCondition.OnHit:       return Util.Localize(Define.LocalizeKey.AbilityCondOnHitText);
+            case Define.AbilityCondition.OnCrit:      return Util.Localize(Define.LocalizeKey.AbilityCondOnCritText);
+            case Define.AbilityCondition.OnMiss:      return Util.Localize(Define.LocalizeKey.AbilityCondOnMissText);
+            case Define.AbilityCondition.SelfEvade:   return Util.Localize(Define.LocalizeKey.AbilityCondSelfEvadeText);
+            case Define.AbilityCondition.OnDamaged:   return Util.Localize(Define.LocalizeKey.AbilityCondOnDamagedText);
+            case Define.AbilityCondition.OnHeal:      return Util.Localize(Define.LocalizeKey.AbilityCondOnHealText);
+            case Define.AbilityCondition.LowHp:       return string.Format(Util.Localize(Define.LocalizeKey.AbilityCondLowHpFormat), p);
+            // 예전엔 아래 둘이 default 로 빠져 화면에 enum 이름("EnemyEvade")이 그대로 찍혔다.
+            case Define.AbilityCondition.EnemyEvade:  return Util.Localize(Define.LocalizeKey.AbilityCondEnemyEvadeText);
+            case Define.AbilityCondition.EnemyLowHp:  return string.Format(Util.Localize(Define.LocalizeKey.AbilityCondEnemyLowHpFormat), p);
             default:                                  return c.ToString();
         }
     }
 
-    static string ContextKor(Define.AbilityContext c)
+    static string ContextText(Define.AbilityContext c)
     {
         switch (c)
         {
-            case Define.AbilityContext.InBattle:    return "전투 중";
-            case Define.AbilityContext.OutOfBattle: return "비전투 중";
-            default:                                return "항시";
+            case Define.AbilityContext.InBattle:    return Util.Localize(Define.LocalizeKey.AbilityContextInBattleText);
+            case Define.AbilityContext.OutOfBattle: return Util.Localize(Define.LocalizeKey.AbilityContextOutOfBattleText);
+            default:                                return Util.Localize(Define.LocalizeKey.AbilityContextAlwaysText);
         }
     }
 
@@ -561,29 +565,43 @@ public class UI_SkillDetailPopup : UI_Popup
     {
         switch (d.Effect)
         {
-            case Define.AbilityEffect.Heal:        return $"체력 {d.EffectValue:0} 회복";
-            case Define.AbilityEffect.BonusDamage: return $"{d.EffectValue:0} 추가 피해";
+            case Define.AbilityEffect.Heal:        return string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectHealFormat), d.EffectValue);
+            case Define.AbilityEffect.BonusDamage: return string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectBonusDamageFormat), d.EffectValue);
             case Define.AbilityEffect.Buff:
-                string dur = d.EffectDuration > 0 ? $" ({d.EffectDuration:0.#}초)" : "";
-                return $"{StatKor(d.EffectStat)} +{d.EffectValue:0}{dur}";
+                string dur = d.EffectDuration > 0 ? " " + string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectDurationFormat), d.EffectDuration) : "";
+                return string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectBuffFormat), StatText(d.EffectStat), d.EffectValue) + dur;
             default:                               return "";
         }
     }
 
-    static string StatKor(string s)
+    // 스탯 이름. 영문은 문장 중간용 소문자라 문장 맨 앞에 쓸 땐 호출부가 첫 글자를 대문자로 바꾼다.
+    static string StatText(string s)
     {
         switch (s)
         {
-            case "PhysicalAtk": return "물리공격력";
-            case "MagicAtk":    return "마법공격력";
-            case "CritRate":    return "치명타 확률";
-            case "CritDamage":  return "치명타 피해";
-            case "AtkSpeed":    return "공격속도";
-            case "Accuracy":    return "명중률";
-            case "Def":         return "방어력";
-            case "MaxHp":       return "최대 체력";
-            case "Evasion":     return "회피율";
-            default:            return s;
+            case "PhysicalAtk":           return Util.Localize(Define.LocalizeKey.AbilityStatPhysicalAtkText);
+            case "MagicAtk":              return Util.Localize(Define.LocalizeKey.AbilityStatMagicAtkText);
+            case "CritRate":              return Util.Localize(Define.LocalizeKey.AbilityStatCritRateText);
+            case "CritDamage":            return Util.Localize(Define.LocalizeKey.AbilityStatCritDamageText);
+            case "AtkSpeed":              return Util.Localize(Define.LocalizeKey.AbilityStatAtkSpeedText);
+            case "Accuracy":              return Util.Localize(Define.LocalizeKey.AbilityStatAccuracyText);
+            case "Def":                   return Util.Localize(Define.LocalizeKey.AbilityStatDefText);
+            case "MaxHp":                 return Util.Localize(Define.LocalizeKey.AbilityStatMaxHpText);
+            case "Evasion":               return Util.Localize(Define.LocalizeKey.AbilityStatEvasionText);
+            // 다음 등급 미리보기(BuildNextLevelPreview)에 나오는 수치형 능력들 — 예전엔 enum 이름이 그대로 찍혔다.
+            case "PhysicalResist":        return Util.Localize(Define.LocalizeKey.AbilityStatPhysicalResistText);
+            case "MaxMemory":             return Util.Localize(Define.LocalizeKey.AbilityStatMaxMemoryText);
+            case "CatchRate":             return Util.Localize(Define.LocalizeKey.AbilityStatCatchRateText);
+            case "GuaranteedCatchReduce": return Util.Localize(Define.LocalizeKey.AbilityStatGuaranteedCatchReduceText);
+            case "ExpGain":               return Util.Localize(Define.LocalizeKey.AbilityStatExpGainText);
+            case "GoldGain":              return Util.Localize(Define.LocalizeKey.AbilityStatGoldGainText);
+            case "DropRate":              return Util.Localize(Define.LocalizeKey.AbilityStatDropRateText);
+            case "InterestMax":           return Util.Localize(Define.LocalizeKey.AbilityStatInterestMaxText);
+            case "PotionCooldown":        return Util.Localize(Define.LocalizeKey.AbilityStatPotionCooldownText);
+            case "EnhanceLuck":           return Util.Localize(Define.LocalizeKey.AbilityStatEnhanceLuckText);
+            case "MoveSpeed":             return Util.Localize(Define.LocalizeKey.AbilityStatMoveSpeedText);
+            case "RecoveryRate":          return Util.Localize(Define.LocalizeKey.AbilityStatRecoveryRateText);
+            default:                      return s;
         }
     }
 
@@ -737,8 +755,8 @@ public class UI_SkillDetailPopup : UI_Popup
         else
         {
             // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:- 기억중 - / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
-            btnLabel = !owned ? "습득 필요"
-                     : talent ? "항시 적용"
+            btnLabel = !owned ? Util.Localize(Define.LocalizeKey.AbilityNeedLearnText)
+                     : talent ? Util.Localize(Define.LocalizeKey.AbilityAlwaysActiveText)
                      : equipped ? $"- {Util.Localize(Define.LocalizeKey.Memorized_Text_Full)} -"   // 기억중 → "- 기억중 -" (mockup image152)
                      : canAfford ? Util.Localize(Define.LocalizeKey.MemorizeBtnText)
                      : Util.Localize(Define.LocalizeKey.Lack_Memory_Text);
@@ -1469,7 +1487,9 @@ public class UI_SkillDetailPopup : UI_Popup
         float cur  = d.StatBonus * lv;
         float next = d.StatBonus * (lv + 1);
         string col = next > cur ? "#00FF00" : next < cur ? "red" : "yellow";
-        return $"\n\n<color=yellow>{StatKor(d.StatType)} +{cur:0} ▶ <color={col}>+{next:0}</color></color>";
+        string stat = StatText(d.StatType);
+        if (!string.IsNullOrEmpty(stat)) stat = char.ToUpperInvariant(stat[0]) + stat.Substring(1);   // 줄 맨 앞이라 영문은 첫 글자만 대문자
+        return $"\n\n<color=yellow>{stat} +{cur:0} ▶ <color={col}>+{next:0}</color></color>";
     }
 
     // ── helpers ──

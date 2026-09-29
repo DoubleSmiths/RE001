@@ -1282,7 +1282,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
-            speakerName: "접수원 아가씨",
+            speakerName: Util.Localize(LocalizeKey.NpcReceptionistNameText),
             portrait: null,
             onFinished: isFirstQuest
                 ? (System.Action)(() => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX))
@@ -1313,7 +1313,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
-            speakerName: "연금공방 아가씨",
+            speakerName: Util.Localize(LocalizeKey.NpcAlchemistNameText),
             portrait: null,
             onFinished: () =>
             {
@@ -1342,7 +1342,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.Quest.CheckButtonClick(VILLAGE1_FORGE_TALK_VFX);
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ForgeNormalText",
-            speakerName: "대장장이",
+            speakerName: Util.Localize(LocalizeKey.NpcBlacksmithNameText),
             portrait: GetImage((int)Images.Village1ForgeTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
@@ -1353,7 +1353,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.Quest.CheckButtonClick(VILLAGE1_MONASTERY_TALK_VFX);
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "MonasteryNormalText",
-            speakerName: "수도원 사제",
+            speakerName: Util.Localize(LocalizeKey.NpcMonasteryPriestNameText),
             portrait: GetImage((int)Images.Village1MonasteryTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
@@ -1364,7 +1364,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.Quest.CheckButtonClick(VILLAGE1_SHOP_TALK_VFX);
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ShopNormalText",
-            speakerName: "상점 주인",
+            speakerName: Util.Localize(LocalizeKey.NpcShopkeeperNameText),
             portrait: GetImage((int)Images.Village1ShopTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
@@ -1397,7 +1397,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
-            speakerName: "접수원 아가씨",
+            speakerName: Util.Localize(LocalizeKey.NpcReceptionistNameText),
             portrait: null,
             onFinished: isReportQuest
                 ? (System.Action)(() =>

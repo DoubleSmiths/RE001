@@ -83,7 +83,7 @@ public class AbilityManager
     // 슬2: 능력 이름/설명/이야기 — Name/Description/Story는 LocalizationData 키. Util.Localize로 한/영 전환.
     public string GetName(int id)
     {
-        if (!TryData(id, out var d)) return $"능력 #{id}";
+        if (!TryData(id, out var d)) return string.Format(Util.Localize(Define.LocalizeKey.AbilityUnknownFormat), id);
         return Util.Localize(d.Name);
     }
     public string GetDesc(int id)

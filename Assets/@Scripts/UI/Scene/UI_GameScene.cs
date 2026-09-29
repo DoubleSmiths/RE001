@@ -271,8 +271,11 @@ public class UI_GameScene : UI_Scene
     /// 무엇 때문에 오르는지 알 수 없어, 어디서 몇 마리를 잡고 있는지 묶어서 알린다.</summary>
     void ShowIdleBatch(GameManager.OfflineReward r, string area)
     {
-        string where = string.IsNullOrEmpty(area) ? "" : $"{area}에서 ";
-        Managers.UI.ShowToast($"방치 사냥 중 — {where}{r.Kills}마리\n경험치 {r.Exp:N0} · 골드 {r.Gold:N0}");
+        // 지역명 유무에 따라 문장 구조가 달라져(영문은 "in {지역}" 이 뒤에 붙는다) 서식 키를 둘로 나눈다.
+        string msg = string.IsNullOrEmpty(area)
+            ? string.Format(Util.Localize(LocalizeKey.IdleHuntFormat), r.Kills, r.Exp, r.Gold)
+            : string.Format(Util.Localize(LocalizeKey.IdleHuntAreaFormat), area, r.Kills, r.Exp, r.Gold);
+        Managers.UI.ShowToast(msg);
     }
 
     /// <summary>방치 보상 정산 결과 안내. 전용 팝업 대신 토스트를 재사용한다
@@ -280,11 +283,12 @@ public class UI_GameScene : UI_Scene
     public void ShowOfflineReward(GameManager.OfflineReward r)
     {
         double h = r.Seconds / 3600.0;
-        string time = h >= 1.0 ? $"{h:F1}시간" : $"{r.Seconds / 60.0:F0}분";
-        string msg = $"자리를 비운 {time} 동안 {r.Kills}마리를 처치했습니다\n" +
-                     $"경험치 {r.Exp:N0} · 골드 {r.Gold:N0}";
+        string time = h >= 1.0
+            ? string.Format(Util.Localize(LocalizeKey.OfflineTimeHoursFormat), h)
+            : string.Format(Util.Localize(LocalizeKey.OfflineTimeMinutesFormat), r.Seconds / 60.0);
+        string msg = string.Format(Util.Localize(LocalizeKey.OfflineRewardFormat), time, r.Kills, r.Exp, r.Gold);
         if (r.Capped)
-            msg += $"\n(최대 {GameManager.OFFLINE_MAX_HOURS:F0}시간까지 정산됩니다)";
+            msg += "\n" + string.Format(Util.Localize(LocalizeKey.OfflineRewardCapFormat), GameManager.OFFLINE_MAX_HOURS);
         Managers.UI.ShowToast(msg);
     }
 

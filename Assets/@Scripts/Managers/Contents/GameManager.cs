@@ -256,7 +256,10 @@ public class GameManager
     // ── 캐릭터 ──
     public string PlayerName
     {
-        get => _gameData.PlayerName;
+        // 이름 입력 기능이 없어 저장값은 늘 기본값("여행자")이다 — 표시할 때 언어에 맞춘다.
+        get => string.IsNullOrEmpty(_gameData.PlayerName) || _gameData.PlayerName == "여행자"
+            ? Util.Localize(LocalizeKey.DefaultPlayerNameText)
+            : _gameData.PlayerName;
         set { _gameData.PlayerName = value; }
     }
     public int AdventurerRank
@@ -1159,8 +1162,8 @@ public class GameManager
     /// <summary>구매가 막힌 이유. 살 수 있으면 빈 문자열.</summary>
     public string GetBuyBlockReason(Data.ShopItemData shop, int count = 1)
     {
-        if (shop == null) return "판매하지 않는 물건";
-        if (Level < shop.UnlockLevel) return $"Lv.{shop.UnlockLevel} 필요";
+        if (shop == null) return Util.Localize(LocalizeKey.ShopNotForSaleText);
+        if (Level < shop.UnlockLevel) return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), shop.UnlockLevel);
         if (Gold < shop.Price * count) return Util.Localize(Define.LocalizeKey.ShopNotEnoughGoldText);
         return string.Empty;
     }
@@ -1471,8 +1474,8 @@ public class GameManager
     static string LockText(Data.TravelConditionData cond)
     {
         if (!string.IsNullOrEmpty(cond.FailMessage)) return cond.FailMessage;
-        if (cond.Type == "LEVEL_REQUIRED") return $"Lv.{cond.Value} 필요";
-        return "잠김";
+        if (cond.Type == "LEVEL_REQUIRED") return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), cond.Value);
+        return Util.Localize(LocalizeKey.TravelLockedText);
     }
 
     public int GetPlayerMaxHp()

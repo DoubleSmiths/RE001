@@ -160,7 +160,7 @@ public class UI_TamePopup : UI_Popup
         Managers.Data.MinMonDic.TryGetValue(dataId, out _mm);
         _creature = null;
         Managers.Data.CreatureDic.TryGetValue(dataId, out _creature);
-        _cName = _creature != null && !string.IsNullOrEmpty(_creature.Name) ? Util.Localize(_creature.Name) : "미니몬";
+        _cName = _creature != null && !string.IsNullOrEmpty(_creature.Name) ? Util.Localize(_creature.Name) : Util.Localize(LocalizeKey.MinimonDefaultNameText);
 
         // 슬31: 타이틀 = CatchMinimonTitleText + "!" ("미니몬 잡기!"). prefab 영어 하드코딩 교체 → 한/영 전환.
         var title = GetText((int)Texts.Txt_Title_03);

@@ -224,7 +224,7 @@ public class UI_BestiaryPopup : UI_Popup
             && Managers.Data.CreatureDic.TryGetValue(dataId, out var cd)
             && !string.IsNullOrEmpty(cd.UniqueSkillName))
             return Util.Localize(cd.UniqueSkillName);
-        return $"고유기술";
+        return Util.Localize(Define.LocalizeKey.UniqueSkillText).Trim();   // 기존 키 재사용 ("고유 기술 " 뒤 공백 제거)
     }
 
     /// <summary>고유기술 설명(로컬키). 없으면 빈 문자열.</summary>
