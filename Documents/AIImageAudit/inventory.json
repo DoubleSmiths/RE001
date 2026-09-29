@@ -1,0 +1,5630 @@
+{
+  "counts": {
+    "장비": 60,
+    "스킬": 67,
+    "재료": 31,
+    "지역 미리보기": 155,
+    "전투 배경 레이어": 75,
+    "마을 배경": 5,
+    "건물 내부": 2,
+    "NPC·메뉴": 6
+  },
+  "total": 401,
+  "entries": [
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30001.png",
+      "name": "Equip30001",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1602,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2494,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30002.png",
+      "name": "Equip30002",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2435,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1636,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30003.png",
+      "name": "Equip30003",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2760,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1336,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30004.png",
+      "name": "Equip30004",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2709,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1387,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30005.png",
+      "name": "Equip30005",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2202,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1885,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30006.png",
+      "name": "Equip30006",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2095,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2001,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30007.png",
+      "name": "Equip30007",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 618,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3478,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30008.png",
+      "name": "Equip30008",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2209,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1887,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30009.png",
+      "name": "Equip30009",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2678,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1418,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30010.png",
+      "name": "Equip30010",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2838,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1258,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30011.png",
+      "name": "Equip30011",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2540,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1527,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30012.png",
+      "name": "Equip30012",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2427,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1669,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30013.png",
+      "name": "Equip30013",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 461,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3628,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30014.png",
+      "name": "Equip30014",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2636,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1460,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30015.png",
+      "name": "Equip30015",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2192,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1892,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30016.png",
+      "name": "Equip30016",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2133,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1892,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30017.png",
+      "name": "Equip30017",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2515,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1581,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30018.png",
+      "name": "Equip30018",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2232,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1864,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30019.png",
+      "name": "Equip30019",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 401,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3674,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30020.png",
+      "name": "Equip30020",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2407,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1639,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30021.png",
+      "name": "Equip30021",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1966,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2099,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30022.png",
+      "name": "Equip30022",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1706,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2352,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30023.png",
+      "name": "Equip30023",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1812,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2220,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30024.png",
+      "name": "Equip30024",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2717,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1365,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30025.png",
+      "name": "Equip30025",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 605,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3491,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30026.png",
+      "name": "Equip30026",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2102,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1939,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30027.png",
+      "name": "Equip30027",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2026,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2070,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30028.png",
+      "name": "Equip30028",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2201,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1895,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30029.png",
+      "name": "Equip30029",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2461,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1590,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30030.png",
+      "name": "Equip30030",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1764,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2296,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30031.png",
+      "name": "Equip30031",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1307,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2789,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30032.png",
+      "name": "Equip30032",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2408,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1688,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30033.png",
+      "name": "Equip30033",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2093,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2003,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30034.png",
+      "name": "Equip30034",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2155,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1941,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30035.png",
+      "name": "Equip30035",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2719,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1377,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30036.png",
+      "name": "Equip30036",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1926,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2170,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30037.png",
+      "name": "Equip30037",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 730,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3366,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30038.png",
+      "name": "Equip30038",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2474,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1622,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30039.png",
+      "name": "Equip30039",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2211,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1885,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30040.png",
+      "name": "Equip30040",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3013,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1083,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30041.png",
+      "name": "Equip30041",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2463,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1633,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30042.png",
+      "name": "Equip30042",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1504,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30043.png",
+      "name": "Equip30043",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 652,
+      "visible_magenta_pixels": 6,
+      "transparent_pixels": 3440,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30044.png",
+      "name": "Equip30044",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1928,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2168,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30045.png",
+      "name": "Equip30045",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2419,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1677,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30046.png",
+      "name": "Equip30046",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2066,
+      "visible_magenta_pixels": 13,
+      "transparent_pixels": 2030,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30047.png",
+      "name": "Equip30047",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2146,
+      "visible_magenta_pixels": 87,
+      "transparent_pixels": 1926,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30048.png",
+      "name": "Equip30048",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2595,
+      "visible_magenta_pixels": 18,
+      "transparent_pixels": 1501,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30049.png",
+      "name": "Equip30049",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 643,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3453,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30050.png",
+      "name": "Equip30050",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1889,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2171,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30051.png",
+      "name": "Equip30051",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1912,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2148,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30052.png",
+      "name": "Equip30052",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1834,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2215,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30053.png",
+      "name": "Equip30053",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2567,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1529,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30054.png",
+      "name": "Equip30054",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2492,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1604,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30055.png",
+      "name": "Equip30055",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 632,
+      "visible_magenta_pixels": 13,
+      "transparent_pixels": 3464,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30056.png",
+      "name": "Equip30056",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2043,
+      "visible_magenta_pixels": 60,
+      "transparent_pixels": 2020,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30057.png",
+      "name": "Equip30057",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1945,
+      "visible_magenta_pixels": 62,
+      "transparent_pixels": 2110,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30058.png",
+      "name": "Equip30058",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1797,
+      "visible_magenta_pixels": 37,
+      "transparent_pixels": 2245,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30059.png",
+      "name": "Equip30059",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2837,
+      "visible_magenta_pixels": 177,
+      "transparent_pixels": 1259,
+      "empty": false
+    },
+    {
+      "group": "equipment",
+      "label": "장비",
+      "path": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30060.png",
+      "name": "Equip30060",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2190,
+      "visible_magenta_pixels": 83,
+      "transparent_pixels": 1877,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5002.png",
+      "name": "Skill5002",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2921,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1123,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5003.png",
+      "name": "Skill5003",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3180,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 916,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5004.png",
+      "name": "Skill5004",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3077,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1019,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5005.png",
+      "name": "Skill5005",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2795,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1283,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5006.png",
+      "name": "Skill5006",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2708,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1388,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5007.png",
+      "name": "Skill5007",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2755,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1331,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5008.png",
+      "name": "Skill5008",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3201,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 855,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5010.png",
+      "name": "Skill5010",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2752,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1319,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5011.png",
+      "name": "Skill5011",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3038,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1049,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5013.png",
+      "name": "Skill5013",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2650,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1410,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5014.png",
+      "name": "Skill5014",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2773,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1291,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5015.png",
+      "name": "Skill5015",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2602,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1474,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5100.png",
+      "name": "Skill5100",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2821,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1250,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5101.png",
+      "name": "Skill5101",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2900,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1196,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5102.png",
+      "name": "Skill5102",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2736,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1346,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5103.png",
+      "name": "Skill5103",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2678,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1406,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5104.png",
+      "name": "Skill5104",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3033,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1034,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5105.png",
+      "name": "Skill5105",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2714,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1296,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5106.png",
+      "name": "Skill5106",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3096,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 958,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5107.png",
+      "name": "Skill5107",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2869,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1171,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5108.png",
+      "name": "Skill5108",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3060,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1036,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5109.png",
+      "name": "Skill5109",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2726,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1370,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5110.png",
+      "name": "Skill5110",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3104,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 992,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5111.png",
+      "name": "Skill5111",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2990,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1106,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5112.png",
+      "name": "Skill5112",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2929,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1167,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5113.png",
+      "name": "Skill5113",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2706,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1373,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5114.png",
+      "name": "Skill5114",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2812,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1264,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5115.png",
+      "name": "Skill5115",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2746,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1342,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5116.png",
+      "name": "Skill5116",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3071,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1025,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5117.png",
+      "name": "Skill5117",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2730,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1334,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5118.png",
+      "name": "Skill5118",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3094,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1002,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5119.png",
+      "name": "Skill5119",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2283,
+      "visible_magenta_pixels": 102,
+      "transparent_pixels": 1802,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5120.png",
+      "name": "Skill5120",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2777,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1283,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5121.png",
+      "name": "Skill5121",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2480,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1591,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5122.png",
+      "name": "Skill5122",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2951,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1130,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5123.png",
+      "name": "Skill5123",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3082,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1014,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5124.png",
+      "name": "Skill5124",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3099,
+      "visible_magenta_pixels": 1,
+      "transparent_pixels": 997,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5125.png",
+      "name": "Skill5125",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2763,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1316,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5126.png",
+      "name": "Skill5126",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2983,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1096,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5127.png",
+      "name": "Skill5127",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3313,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 783,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5128.png",
+      "name": "Skill5128",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2597,
+      "visible_magenta_pixels": 262,
+      "transparent_pixels": 1468,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5129.png",
+      "name": "Skill5129",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3106,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 968,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5130.png",
+      "name": "Skill5130",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2941,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1155,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5131.png",
+      "name": "Skill5131",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2868,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1228,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5132.png",
+      "name": "Skill5132",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3151,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 943,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5133.png",
+      "name": "Skill5133",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2781,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1276,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5134.png",
+      "name": "Skill5134",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2725,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1337,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5135.png",
+      "name": "Skill5135",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3080,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 988,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5136.png",
+      "name": "Skill5136",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2914,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1182,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5137.png",
+      "name": "Skill5137",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2624,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1437,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5138.png",
+      "name": "Skill5138",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3184,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 904,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5139.png",
+      "name": "Skill5139",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3125,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 964,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5140.png",
+      "name": "Skill5140",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3155,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 941,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5141.png",
+      "name": "Skill5141",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2764,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1272,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5142.png",
+      "name": "Skill5142",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2689,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1391,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5143.png",
+      "name": "Skill5143",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3132,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 954,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5144.png",
+      "name": "Skill5144",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3165,
+      "visible_magenta_pixels": 10,
+      "transparent_pixels": 914,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5200.png",
+      "name": "Skill5200",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2746,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1298,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5201.png",
+      "name": "Skill5201",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2700,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1374,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5202.png",
+      "name": "Skill5202",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3173,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 923,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5203.png",
+      "name": "Skill5203",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2739,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1333,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5204.png",
+      "name": "Skill5204",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3090,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 981,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5205.png",
+      "name": "Skill5205",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2950,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1123,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill6002.png",
+      "name": "Skill6002",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2871,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1225,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill7000.png",
+      "name": "Skill7000",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2724,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1355,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill7001.png",
+      "name": "Skill7001",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3157,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 915,
+      "empty": false
+    },
+    {
+      "group": "skill",
+      "label": "스킬",
+      "path": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill7002.png",
+      "name": "Skill7002",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2754,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1308,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/item_rabijelly.png",
+      "name": "item_rabijelly",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2608,
+      "visible_magenta_pixels": 1432,
+      "transparent_pixels": 1488,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_0.png",
+      "name": "Mat_BreezingWindForest_0",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2009,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2087,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_1.png",
+      "name": "Mat_BreezingWindForest_1",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2148,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1912,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_2.png",
+      "name": "Mat_BreezingWindForest_2",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1503,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2593,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_3.png",
+      "name": "Mat_BreezingWindForest_3",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1920,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2165,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_4.png",
+      "name": "Mat_BreezingWindForest_4",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2514,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1582,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_5.png",
+      "name": "Mat_BreezingWindForest_5",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2219,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1877,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_6.png",
+      "name": "Mat_BreezingWindForest_6",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1362,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2734,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_7.png",
+      "name": "Mat_BreezingWindForest_7",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2330,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1766,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_8.png",
+      "name": "Mat_BreezingWindForest_8",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2521,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1504,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_9.png",
+      "name": "Mat_BreezingWindForest_9",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 575,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 3518,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_0.png",
+      "name": "Mat_RuinedSanctum_0",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1155,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2924,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_1.png",
+      "name": "Mat_RuinedSanctum_1",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2426,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1670,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_2.png",
+      "name": "Mat_RuinedSanctum_2",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2946,
+      "visible_magenta_pixels": 16,
+      "transparent_pixels": 1150,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_3.png",
+      "name": "Mat_RuinedSanctum_3",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2170,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1895,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_4.png",
+      "name": "Mat_RuinedSanctum_4",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2186,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1895,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_5.png",
+      "name": "Mat_RuinedSanctum_5",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2805,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1291,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_6.png",
+      "name": "Mat_RuinedSanctum_6",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1170,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2926,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_7.png",
+      "name": "Mat_RuinedSanctum_7",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1775,
+      "visible_magenta_pixels": 129,
+      "transparent_pixels": 2302,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_8.png",
+      "name": "Mat_RuinedSanctum_8",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2386,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1689,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_9.png",
+      "name": "Mat_RuinedSanctum_9",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2144,
+      "visible_magenta_pixels": 120,
+      "transparent_pixels": 1952,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_0.png",
+      "name": "Mat_WhisperingCave_0",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2122,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1974,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_1.png",
+      "name": "Mat_WhisperingCave_1",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1838,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2200,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_2.png",
+      "name": "Mat_WhisperingCave_2",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1919,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2177,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_3.png",
+      "name": "Mat_WhisperingCave_3",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1691,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2405,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_4.png",
+      "name": "Mat_WhisperingCave_4",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1439,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2646,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_5.png",
+      "name": "Mat_WhisperingCave_5",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1932,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2155,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_6.png",
+      "name": "Mat_WhisperingCave_6",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2510,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1547,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_7.png",
+      "name": "Mat_WhisperingCave_7",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1572,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2504,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_8.png",
+      "name": "Mat_WhisperingCave_8",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 2239,
+      "visible_magenta_pixels": 267,
+      "transparent_pixels": 1840,
+      "empty": false
+    },
+    {
+      "group": "material",
+      "label": "재료",
+      "path": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_9.png",
+      "name": "Mat_WhisperingCave_9",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 3012,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 1084,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_11000.png",
+      "name": "Region_11000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_12000.png",
+      "name": "Region_12000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_13000.png",
+      "name": "Region_13000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_14000.png",
+      "name": "Region_14000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_15000.png",
+      "name": "Region_15000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21000.png",
+      "name": "Region_21000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21010.png",
+      "name": "Region_21010",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21020.png",
+      "name": "Region_21020",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21030.png",
+      "name": "Region_21030",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21040.png",
+      "name": "Region_21040",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21050.png",
+      "name": "Region_21050",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21100.png",
+      "name": "Region_21100",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21110.png",
+      "name": "Region_21110",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21120.png",
+      "name": "Region_21120",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21130.png",
+      "name": "Region_21130",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21140.png",
+      "name": "Region_21140",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21150.png",
+      "name": "Region_21150",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21200.png",
+      "name": "Region_21200",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21210.png",
+      "name": "Region_21210",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21220.png",
+      "name": "Region_21220",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21230.png",
+      "name": "Region_21230",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21240.png",
+      "name": "Region_21240",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21250.png",
+      "name": "Region_21250",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21300.png",
+      "name": "Region_21300",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21310.png",
+      "name": "Region_21310",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21320.png",
+      "name": "Region_21320",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21330.png",
+      "name": "Region_21330",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21340.png",
+      "name": "Region_21340",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21350.png",
+      "name": "Region_21350",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21400.png",
+      "name": "Region_21400",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21410.png",
+      "name": "Region_21410",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21420.png",
+      "name": "Region_21420",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21430.png",
+      "name": "Region_21430",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21440.png",
+      "name": "Region_21440",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_21450.png",
+      "name": "Region_21450",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22000.png",
+      "name": "Region_22000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22010.png",
+      "name": "Region_22010",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22020.png",
+      "name": "Region_22020",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22030.png",
+      "name": "Region_22030",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22040.png",
+      "name": "Region_22040",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22050.png",
+      "name": "Region_22050",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22100.png",
+      "name": "Region_22100",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22110.png",
+      "name": "Region_22110",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22120.png",
+      "name": "Region_22120",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22130.png",
+      "name": "Region_22130",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22140.png",
+      "name": "Region_22140",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22150.png",
+      "name": "Region_22150",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22200.png",
+      "name": "Region_22200",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22210.png",
+      "name": "Region_22210",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22220.png",
+      "name": "Region_22220",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22230.png",
+      "name": "Region_22230",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22240.png",
+      "name": "Region_22240",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22250.png",
+      "name": "Region_22250",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22300.png",
+      "name": "Region_22300",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22310.png",
+      "name": "Region_22310",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22320.png",
+      "name": "Region_22320",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22330.png",
+      "name": "Region_22330",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22340.png",
+      "name": "Region_22340",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22350.png",
+      "name": "Region_22350",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22400.png",
+      "name": "Region_22400",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22410.png",
+      "name": "Region_22410",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22420.png",
+      "name": "Region_22420",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22430.png",
+      "name": "Region_22430",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22440.png",
+      "name": "Region_22440",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_22450.png",
+      "name": "Region_22450",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23000.png",
+      "name": "Region_23000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23010.png",
+      "name": "Region_23010",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23020.png",
+      "name": "Region_23020",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23030.png",
+      "name": "Region_23030",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23040.png",
+      "name": "Region_23040",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23050.png",
+      "name": "Region_23050",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23100.png",
+      "name": "Region_23100",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23110.png",
+      "name": "Region_23110",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23120.png",
+      "name": "Region_23120",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23130.png",
+      "name": "Region_23130",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23140.png",
+      "name": "Region_23140",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23150.png",
+      "name": "Region_23150",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23200.png",
+      "name": "Region_23200",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23210.png",
+      "name": "Region_23210",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23220.png",
+      "name": "Region_23220",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23230.png",
+      "name": "Region_23230",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23240.png",
+      "name": "Region_23240",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23250.png",
+      "name": "Region_23250",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23300.png",
+      "name": "Region_23300",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23310.png",
+      "name": "Region_23310",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23320.png",
+      "name": "Region_23320",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23330.png",
+      "name": "Region_23330",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23340.png",
+      "name": "Region_23340",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23350.png",
+      "name": "Region_23350",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23400.png",
+      "name": "Region_23400",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23410.png",
+      "name": "Region_23410",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23420.png",
+      "name": "Region_23420",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23430.png",
+      "name": "Region_23430",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23440.png",
+      "name": "Region_23440",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_23450.png",
+      "name": "Region_23450",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24000.png",
+      "name": "Region_24000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24010.png",
+      "name": "Region_24010",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24020.png",
+      "name": "Region_24020",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24030.png",
+      "name": "Region_24030",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24040.png",
+      "name": "Region_24040",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24050.png",
+      "name": "Region_24050",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24100.png",
+      "name": "Region_24100",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24110.png",
+      "name": "Region_24110",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24120.png",
+      "name": "Region_24120",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24130.png",
+      "name": "Region_24130",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24140.png",
+      "name": "Region_24140",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24150.png",
+      "name": "Region_24150",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24200.png",
+      "name": "Region_24200",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24210.png",
+      "name": "Region_24210",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24220.png",
+      "name": "Region_24220",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24230.png",
+      "name": "Region_24230",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24240.png",
+      "name": "Region_24240",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24250.png",
+      "name": "Region_24250",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24300.png",
+      "name": "Region_24300",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24310.png",
+      "name": "Region_24310",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24320.png",
+      "name": "Region_24320",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24330.png",
+      "name": "Region_24330",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24340.png",
+      "name": "Region_24340",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24350.png",
+      "name": "Region_24350",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24400.png",
+      "name": "Region_24400",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24410.png",
+      "name": "Region_24410",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24420.png",
+      "name": "Region_24420",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24430.png",
+      "name": "Region_24430",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24440.png",
+      "name": "Region_24440",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_24450.png",
+      "name": "Region_24450",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25000.png",
+      "name": "Region_25000",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25010.png",
+      "name": "Region_25010",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25020.png",
+      "name": "Region_25020",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25030.png",
+      "name": "Region_25030",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25040.png",
+      "name": "Region_25040",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25050.png",
+      "name": "Region_25050",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25100.png",
+      "name": "Region_25100",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25110.png",
+      "name": "Region_25110",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25120.png",
+      "name": "Region_25120",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25130.png",
+      "name": "Region_25130",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25140.png",
+      "name": "Region_25140",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25150.png",
+      "name": "Region_25150",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25200.png",
+      "name": "Region_25200",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25210.png",
+      "name": "Region_25210",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25220.png",
+      "name": "Region_25220",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25230.png",
+      "name": "Region_25230",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25240.png",
+      "name": "Region_25240",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25250.png",
+      "name": "Region_25250",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25300.png",
+      "name": "Region_25300",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25310.png",
+      "name": "Region_25310",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25320.png",
+      "name": "Region_25320",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25330.png",
+      "name": "Region_25330",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25340.png",
+      "name": "Region_25340",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25350.png",
+      "name": "Region_25350",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25400.png",
+      "name": "Region_25400",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25410.png",
+      "name": "Region_25410",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25420.png",
+      "name": "Region_25420",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25430.png",
+      "name": "Region_25430",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25440.png",
+      "name": "Region_25440",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "region",
+      "label": "지역 미리보기",
+      "path": "Assets/@Resources/Sprite/Map/Region/Region_25450.png",
+      "name": "Region_25450",
+      "size": [
+        256,
+        170
+      ],
+      "visible_pixels": 43520,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_21000.png",
+      "name": "RegionL_Far_21000",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_21100.png",
+      "name": "RegionL_Far_21100",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_21200.png",
+      "name": "RegionL_Far_21200",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_21300.png",
+      "name": "RegionL_Far_21300",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_21400.png",
+      "name": "RegionL_Far_21400",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_22000.png",
+      "name": "RegionL_Far_22000",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_22100.png",
+      "name": "RegionL_Far_22100",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_22200.png",
+      "name": "RegionL_Far_22200",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_22300.png",
+      "name": "RegionL_Far_22300",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_22400.png",
+      "name": "RegionL_Far_22400",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_23000.png",
+      "name": "RegionL_Far_23000",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_23100.png",
+      "name": "RegionL_Far_23100",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_23200.png",
+      "name": "RegionL_Far_23200",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_23300.png",
+      "name": "RegionL_Far_23300",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_23400.png",
+      "name": "RegionL_Far_23400",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_24000.png",
+      "name": "RegionL_Far_24000",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_24100.png",
+      "name": "RegionL_Far_24100",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_24200.png",
+      "name": "RegionL_Far_24200",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_24300.png",
+      "name": "RegionL_Far_24300",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_24400.png",
+      "name": "RegionL_Far_24400",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_25000.png",
+      "name": "RegionL_Far_25000",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_25100.png",
+      "name": "RegionL_Far_25100",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_25200.png",
+      "name": "RegionL_Far_25200",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 1,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_25300.png",
+      "name": "RegionL_Far_25300",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_25400.png",
+      "name": "RegionL_Far_25400",
+      "size": [
+        512,
+        341
+      ],
+      "visible_pixels": 174592,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_21000.png",
+      "name": "RegionL_Mid_21000",
+      "size": [
+        512,
+        125
+      ],
+      "visible_pixels": 42861,
+      "visible_magenta_pixels": 84,
+      "transparent_pixels": 21139,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_21100.png",
+      "name": "RegionL_Mid_21100",
+      "size": [
+        512,
+        69
+      ],
+      "visible_pixels": 22080,
+      "visible_magenta_pixels": 63,
+      "transparent_pixels": 13248,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_21200.png",
+      "name": "RegionL_Mid_21200",
+      "size": [
+        512,
+        77
+      ],
+      "visible_pixels": 15861,
+      "visible_magenta_pixels": 176,
+      "transparent_pixels": 23563,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_21300.png",
+      "name": "RegionL_Mid_21300",
+      "size": [
+        512,
+        91
+      ],
+      "visible_pixels": 23165,
+      "visible_magenta_pixels": 147,
+      "transparent_pixels": 23057,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_21400.png",
+      "name": "RegionL_Mid_21400",
+      "size": [
+        512,
+        86
+      ],
+      "visible_pixels": 16830,
+      "visible_magenta_pixels": 88,
+      "transparent_pixels": 27202,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_22000.png",
+      "name": "RegionL_Mid_22000",
+      "size": [
+        512,
+        112
+      ],
+      "visible_pixels": 30486,
+      "visible_magenta_pixels": 160,
+      "transparent_pixels": 26446,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_22100.png",
+      "name": "RegionL_Mid_22100",
+      "size": [
+        512,
+        85
+      ],
+      "visible_pixels": 30405,
+      "visible_magenta_pixels": 113,
+      "transparent_pixels": 13115,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_22200.png",
+      "name": "RegionL_Mid_22200",
+      "size": [
+        512,
+        98
+      ],
+      "visible_pixels": 18501,
+      "visible_magenta_pixels": 149,
+      "transparent_pixels": 31413,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_22300.png",
+      "name": "RegionL_Mid_22300",
+      "size": [
+        512,
+        90
+      ],
+      "visible_pixels": 29633,
+      "visible_magenta_pixels": 19,
+      "transparent_pixels": 16052,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_22400.png",
+      "name": "RegionL_Mid_22400",
+      "size": [
+        512,
+        80
+      ],
+      "visible_pixels": 23354,
+      "visible_magenta_pixels": 189,
+      "transparent_pixels": 17606,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_23000.png",
+      "name": "RegionL_Mid_23000",
+      "size": [
+        512,
+        91
+      ],
+      "visible_pixels": 24988,
+      "visible_magenta_pixels": 212,
+      "transparent_pixels": 21160,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_23100.png",
+      "name": "RegionL_Mid_23100",
+      "size": [
+        512,
+        67
+      ],
+      "visible_pixels": 19494,
+      "visible_magenta_pixels": 45,
+      "transparent_pixels": 14511,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_23200.png",
+      "name": "RegionL_Mid_23200",
+      "size": [
+        512,
+        62
+      ],
+      "visible_pixels": 17706,
+      "visible_magenta_pixels": 29,
+      "transparent_pixels": 12818,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_23300.png",
+      "name": "RegionL_Mid_23300",
+      "size": [
+        512,
+        94
+      ],
+      "visible_pixels": 20575,
+      "visible_magenta_pixels": 160,
+      "transparent_pixels": 27553,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_23400.png",
+      "name": "RegionL_Mid_23400",
+      "size": [
+        512,
+        90
+      ],
+      "visible_pixels": 29559,
+      "visible_magenta_pixels": 192,
+      "transparent_pixels": 15720,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_24000.png",
+      "name": "RegionL_Mid_24000",
+      "size": [
+        512,
+        95
+      ],
+      "visible_pixels": 24383,
+      "visible_magenta_pixels": 17,
+      "transparent_pixels": 24249,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_24100.png",
+      "name": "RegionL_Mid_24100",
+      "size": [
+        512,
+        72
+      ],
+      "visible_pixels": 22082,
+      "visible_magenta_pixels": 58,
+      "transparent_pixels": 14782,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_24200.png",
+      "name": "RegionL_Mid_24200",
+      "size": [
+        512,
+        70
+      ],
+      "visible_pixels": 17730,
+      "visible_magenta_pixels": 92,
+      "transparent_pixels": 17339,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_24300.png",
+      "name": "RegionL_Mid_24300",
+      "size": [
+        512,
+        59
+      ],
+      "visible_pixels": 15214,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 12030,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_24400.png",
+      "name": "RegionL_Mid_24400",
+      "size": [
+        512,
+        110
+      ],
+      "visible_pixels": 36775,
+      "visible_magenta_pixels": 53,
+      "transparent_pixels": 19545,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_25000.png",
+      "name": "RegionL_Mid_25000",
+      "size": [
+        512,
+        79
+      ],
+      "visible_pixels": 22378,
+      "visible_magenta_pixels": 174,
+      "transparent_pixels": 17879,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_25100.png",
+      "name": "RegionL_Mid_25100",
+      "size": [
+        512,
+        72
+      ],
+      "visible_pixels": 20620,
+      "visible_magenta_pixels": 27,
+      "transparent_pixels": 15660,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_25200.png",
+      "name": "RegionL_Mid_25200",
+      "size": [
+        512,
+        87
+      ],
+      "visible_pixels": 21518,
+      "visible_magenta_pixels": 18,
+      "transparent_pixels": 22840,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_25300.png",
+      "name": "RegionL_Mid_25300",
+      "size": [
+        512,
+        66
+      ],
+      "visible_pixels": 19038,
+      "visible_magenta_pixels": 110,
+      "transparent_pixels": 14754,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_25400.png",
+      "name": "RegionL_Mid_25400",
+      "size": [
+        512,
+        93
+      ],
+      "visible_pixels": 22231,
+      "visible_magenta_pixels": 69,
+      "transparent_pixels": 25385,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_21000.png",
+      "name": "RegionL_Near_21000",
+      "size": [
+        512,
+        126
+      ],
+      "visible_pixels": 42596,
+      "visible_magenta_pixels": 77,
+      "transparent_pixels": 21916,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_21100.png",
+      "name": "RegionL_Near_21100",
+      "size": [
+        512,
+        125
+      ],
+      "visible_pixels": 43560,
+      "visible_magenta_pixels": 89,
+      "transparent_pixels": 20440,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_21200.png",
+      "name": "RegionL_Near_21200",
+      "size": [
+        512,
+        131
+      ],
+      "visible_pixels": 42177,
+      "visible_magenta_pixels": 122,
+      "transparent_pixels": 24895,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_21300.png",
+      "name": "RegionL_Near_21300",
+      "size": [
+        512,
+        93
+      ],
+      "visible_pixels": 31544,
+      "visible_magenta_pixels": 57,
+      "transparent_pixels": 16042,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_21400.png",
+      "name": "RegionL_Near_21400",
+      "size": [
+        512,
+        104
+      ],
+      "visible_pixels": 24621,
+      "visible_magenta_pixels": 429,
+      "transparent_pixels": 28627,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_22000.png",
+      "name": "RegionL_Near_22000",
+      "size": [
+        512,
+        102
+      ],
+      "visible_pixels": 33475,
+      "visible_magenta_pixels": 108,
+      "transparent_pixels": 18604,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_22100.png",
+      "name": "RegionL_Near_22100",
+      "size": [
+        512,
+        112
+      ],
+      "visible_pixels": 28345,
+      "visible_magenta_pixels": 7,
+      "transparent_pixels": 28692,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_22200.png",
+      "name": "RegionL_Near_22200",
+      "size": [
+        512,
+        119
+      ],
+      "visible_pixels": 37789,
+      "visible_magenta_pixels": 16,
+      "transparent_pixels": 22717,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_22300.png",
+      "name": "RegionL_Near_22300",
+      "size": [
+        512,
+        83
+      ],
+      "visible_pixels": 21701,
+      "visible_magenta_pixels": 81,
+      "transparent_pixels": 20795,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_22400.png",
+      "name": "RegionL_Near_22400",
+      "size": [
+        512,
+        135
+      ],
+      "visible_pixels": 44522,
+      "visible_magenta_pixels": 109,
+      "transparent_pixels": 24598,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_23000.png",
+      "name": "RegionL_Near_23000",
+      "size": [
+        512,
+        112
+      ],
+      "visible_pixels": 22428,
+      "visible_magenta_pixels": 20,
+      "transparent_pixels": 34670,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_23100.png",
+      "name": "RegionL_Near_23100",
+      "size": [
+        512,
+        106
+      ],
+      "visible_pixels": 31271,
+      "visible_magenta_pixels": 106,
+      "transparent_pixels": 23001,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_23200.png",
+      "name": "RegionL_Near_23200",
+      "size": [
+        512,
+        154
+      ],
+      "visible_pixels": 53802,
+      "visible_magenta_pixels": 144,
+      "transparent_pixels": 25046,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_23300.png",
+      "name": "RegionL_Near_23300",
+      "size": [
+        512,
+        163
+      ],
+      "visible_pixels": 54837,
+      "visible_magenta_pixels": 215,
+      "transparent_pixels": 28619,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_23400.png",
+      "name": "RegionL_Near_23400",
+      "size": [
+        512,
+        87
+      ],
+      "visible_pixels": 24704,
+      "visible_magenta_pixels": 74,
+      "transparent_pixels": 19840,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_24000.png",
+      "name": "RegionL_Near_24000",
+      "size": [
+        512,
+        155
+      ],
+      "visible_pixels": 43289,
+      "visible_magenta_pixels": 107,
+      "transparent_pixels": 36071,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_24100.png",
+      "name": "RegionL_Near_24100",
+      "size": [
+        512,
+        106
+      ],
+      "visible_pixels": 23637,
+      "visible_magenta_pixels": 43,
+      "transparent_pixels": 30635,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_24200.png",
+      "name": "RegionL_Near_24200",
+      "size": [
+        512,
+        119
+      ],
+      "visible_pixels": 44171,
+      "visible_magenta_pixels": 44,
+      "transparent_pixels": 16078,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_24300.png",
+      "name": "RegionL_Near_24300",
+      "size": [
+        512,
+        117
+      ],
+      "visible_pixels": 28457,
+      "visible_magenta_pixels": 112,
+      "transparent_pixels": 31447,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_24400.png",
+      "name": "RegionL_Near_24400",
+      "size": [
+        512,
+        191
+      ],
+      "visible_pixels": 40657,
+      "visible_magenta_pixels": 23,
+      "transparent_pixels": 56755,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_25000.png",
+      "name": "RegionL_Near_25000",
+      "size": [
+        512,
+        111
+      ],
+      "visible_pixels": 32373,
+      "visible_magenta_pixels": 212,
+      "transparent_pixels": 24459,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_25100.png",
+      "name": "RegionL_Near_25100",
+      "size": [
+        512,
+        96
+      ],
+      "visible_pixels": 21572,
+      "visible_magenta_pixels": 74,
+      "transparent_pixels": 27580,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_25200.png",
+      "name": "RegionL_Near_25200",
+      "size": [
+        512,
+        128
+      ],
+      "visible_pixels": 48441,
+      "visible_magenta_pixels": 35,
+      "transparent_pixels": 17016,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_25300.png",
+      "name": "RegionL_Near_25300",
+      "size": [
+        512,
+        96
+      ],
+      "visible_pixels": 27025,
+      "visible_magenta_pixels": 51,
+      "transparent_pixels": 21402,
+      "empty": false
+    },
+    {
+      "group": "layers",
+      "label": "전투 배경 레이어",
+      "path": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Near_25400.png",
+      "name": "RegionL_Near_25400",
+      "size": [
+        512,
+        140
+      ],
+      "visible_pixels": 43685,
+      "visible_magenta_pixels": 62,
+      "transparent_pixels": 27995,
+      "empty": false
+    },
+    {
+      "group": "village",
+      "label": "마을 배경",
+      "path": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_11000.png",
+      "name": "VillageBG_11000",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "village",
+      "label": "마을 배경",
+      "path": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_12000.png",
+      "name": "VillageBG_12000",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "village",
+      "label": "마을 배경",
+      "path": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_13000.png",
+      "name": "VillageBG_13000",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "village",
+      "label": "마을 배경",
+      "path": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_14000.png",
+      "name": "VillageBG_14000",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "village",
+      "label": "마을 배경",
+      "path": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_15000.png",
+      "name": "VillageBG_15000",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "interior",
+      "label": "건물 내부",
+      "path": "Assets/@Resources/Sprite/Background/Town/Background_Forge.png",
+      "name": "Background_Forge",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "interior",
+      "label": "건물 내부",
+      "path": "Assets/@Resources/Sprite/Background/Town/Background_Shop.png",
+      "name": "Background_Shop",
+      "size": [
+        512,
+        512
+      ],
+      "visible_pixels": 262144,
+      "visible_magenta_pixels": 364,
+      "transparent_pixels": 0,
+      "empty": false
+    },
+    {
+      "group": "npc",
+      "label": "NPC·메뉴",
+      "path": "Assets/@Resources/Sprite/NPC/Priestess_Standing_Idle.png",
+      "name": "Priestess_Standing_Idle",
+      "size": [
+        66,
+        134
+      ],
+      "visible_pixels": 6563,
+      "visible_magenta_pixels": 0,
+      "transparent_pixels": 2281,
+      "empty": false
+    },
+    {
+      "group": "npc",
+      "label": "NPC·메뉴",
+      "path": "Assets/@Resources/Sprite/NPC/Shopkeeper_Standing_Idle.png",
+      "name": "Shopkeeper_Standing_Idle",
+      "size": [
+        58,
+        134
+      ],
+      "visible_pixels": 5732,
+      "visible_magenta_pixels": 7,
+      "transparent_pixels": 2040,
+      "empty": false
+    },
+    {
+      "group": "npc",
+      "label": "NPC·메뉴",
+      "path": "Assets/@Resources/Sprite/UI/Image/NPC/priestess/priestess_profile.png",
+      "name": "priestess_profile",
+      "size": [
+        480,
+        600
+      ],
+      "visible_pixels": 222480,
+      "visible_magenta_pixels": 144,
+      "transparent_pixels": 65520,
+      "empty": false
+    },
+    {
+      "group": "npc",
+      "label": "NPC·메뉴",
+      "path": "Assets/@Resources/Sprite/UI/Image/NPC/shopkeeper/shopkeeper_profile.png",
+      "name": "shopkeeper_profile",
+      "size": [
+        408,
+        600
+      ],
+      "visible_pixels": 179776,
+      "visible_magenta_pixels": 96,
+      "transparent_pixels": 65024,
+      "empty": false
+    },
+    {
+      "group": "npc",
+      "label": "NPC·메뉴",
+      "path": "Assets/@Resources/Sprite/Icon/Menu Icon/Forge_Icon.png",
+      "name": "Forge_Icon",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1989,
+      "visible_magenta_pixels": 3,
+      "transparent_pixels": 2107,
+      "empty": false
+    },
+    {
+      "group": "npc",
+      "label": "NPC·메뉴",
+      "path": "Assets/@Resources/Sprite/Icon/Menu Icon/Shop_Icon.png",
+      "name": "Shop_Icon",
+      "size": [
+        64,
+        64
+      ],
+      "visible_pixels": 1881,
+      "visible_magenta_pixels": 3,
+      "transparent_pixels": 2215,
+      "empty": false
+    }
+  ],
+  "note": "자홍색은 의도된 보라 장비·마법색일 수 있다. 수치만으로 결함 판정하지 않는다."
+}

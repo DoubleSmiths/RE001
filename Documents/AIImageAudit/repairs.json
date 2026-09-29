@@ -1,0 +1,447 @@
+{
+  "version": 1,
+  "mode": "built-in image_gen",
+  "entries": [
+    {
+      "id": "Region_23300",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_23300.png",
+      "source": "generated/Region_23300.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Asset: RE001 RPG region preview background, landscape 3:2 ratio. Edit target is supplied existing image. A volcanic fantasy region: erupting orange lava fountain between black basalt cliffs, red-hot fissures, a deep rocky basin and distant ash mountains. The reference is erroneously fragmented into disconnected horizontal strips. Rebuild as ONE continuous coherent scene with connected rock walls, terrain and smoky sky, no horizontal strip gaps, no disconnected floating ribbons. Preserve the same orange lava/blue-gray basalt palette and 16-bit game pixel-art language. Entire rectangular canvas must be fully opaque with continuous finished scenery all the way to every edge. Pixel art, crisp deliberate pixel clusters, no photographic blur, no characters, no UI, no words, no frames. Output one image, not a sprite sheet."
+    },
+    {
+      "id": "Region_24220",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_24220.png",
+      "source": "generated/Region_24220.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Asset: RE001 RPG region preview background, landscape 3:2 ratio. Edit target is supplied existing image. A ruined gothic cathedral dungeon interior: tall arched stone walls, an upper glowing turquoise rose window, pale moonbeams, a central nave with platforms and stairs at different depths. Reference is broken into disconnected floating bands. Rebuild as ONE continuous connected cathedral interior, with complete dark stone walls, pillars and floor, no missing strips or blurred transparent gaps. Preserve cyan/teal lighting and dark blue-gray stone palette. Entire rectangular canvas must be fully opaque with continuous finished scenery all the way to every edge. Pixel art, crisp deliberate pixel clusters, no photographic blur, no characters, no UI, no words, no frames. Output one image, not a sprite sheet."
+    },
+    {
+      "id": "Region_13000",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_13000.png",
+      "source": "generated/Region_13000.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Repair incomplete scenery: a soot-stained mining town with smoking chimneys and glowing orange forge windows, under an ashen smoky sky, ore carts and cobbled ground. Complete atmospheric sky and ground across whole rectangular canvas. Keep settlement silhouette and palette. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "Region_15000",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_15000.png",
+      "source": "generated/Region_15000.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Restore continuous opaque scenery behind a radiant city of ivory towers, blue roofs and gold spires at warm golden dawn. Keep the central very tall narrow spire and the city skyline. Fill all sky and lower surroundings with finished pixel scenery. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "Region_21340",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_21340.png",
+      "source": "generated/Region_21340.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Restore continuous cave environment around this underground green swamp: stalactites, layered tree roots, dark teal water, bioluminescent green plants, a stone ruin and deeper cavern. Remove all missing transparent regions; full opaque walls ceiling and foreground. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "Region_22340",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_22340.png",
+      "source": "generated/Region_22340.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Restore continuous towering cavern split by a central vertical chasm or waterfall, with dark teal cliffs and turquoise glowing crystals on ledges. Paint complete cavern walls behind and between platforms; no empty alpha, separated strips or missing sections. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "Region_23340",
+      "target": "Assets/@Resources/Sprite/Map/Region/Region_23340.png",
+      "source": "generated/Region_23340.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Restore this volcanic cave: massive black basalt arch cracked with bright orange magma, orange pools and sharp stalactites, ominous charcoal cavern depth. Full continuous opaque surrounding walls ceiling and ground. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "RegionL_Far_22300",
+      "target": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Far_22300.png",
+      "source": "generated/RegionL_Far_22300.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Distant background ONLY: desaturated slate-gray rugged mountain massif, distant rolling mountain ridges and overcast cloudy storm sky, atmospheric pixel-art horizon. No foreground objects. Complete opaque sky and distant land across the entire rectangular canvas. Preserve low contrast distant background character. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "VillageBG_15000",
+      "target": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_15000.png",
+      "source": "generated/VillageBG_15000.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Square town gameplay background: radiant white marble city with tall gold spires at dawn, architecture in background, a wide horizontal stone walking path across bottom. Preserve existing city identity and side view. Fully opaque warm dawn sky and complete ground, no missing alpha. Crisp pixel art instead of blurry stretches. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "VillageBG_13000",
+      "target": "Assets/@Resources/Sprite/Background/VillageBG/VillageBG_13000.png",
+      "source": "generated/VillageBG_13000.png",
+      "kind": "opaque",
+      "prompt": "Use case: precise-object-edit. Production RE001 2D pixel-art RPG background. Existing image is the edit target and composition reference. Square town gameplay background: soot-stained mining town, dark stone workshops with smoking chimneys and warm orange glowing forge windows, overcast ash-gray sky and a walkable cobbled road horizontally across bottom. Existing image has vast blank flat gray upper and lower zones. Replace those with coherent detailed sky, haze, rooftops and textured road while preserving the compact mining town buildings and side view. Match the reference aspect ratio (square for village backgrounds, 3:2 landscape for region previews). All pixels fully opaque; paint complete scenery to the four edges. Consistent 16-bit pixel clusters and restrained palette, no characters, lettering, UI, border, checkerboard, transparency, blur or vignette void. Preserve the environment's identity and overall framing."
+    },
+    {
+      "id": "Equip30013",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30013.png",
+      "source": "generated/Equip30013.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: tempered steel longsword, straight pale silver blade, dark crossguard and brown grip"
+    },
+    {
+      "id": "Equip30016",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30016.png",
+      "source": "generated/Equip30016.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of tempered steel gauntlets, segmented silver plates and brown leather joints"
+    },
+    {
+      "id": "Equip30019",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30019.png",
+      "source": "generated/Equip30019.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: engraved silver longsword, ornate narrow blade, dark grip"
+    },
+    {
+      "id": "Equip30020",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30020.png",
+      "source": "generated/Equip30020.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: engraved silver knight helmet with wing-shaped side guards and dark visor"
+    },
+    {
+      "id": "Equip30021",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30021.png",
+      "source": "generated/Equip30021.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: engraved silver breastplate with ornate shoulder plates"
+    },
+    {
+      "id": "Equip30022",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30022.png",
+      "source": "generated/Equip30022.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of engraved silver gauntlets"
+    },
+    {
+      "id": "Equip30023",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30023.png",
+      "source": "generated/Equip30023.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of engraved silver greaves and boots"
+    },
+    {
+      "id": "Equip30024",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30024.png",
+      "source": "generated/Equip30024.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: round engraved silver amulet with spiral emblem"
+    },
+    {
+      "id": "Equip30029",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30029.png",
+      "source": "generated/Equip30029.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of luminous blue mithril greaves, bright cyan highlights"
+    },
+    {
+      "id": "Equip30030",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30030.png",
+      "source": "generated/Equip30030.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: blue mithril amulet with glowing blue orb and pale blue star-shaped setting"
+    },
+    {
+      "id": "Equip30047",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30047.png",
+      "source": "generated/Equip30047.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of dark abyssal purple greaves, violet plates and pale steel trim. Preserve purple as intentional material color"
+    },
+    {
+      "id": "Equip30050",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30050.png",
+      "source": "generated/Equip30050.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: white-gold dawn knight helmet with gold crownlike trim"
+    },
+    {
+      "id": "Equip30051",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30051.png",
+      "source": "generated/Equip30051.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: white-gold dawn breastplate with gold shoulder trim and opaque ivory metal plates"
+    },
+    {
+      "id": "Equip30052",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30052.png",
+      "source": "generated/Equip30052.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of white-gold dawn gauntlets, ivory plates and gold trim"
+    },
+    {
+      "id": "Equip30056",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30056.png",
+      "source": "generated/Equip30056.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: mythic prismatic silver helmet with iridescent central gemstone"
+    },
+    {
+      "id": "Equip30057",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30057.png",
+      "source": "generated/Equip30057.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: mythic prismatic silver breastplate with rainbow gemstones"
+    },
+    {
+      "id": "Equip30058",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30058.png",
+      "source": "generated/Equip30058.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: pair of mythic prismatic silver gauntlets with iridescent gemstones"
+    },
+    {
+      "id": "Equip30060",
+      "target": "Assets/@Resources/Sprite/Icon/Equipment/Generated/Equip30060.png",
+      "source": "generated/Equip30060.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Production RE001 fantasy RPG inventory icon, intended final size 64x64. Input is the damaged original icon to rebuild faithfully. Preserve item type, silhouette, material, orientation and tier identity. Repaint missing white/gray/metal portions as solid opaque pixels instead of transparent holes. Crisp readable 16-bit pixel art with chunky deliberate pixel clusters, dark clean outline, restrained shading, top-left highlights. One centered complete inventory object (or the original pair) on true transparent background, fills about 80% of square canvas, generous clean padding, no cast shadow, no ground, no text, no UI border, no glow haze. Strong solid filled body including all pale highlights. No checkerboard or colored background. For paired items preserve a clear transparent gap between the two. Match the reference design, do not invent different equipment. Subject: mythic prismatic amulet, round golden frame enclosing a multicolored faceted gem"
+    },
+    {
+      "id": "Skill5005",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5005.png",
+      "source": "generated/Skill5005.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: diagonal steel sword surrounded by orange flames"
+    },
+    {
+      "id": "Skill5010",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5010.png",
+      "source": "generated/Skill5010.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: silver curved capture chain and teal ring"
+    },
+    {
+      "id": "Skill5013",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5013.png",
+      "source": "generated/Skill5013.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: upright steel sword wreathed in flame"
+    },
+    {
+      "id": "Skill5014",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5014.png",
+      "source": "generated/Skill5014.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: diagonal silver blade with orange flame"
+    },
+    {
+      "id": "Skill5100",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5100.png",
+      "source": "generated/Skill5100.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red battle banner with a gold lightning emblem"
+    },
+    {
+      "id": "Skill5102",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5102.png",
+      "source": "generated/Skill5102.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red flag rising diagonally on a brown pole"
+    },
+    {
+      "id": "Skill5105",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5105.png",
+      "source": "generated/Skill5105.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: gray impact rune split by glowing red fissures"
+    },
+    {
+      "id": "Skill5113",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5113.png",
+      "source": "generated/Skill5113.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: gold healing chalice radiating green healing motes"
+    },
+    {
+      "id": "Skill5114",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5114.png",
+      "source": "generated/Skill5114.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red battle banner and golden runes"
+    },
+    {
+      "id": "Skill5115",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5115.png",
+      "source": "generated/Skill5115.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: gold healing chalice surrounded by green motes"
+    },
+    {
+      "id": "Skill5117",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5117.png",
+      "source": "generated/Skill5117.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: upright red banner with glowing orange runes"
+    },
+    {
+      "id": "Skill5120",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5120.png",
+      "source": "generated/Skill5120.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red banner surrounded by orange gold magic"
+    },
+    {
+      "id": "Skill5121",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5121.png",
+      "source": "generated/Skill5121.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red battle flag with small gold runes"
+    },
+    {
+      "id": "Skill5125",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5125.png",
+      "source": "generated/Skill5125.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red heart inside a silver shield"
+    },
+    {
+      "id": "Skill5128",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5128.png",
+      "source": "generated/Skill5128.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: purple arcane compass sigil"
+    },
+    {
+      "id": "Skill5133",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5133.png",
+      "source": "generated/Skill5133.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: turquoise five-point magical circle sigil"
+    },
+    {
+      "id": "Skill5134",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5134.png",
+      "source": "generated/Skill5134.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: cyan angular runic sigil"
+    },
+    {
+      "id": "Skill5137",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5137.png",
+      "source": "generated/Skill5137.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: turquoise swirling arcane symbol"
+    },
+    {
+      "id": "Skill5141",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5141.png",
+      "source": "generated/Skill5141.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: turquoise triangle and circle arcane sigil"
+    },
+    {
+      "id": "Skill5142",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5142.png",
+      "source": "generated/Skill5142.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: icy blue star and circle arcane glyph"
+    },
+    {
+      "id": "Skill5200",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5200.png",
+      "source": "generated/Skill5200.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: bright orange shattering impact rune"
+    },
+    {
+      "id": "Skill5201",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5201.png",
+      "source": "generated/Skill5201.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: golden healing chalice with green leaves and motes"
+    },
+    {
+      "id": "Skill5203",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill5203.png",
+      "source": "generated/Skill5203.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: red banner with gold runes"
+    },
+    {
+      "id": "Skill7000",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill7000.png",
+      "source": "generated/Skill7000.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: green eye accuracy sigil"
+    },
+    {
+      "id": "Skill7002",
+      "target": "Assets/@Resources/Sprite/Icon/Skill/Generated/Skill7002.png",
+      "source": "generated/Skill7002.png",
+      "kind": "medallion",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged RE001 RPG skill icon. Final use is 64x64 pixel art. Preserve its central symbol and color identity. One complete circular gold-rimmed medallion, centered with even small transparent margin. The medallion has a fully OPAQUE dark navy/enamel backplate behind the symbol; absolutely no transparent holes inside the circle. Solid continuous gold rim and all internal details, only outside the medallion is true transparent alpha. Crisp chunky readable 16-bit pixel art, no tiny noisy ornament, no text or numbers, no drop shadow, no outer glow or background color. Keep original magical motif distinct. Subject: diagonal blazing silver sword"
+    },
+    {
+      "id": "Mat_BreezingWindForest_1",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_BreezingWindForest_1.png",
+      "source": "generated/Mat_BreezingWindForest_1.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a coil of silver-white spider silk thread, thick readable coiled strands with a loose end. White thread must remain fully visible and opaque; preserve the central opening."
+    },
+    {
+      "id": "Mat_RuinedSanctum_0",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_0.png",
+      "source": "generated/Mat_RuinedSanctum_0.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a small mound of pale gray revenant ash with a few darker pebbles; coherent solid pile, textured gray surface, no holes or white pixels cut out."
+    },
+    {
+      "id": "Mat_RuinedSanctum_4",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_4.png",
+      "source": "generated/Mat_RuinedSanctum_4.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a chipped gray stone gargoyle fragment shaped like part of its head/jaw, original sculpted angular form and dark engraved features; solid stone, no holes."
+    },
+    {
+      "id": "Mat_RuinedSanctum_7",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_7.png",
+      "source": "generated/Mat_RuinedSanctum_7.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a round corked glass vial holding purple corrupted essence, pale blue glass neck and violet liquid in the lower bulb. Glass highlights and violet liquid drawn as solid pixels, not disappearing alpha. Preserve the original bottle silhouette."
+    },
+    {
+      "id": "Mat_RuinedSanctum_8",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_RuinedSanctum_8.png",
+      "source": "generated/Mat_RuinedSanctum_8.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a broken light-gray carved altar stone fragment with engraved stepped arch motif, chipped corners and dark stone thickness. Solid pale stone, no transparency through carved surface."
+    },
+    {
+      "id": "Mat_WhisperingCave_4",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_4.png",
+      "source": "generated/Mat_WhisperingCave_4.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a curved orange-brown segmented centipede chitin shell plate with silver-gray edge, clearly defined solid shell and dark outline."
+    },
+    {
+      "id": "Mat_WhisperingCave_5",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_5.png",
+      "source": "generated/Mat_WhisperingCave_5.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a compact clump of bright green damp glowing moss, readable clustered leaves with dark green shadow base; clean silhouette, intrinsic green highlights but no external glow haze."
+    },
+    {
+      "id": "Mat_WhisperingCave_6",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_6.png",
+      "source": "generated/Mat_WhisperingCave_6.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: a chipped pale white-gray stone statue fragment, angular broken rock with etched subtle details and gray shadow faces. All stone faces opaque, no missing flecks."
+    },
+    {
+      "id": "Mat_WhisperingCave_8",
+      "target": "Assets/@Resources/Sprite/Icon/Material/Generated/Mat_WhisperingCave_8.png",
+      "source": "generated/Mat_WhisperingCave_8.png",
+      "kind": "cutout",
+      "prompt": "Use case: precise-object-edit. Rebuild this damaged fantasy RPG crafting-material inventory icon faithfully. Final use 64x64. Preserve original object identity, shape and palette. Repair missing internal material so all solid surfaces including white highlights are opaque, not holes. One centered complete item on true transparent background. Crisp chunky readable 16-bit pixel art, clean dark silhouette outline, simple coherent shading, modest top-left highlight. About 80% square canvas occupied, clean padding. No ground, shadow, colored fringe, background, glow haze, text or UI frame. Subject: one iridescent salamander scale, overlapping facets of turquoise purple and gold, teardrop/oval shape, clean dark outline. Keep intentional rainbow colors; fully opaque scale surface."
+    },
+    {
+      "id": "RegionL_Mid_24300",
+      "target": "Assets/@Resources/Sprite/Background/RegionLayer/RegionL_Mid_24300.png",
+      "source": "generated/RegionL_Mid_24300.png",
+      "kind": "layer",
+      "prompt": "Use case: precise-object-edit. Rebuild the supplied damaged snowy midground scenery strip for a side-scrolling 16-bit pixel-art RPG. Preserve its long low horizontal composition: bare snow-covered tree on left, groups of snow-capped blue-gray rocks, a small ruined rectangular stone arch slightly left of center, more snow-covered rocks, bare tree on right. True transparent alpha sky and empty gaps between objects. All SNOW, tree trunks, branches and stone surfaces must be SOLID OPAQUE, even bright white highlights; the original white material was accidentally deleted by background removal. Clean dark slate-blue outlines and icy blue shadow planes, crisp readable pixel clusters. NO magenta or purple contamination or glow. No colored background, no gradient, no cast shadow, text or characters. Full scene stays within wide horizontal strip about 6:1 content aspect ratio; compose the complete strip with minimal surrounding transparent padding. Both ends meet same low ground line for scrolling. Output one scenery strip, not multiple rows."
+    }
+  ]
+}
