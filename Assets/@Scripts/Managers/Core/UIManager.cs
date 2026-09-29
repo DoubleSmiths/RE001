@@ -10,10 +10,11 @@ using UnityEngine.UI;
 public class UIManager
 {
     int _order = 1000;        // 팝업 베이스 — 월드 전투 요소(데미지폰트 350 등) 위로
-    int _toastOrder = 2000;    // 토스트는 팝업(1000+) 위
+    const int TOAST_ORDER_BASE = 2000;
+    int _toastOrder = TOAST_ORDER_BASE;    // 토스트는 팝업(1000+) 위
 
     Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
-    Stack<UI_Toast> _toastStack = new Stack<UI_Toast>();
+    readonly List<UI_Toast> _toasts = new List<UI_Toast>();
     UI_Scene _sceneUI = null;
     public UI_Scene SceneUI { get { return _sceneUI; } }
 
@@ -228,27 +229,25 @@ public class UIManager
         var canvas = go.GetComponent<Canvas>();
         if (canvas != null && canvas.worldCamera == null) canvas.worldCamera = Camera.main;
         popup.SetInfo(msg);
-        _toastStack.Push(popup);
+        _toasts.Add(popup);
         go.transform.SetParent(Root.transform);
-        CoroutineManager.StartCoroutine(CoCloseToastUI());
+        CoroutineManager.StartCoroutine(CoCloseToastUI(popup));
         return popup;
     }
 
-    IEnumerator CoCloseToastUI()
+    // 토스트는 저마다 3초 뒤 **자기 자신을** 닫는다. 예전엔 타이머가 맨 위(마지막) 토스트를 닫아서, 연달아 뜨면
+    //  나중 것이 페이드 도중 먼저 사라지고 먼저 뜬 것이 남았다(보스 처치→돌파→다음 지역: DOTween '파괴된 Image' 경고 3건).
+    IEnumerator CoCloseToastUI(UI_Toast toast)
     {
        yield return new WaitForSecondsRealtime(3f);
-       CloseToastUI();
+       CloseToastUI(toast);
     }
 
-    public void CloseToastUI()
+    public void CloseToastUI(UI_Toast toast)
     {
-        if (_toastStack.Count == 0)
-            return;
-
-        UI_Toast toast = _toastStack.Pop();
-        Managers.Resource.Destroy(toast.gameObject);
-        toast = null;
-        _toastOrder--;
+        if (!_toasts.Remove(toast)) return;
+        if (toast != null) Managers.Resource.Destroy(toast.gameObject);   // 씬 전환으로 이미 사라졌을 수 있다(== 로 확인)
+        if (_toasts.Count == 0) _toastOrder = TOAST_ORDER_BASE;
     }
 
     public int GetPopupCount()

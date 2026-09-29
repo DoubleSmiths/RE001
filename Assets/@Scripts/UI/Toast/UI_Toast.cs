@@ -31,7 +31,7 @@ public class UI_Toast : UI_Base
         //OpenAnimation();
         //PopupOpenAnimation(gameObject);
 
-        Sequence sequence = DOTween.Sequence();
+        Sequence sequence = DOTween.Sequence().SetLink(gameObject);
         sequence.AppendCallback(() => gameObject.GetComponent<DOTweenAnimation>()?.DORestart());
         sequence.AppendInterval(1.1f);
         sequence.AppendCallback(() => Fade());
@@ -90,10 +90,11 @@ public class UI_Toast : UI_Base
 
     void Fade()
     {
-        GetImage((int)Images.StageTitle).DOFade(0, 1.5f);
-        GetImage((int)Images.StageTitle_1).DOFade(0, 1.5f);
-        GetImage((int)Images.StageTitle_2).DOFade(0, 1.5f);
-        GetText((int)Texts.StageTitle_Txt).DOFade(0, 1.5f);
+        // 토스트가 먼저 치워져도 트윈이 사라진 그림을 건드리지 않게 이 오브젝트에 묶는다
+        GetImage((int)Images.StageTitle).DOFade(0, 1.5f).SetLink(gameObject);
+        GetImage((int)Images.StageTitle_1).DOFade(0, 1.5f).SetLink(gameObject);
+        GetImage((int)Images.StageTitle_2).DOFade(0, 1.5f).SetLink(gameObject);
+        GetText((int)Texts.StageTitle_Txt).DOFade(0, 1.5f).SetLink(gameObject);
     }
 
 }
