@@ -403,28 +403,52 @@ public static class IntegrationTestMenu
     static void SaveNow()
     {
         if (!RequirePlayMode()) return;
-        Managers.Game.SaveGame();
+        Managers.Game.SaveGameNow();
         Debug.Log($"[Save] {Application.persistentDataPath}/SaveData.json 저장 완료");
     }
 
     [MenuItem("Test/Integration/Save - 세이브 데이터 삭제 (재시작 필요)", false, 501)]
     static void DeleteSave()
     {
-        string path = Application.persistentDataPath + "/SaveData.json";
-        if (System.IO.File.Exists(path))
-        {
-            System.IO.File.Delete(path);
-            PlayerPrefs.SetInt("ISFIRST", 1);
-            PlayerPrefs.Save();
-            Debug.Log($"[Save] 삭제 완료: {path}  — Play 다시 누르면 첫 실행 상태");
-        }
-        else Debug.Log("[Save] 파일 없음");
+        // 본 파일이 없어도 .bak/.tmp 가 남아 있으면 다음 Play 에서 복구되므로 조건 없이 전부 지운다.
+        GameManager.DeleteSaveFiles();
+        Debug.Log($"[Save] 삭제 완료: {GameManager.SavePath}  — Play 다시 누르면 첫 실행 상태");
     }
 
     [MenuItem("Test/Integration/Save - 세이브 위치 열기", false, 502)]
     static void OpenSaveFolder()
     {
         EditorUtility.RevealInFinder(Application.persistentDataPath);
+    }
+
+    // ─────────────────────────────────────────────
+    // 8. 화면 비율 (FixedResolution.Fit) — 플레이 모드 불필요
+    // ─────────────────────────────────────────────
+    [MenuItem("Test/Integration/Letterbox - 안전 영역 계산", false, 600)]
+    static void CheckLetterbox()
+    {
+        // (안전 영역, 화면) → 카메라 영역이 안전 영역 안에 있고 목표 비율을 지키는가
+        var cases = new (string name, Rect safe, float w, float h)[]
+        {
+            ("펀치홀 폰 1080x2400, 위 90px",  new Rect(0, 0, 1080, 2310), 1080, 2400),
+            ("노치 없는 긴 폰 1080x2640",     new Rect(0, 0, 1080, 2640), 1080, 2640),
+            ("PC 1920x1080",                  new Rect(0, 0, 1920, 1080), 1920, 1080),
+            ("안전 영역 0 (폴백)",            new Rect(0, 0, 0, 0),       1080, 2400),
+        };
+        int fail = 0;
+        foreach (var c in cases)
+        {
+            Rect r = FixedResolution.Fit(c.safe, c.w, c.h);
+            Rect safe = c.safe.width > 0 ? c.safe : new Rect(0, 0, c.w, c.h);
+            float aspect = (r.width * c.w) / (r.height * c.h);
+            bool inside = r.xMin * c.w >= safe.xMin - 0.5f && r.xMax * c.w <= safe.xMax + 0.5f
+                       && r.yMin * c.h >= safe.yMin - 0.5f && r.yMax * c.h <= safe.yMax + 0.5f;
+            bool ok = inside && Mathf.Abs(aspect - FixedResolution.TARGET_ASPECT) < 0.001f;
+            if (!ok) fail++;
+            Debug.Log($"[Letterbox] {(ok ? "PASS" : "FAIL")} {c.name}: rect={r} 비율={aspect:F4} 안전영역안={inside}");
+        }
+        if (fail == 0) Debug.Log($"[Letterbox] PASS {cases.Length}/{cases.Length}");
+        else Debug.LogError($"[Letterbox] FAIL {fail}/{cases.Length}");
     }
 }
 #endif

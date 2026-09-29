@@ -396,13 +396,13 @@ public class UI_MonsterDetailPopup : UI_Popup
     }
 
     // 슬9/10: 고유기술 게이팅 — 정보해금과 습득을 분리.
-    //  정보해금(infoUnlocked) = 포획≥1(공명도>0) 또는 기록도 100% (슬9 MinimonSkillLockedText)
+    // 첫 발견부터 포획 보상을 미리 보여준다. 영구 습득은 공명도 100%를 유지한다.
     //    → 정보 표시 + interactive O (클릭 시 기술 상세창)
     //  습득(learned) = 공명도 100% (슬10) → 어두운 잠금 오버레이 제거
     //  정보 미해금 = FullLock ("?" + 요구문구, interactive X)
     void RefreshSkillGate(int rec, int sync)
     {
-        bool infoUnlocked = sync > 0 || rec >= 100;
+        bool infoUnlocked = sync > 0 || rec > 0;
         bool learned      = sync >= 100;
         _skillUnlocked = infoUnlocked;
 
@@ -420,7 +420,12 @@ public class UI_MonsterDetailPopup : UI_Popup
         var q = GetText((int)Texts.MonsterDetailPopupSkillBoxFullLockQuestion);
         if (q != null) { q.text = "?"; ApplyFont(q, Define.FontType.UI); }
         var req = GetText((int)Texts.MonsterDetailPopupSkillBoxFullLockReq);
-        if (req != null) { req.color = Util.HexToColor("6C6C6C"); ApplyFont(req, Define.FontType.UI); }
+        if (req != null) { req.color = Util.HexToColor("6C6C6C"); ApplyFont(req, Define.FontType.UI); req.text = Util.Localize("MonsterSkillFullLockText"); }
+        // 아래 둘은 프리팹에 박힌 한국어라 영어에서도 그대로 나왔다
+        var needLink = GetText((int)Texts.MonsterDetailPopupSkillText);
+        if (needLink != null) { needLink.text = Util.Localize("MonsterSkillNeedLinkText"); ApplyFont(needLink, Define.FontType.UI); }
+        var loot = GetText((int)Texts.DropItemBoxText);
+        if (loot != null) { loot.text = Util.Localize(LocalizeKey.LootText); ApplyFont(loot, Define.FontType.UI); }
 
         // 슬라이드 79: 고유기술 이름 — CreatureData.UniqueSkillName (FullLock 시엔 위 UI가 덮음)
         var skillName = GetText((int)Texts.MonsterDetailPopupSkillName);

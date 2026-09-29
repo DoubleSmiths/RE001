@@ -97,13 +97,23 @@ public class PlayerController : CreatureController
     }
 
     bool _companionSubscribed;
+    bool _abilitySubscribed;
 
     void OnDestroy()
     {
         if (Managers.MinMon != null) Managers.MinMon.OnCompanionChanged -= OnCompanionChanged;
+        if (Managers.MinMon != null) Managers.MinMon.OnMinMonAdded -= OnMinMonAdded;
+        if (Managers.Ability != null) Managers.Ability.OnAbilityChanged -= OnAbilityChanged;
     }
 
     void OnCompanionChanged(int id) => RefreshCompanion();
+
+    void OnAbilityChanged() => RefreshStats(false);
+
+    void OnMinMonAdded(int id)
+    {
+        if (id == _companionId && _companion != null) _companion.RefreshStats();
+    }
 
     // 동행 미니몬 스폰/해제 동기화. CompanionMinMonId가 유효하면 발치에 스폰, -1이면 해제.
     public void RefreshCompanion()
@@ -127,6 +137,7 @@ public class PlayerController : CreatureController
         _critStreak = 0;
         _evadeStreak = 0;
         _abilityRunner?.OnBattleStart();   // 슬39: 전투 시작 발동조건
+        Managers.UI?.RefreshTimeScale();
     }
 
     // 능력 효과/회복 — 전투 중 HP 회복(RecoveryRate 적용). 회복 시 발동조건(OnHeal) 통지.
@@ -145,13 +156,107 @@ public class PlayerController : CreatureController
     public void StopBattle()
     {
         _inBattle = false;
+        _guardStart = -999f;
+        if (_sprite != null) { _sprite.DOKill(); _sprite.color = Color.white; }
         _abilityRunner?.OnBattleEnd();   // 슬39: 전투 종료 — 임시 버프/쿨 정리
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
         State = Define.State.Idle;
         transform.DOKill();   // 진행 중인 DOMove(off-screen) 중단
         transform.position = _originalPos;
+        Managers.UI?.RefreshTimeScale();
     }
+
+    #region 가드·패링 (v2 — Postknight 식 손맛, ADR0030)
+    // 막기 입력(UI_GuardInput: 전투 화면 탭 / Space)을 누른 순간부터 GUARD_DURATION 동안 막는다.
+    //  처음 PARRY_WINDOW 안에 공격이 닿으면 패링 — 피해 0, 적 기절, 확정 치명 반격, 콤보 가산.
+    //  나머지 구간이면 막기 — 피해 감소. 한 번 막으면 끝이고 재사용 대기(GUARD_COOLDOWN)로 연타를 막는다.
+    //  아무것도 안 누르면 예전처럼 맞는다 — 손을 쓰면 확실히 이득, 안 써도 벌은 없다.
+    public enum GuardResult { None, Block, Parry }
+    public event System.Action<GuardResult> OnGuard;   // 막기/패링이 실제로 일어났을 때(미션·도움말용)
+
+    static readonly Color GUARD_TINT = new Color(0.55f, 0.8f, 1f, 1f);
+    const float PARRY_HITSTOP = 0.08f;   // 패링 순간 멈칫(실시간 초) — 반격이 그 뒤에 들어간다
+    const float GUARD_CALLOUT_RAISE = 1.1f;
+
+    float _guardStart = -999f;
+    float _guardReadyAt;
+
+    float GuardDuration => Managers.Data.Balance(BalanceKey.GUARD_DURATION, 0.45f);
+    public bool CanGuard => _inBattle && State != Define.State.Dead && Time.time >= _guardReadyAt;
+
+    public bool TryGuard()
+    {
+        if (!CanGuard) return false;
+        _guardStart   = Time.time;
+        _guardReadyAt = Time.time + Managers.Data.Balance(BalanceKey.GUARD_COOLDOWN, 1f);
+        if (_sprite != null)
+        {
+            _sprite.DOKill();
+            _sprite.color = GUARD_TINT;   // 막는 동안 푸른빛이 서서히 빠진다
+            _sprite.DOColor(Color.white, GuardDuration).SetEase(Ease.InQuad).SetLink(gameObject);
+        }
+        return true;
+    }
+
+    // 몬스터 공격이 닿는 순간 MonsterController.AttackTrigger 가 묻는다.
+    public GuardResult ResolveGuard()
+    {
+        float t = Time.time - _guardStart;
+        if (t < 0f || t >= GuardDuration) return GuardResult.None;
+        _guardStart = -999f;
+        var result = t < Managers.Data.Balance(BalanceKey.PARRY_WINDOW, 0.2f) ? GuardResult.Parry : GuardResult.Block;
+
+        // 반격의 '치명타!' 알림과 같은 자리면 글자가 겹친다 — 한 줄 위에 띄운다
+        Vector3 calloutPos = transform.position + Vector3.up * (DamageFontYOffset + CRIT_CALLOUT_RAISE + GUARD_CALLOUT_RAISE);
+        if (result == GuardResult.Parry)
+        {
+            Managers.Mission?.Notify(MissionEvent.Parry);
+            Managers.Object.ShowCallout(calloutPos, Util.Localize("ParryText"), DamageFontMode.CriticalCallout, transform);
+            Managers.Sound?.PlaySFX("SFX_SwordBlock", 1.25f);
+        }
+        else
+        {
+            Managers.Object.ShowCallout(calloutPos, Util.Localize("BlockText"), DamageFontMode.Miss, transform);
+            Managers.Sound?.PlaySFX("SFX_SwordBlock", 0.85f);
+        }
+        OnGuard?.Invoke(result);
+        return result;
+    }
+
+    // v2 스테이지 보스가 나오면 체력을 가득 채운다 — 앞선 사냥에서 깎인 채로 들어가 새 캐릭터가 1-1 첫 보스에 쓰러졌다.
+    //  보스의 벽은 30초 제한(화력)이지 누적 피해가 아니다.
+    public void RefillHp()
+    {
+        if (State == Define.State.Dead) return;
+        Hp = MaxHp;
+        OnHpChanged?.Invoke(Hp, MaxHp);
+    }
+
+    // 패링 반격 — 짧게 멈칫한 뒤 확정 치명타 한 방 + 콤보 가산. 기절한 적은 받는 피해가 늘어 있다.
+    public void ParryCounter(MonsterController target)
+    {
+        Managers.Combo?.AddBonusHits(Mathf.RoundToInt(Managers.Data.Balance(BalanceKey.PARRY_COMBO_BONUS, 3f)));
+        StartCoroutine(CoParryCounter(target));
+    }
+
+    IEnumerator CoParryCounter(MonsterController target)
+    {
+        if (_anim != null) _anim.speed = 0f;
+        yield return new WaitForSecondsRealtime(PARRY_HITSTOP);
+        if (_anim != null) _anim.speed = 1f;
+        if (target == null || target.State == Define.State.Dead || State == Define.State.Dead) yield break;
+
+        PlayMotion("Attack", 1.5f);
+        Managers.Sound?.PlaySFX("Sound_PlayerAttack");
+        float prevDmgAmp = DmgAmp;
+        DmgAmp += ComboDmgBoostBonus();
+        BattleMath.DamageResult result = BattleMath.Resolve(this, target, AttackType.Physical, guaranteedCrit: true);
+        DmgAmp = prevDmgAmp;
+        target.TakeHit(result, this);
+        OnHitLanded?.Invoke(result.FinalDamage);
+    }
+    #endregion
 
     // 마을 내 장소 이동(길드/연금공방/모험가협회 등) — 페이드 암전 중 호출.
     //  Play("Escape")로 시작한 달리기 애니/이동을 멈추고 즉시 원위치+Idle로 되돌려,
@@ -170,6 +275,9 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void Update()
     {
+        // 모달 정지는 남은 공격/버프 시간을 보존한다. 실제 시간 물약 쿨타임도 여기서 함께 멈춘다.
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
+
         // 콤보 Tick — 항상 활성인 Player의 Update에서 구동(Managers.Update 플레이키 대비).
         // ComboManager.Tick은 프레임 디듑이 있어 다른 Update와 중복 호출돼도 1회만 처리됨.
         Managers.Combo?.Tick(Time.deltaTime);
@@ -193,6 +301,7 @@ public class PlayerController : CreatureController
     float _autoPotionCd;
     void UpdateAutoPotion()
     {
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         // (_autoPotionCd 감소는 Update에서 전투 여부와 무관하게 처리)
         var game = Managers.Game;
         if (game == null || !game.AutoPotionMemorized || !game.AutoPotionOn) return;
@@ -302,9 +411,11 @@ public class PlayerController : CreatureController
     // ────────────────────────────────────────
     void AutoAttack()
     {
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         if (State == Define.State.Attack) return;
-        // 콤보 + 신속물약 공격속도 버프: 합산 %만큼 공격 사이클 전체가 빨라짐(쿨타임 + 애니 + 상태지속).
-        float speedMul = 1f + (ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / 100f;
+        // 기본 공속(100)과 능력·콤보·물약을 같은 단위로 합산한다. 이번 공격은 시작 시 배율로 마친다.
+        float speedMul = Mathf.Max(MIN_PLAYER_ATTACK_SPEED_MULTIPLIER,
+            (AtkSpeed + ComboAtkSpeedBonus() + PotionAtkSpeedBonus) / ABILITY_PERCENT_BASE);
         float effectiveCooldown = AtkCooldown / speedMul;
         if (Time.time < _lastAtkTime + effectiveCooldown) return;
 
@@ -315,13 +426,18 @@ public class PlayerController : CreatureController
 
         _lastAtkTime = Time.time;
         _attackTarget = target;         // 슬라이드 61 — 키프레임 시점에 데미지 적용하기 위해 락온
+        // 이전 Idle 피격의 복귀가 새 공격을 중간에 Idle로 덮어쓰지 않게 한다.
+        if (_onHitCo != null)
+        {
+            StopCoroutine(_onHitCo);
+            _onHitCo = null;
+        }
         State = Define.State.Attack;
         // 공격속도만큼 Attack 애니 재생속도를 올려 키프레임(AttackTrigger)과 클립 종료가 함께 빨라지도록.
         if (_anim != null) _anim.speed = speedMul;
 
         // 명중/회피 dice + BattleMath.Resolve + TakeHit는 Attack.anim의 키프레임 이벤트
-        // (AttackTrigger, 0.5s)에서 호출됨. OnHit으로 인터럽트되면 키프레임에 도달하지
-        // 못해 자연스럽게 데미지 미적용 (슬라이드 60 — 인터럽트 = 빗나감).
+        // (AttackTrigger, 0.5s)에서 호출된다. 일반 피격은 진행 중인 공격을 끊지 않는다(ADR0024).
 
         if (_attackResetCo != null) StopCoroutine(_attackResetCo);
         // Attack 상태 지속도 공격속도만큼 단축 — 클립 길이가 병목이 되지 않도록.
@@ -401,8 +517,9 @@ public class PlayerController : CreatureController
         if (MaxHp > 0f) _abilityRunner?.Notify(Define.AbilityCondition.LowHp, Hp / MaxHp * 100f);
     }
 
-    // 슬라이드 60/64/65 Player —
-    //  · OnHit Anim을 처음부터 재생 (어느 상태에서 피격되었든)
+    // 슬라이드 60/64/65 Player — 일반 피격의 공격 취소는 ADR0024로 변경.
+    //  · 공격 중에는 피해·소리는 유지하고 타격 키프레임까지 공격 모션을 마친다.
+    //  · 그 외 상태에서는 OnHit Anim을 처음부터 재생
     //  · OnHit 클립 길이 0.35s (슬라이드 65 고정)
     //  · OnHit 끝나면 Idle로 복귀 → AutoAttack이 자연 재개 (cooldown 끝나는 대로 Attack)
     //  · OnHit 도중 또 피격 시 OnHit 처음부터 재시작 (CrossFade normalizedTime 0)
@@ -412,6 +529,7 @@ public class PlayerController : CreatureController
         if (_anim == null) return;
 
         Managers.Sound?.PlaySFX("Sound_PlayeronHit");   // 플레이어 피격
+        if (State == Define.State.Attack) return;
         _anim.speed = 1f;   // 공격속도 버프로 올렸던 애니 속도 원복(피격 연출은 정상 속도)
         _anim.CrossFade("OnHit", 0.05f, -1, 0f);
 
@@ -438,7 +556,10 @@ public class PlayerController : CreatureController
 
     void CheckLevelUp()
     {
-        while (Managers.Game.Exp >= _expRequired)
+        // 상한(LevelData 마지막 레벨)에서 멈춘다 — 넘어가면 레벨 조회가 실패해 폴백 공식으로 떨어지고
+        //  Lv301 에서 최대 HP 가 22,780 → 6,100 으로 곤두박질쳤다. 상한에선 경험치 바를 가득 찬 채로 둔다.
+        int maxLevel = Managers.Data != null ? Managers.Data.MaxPlayerLevel : int.MaxValue;
+        while (Managers.Game.Level < maxLevel && Managers.Game.Exp >= _expRequired)
         {
             Managers.Game.Exp  -= _expRequired;
             Managers.Game.Level++;
@@ -453,6 +574,9 @@ public class PlayerController : CreatureController
             // _expRequired는 위 RefreshStats()가 LevelData(없으면 fallback 식)로 이미 갱신함.
             // 여기서 또 ×1.2 하면 세션 내 연속 레벨업과 재접속 시 요구 경험치가 달라지는 버그가 있었음.
         }
+
+        if (Managers.Game.Level >= maxLevel && Managers.Game.Exp > _expRequired)
+            Managers.Game.Exp = _expRequired;
     }
 
     /// <summary>그 레벨에 도달하며 받는 능력점수를 지급한다.
@@ -545,7 +669,11 @@ public class PlayerController : CreatureController
 
         // 슬38: 장착(기억)된 능력의 스탯 보너스 가산
         Managers.Ability?.ApplyTo(this);
-        // 슬39: 스탯이 base+패시브로 리셋됐으니 런너의 임시 버프 추적도 비움(중복 환불 방지)
+        // v2 훈련(골드 강화) — 가산이 끝난 값에 % 로 곱한다(ADR0030)
+        Managers.Game?.ApplyTraining(this);
+        // v2 핫타임 공격력 +20%(광고·크리스탈, 30분)
+        Managers.Shop?.ApplyHotTime(this);
+        // 재계산된 스탯에 아직 사용 중인 능력의 임시 버프를 다시 적용한다.
         _abilityRunner?.OnStatsReset();
 
         Hp = fullHeal ? MaxHp : Mathf.Min(Hp, MaxHp);
@@ -563,9 +691,15 @@ public class PlayerController : CreatureController
             if (!_companionSubscribed)
             {
                 Managers.MinMon.OnCompanionChanged += OnCompanionChanged;
+                Managers.MinMon.OnMinMonAdded += OnMinMonAdded;
                 _companionSubscribed = true;
             }
             RefreshCompanion();
+        }
+        if (!_abilitySubscribed && Managers.Ability != null)
+        {
+            Managers.Ability.OnAbilityChanged += OnAbilityChanged;
+            _abilitySubscribed = true;
         }
     }
 
@@ -613,8 +747,7 @@ public class PlayerController : CreatureController
     // Attack.anim의 0.5s 키프레임에 functionName=AttackTrigger 이벤트 등록되어 있음.
     // 명중/회피 dice + BattleMath.Resolve + TakeHit를 이 시점에 처리.
     //
-    // OnHit 등으로 Attack 클립이 인터럽트되면 이 이벤트가 발화되지 않아 자연스럽게
-    // 데미지가 들어가지 않음 (슬라이드 60 — 공격이 끊긴 경우).
+    // 일반 피격은 공격을 유지하며, 사망·교전 종료는 아래 상태/타겟 가드로 타격을 차단한다.
     // 디버그 — 레벨/EXP 리셋. 테스트 메뉴에서 호출.
     public void DebugResetLevel(int targetLevel = 1)
     {

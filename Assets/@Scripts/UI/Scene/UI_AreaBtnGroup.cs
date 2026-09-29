@@ -1,6 +1,5 @@
 using DG;
 using DG.Tweening;
-using System.Net.Http.Headers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,7 +50,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
         //  흔들림 + 확대 + 페이드인은 그대로 두고, 마무리 글로우 플래시(GlowDot_01)로 순간을 잡는다.
         //  (주의: 월드 ParticleSystem은 SSC 캔버스 위에 직접 렌더되지 않아 UIFx.PlayParticle 경유가 필요했다)
 
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         seq.Join(go.transform.DOShakePosition(FADE_DURATION, new Vector3(0.7f, 0.7f, 1f), 27, 40.1f, false, false).SetEase(Ease.OutQuad));
         seq.Join(go.transform.DOScale(1.15f, FADE_DURATION).SetEase(Ease.Linear));
@@ -64,10 +63,19 @@ public abstract class UI_AreaBtnGroup : UI_Base
             UIFx.PlayParticle((RectTransform)go.transform, Vector2.zero, "GlowDot_01", FLASH_DURATION + 0.5f));
         seq.AppendInterval(FLASH_DURATION);
 
+        // 정상 완료와 그룹 소멸 양쪽에서 입력을 복원하되, 후속 연출의 입력 잠금은 건드리지 않는다.
+        bool inputReleased = false;
+        System.Action releaseInput = () =>
+        {
+            if (inputReleased) return;
+            inputReleased = true;
+            if (blocker != null) Managers.Resource.Destroy(blocker);
+            if (es != null) es.enabled = prevEsEnabled;
+        };
+        seq.OnKill(() => releaseInput());
         seq.OnComplete(() =>
         {
-            if (blocker != null) Destroy(blocker);
-            if (es != null) es.enabled = prevEsEnabled;
+            releaseInput();
             go.GetComponent<Button>().interactable = true;
             onComplete?.Invoke();
         });
@@ -108,7 +116,7 @@ public abstract class UI_AreaBtnGroup : UI_Base
         rt.DOKill();
         rt.gameObject.SetActive(true);
 
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(rt).SetLink(gameObject);
 
         // FROM (-150, 12) → 현재 위치
         seq.Append(

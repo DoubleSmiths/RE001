@@ -59,7 +59,18 @@
 
 ## 결과
 
-- 새 전투 지역을 추가하면 `UI_GameScene.EnterArea`가 자동으로 `MarkBattleArea`를 남긴다.
+- 새 전투 지역을 추가하면 `UI_GameScene.SwapAreaBtnGroup`이 자동으로 `MarkBattleArea`를 남긴다.
+  (2026-09-29 수정: 처음엔 `EnterArea`에만 걸었는데 전투 진입은 전부 `EnterAreaWithFade` 경로라
+  `LastBattleAreaId`가 0으로 남아 실제 플레이에서는 오프라인 보상·방치 누적이 한 번도 돌지 않았다.
+  두 경로가 모두 지나는 `SwapAreaBtnGroup`으로 옮겼다. 위 검증은 지역 값을 직접 넣고 한 것이었다.)
+- 같은 날 리뷰 반영(보상이 실제로 나가기 시작하면서 드러난 구멍):
+  - 평균은 **출현 가중**이다(`GameManager.TryGetAreaAverage` ← `ObjectManager.FieldPool`). 단순 평균은 희귀·우두머리가 끼인
+    27개 노드에서 기대값의 최대 2.1배를 줘 "직접 사냥보다 낮게"를 넘었다. `_tools/sim_economy.py`는 원래 가중 평균이었다.
+  - 앱 복귀(`OnApplicationPause(false)`)에서도 정산한다. 프로세스가 살아 있으면 GameScene 이 다시 로드되지 않아 홈에 나갔다 온
+    시간이 통째로 사라졌다. 방치 누적(`TickIdle`)은 한 프레임에 1초까지만 센다 — 복귀 첫 프레임의 `unscaledDeltaTime`엔
+    백그라운드 시간 전체가 들어와 상한 없이 한꺼번에 지급될 수 있었다.
+  - 정산을 마친 뒤부터는 저장할 때마다 `LastSeenTicks`를 갱신한다. 전에는 일시정지·종료 때만 기록해서 비정상 종료 뒤
+    다음 실행이 이미 플레이한 세션 시간을 또 지급했다.
 - 몬스터 경험치·골드를 조정하면 방치 수익도 같이 변한다([[0003]]의 상대값 설계와 연동).
 - 안내는 전용 팝업 없이 토스트를 재사용한다. 연출 스펙이 정해지면 그때 전용 프리팹으로.
 - 검증(플레이 모드 실측): 3시간 → 1,350처치 / EXP 100,170 / 골드 28,822.

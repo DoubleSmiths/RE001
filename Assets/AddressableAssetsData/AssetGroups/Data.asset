@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2310045df0c273e4d97fb9e55dc62fbd
+    m_Address: BalanceConfig
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2f85b81aa8f2ca74692c75f9d05bf94a
     m_Address: PF_Stardust_Gold
     m_ReadOnly: 0
@@ -57,6 +63,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 589c58a189d454d46adff8c379de04e6
+    m_Address: ProductData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ec9fdb0acc6c89418d1bc82da7ccca9
     m_Address: LevelData
     m_ReadOnly: 0
@@ -65,6 +77,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6b89cc1eaeffcd74192a7fe921715118
     m_Address: CreatureData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74d92c6e3005b4947aa0d7c055e039d2
+    m_Address: Credits
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
@@ -185,6 +203,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eac39a9ae29364446bbaae3d42f8f39e
     m_Address: SpeedPotion
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f543b709a480e614e80706de27f0663a
+    m_Address: MissionData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

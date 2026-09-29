@@ -27,6 +27,8 @@ public class DataManager
     public Dictionary<int, ShopItemData>      ShopItemDic       { get; private set; } = new Dictionary<int, ShopItemData>();
     public Dictionary<int, LevelData>          LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
     public Dictionary<int, PlayerStatusData>   PlayerStatusDic   { get; private set; } = new Dictionary<int, PlayerStatusData>();
+    // 레벨 상한 = LevelData 의 마지막 레벨. 데이터가 없으면 상한 없음.
+    public int MaxPlayerLevel { get; private set; } = int.MaxValue;
     public Dictionary<string, DialogueScriptGroup>       DialogueScriptDic { get; private set; } = new Dictionary<string, DialogueScriptGroup>();
     public Dictionary<string, LocalizationEntry>         LocalizationDic   { get; private set; } = new Dictionary<string, LocalizationEntry>();
     public Dictionary<int, QuestData>                QuestDic          { get; private set; } = new Dictionary<int, QuestData>();
@@ -57,6 +59,12 @@ public class DataManager
         ShopItemDic       = LoadJson<ShopItemDataLoader,      int,    ShopItemData>       ("ShopItemData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
         LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
+        MaxPlayerLevel    = int.MaxValue;
+        if (LevelDic.Count > 0)
+        {
+            MaxPlayerLevel = 0;
+            foreach (int lv in LevelDic.Keys) MaxPlayerLevel = Mathf.Max(MaxPlayerLevel, lv);
+        }
         PlayerStatusDic   = LoadJson<PlayerStatusDataLoader,  int,    PlayerStatusData>   ("PlayerStatusData").MakeDict();
         DialogueScriptDic = LoadJson<DialogueScriptLoader,    string, DialogueScriptGroup>("DialogueScriptData").MakeDict();
         LocalizationDic   = LoadJson<LocalizationLoader,      string, LocalizationEntry>  ("LocalizationData").MakeDict();
@@ -69,6 +77,22 @@ public class DataManager
         SubQuestUnlockDic = LoadJson<SubQuestUnlockLoader, int, List<SubQuestUnlockData>> ("SubQuestUnlockData").MakeDict();
         ComboStageDic     = LoadJson<ComboStageDataLoader, int, ComboStageData>          ("ComboData").MakeDict();
         BuffDic           = LoadJson<BuffDataLoader,       int, BuffData>                ("BuffData").MakeDict();
+        BalanceDic        = LoadJson<BalanceConfigLoader,  string, BalanceConfigData>    ("BalanceConfig").MakeDict();
+        MissionDic        = LoadJson<MissionDataLoader,    int,    MissionData>          ("MissionData").MakeDict();   // v2 미션·출석
+        ProductDic        = LoadJson<ProductDataLoader,    int,    ProductData>          ("ProductData").MakeDict();   // v2 인앱 상품 목록
+    }
+
+    // v2 밸런스 값(ADR0030). 키가 없으면 한 번만 알리고 fallback — 수치 누락이 게임을 멈추지 않게.
+    public Dictionary<string, BalanceConfigData> BalanceDic { get; private set; } = new Dictionary<string, BalanceConfigData>();
+    public Dictionary<int, MissionData> MissionDic { get; private set; } = new Dictionary<int, MissionData>();
+    public Dictionary<int, ProductData> ProductDic { get; private set; } = new Dictionary<int, ProductData>();
+    readonly HashSet<string> _missingBalanceKeys = new HashSet<string>();
+
+    public float Balance(string key, float fallback = 0f)
+    {
+        if (BalanceDic.TryGetValue(key, out var d)) return d.Value;
+        if (_missingBalanceKeys.Add(key)) Debug.LogError($"[DataManager] BalanceConfig 에 '{key}' 없음 — {fallback} 사용");
+        return fallback;
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

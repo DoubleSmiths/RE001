@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RE001 몬스터 애니메이션 확인</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #171d24; color: #edf2f6; font: 15px system-ui, sans-serif; }
+  header { padding: 24px 28px 18px; position: sticky; top: 0; z-index: 2; background: #171d2af5; border-bottom: 1px solid #405065; }
+  h1 { font-size: 24px; margin: 0 0 8px; }
+  p { color: #b7c6d7; margin: 8px 0 16px; }
+  nav { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  select, button, input { font: inherit; }
+  select, button { padding: 8px 12px; border: 1px solid #6d8097; border-radius: 6px; background: #263648; color: white; }
+  main { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; padding: 24px; }
+  article { min-width: 0; border: 1px solid #405065; border-radius: 10px; overflow: hidden; background: #222c37; }
+  h2 { margin: 14px 18px 4px; font-size: 18px; }
+  small { display: block; margin: 0 18px 12px; color: #b7c6d7; }
+  .stage { position: relative; height: 256px; overflow: hidden; background-color: #788492; background-image: conic-gradient(#b2bbc4 25%, transparent 0 50%, #b2bbc4 0 75%, transparent 0); background-size: 24px 24px; }
+  .stage::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; border-bottom: 1px solid #ffcc66; }
+  .sprite { position: absolute; width: 384px; height: 256px; max-width: none; bottom: 0; left: 50%; transform: translateX(-50%); image-rendering: pixelated; }
+  .thumbs { display: grid; grid-template-columns: repeat(4, 1fr); background: #a9b5bf; }
+  .thumbs img { width: 100%; image-rendering: pixelated; border: 1px solid #697c8d; }
+  a { color: #a3d8ff; }
+  footer { padding: 20px 28px; color: #b7c6d7; }
+</style>
+<header>
+  <h1>몬스터 애니메이션 · 30종</h1>
+  <p>동작별 4프레임 · 실제 교체 PNG 재생 · 바닥의 노란 선이 공통 기준선입니다. Unity 실행 검증과는 별도인 이미지 미리보기입니다.</p>
+  <nav>
+    <label>동작 <select id="state"><option value="Idle">Idle · 대기</option><option value="Move">Walk · 이동</option><option value="Attack">Attack · 공격</option><option value="Die">Dead · 사망</option><option value="OnHit">Hurt · 피격</option></select></label>
+    <button id="play">일시 정지</button>
+    <label>프레임 <input id="frame" type="range" min="0" max="3" value="0"><output id="index">1 / 4</output></label>
+    <label>속도 <select id="speed"><option value="1">1×</option><option value="0.5">0.5×</option><option value="2">2×</option></select></label>
+    <label>배경 <select id="background"><option value="checker">체크</option><option value="#e7e8e9">밝게</option><option value="#242b36">어둡게</option><option value="#688461">초록</option></select></label>
+  </nav>
+</header>
+<main id="grid"></main>
+<footer>시트의 행 순서: Idle → Walk → Attack → Dead → Hurt. 게임 상태 이름은 Idle / Run / Attack / Die / OnHit을 유지합니다. <a href="README.md">작업·검증 기록</a></footer>
+<script>
+const regions = [
+  ['BreezingWindForest', '숲', ['슬라임', '숲 거미', '늑대', '버섯', '바람 정령', '멧돼지', '까마귀', '덩굴', '여우', '말벌']],
+  ['WhisperingCave', '동굴', ['박쥐', '두더지', '광부 망령', '수정 골렘', '지네', '이끼 괴물', '석상 파수병', '그림자', '도롱뇽', '발광 벌레']],
+  ['RuinedSanctum', '성소', ['해골 망령', '석기사', '타락 사제', '키메라', '가고일', '갑옷 수호자', '유령', '타락 정령', '제단 수호자', '공허 괴물']]
+];
+const states = ['Idle', 'Move', 'Attack', 'Die', 'OnHit'];
+const duration = { Idle: 800, Move: 500, Attack: 500, Die: 500, OnHit: 350 };
+const state = document.querySelector('#state');
+const slider = document.querySelector('#frame');
+const speed = document.querySelector('#speed');
+const play = document.querySelector('#play');
+const cards = [];
+let playing = true, start = performance.now(), last = -1;
+for (const [region, title, names] of regions) {
+  names.forEach((name, i) => {
+    const id = `Mon_${region}_${i}`;
+    const path = `../../Assets/@Resources/Sprite/Monster/Anim/${id}`;
+    const article = document.createElement('article');
+    article.innerHTML = `<h2>${name} <small style="display:inline;margin:0">${title}</small></h2><small><a href="sheets/${id}.png">5동작 전체 시트</a></small><div class="stage"><img class="sprite" alt="${name} 애니메이션"></div><div class="thumbs"></div>`;
+    document.querySelector('#grid').append(article);
+    const frames = {};
+    for (const s of states) frames[s] = Array.from({length: 4}, (_, n) => {
+      const image = new Image(); image.src = `${path}/${s}_${n}.png`; return image;
+    });
+    cards.push({article, frames, image: article.querySelector('.sprite')});
+  });
+}
+function paint(frame) {
+  slider.value = frame;
+  document.querySelector('#index').textContent = `${frame + 1} / 4`;
+  for (const card of cards) card.image.src = card.frames[state.value][frame].src;
+  last = frame;
+}
+function changeState() {
+  for (const card of cards) {
+    const thumbs = card.article.querySelector('.thumbs'); thumbs.replaceChildren();
+    card.frames[state.value].forEach((im, i) => { const copy = im.cloneNode(); copy.alt = `${state.value} ${i + 1}`; thumbs.append(copy); });
+  }
+  start = performance.now(); paint(0);
+}
+state.addEventListener('change', changeState);
+play.addEventListener('click', () => { playing = !playing; play.textContent = playing ? '일시 정지' : '재생'; start = performance.now() - Number(slider.value) * duration[state.value] / 4 / Number(speed.value); });
+slider.addEventListener('input', () => { playing = false; play.textContent = '재생'; paint(Number(slider.value)); });
+document.querySelector('#background').addEventListener('change', event => {
+  for (const card of cards) { const stage = card.article.querySelector('.stage'); const checker = event.target.value === 'checker'; stage.style.backgroundImage = checker ? '' : 'none'; stage.style.backgroundColor = checker ? '' : event.target.value; }
+});
+function tick(now) {
+  if (playing) { const frame = Math.floor((now - start) * Number(speed.value) / (duration[state.value] / 4)) % 4; if (frame !== last) paint(frame); }
+  requestAnimationFrame(tick);
+}
+changeState(); requestAnimationFrame(tick);
+</script>
+</html>

@@ -4,6 +4,11 @@ using static Util;
 
 public class Define
 {
+    #region Editor
+    public const string EDITOR_SCENE_BACKUP_FOLDER = "Temp/__Backupscenes";
+    public const string EDITOR_SCENE_ARCHIVE_FOLDER = "Documents/UnityRecovery";
+    #endregion
+
     #region Enum
     public enum State
     {
@@ -86,6 +91,43 @@ public class Define
 
     // 액티브 스킬바 슬롯 수 (기획서 퀵슬롯 6칸).
     public const int ACTIVE_SKILL_SLOTS = 6;
+    public const int ACTIVE_SKILL_SLOT_SIZE = 26;
+    public const int ACTIVE_SKILL_SLOT_GAP = 2;
+    public const int ACTIVE_SKILL_BAR_Y = 99;
+    public const int ACTIVE_SKILL_ICON_INSET = 4;
+    public const int ACTIVE_SKILL_STATUS_HEIGHT = 7;
+    public const float ACTIVE_SKILL_STATUS_FONT_SIZE = 5.5f;
+    public const int ACTIVE_SKILL_COOLDOWN_FONT_SIZE = 10;
+    public const string ACTIVE_SKILL_FRAME_SPRITE = "11_orange_button_xs_empty";
+    public const string COMBAT_ABILITY_READY_TEXT = "CombatAbilityReadyText";
+    public const string GROWTH_CLASS_GUIDE_TEXT = "GrowthClassGuideText";
+    public const string CLASS_ABILITY_TEXT_PREFIX = "ClassAbility";
+    public const string GROWTH_MATERIAL_HINT_TEXT = "GrowthMaterialHintText";
+    public const string ITEM_LINK_PREFIX = "item:";
+    public const float ITEM_SOURCE_RIGHT_INSET = 6f;
+    public const float ITEM_SOURCE_TEXT_HEIGHT = 24f;
+    public const float ITEM_SOURCE_DIVIDER_GAP = 4f;
+    public const float ITEM_SOURCE_MIN_FONT_SIZE = 5f;
+    public const string GROWTH_ITEM_RARITY_LABEL_TEXT = "GrowthItemRarityLabelText";
+    public const string GROWTH_ITEM_FOUND_LABEL_TEXT = "GrowthItemFoundLabelText";
+    public const float CLASS_GUIDE_FONT_SIZE = 6f;
+    public const float CLASS_GUIDE_MIN_FONT_SIZE = 5f;
+    public const float EQUIP_TITLE_RIGHT_INSET = 4f;
+    public const string COMBAT_ABILITY_COOLDOWN_TEXT = "CombatAbilityCooldownText";
+    public const string COMBAT_ABILITY_FULL_HP_TEXT = "CombatAbilityFullHpText";
+    public const string COMBAT_ABILITY_NO_TARGET_TEXT = "CombatAbilityNoTargetText";
+    public const string COMBAT_ABILITY_UNAVAILABLE_TEXT = "CombatAbilityUnavailableText";
+    public const float ABILITY_PERCENT_BASE = 100f;
+    public const float MIN_PLAYER_ATTACK_SPEED_MULTIPLIER = 0.1f;
+    public const int DOTWEEN_TWEENER_CAPACITY = 7812;
+
+    // 치명타 "Critical!" 알림을 공격자 머리 위로 이만큼 더 올린다(월드 단위).
+    //  근접 거리에서 피격자 쪽 피해 숫자와 같은 높이라 글자가 겹쳤다(영어 'Critical' 은 특히 길다).
+    public const float CRIT_CALLOUT_RAISE = 0.7f;
+    public const float BESTIARY_LAYOUT_EPSILON = 0.001f;
+    public const int DOTWEEN_SEQUENCE_CAPACITY = 625;
+    public const string COMPANION_ABILITY_BORROWED_TEXT = "CompanionAbilityBorrowedText";
+    public const string COMPANION_ABILITY_AVAILABLE_TEXT = "CompanionAbilityAvailableText";
 
     // 확률 발동 조건 (슬39).
     public enum AbilityCondition
@@ -207,6 +249,40 @@ public class Define
         SubBgm,
         Effect,
         Max,
+    }
+
+    // v2 훈련(골드 강화) 스탯 — GameData.TrainingLevels 인덱스 순서 (ADR0030)
+    // v2 미션 이벤트(ADR0030) — MissionData.Event 문자열과 이름이 같아야 한다(_tools/gen_missions.py).
+    public enum MissionEvent
+    {
+        KillMonster,
+        BossClear,
+        NewStage,
+        Train,
+        CaptureTry,
+        Enhance,
+        Parry,
+        DailyAllClear,   // 일일 완료 상자를 연 날(주간 미션용)
+        DailyChest,      // 진행 = 받은 일일 미션 수(계산값)
+        ReachLevel,      // 진행 = 현재 레벨(계산값, 가이드)
+        Discover,        // 진행 = 발견한 몬스터 수(계산값, 가이드)
+        Attendance,
+    }
+
+    // v2 핫타임(ADR0030, 설계서 4.6) — 광고 또는 크리스탈로 30분 켠다
+    public enum HotTime
+    {
+        Gold,   // 처치·방치 골드 ×2
+        Exp,    // 처치·방치 경험치 ×2
+        Atk,    // 공격력 +20%
+    }
+
+    public enum TrainingStat
+    {
+        Attack,
+        Health,
+        Defense,
+        CritDamage,
     }
 
     public enum UIEvent
@@ -1618,6 +1694,66 @@ public class Define
         public const string ForgeRestoreActionText = "ForgeRestoreActionText";
         public const string SkipEnhanceAnimationText = "SkipEnhanceAnimationText";
         public const string EnhanceDurabilityRiskText = "EnhanceDurabilityRiskText";
+        public const string AbilityTriggerChanceFormat = "AbilityTriggerChanceFormat";
+        public const string AbilityTriggerIntervalFormat = "AbilityTriggerIntervalFormat";
+        public const string AbilityCondBattleStartText = "AbilityCondBattleStartText";
+        public const string AbilityCondOnAttackText = "AbilityCondOnAttackText";
+        public const string AbilityCondAfterAttackText = "AbilityCondAfterAttackText";
+        public const string AbilityCondOnHitText = "AbilityCondOnHitText";
+        public const string AbilityCondOnCritText = "AbilityCondOnCritText";
+        public const string AbilityCondOnMissText = "AbilityCondOnMissText";
+        public const string AbilityCondSelfEvadeText = "AbilityCondSelfEvadeText";
+        public const string AbilityCondOnDamagedText = "AbilityCondOnDamagedText";
+        public const string AbilityCondOnHealText = "AbilityCondOnHealText";
+        public const string AbilityCondLowHpFormat = "AbilityCondLowHpFormat";
+        public const string AbilityCondEnemyEvadeText = "AbilityCondEnemyEvadeText";
+        public const string AbilityCondEnemyLowHpFormat = "AbilityCondEnemyLowHpFormat";
+        public const string AbilityContextInBattleText = "AbilityContextInBattleText";
+        public const string AbilityContextOutOfBattleText = "AbilityContextOutOfBattleText";
+        public const string AbilityContextAlwaysText = "AbilityContextAlwaysText";
+        public const string AbilityEffectHealFormat = "AbilityEffectHealFormat";
+        public const string AbilityEffectBonusDamageFormat = "AbilityEffectBonusDamageFormat";
+        public const string AbilityEffectBuffFormat = "AbilityEffectBuffFormat";
+        public const string AbilityEffectDurationFormat = "AbilityEffectDurationFormat";
+        public const string AbilityStatPhysicalAtkText = "AbilityStatPhysicalAtkText";
+        public const string AbilityStatMagicAtkText = "AbilityStatMagicAtkText";
+        public const string AbilityStatCritRateText = "AbilityStatCritRateText";
+        public const string AbilityStatCritDamageText = "AbilityStatCritDamageText";
+        public const string AbilityStatAtkSpeedText = "AbilityStatAtkSpeedText";
+        public const string AbilityStatAccuracyText = "AbilityStatAccuracyText";
+        public const string AbilityStatDefText = "AbilityStatDefText";
+        public const string AbilityStatMaxHpText = "AbilityStatMaxHpText";
+        public const string AbilityStatEvasionText = "AbilityStatEvasionText";
+        public const string AbilityStatPhysicalResistText = "AbilityStatPhysicalResistText";
+        public const string AbilityStatMaxMemoryText = "AbilityStatMaxMemoryText";
+        public const string AbilityStatCatchRateText = "AbilityStatCatchRateText";
+        public const string AbilityStatGuaranteedCatchReduceText = "AbilityStatGuaranteedCatchReduceText";
+        public const string AbilityStatExpGainText = "AbilityStatExpGainText";
+        public const string AbilityStatGoldGainText = "AbilityStatGoldGainText";
+        public const string AbilityStatDropRateText = "AbilityStatDropRateText";
+        public const string AbilityStatInterestMaxText = "AbilityStatInterestMaxText";
+        public const string AbilityStatPotionCooldownText = "AbilityStatPotionCooldownText";
+        public const string AbilityStatEnhanceLuckText = "AbilityStatEnhanceLuckText";
+        public const string AbilityStatMoveSpeedText = "AbilityStatMoveSpeedText";
+        public const string AbilityStatRecoveryRateText = "AbilityStatRecoveryRateText";
+        public const string AbilityNeedLearnText = "AbilityNeedLearnText";
+        public const string AbilityAlwaysActiveText = "AbilityAlwaysActiveText";
+        public const string NpcReceptionistNameText = "NpcReceptionistNameText";
+        public const string NpcAlchemistNameText = "NpcAlchemistNameText";
+        public const string NpcBlacksmithNameText = "NpcBlacksmithNameText";
+        public const string NpcMonasteryPriestNameText = "NpcMonasteryPriestNameText";
+        public const string NpcShopkeeperNameText = "NpcShopkeeperNameText";
+        public const string MinimonDefaultNameText = "MinimonDefaultNameText";
+        public const string AbilityUnknownFormat = "AbilityUnknownFormat";
+        public const string IdleHuntAreaFormat = "IdleHuntAreaFormat";
+        public const string IdleHuntFormat = "IdleHuntFormat";
+        public const string OfflineRewardFormat = "OfflineRewardFormat";
+        public const string OfflineRewardCapFormat = "OfflineRewardCapFormat";
+        public const string OfflineTimeHoursFormat = "OfflineTimeHoursFormat";
+        public const string OfflineTimeMinutesFormat = "OfflineTimeMinutesFormat";
+        public const string ShopNotForSaleText = "ShopNotForSaleText";
+        public const string TravelLockedText = "TravelLockedText";
+        public const string DefaultPlayerNameText = "DefaultPlayerNameText";
 
     }
     #endregion
@@ -1652,6 +1788,7 @@ public class Define
     public const string BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE = "BTN_STAGE_BREEZING_WIND_FOREST_ENTRANCE";
 
     // Village1 Build Btn Group
+    public const int FIRST_GUILD_QUEST_ID = 1;
     public const string VILLAGE1_GUILD_TALK_VFX = "VILLAGE1_GUILD_TALK_VFX";
     public const string VILLAGE1_GUILD_QUEST_VFX = "VILLAGE1_GUILD_QUEST_VFX";
     public const string GUILD_EXIT_QUEST_VFX = "GUILD_EXIT_QUEST_VFX";
@@ -1722,6 +1859,65 @@ public class Define
     public const int POTION_ID_MIN = 30000;
     public const int SPEED_POTION_ID_MIN = 40000;
     public const int IMPORTANT_ITEM_ID_MIN = 20000;
+
+    #region Sound (구역 배경음 — 주소 = 파일 이름)
+    public const string BGM_VILLAGE = "BGM_Village1";
+    public const string BGM_BATTLE  = "BGM_BWF";
+    public const string BGM_BOSS    = "BGM_Boss";   // v2 스테이지 보스(ADR0030)
+    #endregion
+
+    #region Shop (v2 핫타임 버프 아이콘 — 기존 스킬 메달 스프라이트, Sprites 그룹)
+    public static readonly string[] HOT_TIME_ICONS = { "Skill5106", "Skill5128", "Skill5002" };   // HotTime 순서: 골드·경험치·공격
+    #endregion
+
+    #region BalanceKey (v2 밸런스 — BalanceConfig 표의 키, ADR0030)
+    public static class BalanceKey
+    {
+        // 훈련
+        public const string TRAIN_COST_BASE     = "TRAIN_COST_BASE";
+        public const string TRAIN_COST_COEF     = "TRAIN_COST_COEF";
+        public const string TRAIN_COST_POW      = "TRAIN_COST_POW";
+        public const string TRAIN_CAP_PER_LEVEL = "TRAIN_CAP_PER_LEVEL";
+        public const string TRAIN_ATK_PCT       = "TRAIN_ATK_PCT";
+        public const string TRAIN_HP_PCT        = "TRAIN_HP_PCT";
+        public const string TRAIN_DEF_PCT       = "TRAIN_DEF_PCT";
+        public const string TRAIN_CRITDMG_PCT   = "TRAIN_CRITDMG_PCT";
+        // 스테이지·보스
+        public const string STAGE_KILLS_TO_BOSS          = "STAGE_KILLS_TO_BOSS";
+        public const string BOSS_HP_MULT                 = "BOSS_HP_MULT";
+        public const string BOSS_ATK_MULT                = "BOSS_ATK_MULT";
+        public const string BOSS_DEF_MULT                = "BOSS_DEF_MULT";
+        public const string BOSS_SCALE                   = "BOSS_SCALE";
+        public const string BOSS_TIME_LIMIT              = "BOSS_TIME_LIMIT";
+        public const string BOSS_FIRST_CRYSTAL_BASE      = "BOSS_FIRST_CRYSTAL_BASE";
+        public const string BOSS_FIRST_CRYSTAL_PER_FIELD = "BOSS_FIRST_CRYSTAL_PER_FIELD";
+        public const string BOSS_REWARD_KILLS            = "BOSS_REWARD_KILLS";
+        // 가드·패링
+        public const string ATTACK_TELEGRAPH       = "ATTACK_TELEGRAPH";
+        public const string GUARD_DURATION         = "GUARD_DURATION";
+        public const string PARRY_WINDOW           = "PARRY_WINDOW";
+        public const string GUARD_COOLDOWN         = "GUARD_COOLDOWN";
+        public const string BLOCK_DAMAGE_MULT      = "BLOCK_DAMAGE_MULT";
+        public const string PARRY_STUN             = "PARRY_STUN";
+        public const string STUN_DAMAGE_TAKEN_MULT = "STUN_DAMAGE_TAKEN_MULT";
+        public const string PARRY_COMBO_BONUS      = "PARRY_COMBO_BONUS";
+        // 상점·광고·월정액(P1)
+        public const string HOTTIME_MINUTES             = "HOTTIME_MINUTES";
+        public const string HOTTIME_ADS_PER_DAY         = "HOTTIME_ADS_PER_DAY";
+        public const string HOTTIME_CRYSTAL_COST        = "HOTTIME_CRYSTAL_COST";
+        public const string HOT_GOLD_MULT               = "HOT_GOLD_MULT";
+        public const string HOT_EXP_MULT                = "HOT_EXP_MULT";
+        public const string HOT_ATK_PCT                 = "HOT_ATK_PCT";
+        public const string FREE_CRYSTAL_AD             = "FREE_CRYSTAL_AD";
+        public const string FREE_CRYSTAL_ADS_PER_DAY    = "FREE_CRYSTAL_ADS_PER_DAY";
+        public const string MANDRAKE_CRYSTAL_COST       = "MANDRAKE_CRYSTAL_COST";
+        public const string OFFLINE_AD_MULT             = "OFFLINE_AD_MULT";
+        public const string MONTHLY_DAYS                = "MONTHLY_DAYS";
+        public const string MONTHLY_DAILY_CRYSTAL       = "MONTHLY_DAILY_CRYSTAL";
+        public const string MONTHLY_OFFLINE_BONUS_HOURS = "MONTHLY_OFFLINE_BONUS_HOURS";
+        public const string CRYSTAL_FIRST_BUY_MULT      = "CRYSTAL_FIRST_BUY_MULT";
+    }
+    #endregion
 
     #region Ground (접지)
     // 캐릭터의 **발이 닿는** 월드 Y. 지면 타일(JungleTileset) 윗면 높이다.

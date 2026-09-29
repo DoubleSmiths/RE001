@@ -8,8 +8,7 @@ using static Define;
 // [직업(전직) 능력] 팝업 — 수도원 [축성] 버튼으로 진입. UI_SkillBookPopup과 동일 프레임 구조.
 //  - SkillDic에서 출처(Source)=Class인 능력만 슬롯(SkillBookSkill_0~6 템플릿)에 표시.
 //  - MemoryAmountTxt_1 = 기억력 게이지 대신 [직업 숙련도] "prof/100" (만충=#00FF00 / 미만=yellow).
-//  - 슬롯 클릭: 보유 → [능력 정보창] / 미보유&숙련도 만충 → 축성(TryAnoint)+authored PunchScale /
-//    미보유&숙련도 부족 → 토스트(Lack_Proficiency_Text).
+//  - 슬롯 클릭: [능력 정보창]에서 효과를 확인한 뒤 기존 축성 버튼으로 습득한다.
 //  - 필터 버튼(SkillPopup_BtnGroup)은 출처가 Class 고정이라 미사용(비활성).
 public class UI_ClassPopup : UI_Popup
 {
@@ -60,6 +59,7 @@ public class UI_ClassPopup : UI_Popup
         public Image LvlBg;             // 레벨 컨테이너 배경
         public Image LvlFrame;          // Img_LvlIcon_* (HP_MP_little_frame)
         public TMP_Text LvlTxt;         // Txt_LvlIcon_*
+        public float LvlFontSize = -1f; // 저작된 레벨 글자 크기(미보유 이름은 줄여 쓰므로 되돌릴 때 필요)
     }
 
     // 프리팹에 저작된 슬롯은 7개(SkillBookSkill_0~6)지만 직업 능력은 그보다 많다(현재 12개).
@@ -105,7 +105,11 @@ public class UI_ClassPopup : UI_Popup
         CacheSlots();
 
         // 숙련도/능력 보유 변동 시 갱신 (OnDestroy 해제)
-        if (Managers.Game != null) Managers.Game.OnClassProficiencyChanged += Refresh;
+        if (Managers.Game != null)
+        {
+            Managers.Game.OnClassProficiencyChanged += Refresh;
+            Managers.Game.OnLanguageChanged += OnLanguageChanged;
+        }
         if (Managers.Ability != null) Managers.Ability.OnAbilityChanged += Refresh;
 
         return true;
@@ -149,19 +153,40 @@ public class UI_ClassPopup : UI_Popup
     public override void OnDestroy()
     {
         base.OnDestroy();
-        if (Managers.Game != null) Managers.Game.OnClassProficiencyChanged -= Refresh;
+        if (Managers.Game != null)
+        {
+            Managers.Game.OnClassProficiencyChanged -= Refresh;
+            Managers.Game.OnLanguageChanged -= OnLanguageChanged;
+        }
         if (Managers.Ability != null) Managers.Ability.OnAbilityChanged -= Refresh;
     }
 
     public void SetInfo()
     {
+        OnLanguageChanged();
+    }
+
+    void OnLanguageChanged()
+    {
         // 실제 기능인 직업 능력 습득을 한영 공통 키로 표시한다.
         var title = GetText((int)Texts.title);
         if (title != null) { title.text = Util.Localize(LocalizeKey.Class_Ability_Text); ApplyFont(title, FontType.UI); }
 
-        // 상단 서브타이틀 = "직업 기술" (기존 키 Class_Ability_Text 재사용)
+        // 중복 제목 대신 숙련도를 얻고 사용하는 방법을 기존 두 줄 공간에 안내한다.
         var sub = GetText((int)Texts.SubtitleText);
-        if (sub != null) { sub.text = Util.Localize(LocalizeKey.Class_Ability_Text); ApplyFont(sub, FontType.UI); }
+        if (sub != null)
+        {
+            sub.text = Util.Localize(GROWTH_CLASS_GUIDE_TEXT);
+            ApplyFont(sub, FontType.UI);
+            sub.fontSize = CLASS_GUIDE_FONT_SIZE;
+            sub.enableAutoSizing = true;
+            sub.fontSizeMax = CLASS_GUIDE_FONT_SIZE;
+            sub.fontSizeMin = CLASS_GUIDE_MIN_FONT_SIZE;
+            sub.alignment = TextAlignmentOptions.MidlineLeft;
+            sub.textWrappingMode = TextWrappingModes.Normal;
+            var fitter = sub.GetComponent<ContentSizeFitter>();
+            if (fitter != null) fitter.enabled = false;
+        }
 
         Refresh();
     }
@@ -203,6 +228,18 @@ public class UI_ClassPopup : UI_Popup
         txt.color = Color.white;
         txt.text = $"<color={col}>{prof}</color>/{CLASS_PROFICIENCY_MAX}";
         ApplyFont(txt, FontType.UI);
+
+        var guide = GetText((int)Texts.SubtitleText);
+        if (guide == null) return;
+        float inset = Mathf.Abs(txt.rectTransform.anchoredPosition.x);
+        float gaugeWidth = txt.GetPreferredValues($"{CLASS_PROFICIENCY_MAX}/{CLASS_PROFICIENCY_MAX}").x;
+        var guideRT = guide.rectTransform;
+        float left = guideRT.offsetMin.x;
+        guideRT.anchorMin = Vector2.zero;
+        guideRT.anchorMax = Vector2.one;
+        guideRT.offsetMin = new Vector2(left, 0f);
+        // 최대치 숫자의 실제 글자 폭과 양옆 여백을 항상 비워 둔다.
+        guideRT.offsetMax = new Vector2(-gaugeWidth - inset - inset, 0f);
     }
 
     // 슬롯 표시 — 시각 규칙은 UI_SkillBookSkill과 동일. 단 직업창은 미보유(축성 대상)도 노출 → 잠금 오버레이 사용.
@@ -237,10 +274,22 @@ public class UI_ClassPopup : UI_Popup
             ApplyFont(s.MemTxt, FontType.UI);
         }
 
-        // 레벨(단계) — 보유 시에만. 색 규칙은 UI_SkillBookSkill과 동일(<최대=흰/노랑, =최대=magenta 계열).
-        SetActiveSafe(s.LvlGroup, owned);
+        // 레벨(단계) — 보유 시. 색 규칙은 UI_SkillBookSkill과 동일(<최대=흰/노랑, =최대=magenta 계열).
+        //  미보유면 같은 칸에 **능력 이름**을 보여준다 — 잠금 아이콘만 있어 무엇인지 알려면 하나씩 열어 봐야 했다.
+        SetActiveSafe(s.LvlGroup, owned || d != null);
+        if (!owned && d != null && s.LvlTxt != null)
+        {
+            if (s.LvlFrame != null) s.LvlFrame.color = Color.white;
+            if (s.LvlBg != null)    s.LvlBg.color    = Util.HexToColor("000000");
+            if (s.LvlFontSize < 0f) s.LvlFontSize = s.LvlTxt.fontSize;
+            s.LvlTxt.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+            ApplyFont(s.LvlTxt, FontType.UI);
+            s.LvlTxt.fontSize = s.LvlFontSize * LOCKED_NAME_SCALE;
+            s.LvlTxt.text = FitWidth(s.LvlTxt, Util.Localize(d.Name));   // 긴 영문 이름은 뒤를 잘라 ".."
+        }
         if (owned)
         {
+            if (s.LvlTxt != null && s.LvlFontSize > 0f) s.LvlTxt.fontSize = s.LvlFontSize;
             if (s.LvlFrame != null) s.LvlFrame.color = maxed ? Util.HexToColor("FF00F5") : Color.white;
             if (s.LvlBg != null)    s.LvlBg.color    = maxed ? Util.HexToColor("3C143A") : Util.HexToColor("000000");
             if (s.LvlTxt != null)
@@ -253,33 +302,31 @@ public class UI_ClassPopup : UI_Popup
         }
     }
 
-    // 슬롯 클릭 — 보유:정보창 / 미보유&만충:축성 / 미보유&부족:토스트
+    const float LOCKED_NAME_SCALE = 0.75f;   // 이름은 레벨 표기보다 길어 조금 작게(더 작으면 픽셀 폰트가 뭉개진다)
+
+    // 칸 너비에 맞춰 뒤를 잘라 ".." 을 붙인다(자동 크기+Ellipsis 는 칸 높이가 낮아 글자가 통째로 사라졌다).
+    static string FitWidth(TMP_Text t, string text)
+    {
+        // 레벨 글자는 너비 0 인 글상자(넘침 표시)라 배지(부모) 너비를 기준으로 한다.
+        float w = t.rectTransform.rect.width;
+        if (w <= 0f && t.transform.parent is RectTransform badge) w = badge.rect.width - 1f;
+        if (w <= 0f || t.GetPreferredValues(text).x <= w) return text;
+        for (int n = text.Length - 1; n > 0; n--)
+        {
+            string cut = text.Substring(0, n).TrimEnd() + "..";
+            if (t.GetPreferredValues(cut).x <= w) return cut;
+        }
+        return text;
+    }
+
+    // 숙련도를 쓰기 전에 효과를 비교할 수 있도록 미보유 능력도 상세 창으로 연다.
     void OnClickSlot(int idx)
     {
         if (idx < 0 || idx >= _slotIds.Count) return;
         int id = _slotIds[idx];
         if (id < 0) return;
 
-        if (Managers.Ability.IsLearned(id))
-        {
-            Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(id);
-            return;
-        }
-
-        if (Managers.Ability.CanAnoint(id))
-        {
-            // 축성(습득) — 숙련도 100 소진. 표시 갱신은 OnAbilityChanged/OnClassProficiencyChanged 구독이 처리.
-            if (Managers.Ability.TryAnoint(id))
-            {
-                var anim = _slots[idx].Root.GetComponent<DOTweenAnimation>();
-                if (anim != null) anim.DORestart();   // 슬롯 authored PunchScale
-                Managers.Game?.Player?.RefreshStats(fullHeal: false);   // 재능(점유0)은 습득 즉시 적용
-            }
-            return;
-        }
-
-        // 숙련도 부족 (키는 LocalizationData 시트 소관 — Localize는 키 부재 시 키 문자열 반환)
-        Managers.UI.ShowToast(Util.Localize("Lack_Proficiency_Text"));
+        Managers.UI.ShowPopupUI<UI_SkillDetailPopup>().SetInfo(id);
     }
 
     /// <summary>슬롯 하나의 내부 노드를 캐싱한다. 저작 템플릿과 복제본이 같은 구조라 공용.</summary>

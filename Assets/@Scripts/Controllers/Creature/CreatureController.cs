@@ -204,7 +204,7 @@ public abstract class CreatureController : BaseController
                     Managers.Object.ShowCriHitEffect(transform.position);
 
                     Managers.Object.ShowCritEffect(attacker.transform.position);
-                    Vector3 attackerFontPos = attacker.transform.position + Vector3.up * attacker.DamageFontYOffset;
+                    Vector3 attackerFontPos = attacker.transform.position + Vector3.up * (attacker.DamageFontYOffset + CRIT_CALLOUT_RAISE);
                     Managers.Object.ShowCriticalCallout(attackerFontPos, attacker.transform);
                 }
                 else
@@ -246,6 +246,19 @@ public abstract class CreatureController : BaseController
     // 이미 진행 중인 피드백이 있으면 처음부터 재시작 (슬라이드 64: "OnHit 도중 또 피격 시 처음부터").
     protected Coroutine _onHitCo;
 
+    protected virtual void OnDisable()
+    {
+        // 귀환 시 제거와 풀 반환에서도 피격 연출을 끝내 다음 활성화에 잔상이 남지 않게 한다.
+        if (_onHitCo != null)
+        {
+            StopCoroutine(_onHitCo);
+            _onHitCo = null;
+        }
+        if (_sprite == null) return;
+        _sprite.DOKill(false);
+        _sprite.color = Color.white;
+    }
+
     protected virtual void PlayHitFeedback()
     {
         if (_sprite == null) return;
@@ -257,8 +270,8 @@ public abstract class CreatureController : BaseController
     IEnumerator CoColorFlashOnHit()
     {
         Color hit = new Color(1f, 0.2f, 0.2f);
-        yield return _sprite.DOColor(hit, 0.3f).WaitForCompletion();
-        yield return _sprite.DOColor(Color.white, 0.3f).SetEase(Ease.OutQuad).WaitForCompletion();
+        yield return _sprite.DOColor(hit, 0.3f).SetLink(gameObject, LinkBehaviour.KillOnDisable).WaitForCompletion();
+        yield return _sprite.DOColor(Color.white, 0.3f).SetEase(Ease.OutQuad).SetLink(gameObject, LinkBehaviour.KillOnDisable).WaitForCompletion();
         _onHitCo = null;
     }
 

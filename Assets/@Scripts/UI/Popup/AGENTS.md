@@ -19,6 +19,7 @@ UIManager 팝업 스택 위에서 동작하는 모달/비모달 팝업 20종이 
 | `UI_InventoryPopup.cs` | 소지품 인벤토리 팝업(슬19~20). `Managers.Game.Inventory`를 일반/귀중품(5슬롯)으로 분류해 `UI_InvSlot`/`UI_ImportantSlot`을 `MakeSubItem`으로 생성 — 일반 슬롯은 무제한(기본 25칸, 초과 시 `SPARE_SLOT_COUNT`=5 여유분 포함 동적 확장, ScrollView 스크롤). 정렬 버튼(클릭 애님 Scale 0.9/0.05s/Yoyo), 귀중품 박스 타이틀은 프리팹에 TMP가 없어 런타임 생성(`CreateRequisiteTitle` → "RequisiteTitleText" + Underlay 9F8320), NEW 뱃지(`OnInventoryNewChanged` 구독), 닫을 때 `ClearAllItemNew()`. `SetInfo()` |
 | `UI_ItemPopup.cs` | 아이템 상세 팝업(슬21). `ItemDic`/`RequisiteItemDic`에서 이름·등급·발견장소·설명·보유수량 표시. 타이틀 Glow는 항상 등급색 유지, 이미지 후광(`ItemPopupImgGroupGlow`)/shine은 ①퀘스트 클리어 보상으로 열릴 때(`showGlow=true` — QuestManager/SubQuestManager ITEM_REWARD 경로) ②귀중품(`EquipGrade.REQUISITE`)일 때만 표시. 하단 ButtonGroup은 항상 숨김. 등급/발견장소 라벨 + 사용/사용불가 버튼 라벨 6종(MOR/Scroll/SOM)은 `RefreshTexts()`로 로컬라이즈. `SetInfo(int id, bool showGlow = false)` |
 | `UI_MinionInfoPopup.cs` | [나의 미니몬] 팝업. 포획한 미니몬의 능력치 등급(outline)/공명도/사용 스킬/동행(부르기·동행중) 토글. `SetInfo(int dataId)`, 포획 결과 연출 `PlayCatchResult(bool first, bool improved)` |
+| `UI_MissionPopup.cs` | v2 미션·출석 창(ADR0030, 빌더 `Tools/Remake V2/Build Mission Popup` — 틀은 UI_ShopPopup 복제, 줄·탭은 상태 창 긴 버튼 복제). 탭 일일/주간/가이드/출석, 줄을 누르면 받기, 창 그림의 오른쪽 아래 자리(원래 가방 정리 버튼)는 `모두 받기`. 줄은 `MissionRowTemplate` 복제본을 재사용하고 누름은 줄마다 한 번만 건다 다섯째 탭 `상점`(ShopManager): 핫타임(광고 남으면 광고, 아니면 크리스탈)·무료 크리스탈·오프라인 2배·월정액·만드라고라·인앱 상품. 상점 탭에서는 제목이 상점이고 `모두 받기`를 숨긴다(줄 동작이 광고·소비·결제라서). |
 | `UI_MonsterDetailPopup.cs` | 도감 몬스터 상세 팝업. 능력치 14종·드롭 아이템·몬스터 스킬 잠금 표시, [내 미니몬] 버튼 → `UI_MinionInfoPopup`. 몬스터 IMG는 `CreatureData.AnimController`를 Animator에 주입해 해당 몬스터 Idle 애님 반복 재생(프리팹 기본 컨트롤러=슬라임은 백업 후 복원), 잠금 문구는 로컬라이즈(`MinimonSkillLockedText`/`Link100RequiredText`). `SetInfo(int dataId)`, `RefreshCompanionState()` |
 | `UI_PotionDetailPopup.cs` | 물약 상세정보 팝업(슬36~40). HP/SPD 물약을 내부 `PotionView`로 정규화, 설명 ↔ 필요재료 토글, 다음 단계 미리보기, 제작 버튼 처리(제작 시퀀스는 try/finally로 DOTween 안전화). 미제작 SPD는 설명 분기(`SpdPotionRevealed`로 판정 → `SPDPotion0DescText`), 재료 충족=00FF00/부족=FF0000 + 부족 시 아이콘 위 반투명 검정 오버레이(`_reqItemDims`), 게이지 점멸은 `_blinkExtras` 리스트로 세그먼트 포함(StartBlink 첫 줄이 StopBlink 호출하므로 거기서 비우지 않음 — 슬39 주의). 물약 이미지 후광(`GlowMask_1`)/shine(`PotionDetailPopupshineeffect`)은 표시하지 않음 — 타이틀 후광만 유지(UI_ItemPopup과 동일 정책). `SetInfo(int dataId = -1, bool fromCustomOrder = true)` |
 | `UI_PotionPopup.cs` | 물약창 팝업(슬41~42). HP/Speed 슬롯 + 쿨타임 슬라이더(위→아래) + Finish Anim + 자동물약 On/Off와 HP Ratio 슬라이더(기억 전/후 분기). 슬롯 하단 [정보] 버튼(`Buttons.Button`/`Button_1`) → `UI_PotionDetailPopup`(설명 전용, `fromCustomOrder: false`). HP/SPD 쿨타임은 PlayerController에 영속(`StartHpPotionCooldown`/`StartSpdPotionCooldown`, 재오픈 시 `*CooldownNormalized`로 복원). AutoBtn NEW: 자동물약 기억 후 클릭(확인) 전까지 노출 — PlayerPrefs `AutoPotionNewSeen` 키로 영속, `MarkAutoPotionMemorized()` 시 리셋. `RefreshTexts()`로 타이틀(`LocalizeKey.BtmPotionBtnText`)·정보 라벨 언어 처리, `OnLanguageChanged` 구독/해제. `SetInfo()`, `MarkAutoPotionMemorized()` |
@@ -36,7 +37,7 @@ UIManager 팝업 스택 위에서 동작하는 모달/비모달 팝업 20종이 
 - 새 팝업은 `UI_Popup` 상속 + `Awake() => Init();` + `base.Init()` 체크가 기본 골격. `Init()`에서 `BindImage/BindText/BindButton/BindObject(typeof(enum))`으로 프리팹 노드를 바인딩한다 — enum 멤버 이름은 프리팹 GameObject 이름과 완전 일치해야 하므로 프리팹의 오타(`OpenHelemtListBtn` 등)도 enum에 그대로 유지한다.
 - 열기/닫기는 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`로만. 예외는 비모달 알림 2종(`UI_AttactedPopup`, `UI_WarningPopup`)으로, 전투 중 게임을 멈추지 않기 위해 스택/timeScale을 쓰지 않고 `Managers.UI.ShowAttractedPopup`/`ShowWarningPopup`으로 직접 생성 후 스스로 `Managers.Resource.Destroy`한다.
 - 데이터 주입은 팝업 생성 직후 `SetInfo(...)` 호출 컨벤션. 시그니처는 팝업마다 다르다(위 표 참조).
-- 팝업이 열리면 `Time.timeScale = 0` — 모든 코루틴 대기는 `WaitForSecondsRealtime`, 모든 DOTween은 `.SetUpdate(true)`를 붙여야 동작한다.
+- 전투 중 도감·마물 상세·포획·나의 미니몬이 스택에 있으면 전투를 정지한다(`UIManager.IsBattlePaused`, ADR0026). 다른 팝업과 마을 진행은 유지한다. UIManager가 팝업 Animator/저작 Tween을 독립 시간으로 설정하며, 코드 연출도 `WaitForSecondsRealtime`과 `.SetUpdate(true)`를 사용한다.
 - 진입/닫기 애니메이션: `_frameRT`에 프레임 RectTransform을 넣고 `OpenAnimation()` 호출, 배경 버튼에 `BindEvent(OnClickBG)` 연결(역방향 애니 후 닫기). 등장 방향은 `_openFromY/_closeToY`로 조정(예: SettingPopup은 +350).
 - 배경클릭 닫기는 오픈 후 0.5초 동안 잠김(`UI_Popup.IsCloseAllowed`, 기획서1 슬8) — `OnClickBG`가 자동 처리하므로 base를 쓰면 별도 코드 불필요. 커스텀 닫기 핸들러를 만들 때는 `IsCloseAllowed`를 직접 체크한다.
 - 언어 변경 대응(전 팝업 통일 패턴): 정적 라벨은 `RefreshTexts()`에 모으고 `Init()`에서 호출 + `Managers.Game.OnLanguageChanged += RefreshTexts` 구독, 반드시 `OnDestroy()`에서 해제. 텍스트는 `Util.Localize(key)` + `ApplyFont(tmp, FontType.UI)`. `Define.LocalizeKey`에 아직 없는 신규 키는 문자열 키로 `Util.Localize("...")` 호출(Tools/GenerateLocalizeKeys 재실행 시 상수로 교체 가능).
@@ -83,3 +84,12 @@ UIManager 팝업 스택 위에서 동작하는 모달/비모달 팝업 20종이 
 - **UnityEngine.UI** — Image/Button/Slider/ScrollRect
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- `UI_BestiaryPopup`는 지역 헤더 전체와 기존 스크롤 높이를 유지하면서 Viewport 위아래 한 행 여유 안의 지역만 마물 칸을 생성한다. 첫 가시 지역은 SetInfo 안에서 채우며, 스크롤·화면 크기 변경 시 재계산한다. 화면 밖의 FindBox는 null이지만 등급/완성도 갱신은 계속 진행하고, 재진입 시 최신 데이터를 표시한다. 언어 변경은 25개 지역명을 포함하며 ScrollRect·언어 이벤트는 OnDestroy에서 해제한다.
+
+- 2026-09-10: 해금 안내는 마을 버튼에 로드된 Sprite를 받으며 문자열 SetInfo도 호환한다. 본문은 부모 폭 안에서 줄바꿈하고 언어 변경 시 제목/본문/폰트를 함께 갱신한다. 이전 타이핑 코루틴·Tween을 종료하고 새 문장의 알파 배열을 독립적으로 캡처한다.
+
+- 2026-09-10: 장비 목록은 제작 요구 레벨 후 DataId로 정렬한다. 제작 상세 본문의 재료 링크는 `UI_ItemLinkHandler`로 아이템 상세를 열며 상위 ScrollRect의 드래그를 유지한다. 아이템 출처는 `ItemSourceGuide`로 층·마물을 표시하고 열린 상태의 언어 변경에 대응한다.
+- 2026-09-10: 축성 창은 처치로 숙련도를 얻는 방법을 표시한다. 미보유 능력도 아이콘 클릭 시 상세 설명·기억 비용을 먼저 보여주며, 숙련도는 상세 창의 축성 버튼에서만 소비한다.
+
+- 2026-09-09: 첫 발견부터 미니몬 능력 효과를 미리 보여준다. `UI_MinionInfoPopup`은 포획 결과 연출 종료 후 부르기 버튼을 표시한다. 동행 중인 대여 능력은 별도 기억/망각 불가이며 설명과 버튼에 동행 상태를 표시한다. 공명도 100% 영구 습득 규칙은 유지한다.

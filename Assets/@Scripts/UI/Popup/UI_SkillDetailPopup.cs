@@ -365,7 +365,13 @@ public class UI_SkillDetailPopup : UI_Popup
             //  0.55s 후 ClampPopupToCenter가 위로 올려 '훅 점프'가 생겼다. → 컴포넌트를 끄고 코드가 처음부터
             //  중앙 위치로 슬라이드인. (컴포넌트화하려면 prefab anim의 isFrom 스냅/클램프 충돌부터 해결 필요.)
             foreach (var anim in mainGo.GetComponentsInParent<DG.Tweening.DOTweenAnimation>(true))
+            {
+                // disabled 컴포넌트도 Awake에서 Tween을 생성할 수 있어 생성 자체와 기존 Tween을 함께 막는다.
+                anim.autoGenerate = false;
+                anim.autoPlay = false;
+                anim.DOKill();
                 anim.enabled = false;
+            }
         }
 
         GetButton((int)Buttons.SkillDetailPopupBackground).gameObject.BindEvent(OnClickBG);
@@ -432,8 +438,10 @@ public class UI_SkillDetailPopup : UI_Popup
     //  '중앙 위치'를 계산하고, 그 위치로 직접 진입 슬라이드인(From y-120). 프리팹 진입 애니는 Init에서 꺼서 점프 없음.
     //  팝업 길이가 능력마다 달라도 항상 가운데. (_baseOrigin 기준 재계산이라 누적 없음)
     const float SAFE_CENTER_Y = -0.4f;   // 화면 사용영역 중심(상/하 HUD 고려, world). 약간 아래로(피드백)
-    void ClampPopupToCenter()
+    void ClampPopupToCenter(bool animate = true)
     {
+        // 닫기 중 갱신으로 종료 Tween의 완료 콜백을 취소하지 않는다.
+        if (_isClosing) return;
         var main = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "SkillDetailPopupMain") as RectTransform;
         if (main == null) return;
         var titleRT = System.Array.Find(GetComponentsInChildren<Transform>(true), t => t.name == "Title") as RectTransform;
@@ -453,6 +461,11 @@ public class UI_SkillDetailPopup : UI_Popup
         if (scale <= 0.0001f) { _frameOrigin = _baseOrigin; main.anchoredPosition = _frameOrigin; return; }
 
         _frameOrigin = _baseOrigin + new Vector2(0f, (SAFE_CENTER_Y - center) / scale);
+        if (!animate)
+        {
+            main.anchoredPosition = _frameOrigin;
+            return;
+        }
         // 중앙 위치로 직접 진입 슬라이드인 (점프 없음)
         main.anchoredPosition = _frameOrigin + new Vector2(0f, FRAME_FROM_Y);
         main.DOAnchorPos(_frameOrigin, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
@@ -496,10 +509,13 @@ public class UI_SkillDetailPopup : UI_Popup
     }
 
     // ── 슬39: 발동조건/효과 설명 ──
+    //  문구는 전부 LocalizationData 키. 한/영 어순이 달라 조각을 이어 붙이지 않고 서식({0})째로 둔다.
     string BuildTriggerDesc(int id)
     {
         if (!Managers.Data.SkillDic.TryGetValue(id, out var d)) return "";
         if (d.TriggerType == Define.AbilityTrigger.None) return "";
+        // 미니몬 액티브 설명은 효과 비율·공유 쿨타임까지 데이터에 표시한다.
+        if (d.TriggerType == Define.AbilityTrigger.Active && d.Source == Define.AbilitySource.Minion) return "";
 
         string eff = EffectDesc(d);
         if (d.TriggerType == Define.AbilityTrigger.Probability)
@@ -507,38 +523,41 @@ public class UI_SkillDetailPopup : UI_Popup
             string conds = "";
             if (d.Conditions != null)
                 for (int i = 0; i < d.Conditions.Count; i++)
-                    conds += (i > 0 ? " / " : "") + CondKor(d.Conditions[i], d.ConditionValue);
-            return $"<color=#FFD24A>[{conds}]</color> {d.ProcChance:0}% 확률로 {eff}";
+                    conds += (i > 0 ? " / " : "") + CondText(d.Conditions[i], d.ConditionValue);
+            return $"<color=#FFD24A>[{conds}]</color> " + string.Format(Util.Localize(Define.LocalizeKey.AbilityTriggerChanceFormat), d.ProcChance, eff);
         }
         // Time
-        return $"<color=#FFD24A>[{ContextKor(d.ActiveContext)}]</color> {d.Cooldown:0.#}초마다 {eff}";
+        return $"<color=#FFD24A>[{ContextText(d.ActiveContext)}]</color> " + string.Format(Util.Localize(Define.LocalizeKey.AbilityTriggerIntervalFormat), d.Cooldown, eff);
     }
 
-    static string CondKor(Define.AbilityCondition c, float p)
+    static string CondText(Define.AbilityCondition c, float p)
     {
         switch (c)
         {
-            case Define.AbilityCondition.BattleStart: return "전투 시작 시";
-            case Define.AbilityCondition.OnAttack:    return "공격 시";
-            case Define.AbilityCondition.AfterAttack: return "공격 후";
-            case Define.AbilityCondition.OnHit:       return "타격 시";
-            case Define.AbilityCondition.OnCrit:      return "치명타 시";
-            case Define.AbilityCondition.OnMiss:      return "공격이 빗나갈 시";
-            case Define.AbilityCondition.SelfEvade:   return "회피 시";
-            case Define.AbilityCondition.OnDamaged:   return "피격 시";
-            case Define.AbilityCondition.OnHeal:      return "체력 회복 시";
-            case Define.AbilityCondition.LowHp:       return $"HP {p:0}% 이하 시";
+            case Define.AbilityCondition.BattleStart: return Util.Localize(Define.LocalizeKey.AbilityCondBattleStartText);
+            case Define.AbilityCondition.OnAttack:    return Util.Localize(Define.LocalizeKey.AbilityCondOnAttackText);
+            case Define.AbilityCondition.AfterAttack: return Util.Localize(Define.LocalizeKey.AbilityCondAfterAttackText);
+            case Define.AbilityCondition.OnHit:       return Util.Localize(Define.LocalizeKey.AbilityCondOnHitText);
+            case Define.AbilityCondition.OnCrit:      return Util.Localize(Define.LocalizeKey.AbilityCondOnCritText);
+            case Define.AbilityCondition.OnMiss:      return Util.Localize(Define.LocalizeKey.AbilityCondOnMissText);
+            case Define.AbilityCondition.SelfEvade:   return Util.Localize(Define.LocalizeKey.AbilityCondSelfEvadeText);
+            case Define.AbilityCondition.OnDamaged:   return Util.Localize(Define.LocalizeKey.AbilityCondOnDamagedText);
+            case Define.AbilityCondition.OnHeal:      return Util.Localize(Define.LocalizeKey.AbilityCondOnHealText);
+            case Define.AbilityCondition.LowHp:       return string.Format(Util.Localize(Define.LocalizeKey.AbilityCondLowHpFormat), p);
+            // 예전엔 아래 둘이 default 로 빠져 화면에 enum 이름("EnemyEvade")이 그대로 찍혔다.
+            case Define.AbilityCondition.EnemyEvade:  return Util.Localize(Define.LocalizeKey.AbilityCondEnemyEvadeText);
+            case Define.AbilityCondition.EnemyLowHp:  return string.Format(Util.Localize(Define.LocalizeKey.AbilityCondEnemyLowHpFormat), p);
             default:                                  return c.ToString();
         }
     }
 
-    static string ContextKor(Define.AbilityContext c)
+    static string ContextText(Define.AbilityContext c)
     {
         switch (c)
         {
-            case Define.AbilityContext.InBattle:    return "전투 중";
-            case Define.AbilityContext.OutOfBattle: return "비전투 중";
-            default:                                return "항시";
+            case Define.AbilityContext.InBattle:    return Util.Localize(Define.LocalizeKey.AbilityContextInBattleText);
+            case Define.AbilityContext.OutOfBattle: return Util.Localize(Define.LocalizeKey.AbilityContextOutOfBattleText);
+            default:                                return Util.Localize(Define.LocalizeKey.AbilityContextAlwaysText);
         }
     }
 
@@ -546,29 +565,43 @@ public class UI_SkillDetailPopup : UI_Popup
     {
         switch (d.Effect)
         {
-            case Define.AbilityEffect.Heal:        return $"체력 {d.EffectValue:0} 회복";
-            case Define.AbilityEffect.BonusDamage: return $"{d.EffectValue:0} 추가 피해";
+            case Define.AbilityEffect.Heal:        return string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectHealFormat), d.EffectValue);
+            case Define.AbilityEffect.BonusDamage: return string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectBonusDamageFormat), d.EffectValue);
             case Define.AbilityEffect.Buff:
-                string dur = d.EffectDuration > 0 ? $" ({d.EffectDuration:0.#}초)" : "";
-                return $"{StatKor(d.EffectStat)} +{d.EffectValue:0}{dur}";
+                string dur = d.EffectDuration > 0 ? " " + string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectDurationFormat), d.EffectDuration) : "";
+                return string.Format(Util.Localize(Define.LocalizeKey.AbilityEffectBuffFormat), StatText(d.EffectStat), d.EffectValue) + dur;
             default:                               return "";
         }
     }
 
-    static string StatKor(string s)
+    // 스탯 이름. 영문은 문장 중간용 소문자라 문장 맨 앞에 쓸 땐 호출부가 첫 글자를 대문자로 바꾼다.
+    static string StatText(string s)
     {
         switch (s)
         {
-            case "PhysicalAtk": return "물리공격력";
-            case "MagicAtk":    return "마법공격력";
-            case "CritRate":    return "치명타 확률";
-            case "CritDamage":  return "치명타 피해";
-            case "AtkSpeed":    return "공격속도";
-            case "Accuracy":    return "명중률";
-            case "Def":         return "방어력";
-            case "MaxHp":       return "최대 체력";
-            case "Evasion":     return "회피율";
-            default:            return s;
+            case "PhysicalAtk":           return Util.Localize(Define.LocalizeKey.AbilityStatPhysicalAtkText);
+            case "MagicAtk":              return Util.Localize(Define.LocalizeKey.AbilityStatMagicAtkText);
+            case "CritRate":              return Util.Localize(Define.LocalizeKey.AbilityStatCritRateText);
+            case "CritDamage":            return Util.Localize(Define.LocalizeKey.AbilityStatCritDamageText);
+            case "AtkSpeed":              return Util.Localize(Define.LocalizeKey.AbilityStatAtkSpeedText);
+            case "Accuracy":              return Util.Localize(Define.LocalizeKey.AbilityStatAccuracyText);
+            case "Def":                   return Util.Localize(Define.LocalizeKey.AbilityStatDefText);
+            case "MaxHp":                 return Util.Localize(Define.LocalizeKey.AbilityStatMaxHpText);
+            case "Evasion":               return Util.Localize(Define.LocalizeKey.AbilityStatEvasionText);
+            // 다음 등급 미리보기(BuildNextLevelPreview)에 나오는 수치형 능력들 — 예전엔 enum 이름이 그대로 찍혔다.
+            case "PhysicalResist":        return Util.Localize(Define.LocalizeKey.AbilityStatPhysicalResistText);
+            case "MaxMemory":             return Util.Localize(Define.LocalizeKey.AbilityStatMaxMemoryText);
+            case "CatchRate":             return Util.Localize(Define.LocalizeKey.AbilityStatCatchRateText);
+            case "GuaranteedCatchReduce": return Util.Localize(Define.LocalizeKey.AbilityStatGuaranteedCatchReduceText);
+            case "ExpGain":               return Util.Localize(Define.LocalizeKey.AbilityStatExpGainText);
+            case "GoldGain":              return Util.Localize(Define.LocalizeKey.AbilityStatGoldGainText);
+            case "DropRate":              return Util.Localize(Define.LocalizeKey.AbilityStatDropRateText);
+            case "InterestMax":           return Util.Localize(Define.LocalizeKey.AbilityStatInterestMaxText);
+            case "PotionCooldown":        return Util.Localize(Define.LocalizeKey.AbilityStatPotionCooldownText);
+            case "EnhanceLuck":           return Util.Localize(Define.LocalizeKey.AbilityStatEnhanceLuckText);
+            case "MoveSpeed":             return Util.Localize(Define.LocalizeKey.AbilityStatMoveSpeedText);
+            case "RecoveryRate":          return Util.Localize(Define.LocalizeKey.AbilityStatRecoveryRateText);
+            default:                      return s;
         }
     }
 
@@ -672,6 +705,8 @@ public class UI_SkillDetailPopup : UI_Popup
         bool talent   = Managers.Ability.IsTalent(SkillId);
         bool equipped = Managers.Ability.IsEquipped(SkillId);
         int cap = Managers.Data.SkillDic.TryGetValue(SkillId, out var d) ? d.MemoryCapacity : 0;
+        if (Managers.Ability.IsCompanionGranted(SkillId) && !Managers.Game.EquippedAbilities.Contains(SkillId))
+            cap = 0;
 
         // 슬44: 기억력 점유량 (재능=0이면 "?" 색 #FDF6A6). 외곽선(C0AA70)은 prefab 머티리얼 프리셋 소관.
         SetText(Texts.Txt_GotMEM_01, talent ? "<color=#FDF6A6>?</color>" : cap.ToString());
@@ -693,7 +728,12 @@ public class UI_SkillDetailPopup : UI_Popup
 
         string btnLabel;
         bool interactable;
-        if (equipGranted)
+        if (Managers.Ability.IsCompanionGranted(SkillId))
+        {
+            btnLabel = Util.Localize(Define.COMPANION_ABILITY_BORROWED_TEXT);
+            interactable = false;
+        }
+        else if (equipGranted)
         {
             // 장비 착용 부여(무점유) — 망각 불가 → "기억중" 표기 + 비활성.
             //  (게이지 점유 표기는 UsedMemory 기반이라 무점유가 자동 반영됨)
@@ -715,8 +755,8 @@ public class UI_SkillDetailPopup : UI_Popup
         else
         {
             // 슬51/52: 기억 버튼 라벨 — 미보유:습득 필요 / 재능:항시 적용 / 기억중:- 기억중 - / 미기억&가능:기억하기 / 미기억&부족:기억력 부족
-            btnLabel = !owned ? "습득 필요"
-                     : talent ? "항시 적용"
+            btnLabel = !owned ? Util.Localize(Define.LocalizeKey.AbilityNeedLearnText)
+                     : talent ? Util.Localize(Define.LocalizeKey.AbilityAlwaysActiveText)
                      : equipped ? $"- {Util.Localize(Define.LocalizeKey.Memorized_Text_Full)} -"   // 기억중 → "- 기억중 -" (mockup image152)
                      : canAfford ? Util.Localize(Define.LocalizeKey.MemorizeBtnText)
                      : Util.Localize(Define.LocalizeKey.Lack_Memory_Text);
@@ -738,7 +778,7 @@ public class UI_SkillDetailPopup : UI_Popup
     void OnClickMemorize()
     {
         // 장비 착용 부여(무점유)는 망각 불가 (BindEvent는 Button.interactable을 무시하므로 코드 가드)
-        if (Managers.Ability.IsEquipGranted(SkillId)) return;
+        if (Managers.Ability.IsEquipGranted(SkillId) || Managers.Ability.IsCompanionGranted(SkillId)) return;
 
         // 미보유 → 출처별 습득 시도 (NPC 재료 소모 / 축성)
         if (!Managers.Ability.IsLearned(SkillId)) { TryAcquire(); return; }
@@ -797,6 +837,7 @@ public class UI_SkillDetailPopup : UI_Popup
         ApplyEquipMaterial();
         RefreshAutoSize();
         ApplyBottomMargin();
+        ClampPopupToCenter(false);
     }
 
     // 슬52: 기억/망각 버튼 Punch (양쪽 공통).
@@ -890,7 +931,8 @@ public class UI_SkillDetailPopup : UI_Popup
         // 슬45: 이름 바 위 상태 배지(MasterAndMEMGroup) — 최대등급=완벽숙달(FF00F5) / 기억중=기억중 / 재능=재능(둘 다 파랑 3BA6FF).
         //  최대등급과 기억중(재능)은 독립 조건 → 둘 다 성립하면 둘 다 표시(좌우로 분리). 둘 다 같은 위치라 겹침 방지.
         bool showMaster = atMax;
-        bool showMemBadge = talent || (owned && equipped);
+        bool showMemBadge = talent || (owned && equipped &&
+            (!Managers.Ability.IsCompanionGranted(SkillId) || Managers.Game.EquippedAbilities.Contains(SkillId)));
         var mIcon   = GetImage((int)Images.MasterIcon)?.rectTransform;
         var memIcon = GetImage((int)Images.MemorizedIcon)?.rectTransform;
         if (!_badgeBaseCached && mIcon != null) { _badgeBaseX = mIcon.anchoredPosition.x; _badgeBaseCached = true; }
@@ -912,11 +954,12 @@ public class UI_SkillDetailPopup : UI_Popup
         if (memIcon != null) memIcon.anchoredPosition = new Vector2(_badgeBaseX + off, memIcon.anchoredPosition.y);
 
         // 점유량(GotMEM) / 재능(NoMEM) — 점유량 0이면 재능 표기
-        SetActive(GetObject((int)GameObjects.GotMEM), owned && !talent);
+        SetActive(GetObject((int)GameObjects.GotMEM), (owned || sd?.Source == Define.AbilitySource.Class) && !talent);
         SetActive(GetTextGo((int)Texts.NoMEM),        talent);
 
-        // 습득 필요(Lv0Text) — 미보유 시
-        SetActive(GetTextGo((int)Texts.Lv0Text), !owned);
+        // 포획과 축성은 습득 전에 효과를 비교할 수 있다.
+        SetActive(GetTextGo((int)Texts.Lv0Text), !owned
+            && sd?.Source != Define.AbilitySource.Minion && sd?.Source != Define.AbilitySource.Class);
 
         // 슬43/45: 능력이 [재능]이거나 기억(사용)중이면 아이콘 배경 Active_Ef(빛 sweep 루프) 활성.
         //  (모션/색은 prefab authored 이펙트 유지 — 코드는 토글만. UI_SkillBookSkill.cs와 동일 패턴)
@@ -963,19 +1006,28 @@ public class UI_SkillDetailPopup : UI_Popup
             ApplyFont(lvT, Define.FontType.UI);
         }
 
-        // 능력 설명(mechanics) — GetDesc + 발동조건 한 줄. 미보유 시 "- 습득 필요 -"(Lv0Text)가 대체하므로 숨김.
-        bool owned = Managers.Ability.IsLearned(SkillId);
+        // 포획·축성의 보상을 습득 전에 확인할 수 있다.
+        bool showDesc = Managers.Ability.IsLearned(SkillId) ||
+            (Managers.Data.SkillDic.TryGetValue(SkillId, out var data)
+                && (data.Source == Define.AbilitySource.Minion || data.Source == Define.AbilitySource.Class));
         var realT = GetText((int)Texts.LvEffectTxt_Real);
         if (realT != null)
         {
-            realT.gameObject.SetActive(owned);
-            if (owned)
+            realT.gameObject.SetActive(showDesc);
+            if (showDesc)
             {
-                string desc = Managers.Ability.GetDesc(SkillId);
-                string trig = BuildTriggerDesc(SkillId);
-                if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
-                // 슬51 버튼2: 다음 등급 미리보기 토글 시 "현재 ▶ 다음" 한 줄 추가
-                if (_previewNext) desc += BuildNextLevelPreview();
+                string desc;
+                if (Managers.Data.SkillDic.TryGetValue(SkillId, out var descriptionData)
+                    && descriptionData.Source == Define.AbilitySource.Class)
+                    desc = ClassAbilityDescription.GetDescription(SkillId, _previewNext);
+                else
+                {
+                    desc = Managers.Ability.GetDesc(SkillId);
+                    string trig = BuildTriggerDesc(SkillId);
+                    if (!string.IsNullOrEmpty(trig)) desc = string.IsNullOrEmpty(desc) ? trig : desc + "\n\n" + trig;
+                    // 슬51 버튼2: 다음 등급 미리보기 토글 시 "현재 ▶ 다음" 한 줄 추가
+                    if (_previewNext) desc += BuildNextLevelPreview();
+                }
                 realT.text = desc;
                 // 슬46: 능력 설명 = 중앙 + 상단 정렬. 상단정렬이라 길어지면 아래로만 넘쳐 위(능력 등급)와 겹치지 않음.
                 realT.alignment = TMPro.TextAlignmentOptions.Top;
@@ -1313,23 +1365,22 @@ public class UI_SkillDetailPopup : UI_Popup
         int  rec     = Managers.MinMon.GetRecordRate(minionId);   // 0..100
         bool owned   = Managers.MinMon.IsOwned(minionId);
         bool allSS   = Managers.MinMon.IsAllSS(minionId);
-        int  star    = Managers.MinMon.GetStarGrade(minionId);
+        int sync = Mathf.RoundToInt(Managers.MinMon.GetSyncRate(minionId) * Define.ABILITY_PERCENT_BASE);
         // 슬48: 상호작용 = 기록도>0 또는 보유 (0%+미보유만 X). 텍스트/잠금 노출은 동일 기준.
         bool unlocked = rec > 0 || owned;
 
-        // 슬48: 기록도 텍스트 + 색 (0=red / 0<x<100=orange / 100=#00FF00). 'lime' TMP 미지원 → #00FF00.
-        string rc = rec <= 0 ? "red" : rec >= 100 ? "#00FF00" : "orange";
+        // 영구 습득 조건은 처치 기록도가 아니라 포획 공명도다.
+        string rc = sync <= 0 ? "red" : sync >= Define.ABILITY_PERCENT_BASE ? "#00FF00" : "orange";
         var recT = GetText((int)Texts.Txt_ReqMinionBox_07);
-        if (recT != null) { recT.text = $"<color={rc}>{rec}</color>/100"; SetActive(recT.gameObject, unlocked); }
+        if (recT != null) { recT.text = $"<color={rc}>{sync}%</color>"; SetActive(recT.gameObject, unlocked); }
 
-        // 슬48: 기록도 아래 부가 텍스트(Txt_ReqMinionBox_05) — 2단계 이상=Minimon_MaxRank_Text("최상등급"),
-        //  1단계=Req_Minimon_SubText(문구는 "최상등급"으로 동일 — 사용자 결정). 색은 둘 다 AllSS=#00FF00 / 그외 #909090.
+        // 현재 진행도가 어떤 조건인지 짧게 표시한다.
         var subT = GetText((int)Texts.Txt_ReqMinionBox_05);
         if (subT != null)
         {
             SetActive(subT.gameObject, unlocked);
-            subT.text = Util.Localize(star >= 2 ? Define.LocalizeKey.Minimon_MaxRank_Text : Define.LocalizeKey.Req_Minimon_SubText);
-            SetTextColor(subT, allSS ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
+            subT.text = Util.Localize(Define.LocalizeKey.LinkText);
+            SetTextColor(subT, sync >= Define.ABILITY_PERCENT_BASE ? new Color32(0x00, 0xFF, 0x00, 0xFF) : new Color32(0x90, 0x90, 0x90, 0xFF));
         }
 
         // 슬48: 미니몬 이미지 = 도감 ICON과 동일(CreatureData.IconLabel) 데이터 연결.
@@ -1347,12 +1398,12 @@ public class UI_SkillDetailPopup : UI_Popup
         }
 
         // 슬48: 우상단 체크 ICON 2개(Checkmark_01) — 조건 성립마다 하나씩 #0AFF00 점등, 기본 #BEBEBE(a150).
-        //  Img_ReqMinionBox_06 = 기록도 100% / Img_ReqMinionBox_04 = 능력치 모두 SS. (이전 GlowMask_18/30 오매핑 수정)
+        //  Img_ReqMinionBox_06 = 공명도 100% / Img_ReqMinionBox_04 = 능력치 모두 SS.
         Color32 chkOn  = new Color32(0x0A, 0xFF, 0x00, 0xFF);
         Color32 chkOff = new Color32(0xBE, 0xBE, 0xBE, 150);
         var chk1 = GetImage((int)Images.Img_ReqMinionBox_06);
         var chk2 = GetImage((int)Images.Img_ReqMinionBox_04);
-        if (chk1 != null) { SetActive(chk1.gameObject, unlocked); chk1.color = (rec >= 100) ? (Color)chkOn : (Color)chkOff; }
+        if (chk1 != null) { SetActive(chk1.gameObject, unlocked); chk1.color = (sync >= Define.ABILITY_PERCENT_BASE) ? (Color)chkOn : (Color)chkOff; }
         if (chk2 != null) { SetActive(chk2.gameObject, unlocked); chk2.color = allSS ? (Color)chkOn : (Color)chkOff; }
 
         // 잠금 오버레이("?" + "미니몬 또는 기록도 필요") — 미해금 시 표시
@@ -1424,6 +1475,7 @@ public class UI_SkillDetailPopup : UI_Popup
         RefreshBottomButtons();
         RefreshAutoSize();      // 슬46: 미리보기 줄 추가/제거에 맞춰 세로 사이즈 재조정
         ApplyBottomMargin();    // 슬51: 하단 UI를 SubFrame 밑으로 재정렬
+        ClampPopupToCenter(false);
     }
 
     // 슬51 버튼2: 다음 등급 수치 미리보기 한 줄 (StatBonus×Level 파생). 높으면 #00FF00, 낮으면 red.
@@ -1435,7 +1487,9 @@ public class UI_SkillDetailPopup : UI_Popup
         float cur  = d.StatBonus * lv;
         float next = d.StatBonus * (lv + 1);
         string col = next > cur ? "#00FF00" : next < cur ? "red" : "yellow";
-        return $"\n\n<color=yellow>{StatKor(d.StatType)} +{cur:0} ▶ <color={col}>+{next:0}</color></color>";
+        string stat = StatText(d.StatType);
+        if (!string.IsNullOrEmpty(stat)) stat = char.ToUpperInvariant(stat[0]) + stat.Substring(1);   // 줄 맨 앞이라 영문은 첫 글자만 대문자
+        return $"\n\n<color=yellow>{stat} +{cur:0} ▶ <color={col}>+{next:0}</color></color>";
     }
 
     // ── helpers ──

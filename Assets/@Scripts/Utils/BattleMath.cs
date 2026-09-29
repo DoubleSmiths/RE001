@@ -24,11 +24,13 @@ public static class BattleMath
     public static bool DebugForcePlayerCritical = false;
 #endif
 
+    // guaranteedCrit: 명중·치명 주사위를 건너뛰고 반드시 치명타로 맞힌다(v2 패링 반격, ADR0030).
     public static DamageResult Resolve(
         CreatureController attacker,
         CreatureController defender,
         AttackType attackType = AttackType.Physical,
-        float skillMul = 1f)
+        float skillMul = 1f,
+        bool guaranteedCrit = false)
     {
         DamageResult r = default;
         r.AttackType = attackType;   // 속성 보존(miss/hit 공통)
@@ -37,7 +39,7 @@ public static class BattleMath
         //    [Accuracy, 100)는 순수 빗나감. 총 실패 확률은 기존과 동일(단일 주사위 유지).
         float hitChance = Mathf.Clamp(attacker.Accuracy - defender.Evasion, 0f, 100f);
         float roll = Random.value * 100f;
-        if (roll >= hitChance)
+        if (!guaranteedCrit && roll >= hitChance)
         {
             r.Evaded = roll < attacker.Accuracy;
             return r; // Hit=false, FinalDamage=0
@@ -46,7 +48,7 @@ public static class BattleMath
 
         // 2-a. BASE
         float atk = attackType == AttackType.Physical ? attacker.FinalPhysicalAtk : attacker.FinalMagicAtk;
-        bool isCrit = Random.value * 100f < Mathf.Min(attacker.CritRate, 100f);
+        bool isCrit = guaranteedCrit || Random.value * 100f < Mathf.Min(attacker.CritRate, 100f);
 #if UNITY_EDITOR
         // 테스트 토글: Player 공격은 항상 크리티컬
         if (DebugForcePlayerCritical && attacker.ObjectType == ObjectType.Player)

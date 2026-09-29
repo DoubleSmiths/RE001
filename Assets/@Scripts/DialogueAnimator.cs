@@ -81,7 +81,7 @@ public class DialogueAnimator : MonoBehaviour
 
         float panelTargetAlpha = 220f / 255f;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
 
         // Background: 1.0s 페이드 (시퀀스 기준 트랙)
         seq.Append(gradient.DOFade(1f, BG_FADE_DURATION).SetEase(Ease.OutQuad).SetUpdate(true));
@@ -147,7 +147,7 @@ public class DialogueAnimator : MonoBehaviour
             yield return FadeArrowAlpha(arrow, minAlpha, maxAlpha, duration);
 
             //대기
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
         }
     }
 
@@ -226,12 +226,15 @@ public class DialogueAnimator : MonoBehaviour
         text.ForceMeshUpdate();
 
         int charCount = text.textInfo.characterCount;
-        _charAlphas = new float[charCount]; // 기본값 0
+        float[] charAlphas = new float[charCount]; // 기본값 0
+        _charAlphas = charAlphas;
 
         for (int i = 0; i < charCount; i++)
         {
             int index = i;
-            DOTween.To(() => _charAlphas[index], a => _charAlphas[index] = a, 1f, _typingSpeed * 2f)
+            // 스킵 직후 새 줄이 시작돼도 이전 페이드는 그 줄의 배열만 갱신한다.
+            DOTween.To(() => charAlphas[index], a => charAlphas[index] = a, 1f, _typingSpeed * 2f)
+                   .SetTarget(this).SetLink(gameObject)
                    .SetUpdate(true);
 
             yield return new WaitForSecondsRealtime(_typingSpeed);
@@ -257,7 +260,7 @@ public class DialogueAnimator : MonoBehaviour
         Vector2 origin = portrait.rectTransform.anchoredPosition;
         portrait.rectTransform.anchoredPosition = origin + new Vector2(-60f, 0f);
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(portrait.rectTransform.DOAnchorPos(origin, 0.3f).SetEase(Ease.OutCubic));
         seq.Join(portrait.DOColor(_portraitActiveColor, 0.3f));
     }

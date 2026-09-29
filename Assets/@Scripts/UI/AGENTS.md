@@ -67,3 +67,5 @@
 - Unity UGUI (`UnityEngine.UI`, `UnityEngine.EventSystems`)
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- `UI_ItemLinkHandler`는 TMP 본문의 재료 링크를 아이템 상세 팝업으로 연결하는 클릭 전용 이벤트 수신기다. 스크롤 본문에서는 드래그 인터페이스가 없는 이 컴포넌트를 써서 상위 ScrollRect의 드래그 입력을 유지한다.

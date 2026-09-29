@@ -76,6 +76,34 @@ public class UI_Popup : UI_Base
         Managers.UI.ClosePopupUI(this);
     }
 
+    // 안드로이드 뒤로가기 / PC ESC — 플레이어가 뒤로·X·바깥을 누른 것과 **똑같이** 처리한다.
+    //  닫기 규칙(분배 롤백, 제작 중 잠금 등)은 팝업마다 그 버튼 핸들러에 이미 들어 있으므로 새로 만들지 않는다.
+    //  닫기 수단이 없는 팝업(강화 연출·대사 진행 등)은 false — 뒤로가기를 무시한다.
+    public virtual bool OnBackPressed()
+    {
+        UI_EventHandler best = null;
+        int bestRank = int.MaxValue;
+        foreach (var h in GetComponentsInChildren<UI_EventHandler>(false))
+        {
+            if (h.OnClickHandler == null) continue;
+            int rank = BackRank(h.name);
+            if (rank < bestRank) { best = h; bestRank = rank; }
+        }
+        if (best == null) return false;
+        best.OnPointerClick(new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current));
+        return true;
+    }
+
+    // 프리팹 노드 이름 규칙(자동 바인딩과 같은 이름)으로 고른다: X/나가기 > 바깥 배경.
+    //  "…Back" 버튼은 고르지 않는다 — 여정창·물약 상세의 Back 은 최상위에서 아무것도 안 해서 창이 안 닫혔다.
+    static int BackRank(string name)
+    {
+        string n = name.ToLowerInvariant();
+        if (n.Contains("xbutton") || n.Contains("exit") || n.Contains("close") || n.Contains("cancel")) return 1;
+        if (n.EndsWith("background")) return 2;
+        return int.MaxValue;
+    }
+
     public virtual void RefreshUI() { }
 
     public void OpenAnimation()
@@ -121,7 +149,7 @@ public class UI_Popup : UI_Base
 
     IEnumerator WaitAndDeactivate(GameObject go, float delay)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         if (go != null)
             go.SetActive(false);
         RefreshUI();

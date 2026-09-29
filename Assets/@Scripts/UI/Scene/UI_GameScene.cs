@@ -271,8 +271,11 @@ public class UI_GameScene : UI_Scene
     /// 무엇 때문에 오르는지 알 수 없어, 어디서 몇 마리를 잡고 있는지 묶어서 알린다.</summary>
     void ShowIdleBatch(GameManager.OfflineReward r, string area)
     {
-        string where = string.IsNullOrEmpty(area) ? "" : $"{area}에서 ";
-        Managers.UI.ShowToast($"방치 사냥 중 — {where}{r.Kills}마리\n경험치 {r.Exp:N0} · 골드 {r.Gold:N0}");
+        // 지역명 유무에 따라 문장 구조가 달라져(영문은 "in {지역}" 이 뒤에 붙는다) 서식 키를 둘로 나눈다.
+        string msg = string.IsNullOrEmpty(area)
+            ? string.Format(Util.Localize(LocalizeKey.IdleHuntFormat), r.Kills, r.Exp, r.Gold)
+            : string.Format(Util.Localize(LocalizeKey.IdleHuntAreaFormat), area, r.Kills, r.Exp, r.Gold);
+        Managers.UI.ShowToast(msg);
     }
 
     /// <summary>방치 보상 정산 결과 안내. 전용 팝업 대신 토스트를 재사용한다
@@ -280,23 +283,17 @@ public class UI_GameScene : UI_Scene
     public void ShowOfflineReward(GameManager.OfflineReward r)
     {
         double h = r.Seconds / 3600.0;
-        string time = h >= 1.0 ? $"{h:F1}시간" : $"{r.Seconds / 60.0:F0}분";
-        string msg = $"자리를 비운 {time} 동안 {r.Kills}마리를 처치했습니다\n" +
-                     $"경험치 {r.Exp:N0} · 골드 {r.Gold:N0}";
+        string time = h >= 1.0
+            ? string.Format(Util.Localize(LocalizeKey.OfflineTimeHoursFormat), h)
+            : string.Format(Util.Localize(LocalizeKey.OfflineTimeMinutesFormat), r.Seconds / 60.0);
+        string msg = string.Format(Util.Localize(LocalizeKey.OfflineRewardFormat), time, r.Kills, r.Exp, r.Gold);
         if (r.Capped)
-            msg += $"\n(최대 {GameManager.OFFLINE_MAX_HOURS:F0}시간까지 정산됩니다)";
+            msg += "\n" + string.Format(Util.Localize(LocalizeKey.OfflineRewardCapFormat), GameManager.OFFLINE_MAX_HOURS);
         Managers.UI.ShowToast(msg);
     }
 
     public void EnterArea(AreaType area)
     {
-        // 방치 보상은 "마지막으로 사냥하던 지역" 기준으로 정산한다(GameManager.ClaimOfflineReward).
-        if (area == AreaType.Battle)
-            Managers.Game?.MarkBattleArea(Managers.Game.CurrentTravelAreaId);
-
-        // 전투 밖에서는 방치 누적이 돌아간다(GameManager.TickIdle). 전투 중엔 실제 전투가 보상하므로 끈다.
-        Managers.Game?.SetInBattleArea(area == AreaType.Battle);
-
         // 구역이 바뀔 때마다 플레이어를 지면에 다시 세운다.
         //  Idle/Move 클립에는 위치 커브가 있고 Run/Attack에는 없다 → 마을에선 클립이 y를 잡아주지만
         //  전투(Run)에선 잡아주는 게 없어 씬에 저작된 옛 y가 그대로 남아 **공중을 걷고 있었다**.
@@ -502,8 +499,17 @@ public class UI_GameScene : UI_Scene
 
         _currentBtnGroup.Setup(this);
 
-        // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_Minion_battle은 별도)
-        Managers.Sound?.PlayBgm(area == AreaType.Battle ? "BGM_BWF" : "BGM_Village1");
+        // 방치 보상은 "마지막으로 사냥하던 지역" 기준으로 정산하고(GameManager.ClaimOfflineReward),
+        //  전투 밖에서만 방치 누적이 돈다(TickIdle — 전투 중엔 실제 전투가 보상한다).
+        //  ⚠️ 예전엔 이 두 줄이 EnterArea 에만 있었는데 전투 진입은 전부 EnterAreaWithFade 라
+        //     지역이 한 번도 기록되지 않아(LastBattleAreaId 0) 오프라인 보상·방치 누적이 실제로는 한 번도 돌지 않았다.
+        //     두 경로가 모두 지나는 여기서 처리한다.
+        if (area == AreaType.Battle)
+            Managers.Game?.MarkBattleArea(Managers.Game.CurrentTravelAreaId);
+        Managers.Game?.SetInBattleArea(area == AreaType.Battle);
+
+        // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_MinimonCapture는 별도)
+        Managers.Sound?.PlayBgm(area == AreaType.Battle ? BGM_BATTLE : BGM_VILLAGE);
 
         Debug.Log($"[UI_GameScene] SwapAreaBtnGroup success. area={area}, prefab={prefabName}");
         return true;
@@ -604,6 +610,7 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BtmMinimonCodexBtnText);
         // PlayerLv prefix 등 동적 텍스트도 언어 변경 시 재갱신
         RefreshPlayerBar();
+        RefreshQuestFollow(Managers.Quest.CurrentQuestID);   // 추적 재료 이름
     }
 
     public void RefreshBTMButtonGroup()
@@ -840,7 +847,10 @@ public class UI_GameScene : UI_Scene
         int itemId = int.Parse(quest.FollowItemID);
         int current = Managers.Game.GetItemCount(itemId);
 
-        GetText((int)Texts.Quest_NeedItemNameTxt).text = quest.FollowItemName;
+        // 퀘스트 시트의 FollowItemName 은 한국어 표시 문자열이다 — 영어에서도 한글이 나왔다. 아이템 이름 키로 표시.
+        GetText((int)Texts.Quest_NeedItemNameTxt).text = Managers.Data.ItemDic.TryGetValue(itemId, out var followItem)
+            ? Util.Localize(followItem.Name)
+            : quest.FollowItemName;
 
         // 보유 개수 색상: 0=빨강 / 0<보유<필요=주황 / 보유≥필요=초록. (TMP는 lime 등 미지원 → hex)
         // 표기는 (보유/필요) 한 쌍 괄호 + 슬래시, 전체에 색 적용 — 예: (1/2)
@@ -1003,7 +1013,7 @@ public class UI_GameScene : UI_Scene
         player.OnBuffApplied += OnBuffApplied;
         player.OnBuffCleared += OnBuffCleared;
 
-        // 액티브 스킬바 — 최하단 탭 바로 위. 장착된 액티브 능력이 없으면 슬롯이 전부 꺼져 보이지 않는다.
+        // 액티브 스킬바 — 전투 기록 아래 독립된 행동 영역. 마을이나 수동 능력이 없을 때는 숨긴다.
         if (_skillBar == null && player.AbilityRunner != null)
         {
             var host = GetImage((int)Images.ButtomDisplayer);

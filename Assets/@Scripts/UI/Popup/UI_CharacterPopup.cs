@@ -310,6 +310,11 @@ public class UI_CharacterPopup : UI_Popup
         // 팝업 타이틀
         GetText((int)Texts.title).text = Util.Localize(LocalizeKey.CharPopupTitleText);
 
+        // '능력 상세정보' 버튼 라벨 — 노드 이름이 "Text" 라 enum 바인딩 밖이라 영어에서도 한국어로 남았다
+        var detailBtn = Util.FindChild(gameObject, "StatDetailBtn", true);
+        var detailTxt = detailBtn != null ? detailBtn.GetComponentInChildren<TMP_Text>(true) : null;
+        if (detailTxt != null) { detailTxt.text = Util.Localize(LocalizeKey.CharPopupAttributeDetailText); ApplyFont(detailTxt, FontType.UI); }
+
         // 4대 스탯 그룹 라벨 (첫 번째 TMP_Text = 라벨)
         SetGroupLabel(GetImage((int)Images.STRStatGroup).gameObject, Util.Localize(LocalizeKey.StrengthText));
         SetGroupLabel(GetImage((int)Images.VITStatGroup).gameObject, Util.Localize(LocalizeKey.VitialityText));
@@ -359,10 +364,15 @@ public class UI_CharacterPopup : UI_Popup
         for (int i = 0; i < 4; i++) _statDeltas[i] = 0;
     }
 
+    // 임시 분배는 이 창 안에만 둔다 — 확정 전에는 저장된 StatusPoint 를 건드리지 않는다.
+    //  (예전엔 + 누를 때마다 포인트를 차감·저장하고 분배치는 확정 때만 저장해서, 확정 전에
+    //   앱이 백그라운드로 가 저장된 뒤 종료되면 쓴 포인트가 통째로 사라졌다)
+    int PendingPoints => _statDeltas[0] + _statDeltas[1] + _statDeltas[2] + _statDeltas[3];
+    int AvailablePoints => Managers.Game.StatusPoint - PendingPoints;
+
     bool AddStat(int idx)
     {
-        if (Managers.Game.StatusPoint <= 0) return false;
-        Managers.Game.StatusPoint--;
+        if (AvailablePoints <= 0) return false;
         _statDeltas[idx]++;
         //PlayStatBtnAnim(idx, true);
         RefreshUI();
@@ -372,7 +382,6 @@ public class UI_CharacterPopup : UI_Popup
     bool RemoveStat(int idx)
     {
         if (_statDeltas[idx] <= 0) return false;
-        Managers.Game.StatusPoint++;
         _statDeltas[idx]--;
         //PlayStatBtnAnim(idx, false);
         RefreshUI();
@@ -465,6 +474,9 @@ public class UI_CharacterPopup : UI_Popup
         _detailOpen = !_detailOpen;
         GameObject frame = GetImage((int)Images.StatDetailFrame).gameObject;
         frame.SetActive(_detailOpen);
+        // v2 훈련 패널과 상세 패널은 창 높이(432)에 같이 들어가지 않는다 — 상세를 펼치는 동안 훈련을 접는다.
+        GameObject training = Util.FindChild(gameObject, "TrainingFrame", true);
+        if (training != null) training.SetActive(!_detailOpen);
 
         if (_detailOpen)
         {
@@ -509,14 +521,11 @@ public class UI_CharacterPopup : UI_Popup
     // StatResetBtn = 롤백 버튼: 임시 투자분(델타)을 취소하고 포인트를 환불.
     void OnClickStatReset() => RollbackDeltas();
 
-    // 저장 안 한 임시 분배를 롤백 — 투자한 포인트를 환불하고 델타 0으로.
+    // 저장 안 한 임시 분배를 롤백 — 델타만 0으로(포인트는 확정 때만 차감된다).
     void RollbackDeltas()
     {
         for (int i = 0; i < 4; i++)
-        {
-            Managers.Game.StatusPoint += _statDeltas[i];
             _statDeltas[i] = 0;
-        }
         RefreshUI();
     }
 
@@ -536,9 +545,10 @@ public class UI_CharacterPopup : UI_Popup
         if (nothingToApply) return;
 
         // 분배 델타를 GameData에 누적(영구 저장 — 세이브/로드는 GameManager가 관리)
+        int spent = PendingPoints;
         int[] inv = Managers.Game.StatInvest;
         for (int i = 0; i < 4; i++) { inv[i] += _statDeltas[i]; _statDeltas[i] = 0; }
-        Managers.Game.SaveGame();
+        Managers.Game.StatusPoint -= spent;   // 세터가 저장 — 분배치와 같은 기록에 들어간다
 
         // 실제 캐릭터에 적용 + PlayerBar 갱신 (RefreshStats가 OnHpChanged 발화 → HP 바/텍스트 즉시 갱신)
         _player.RefreshStats();
@@ -564,8 +574,9 @@ public class UI_CharacterPopup : UI_Popup
     {
         if (_player == null) return;
 
-        GetText((int)Texts.PointsStatPointsTxt).text = Managers.Game.StatusPoint.ToString();
+        GetText((int)Texts.PointsStatPointsTxt).text = AvailablePoints.ToString();
         GetText((int)Texts.ElixirPointsTxt).text     = Managers.Game.Elixir.ToString();
+        LayoutPointsBar();
 
         // ── 미리보기용 기본값 (스탯 포인트 투자분 반영) ──
         float patkBase = _player.PhysicalAtk + _statDeltas[0] * 2f;
@@ -699,6 +710,29 @@ public class UI_CharacterPopup : UI_Popup
         TMP_Text[] texts = group.GetComponentsInChildren<TMP_Text>();
         if (texts.Length > 0)
             texts[texts.Length - 1].text = value;
+    }
+
+    // 머리줄(능력점수 / 달빛영약) — 라벨 폭이 언어마다 달라 고정 좌표면 숫자·아이콘과 겹쳤다(영어 POINT117, 한국어 달 아이콘).
+    //  왼쪽은 라벨 → 숫자, 오른쪽은 숫자(오른쪽 끝 고정) → 라벨 → 아이콘 순으로 실제 글자 폭에 맞춰 붙인다.
+    const float POINTS_BAR_GAP = 2f;
+    void LayoutPointsBar()
+    {
+        TMP_Text pointLabel = GetText((int)Texts.PointsText);
+        var pointValue = (RectTransform)GetText((int)Texts.PointsStatPointsTxt).transform;
+        float labelRight = ((RectTransform)pointLabel.transform).anchoredPosition.x + pointLabel.GetPreferredValues().x;
+        pointValue.anchoredPosition = new Vector2(labelRight + POINTS_BAR_GAP, pointValue.anchoredPosition.y);
+
+        TMP_Text elixirValue = GetText((int)Texts.ElixirPointsTxt);
+        TMP_Text elixirLabel = GetText((int)Texts.ElixirText);
+        var elixirLabelRT = (RectTransform)elixirLabel.transform;
+        float valueLeft = ((RectTransform)elixirValue.transform).anchoredPosition.x - elixirValue.GetPreferredValues().x;
+        elixirLabelRT.anchoredPosition = new Vector2(valueLeft - POINTS_BAR_GAP, elixirLabelRT.anchoredPosition.y);
+
+        GameObject icon = Util.FindChild(GetObject((int)GameObjects.PointsandElixirBar).gameObject, "Img_PointsandElixirBar_01");
+        if (icon == null) return;
+        var iconRT = (RectTransform)icon.transform;
+        float labelLeft = elixirLabelRT.anchoredPosition.x - elixirLabel.GetPreferredValues().x;
+        iconRT.anchoredPosition = new Vector2(labelLeft - POINTS_BAR_GAP, iconRT.anchoredPosition.y);
     }
 
     // 그룹 내 첫 번째 TMP_Text = 라벨 (슬라이드 16: LocalizationData 연동)

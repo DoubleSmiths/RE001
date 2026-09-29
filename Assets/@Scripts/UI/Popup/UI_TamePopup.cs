@@ -106,8 +106,10 @@ public class UI_TamePopup : UI_Popup
         if (base.Init() == false)
             return false;
 
-        // 잡기 시작 — 잡기 전용 BGM(BGM_Minion_battle). 닫을 때 OnDestroy에서 원래 BGM 복귀.
-        Managers.Sound?.PushBgm("BGM_Minion_battle");
+        // 잡기 시작 — 잡기 전용 BGM. 닫을 때 OnDestroy에서 원래 BGM 복귀.
+        //  (예전 BGM_Minion_battle·SFX_MinimonCatch 는 포켓몬스터 원곡 추출본이라 출시 불가 — 자작 칩튠으로 교체,
+        //   _tools/gen_chiptune.py)
+        Managers.Sound?.PushBgm("BGM_MinimonCapture");
 
         BindImage(typeof(Images));
         BindText(typeof(Texts));
@@ -160,7 +162,7 @@ public class UI_TamePopup : UI_Popup
         Managers.Data.MinMonDic.TryGetValue(dataId, out _mm);
         _creature = null;
         Managers.Data.CreatureDic.TryGetValue(dataId, out _creature);
-        _cName = _creature != null && !string.IsNullOrEmpty(_creature.Name) ? Util.Localize(_creature.Name) : "미니몬";
+        _cName = _creature != null && !string.IsNullOrEmpty(_creature.Name) ? Util.Localize(_creature.Name) : Util.Localize(LocalizeKey.MinimonDefaultNameText);
 
         // 슬31: 타이틀 = CatchMinimonTitleText + "!" ("미니몬 잡기!"). prefab 영어 하드코딩 교체 → 한/영 전환.
         var title = GetText((int)Texts.Txt_Title_03);
@@ -381,7 +383,8 @@ public class UI_TamePopup : UI_Popup
         //  TryCatch는 실패 시 TameCount를 올리지만, 여기서 다시 그리지 않으면 화면 숫자가 그대로라
         //  **기회가 차감되지 않는 것처럼 보인다.** 예전에 같은 증상을 한 번 고쳤는데(303행 주석)
         //  갱신 지점이 Init/등장 시점뿐이라 시도 후에는 다시 낡은 값이 남아 있었다.
-        RefreshLureButton();
+        // 성공 직후에는 이번 시도의 확률을 유지한다. 첫 포획 100%가 재포획 확률로 바뀌지 않게 한다.
+        if (!success) RefreshLureButton();
 
         // ⚠️ 갱신만으로는 부족했다. 시도 중에는 버튼이 숨겨져 있고 **실패하면 미니몬이 도망가며
         //    팝업이 곧장 닫힌다** — 바뀐 숫자를 볼 틈이 아예 없어서 여전히 "차감이 안 된다"로 보였다.
@@ -493,7 +496,7 @@ public class UI_TamePopup : UI_Popup
         if (success)
         {
             // 슬36-1: 미니몬 Caught Anim — prefab "Monster Caught"(Move Y Yoyo 0.18s ×4 = 0.72s)
-            Managers.Sound?.PlaySFX("SFX_MinimonCatch");   // 포획 성공
+            Managers.Sound?.PlaySFX("SFX_MinimonCaught");   // 포획 성공
             PlayAnim(_slimeTr?.gameObject, "Monster Caught");
             yield return new WaitForSecondsRealtime(0.72f);
 
@@ -551,7 +554,12 @@ public class UI_TamePopup : UI_Popup
         Managers.UI.ShowPopupUI<UI_MinionInfoPopup>().SetInfo(_dataId);
     }
 
-    void OnClickExit() => OnClickBG();
+    // 연출 중(특히 만드라고라를 이미 쓴 뒤 포획 판정 전)에 나가면 아이템만 사라졌다 — 뒤로가기가 생기며 쉬워졌다.
+    void OnClickExit()
+    {
+        if (_busy) return;
+        OnClickBG();
+    }
 
     // ─────────────────────────────────────────────
     // 표기
@@ -618,9 +626,13 @@ public class UI_TamePopup : UI_Popup
         if (go == null) return;
         foreach (var a in go.GetComponents<DOTweenAnimation>())
         {
-            if (a.id == id) { a.DORestart(); return; }
+            if (a.id != id) continue;
+            // 컴포넌트의 DORestart는 같은 오브젝트의 다른 모션까지 재시작한다.
+            // 필요한 저작 Tween만 준비하고 재생해 입장/유혹/성공 모션이 서로 간섭하지 않게 한다.
+            if (a.tween == null || !a.tween.IsActive()) a.CreateTween(false, false);
+            a.tween?.Restart();
+            return;
         }
-        go.GetComponent<DOTweenAnimation>()?.DORestart();
     }
 
     // 특정 id의 prefab DOTweenAnimation을 비활성화(스냅/자동재생 방지). 코드로 대체할 때 사용.
@@ -628,7 +640,14 @@ public class UI_TamePopup : UI_Popup
     {
         if (go == null) return;
         foreach (var a in go.GetComponents<DOTweenAnimation>())
-            if (a.id == id) { a.DOKill(); a.enabled = false; }
+        {
+            if (a.id != id) continue;
+            // DOKill은 같은 GameObject의 모든 Tween을 죽이므로 교체한 입장 모션만 직접 종료한다.
+            a.tween?.Kill();
+            a.tween = null;
+            a.autoGenerate = false;
+            a.enabled = false;
+        }
     }
 
     void PlayEmoj(Images id, string state)

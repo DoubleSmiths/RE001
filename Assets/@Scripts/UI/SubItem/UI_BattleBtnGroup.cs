@@ -161,6 +161,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged += RefreshNotify;
         RefreshNotify();
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged += OnLanguageChanged;
 
         ChangeMap();
         // 슬라이드 57 — 진입 직후엔 Player Idle 고정 (배경 스크롤도 정지).
@@ -184,6 +186,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         EndBattle();
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged -= OnLanguageChanged;
         UnbindComboUI();
         UnhookPlayerLogEvents();
         UnbindDropListUI();
@@ -208,13 +212,11 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             if (i == 0 || i == 1 || i == 4 || i == 6 || i == 8 || i == 9 || i == 10 || i == 11 || i == 12 || i == 17 || i == 18) ApplyFont(tmp, FontType.UI);
             //if (tmp.name == "ReturnButtonText") ApplyFont(tmp, FontType.UI);
 
-            string enumKey = System.Enum.GetName(typeof(Texts), i);
             // 동적 갱신 대상은 빈 문자열로 시작, 아닌 것은 Localize
             if (IsDynamicText((Texts)i))
                 tmp.text = "";
-            else
-                tmp.text = Util.Localize(enumKey);
         }
+        RefreshStaticTexts();
 
         // 콤보 라벨 스타일 (슬라이드 47): 초기 색 흰색, 검정 아웃라인 underlay.
         var comboLabel = GetText((int)Texts.ComboText);
@@ -223,6 +225,41 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             comboLabel.color = COMBO_IDLE_COLOR;
             Util.SetTMPUnderlay(comboLabel, COMBO_OUTLINE, COMBO_OUTLINE_X, COMBO_OUTLINE_Y);
         }
+    }
+
+    // 고정 라벨(전투 기록·전투 시간 등)은 enum 이름이 곧 로컬라이즈 키다.
+    void RefreshStaticTexts()
+    {
+        for (int i = 0; i < System.Enum.GetValues(typeof(Texts)).Length; i++)
+        {
+            var tmp = GetText(i);
+            if (tmp == null || IsDynamicText((Texts)i)) continue;
+            tmp.text = Util.Localize(System.Enum.GetName(typeof(Texts), i));
+        }
+    }
+
+    // 전투 중 언어를 바꾸면 고정 라벨·귀환/여정 버튼이 예전 언어로 남아 있었다.
+    void OnLanguageChanged()
+    {
+        RefreshStaticTexts();
+        RefreshReturnButtonText(_returnConfirming);   // 귀환 확인 대기 중이면 확인 문구를 유지한다
+        var travelTmp = GetText((int)Texts.TravelButtonText);
+        if (travelTmp != null) travelTmp.text = Util.Localize(LocalizeKey.TravelBtnText);
+        RefreshComboLabels();
+    }
+
+    // 콤보 이름·버프 라벨은 랭크가 바뀔 때만 채워져 언어를 바꿔도 콤보가 끝날 때까지 예전 언어로 남았다.
+    //  지금 보이는 것만 다시 쓴다(끊겨서 비운 칸은 그대로, 랭크업 연출은 다시 틀지 않는다).
+    void RefreshComboLabels()
+    {
+        var stage = Managers.Combo?.GetCurrentStage();
+        if (stage == null) return;
+        var title = GetText((int)Texts.ComboTitle);
+        if (title != null && title.text != "") title.text = Util.Localize(stage.NameKey);
+        var asLbl = GetText((int)Texts.ASBoostText);
+        if (asLbl != null && asLbl.text != "") asLbl.text = Util.Localize(LocalizeKey.AttackSpeedText);
+        var dmgLbl = GetText((int)Texts.DMGBoostText);
+        if (dmgLbl != null && dmgLbl.text != "") dmgLbl.text = Util.Localize(LocalizeKey.DmgBoostText);
     }
 
     static bool IsDynamicText(Texts t)
@@ -622,24 +659,33 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             s.transform.SetSiblingIndex(idx++);
     }
 
+    // 매 프레임 불린다 — 값이 바뀐 칸만, 문자열을 만들지 않는 SetText 인자 방식으로 쓴다.
+    //  예전엔 4칸을 매 프레임 새 문자열로 다시 써서 전투 내내 프레임당 약 1.3KB 가비지와 TMP 재배치 4회가 났다
+    //  (프로파일러 GC.Alloc 의 유일한 게임 코드 출처였다).
+    int _shownCentis = -1, _shownDealt = -1, _shownTaken = -1, _shownHeal = -1;
+
     void RefreshLogTexts()
     {
-        var timeTmp = GetText((int)Texts.BattleTimeNum);
-        if (timeTmp != null)
+        // 센티초 단위 정수로 환산 후 분/초/센티초 분해 — float 포맷 rounding 회피.
+        int centis = Mathf.Max(0, Mathf.FloorToInt(_logTime * 100f));
+        if (centis != _shownCentis)
         {
-            // 센티초 단위 정수로 환산 후 분/초/센티초 분해 — float 포맷 rounding 회피.
-            int centis = Mathf.Max(0, Mathf.FloorToInt(_logTime * 100f));
-            int min    = centis / 6000;
-            int sec    = (centis / 100) % 60;
-            int cs     = centis % 100;
-            timeTmp.text = $"{min:00}:{sec:00}.{cs:00}";
+            var timeTmp = GetText((int)Texts.BattleTimeNum);
+            if (timeTmp != null) timeTmp.SetText("{0:00}:{1:00}.{2:00}", centis / 6000, (centis / 100) % 60, centis % 100);
+            _shownCentis = centis;
         }
-        var dealtTmp = GetText((int)Texts.DmgDealtNum);
-        if (dealtTmp != null) dealtTmp.text = Mathf.RoundToInt(Mathf.Max(0f, _logDealtDisplay)).ToString();
-        var takenTmp = GetText((int)Texts.DmgTakenNum);
-        if (takenTmp != null) takenTmp.text = Mathf.RoundToInt(Mathf.Max(0f, _logTakenDisplay)).ToString();
-        var healTmp  = GetText((int)Texts.HPRestoredNum);
-        if (healTmp  != null) healTmp.text  = Mathf.RoundToInt(Mathf.Max(0f, _logHealDisplay)).ToString();
+        SetLogNumber(Texts.DmgDealtNum, _logDealtDisplay, ref _shownDealt);
+        SetLogNumber(Texts.DmgTakenNum, _logTakenDisplay, ref _shownTaken);
+        SetLogNumber(Texts.HPRestoredNum, _logHealDisplay, ref _shownHeal);
+    }
+
+    void SetLogNumber(Texts id, float value, ref int shown)
+    {
+        int v = Mathf.RoundToInt(Mathf.Max(0f, value));
+        if (v == shown) return;
+        shown = v;
+        var tmp = GetText((int)id);
+        if (tmp != null) tmp.SetText("{0}", v);
     }
 
     // ── 에디터 테스트용: ATTACKBTN 클릭 시 타격 시뮬 ──
@@ -860,9 +906,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         {
             PlayerController player = Managers.Game.Player;
             if (player == null) yield break;
-
-            // 데이터 드리븐: 현재 지역의 Habitat/EncounterRate로 슬라임/고블린 등 가중 랜덤 선택.
-            int dataId = Managers.Object.PickFieldMonsterId(2001);
+            // 쓰러진 뒤 마을로 돌아가기 전(약 1초)에는 다음 몬스터를 내지 않는다
+            if (player.State == State.Dead) { yield return null; continue; }
 
             // Y는 지면 상수 하나. 플레이어 y를 따라가게 두면 플레이어가 어긋난 순간
             //  몬스터까지 같이 떠오른다(실제로 그렇게 둘 다 공중에 떠 있었다).
@@ -871,22 +916,126 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
                 Define.GROUND_Y,
                 0f);
 
-            MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
-            if (mc != null)
+            // v2 스테이지(ADR0030): 정해진 수를 잡았고 자동 도전이 켜져 있으면 이번엔 보스.
+            int nodeId = Managers.Game.CurrentTravelAreaId;
+            if (Managers.Game.BossAutoChallenge && Managers.Game.IsBossReady(nodeId))
             {
-                // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
-                // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
-                mc.OnEngaged += () =>
-                {
-                    Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
-                    StartBattleLog(mc);
-                };
+                yield return CoStageBoss(nodeId, spawnPos, monsterRoot);
+                if (_stageAdvancing) yield break;   // 다음 스테이지로 이동 중 — 이 그룹은 곧 교체된다
             }
-            yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            else
+            {
+                // 데이터 드리븐: 현재 지역의 Habitat/EncounterRate로 슬라임/고블린 등 가중 랜덤 선택.
+                int dataId = Managers.Object.PickFieldMonsterId(2001);
+                MonsterController mc = Managers.Object.SpawnMonster(dataId, spawnPos);
+                if (mc != null)
+                {
+                    // 슬라이드 50/59 — 실제 조우(콜라이더 충돌) 시점에 HP Bar 호출 + 전투 기록 타이머 시작.
+                    // 슬라임이 스폰 후 좌측으로 스크롤하는 시간은 전투 시간이 아님 (이전엔 spawn 직후 시작 → 부정확).
+                    mc.OnEngaged += () =>
+                    {
+                        Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform).SetInfo(mc);
+                        StartBattleLog(mc);
+                    };
+                    mc.OnDied += () => Managers.Game.AddStageKill(nodeId);
+                }
+                yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            }
 
             // 다음 몬스터까지 6초
             yield return new WaitForSeconds(MONSTER_SPAWN_DELAY);
         }
+    }
+
+    // ────────────────────────────────────────
+    //  v2 스테이지 보스 (ADR0030, 설계서 4.3)
+    //    - 보스 출현 알림 + 보스 곡. 제한 시간은 맞붙은 뒤부터 잰다(걸어오는 시간은 빼 준다).
+    //    - 처치: 첫 돌파면 크리스탈 + 다음 스테이지로 자동 이동, 이미 돌파한 곳이면 보상만 받고 머문다.
+    //    - 시간 초과: 보스가 물러나고 처치 수는 0, 자동 도전이 꺼진다. 쓰러지면 같은 실패(귀환은 PlayerController).
+    // ────────────────────────────────────────
+    const float  STAGE_ADVANCE_DELAY = 1.5f;       // 돌파 알림을 읽을 틈을 두고 다음 스테이지로
+    bool _stageAdvancing;
+
+    System.Collections.IEnumerator CoStageBoss(int nodeId, Vector3 spawnPos, Transform monsterRoot)
+    {
+        MonsterController boss = Managers.Object.SpawnStageBoss(nodeId, spawnPos);
+        if (boss == null)
+        {
+            Debug.LogWarning($"[Stage] 노드 {nodeId} 에 보스로 세울 몬스터가 없다 — 처치 수만 비운다");
+            Managers.Game.FailStage(nodeId, stopAutoChallenge: false);
+            yield break;
+        }
+
+        bool killed = false;
+        UI_MonsterHPBar bar = null;
+        boss.OnDied += () => killed = true;
+        boss.OnEngaged += () =>
+        {
+            bar = Managers.UI.MakeSubItem<UI_MonsterHPBar>(Managers.UI.SceneUI.transform);
+            bar.SetInfo(boss);
+            StartBattleLog(boss);
+        };
+
+        Managers.UI.ShowToast(Util.Localize("BossAppearText"));
+        Managers.Sound?.PlayBgm(BGM_BOSS);
+        PlayerController player = Managers.Game.Player;
+        if (player != null) player.RefillHp();   // 보스전은 가득 찬 체력으로 — 벽은 제한 시간이다
+
+        // 전투 정지(도감 등) 중엔 Time.deltaTime 이 0 이라 제한 시간도 멈춘다.
+        float limit = Managers.Data.Balance(BalanceKey.BOSS_TIME_LIMIT, 30f);
+        float left  = limit;
+        bool playerDown = false;
+        Managers.Game.SetBossFight(true, left, limit);
+        while (!killed && left > 0f)
+        {
+            if (boss == null) break;   // 다른 경로로 치워졌다
+            if (player == null || player.State == State.Dead) { playerDown = true; break; }
+            if (boss.HasEngaged) left -= Time.deltaTime;
+            Managers.Game.SetBossFight(true, Mathf.Max(0f, left), limit);
+            yield return null;
+        }
+        Managers.Game.SetBossFight(false);
+
+        if (!killed)
+        {
+            Managers.Game.FailStage(nodeId);
+            Managers.UI.ShowToast(Util.Localize("BossFailText"));
+            if (boss != null) boss.Retreat();   // 쓰러진 뒤 동행 미니몬이 마저 잡아 보상이 나가지 않게 여기서도 물린다
+            if (playerDown) yield break;         // 마을 귀환이 HP 바·곡을 정리한다
+
+            if (bar != null) bar.PlayCloseAnimation();
+            Managers.Sound?.PlayBgm(BGM_BATTLE);
+            yield return new WaitUntil(() => monsterRoot.childCount == 0);
+            yield break;
+        }
+
+        bool firstClear = Managers.Game.ClearStage(nodeId, out int crystals);
+        Managers.UI.ShowToast(firstClear
+            ? string.Format(Util.Localize("StageClearFormat"), crystals)
+            : Util.Localize("BossDefeatText"));
+        Managers.Sound?.PlayBgm(BGM_BATTLE);
+        yield return new WaitUntil(() => monsterRoot.childCount == 0);
+
+        // 다음 스테이지가 아직 안 깬 곳이고 열려 있으면 그리로 간다(개척). 이미 깬 곳으로는 옮기지 않는다 —
+        //  포획·재료 파밍 자리를 멋대로 옮기지 않는다. 레벨이 모자라 머물렀다면 레벨을 채운 뒤의 재돌파 때 간다.
+        int next = Managers.Game.NextStage(nodeId);
+        if (next <= 0 || Managers.Game.IsStageCleared(next)) yield break;
+        string lockReason = Managers.Game.GetTravelLockReason(next);
+        if (!string.IsNullOrEmpty(lockReason))
+        {
+            if (firstClear) Managers.UI.ShowToast(string.Format(Util.Localize("StageNextLockedFormat"), lockReason));
+            yield break;
+        }
+
+        yield return new WaitForSeconds(STAGE_ADVANCE_DELAY);
+        var scene = Managers.UI.SceneUI as UI_GameScene;
+        if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle)) yield break;
+        _stageAdvancing = true;
+        // 여정 팝업으로 들어갈 때와 같은 입장 신호(퀘스트 안내용 버튼 ID)
+        if (Managers.Data.TravelNodeDic.TryGetValue(next, out var nextNode) && !string.IsNullOrEmpty(nextNode.EnterBtnId))
+            Managers.Quest?.CheckButtonClick(nextNode.EnterBtnId);
+        Managers.Game.CurrentTravelAreaId = next;   // 스폰 지역은 이 값으로 정해진다 — 전환보다 먼저
+        scene.EnterAreaWithFade(AreaType.Battle);
     }
 
     void EndBattle()
@@ -895,7 +1044,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         //  "fake null"이라 널 조건 연산자를 그대로 통과하고, 그 뒤 접근에서
         //  MissingReferenceException이 난다(씬 전환·플레이 종료 시 실제로 발생했다).
         //  Unity가 오버로드한 == 비교만이 파괴 여부까지 판정한다.
-        var player = Managers.Game.Player;
+        //  Managers.Game 은 일반 C# 객체라 ?. 가 안전하다 — 종료 중(@Managers 파괴 후)엔 null 이다.
+        var player = Managers.Game?.Player;
         if (player != null)
             player.StopBattle();
 
@@ -904,6 +1054,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             StopCoroutine(_battleCoroutine);
             _battleCoroutine = null;
         }
+        // 보스전 도중 귀환·이동하면 루프가 멈춰 끝 처리가 안 돈다 — 스테이지 막대가 타이머를 계속 보이지 않게.
+        //  (처치 수는 그대로라 다시 오면 곧바로 보스가 나온다)
+        Managers.Game?.SetBossFight(false);
 
         // 정리 경로에서는 **있을 때만** 가져온다. lazy 게터를 쓰면 씬을 닫는 도중 @Monster를
         //  새로 만들어 "Some objects were not cleaned up when closing the scene" 에러가 난다.

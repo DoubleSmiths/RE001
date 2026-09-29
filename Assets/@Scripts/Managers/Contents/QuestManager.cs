@@ -235,6 +235,21 @@ public class QuestManager
         SetCurrentQuest(nextId);   // 먼저 퀘스트 전환 → CurrentQuestID = nextId
 
         ProcessUnlocks(questId);   // 이후 보상 지급 (AddItem 이벤트가 발행돼도 이미 다음 퀘스트 기준으로 체크)
+
+        // 마지막 임무 완료 = 엔딩. 예전엔 협회 대사 한 줄로 끝나 끝났는지 알 수 없었다.
+        if (!Managers.Data.QuestDic.ContainsKey(nextId) && !Managers.Game.EndingSeen)
+            CoroutineManager.StartCoroutine(CoShowEnding());
+    }
+
+    // 보고 대화·보상 창이 모두 닫힌 뒤에 감사 인사 + 크레딧을 띄운다. 이후에도 설정 → 크레딧으로 다시 볼 수 있다.
+    System.Collections.IEnumerator CoShowEnding()
+    {
+        yield return new UnityEngine.WaitForSecondsRealtime(1f);
+        while (Managers.UI.GetPopupCount() > 0)
+            yield return new UnityEngine.WaitForSecondsRealtime(0.5f);
+
+        Managers.Game.EndingSeen = true;
+        Managers.UI.ShowPopupUI<UI_CreditsPopup>()?.ShowAsEnding();
     }
 
     void RollbackTo(int questId)

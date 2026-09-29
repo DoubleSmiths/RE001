@@ -20,9 +20,7 @@ public class DataTransformer : EditorWindow
     public static void DeleteGameData()
     {
         PlayerPrefs.DeleteAll();
-        string path = Application.persistentDataPath + "/SaveData.json";
-        if (File.Exists(path))
-            File.Delete(path);
+        GameManager.DeleteSaveFiles();   // 본 파일만 지우면 .bak 에서 복구된다
     }
 
 
@@ -777,6 +775,9 @@ public class DataTransformer : EditorWindow
         ParseEquipEnhanceDataSheet(ReadXlsx($"{baseDir}/EquipEnhanceData.xlsx"));
         ParseForgeRecipeDataSheet(ReadXlsx($"{baseDir}/ForgeRecipeData.xlsx"));
         ParseShopItemDataSheet   (ReadXlsx($"{baseDir}/ShopItemData.xlsx"));
+        ParseBalanceConfigSheet  (ReadXlsx($"{baseDir}/BalanceConfig.xlsx"));
+        ParseMissionDataSheet    (ReadXlsx($"{baseDir}/MissionData.xlsx"));
+        ParseProductDataSheet    (ReadXlsx($"{baseDir}/ProductData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
@@ -931,6 +932,67 @@ public class DataTransformer : EditorWindow
         WriteJsonStr("ShopItemData", loader);
     }
 
+    // v2 미션·출석 / 인앱 상품 (_tools/gen_missions.py 가 만든 표, ADR0030)
+    static void ParseMissionDataSheet(List<List<string>> rows)
+    {
+        var loader = new MissionDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.missions.Add(new MissionData
+            {
+                DataId      = ConvertValue<int>(C(row, 0)),
+                Kind        = C(row, 1),
+                Order       = ConvertValue<int>(C(row, 2)),
+                Event       = C(row, 3),
+                Goal        = ConvertValue<int>(C(row, 4)),
+                RewardType  = C(row, 5),
+                RewardValue = ConvertValue<int>(C(row, 6)),
+                TitleKey    = C(row, 7),
+            });
+        }
+        WriteJsonStr("MissionData", loader);
+    }
+
+    static void ParseProductDataSheet(List<List<string>> rows)
+    {
+        var loader = new ProductDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.products.Add(new ProductData
+            {
+                DataId     = ConvertValue<int>(C(row, 0)),
+                ProductKey = C(row, 1),
+                Kind       = C(row, 2),
+                PriceKRW   = ConvertValue<int>(C(row, 3)),
+                Crystal    = ConvertValue<int>(C(row, 4)),
+                Mandrake   = ConvertValue<int>(C(row, 5)),
+                NameKey    = C(row, 6),
+            });
+        }
+        WriteJsonStr("ProductData", loader);
+    }
+
+    static void ParseBalanceConfigSheet(List<List<string>> rows)
+    {
+        var loader = new BalanceConfigLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.items.Add(new BalanceConfigData
+            {
+                Key   = C(row, 0),
+                Value = ConvertValue<float>(C(row, 1)),
+                Desc  = C(row, 2),
+            });
+        }
+        WriteJsonStr("BalanceConfig", loader);
+    }
+
     static void ParseMinMonDataSheet(List<List<string>> rows)
     {
         var loader = new MinMonDataLoader();
@@ -953,6 +1015,8 @@ public class DataTransformer : EditorWindow
             d.CritGrade     = ConvertValue<MinMonGrade>(C(row, 11));
             d.MaxTameCount  = ConvertValue<int>(C(row, 12));
             d.CatchChance   = ConvertValue<float>(C(row, 13));
+            d.FirstInterestKillCount = ConvertValue<int>(C(row, 14));
+            d.FirstCatchChance = ConvertValue<float>(C(row, 15));
             loader.minMons.Add(d);
         }
         WriteJsonStr("MinMonData", loader);

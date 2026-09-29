@@ -44,11 +44,9 @@ public static class QuestVerifyMenu
     [MenuItem("Test/Quest Verify/A. Reset & Re-init (세이브 삭제) %#r", false, 0)]
     static void ResetAndReinit()
     {
-        string path = Application.persistentDataPath + "/SaveData.json";
-        if (File.Exists(path)) File.Delete(path);
-        PlayerPrefs.SetInt("ISFIRST", 1);
-        PlayerPrefs.Save();
-        Debug.Log($"[QuestVerify] 세이브 삭제 + ISFIRST=1.\n" +
+        string path = GameManager.SavePath;
+        GameManager.DeleteSaveFiles();   // 본 파일만 지우면 .bak 에서 복구된다
+        Debug.Log($"[QuestVerify] 세이브 삭제.\n" +
                   $"  PATH: {path}\n" +
                   $"  ⚠ PlayMode를 ▶ Stop → ▶ Play 다시 누르면 첫 실행 상태로 재진입합니다.");
     }

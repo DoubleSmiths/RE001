@@ -419,6 +419,9 @@ namespace Data
         public MinMonGrade CritGrade;
         public int MaxTameCount;
         public float CatchChance;
+        // 첫 동행 체험까지의 대기만 제한한다. 0이면 기존 확률을 사용한다.
+        public int FirstInterestKillCount;
+        public float FirstCatchChance;
     }
 
     [Serializable]
@@ -460,6 +463,81 @@ namespace Data
             var dict = new Dictionary<int, ForgeRecipeData>();
             foreach (var item in recipes)
                 dict.Add(item.DataId, item);
+            return dict;
+        }
+    }
+    #endregion
+
+    #region BalanceConfig
+    // v2 밸런스 스칼라 값(키·값). 코드에 수치를 박지 않고 여기서 읽는다 — 키는 Define.BalanceKey (ADR0030).
+    [Serializable]
+    public class BalanceConfigData
+    {
+        public string Key;
+        public float  Value;
+        public string Desc;
+    }
+
+    [Serializable]
+    public class BalanceConfigLoader : ILoader<string, BalanceConfigData>
+    {
+        public List<BalanceConfigData> items = new List<BalanceConfigData>();
+        public Dictionary<string, BalanceConfigData> MakeDict()
+        {
+            var dict = new Dictionary<string, BalanceConfigData>();
+            foreach (var d in items)
+                if (!string.IsNullOrEmpty(d.Key)) dict[d.Key] = d;
+            return dict;
+        }
+    }
+    #endregion
+
+    #region MissionData / ProductData (v2 미션·출석·인앱 상품 — _tools/gen_missions.py, ADR0030)
+    [Serializable]
+    public class MissionData
+    {
+        public int    DataId;
+        public string Kind;          // Daily / Weekly / Guide / Attendance
+        public int    Order;
+        public string Event;         // Define.MissionEvent 이름
+        public int    Goal;
+        public string RewardType;    // Crystal / Mandrake / Gold
+        public int    RewardValue;
+        public string TitleKey;      // {0} = Goal
+    }
+
+    [Serializable]
+    public class MissionDataLoader : ILoader<int, MissionData>
+    {
+        public List<MissionData> missions = new List<MissionData>();
+        public Dictionary<int, MissionData> MakeDict()
+        {
+            var dict = new Dictionary<int, MissionData>();
+            foreach (var m in missions) dict[m.DataId] = m;
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class ProductData
+    {
+        public int    DataId;
+        public string ProductKey;    // 스토어 상품 ID
+        public string Kind;          // Pack / StepUp / Monthly / AdFree / Crystal
+        public int    PriceKRW;
+        public int    Crystal;
+        public int    Mandrake;
+        public string NameKey;
+    }
+
+    [Serializable]
+    public class ProductDataLoader : ILoader<int, ProductData>
+    {
+        public List<ProductData> products = new List<ProductData>();
+        public Dictionary<int, ProductData> MakeDict()
+        {
+            var dict = new Dictionary<int, ProductData>();
+            foreach (var p in products) dict[p.DataId] = p;
             return dict;
         }
     }

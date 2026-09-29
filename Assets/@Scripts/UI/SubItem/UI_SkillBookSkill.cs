@@ -129,10 +129,12 @@ public class UI_SkillBookSkill : UI_Base
 
         // 슬41: 재능/기억중이면 상단에 "기억중" 배지 표시 / 아니면 끔. 배지 배경 컨테이너(Img_SkillBookSkill_0_03)째 토글.
         //  (기억하기 시 active=true로 켜지고, 망각 시 RefreshUI→SetInfo 재실행으로 꺼짐)
-        Show(Images.Img_SkillBookSkill_0_03, active);
-        Show(Images.Img_MemorizedIcon_01, active);
-        ShowText(Texts.Txt_MemorizedIcon_18, active);
-        if (active)
+        bool showMemoryBadge = active && (!Managers.Ability.IsCompanionGranted(abilityId)
+            || Managers.Game.EquippedAbilities.Contains(abilityId));
+        Show(Images.Img_SkillBookSkill_0_03, showMemoryBadge);
+        Show(Images.Img_MemorizedIcon_01, showMemoryBadge);
+        ShowText(Texts.Txt_MemorizedIcon_18, showMemoryBadge);
+        if (showMemoryBadge)
         {
             var memTxt = GetText((int)Texts.Txt_MemorizedIcon_18);
             if (memTxt != null)

@@ -46,6 +46,7 @@ public class SoundManager
         foreach (AudioSource audioSource in _audioSources)
             audioSource.Stop();
         _audioClips.Clear();
+        _currentBgmKey = null;   // 멈춘 곡을 '재생 중'으로 기억하면 다음 씬의 같은 곡 요청이 무시된다
     }
 
     public void Play(Define.Sound type)
@@ -153,6 +154,23 @@ public class SoundManager
 
         DOTween.To(() => src.volume, v => src.volume = v, BGM_VOLUME, BGM_FADE_IN)
                .SetTarget(src).SetUpdate(true);
+    }
+
+    // 설정에서 배경음을 켜고 끌 때 재생 중인 곡에 바로 반영한다.
+    //  (예전엔 켜짐 여부를 곡을 **새로 틀 때만** 봐서, 끄기를 눌러도 지금 곡이 계속 나오고
+    //   다시 켜도 다음 지역 이동 전까지 조용했다)
+    public void ApplyBgmEnabled(bool on)
+    {
+        AudioSource bgm = _audioSources[(int)Define.Sound.Bgm];
+        AudioSource sub = _audioSources[(int)Define.Sound.SubBgm];
+        if (!on)
+        {
+            if (bgm != null) { DOTween.Kill(bgm); bgm.Stop(); }
+            if (sub != null) sub.Stop();
+            return;
+        }
+        if (bgm != null && bgm.clip != null && !bgm.isPlaying) StartBgmFadeIn(bgm, bgm.clip);
+        if (sub != null && sub.clip != null && !sub.isPlaying) sub.Play();
     }
 
     // 임시 BGM(잡기 등) — 현재 곡을 저장하고 새 곡 재생. PopBgm으로 원래 곡 복귀.

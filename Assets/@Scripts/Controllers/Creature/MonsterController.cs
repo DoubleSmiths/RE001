@@ -11,11 +11,23 @@ public class MonsterController : CreatureController
 
     // 슬라이드 49: 전투 드롭 통지 (dataId, count) — AddItem 와 별도로 UI 리스트 용.
     public static event System.Action<int, int> OnItemDropped;
+    // v2 공격 예고('!')가 떴다 — UI_GuardInput 이 처음 한 번 막기 도움말을 띄운다(ADR0030).
+    public static event System.Action OnAttackTelegraph;
 
     Data.CreatureData _data;
     PlayerController  _target;
     bool _hasEngaged;
     public bool HasEngaged => _hasEngaged;
+
+    // 처치 보상 — 데이터 값으로 시작하고, 스테이지 보스는 MakeStageBoss 가 덮어쓴다.
+    float _rewardExp;
+    int   _rewardGold;
+
+    // v2 스테이지 보스(ADR0030)
+    public bool IsStageBoss { get; private set; }
+    public event System.Action OnDied;   // 실제로 쓰러졌을 때만(귀환·보스 퇴각으로 치워질 때는 아님)
+    bool _retreating;
+    const float RETREAT_FADE = 0.6f;
 
     public override bool Init()
     {
@@ -48,6 +60,8 @@ public class MonsterController : CreatureController
         DamageFontYOffset  = _data.DamageFontYOffset;
         if (System.Enum.TryParse(_data.Rarity, true, out CreatureRarity r))
             Rarity = r;
+        _rewardExp  = _data.TotalExp;
+        _rewardGold = _data.RewardGold;
 
         // 범용 몬스터 프리팹: 데이터(AnimController)로 외형/애니 런타임 교체.
         //  비어있으면 프리팹 기본 컨트롤러 유지(슬라임). CompanionController.ApplyPetAnimator와 동일 패턴.
@@ -69,9 +83,61 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     const float GROUND_SCROLL_SPEED = 5f;   // 슬라이드 58 — Ground Layer Speed = 5
 
+    // 스테이지 보스 능력치 — ObjectManager.SpawnStageBoss 가 노드 몬스터의 출현 가중 평균으로 채운다.
+    public struct StageBossStats
+    {
+        public float MaxHp, PhysicalAtk, MagicAtk, Def;
+        public float CritRate, CritDamage, Accuracy, Evasion, PhysicalResist, MagicResist, DmgAmp, AttackDelay;
+        public float Scale, RewardExp;
+        public int   RewardGold;
+    }
+
+    // 능력치·보상·크기를 보스로 바꾼다(모습·효과음·애니메이터만 원래 몬스터 것). 몬스터는 풀링하지 않아 되돌릴 필요가 없다.
+    public void MakeStageBoss(StageBossStats s)
+    {
+        IsStageBoss        = true;
+        MaxHp              = s.MaxHp;
+        Hp                 = s.MaxHp;
+        PhysicalAtk        = s.PhysicalAtk;
+        MagicAtk           = s.MagicAtk;
+        Def                = s.Def;
+        CritRate           = s.CritRate;
+        CritDamage         = s.CritDamage;
+        Accuracy           = s.Accuracy;
+        Evasion            = s.Evasion;
+        PhysicalResist     = s.PhysicalResist;
+        MagicResist        = s.MagicResist;
+        DmgAmp             = s.DmgAmp;
+        MonsterAttackDelay = s.AttackDelay;
+        Rarity             = CreatureRarity.Boss;   // HP 바가 우두머리 모양(색·크기·재질)이 된다
+        _rewardExp         = s.RewardExp;
+        _rewardGold        = s.RewardGold;
+        transform.localScale *= s.Scale;
+        DamageFontYOffset    *= s.Scale;
+        gameObject.AddComponent<BossOutline>();
+    }
+
+    // 제한 시간 초과 — 싸움을 멈추고 흐려지며 사라진다(보상 없음). 교전이 풀려 플레이어는 다시 달린다.
+    public void Retreat()
+    {
+        if (State == Define.State.Dead || _retreating) return;
+        _retreating = true;
+        _hasEngaged = false;
+        StopAllCoroutines();
+        foreach (var col in GetComponents<Collider2D>()) col.enabled = false;
+        _rb.linearVelocity = Vector2.zero;
+        State = Define.State.Idle;
+        if (_sprite != null)
+        {
+            _sprite.DOKill();   // 피격 색 트윈이 알파를 1로 되돌리지 않게
+            _sprite.DOFade(0f, RETREAT_FADE).SetLink(gameObject);   // 금빛 테두리도 본체 알파를 따라간다
+        }
+        StartCoroutine(CoDestroyAfterDie(RETREAT_FADE));
+    }
+
     void FixedUpdate()
     {
-        if (State == Define.State.Dead) return;
+        if (State == Define.State.Dead || _retreating) return;
         if (_target == null) return;
 
         // 플레이어 쪽을 보게 한다. FlipToward는 만들어만 두고 아무 데서도 부르지 않아서
@@ -113,12 +179,29 @@ public class MonsterController : CreatureController
             State = Define.State.Moving;
     }
 
+    // ── v2 공격 예고·기절 (ADR0030) ──
+    //  타격이 닿기 ATTACK_TELEGRAPH 초 전에 머리 위 '!' — 예전엔 공격 모션 0.25초 만에 맞아 반응할 수 없었다.
+    //  공격 주기는 그대로 두고, 모션보다 앞선 몫(예고 − 모션 앞부분)만큼 먼저 띄운다.
+    bool  _telegraphed;
+    float _stunnedUntil = -999f;
+    public bool IsStunned => Time.time < _stunnedUntil;
+    float TelegraphLead => Mathf.Max(0f, Managers.Data.Balance(BalanceKey.ATTACK_TELEGRAPH, 0.6f) - ATTACK_HIT_DELAY);
+
     void TryAttack()
     {
         // 슬라이드 67 — Player 사망 시 monster는 Idle 고정. Dead target에는 공격 중단.
         if (_target == null || _target.State == Define.State.Dead) return;
+        if (IsStunned) return;   // 패링당해 비틀거리는 중
         // 슬라이드 53: 몬스터 공격속도는 Attack Anim 재생 전 대기 시간(MonsterAttackDelay)에 영향
-        if (Time.time < _lastAtkTime + MonsterAttackDelay) return;
+        float attackAt = _lastAtkTime + MonsterAttackDelay;
+        if (!_telegraphed && Time.time >= attackAt - TelegraphLead)
+        {
+            _telegraphed = true;
+            PlayEmoj("Emoj_Exclamation", TelegraphLead + ATTACK_HIT_DELAY, EMOJ_ABOVE_DAMAGE);
+            OnAttackTelegraph?.Invoke();
+        }
+        if (Time.time < attackAt) return;
+        _telegraphed = false;
         _lastAtkTime = Time.time;
         State = Define.State.Attack;
         _rb.linearVelocity = Vector2.zero;
@@ -173,8 +256,36 @@ public class MonsterController : CreatureController
         _attackHitDone = true;
 
         Managers.Sound?.PlaySFX(_data != null ? _data.AttackSfx : "Slime_Attack");   // 몬스터 공격 (데이터 드리븐)
+
+        // v2 가드(ADR0030): 플레이어가 막는 중이면 패링(피해 0·기절·반격) 또는 막기(피해 감소).
+        var guard = _target.ResolveGuard();
+        if (guard == PlayerController.GuardResult.Parry)
+        {
+            Stun(Managers.Data.Balance(BalanceKey.PARRY_STUN, 1.5f));
+            _target.ParryCounter(this);
+            return;
+        }
         BattleMath.DamageResult result = BattleMath.Resolve(this, _target, AttackType.Physical);
+        if (guard == PlayerController.GuardResult.Block && result.Hit)
+            result.FinalDamage = Mathf.Max(1, Mathf.RoundToInt(result.FinalDamage * Managers.Data.Balance(BalanceKey.BLOCK_DAMAGE_MULT, 0.4f)));
         _target.TakeHit(result, this);
+    }
+
+    // 패링당함 — 그 자리에 굳어(애니메이터 정지) 식은땀을 흘리고, 풀린 뒤에야 다음 공격 주기를 센다.
+    void Stun(float seconds)
+    {
+        _stunnedUntil = Time.time + seconds;
+        _lastAtkTime  = _stunnedUntil;
+        _telegraphed  = false;
+        if (_anim != null) _anim.speed = 0f;
+        PlayEmoj("Emoj_Sweat", seconds, EMOJ_ABOVE_DAMAGE);
+        StartCoroutine(CoEndStun(seconds));
+    }
+
+    IEnumerator CoEndStun(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if (_anim != null) _anim.speed = 1f;
     }
 
     // ────────────────────────────────────────
@@ -182,6 +293,9 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     public override void TakeHit(BattleMath.DamageResult result, CreatureController attacker = null)
     {
+        if (_retreating) return;   // 물러나는 보스를 동행 미니몬이 마저 잡아 보상이 나가지 않게
+        if (IsStunned && result.Hit)   // 기절한 적은 더 아프게 맞는다(패링 보상)
+            result.FinalDamage = Mathf.RoundToInt(result.FinalDamage * Managers.Data.Balance(BalanceKey.STUN_DAMAGE_TAKEN_MULT, 1.5f));
         base.TakeHit(result, attacker);
         OnHpChanged?.Invoke(Hp, MaxHp);
     }
@@ -232,6 +346,7 @@ public class MonsterController : CreatureController
     //   5. Die clip 종료 후 풀 반환
     protected override void OnDead()
     {
+        if (_anim != null) _anim.speed = 1f;   // 기절(애니메이터 정지) 중에 쓰러져도 사망 모션은 재생한다
         base.OnDead();
         Managers.Sound?.PlaySFX(_data != null ? _data.DieSfx : "Slime_Die");   // 몬스터 사망 (데이터 드리븐, 슬167)
         _rb.linearVelocity = Vector2.zero;
@@ -239,8 +354,23 @@ public class MonsterController : CreatureController
         // 보상
         if (_target != null)
         {
-            if (_data != null) Managers.Game.Gold += _data.RewardGold;
-            _target.GainExp(_data?.TotalExp ?? 0f);
+            // v2 핫타임(골드·경험치 2배)은 처치 보상에만 곱한다
+            if (_data != null) Managers.Game.Gold += Mathf.RoundToInt(_rewardGold * (Managers.Shop?.GoldMult ?? 1f));
+            _target.GainExp(_rewardExp * (Managers.Shop?.ExpMult ?? 1f));
+        }
+        OnDied?.Invoke();
+        Managers.Mission?.Notify(MissionEvent.KillMonster);
+
+        // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
+        // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.
+        Managers.Game.AddClassProficiency(1);
+
+        // v2 스테이지 보스는 외형만 빌린 '스테이지 수호자'다 — 그 종의 드롭·도감 기록·관심(포획) 판정은 하지 않는다.
+        //  (우두머리 외형은 드롭 확정·관심 40%라, 보스마다 돌리면 포획·재료 경제가 몰래 몇 배로 바뀌었다)
+        if (IsStageBoss)
+        {
+            StartCoroutine(CoDestroyAfterDie(Mathf.Max(0.5f, ClipLength("Die", 0.5f) + 0.1f)));
+            return;
         }
 
         // 아이템 드롭
@@ -252,10 +382,6 @@ public class MonsterController : CreatureController
 
         // 슬9: 사냥 성공 시 Kill Count 증가 (기록도/분석률 = KillCount/MaxKillCount)
         Managers.MinMon.AddKill(DataId);
-
-        // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
-        // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.
-        Managers.Game.AddClassProficiency(1);
 
         // 슬23~25: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장 + Side UI 알림
         if (_data != null)
@@ -285,18 +411,22 @@ public class MonsterController : CreatureController
     }
 
     // 슬24: 관심을 보였을 때 몬스터 머리 위에 Emoj_Shy 재생.
-    //  Emoj.controller 클립이 SpriteRenderer.m_Sprite를 구동(슬16 idle와 동일) → 월드 SpriteRenderer로 생성.
     //  몬스터는 0.5초 뒤 풀 반환되므로 부모로 두지 않고 독립 오브젝트로 두어 1.2초간 자체 재생 후 파괴.
-    void PlayShyEmoj()
+    void PlayShyEmoj() => PlayEmoj("Emoj_Shy", 1.2f);
+
+    // 머리 위 이모지(Emoj.controller 의 상태 이름) — 관심(Shy)·공격 예고(Exclamation)·기절(Sweat).
+    //  Emoj 클립이 SpriteRenderer.m_Sprite 를 구동(슬16 idle와 동일) → 월드 SpriteRenderer로 생성.
+    //  높이는 데미지 글자와 같은 머리 위(DamageFontYOffset) — 스프라이트 캔버스 위쪽 빈칸 때문에 bounds 로 재면 너무 뜬다.
+    const float EMOJ_ABOVE_DAMAGE = 0.8f;   // 예고·기절은 데미지 숫자가 뜨는 자리보다 위에 — 숫자에 가려졌다
+
+    void PlayEmoj(string state, float seconds, float raise = 0f)
     {
         var ctrl = Managers.Resource.Load<RuntimeAnimatorController>("Emoj");
         if (ctrl == null) return;
 
         var sr = GetComponent<SpriteRenderer>();
-        float headY = sr != null ? sr.bounds.max.y + 0.4f : transform.position.y + 1f;
-
-        var go = new GameObject("Emoj_Shy_FX");
-        go.transform.position = new Vector3(transform.position.x, headY, transform.position.z);
+        var go = new GameObject(state + "_FX");
+        go.transform.position = transform.position + Vector3.up * (DamageFontYOffset + raise);
         go.transform.localScale = Vector3.one;
 
         var esr = go.AddComponent<SpriteRenderer>();
@@ -305,9 +435,9 @@ public class MonsterController : CreatureController
         var an = go.AddComponent<Animator>();
         an.runtimeAnimatorController = ctrl;
         an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-        an.Play("Emoj_Shy", 0, 0f);
+        an.Play(state, 0, 0f);
 
-        Destroy(go, 1.2f);
+        Destroy(go, seconds);
     }
 
     // ────────────────────────────────────────

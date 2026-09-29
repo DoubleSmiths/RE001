@@ -452,6 +452,6 @@ public class UI_ForgePopup : UI_Popup
                 if (anim.id == "xButtonClick") anim.DORestart();
 
         // 대상 지정 닫기 — 지연 중 다른 팝업이 push돼도 엉뚱한 top이 닫히지 않게 (UIManager는 top 불일치 시 no-op)
-        DOVirtual.DelayedCall(0.2f, () => Managers.UI.ClosePopupUI(this), ignoreTimeScale: true);
+        DOVirtual.DelayedCall(0.2f, () => Managers.UI.ClosePopupUI(this), ignoreTimeScale: true).SetTarget(this).SetLink(gameObject);
     }
 }

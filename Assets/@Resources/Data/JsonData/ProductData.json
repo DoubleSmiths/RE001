@@ -1,0 +1,112 @@
+﻿{
+  "products": [
+    {
+      "DataId": 5001,
+      "ProductKey": "starter_pack",
+      "Kind": "Pack",
+      "PriceKRW": 1100,
+      "Crystal": 300,
+      "Mandrake": 5,
+      "NameKey": "ProductStarterText"
+    },
+    {
+      "DataId": 5002,
+      "ProductKey": "stepup_1",
+      "Kind": "StepUp",
+      "PriceKRW": 1100,
+      "Crystal": 150,
+      "Mandrake": 0,
+      "NameKey": "ProductStepUp1Text"
+    },
+    {
+      "DataId": 5003,
+      "ProductKey": "stepup_2",
+      "Kind": "StepUp",
+      "PriceKRW": 3300,
+      "Crystal": 450,
+      "Mandrake": 0,
+      "NameKey": "ProductStepUp2Text"
+    },
+    {
+      "DataId": 5004,
+      "ProductKey": "stepup_3",
+      "Kind": "StepUp",
+      "PriceKRW": 5500,
+      "Crystal": 800,
+      "Mandrake": 0,
+      "NameKey": "ProductStepUp3Text"
+    },
+    {
+      "DataId": 5005,
+      "ProductKey": "monthly_pass",
+      "Kind": "Monthly",
+      "PriceKRW": 5500,
+      "Crystal": 300,
+      "Mandrake": 0,
+      "NameKey": "ProductMonthlyText"
+    },
+    {
+      "DataId": 5006,
+      "ProductKey": "ad_free",
+      "Kind": "AdFree",
+      "PriceKRW": 9900,
+      "Crystal": 0,
+      "Mandrake": 0,
+      "NameKey": "ProductAdFreeText"
+    },
+    {
+      "DataId": 5101,
+      "ProductKey": "crystal_60",
+      "Kind": "Crystal",
+      "PriceKRW": 1100,
+      "Crystal": 60,
+      "Mandrake": 0,
+      "NameKey": "ProductCrystalFormat"
+    },
+    {
+      "DataId": 5102,
+      "ProductKey": "crystal_330",
+      "Kind": "Crystal",
+      "PriceKRW": 5500,
+      "Crystal": 330,
+      "Mandrake": 0,
+      "NameKey": "ProductCrystalFormat"
+    },
+    {
+      "DataId": 5103,
+      "ProductKey": "crystal_700",
+      "Kind": "Crystal",
+      "PriceKRW": 11000,
+      "Crystal": 700,
+      "Mandrake": 0,
+      "NameKey": "ProductCrystalFormat"
+    },
+    {
+      "DataId": 5104,
+      "ProductKey": "crystal_2200",
+      "Kind": "Crystal",
+      "PriceKRW": 33000,
+      "Crystal": 2200,
+      "Mandrake": 0,
+      "NameKey": "ProductCrystalFormat"
+    },
+    {
+      "DataId": 5105,
+      "ProductKey": "crystal_3800",
+      "Kind": "Crystal",
+      "PriceKRW": 55000,
+      "Crystal": 3800,
+      "Mandrake": 0,
+      "NameKey": "ProductCrystalFormat"
+    },
+    {
+      "DataId": 5106,
+      "ProductKey": "crystal_8000",
+      "Kind": "Crystal",
+      "PriceKRW": 110000,
+      "Crystal": 8000,
+      "Mandrake": 0,
+      "NameKey": "ProductCrystalFormat"
+    }
+  ]
+}

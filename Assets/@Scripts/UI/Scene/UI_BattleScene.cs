@@ -59,8 +59,10 @@ public class UI_BattleScene : UI_Scene
         return true;
     }
 
-    void OnDestroy()
+    // override 가 아니면 UI_Base 정리(트윈 종료·폰트 구독 해제)를 가려 건너뛴다.
+    public override void OnDestroy()
     {
+        base.OnDestroy();
         if (Managers.Game != null)
             Managers.Game.OnResourceChanged -= RefreshCurrency;
     }

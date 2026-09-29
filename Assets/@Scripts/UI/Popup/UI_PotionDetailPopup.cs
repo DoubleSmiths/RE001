@@ -191,6 +191,7 @@ public class UI_PotionDetailPopup : UI_Popup
     Image _bg;
     Image _potionImg;
     TMP_Text _nameText;
+    float _nameFontSize;
     TMP_Text _rankText, _nextRankText;
     TMP_Text _flatHeal, _flatHealN;
     TMP_Text _pHeal, _pHealN;
@@ -256,6 +257,7 @@ public class UI_PotionDetailPopup : UI_Popup
         // 물약 이미지 & 헤더
         _potionImg    = GetImage((int)Images.PotionDetailPopupPotionImg);
         _nameText     = GetText((int)Texts.PotionDetailPopupPotionName);
+        _nameFontSize = _nameText.fontSize;
         _rankText     = GetText((int)Texts.RankText);
         _nextRankText = GetText((int)Texts.NextLevel_RankText);
 
@@ -295,6 +297,12 @@ public class UI_PotionDetailPopup : UI_Popup
         _nextLvlBtn    = GetButton((int)Buttons.NextLvlBtn)?.gameObject;
         _backBtn       = GetButton((int)Buttons.BackBtn)?.gameObject;
         _nextLvlBtnLabel = GetText((int)Texts.Txt_NextLvlBtn_05);
+
+        // 프리팹에 박힌 한국어 라벨(획득처 '연금공방' / [물약개선] / [제작]) — 영어에서도 그대로 나왔다
+        void SetLabel(TMP_Text t, string key) { if (t == null) return; t.text = Localize(key); ApplyFont(t, FontType.UI); }
+        SetLabel(GetText((int)Texts.WhereToFindTxt), LocalizeKey.AlchemyText);
+        SetLabel(GetText((int)Texts.Txt_CraftBtn_06), LocalizeKey.CraftText);
+        SetLabel(_nextLvlBtnLabel, "PotionUpgradeText");
 
         // ReqItemBox1_1 ~ 5 및 아이콘 캐시
         var list     = new List<RectTransform>();
@@ -477,6 +485,19 @@ public class UI_PotionDetailPopup : UI_Popup
         return Managers.Game.Language == Define.Language.Korean ? entry.Kor : entry.Eng;
     }
 
+    // 영문 이름(최대 20자, BUDGET RECOV. POTION)이 이름판 마스크(폭 80)를 넘어 양 끝 글자가 잘렸다.
+    //  판 폭에 맞춰 글자를 줄인다. 매번 원래 크기에서 다시 재서 단계 미리보기를 오가도 계속 작아지지 않는다.
+    const float NAME_PADDING = 4f;
+
+    void SetName(string name)
+    {
+        _nameText.text = name;
+        _nameText.fontSize = _nameFontSize;
+        float max = ((RectTransform)_nameText.transform.parent).rect.width - NAME_PADDING;
+        float w = _nameText.GetPreferredValues(name).x;
+        if (w > max) _nameText.fontSize = _nameFontSize * max / w;
+    }
+
     void ApplyData(PotionView data)
     {
         // 종류에 맞춰 텍스트 그룹 전환
@@ -484,8 +505,8 @@ public class UI_PotionDetailPopup : UI_Popup
         _hpTextsGroup.SetActive(isHP);
         _spdTextsGroup.SetActive(!isHP);
 
-        _nameText.text = Localize(data.Name);
-        _rankText.text = $"{data.Step}{Localize(LocalizeKey.RankText)}";
+        SetName(Localize(data.Name));
+        _rankText.text = string.Format(Localize("RankFormat"), data.Step);   // 한 '1단계' / 영 'RANK 1'
         _rankText.color = Color.white;
 
         // 현재 단계에 맞춰 Gauge 채우기 (S37 스펙) — 미리보기 아니므로 초록 없음
@@ -687,7 +708,7 @@ public class UI_PotionDetailPopup : UI_Popup
             _backBtn?.SetActive(false);
             _maxLvlTxt?.gameObject.SetActive(false);
             _descText.gameObject.SetActive(true);
-            if (_switchBtnLabel != null) _switchBtnLabel.text = Localize(LocalizeKey.ItemNeededText);
+            if (_switchBtnLabel != null) _switchBtnLabel.text = Localize("SwitchToItemsText");   // 버튼 폭 30 — 'REQ. ITEMS' 는 넘쳤다
         }
         else
         {
@@ -755,8 +776,8 @@ public class UI_PotionDetailPopup : UI_Popup
         if (curr == null) return;
 
         // 이름/단계/아이콘은 다음 값으로 교체. 단, 변경부 하이라이트 및 점멸 적용.
-        _nameText.text = Localize(next.Name);
-        _rankText.text = $"{next.Step}{Localize(LocalizeKey.RankText)}";
+        SetName(Localize(next.Name));
+        _rankText.text = string.Format(Localize("RankFormat"), next.Step);
         _rankText.color = next.Grade != curr.Grade
             ? new Color32(0x00, 0xFF, 0x00, 0xFF)
             : Color.white;
@@ -837,7 +858,7 @@ public class UI_PotionDetailPopup : UI_Popup
     void StartBlink()
     {
         StopBlink();
-        _blinkSeq = DOTween.Sequence().SetUpdate(true).SetLoops(-1);
+        _blinkSeq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true).SetLoops(-1);
         // 이름/단계/능력치 라벨 알파 점멸 (OutSine 0.5s in / 0.5s out)
         var targets = BlinkTargets();
         foreach (var t in targets)
@@ -882,7 +903,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         _craftBusy = true;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(_myFrameRT.DOShakeAnchorPos(1.1f, strength: new Vector3(1.5f, 0f, 0f), vibrato: 21, randomness: 0f).SetEase(Ease.OutQuad));
         seq.AppendCallback(() => { SpawnCraftFX(); SpawnCraftFlash(); Managers.Sound?.PlaySFX("SFX_PotionUpgrade"); });   // S40: FX + 흰 플래시 + 제작음
         seq.Append(_myFrameRT.DOPunchScale(new Vector3(0.2f, 0.2f, 1f), 0.3f, vibrato: 4, elasticity: 1f).SetEase(Ease.OutQuad));
@@ -942,7 +963,7 @@ public class UI_PotionDetailPopup : UI_Popup
         img.color = new Color(1f, 1f, 1f, 0f);
 
         // 0 → 0.85 빠르게(0.08s) → 0 페이드(0.3s)
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(img.DOFade(0.85f, 0.08f).SetEase(Ease.OutQuad));
         seq.Append(img.DOFade(0f, 0.3f).SetEase(Ease.InQuad));
         seq.OnComplete(() => { if (go != null) Destroy(go); });
@@ -1007,7 +1028,7 @@ public class UI_PotionDetailPopup : UI_Popup
         StopBlink();
         _myFrameRT.DOKill();
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
         seq.Append(_myFrameRT.DOAnchorPos(_frameOrigin + new Vector2(0f, FRAME_FROM_Y), 0.3f).SetEase(Ease.InBack));
         seq.OnComplete(() => Managers.UI.ClosePopupUI());
     }

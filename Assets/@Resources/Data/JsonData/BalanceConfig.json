@@ -1,0 +1,199 @@
+﻿{
+  "items": [
+    {
+      "Key": "TRAIN_COST_BASE",
+      "Value": 10.0,
+      "Desc": "훈련 비용 = BASE + COEF × 단계^POW (골드)"
+    },
+    {
+      "Key": "TRAIN_COST_COEF",
+      "Value": 0.8,
+      "Desc": "훈련 비용 계수"
+    },
+    {
+      "Key": "TRAIN_COST_POW",
+      "Value": 1.65,
+      "Desc": "훈련 비용 지수"
+    },
+    {
+      "Key": "TRAIN_CAP_PER_LEVEL",
+      "Value": 2.0,
+      "Desc": "훈련 상한 = 플레이어 레벨 × 이 값"
+    },
+    {
+      "Key": "TRAIN_ATK_PCT",
+      "Value": 0.2,
+      "Desc": "공격력(물리·마법) % / 단계"
+    },
+    {
+      "Key": "TRAIN_HP_PCT",
+      "Value": 0.25,
+      "Desc": "최대 체력 % / 단계"
+    },
+    {
+      "Key": "TRAIN_DEF_PCT",
+      "Value": 0.15,
+      "Desc": "방어 % / 단계"
+    },
+    {
+      "Key": "TRAIN_CRITDMG_PCT",
+      "Value": 0.5,
+      "Desc": "치명 피해 %p / 단계"
+    },
+    {
+      "Key": "STAGE_KILLS_TO_BOSS",
+      "Value": 10.0,
+      "Desc": "보스 등장까지 처치 수"
+    },
+    {
+      "Key": "BOSS_HP_MULT",
+      "Value": 8.0,
+      "Desc": "보스 체력 배수(노드의 가장 강한 몬스터 기준)"
+    },
+    {
+      "Key": "BOSS_ATK_MULT",
+      "Value": 1.2,
+      "Desc": "보스 공격 = 노드 평균 × 이 값. 1.5 는 새 캐릭터가 1-1 첫 보스에 쓰러졌다(벽은 죽음이 아니라 30초 제한이어야 한다)"
+    },
+    {
+      "Key": "BOSS_DEF_MULT",
+      "Value": 1.2,
+      "Desc": "보스 방어 배수"
+    },
+    {
+      "Key": "BOSS_SCALE",
+      "Value": 1.35,
+      "Desc": "보스 크기 배수"
+    },
+    {
+      "Key": "BOSS_TIME_LIMIT",
+      "Value": 30.0,
+      "Desc": "보스 제한 시간(초)"
+    },
+    {
+      "Key": "BOSS_FIRST_CRYSTAL_BASE",
+      "Value": 20.0,
+      "Desc": "첫 돌파 크리스탈 = BASE + PER_FIELD × 필드 순번"
+    },
+    {
+      "Key": "BOSS_FIRST_CRYSTAL_PER_FIELD",
+      "Value": 2.0,
+      "Desc": "첫 돌파 크리스탈 필드당 가산"
+    },
+    {
+      "Key": "BOSS_REWARD_KILLS",
+      "Value": 10.0,
+      "Desc": "보스 처치 보상 = 일반 처치 N마리 몫의 경험치·골드(매번). 첫 돌파는 크리스탈을 더 준다"
+    },
+    {
+      "Key": "ATTACK_TELEGRAPH",
+      "Value": 0.6,
+      "Desc": "몬스터 공격 예고 표시(초, 공격 모션 시작 전)"
+    },
+    {
+      "Key": "GUARD_DURATION",
+      "Value": 0.45,
+      "Desc": "가드 한 번의 지속(초)"
+    },
+    {
+      "Key": "PARRY_WINDOW",
+      "Value": 0.2,
+      "Desc": "가드 시작 후 완벽 패링으로 치는 구간(초)"
+    },
+    {
+      "Key": "GUARD_COOLDOWN",
+      "Value": 1.0,
+      "Desc": "가드 재사용(초)"
+    },
+    {
+      "Key": "BLOCK_DAMAGE_MULT",
+      "Value": 0.4,
+      "Desc": "막기 성공 시 받는 피해 배수"
+    },
+    {
+      "Key": "PARRY_STUN",
+      "Value": 1.5,
+      "Desc": "완벽 패링 시 몬스터 기절(초)"
+    },
+    {
+      "Key": "STUN_DAMAGE_TAKEN_MULT",
+      "Value": 1.5,
+      "Desc": "기절한 몬스터가 받는 피해 배수"
+    },
+    {
+      "Key": "PARRY_COMBO_BONUS",
+      "Value": 3.0,
+      "Desc": "완벽 패링 시 콤보 가산"
+    },
+    {
+      "Key": "HOTTIME_MINUTES",
+      "Value": 30.0,
+      "Desc": "핫타임 한 번의 길이(분, 실제 시간)"
+    },
+    {
+      "Key": "HOTTIME_ADS_PER_DAY",
+      "Value": 3.0,
+      "Desc": "핫타임 종류별 광고로 켤 수 있는 하루 횟수"
+    },
+    {
+      "Key": "HOTTIME_CRYSTAL_COST",
+      "Value": 50.0,
+      "Desc": "핫타임을 크리스탈로 켤 때 값"
+    },
+    {
+      "Key": "HOT_GOLD_MULT",
+      "Value": 2.0,
+      "Desc": "골드 핫타임: 처치·방치 골드 배수"
+    },
+    {
+      "Key": "HOT_EXP_MULT",
+      "Value": 2.0,
+      "Desc": "경험치 핫타임: 처치·방치 경험치 배수"
+    },
+    {
+      "Key": "HOT_ATK_PCT",
+      "Value": 20.0,
+      "Desc": "전투 핫타임: 공격력 +%"
+    },
+    {
+      "Key": "FREE_CRYSTAL_AD",
+      "Value": 30.0,
+      "Desc": "광고 무료 크리스탈 양"
+    },
+    {
+      "Key": "FREE_CRYSTAL_ADS_PER_DAY",
+      "Value": 1.0,
+      "Desc": "무료 크리스탈 광고 하루 횟수"
+    },
+    {
+      "Key": "MANDRAKE_CRYSTAL_COST",
+      "Value": 50.0,
+      "Desc": "만드라고라 1개 값(크리스탈)"
+    },
+    {
+      "Key": "OFFLINE_AD_MULT",
+      "Value": 2.0,
+      "Desc": "오프라인 보상 광고 배수(받은 만큼 한 번 더 = 2)"
+    },
+    {
+      "Key": "MONTHLY_DAYS",
+      "Value": 30.0,
+      "Desc": "월정액 기간(일)"
+    },
+    {
+      "Key": "MONTHLY_DAILY_CRYSTAL",
+      "Value": 100.0,
+      "Desc": "월정액 매일 받는 크리스탈"
+    },
+    {
+      "Key": "MONTHLY_OFFLINE_BONUS_HOURS",
+      "Value": 4.0,
+      "Desc": "월정액 중 오프라인 정산 상한 추가 시간"
+    },
+    {
+      "Key": "CRYSTAL_FIRST_BUY_MULT",
+      "Value": 2.0,
+      "Desc": "크리스탈 상품 종류별 첫 구매 배수"
+    }
+  ]
+}

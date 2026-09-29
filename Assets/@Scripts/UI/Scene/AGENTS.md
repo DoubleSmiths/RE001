@@ -47,3 +47,5 @@
 - Unity UGUI (`UnityEngine.UI` — Image, Button, Slider, GraphicRaycaster), Addressables(ResourceManager 경유)
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+- `UI_AreaBtnGroup` 장소명·해금 연출은 그룹 수명에 연결한다. 해금 Tween의 정상 완료/중단 양쪽에서 입력 블로커와 EventSystem을 복원하며, 복원은 한 번만 실행해 완료 콜백이 시작한 후속 해금의 잠금을 보존한다.

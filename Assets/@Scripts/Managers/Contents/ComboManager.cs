@@ -135,7 +135,9 @@ public class ComboManager
         // 타이머 감소
         if (Combo <= 0 && CurrentTimer <= 0f) return;
 
-        CurrentTimer -= dt;
+        // 현재 채움량과 타격당 충전량은 유지하고 지속시간만 늘린다. 기억/망각 시 리필하지 않는다.
+        float keepBonus = Managers.Ability != null ? Managers.Ability.ComboKeepBonus : 0f;
+        CurrentTimer -= dt / (1f + keepBonus / Define.ABILITY_PERCENT_BASE);
         if (CurrentTimer <= 0f)
         {
             CurrentTimer = 0f;
@@ -156,6 +158,12 @@ public class ComboManager
 
     /// <summary>테스트/에디터용: 실제 플레이어 없이 수동 타격 시뮬레이션.</summary>
     public void SimulateHit(float damage) => HandleHit(damage);
+
+    /// <summary>v2 패링 보상(ADR0030) — 피해 없이 콤보 수만 올린다(단계·타이머는 실제 타격과 똑같이 오른다).</summary>
+    public void AddBonusHits(int hits)
+    {
+        for (int i = 0; i < hits; i++) HandleHit(0f);
+    }
 
     void HandleHit(float damage)
     {

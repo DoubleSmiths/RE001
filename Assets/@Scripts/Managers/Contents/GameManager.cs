@@ -14,6 +14,8 @@ public class InventoryItem
     public int DataId;
     public int Count;
     public bool isNew;
+    // 값은 isNew 필드가 저장한다. 프로퍼티까지 직렬화하면 로드 중에 세터(저장·이벤트)가 돌 수 있다.
+    [JsonIgnore]
     public bool IsNew
     {
         get => isNew;
@@ -50,6 +52,9 @@ public class Equipment
         }
     }
 
+    // ⚠️ 저장 금지 — 데이터표 행을 그대로 돌려주는 get-only 참조라, 저장하면 행 사본이 세이브에 남고
+    //  로드 때 Newtonsoft 가 그 사본을 **공유 EquipmentDic 객체에 덮어써** 밸런스 수정이 되돌아갔다.
+    [JsonIgnore]
     public Data.EquipmentData EquipmentData => Managers.Data.EquipmentDic.TryGetValue(DataId, out var d) ? d : null;
 }
 
@@ -67,12 +72,41 @@ public class MinMonSaveData
     public int CritGrade     = -1;
 }
 
+// v2 미션·출석(ADR0030) — MissionManager 가 읽고 쓴다. 일일·주간 진행과 받음 표시는 주기마다 비운다.
+[Serializable]
+public class MissionSaveData
+{
+    public int DailyKey;                                           // 마지막 일일 초기화 날짜(yyyyMMdd, 기기 현지 시각)
+    public int WeeklyKey;                                          // 마지막 주간 초기화 주의 월요일(yyyyMMdd)
+    public Dictionary<int, int> Progress = new Dictionary<int, int>();       // 일일·주간 미션 진행
+    public List<int> Claimed = new List<int>();                              // 받은 미션(가이드는 누적)
+    public Dictionary<string, int> Lifetime = new Dictionary<string, int>(); // 누적 이벤트 수(가이드 판정)
+    public int AttendanceIndex;                                    // 다음에 받을 출석 칸(0~6)
+    public int AttendanceKey;                                      // 마지막으로 출석 보상을 받은 날(yyyyMMdd)
+}
+
+// v2 상점·광고·월정액(ADR0030) — ShopManager 가 읽고 쓴다.
+[Serializable]
+public class ShopSaveData
+{
+    public long[] HotUntil = new long[3];                              // HotTime 별 끝 시각(UTC Ticks)
+    public int AdDayKey;                                               // 광고 횟수를 센 날(yyyyMMdd)
+    public Dictionary<string, int> AdViews = new Dictionary<string, int>();   // 자리별 오늘 본 횟수
+    public List<string> Purchased = new List<string>();                // 산 상품 ID(1회성·스텝업·첫 구매 2배 판정)
+    public long MonthlyUntil;                                          // 월정액 끝(UTC Ticks)
+    public int MonthlyClaimKey;                                        // 월정액 매일 보상을 받은 날
+    public bool AdFree;                                                // 광고 제거 — 광고 없이 즉시 보상
+}
+
 // ──────────────────────────────────────────────
 //  세이브 데이터
 // ──────────────────────────────────────────────
 [Serializable]
 public class GameData
 {
+    // 세이브 형식 버전 — 0 = 버전 필드 도입 전 세이브. 기록할 때 GameManager.SAVE_VERSION 으로 채운다.
+    public int SaveVersion = 0;
+
     // 기본
     public string PlayerName = "여행자";
     public int    AdventurerRank = 0;   // 슬7: 모험가 등급 0~99 (0=BLANK)
@@ -85,6 +119,20 @@ public class GameData
     public int    Mandrake    = 0;   // 슬31/37: [가랏! 만드라고라!] 확정 포획용 소비 아이템 보유 수
     // 캐릭터창 스탯 분배 누적치(영구). 0=STR(물공) 1=VIT(HP) 2=DEX(명중) 3=MAG(마공)
     public int[]  StatInvest  = new int[4];
+    // v2 훈련(골드 강화) 단계. 0=공격% 1=체력% 2=방어% 3=치명피해%p (ADR0030)
+    public int[]  TrainingLevels = new int[4];
+    // v2 스테이지·보스(ADR0030). 처치 수는 StageNodeId 노드의 것 — 다른 노드로 가면 0부터 센다.
+    //  돌파한 노드는 첫 돌파 크리스탈을 다시 주지 않는다. 보스에게 지면 자동 도전이 꺼진다(막대를 눌러 다시 켠다).
+    public int       StageNodeId;
+    public int       StageKillCount;
+    public List<int> ClearedStages = new List<int>();
+    public bool      BossAutoChallenge = true;
+    // v2 가드·패링 도움말을 이미 보여 줬는가(첫 공격 예고 '!' 때 한 번)
+    public bool      GuardHintSeen;
+    // v2 미션·출석
+    public MissionSaveData Missions = new MissionSaveData();
+    // v2 상점·광고·월정액
+    public ShopSaveData Shop = new ShopSaveData();
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -181,6 +229,9 @@ public class GameData
     // [치트] 만능 키 — 모든 잠금 게이트를 무시한다. 세이브에 남겨 재시작해도 유지된다.
     //  (여정 노드 조건처럼 "데이터를 채우는" 게 아니라 "판정을 건너뛰는" 종류의 해금은 이 플래그로 처리)
     public bool AllUnlocked = false;
+
+    // 마지막 협회 임무를 마친 뒤 엔딩(감사 인사 + 크레딧)을 한 번 봤는가
+    public bool EndingSeen = false;
 }
 
 // ──────────────────────────────────────────────
@@ -224,7 +275,7 @@ public class GameManager
     public bool IsBGSoundOn
     {
         get => _gameData._isBGSoundOn;
-        set { _gameData._isBGSoundOn = value; SaveGame(); }
+        set { _gameData._isBGSoundOn = value; SaveGame(); Managers.Sound?.ApplyBgmEnabled(value); }
     }
 
     public bool IsSFXOn
@@ -248,7 +299,10 @@ public class GameManager
     // ── 캐릭터 ──
     public string PlayerName
     {
-        get => _gameData.PlayerName;
+        // 이름 입력 기능이 없어 저장값은 늘 기본값("여행자")이다 — 표시할 때 언어에 맞춘다.
+        get => string.IsNullOrEmpty(_gameData.PlayerName) || _gameData.PlayerName == "여행자"
+            ? Util.Localize(LocalizeKey.DefaultPlayerNameText)
+            : _gameData.PlayerName;
         set { _gameData.PlayerName = value; }
     }
     public int AdventurerRank
@@ -363,10 +417,27 @@ public class GameManager
     public List<int> DiscoveredMonsterIds => _gameData.DiscoveredMonsterIds;
 
     // ── 언어 ──
+    //  처음 실행은 기기 언어를 따른다(한국어 기기만 한국어, 나머지는 영어).
+    //  Util.Localize 가 문자열마다 읽으므로 PlayerPrefs(윈도우는 레지스트리)를 매번 읽지 않고 캐시한다.
+    Define.Language? _language;
     public Define.Language Language
     {
-        get => (Define.Language)PlayerPrefs.GetInt("Language", (int)Define.Language.Korean);
-        set { PlayerPrefs.SetInt("Language", (int)value); OnLanguageChanged?.Invoke(); }
+        get
+        {
+            if (_language == null)
+            {
+                var systemDefault = Application.systemLanguage == SystemLanguage.Korean ? Define.Language.Korean : Define.Language.English;
+                _language = (Define.Language)PlayerPrefs.GetInt("Language", (int)systemDefault);
+            }
+            return _language.Value;
+        }
+        set
+        {
+            _language = value;
+            PlayerPrefs.SetInt("Language", (int)value);
+            PlayerPrefs.Save();
+            OnLanguageChanged?.Invoke();
+        }
     }
 
     // ── 퀘스트 ──
@@ -513,7 +584,9 @@ public class GameManager
 
         if (_gameData.OwnedEquipments.Count > 0)      UnlockBtmButton(Define.TabType.Equipment);
         if (LearnedAbilities.Count > 0
-            || _gameData.EquippedAbilities.Count > 0) UnlockBtmButton(Define.TabType.Skill);
+            || _gameData.EquippedAbilities.Count > 0
+            || Managers.Ability.IsCompanionGranted(Managers.Ability.MinionSkillId(CompanionMinMonId)))
+            UnlockBtmButton(Define.TabType.Skill);
         if (DiscoveredMonsterIds.Count > 0)           UnlockBtmButton(Define.TabType.Bestiary);
 
         return before != _gameData.UnlockedBtmButtons;
@@ -540,9 +613,17 @@ public class GameManager
         if (!_gameData.UnlockedBtnIds.Contains(btnId))
         {
             _gameData.UnlockedBtnIds.Add(btnId);
+            // 수도원이 열리는 순간 첫 축성은 바로 할 수 있게 한다(ADR0029). 예전엔 해금 시점 숙련도가
+            //  절반쯤(실측 48/100)이라 직업 능력을 보여 주고도 수십 마리를 더 잡아야 첫 선택을 할 수 있었다.
+            if (btnId == UNLOCK_MONASTERY_BUTTON && !HasAnyClassAbility())
+                AddClassProficiency(CLASS_PROFICIENCY_MAX);
             SaveGame();
         }
     }
+
+    bool HasAnyClassAbility()
+        => _gameData.LearnedAbilities.Exists(id =>
+            Managers.Data.SkillDic.TryGetValue(id, out var skill) && skill.Source == AbilitySource.Class);
 
     // ── 이벤트 ──
     public event Action OnLanguageChanged;
@@ -561,7 +642,8 @@ public class GameManager
     // ────────────────────────────────────────
     public void Init()
     {
-        _path = Application.persistentDataPath + "/SaveData.json";
+        FlushSave();    // 타이틀 재진입 등으로 다시 불릴 때 아직 안 쓴 변경을 먼저 기록한다
+        _path = SavePath;
 
         if (LoadGame())
         {
@@ -570,11 +652,11 @@ public class GameManager
             return;
         }
 
-        // 할때마다 처음상태로 하고싶으면 1로 바꿔야하는 것.
-        PlayerPrefs.SetInt("ISFIRST", 0);
+        // 새 게임 — 세이브 파일이 없을 때만 온다(예전의 PlayerPrefs "ISFIRST" 판정은 폐기).
+        FirstSetting();
         EnsurePotionState();
         EnsureStarterEquipment();
-        SaveGame();
+        SaveGameNow();
     }
 
     // ────────────────────────────────────────
@@ -600,8 +682,14 @@ public class GameManager
     public OfflineReward LastOfflineReward { get; private set; }
 
     /// <summary>마지막 접속 이후 경과분을 정산해 지급한다. Init에서 1회 호출.</summary>
+    // 이번 실행에서 오프라인 정산을 마쳤는가. 마친 뒤부터는 저장할 때마다 기준 시각(LastSeenTicks)을 갱신한다 —
+    //  예전엔 일시정지·종료 때만 기록해서, 앱이 비정상 종료되면 다음 실행이 이미 플레이한 세션 시간을 또 지급했다.
+    //  정산 전에 갱신하면 방금 비운 시간을 지워 버리므로 정산 뒤부터다.
+    bool _offlineSettled;
+
     public OfflineReward ClaimOfflineReward()
     {
+        _offlineSettled = true;
         var result = new OfflineReward();
         if (_gameData.LastSeenTicks <= 0)
         {
@@ -617,7 +705,8 @@ public class GameManager
             return result;
         }
 
-        double capped = System.Math.Min(seconds, OFFLINE_MAX_HOURS * 3600.0);
+        // 월정액 중에는 상한 +4시간(ShopManager.OfflineBonusHours)
+        double capped = System.Math.Min(seconds, (OFFLINE_MAX_HOURS + (Managers.Shop?.OfflineBonusHours ?? 0f)) * 3600.0);
         result.Capped  = seconds > capped;
         result.Seconds = capped;
 
@@ -643,6 +732,7 @@ public class GameManager
         MarkSeen();
 
         LastOfflineReward = result;
+        Managers.Shop?.OnOfflineClaimed(result);   // 상점 탭에 '오프라인 보상 2배(광고)'가 열린다
         Debug.Log($"[방치보상] {capped / 3600.0:F1}시간 → {result.Kills}처치, EXP {result.Exp:N0}, 골드 {result.Gold:N0}");
         return result;
     }
@@ -660,12 +750,16 @@ public class GameManager
     {
         _inBattleArea = inBattle;
         _idleKillProgress = 0f;
+        OnStageChanged?.Invoke();   // 스테이지 막대는 전투 구역에서만 보인다
     }
+    public bool InBattleArea => _inBattleArea;
 
     /// <summary>Managers.Update에서 매 프레임 호출. 전투 밖일 때만 누적한다.</summary>
     public void TickIdle(float deltaTime)
     {
         if (_inBattleArea || Player == null || _gameData == null) return;
+        // 앱 복귀 첫 프레임의 unscaledDeltaTime 엔 백그라운드 시간 전체가 들어온다 — 그 시간은 오프라인 정산 몫이다.
+        deltaTime = Mathf.Min(deltaTime, IDLE_MAX_FRAME_SECONDS);
         if (_gameData.LastBattleAreaId <= 0) return;      // 전투 경험이 없으면 누적 대상 없음
 
         _idleKillProgress += deltaTime / OFFLINE_KILL_INTERVAL * OFFLINE_RATE;
@@ -677,13 +771,15 @@ public class GameManager
 
         if (!TryGetAreaAverage(_gameData.LastBattleAreaId, out float avgExp, out float avgGold)) return;
 
-        int gold = Mathf.RoundToInt(avgGold * kills);
-        float exp = avgExp * kills;
+        // 켜 둔 채 쌓이는 방치 처치도 처치다 — 핫타임 배수를 곱한다(오프라인 정산에는 곱하지 않는다)
+        int gold = Mathf.RoundToInt(avgGold * kills * (Managers.Shop?.GoldMult ?? 1f));
+        float exp = avgExp * kills * (Managers.Shop?.ExpMult ?? 1f);
 
         Gold += gold;                 // setter가 OnResourceChanged를 쏴 HUD 골드가 실시간으로 오른다
         Player.GainExp(exp);          // OnExpChanged로 EXP 바도 함께 오른다
         IdleKillCount += kills;
         OnIdleAccrued?.Invoke(kills);
+        Managers.Mission?.Notify(MissionEvent.KillMonster, kills);   // 켜 둔 채 쌓인 방치 처치도 센다(오프라인 정산은 세지 않는다)
 
         // 숫자만 오르면 왜 오르는지 알 수 없다 — 일정 주기마다 묶어서 알린다(매번 띄우면 스팸).
         _batchKills += kills; _batchGold += gold; _batchExp += exp;
@@ -691,6 +787,7 @@ public class GameManager
     }
 
     const float IDLE_NOTIFY_INTERVAL = 60f;   // 방치 요약 알림 주기(초)
+    const float IDLE_MAX_FRAME_SECONDS = 1f;  // 방치 누적이 한 프레임에 셀 수 있는 최대 시간
     float _idleNotifyTimer;
     int   _batchKills, _batchGold;
     float _batchExp;
@@ -720,21 +817,23 @@ public class GameManager
     /// <summary>방치 요약 알림 (주기적). 인자: 이번 구간 성과, 지역 이름.</summary>
     public event System.Action<OfflineReward, string> OnIdleBatch;
 
-    /// <summary>해당 전투 노드에 출현하는 몬스터의 평균 경험치·골드.</summary>
-    bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)
+    /// <summary>해당 전투 노드에서 한 마리 잡을 때의 기대 경험치·골드 — 실제 스폰 풀(ObjectManager.FieldPool)의 출현 가중 평균.</summary>
+    //  예전엔 출현 확률을 무시한 단순 평균이라 드물게 나오는 희귀·우두머리가 끼인 노드(125곳 중 27곳)에서 기대값의
+    //  약 2배를 줬다 — 방치·오프라인 보상이 "직접 사냥보다 낮게"라는 의도를 넘었고 보스 보상도 부풀었다.
+    public bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)
     {
         avgExp = 0f; avgGold = 0f;
-        if (Managers.Data?.TravelNodeDic == null) return false;
-        if (!Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn)) return false;
+        var pool = Managers.Object?.FieldPool(nodeId);
+        if (pool == null || pool.Count == 0) return false;
 
-        int n = 0;
-        foreach (var c in Managers.Data.CreatureDic.Values)
+        float weight = 0f;
+        foreach (var c in pool)
         {
-            if (c == null || c.Habitat != tn.Name || c.EncounterRate <= 0f) continue;
-            avgExp += c.TotalExp; avgGold += c.RewardGold; n++;
+            avgExp  += c.TotalExp   * c.EncounterRate;
+            avgGold += c.RewardGold * c.EncounterRate;
+            weight  += c.EncounterRate;
         }
-        if (n == 0) return false;
-        avgExp /= n; avgGold /= n;
+        avgExp /= weight; avgGold /= weight;
         return true;
     }
 
@@ -742,7 +841,7 @@ public class GameManager
     public void MarkSeen()
     {
         _gameData.LastSeenTicks = System.DateTime.UtcNow.Ticks;
-        SaveGame();
+        SaveGameNow();  // 일시정지/종료 직전에 불리므로 모아 쓰기를 기다리지 않는다
     }
 
     /// <summary>전투 지역 진입 시 호출 — 방치 보상 정산 기준이 된다.</summary>
@@ -895,6 +994,7 @@ public class GameManager
 
         r.GoldCost = GetEnhanceCost(equip);
         Gold -= r.GoldCost;          // CanEnhance에서 잔액을 이미 확인함
+        Managers.Mission?.Notify(MissionEvent.Enhance);   // v2 미션 — 강화 시도(성공 여부 무관)
         RemoveItem(scrollId, 1);
 
         // 요구 재료 소모. 데이터가 비어 있던 시절엔 강화가 골드와 주문서만 먹었다 —
@@ -1131,8 +1231,8 @@ public class GameManager
     /// <summary>구매가 막힌 이유. 살 수 있으면 빈 문자열.</summary>
     public string GetBuyBlockReason(Data.ShopItemData shop, int count = 1)
     {
-        if (shop == null) return "판매하지 않는 물건";
-        if (Level < shop.UnlockLevel) return $"Lv.{shop.UnlockLevel} 필요";
+        if (shop == null) return Util.Localize(LocalizeKey.ShopNotForSaleText);
+        if (Level < shop.UnlockLevel) return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), shop.UnlockLevel);
         if (Gold < shop.Price * count) return Util.Localize(Define.LocalizeKey.ShopNotEnoughGoldText);
         return string.Empty;
     }
@@ -1158,6 +1258,209 @@ public class GameManager
         Gold += shop.SellPrice * count;
         SaveGame();
         return true;
+    }
+    #endregion
+
+    #region 훈련 (v2 — 골드 무한 강화, ADR0030)
+    // 골드의 목적지. 30초마다 무언가를 올리게 하되, 상한(레벨 × 2)으로 지역 난이도를 지킨다.
+    public const int TRAINING_STAT_COUNT = 4;
+    public event Action OnTrainingChanged;
+
+    public int TrainingLevel(TrainingStat stat) => _gameData.TrainingLevels[(int)stat];
+    public int TrainingCap => Mathf.FloorToInt(Level * Managers.Data.Balance(BalanceKey.TRAIN_CAP_PER_LEVEL, 2f));
+
+    // 다음 단계(nextLevel)로 올리는 비용 = BASE + COEF × nextLevel^POW
+    public int TrainingCost(int nextLevel)
+    {
+        var d = Managers.Data;
+        double cost = d.Balance(BalanceKey.TRAIN_COST_BASE, 10f)
+                    + d.Balance(BalanceKey.TRAIN_COST_COEF, 0.8f) * Math.Pow(nextLevel, d.Balance(BalanceKey.TRAIN_COST_POW, 1.65f));
+        return (int)Math.Min(int.MaxValue, Math.Round(cost));
+    }
+
+    // 단계당 가산(%, 치명피해는 %p)
+    public float TrainingPerLevel(TrainingStat stat) => stat switch
+    {
+        TrainingStat.Attack     => Managers.Data.Balance(BalanceKey.TRAIN_ATK_PCT, 0.2f),
+        TrainingStat.Health     => Managers.Data.Balance(BalanceKey.TRAIN_HP_PCT, 0.25f),
+        TrainingStat.Defense    => Managers.Data.Balance(BalanceKey.TRAIN_DEF_PCT, 0.15f),
+        _                       => Managers.Data.Balance(BalanceKey.TRAIN_CRITDMG_PCT, 0.5f),
+    };
+
+    public float TrainingBonus(TrainingStat stat) => TrainingLevel(stat) * TrainingPerLevel(stat);
+
+    public bool TryTrain(TrainingStat stat)
+    {
+        int next = TrainingLevel(stat) + 1;
+        if (next > TrainingCap) return false;
+        int cost = TrainingCost(next);
+        if (Gold < cost) return false;
+        Gold -= cost;
+        _gameData.TrainingLevels[(int)stat] = next;
+        SaveGame();
+        Player?.RefreshStats(fullHeal: false);
+        OnTrainingChanged?.Invoke();
+        Managers.Mission?.Notify(MissionEvent.Train);
+        return true;
+    }
+
+    // PlayerController.RefreshStats 가 장비·능력까지 더한 뒤 부른다 — 임시 버프보다 먼저 곱한다.
+    public void ApplyTraining(PlayerController p)
+    {
+        if (p == null || _gameData.TrainingLevels == null) return;
+        float atk = 1f + TrainingBonus(TrainingStat.Attack) / 100f;
+        p.PhysicalAtk *= atk;
+        p.MagicAtk    *= atk;
+        p.MaxHp       *= 1f + TrainingBonus(TrainingStat.Health) / 100f;
+        p.Def         *= 1f + TrainingBonus(TrainingStat.Defense) / 100f;
+        p.CritDamage  += TrainingBonus(TrainingStat.CritDamage);
+    }
+    #endregion
+
+    #region 스테이지·보스 (v2 — 10마리 → 보스 → 다음, ADR0030)
+    // 사냥터(전투 노드 125곳) = 스테이지 '필드-층'(1-1 ~ 25-5). 정해진 수를 잡으면 보스, 보스를 잡으면 첫 돌파 크리스탈.
+    //  규칙·저장은 여기, 전투 흐름(스폰·제한 시간)은 UI_BattleBtnGroup, 표시는 UI_StageBar.
+    public event Action OnStageChanged;
+
+    public int  StageKillsToBoss => Mathf.Max(1, Mathf.RoundToInt(Managers.Data.Balance(BalanceKey.STAGE_KILLS_TO_BOSS, 10f)));
+    public int  StageKills(int nodeId) => _gameData.StageNodeId == nodeId ? _gameData.StageKillCount : 0;
+    public bool IsBossReady(int nodeId) => StageKills(nodeId) >= StageKillsToBoss;
+    public bool IsStageCleared(int nodeId) => _gameData.ClearedStages.Contains(nodeId);
+    public int  ClearedStageCount => _gameData.ClearedStages.Count;
+
+    public bool BossAutoChallenge
+    {
+        get => _gameData.BossAutoChallenge;
+        set
+        {
+            if (_gameData.BossAutoChallenge == value) return;
+            _gameData.BossAutoChallenge = value;
+            SaveGame();
+            OnStageChanged?.Invoke();
+        }
+    }
+
+    public void AddStageKill(int nodeId)
+    {
+        if (_gameData.StageNodeId != nodeId)
+        {
+            // 새 스테이지 — 처치 수는 0부터, 다른 곳에서 꺼진 자동 도전은 다시 켠다(실패는 그 스테이지 이야기다)
+            _gameData.StageNodeId = nodeId;
+            _gameData.StageKillCount = 0;
+            _gameData.BossAutoChallenge = true;
+        }
+        if (_gameData.StageKillCount >= StageKillsToBoss) return;   // 보스를 기다리는 동안은 더 세지 않는다
+        _gameData.StageKillCount++;
+        SaveGame();
+        OnStageChanged?.Invoke();
+    }
+
+    // 보스 처치 — 첫 돌파면 true 와 준 크리스탈(crystals), 이미 돌파한 곳이면 false.
+    public bool ClearStage(int nodeId, out int crystals)
+    {
+        crystals = 0;
+        bool firstClear = !_gameData.ClearedStages.Contains(nodeId);
+        if (firstClear)
+        {
+            _gameData.ClearedStages.Add(nodeId);
+            crystals = StageFirstClearCrystals(nodeId);
+            Crystal += crystals;
+        }
+        _gameData.StageKillCount = 0;
+        SaveGame();
+        OnStageChanged?.Invoke();
+        Managers.Mission?.Notify(MissionEvent.BossClear);
+        if (firstClear) Managers.Mission?.Notify(MissionEvent.NewStage);
+        return firstClear;
+    }
+
+    // 시간 초과·사망 — 처치 수를 비우고 자동 도전을 끈다(같은 벽에 30초씩 계속 부딪히지 않게).
+    //  스테이지 막대를 누르면 다시 켜진다 — 그 사이 훈련으로 강해지라는 신호다.
+    public void FailStage(int nodeId, bool stopAutoChallenge = true)
+    {
+        if (_gameData.StageNodeId == nodeId) _gameData.StageKillCount = 0;
+        if (stopAutoChallenge) _gameData.BossAutoChallenge = false;
+        SaveGame();
+        OnStageChanged?.Invoke();
+    }
+
+    public int StageFirstClearCrystals(int nodeId)
+    {
+        if (!TryGetStageNumber(nodeId, out int field, out _)) return 0;
+        var d = Managers.Data;
+        return Mathf.RoundToInt(d.Balance(BalanceKey.BOSS_FIRST_CRYSTAL_BASE, 20f)
+                              + d.Balance(BalanceKey.BOSS_FIRST_CRYSTAL_PER_FIELD, 2f) * field);
+    }
+
+    // 보스전 진행 상태(저장 안 함) — UI_BattleBtnGroup 이 쓰고 UI_StageBar 가 읽는다.
+    public bool  BossFightActive { get; private set; }
+    public float BossTimeLeft    { get; private set; }
+    public float BossTimeLimit   { get; private set; }
+
+    public void SetBossFight(bool active, float left = 0f, float limit = 0f)
+    {
+        bool changed = BossFightActive != active;
+        BossFightActive = active;
+        BossTimeLeft    = left;
+        BossTimeLimit   = limit;
+        if (changed) OnStageChanged?.Invoke();
+    }
+
+    // 스테이지 순서 = 전투 노드 Id 오름차순(21010, 21020 … 25450). 같은 부모의 층은 Id 가 이어져 있다.
+    List<int> _stageOrder;
+    List<int> StageOrder
+    {
+        get
+        {
+            if (_stageOrder != null || Managers.Data?.TravelNodeDic == null) return _stageOrder ?? new List<int>();
+            var order = new List<int>();
+            foreach (var n in Managers.Data.TravelNodeDic.Values)
+                if (string.Equals(n.AreaType, nameof(AreaType.Battle), StringComparison.OrdinalIgnoreCase)) order.Add(n.Id);
+            order.Sort();
+            if (order.Count > 0) _stageOrder = order;   // 데이터가 오기 전 빈 결과는 굳히지 않는다
+            return order;
+        }
+    }
+
+    // 필드 = 부모 노드가 몇 번째인지(1~25), 층 = 그 부모 안에서 몇 번째인지(1~5).
+    public bool TryGetStageNumber(int nodeId, out int field, out int floor)
+    {
+        field = floor = 0;
+        var nodes = Managers.Data?.TravelNodeDic;
+        if (nodes == null) return false;
+        int lastParent = int.MinValue;
+        foreach (int id in StageOrder)
+        {
+            int parent = nodes[id].ParentId;
+            if (parent != lastParent) { field++; floor = 0; lastParent = parent; }
+            floor++;
+            if (id == nodeId) return true;
+        }
+        field = floor = 0;
+        return false;
+    }
+
+    public int NextStage(int nodeId)
+    {
+        var order = StageOrder;
+        int i = order.IndexOf(nodeId);
+        return i >= 0 && i + 1 < order.Count ? order[i + 1] : 0;
+    }
+
+    public MissionSaveData MissionSave => _gameData.Missions;
+    public ShopSaveData    ShopSave    => _gameData.Shop;
+
+    public bool GuardHintSeen
+    {
+        get => _gameData.GuardHintSeen;
+        set { _gameData.GuardHintSeen = value; SaveGame(); }
+    }
+
+    public string StageLabel(int nodeId)
+    {
+        if (!TryGetStageNumber(nodeId, out int field, out int floor)) return "";
+        string name = Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var node) ? Util.Localize(node.Name) : "";
+        return string.Format(Util.Localize("StageLabelFormat"), field, floor, name);
     }
     #endregion
 
@@ -1292,6 +1595,12 @@ public class GameManager
     // ────────────────────────────────────────
     //  [치트] 만능 키 — 모든 컨텐츠 해금
     // ────────────────────────────────────────
+    public bool EndingSeen
+    {
+        get => _gameData.EndingSeen;
+        set { _gameData.EndingSeen = value; SaveGame(); }
+    }
+
     public bool AllUnlocked
     {
         get => _gameData.AllUnlocked;
@@ -1440,11 +1749,14 @@ public class GameManager
 
     // FailMessage가 비어 있어도 잠금 사유는 반드시 비어있지 않은 문자열이어야 한다
     //  (호출부가 문자열 유무로 해금 여부를 판정하므로).
+    //  FailMessage 는 한국어 문장 데이터(148행 전부 레벨 조건)라, 한국어가 아니면 키 문구로 대신한다 —
+    //  예전엔 영어 모드에서도 잠긴 지역마다 '레벨 13 이상이어야 갈 수 있습니다.'가 붙었다.
     static string LockText(Data.TravelConditionData cond)
     {
-        if (!string.IsNullOrEmpty(cond.FailMessage)) return cond.FailMessage;
-        if (cond.Type == "LEVEL_REQUIRED") return $"Lv.{cond.Value} 필요";
-        return "잠김";
+        bool korean = Managers.Game != null && Managers.Game.Language == Define.Language.Korean;
+        if (korean && !string.IsNullOrEmpty(cond.FailMessage)) return cond.FailMessage;
+        if (cond.Type == "LEVEL_REQUIRED") return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), cond.Value);
+        return Util.Localize(LocalizeKey.TravelLockedText);
     }
 
     public int GetPlayerMaxHp()
@@ -1584,36 +1896,233 @@ public class GameManager
     // ────────────────────────────────────────
     //  세이브 / 로드
     // ────────────────────────────────────────
+    //  저장은 "변경 표시 → 모아서 기록"이다. 세터마다 SaveGame()을 부르는 기존 패턴은 그대로 두고,
+    //  실제 디스크 기록은 FlushSave 가 SAVE_FLUSH_INTERVAL 마다 한 번만 한다.
+    //  (예전엔 처치 1회에 3~6번, 자동물약 슬라이더를 끄는 동안 매 프레임 90KB를 동기 기록했다)
+    //  일시정지·종료(MarkSeen)와 새 게임 생성은 SaveGameNow 로 즉시 기록한다.
+    //
+    //  기록은 임시 파일에 다 쓴 뒤 이름을 바꾸고, 직전 정상본은 .bak 으로 남긴다.
+    //  쓰는 도중 앱이 죽어도 온전한 파일 하나는 반드시 남는다.
+    public const int SAVE_VERSION = 1;
+    const float SAVE_FLUSH_INTERVAL = 3f;
+    const int SAVE_READ_RETRIES = 3;
+
+    public static string SavePath => Application.persistentDataPath + "/SaveData.json";
+
+    // 기본값(Auto)은 필드 초기값이 든 리스트에 로드한 값을 **이어 붙인다** —
+    //  ActivationManager(초기값 7칸)가 로드할 때마다 7칸씩 늘어나 해금 표시가 사라졌다.
+    static readonly JsonSerializerSettings s_saveJson = new JsonSerializerSettings
+    {
+        ObjectCreationHandling = ObjectCreationHandling.Replace,
+    };
+    static readonly JsonSerializer s_saveSerializer = JsonSerializer.Create(s_saveJson);
+
+    bool  _saveDirty;
+    float _saveTimer;
+
     public void SaveGame()
     {
         if (_path == null) return;
-        File.WriteAllText(_path, JsonConvert.SerializeObject(_gameData));
+        _saveDirty = true;
+    }
+
+    public void SaveGameNow()
+    {
+        SaveGame();
+        FlushSave();
+    }
+
+    /// <summary>Managers.Update 에서 매 프레임. 변경이 있으면 주기마다 한 번 기록한다.</summary>
+    public void TickSave(float unscaledDeltaTime)
+    {
+        if (!_saveDirty) return;
+        _saveTimer += unscaledDeltaTime;
+        if (_saveTimer >= SAVE_FLUSH_INTERVAL)
+            FlushSave();
+    }
+
+    public void FlushSave()
+    {
+        _saveTimer = 0f;
+        if (_path == null || !_saveDirty) return;
+        _saveDirty = false;
+
+        string tmp = _path + ".tmp", bak = _path + ".bak";
+        try
+        {
+            _gameData.SaveVersion = SAVE_VERSION;
+            if (_offlineSettled) _gameData.LastSeenTicks = DateTime.UtcNow.Ticks;
+            // 이름을 바꾸기 전에 디스크까지 내린다(fsync). 안 하면 전원이 나갔을 때 방금 이름 바꾼 본 파일과
+            //  2~3초 전 .bak 이 둘 다 빈 파일일 수 있다(ext4 지연 할당).
+            // 파일에 바로 직렬화한다 — 예전엔 JSON 전체 문자열(UTF-16)과 바이트 배열을 만들어 저장 한 번에 수백 KB 를
+            //  할당했고, 전투 중 3초마다 저장되니 게임 코드 가비지의 대부분이었다(프레임당 평균 3.2KB). 결과 바이트는 같다.
+            using (var fs = new FileStream(tmp, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                using (var sw = new StreamWriter(fs, new System.Text.UTF8Encoding(false), 16 * 1024, leaveOpen: true))
+                using (var jw = new JsonTextWriter(sw))
+                    s_saveSerializer.Serialize(jw, _gameData);
+                fs.Flush(true);
+            }
+            if (File.Exists(_path))
+            {
+                if (File.Exists(bak)) File.Delete(bak);
+                File.Move(_path, bak);
+            }
+            File.Move(tmp, _path);
+        }
+        catch (Exception e)
+        {
+            // 저장 실패가 게임 진행(보상 지급 등)을 끊으면 안 된다 — 기록하고 다음 주기에 다시 시도.
+            _saveDirty = true;
+            Debug.LogError($"[Save] 저장 실패: {e.Message}");
+        }
+    }
+
+    /// <summary>세이브 파일 일체 삭제(에디터 초기화 메뉴용). 손상 격리본은 남긴다.
+    /// 플레이 중이면 이번 세션의 저장도 멈춘다 — 안 그러면 모아 쓰기·종료 저장이 곧바로 다시 써서
+    /// "다시 Play = 첫 실행" 이 성립하지 않는다.</summary>
+    public static void DeleteSaveFiles()
+    {
+        if (Application.isPlaying) Managers.Game?.StopSavingThisSession();
+        foreach (string f in new[] { SavePath, SavePath + ".tmp", SavePath + ".bak" })
+            if (File.Exists(f)) File.Delete(f);
+    }
+
+    public void StopSavingThisSession()
+    {
+        _path = null;
+        _saveDirty = false;
     }
 
     public bool LoadGame()
     {
-        if (PlayerPrefs.GetInt("ISFIRST", 1) == 1)
+        // 본 파일 → (본 파일이 이름 바꾸기 도중 사라졌다면) 임시 파일 → 직전 백업 순으로 읽는다.
+        //  읽을 수 없는 파일은 지우지 않고 옆으로 치운다 — 예전엔 예외가 그대로 새어 나가
+        //  빈 데이터가 손상된 세이브를 덮어썼다.
+        if (_path == null) return false;
+
+        GameData data = null;
+        foreach (string candidate in new[] { _path, _path + ".tmp", _path + ".bak" })
         {
-            string path = Application.persistentDataPath + "/SaveData.json";
-            if (File.Exists(path))
-                File.Delete(path);
-
-            FirstSetting();
-
-            return false;
+            if (!File.Exists(candidate)) continue;
+            string json = ReadWithRetry(candidate);
+            if (json == null)
+            {
+                // 파일은 있는데 못 읽는다(백신·클라우드 동기화가 잠금 등) — 손상이 아니다. 격리·새 게임 저장으로
+                //  멀쩡한 세이브를 밀어내지 않도록 이번 세션은 저장하지 않는다. 다음 실행에서 정상적으로 읽힌다.
+                Debug.LogError($"[Save] {Path.GetFileName(candidate)} 를 읽을 수 없어 이번 세션은 저장하지 않습니다.");
+                StopSavingThisSession();
+                return false;
+            }
+            try
+            {
+                data = JsonConvert.DeserializeObject<GameData>(json, s_saveJson);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Save] 읽기 실패 {Path.GetFileName(candidate)}: {e.Message}");
+                data = null;
+            }
+            if (data != null)
+            {
+                if (candidate != _path) Debug.LogWarning($"[Save] {Path.GetFileName(candidate)} 에서 복구");
+                break;
+            }
+            if (!candidate.EndsWith(".tmp")) QuarantineSave(candidate);
         }
-
-        if (!File.Exists(_path))
+        if (data == null)
             return false;
 
-        GameData data = JsonConvert.DeserializeObject<GameData>(File.ReadAllText(_path));
-        if (data != null)
-            _gameData = data;
-
+        _gameData = data;
+        NormalizeSave();
         EnsurePotionState();
         RebuildEquippedFromOwned();   // 장착 딕셔너리를 보유 리스트 참조로 재구성
+        Managers.Ability.RestoreMinionRewards();
 
         return true;
+    }
+
+    static string ReadWithRetry(string path)
+    {
+        for (int i = 0; i < SAVE_READ_RETRIES; i++)
+        {
+            try { return File.ReadAllText(path); }
+            catch (IOException) { System.Threading.Thread.Sleep(100); }
+            catch (UnauthorizedAccessException) { System.Threading.Thread.Sleep(100); }
+        }
+        return null;
+    }
+
+    static void QuarantineSave(string path)
+    {
+        try
+        {
+            string dest = $"{path}.corrupt-{DateTime.Now:yyyyMMdd-HHmmss}";
+            File.Move(path, dest);
+            Debug.LogError($"[Save] 읽을 수 없는 세이브를 보관: {Path.GetFileName(dest)}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[Save] 손상 세이브 보관 실패: {e.Message}");
+        }
+    }
+
+    // 옛 세이브·손으로 고친 세이브의 모양을 현재 코드가 기대하는 모양으로 맞춘다. 여러 번 돌려도 같다.
+    void NormalizeSave()
+    {
+        var d = _gameData;
+        if (d.SaveVersion > SAVE_VERSION)
+            Debug.LogWarning($"[Save] 더 새 버전의 세이브({d.SaveVersion} > {SAVE_VERSION})");
+
+        // v0: 로드마다 이어 붙어 늘어난 칸 정리 — 마지막 세션이 읽고 쓴 앞쪽 칸만 남긴다.
+        int keys = Enum.GetValues(typeof(ActivationKey)).Length;
+        d.ActivationManager ??= new List<int>();
+        if (d.ActivationManager.Count > keys) d.ActivationManager.RemoveRange(keys, d.ActivationManager.Count - keys);
+        while (d.ActivationManager.Count < keys) d.ActivationManager.Add(0);
+
+        // 명시적 null 과 길이가 모자란 고정 배열(인덱스로 접근) 보정
+        d.PlayerName           ??= "";
+        d.OwnedEquipments      ??= new List<Equipment>();
+        d.Inventory            ??= new List<InventoryItem>();
+        d.OwnedMinMons         ??= new List<MinMonSaveData>();
+        d.InterestedMinMons    ??= new List<int>();
+        d.MaxStarGranted       ??= new List<int>();
+        d.LearnedAbilities     ??= new List<int>();
+        d.EquippedAbilities    ??= new List<int>();
+        d.AbilityLevels        ??= new Dictionary<int, int>();
+        d.DiscoveredMonsterIds ??= new List<int>();
+        d.MetQuestConditions   ??= new List<int>();
+        d.UnlockedBtnIds       ??= new List<string>();
+        d.ClearedStages        ??= new List<int>();
+        d.Missions             ??= new MissionSaveData();
+        d.Missions.Progress    ??= new Dictionary<int, int>();
+        d.Missions.Claimed     ??= new List<int>();
+        d.Missions.Lifetime    ??= new Dictionary<string, int>();
+        d.Shop                 ??= new ShopSaveData();
+        d.Shop.HotUntil         = Fit(d.Shop.HotUntil, 3);
+        d.Shop.AdViews         ??= new Dictionary<string, int>();
+        d.Shop.Purchased       ??= new List<string>();
+        d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
+        d.StatInvest            = Fit(d.StatInvest, 4);
+        d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다
+        d.BestiarySkillGrade    = Fit(d.BestiarySkillGrade, 4);
+        d.BestiarySkillNew      = Fit(d.BestiarySkillNew, 4);
+        d.BestiarySkillUnlocked = Fit(d.BestiarySkillUnlocked, 4);
+        d.OwnedEquipments.RemoveAll(e => e == null);
+        d.Inventory.RemoveAll(i => i == null);
+        d.OwnedMinMons.RemoveAll(m => m == null);
+
+        // 레벨 상한 도입 전에 상한을 넘긴 세이브(스탯 폴백 구간) 복구
+        int maxLevel = Managers.Data != null ? Managers.Data.MaxPlayerLevel : int.MaxValue;
+        d.Level = Mathf.Clamp(d.Level, 1, maxLevel);
+    }
+
+    static T[] Fit<T>(T[] arr, int length)
+    {
+        if (arr != null && arr.Length >= length) return arr;
+        var fitted = new T[length];
+        if (arr != null) Array.Copy(arr, fitted, arr.Length);
+        return fitted;
     }
 
     public void FirstSetting()

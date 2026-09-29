@@ -659,6 +659,28 @@
       "BaseAtk": 167,
       "BaseCritRate": 15.0,
       "BaseMagicAtk": 84
+    },
+    {
+      "DataId": 30061,
+      "Name": "Equip30061NameText",
+      "SlotType": "Weapon",
+      "Grade": "Basic",
+      "SpriteName": "Sword 32 (5)",
+      "MaxDurability": 110,
+      "BaseAtk": 18,
+      "BaseCritRate": 0.0,
+      "BaseMagicAtk": 0
+    },
+    {
+      "DataId": 30062,
+      "Name": "Equip30062NameText",
+      "SlotType": "Weapon",
+      "Grade": "Basic",
+      "SpriteName": "Sword01",
+      "MaxDurability": 110,
+      "BaseAtk": 15,
+      "BaseCritRate": 10.0,
+      "BaseMagicAtk": 0
     }
   ]
 }

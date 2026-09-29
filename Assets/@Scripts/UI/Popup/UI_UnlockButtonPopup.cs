@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static Util;
 
 public class UI_UnlockButtonPopup : UI_Popup
@@ -44,6 +45,8 @@ public class UI_UnlockButtonPopup : UI_Popup
     TMP_Text  _animTMP;
     float[]   _charAlphas;
     bool      _isAnimating;
+    string    _iconNameId;
+    string    _iconDescId;
 
     private void Awake()
     {
@@ -69,6 +72,9 @@ public class UI_UnlockButtonPopup : UI_Popup
         var shine = GetObject((int)GameObjects.shineeffect);
         if (shine != null) shine.SetActive(false);
 
+        // 언어 변경 시 폰트 갱신이 본문 재배치보다 먼저 실행되도록 한 번만 등록한다.
+        ApplyFont(GetText((int)Texts.IconNameText), Define.FontType.UI);
+        ApplyFont(GetText((int)Texts.TextTMP), Define.FontType.UI);
         RefreshTexts();
         if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 
@@ -77,17 +83,16 @@ public class UI_UnlockButtonPopup : UI_Popup
 
     public override void OnDestroy()
     {
+        StopTypewriter();
         if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
         base.OnDestroy();
     }
 
-    // enum Texts: IconNameText / TextTMP 모두 동적 (해금 버튼별 set) — 폰트만 적용.
+    // 해금 안내를 읽는 중이면 새 언어로 타이핑하고, 이미 읽은 안내는 즉시 표시한다.
     void RefreshTexts()
     {
-        var icon = GetText((int)Texts.IconNameText);
-        if (icon != null) ApplyFont(icon, Define.FontType.UI);
-        var tmp = GetText((int)Texts.TextTMP);
-        //if (tmp != null) ApplyFont(tmp, Define.FontType.UI);
+        if (string.IsNullOrEmpty(_iconNameId) || string.IsNullOrEmpty(_iconDescId)) return;
+        RefreshLocalizedContent(_isAnimating);
     }
 
     // TMP는 매 프레임 메시를 재갱신하므로 LateUpdate에서 알파를 강제 적용
@@ -103,32 +108,70 @@ public class UI_UnlockButtonPopup : UI_Popup
     // 어떤 버튼이 해금되는지에 따라 정보를 세팅하는 함수
     public void SetInfo(string iconSprite, string iconNameId, string iconDescId)
     {
-        GetImage((int)Images.Icon).sprite = Managers.Resource.Load<Sprite>(iconSprite);
-        GetText((int)Texts.IconNameText).text = Localize(iconNameId);
+        SetInfo(Managers.Resource.Load<Sprite>(iconSprite), iconNameId, iconDescId);
+    }
+
+    public void SetInfo(Sprite iconSprite, string iconNameId, string iconDescId)
+    {
+        // 마을 버튼에 이미 로드된 실제 스프라이트를 받아 서브스프라이트 주소 추측을 피한다.
+        var icon = GetImage((int)Images.Icon);
+        icon.sprite = iconSprite;
+        icon.enabled = iconSprite != null;
+        icon.preserveAspect = true;
+        _iconNameId = iconNameId;
+        _iconDescId = iconDescId;
+        RefreshLocalizedContent(true);
+    }
+
+    void RefreshLocalizedContent(bool animate)
+    {
+        StopTypewriter();
+        _charAlphas = null;
+        GetText((int)Texts.IconNameText).text = Localize(_iconNameId);
 
         TMP_Text tmp = GetText((int)Texts.TextTMP);
+        if (animate)
+            _typewriterCoroutine = StartCoroutine(TypewriterFade(tmp, Localize(_iconDescId)));
+        else
+            SetBodyText(tmp, Localize(_iconDescId));
+    }
+
+    void SetBodyText(TMP_Text tmp, string text)
+    {
+        _animTMP = tmp;
+        tmp.text = text;
+        // 프리팹의 부모 폭과 세로 PreferredSize로 줄바꿈을 확정한 뒤 글자 알파를 다룬다.
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tmp.rectTransform);
+        tmp.ForceMeshUpdate();
+    }
+
+    void StopTypewriter()
+    {
         if (_typewriterCoroutine != null)
+        {
             StopCoroutine(_typewriterCoroutine);
-        _typewriterCoroutine = StartCoroutine(TypewriterFade(tmp, Localize(iconDescId)));
+            _typewriterCoroutine = null;
+        }
+        if (_animTMP != null) DOTween.Kill(_animTMP, false);
+        _isAnimating = false;
     }
 
     // 글자 하나씩 알파 0→1로 페이드인
     IEnumerator TypewriterFade(TMP_Text tmp, string text, float charInterval = 0.05f, float fadeDuration = 0.35f)
     {
-        _animTMP = tmp;
+        SetBodyText(tmp, text);
         _isAnimating = true;
-
-        tmp.text = text;
-        tmp.ForceMeshUpdate();
 
         int charCount = tmp.textInfo.characterCount;
         _charAlphas = new float[charCount]; // 기본값 0
+        var charAlphas = _charAlphas; // 언어가 바뀌어도 이전 Tween이 새 문장의 배열을 읽지 않는다.
 
         for (int i = 0; i < charCount; i++)
         {
             int index = i;
-            DOTween.To(() => _charAlphas[index], a => _charAlphas[index] = a, 1f, fadeDuration)
+            DOTween.To(() => charAlphas[index], a => charAlphas[index] = a, 1f, fadeDuration)
                    .SetTarget(tmp)        // SkipTypewriter에서 한꺼번에 Kill 가능하도록 target 지정
+                   .SetLink(gameObject)
                    .SetUpdate(true);
 
             yield return new WaitForSecondsRealtime(charInterval);
@@ -137,6 +180,8 @@ public class UI_UnlockButtonPopup : UI_Popup
         // 마지막 글자의 페이드인 완료 대기
         yield return new WaitForSecondsRealtime(fadeDuration);
 
+        DOTween.Kill(tmp, false);
+        ShowAllCharacters();
         _isAnimating = false;
         _charAlphas = null;
         _typewriterCoroutine = null;
@@ -144,6 +189,7 @@ public class UI_UnlockButtonPopup : UI_Popup
 
     void SetCharAlpha(TMP_Text tmp, int charIndex, float alpha)
     {
+        if (charIndex >= tmp.textInfo.characterCount) return;
         var charInfo = tmp.textInfo.characterInfo[charIndex];
         if (!charInfo.isVisible) return;
 
@@ -156,6 +202,13 @@ public class UI_UnlockButtonPopup : UI_Popup
         colors[vertexIndex + 1].a = a;
         colors[vertexIndex + 2].a = a;
         colors[vertexIndex + 3].a = a;
+    }
+
+    // 뒤로가기 = 화면을 누른 것과 같다(타이핑 중이면 넘기고, 끝났으면 닫는다). 닫기 버튼이 없어 공용 탐색에 안 걸린다.
+    public override bool OnBackPressed()
+    {
+        OnClickContent();
+        return true;
     }
 
     public void OnClickContent()
@@ -173,15 +226,14 @@ public class UI_UnlockButtonPopup : UI_Popup
     /// <summary>타이핑 코루틴/트윈을 멈추고 모든 글자 알파를 1로 즉시 적용한다.</summary>
     void SkipTypewriter()
     {
-        if (_typewriterCoroutine != null)
-        {
-            StopCoroutine(_typewriterCoroutine);
-            _typewriterCoroutine = null;
-        }
-
         // 진행 중인 글자별 DOTween.To 트윈 종료 (_charAlphas 참조 트윈들)
-        DOTween.Kill(_animTMP);
+        StopTypewriter();
+        ShowAllCharacters();
+        _charAlphas = null;
+    }
 
+    void ShowAllCharacters()
+    {
         if (_animTMP != null && _charAlphas != null)
         {
             for (int i = 0; i < _charAlphas.Length; i++)
@@ -191,8 +243,5 @@ public class UI_UnlockButtonPopup : UI_Popup
             }
             _animTMP.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
         }
-
-        _isAnimating = false;
-        _charAlphas = null;
     }
 }

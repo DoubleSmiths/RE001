@@ -35,20 +35,30 @@ RE001 — Unity 2D 사이드뷰 액션 RPG (모바일 세로 화면, 픽셀 아�
 **자동화 테스트 스위트가 없다.** 검증은 Unity Editor + `unity-cli`로 한다.
 
 ### unity-cli (켜져 있는 에디터에 붙어서 조종)
+Windows에서 프로젝트를 열 때 `_tools/open_unity.bat`를 사용한다. 프로젝트 버전의 에디터를 DX11로 실행하며,
+실행 중인 Unity가 없을 때만 남은 씬 백업을 `Documents/UnityRecovery/`로 **보존 이동**한다.
+`Assets/_Recovery` 사본은 그대로 둔다. Windows 기본 그래픽 API도 DX11이며 Android 설정과 별개다.
+에디터 종료는 저장 상태를 확인한 뒤 실제 창 닫기(Alt+F4)를 사용한다. 플레이 후에는 창 닫기에서도
+씬 백업이 잔류할 수 있어 `SceneBackupArchive`가 정상 종료 확정 시 보존 이동한다(ADR0016).
+런처는 자동화 호스트에서 누락될 수 있는 `ALLUSERSPROFILE`도 Windows 공용 데이터 경로로 보완한다.
+UPM이 `path ... Received undefined`로 실패하면 패키지 캐시를 지우기 전에 실행 환경을 확인한다(ADR0018).
+
 `C:\Users\Mycom\AppData\Local\unity-cli\unity-cli.exe` (v0.3.22, 비공식 도구)
 
 ```bash
 unity-cli editor refresh --compile          # 스크립트 재컴파일, 완료까지 대기
 unity-cli console --type error --lines 30   # 컴파일/런타임 에러 확인  ← 컴파일 검증의 기본 경로
 unity-cli menu "Tools/ParseAllLocal (로컬 전체 파싱)"   # 에디터 메뉴 실행
-unity-cli exec "return Managers.Data.SkillDic.Count;"  # C# 즉시 실행 (top-level 문, 인자 방식만)
+printf '%s' "return Managers.Data.SkillDic.Count;" | unity-cli exec  # C# 즉시 실행 (top-level 문)
 unity-cli editor play --wait                # 플레이 모드 진입
 unity-cli screenshot --view game            # 게임뷰 캡처
 ```
 
 - **Unity Editor가 켜져 있어야 한다.** 꺼져 있으면 `Error: no Unity instances running` → 사용자에게 에디터 실행을 요청한다. 일상 작업에서 임의로 batchmode를 돌리지 않는다(에디터를 닫아야 해서 작업 흐름이 깨진다).
 - 코드 수정 후에는 `editor refresh --compile` → `console --type error` 순으로 반드시 확인. 정독만으로 완료를 주장하지 않는다.
-- `exec` 는 **인자 방식만 동작한다** — stdin 파이프도 `--file` 플래그도 없다.
+- `exec` 는 **stdin 이 터미널이 아니면(에이전트 셸) 인자를 무시하고 stdin 을 읽는다** — 인자로 넘기면 멈추거나 빈 응답이 난다.
+  코드를 파이프로 넘기거나(`printf '%s' "$code" | unity-cli exec`) 인자를 쓸 땐 `< /dev/null` 을 붙인다. `--file` 플래그는 없다.
+  비동기(코루틴) 코드는 `--allow-async` 가 필요하다.
 
 ### 플레이어 빌드는 batchmode로 (`Assets/@Scripts/Editor/BuildScript.cs`)
 
@@ -124,7 +134,7 @@ UI_Base ─┬─ UI_Scene    (씬 HUD: UI_GameScene, UI_BattleScene …)
 ```
 - 프리팹 자식 이름 ↔ `enum Images/Buttons/Texts` 이름이 **1:1**로 자동 바인딩된다 (`Bind<T>(typeof(...))` → `GetImage((int)Images.BG)`). 프리팹 자식 이름을 바꾸면 바인딩이 깨진다. 같은 프리팹 안에서 이름 중복 금지, 언리얼식 prefix(`Img_` `Btn_` `Txt_`) 사용.
 - 팝업은 `Managers.UI.ShowPopupUI<T>()` / `ClosePopupUI()`로만 열고 닫는다 (직접 SetActive 금지).
-- **팝업은 게임을 멈추지 않는다** — `RefreshTimeScale()`은 현재 전부 주석 처리된 no-op다. `Time.timeScale` 관련 코드를 쓰기 전에 실제 구현을 확인할 것.
+- **전투 중 도감·마물 상세·포획·나의 미니몬은 전투를 정지한다.** 스택 어디에든 해당 창이 남으면 `UIManager.IsBattlePaused`가 유지되고 마지막 정지 사유 해제 때 이전 배율을 복원한다. 다른 팝업과 마을 진행은 유지한다. UI 연출은 독립 시간을 사용한다(ADR0026).
 - Toast / 관심 알림(`ShowAttractedPopup`)·경고는 팝업 스택을 쓰지 않고 자체 코루틴으로 소멸한다.
 - **UI 캔버스 위 파티클**: 월드 ParticleSystem은 Screen Space Camera 캔버스 위에 렌더되지 않는다 → 반드시 `UIFx.PlayParticle()` (UIParticle 래퍼) 경유.
 

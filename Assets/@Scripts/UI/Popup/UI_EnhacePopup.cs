@@ -314,7 +314,7 @@ public class UI_EnhacePopup : UI_Popup
             if (flameGo == null) return;
             flameGo.SetActive(true);
             flameGo.GetComponent<Animator>()?.Play("Flame_Start", 0, 0f);   // 처음부터 확실히
-        }).SetUpdate(true);
+        }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
     }
     const float INTRO_FADE = 0.28f;
 
@@ -820,7 +820,7 @@ public class UI_EnhacePopup : UI_Popup
         _colArrow.color = Util.HexToColor(PREVIEW_ARROW_HEX);
         _colArrow.text  = PreviewArrowRow("▶");            // 나타나는 한 순간만 속이 찬다
         DOVirtual.DelayedCall(PREVIEW_FLASH,
-            () => { if (_colArrow != null) _colArrow.text = PreviewArrowRow("▷"); }).SetUpdate(true);
+            () => { if (_colArrow != null) _colArrow.text = PreviewArrowRow("▷"); }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
         yield return new WaitForSecondsRealtime(PREVIEW_STAGGER);
 
         PlayAuthoredNode("Text_3", "");                    // ④ 이후값
@@ -930,5 +930,12 @@ public class UI_EnhacePopup : UI_Popup
         if (_isClosing || _resolving) return;
         _isClosing = true;
         Managers.UI.ClosePopupUI();
+    }
+
+    // 닫기 버튼이 Button.onClick 으로 연결돼 공용 뒤로가기 탐색에 걸리지 않는다 — 같은 닫기 규칙을 쓴다.
+    public override bool OnBackPressed()
+    {
+        OnClickClose();
+        return true;
     }
 }

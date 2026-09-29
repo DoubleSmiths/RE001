@@ -87,31 +87,11 @@ public class ObjectManager
     //  → CreatureData의 Habitat/EncounterRate만 고치면 등장 몬스터·확률을 데이터로 조정 가능.
     public int PickFieldMonsterId(int fallback = 2001)
     {
-        var data = Managers.Data;
-        if (data == null || data.CreatureDic == null) return fallback;
-
-        // 현재 지역 키 집합 (현재 노드 Name + 부모 노드 Name — 입구/지역 둘 다 매칭)
-        var keys = new System.Collections.Generic.HashSet<string>();
         int nodeId = Managers.Game != null ? Managers.Game.CurrentTravelAreaId : 0;
-        if (data.TravelNodeDic != null && data.TravelNodeDic.TryGetValue(nodeId, out var node))
-        {
-            if (!string.IsNullOrEmpty(node.Name)) keys.Add(node.Name);
-            if (data.TravelNodeDic.TryGetValue(node.ParentId, out var parent) && !string.IsNullOrEmpty(parent.Name))
-                keys.Add(parent.Name);
-        }
-        if (keys.Count == 0) return fallback;
+        var pool = FieldPool(nodeId);
 
-        // 후보 풀 + 가중치 합
         float total = 0f;
-        var pool = new System.Collections.Generic.List<Data.CreatureData>();
-        foreach (var c in data.CreatureDic.Values)
-        {
-            if (c == null || string.IsNullOrEmpty(c.Habitat)) continue;
-            if (!keys.Contains(c.Habitat)) continue;
-            if (c.EncounterRate <= 0f) continue;
-            pool.Add(c);
-            total += c.EncounterRate;
-        }
+        foreach (var c in pool) total += c.EncounterRate;
         if (pool.Count == 0 || total <= 0f) return fallback;
 
         float r = Random.value * total;
@@ -121,6 +101,80 @@ public class ObjectManager
             if (r <= 0f) return c.DataId;
         }
         return pool[pool.Count - 1].DataId;
+    }
+
+    // 그 노드에 나오는 몬스터 — 서식지가 노드 이름이나 부모 이름(입구/지역 둘 다)과 같고 출현 확률이 0보다 큰 것.
+    //  스폰·보스·방치/오프라인 보상(GameManager.TryGetAreaAverage)이 모두 이 풀을 쓴다.
+    public System.Collections.Generic.List<Data.CreatureData> FieldPool(int nodeId)
+    {
+        var pool = new System.Collections.Generic.List<Data.CreatureData>();
+        var data = Managers.Data;
+        if (data?.CreatureDic == null || data.TravelNodeDic == null) return pool;
+        if (!data.TravelNodeDic.TryGetValue(nodeId, out var node)) return pool;
+
+        var keys = new System.Collections.Generic.HashSet<string>();
+        if (!string.IsNullOrEmpty(node.Name)) keys.Add(node.Name);
+        if (data.TravelNodeDic.TryGetValue(node.ParentId, out var parent) && !string.IsNullOrEmpty(parent.Name))
+            keys.Add(parent.Name);
+
+        foreach (var c in data.CreatureDic.Values)
+        {
+            if (c == null || string.IsNullOrEmpty(c.Habitat)) continue;
+            if (!keys.Contains(c.Habitat) || c.EncounterRate <= 0f) continue;
+            pool.Add(c);
+        }
+        return pool;
+    }
+
+    // v2 스테이지 보스(ADR0030). 모습은 그 노드에서 체력이 가장 높은 몬스터, 능력치는 전부 그 노드 몬스터의
+    //  출현 가중 평균(체력·공격·방어엔 보스 배율). 가장 센 개체의 능력치를 쓰면 우두머리(체력 5~7배, 공격 주기 0.9초,
+    //  물리저항 36% 등)가 사는 노드만 보스가 튀었다 — 평균이면 어느 스테이지든 "일반 처치 8번 분량"으로 고르다.
+    public MonsterController SpawnStageBoss(int nodeId, Vector3 pos)
+    {
+        var pool = FieldPool(nodeId);
+        if (pool.Count == 0) return null;
+
+        Data.CreatureData look = pool[0];
+        float weight = 0f;
+        foreach (var c in pool)
+        {
+            if (c.MaxHp > look.MaxHp) look = c;
+            weight += c.EncounterRate;
+        }
+        float Avg(System.Func<Data.CreatureData, float> stat)
+        {
+            float sum = 0f;
+            foreach (var c in pool) sum += stat(c) * c.EncounterRate;
+            return sum / weight;
+        }
+
+        MonsterController boss = SpawnMonster(look.DataId, pos);
+        if (boss == null) return null;
+
+        var d = Managers.Data;
+        float atkMul = d.Balance(Define.BalanceKey.BOSS_ATK_MULT, 1.5f);
+        float kills  = d.Balance(Define.BalanceKey.BOSS_REWARD_KILLS, 10f);
+        if (!Managers.Game.TryGetAreaAverage(nodeId, out float avgExp, out float avgGold))
+            Debug.LogWarning($"[Stage] 노드 {nodeId} 평균 보상을 못 구했다 — 보스 보상 0");
+        boss.MakeStageBoss(new MonsterController.StageBossStats
+        {
+            MaxHp          = Avg(c => c.MaxHp) * d.Balance(Define.BalanceKey.BOSS_HP_MULT, 8f),
+            PhysicalAtk    = Avg(c => c.PhysicalAtk) * atkMul,
+            MagicAtk       = Avg(c => c.MagicAtk) * atkMul,
+            Def            = Avg(c => c.Def) * d.Balance(Define.BalanceKey.BOSS_DEF_MULT, 1.2f),
+            CritRate       = Avg(c => c.CritRate),
+            CritDamage     = Avg(c => c.CritDamage),
+            Accuracy       = Avg(c => c.Accuracy),
+            Evasion        = Avg(c => c.Evasion),
+            PhysicalResist = Avg(c => c.PhysicalResist),
+            MagicResist    = Avg(c => c.MagicResist),
+            DmgAmp         = Avg(c => c.DmgAmp),
+            AttackDelay    = Avg(c => c.MonsterAttackDelay),
+            Scale          = d.Balance(Define.BalanceKey.BOSS_SCALE, 1.35f),
+            RewardExp      = avgExp * kills,
+            RewardGold     = Mathf.RoundToInt(avgGold * kills),
+        });
+        return boss;
     }
 
     // [동행 미니몬] 스폰 — 적과 동일한 CreatureData.PrefabLabel(슬라임 등) 재사용.
@@ -164,6 +218,12 @@ public class ObjectManager
     public void ShowHealFont(Vector2 pos, int amount, Transform parent = null)
     {
         SpawnDamageFont(pos, amount.ToString(), DamageFontMode.Heal, parent);
+    }
+
+    // v2 가드 판정 글자(PARRY!/BLOCK, ADR0030) — 기존 데미지 폰트의 모양(치명 알림·빗나감)을 빌린다.
+    public void ShowCallout(Vector2 pos, string text, DamageFontMode mode, Transform parent = null)
+    {
+        SpawnDamageFont(pos, text, mode, parent);
     }
 
     void SpawnDamageFont(Vector2 pos, string display, DamageFontMode mode, Transform parent)

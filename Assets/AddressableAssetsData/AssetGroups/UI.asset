@@ -210,6 +210,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8fd13041cef42234290706305ac85bad
+    m_Address: UI_MissionPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9395ce982f7e590478b1bc8aab3fd5cd
     m_Address: UI_EquipmentPopup
     m_ReadOnly: 0
@@ -421,6 +427,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ee9364dda7844574e990e48211048f4e
     m_Address: UI_SkillDetailPopup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f921474f71968e34e8a3435d66397589
+    m_Address: UI_CreditsPopup
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

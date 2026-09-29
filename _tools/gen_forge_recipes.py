@@ -79,16 +79,24 @@ KOR = ["ID", "결과 장비", "요구 레벨", "골드",
 
 
 def main():
-    wb = openpyxl.Workbook()
+    path = os.path.join(EXCEL, "ForgeRecipeData.xlsx")
+    wb = openpyxl.load_workbook(path) if os.path.exists(path) else openpyxl.Workbook()
     ws = wb.active
     ws.title = "ForgeRecipeData"
+
+    # 기본 60종만 갱신한다. 입문 장비 등 별도 생성기가 추가한 행은 보존한다.
+    have = {ws.cell(r, 1).value: r for r in range(4, ws.max_row + 1)
+            if ws.cell(r, 1).value is not None}
+    for n in range(TIERS * SLOTS):
+        row = have.get(40000 + n)
+        if row is not None:
+            assert ws.cell(row, 2).value == EQUIP_ID0 + n, f'기본 레시피 ID 충돌: {40000 + n}'
 
     for c, v in enumerate(HEADER, 1):
         ws.cell(1, c, v)
     for c, v in enumerate(KOR, 1):
         ws.cell(3, c, v)
 
-    row = 4
     n = 0
     for t in range(TIERS):
         for slot in range(SLOTS):
@@ -97,13 +105,13 @@ def main():
             cnts = counts(t)
             vals = [40000 + n, equip, req_level(t), gold(t),
                     mats[0], cnts[0], mats[1], cnts[1], mats[2], cnts[2]]
+            row = have.get(40000 + n, max(4, ws.max_row + 1))
             for c, v in enumerate(vals, 1):
                 ws.cell(row, c, v)
-            row += 1
             n += 1
 
-    path = os.path.join(EXCEL, "ForgeRecipeData.xlsx")
     wb.save(path)
+    wb.close()
     print("ForgeRecipeData.xlsx 생성 — 레시피 %d개" % n)
 
     # 요약 출력 (사람이 곡선을 눈으로 확인할 수 있게)

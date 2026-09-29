@@ -228,7 +228,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetImage((int)Images.TravelButtonIcon).gameObject.BindEvent(OnClickTravel);
         GetButton((int)Buttons.Village1GuildExitButton).gameObject.BindEvent(() =>
         {
-            Sequence seq = DOTween.Sequence();
+            Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
             // t=0 : 버튼 OutBack 역재생 + 페이드 시작 (FadeInOut: 0.4 out + 0.15 wait + 0.5 in)
             seq.AppendCallback(() =>
@@ -290,7 +290,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         });
         GetButton((int)Buttons.Village1AlchemyExitButton).gameObject.BindEvent(() =>
         {
-            Sequence seq = DOTween.Sequence();
+            Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
             // t=0 : 하위 버튼 OutBack 역재생 + 페이드 시작
             seq.AppendCallback(() =>
@@ -395,6 +395,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     public override void OnDestroy()
     {
+        base.OnDestroy();
         if (Managers.Quest != null)
         {
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
@@ -547,7 +548,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         if (string.IsNullOrEmpty(_pendingUnlockBtnId)) return;
         string unlockId = _pendingUnlockBtnId;
         _pendingUnlockBtnId = null;
-        DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId));
+        DOVirtual.DelayedCall(0.5f, () => TryPlayUnlockAnim(unlockId)).SetTarget(this).SetLink(gameObject);
     }
 
     void SetInfo()
@@ -770,7 +771,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         GetButton((int)Buttons.ShopButton).gameObject.SetActive(false);
         GetButton((int)Buttons.TravelButton).gameObject.SetActive(false);
 
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         seq.AppendCallback(() =>
         {
@@ -830,7 +831,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.TravelButtonIcon),
                     GetText((int)Texts.TravelButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Travel_Icon", LocalizeKey.TravelBtnText, LocalizeKey.TravelUnlockText)); // 해금 대상 = [여정] 버튼
+                        .SetInfo(GetImage((int)Images.TravelButtonIcon).sprite, LocalizeKey.TravelBtnText, LocalizeKey.TravelUnlockText)); // 해금 대상 = [여정] 버튼
                 break;
 
             case UNLOCK_FORGE_BUTTON:
@@ -840,7 +841,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.ForgeButtonIcon),
                     GetText((int)Texts.ForgeButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Forge_Icon", LocalizeKey.ForgeText, LocalizeKey.ForgeUnlockText));
+                        .SetInfo(GetImage((int)Images.ForgeButtonIcon).sprite, LocalizeKey.ForgeText, LocalizeKey.ForgeUnlockText));
                 break;
 
             case UNLOCK_SHOP_BUTTON:
@@ -850,7 +851,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.ShopButtonIcon),
                     GetText((int)Texts.ShopButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Shop_Icon", LocalizeKey.ShopText, LocalizeKey.ShopUnlockText));
+                        .SetInfo(GetImage((int)Images.ShopButtonIcon).sprite, LocalizeKey.ShopText, LocalizeKey.ShopUnlockText));
                 break;
 
             case UNLOCK_MONASTERY_BUTTON:
@@ -860,7 +861,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.MonasteryButtonIcon),
                     GetText((int)Texts.MonasteryButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Monastery_Icon", LocalizeKey.MonasteryText, LocalizeKey.MonasteryUnlockText));
+                        .SetInfo(GetImage((int)Images.MonasteryButtonIcon).sprite, LocalizeKey.MonasteryText, LocalizeKey.MonasteryUnlockText));
                 break;
 
             case UNLOCK_ALCHEMY_BUTTON:
@@ -870,7 +871,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     GetImage((int)Images.AlchemyButtonIcon),
                     GetText((int)Texts.AlchemyButtonText),
                     onComplete: () => Managers.UI.ShowPopupUI<UI_UnlockButtonPopup>()
-                        .SetInfo("Alchemy_Icon", LocalizeKey.AlchemyText, LocalizeKey.AlchemyUnlockText));
+                        .SetInfo(GetImage((int)Images.AlchemyButtonIcon).sprite, LocalizeKey.AlchemyText, LocalizeKey.AlchemyUnlockText));
                 break;
         }
     }
@@ -934,7 +935,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void EnterBuilding(Village1Group group, GameObjects groupObj, string bgKey, Texts nameText,
                        string enterVfxId, Buttons[] subBtns)
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         // t=0 : 로비 버튼 OutBack 역재생
         seq.AppendCallback(RetractMainButtons);
@@ -982,7 +983,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     /// <summary>건물 → 마을 로비 복귀 연출.</summary>
     void ExitBuilding(string exitVfxId, Buttons[] subBtns)
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         // t=0 : 하위 버튼 역재생 + 페이드 시작
         seq.AppendCallback(() =>
@@ -1116,7 +1117,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickGuild()
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         seq.AppendCallback(() =>
         {
@@ -1180,7 +1181,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickAlchemy()
     {
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject);
 
         // t=0 : 로비 TYPE 1 버튼 OutBack 역재생
         seq.AppendCallback(() =>
@@ -1273,7 +1274,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     {
         // 슬라이드 30: 메인 퀘스트 [1] 시에만 [대화] 버튼으로 퀘스트 진행.
         // 그 외에는 GuildNormalText에서 한 줄 랜덤 선택하여 잡담 대사 재생.
-        bool isFirstQuest = Managers.Quest.CurrentQuestID == 1;
+        bool isFirstQuest = Managers.Quest.CurrentQuestID == FIRST_GUILD_QUEST_ID;
 
         string groupKey = isFirstQuest
             ? Managers.Quest.GetCurrentDialogueID()   // "GuildQuest1Text"
@@ -1281,7 +1282,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
-            speakerName: "접수원 아가씨",
+            speakerName: Util.Localize(LocalizeKey.NpcReceptionistNameText),
             portrait: null,
             onFinished: isFirstQuest
                 ? (System.Action)(() => Managers.Quest.CheckButtonClick(VILLAGE1_GUILD_TALK_VFX))
@@ -1312,7 +1313,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
-            speakerName: "연금공방 아가씨",
+            speakerName: Util.Localize(LocalizeKey.NpcAlchemistNameText),
             portrait: null,
             onFinished: () =>
             {
@@ -1327,7 +1328,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
                     {
                         Managers.UI.ShowPopupUI<UI_PotionDetailPopup>()
                             .SetInfo(Managers.Game.CurrentHPPotionDataId, fromCustomOrder: false);
-                    }).SetUpdate(true);
+                    }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
                 }
             },
             randomSingleLine: !useFullDialogue,
@@ -1341,7 +1342,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.Quest.CheckButtonClick(VILLAGE1_FORGE_TALK_VFX);
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ForgeNormalText",
-            speakerName: "대장장이",
+            speakerName: Util.Localize(LocalizeKey.NpcBlacksmithNameText),
             portrait: GetImage((int)Images.Village1ForgeTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
@@ -1352,7 +1353,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.Quest.CheckButtonClick(VILLAGE1_MONASTERY_TALK_VFX);
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "MonasteryNormalText",
-            speakerName: "수도원 사제",
+            speakerName: Util.Localize(LocalizeKey.NpcMonasteryPriestNameText),
             portrait: GetImage((int)Images.Village1MonasteryTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
@@ -1363,7 +1364,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         Managers.Quest.CheckButtonClick(VILLAGE1_SHOP_TALK_VFX);
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ShopNormalText",
-            speakerName: "상점 주인",
+            speakerName: Util.Localize(LocalizeKey.NpcShopkeeperNameText),
             portrait: GetImage((int)Images.Village1ShopTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
@@ -1371,6 +1372,13 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
     void OnClickVillage1GuildQuestButton()
     {
+        // 처음 임무를 받으러 온 플레이어가 [임무]를 눌러도 같은 안내를 시작한다.
+        if (Managers.Quest.CurrentQuestID == FIRST_GUILD_QUEST_ID)
+        {
+            OnClickVillage1GuildTalkButton();
+            return;
+        }
+
         // 완료 보고 퀘스트 진행 중이면 퀘스트 전용 대사 + 종료 시 진행 트리거,
         // 그 외에는 잡담 대사(GuildNormalText) 한 줄 랜덤.
         //
@@ -1389,7 +1397,7 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
 
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: groupKey,
-            speakerName: "접수원 아가씨",
+            speakerName: Util.Localize(LocalizeKey.NpcReceptionistNameText),
             portrait: null,
             onFinished: isReportQuest
                 ? (System.Action)(() =>

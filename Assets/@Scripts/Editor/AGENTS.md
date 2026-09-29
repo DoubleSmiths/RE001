@@ -7,6 +7,8 @@
 UnityEditor 전용 툴 디렉터리 (빌드에 미포함, 다수가 `#if UNITY_EDITOR` 가드). 핵심은 `DataTransformer` — 로컬 xlsx 또는 구글시트를 ExcelDataReader로 읽어 `Assets/@Resources/Data/JsonData/*.json`을 생성하는 시트→JSON 파이프라인이다(게임은 JSON만 읽음). 나머지는 Addressables 등록기, TMP/프리팹 일괄 변환기, 그리고 PlayMode 중 기획서 슬라이드별 UI/시스템을 검증하는 Test 메뉴(Battle/Bestiary/Popup/QuestVerify/Integration)와 여정 해금 연출 자동 녹화/이펙트 진단 도구(Record/FX)이다.
 
 ## Key Files
+`SceneBackupArchive.cs`는 정상 종료가 확정된 `EditorApplication.quitting`에서 남은 씬 백업을 `Documents/UnityRecovery/`로 보존 이동한다. 종료 취소·크래시에는 실행하지 않는다. ADR0016 참조.
+
 | File | Description |
 |------|-------------|
 | `DataTransformer.cs` | 시트→JSON 파서 (EditorWindow). 로컬 xlsx와 구글시트(GSHEET_* export URL) 양대 경로. `Tools/ParseExcel %#K`(로컬 7종), `Tools/ParseExcelFromGoogleSheets`, `Tools/ParseExtraData (스킬/장비/미니몬/물약/콤보)`(로컬 8종), `Tools/ParseExtraDataFromGoogleSheets`, `Tools/GenerateLocalizeKeys`(Define.cs의 LocalizeKey region 덮어쓰기), `Tools/DeleteGameData `(PlayerPrefs+SaveData.json 삭제) |
@@ -15,7 +17,11 @@ UnityEditor 전용 툴 디렉터리 (빌드에 미포함, 다수가 `#if UNITY_E
 | `EquipPrefabAddressableRegistrar.cs` | `Tools/Register Equipment Popup Addressables` — 장비 팝업 프리팹 3종(UI_EquipmentPopup/UI_EquipDetailPopup/UI_ForgePopup)을 UI 그룹+PreLoad 라벨 등록 후 `BuildPlayerContent()`로 카탈로그 재빌드 |
 | `BattleTestMenu.cs` | `Test/Battle/*` — 데미지 폰트 5모드, BattleMath 100회 시뮬, Lv 리셋/강제 레벨업, `Toggle Force Player Critical %#c`(Ctrl+Shift+C) |
 | `BestiaryTestMenu.cs` | `Test/Bestiary/*` — 도감/미니몬 검증. 기록도·별등급·공명도·AllSS 시드/사이클(PlayerPrefs 스텁), TamePopup·관심창고 테스트. 대상 몬스터 2001/2002 |
-| `IntegrationTestMenu.cs` | `Test/Integration/*` — `Diagnose - 전체 진단 %#d`(매니저/데이터 사전/플레이어/능력/미니몬/퀘스트/콤보 종합), `Diagnose - 데이터 무결성`(MinMon↔Creature, 고유기술=creatureId+4000 매핑 등), 능력 학습/망각, 재화 치트, 세이브 저장/삭제 |
+| `IntegrationTestMenu.cs` | `Test/Integration/*` — `Letterbox - 안전 영역 계산`(FixedResolution.Fit 4경우), `Diagnose - 전체 진단 %#d`(매니저/데이터 사전/플레이어/능력/미니몬/퀘스트/콤보 종합), `Diagnose - 데이터 무결성`(MinMon↔Creature, 고유기술=creatureId+4000 매핑 등), 능력 학습/망각, 재화 치트, 세이브 저장/삭제 |
+| `UiQualityScan.cs` | `Test/Integration/UI 품질 스캔 (폰트 섞임·넘침·구독 누수)` — 팝업 22종을 한/영으로 3회씩 열고 닫으며 ① 글자·숫자가 폴백 폰트로 그려지는 텍스트 ② 부모 칸을 넘는 텍스트(후보, 캡처로 확인) ③ 매니저 이벤트 구독 수 증가를 찾는다. GameScene 플레이 중 실행, 결과 `persistentDataPath/ui_scan_result.txt`. ①③이 있으면 에러 |
+| `SaveRobustnessCheck.cs` | `Test/Integration/Save - 내구성 검사` — ISFIRST 무관·손상 복구/격리·병합 없음·데이터표 보호·모아 쓰기 5항목(ADR0027). 사용자 세이브를 백업·복원한다 |
+| `ReleaseSetup.cs` | `Tools/Release/전체 구성` — 브랜딩 스프라이트 임포트, 앱 아이콘(안드로이드 적응형), 타이틀 화면·설정 시스템 줄·크레딧 팝업 생성과 어드레서블 등록(ADR0028). 재실행해도 같은 결과 |
+| `GameViewSizeTool.cs` | `GameViewSizeTool.Set(w, h)` — 게임뷰 해상도 고정(unity-cli exec 로 캡처 전에 호출) |
 | `PopupTestMenu.cs` | `Test/*` 단축키 팝업 — CustomOrder `%#1`, PotionDetail `%#2~4`, PotionPopup `%#6`, 자동물약 해금 토글 `%#7`, 스피드버프 `%#8`, 행운물약 해금 `%#9`, 연금공방 이동 `%#0` (reflection으로 private OnClick 호출) |
 | `QuestVerifyMenu.cs` | `Test/Quest Verify/*` — `A. Reset & Re-init %#r`(세이브 삭제+ISFIRST), `B. Show All & Seed %#u`(전 컨텐츠 해금/시드), part1/part2 슬라이드별 시연 메뉴 다수, `Jump/Battle %#b`·`Village1 %#v`·Quest 점프 |
 | `UnlockAnimRecorder.cs` | `Test/Record/여정 해금 연출 녹화 (Documents 저장)` — 클릭 한 번으로 플레이 진입→GameScene 준비 대기(최대 30초)→Unity Recorder(MP4, 30fps, 게임뷰) 시작→여정 해금 트리거(`Managers.Quest.RaiseBtnUnlocked(UNLOCK_TRAVEL_BUTTON)`)→연출/팝업 촬영→팝업 닫기([!]+NEW 확인 구간)→`Documents/UnlockAnim_*.mp4` 저장→플레이 자동 종료. 미플레이 시 SessionState pending + playModeStateChanged 훅으로 진입 후 자동 재개 (async Task 기반) |

@@ -270,13 +270,13 @@ public class UI_SkillBookPopup : UI_Popup
     {
         if (!Managers.Ability.IsLearned(id)) return false;
         if (_filter == Filter.All) return true;
-        var role = Managers.Ability.GetRole(id);
+        var roles = Managers.Ability.GetRoles(id);
         switch (_filter)
         {
-            case Filter.Skill: return role == AbilityManager.Role.Skill;
-            case Filter.Spell: return role == AbilityManager.Role.Spell;
-            case Filter.Def:   return role == AbilityManager.Role.Def;
-            case Filter.Util:  return role == AbilityManager.Role.Util;
+            case Filter.Skill: return roles.Contains(AbilityManager.Role.Skill);
+            case Filter.Spell: return roles.Contains(AbilityManager.Role.Spell);
+            case Filter.Def:   return roles.Contains(AbilityManager.Role.Def);
+            case Filter.Util:  return roles.Contains(AbilityManager.Role.Util);
             default:           return true;
         }
     }

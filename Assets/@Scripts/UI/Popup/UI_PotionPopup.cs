@@ -196,8 +196,10 @@ public class UI_PotionPopup : UI_Popup
         return true;
     }
 
-    void OnDestroy()
+    // override 가 아니면 UI_Base 정리(트윈 종료·폰트 구독 해제)를 가려 건너뛴다.
+    public override void OnDestroy()
     {
+        base.OnDestroy();
         if (Managers.Game != null && Managers.Game.Player != null)
             Managers.Game.Player.OnAutoPotionUsed -= HandleAutoPotionUsed;
         if (Managers.Game != null)
@@ -360,7 +362,7 @@ public class UI_PotionPopup : UI_Popup
         lockIconTr.localScale = Vector3.one;
         lockIconTr.anchoredPosition = lockOriginPos;
 
-        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        Sequence seq = DOTween.Sequence().SetTarget(this).SetLink(gameObject).SetUpdate(true);
 
         // Delay 0.5s
         seq.AppendInterval(0.5f);
@@ -425,7 +427,7 @@ public class UI_PotionPopup : UI_Popup
         if (_boxAnim != null)
         {
             _boxAnim.DOPlayBackwards();
-            DG.Tweening.DOVirtual.DelayedCall(_boxAnim.duration, () => Managers.UI.ClosePopupUI(), ignoreTimeScale: true);
+            DG.Tweening.DOVirtual.DelayedCall(_boxAnim.duration, () => Managers.UI.ClosePopupUI(), ignoreTimeScale: true).SetTarget(this).SetLink(gameObject);
         }
         else
         {
@@ -469,15 +471,15 @@ public class UI_PotionPopup : UI_Popup
     void RefreshTexts()
     {
         if (_titleText != null) _titleText.text = Util.Localize(Define.LocalizeKey.BtmPotionBtnText);
-        string infoLabel = Managers.Game.Language == Define.Language.Korean ? "정보" : "INFO";
-        var hpInfoTxt  = GetText((int)Texts.Txt_Button_02);
-        var spdInfoTxt = GetText((int)Texts.Txt_Button_1_01);
-        if (hpInfoTxt  != null) hpInfoTxt.text  = infoLabel;
-        if (spdInfoTxt != null) spdInfoTxt.text = infoLabel;
+        string infoLabel = Util.Localize("InfoBtnText");
+        foreach (var t in GetComponentsInChildren<TMPro.TMP_Text>(true))
+            if (t.name == "Txt_Button_02" || t.name == "Txt_Button_1_01") t.text = infoLabel;
     }
 
     void UsePotion(Slot s)
     {
+        // 읽기 모달 아래에 물약창이 남아 있어도 정지 시간을 이용해 회복/버프를 쌓지 않는다.
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         s.count = Mathf.Max(0, s.count - 1);
         s.cooldown = s.cooldownMax;
 
@@ -533,6 +535,7 @@ public class UI_PotionPopup : UI_Popup
     void Update()
     {
         if (!gameObject.activeInHierarchy) return;
+        if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
         // 쿨타임 진행
         foreach (var s in _slots)
         {

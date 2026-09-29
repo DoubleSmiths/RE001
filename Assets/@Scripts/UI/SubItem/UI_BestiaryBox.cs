@@ -89,7 +89,7 @@ public class UI_BestiaryBox : UI_Base
     {
         _starIdleTween?.Kill();
         _starIdleTween = null;
-        if (_activeEf != null) { Managers.Resource.Destroy(_activeEf); _activeEf = null; }
+        if (_activeEf != null) { Managers.Resource?.Destroy(_activeEf); _activeEf = null; }
         base.OnDestroy();
     }
 

@@ -26,6 +26,9 @@ public class MinMonManager
     {
         if (!Managers.Data.CreatureDic.TryGetValue(dataId, out var cd))
             return InterestResult.NotInterested;
+        if (!IsOwned(dataId) && Managers.Data.MinMonDic.TryGetValue(dataId, out var minion)
+            && minion.FirstInterestKillCount > 0 && GetKillCount(dataId) >= minion.FirstInterestKillCount)
+            return AddInterest(dataId);
         if (UnityEngine.Random.value > cd.InterestRate)
             return InterestResult.NotInterested;
         return AddInterest(dataId);
@@ -61,6 +64,7 @@ public class MinMonManager
     {
         if (!Managers.Data.MinMonDic.TryGetValue(dataId, out var data))
             return false;
+        Managers.Mission?.Notify(Define.MissionEvent.CaptureTry);   // v2 미션 — 포획 시도(성공 여부 무관)
 
         MinMonSaveData save = GetSaveData(dataId);
 
@@ -174,6 +178,7 @@ public class MinMonManager
     // ── 동행 설정 ──
     public void SetCompanion(int dataId)
     {
+        if (!IsOwned(dataId) || Managers.Game.CompanionMinMonId == dataId) return;
         // 이전 동행 해제
         int prev = Managers.Game.CompanionMinMonId;
         if (prev != -1)
@@ -189,6 +194,7 @@ public class MinMonManager
 
         Managers.Game.CompanionMinMonId = dataId;
         OnCompanionChanged?.Invoke(dataId);
+        Managers.Ability.OnCompanionChanged();
     }
 
     public void RemoveCompanion()
@@ -202,6 +208,7 @@ public class MinMonManager
         }
         Managers.Game.CompanionMinMonId = -1;
         OnCompanionChanged?.Invoke(-1);
+        Managers.Ability.OnCompanionChanged();
         Managers.Game.SaveGame();
     }
 
@@ -297,11 +304,13 @@ public class MinMonManager
     {
         if (!Managers.Data.MinMonDic.TryGetValue(dataId, out var data)) return 0f;
         float bonus = Managers.Ability != null ? Managers.Ability.CatchRateBonus / 100f : 0f;
-        return Mathf.Clamp01(data.CatchChance + bonus);
+        float chance = !IsOwned(dataId) && data.FirstCatchChance > 0f
+            ? data.FirstCatchChance : data.CatchChance;
+        return Mathf.Clamp01(chance + bonus);
     }
 
     // 천장 도달(다음 시도가 확정 성공) 여부.
-    public bool IsCatchGuaranteed(int dataId) => GetTameCount(dataId) >= GetCatchCeil(dataId);
+    public bool IsCatchGuaranteed(int dataId) => GetCatchChance(dataId) >= 1f || GetTameCount(dataId) >= GetCatchCeil(dataId);
 
     public int GetRecordRate(int dataId)
     {

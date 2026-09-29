@@ -110,6 +110,21 @@ public class UI_EquipDetailPopup : UI_Popup
             contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
         content.textWrappingMode = TextWrappingModes.Normal;
+        content.raycastTarget = true;
+        content.gameObject.GetOrAddComponent<UI_ItemLinkHandler>();
+
+        // 긴 영문 장비명도 아이콘 오른쪽부터 제목 프레임 끝까지의 폭 안에 맞춘다.
+        var title = GetText((int)Texts.Txt_TopFrame_01);
+        var titleFitter = title.GetComponent<ContentSizeFitter>();
+        if (titleFitter != null) titleFitter.enabled = false;
+        var titleRT = title.rectTransform;
+        float titleWidth = ((RectTransform)titleRT.parent).rect.width
+            - titleRT.anchoredPosition.x - EQUIP_TITLE_RIGHT_INSET;
+        titleRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, titleWidth / titleRT.localScale.x);
+        title.enableAutoSizing = true;
+        title.fontSizeMax = title.fontSize;
+        title.fontSizeMin = title.fontSizeMax * 0.65f;
+        title.textWrappingMode = TextWrappingModes.Normal;
 
         // 영어 제목이 오른쪽 수치 열(x=33)을 덮지 않도록 기존 두 열 간격 안에 맞춘다.
         foreach (var id in new[] { Texts.Txt_EquipDuriTxtGroup_07, Texts.Txt_EquipSkillTxtGroup_05 })
@@ -356,8 +371,10 @@ public class UI_EquipDetailPopup : UI_Popup
                     if (id <= 0 || need <= 0) continue;
                     string nm = Managers.Data.ItemDic != null && Managers.Data.ItemDic.TryGetValue(id, out var it)
                         ? Util.Localize(it.Name) : id.ToString();
-                    sb.Append($"\n{nm} ").Append(Colored(Managers.Game.GetItemCount(id), need));
+                    sb.Append($"\n<link=\"{ITEM_LINK_PREFIX}{id}\"><u>{nm}</u></link> ")
+                        .Append(Colored(Managers.Game.GetItemCount(id), need));
                 }
+                sb.Append($"\n<color=#FFD000>{Util.Localize(GROWTH_MATERIAL_HINT_TEXT)}</color>");
                 sb.Append("</size>");
             }
         }
