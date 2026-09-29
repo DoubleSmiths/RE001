@@ -17,7 +17,13 @@
   버전 `1.0.0`(코드 1). 한국어 기기 앱 이름은 `Plugins/Android/LocalizedAppName.androidlib` 의 `values-ko`.
 - **화면**: 세로 고정. 모든 씬의 메인 카메라에 `FixedResolution` 을 자동 부착(1440x3040 비율), 화면 크기가 바뀌면
   다시 계산, 여백은 `@LetterboxCamera`(cullingMask 0, 검정)가 지운다. 모든 UI 캔버스는 Screen Space - Camera.
-  안드로이드는 노치 영역 밖에만 렌더(`renderOutsideSafeArea` 끔)해 안전 영역 코드를 두지 않는다.
+  비율은 **`Screen.safeArea` 안에서** 맞춘다(`FixedResolution.Fit`). 처음엔 `renderOutsideSafeArea`(끔)에 맡겼으나,
+  targetSdk 35 이상은 안드로이드 15+ 에서 노치 모드 NEVER/DEFAULT 가 ALWAYS 로 해석돼(edge-to-edge 강제) 화면이
+  노치·펀치홀 아래까지 그려진다 — 상단 재화 HUD 가 가린다. PC·노치 없는 폰은 안전 영역 = 전체라 결과가 같다.
+- **안드로이드 16(targetSdk 36) 동작 변경**: 예측형 뒤로가기로 `KEYCODE_BACK` 이 전달되지 않는 문제는 Unity 기본값
+  `enableOnBackInvokedCallback="false"`(Player Settings 의 Predictive Back Support 끔)로, 대형 화면에서 방향·비율
+  제한을 무시하는 문제는 `appCategory="game"` 예외로 피한다. 둘 다 AAB 매니페스트에서 확인(bundletool `dump manifest`).
+  Predictive Back Support 를 켜면 ESC 기반 뒤로가기(`UIManager.OnBackPressed`)가 안드로이드 16 에서 끊긴다.
 - **PC**: 창 모드 기본, 크기 조절 가능, 단일 인스턴스. 첫 실행에 모니터 높이 85% 세로 창. 설정의 '전체 화면'은
   테두리 없는 전체화면(좌우 여백). Alt+Enter 도 동작.
 - **뒤로가기/ESC**(`UIManager.OnBackPressed`): 맨 위 팝업은 그 팝업의 X·나가기·바깥 배경 버튼 핸들러를 그대로 누른다

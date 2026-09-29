@@ -14,6 +14,7 @@ public class FixedResolution : MonoBehaviour
 
     Camera _camera;
     int _width, _height;
+    Rect _safe;
     Rect _rect;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -44,7 +45,7 @@ public class FixedResolution : MonoBehaviour
     //  GameScene 메인 카메라의 PixelPerfectCamera 가 시작할 때 rect 를 전체 화면으로 되돌려 여백이 사라졌다.
     void Update()
     {
-        if (Screen.width != _width || Screen.height != _height || _camera.rect != _rect)
+        if (Screen.width != _width || Screen.height != _height || Screen.safeArea != _safe || _camera.rect != _rect)
             Apply();
     }
 
@@ -52,22 +53,36 @@ public class FixedResolution : MonoBehaviour
     {
         _width = Screen.width;
         _height = Screen.height;
+        _safe = Screen.safeArea;
         if (_camera == null || _width <= 0 || _height <= 0) return;
 
-        float scale = ((float)_width / _height) / TARGET_ASPECT;
-        Rect rect = new Rect(0f, 0f, 1f, 1f);
+        _rect = Fit(_safe, _width, _height);
+        _camera.rect = _rect;
+    }
+
+    // 안전 영역 안에서 비율을 맞춘 카메라 영역(0~1).
+    //  targetSdk 35 이상은 안드로이드 15+ 에서 '안전 영역 밖 렌더링 끔'이 무시되고(노치 모드 NEVER/DEFAULT → ALWAYS)
+    //  화면이 노치·펀치홀 아래까지 그려진다 — 그대로 두면 상단 재화 HUD 가 카메라 구멍에 가린다.
+    //  PC·노치 없는 폰은 안전 영역 = 전체 화면이라 예전과 같다.
+    public static Rect Fit(Rect safe, float width, float height)
+    {
+        if (safe.width <= 0f || safe.height <= 0f) safe = new Rect(0f, 0f, width, height);
+
+        Rect rect = new Rect(safe.x / width, safe.y / height, safe.width / width, safe.height / height);
+        float scale = (safe.width / safe.height) / TARGET_ASPECT;
         if (scale < 1f)
         {
-            rect.height = scale;                  // 화면이 더 길다 → 위아래 여백
-            rect.y = (1f - scale) / 2f;
+            float h = rect.height * scale;        // 화면이 더 길다 → 위아래 여백
+            rect.y += (rect.height - h) / 2f;
+            rect.height = h;
         }
         else
         {
-            rect.width = 1f / scale;              // 화면이 더 넓다(PC) → 좌우 여백
-            rect.x = (1f - rect.width) / 2f;
+            float w = rect.width / scale;         // 화면이 더 넓다(PC) → 좌우 여백
+            rect.x += (rect.width - w) / 2f;
+            rect.width = w;
         }
-        _camera.rect = rect;
-        _rect = rect;
+        return rect;
     }
 
     void CreateBarCamera()

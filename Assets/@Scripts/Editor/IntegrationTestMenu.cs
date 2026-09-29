@@ -420,5 +420,35 @@ public static class IntegrationTestMenu
     {
         EditorUtility.RevealInFinder(Application.persistentDataPath);
     }
+
+    // ─────────────────────────────────────────────
+    // 8. 화면 비율 (FixedResolution.Fit) — 플레이 모드 불필요
+    // ─────────────────────────────────────────────
+    [MenuItem("Test/Integration/Letterbox - 안전 영역 계산", false, 600)]
+    static void CheckLetterbox()
+    {
+        // (안전 영역, 화면) → 카메라 영역이 안전 영역 안에 있고 목표 비율을 지키는가
+        var cases = new (string name, Rect safe, float w, float h)[]
+        {
+            ("펀치홀 폰 1080x2400, 위 90px",  new Rect(0, 0, 1080, 2310), 1080, 2400),
+            ("노치 없는 긴 폰 1080x2640",     new Rect(0, 0, 1080, 2640), 1080, 2640),
+            ("PC 1920x1080",                  new Rect(0, 0, 1920, 1080), 1920, 1080),
+            ("안전 영역 0 (폴백)",            new Rect(0, 0, 0, 0),       1080, 2400),
+        };
+        int fail = 0;
+        foreach (var c in cases)
+        {
+            Rect r = FixedResolution.Fit(c.safe, c.w, c.h);
+            Rect safe = c.safe.width > 0 ? c.safe : new Rect(0, 0, c.w, c.h);
+            float aspect = (r.width * c.w) / (r.height * c.h);
+            bool inside = r.xMin * c.w >= safe.xMin - 0.5f && r.xMax * c.w <= safe.xMax + 0.5f
+                       && r.yMin * c.h >= safe.yMin - 0.5f && r.yMax * c.h <= safe.yMax + 0.5f;
+            bool ok = inside && Mathf.Abs(aspect - FixedResolution.TARGET_ASPECT) < 0.001f;
+            if (!ok) fail++;
+            Debug.Log($"[Letterbox] {(ok ? "PASS" : "FAIL")} {c.name}: rect={r} 비율={aspect:F4} 안전영역안={inside}");
+        }
+        if (fail == 0) Debug.Log($"[Letterbox] PASS {cases.Length}/{cases.Length}");
+        else Debug.LogError($"[Letterbox] FAIL {fail}/{cases.Length}");
+    }
 }
 #endif

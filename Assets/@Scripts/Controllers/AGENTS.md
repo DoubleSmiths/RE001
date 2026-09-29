@@ -12,7 +12,7 @@
 | `BaseController.cs` | 모든 컨트롤러의 루트. `Awake()→Init()` 1회 초기화 가드(`_init`), `ObjectType { get; protected set; }` 제공. `virtual bool Init()`은 이미 초기화됐으면 false 반환 — 서브클래스는 `if (!base.Init()) return false;` 패턴 필수 |
 | `BackgroundScroller.cs` | 전투 배경 레이어 무한 스크롤(슬라이드 56/58). Start에서 각 자식 SpriteRenderer를 복제(A/B 2장)해 좌측 이동+랩핑. `_layerSpeeds = {1,2,3,4,4,5}`(BG1..5+Ground), 배열 초과 자식은 마지막 값 fallback. `IsScrolling` 기본 false — PlayerController가 engaged 여부에 따라 on/off 제어 |
 | `BattleSpawner.cs` | 전투 구역 몬스터 주기 스폰. Inspector에서 `monsterIds`/`spawnInterval`/`maxMonsters`/`spawnPoints` 설정. `Managers.Object.MonsterTransform.childCount >= maxMonsters`면 스킵, 스폰은 `Managers.Object.SpawnMonster(dataId, pos)` 위임 |
-| `FixedResolution.cs` | 1440x3040 기준 세로 화면 letterbox/pillarbox(camera.rect). 모든 씬 메인 카메라에 자동 부착, 화면 크기 변경 시 재계산, 여백은 `@LetterboxCamera` 가 검게 지운다(URP 는 OnPreCull 을 부르지 않는다). ADR0028 |
+| `FixedResolution.cs` | 1440x3040 기준 세로 화면 letterbox/pillarbox(camera.rect). **안전 영역(`Screen.safeArea`) 안에서** 계산(안드로이드 15+ 는 노치 아래까지 그린다), 모든 씬 메인 카메라에 자동 부착, 화면·안전 영역 변경 시 재계산, 여백은 `@LetterboxCamera` 가 검게 지운다(URP 는 OnPreCull 을 부르지 않는다). 계산 검사 `Test/Integration/Letterbox - 안전 영역 계산`. ADR0028 |
 | `ProjectileController.cs` | `BaseController` 상속, `ObjectType.Projectile`. `SetInfo(startPos, dir, damage, speed, range)`로 초기화 후 직선 비행. 명중 처리 2경로(슬62): `SetAttacker(attacker, attackType, skillMul)`로 공격자 주입 시 `BattleMath.Resolve → monster.TakeHit`(명중/회피/치명 주사위 판정 경유), 미주입 시 레거시 `monster.OnDamaged(_damage)` 그대로. `SetInfo`가 풀 재사용 대비 attacker를 리셋하므로 `SetAttacker`는 SetInfo 다음에 호출. **현재 발사처 배선 0건 — SetAttacker 경로는 미사용 상태**(호출부 없음, 향후 원거리 공격용). 사거리 초과/명중 시 `Managers.Resource.Destroy(gameObject)`로 풀 반환 |
 
 ## Subdirectories
