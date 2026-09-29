@@ -1651,6 +1651,7 @@ public class GameManager
     {
         ObjectCreationHandling = ObjectCreationHandling.Replace,
     };
+    static readonly JsonSerializer s_saveSerializer = JsonSerializer.Create(s_saveJson);
 
     bool  _saveDirty;
     float _saveTimer;
@@ -1688,10 +1689,13 @@ public class GameManager
             _gameData.SaveVersion = SAVE_VERSION;
             // 이름을 바꾸기 전에 디스크까지 내린다(fsync). 안 하면 전원이 나갔을 때 방금 이름 바꾼 본 파일과
             //  2~3초 전 .bak 이 둘 다 빈 파일일 수 있다(ext4 지연 할당).
-            byte[] bytes = new System.Text.UTF8Encoding(false).GetBytes(JsonConvert.SerializeObject(_gameData, s_saveJson));
+            // 파일에 바로 직렬화한다 — 예전엔 JSON 전체 문자열(UTF-16)과 바이트 배열을 만들어 저장 한 번에 수백 KB 를
+            //  할당했고, 전투 중 3초마다 저장되니 게임 코드 가비지의 대부분이었다(프레임당 평균 3.2KB). 결과 바이트는 같다.
             using (var fs = new FileStream(tmp, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                fs.Write(bytes, 0, bytes.Length);
+                using (var sw = new StreamWriter(fs, new System.Text.UTF8Encoding(false), 16 * 1024, leaveOpen: true))
+                using (var jw = new JsonTextWriter(sw))
+                    s_saveSerializer.Serialize(jw, _gameData);
                 fs.Flush(true);
             }
             if (File.Exists(_path))
