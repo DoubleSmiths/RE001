@@ -359,10 +359,15 @@ public class UI_CharacterPopup : UI_Popup
         for (int i = 0; i < 4; i++) _statDeltas[i] = 0;
     }
 
+    // 임시 분배는 이 창 안에만 둔다 — 확정 전에는 저장된 StatusPoint 를 건드리지 않는다.
+    //  (예전엔 + 누를 때마다 포인트를 차감·저장하고 분배치는 확정 때만 저장해서, 확정 전에
+    //   앱이 백그라운드로 가 저장된 뒤 종료되면 쓴 포인트가 통째로 사라졌다)
+    int PendingPoints => _statDeltas[0] + _statDeltas[1] + _statDeltas[2] + _statDeltas[3];
+    int AvailablePoints => Managers.Game.StatusPoint - PendingPoints;
+
     bool AddStat(int idx)
     {
-        if (Managers.Game.StatusPoint <= 0) return false;
-        Managers.Game.StatusPoint--;
+        if (AvailablePoints <= 0) return false;
         _statDeltas[idx]++;
         //PlayStatBtnAnim(idx, true);
         RefreshUI();
@@ -372,7 +377,6 @@ public class UI_CharacterPopup : UI_Popup
     bool RemoveStat(int idx)
     {
         if (_statDeltas[idx] <= 0) return false;
-        Managers.Game.StatusPoint++;
         _statDeltas[idx]--;
         //PlayStatBtnAnim(idx, false);
         RefreshUI();
@@ -509,14 +513,11 @@ public class UI_CharacterPopup : UI_Popup
     // StatResetBtn = 롤백 버튼: 임시 투자분(델타)을 취소하고 포인트를 환불.
     void OnClickStatReset() => RollbackDeltas();
 
-    // 저장 안 한 임시 분배를 롤백 — 투자한 포인트를 환불하고 델타 0으로.
+    // 저장 안 한 임시 분배를 롤백 — 델타만 0으로(포인트는 확정 때만 차감된다).
     void RollbackDeltas()
     {
         for (int i = 0; i < 4; i++)
-        {
-            Managers.Game.StatusPoint += _statDeltas[i];
             _statDeltas[i] = 0;
-        }
         RefreshUI();
     }
 
@@ -536,9 +537,10 @@ public class UI_CharacterPopup : UI_Popup
         if (nothingToApply) return;
 
         // 분배 델타를 GameData에 누적(영구 저장 — 세이브/로드는 GameManager가 관리)
+        int spent = PendingPoints;
         int[] inv = Managers.Game.StatInvest;
         for (int i = 0; i < 4; i++) { inv[i] += _statDeltas[i]; _statDeltas[i] = 0; }
-        Managers.Game.SaveGame();
+        Managers.Game.StatusPoint -= spent;   // 세터가 저장 — 분배치와 같은 기록에 들어간다
 
         // 실제 캐릭터에 적용 + PlayerBar 갱신 (RefreshStats가 OnHpChanged 발화 → HP 바/텍스트 즉시 갱신)
         _player.RefreshStats();
@@ -564,7 +566,7 @@ public class UI_CharacterPopup : UI_Popup
     {
         if (_player == null) return;
 
-        GetText((int)Texts.PointsStatPointsTxt).text = Managers.Game.StatusPoint.ToString();
+        GetText((int)Texts.PointsStatPointsTxt).text = AvailablePoints.ToString();
         GetText((int)Texts.ElixirPointsTxt).text     = Managers.Game.Elixir.ToString();
 
         // ── 미리보기용 기본값 (스탯 포인트 투자분 반영) ──
