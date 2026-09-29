@@ -576,6 +576,7 @@ public class UI_CharacterPopup : UI_Popup
 
         GetText((int)Texts.PointsStatPointsTxt).text = AvailablePoints.ToString();
         GetText((int)Texts.ElixirPointsTxt).text     = Managers.Game.Elixir.ToString();
+        LayoutPointsBar();
 
         // ── 미리보기용 기본값 (스탯 포인트 투자분 반영) ──
         float patkBase = _player.PhysicalAtk + _statDeltas[0] * 2f;
@@ -709,6 +710,29 @@ public class UI_CharacterPopup : UI_Popup
         TMP_Text[] texts = group.GetComponentsInChildren<TMP_Text>();
         if (texts.Length > 0)
             texts[texts.Length - 1].text = value;
+    }
+
+    // 머리줄(능력점수 / 달빛영약) — 라벨 폭이 언어마다 달라 고정 좌표면 숫자·아이콘과 겹쳤다(영어 POINT117, 한국어 달 아이콘).
+    //  왼쪽은 라벨 → 숫자, 오른쪽은 숫자(오른쪽 끝 고정) → 라벨 → 아이콘 순으로 실제 글자 폭에 맞춰 붙인다.
+    const float POINTS_BAR_GAP = 2f;
+    void LayoutPointsBar()
+    {
+        TMP_Text pointLabel = GetText((int)Texts.PointsText);
+        var pointValue = (RectTransform)GetText((int)Texts.PointsStatPointsTxt).transform;
+        float labelRight = ((RectTransform)pointLabel.transform).anchoredPosition.x + pointLabel.GetPreferredValues().x;
+        pointValue.anchoredPosition = new Vector2(labelRight + POINTS_BAR_GAP, pointValue.anchoredPosition.y);
+
+        TMP_Text elixirValue = GetText((int)Texts.ElixirPointsTxt);
+        TMP_Text elixirLabel = GetText((int)Texts.ElixirText);
+        var elixirLabelRT = (RectTransform)elixirLabel.transform;
+        float valueLeft = ((RectTransform)elixirValue.transform).anchoredPosition.x - elixirValue.GetPreferredValues().x;
+        elixirLabelRT.anchoredPosition = new Vector2(valueLeft - POINTS_BAR_GAP, elixirLabelRT.anchoredPosition.y);
+
+        GameObject icon = Util.FindChild(GetObject((int)GameObjects.PointsandElixirBar).gameObject, "Img_PointsandElixirBar_01");
+        if (icon == null) return;
+        var iconRT = (RectTransform)icon.transform;
+        float labelLeft = elixirLabelRT.anchoredPosition.x - elixirLabel.GetPreferredValues().x;
+        iconRT.anchoredPosition = new Vector2(labelLeft - POINTS_BAR_GAP, iconRT.anchoredPosition.y);
     }
 
     // 그룹 내 첫 번째 TMP_Text = 라벨 (슬라이드 16: LocalizationData 연동)
