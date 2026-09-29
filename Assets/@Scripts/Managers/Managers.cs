@@ -15,6 +15,7 @@ public class Managers : MonoBehaviour
     SubQuestManager _subQuest = new SubQuestManager();
     ComboManager    _combo    = new ComboManager();
     MissionManager  _mission  = new MissionManager();   // v2 미션·출석(ADR0030)
+    ShopManager     _shop     = new ShopManager();      // v2 상점·핫타임·월정액(ADR0030)
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -25,6 +26,7 @@ public class Managers : MonoBehaviour
     public static SubQuestManager SubQuest { get { return Instance?._subQuest; } }
     public static ComboManager    Combo    { get { return Instance?._combo; } }
     public static MissionManager  Mission  { get { return Instance?._mission; } }
+    public static ShopManager     Shop     { get { return Instance?._shop; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 
@@ -104,6 +106,9 @@ public class Managers : MonoBehaviour
 
         // 세터들이 표시만 해 둔 저장을 주기적으로 한 번에 기록
         _game?.TickSave(Time.unscaledDeltaTime);
+
+        // v2 핫타임이 끝나는 순간(실제 시간) 공격력·버프 아이콘을 되돌린다
+        _shop?.Tick();
 
         // 안드로이드 뒤로가기 = KeyCode.Escape. 데이터 준비(타이틀 프리로드) 전에는 받지 않는다.
         if (Input.GetKeyDown(KeyCode.Escape) && _data.LocalizationDic.Count > 0)

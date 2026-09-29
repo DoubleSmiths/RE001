@@ -77,6 +77,7 @@ public class GameScene : BaseScene
         var reward = _game.ClaimOfflineReward();
         if (reward.Kills > 0)
             _ui.ShowOfflineReward(reward);
+        Managers.Shop?.RestoreHotBuffs();   // 켜져 있던 핫타임 아이콘(버프 줄)을 다시 띄운다
     }
 
     void Update()

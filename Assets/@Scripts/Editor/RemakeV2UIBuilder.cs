@@ -219,7 +219,8 @@ public static class RemakeV2UIBuilder
     const string SHOP_POPUP    = "Assets/@Resources/Prefab/UI/Popup/UI_ShopPopup.prefab";
     const string MISSION_POPUP = "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab";
     const string QUEST_ICON    = "Assets/@Resources/Sprite/Icon/Menu Icon/Quest Icon.PNG";
-    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance" };   // UI_MissionPopup.Tab 순서
+    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop" };   // UI_MissionPopup.Tab 순서
+    const string SHOP_ICON = "Assets/@Resources/Sprite/Icon/Menu Icon/Shop_Icon.png";
     const float MISSION_TABS_TOP = 27f, MISSION_TAB_HEIGHT = 12f, MISSION_TABS_WIDTH = 124f;
     const float MISSION_ROW_HEIGHT = 16f, MISSION_RIGHT_WIDTH = 38f;
 
@@ -380,31 +381,38 @@ public static class RemakeV2UIBuilder
         BuildMissionShortcut();
     }
 
-    // HUD 재화 줄에 미션 버튼 — 설정 버튼을 복제해 아이콘만 바꾼다(인스펙터 클릭 연결은 비운다).
+    // HUD 재화 줄에 미션·상점 버튼 — 설정 버튼을 복제해 아이콘만 바꾼다(인스펙터 클릭 연결은 비운다).
     static readonly Vector2 MISSION_BTN_POS = new Vector2(44f, 0f);
+    static readonly Vector2 SHOP_BTN_POS    = new Vector2(61f, 0f);
 
     static void BuildMissionShortcut()
+    {
+        BuildShortcut("Mission", MISSION_BTN_POS, QUEST_ICON, UI_MissionPopup.Tab.Daily);
+        BuildShortcut("Shop", SHOP_BTN_POS, SHOP_ICON, UI_MissionPopup.Tab.Shop);
+    }
+
+    static void BuildShortcut(string prefix, Vector2 pos, string iconPath, UI_MissionPopup.Tab tab)
     {
         GameObject root = PrefabUtility.LoadPrefabContents(GAME_SCENE);
         try
         {
             Transform bar = Find(root.transform, "CurrencyBar");
-            Transform old = Find(root.transform, "MissionBtn", false);
+            Transform old = Find(root.transform, prefix + "Btn", false);
             if (old != null) Object.DestroyImmediate(old.gameObject);
 
             var btn = (RectTransform)Object.Instantiate(Find(bar, "OptionBtn").gameObject, bar).transform;
-            btn.name = "MissionBtn";
-            btn.anchoredPosition = MISSION_BTN_POS;
+            btn.name = prefix + "Btn";
+            btn.anchoredPosition = pos;
             for (int i = btn.childCount - 1; i >= 0; i--) Object.DestroyImmediate(btn.GetChild(i).gameObject);   // 설정 버튼의 아이콘 자식들
             var img = btn.GetComponent<Image>();
-            img.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(QUEST_ICON);
+            img.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
             img.type = Image.Type.Simple;
             img.preserveAspect = true;
             var button = btn.GetComponent<Button>();
             if (button != null) button.onClick = new Button.ButtonClickedEvent();
 
             // 알림 점: 빨간 원(Unity 기본 Knob) + 흰 '!' — 글자만 두면 얇은 선처럼 보여 알아보기 어려웠다
-            var badge = new GameObject("MissionBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            var badge = new GameObject(prefix + "Badge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
             badge.SetParent(btn, false);
             badge.anchorMin = badge.anchorMax = badge.pivot = new Vector2(1f, 1f);
             badge.anchoredPosition = new Vector2(1.5f, 1.5f);
@@ -414,7 +422,7 @@ public static class RemakeV2UIBuilder
             dot.color = new Color32(0xE8, 0x2A, 0x2A, 0xFF);
             dot.raycastTarget = false;
             var mark = (RectTransform)Object.Instantiate(Find(bar, "MainGoldText").gameObject, badge).transform;
-            mark.name = "MissionBadgeTxt";
+            mark.name = prefix + "BadgeTxt";
             mark.anchorMin = Vector2.zero;
             mark.anchorMax = Vector2.one;
             mark.offsetMin = mark.offsetMax = Vector2.zero;
@@ -430,10 +438,10 @@ public static class RemakeV2UIBuilder
 
             var shortcut = btn.gameObject.GetComponent<UI_MissionShortcut>();
             if (shortcut == null) shortcut = btn.gameObject.AddComponent<UI_MissionShortcut>();
-            shortcut._tab = UI_MissionPopup.Tab.Daily;
+            shortcut._tab = tab;
 
             PrefabUtility.SaveAsPrefabAsset(root, GAME_SCENE);
-            Debug.Log("[RemakeV2] HUD 미션 버튼 조립 완료 — CurrencyBar/MissionBtn");
+            Debug.Log($"[RemakeV2] HUD {prefix} 버튼 조립 완료 — CurrencyBar/{prefix}Btn");
         }
         finally
         {

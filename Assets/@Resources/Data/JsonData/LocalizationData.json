@@ -10019,6 +10019,141 @@
       "TextKey": "MissionClaimAllText",
       "Kor": "모두 받기",
       "Eng": "CLAIM ALL"
+    },
+    {
+      "TextKey": "MissionShopTabText",
+      "Kor": "상점",
+      "Eng": "SHOP"
+    },
+    {
+      "TextKey": "HotGoldText",
+      "Kor": "골드 2배",
+      "Eng": "GOLD x2"
+    },
+    {
+      "TextKey": "HotExpText",
+      "Kor": "경험치 2배",
+      "Eng": "EXP x2"
+    },
+    {
+      "TextKey": "HotAtkText",
+      "Kor": "공격력 +20%",
+      "Eng": "ATK +20%"
+    },
+    {
+      "TextKey": "HotLeftFormat",
+      "Kor": "(남은 {0})",
+      "Eng": "({0} LEFT)"
+    },
+    {
+      "TextKey": "AdWatchFormat",
+      "Kor": "광고 보기 {0}",
+      "Eng": "WATCH AD {0}"
+    },
+    {
+      "TextKey": "FreeCrystalFormat",
+      "Kor": "무료 크리스탈 {0}",
+      "Eng": "FREE {0} CRYSTALS"
+    },
+    {
+      "TextKey": "OfflineDoubleText",
+      "Kor": "오프라인 보상 한 번 더",
+      "Eng": "DOUBLE OFFLINE REWARD"
+    },
+    {
+      "TextKey": "MonthlyDailyFormat",
+      "Kor": "월정액 오늘 크리스탈 {0} ({1}일 남음)",
+      "Eng": "MONTHLY: {0} CRYSTALS TODAY ({1}D LEFT)"
+    },
+    {
+      "TextKey": "MonthlyLeftFormat",
+      "Kor": "{0}일 남음",
+      "Eng": "{0}D LEFT"
+    },
+    {
+      "TextKey": "MandrakeBuyFormat",
+      "Kor": "만드라고라 1개 (보유 {0})",
+      "Eng": "1 MANDRAKE (HAVE {0})"
+    },
+    {
+      "TextKey": "FirstBuyBonusText",
+      "Kor": "첫 구매 2배",
+      "Eng": "FIRST x2"
+    },
+    {
+      "TextKey": "PriceFormat",
+      "Kor": "{0:N0}원",
+      "Eng": "KRW {0:N0}"
+    },
+    {
+      "TextKey": "OwnedText",
+      "Kor": "구매함",
+      "Eng": "OWNED"
+    },
+    {
+      "TextKey": "ShopBoughtFormat",
+      "Kor": "{0} 구매 완료(테스트)",
+      "Eng": "{0} PURCHASED (TEST)"
+    },
+    {
+      "TextKey": "ShopNotReadyText",
+      "Kor": "결제는 곧 열립니다",
+      "Eng": "STORE COMING SOON"
+    },
+    {
+      "TextKey": "NotEnoughCrystalText",
+      "Kor": "크리스탈이 부족합니다",
+      "Eng": "NOT ENOUGH CRYSTALS"
+    },
+    {
+      "TextKey": "ProductStarterText",
+      "Kor": "시작 패키지",
+      "Eng": "STARTER PACK"
+    },
+    {
+      "TextKey": "ProductStepUp1Text",
+      "Kor": "스텝업 I",
+      "Eng": "STEP-UP I"
+    },
+    {
+      "TextKey": "ProductStepUp2Text",
+      "Kor": "스텝업 II",
+      "Eng": "STEP-UP II"
+    },
+    {
+      "TextKey": "ProductStepUp3Text",
+      "Kor": "스텝업 III",
+      "Eng": "STEP-UP III"
+    },
+    {
+      "TextKey": "ProductMonthlyText",
+      "Kor": "월정액 (30일)",
+      "Eng": "MONTHLY PASS (30D)"
+    },
+    {
+      "TextKey": "ProductAdFreeText",
+      "Kor": "광고 제거",
+      "Eng": "REMOVE ADS"
+    },
+    {
+      "TextKey": "ProductCrystalFormat",
+      "Kor": "크리스탈 {0}",
+      "Eng": "{0} CRYSTALS"
+    },
+    {
+      "TextKey": "StepLockedText",
+      "Kor": "앞 단계 먼저",
+      "Eng": "LOCKED"
+    },
+    {
+      "TextKey": "HotDurationFormat",
+      "Kor": "{0}분",
+      "Eng": "{0} MIN"
+    },
+    {
+      "TextKey": "ShopTitleText",
+      "Kor": "상점",
+      "Eng": "SHOP"
     }
   ]
 }

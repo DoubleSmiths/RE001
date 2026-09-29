@@ -85,6 +85,19 @@ public class MissionSaveData
     public int AttendanceKey;                                      // 마지막으로 출석 보상을 받은 날(yyyyMMdd)
 }
 
+// v2 상점·광고·월정액(ADR0030) — ShopManager 가 읽고 쓴다.
+[Serializable]
+public class ShopSaveData
+{
+    public long[] HotUntil = new long[3];                              // HotTime 별 끝 시각(UTC Ticks)
+    public int AdDayKey;                                               // 광고 횟수를 센 날(yyyyMMdd)
+    public Dictionary<string, int> AdViews = new Dictionary<string, int>();   // 자리별 오늘 본 횟수
+    public List<string> Purchased = new List<string>();                // 산 상품 ID(1회성·스텝업·첫 구매 2배 판정)
+    public long MonthlyUntil;                                          // 월정액 끝(UTC Ticks)
+    public int MonthlyClaimKey;                                        // 월정액 매일 보상을 받은 날
+    public bool AdFree;                                                // 광고 제거 — 광고 없이 즉시 보상
+}
+
 // ──────────────────────────────────────────────
 //  세이브 데이터
 // ──────────────────────────────────────────────
@@ -118,6 +131,8 @@ public class GameData
     public bool      GuardHintSeen;
     // v2 미션·출석
     public MissionSaveData Missions = new MissionSaveData();
+    // v2 상점·광고·월정액
+    public ShopSaveData Shop = new ShopSaveData();
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -690,7 +705,8 @@ public class GameManager
             return result;
         }
 
-        double capped = System.Math.Min(seconds, OFFLINE_MAX_HOURS * 3600.0);
+        // 월정액 중에는 상한 +4시간(ShopManager.OfflineBonusHours)
+        double capped = System.Math.Min(seconds, (OFFLINE_MAX_HOURS + (Managers.Shop?.OfflineBonusHours ?? 0f)) * 3600.0);
         result.Capped  = seconds > capped;
         result.Seconds = capped;
 
@@ -716,6 +732,7 @@ public class GameManager
         MarkSeen();
 
         LastOfflineReward = result;
+        Managers.Shop?.OnOfflineClaimed(result);   // 상점 탭에 '오프라인 보상 2배(광고)'가 열린다
         Debug.Log($"[방치보상] {capped / 3600.0:F1}시간 → {result.Kills}처치, EXP {result.Exp:N0}, 골드 {result.Gold:N0}");
         return result;
     }
@@ -754,8 +771,9 @@ public class GameManager
 
         if (!TryGetAreaAverage(_gameData.LastBattleAreaId, out float avgExp, out float avgGold)) return;
 
-        int gold = Mathf.RoundToInt(avgGold * kills);
-        float exp = avgExp * kills;
+        // 켜 둔 채 쌓이는 방치 처치도 처치다 — 핫타임 배수를 곱한다(오프라인 정산에는 곱하지 않는다)
+        int gold = Mathf.RoundToInt(avgGold * kills * (Managers.Shop?.GoldMult ?? 1f));
+        float exp = avgExp * kills * (Managers.Shop?.ExpMult ?? 1f);
 
         Gold += gold;                 // setter가 OnResourceChanged를 쏴 HUD 골드가 실시간으로 오른다
         Player.GainExp(exp);          // OnExpChanged로 EXP 바도 함께 오른다
@@ -1430,6 +1448,7 @@ public class GameManager
     }
 
     public MissionSaveData MissionSave => _gameData.Missions;
+    public ShopSaveData    ShopSave    => _gameData.Shop;
 
     public bool GuardHintSeen
     {
@@ -2079,6 +2098,10 @@ public class GameManager
         d.Missions.Progress    ??= new Dictionary<int, int>();
         d.Missions.Claimed     ??= new List<int>();
         d.Missions.Lifetime    ??= new Dictionary<string, int>();
+        d.Shop                 ??= new ShopSaveData();
+        d.Shop.HotUntil         = Fit(d.Shop.HotUntil, 3);
+        d.Shop.AdViews         ??= new Dictionary<string, int>();
+        d.Shop.Purchased       ??= new List<string>();
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

@@ -354,8 +354,9 @@ public class MonsterController : CreatureController
         // 보상
         if (_target != null)
         {
-            if (_data != null) Managers.Game.Gold += _rewardGold;
-            _target.GainExp(_rewardExp);
+            // v2 핫타임(골드·경험치 2배)은 처치 보상에만 곱한다
+            if (_data != null) Managers.Game.Gold += Mathf.RoundToInt(_rewardGold * (Managers.Shop?.GoldMult ?? 1f));
+            _target.GainExp(_rewardExp * (Managers.Shop?.ExpMult ?? 1f));
         }
         OnDied?.Invoke();
         Managers.Mission?.Notify(MissionEvent.KillMonster);

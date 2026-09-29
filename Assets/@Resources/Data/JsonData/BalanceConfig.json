@@ -124,6 +124,76 @@
       "Key": "PARRY_COMBO_BONUS",
       "Value": 3.0,
       "Desc": "완벽 패링 시 콤보 가산"
+    },
+    {
+      "Key": "HOTTIME_MINUTES",
+      "Value": 30.0,
+      "Desc": "핫타임 한 번의 길이(분, 실제 시간)"
+    },
+    {
+      "Key": "HOTTIME_ADS_PER_DAY",
+      "Value": 3.0,
+      "Desc": "핫타임 종류별 광고로 켤 수 있는 하루 횟수"
+    },
+    {
+      "Key": "HOTTIME_CRYSTAL_COST",
+      "Value": 50.0,
+      "Desc": "핫타임을 크리스탈로 켤 때 값"
+    },
+    {
+      "Key": "HOT_GOLD_MULT",
+      "Value": 2.0,
+      "Desc": "골드 핫타임: 처치·방치 골드 배수"
+    },
+    {
+      "Key": "HOT_EXP_MULT",
+      "Value": 2.0,
+      "Desc": "경험치 핫타임: 처치·방치 경험치 배수"
+    },
+    {
+      "Key": "HOT_ATK_PCT",
+      "Value": 20.0,
+      "Desc": "전투 핫타임: 공격력 +%"
+    },
+    {
+      "Key": "FREE_CRYSTAL_AD",
+      "Value": 30.0,
+      "Desc": "광고 무료 크리스탈 양"
+    },
+    {
+      "Key": "FREE_CRYSTAL_ADS_PER_DAY",
+      "Value": 1.0,
+      "Desc": "무료 크리스탈 광고 하루 횟수"
+    },
+    {
+      "Key": "MANDRAKE_CRYSTAL_COST",
+      "Value": 50.0,
+      "Desc": "만드라고라 1개 값(크리스탈)"
+    },
+    {
+      "Key": "OFFLINE_AD_MULT",
+      "Value": 2.0,
+      "Desc": "오프라인 보상 광고 배수(받은 만큼 한 번 더 = 2)"
+    },
+    {
+      "Key": "MONTHLY_DAYS",
+      "Value": 30.0,
+      "Desc": "월정액 기간(일)"
+    },
+    {
+      "Key": "MONTHLY_DAILY_CRYSTAL",
+      "Value": 100.0,
+      "Desc": "월정액 매일 받는 크리스탈"
+    },
+    {
+      "Key": "MONTHLY_OFFLINE_BONUS_HOURS",
+      "Value": 4.0,
+      "Desc": "월정액 중 오프라인 정산 상한 추가 시간"
+    },
+    {
+      "Key": "CRYSTAL_FIRST_BUY_MULT",
+      "Value": 2.0,
+      "Desc": "크리스탈 상품 종류별 첫 구매 배수"
     }
   ]
 }

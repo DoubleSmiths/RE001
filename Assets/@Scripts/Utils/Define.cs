@@ -269,6 +269,14 @@ public class Define
         Attendance,
     }
 
+    // v2 핫타임(ADR0030, 설계서 4.6) — 광고 또는 크리스탈로 30분 켠다
+    public enum HotTime
+    {
+        Gold,   // 처치·방치 골드 ×2
+        Exp,    // 처치·방치 경험치 ×2
+        Atk,    // 공격력 +20%
+    }
+
     public enum TrainingStat
     {
         Attack,
@@ -1858,6 +1866,10 @@ public class Define
     public const string BGM_BOSS    = "BGM_Boss";   // v2 스테이지 보스(ADR0030)
     #endregion
 
+    #region Shop (v2 핫타임 버프 아이콘 — 기존 스킬 메달 스프라이트, Sprites 그룹)
+    public static readonly string[] HOT_TIME_ICONS = { "Skill5106", "Skill5128", "Skill5002" };   // HotTime 순서: 골드·경험치·공격
+    #endregion
+
     #region BalanceKey (v2 밸런스 — BalanceConfig 표의 키, ADR0030)
     public static class BalanceKey
     {
@@ -1889,6 +1901,21 @@ public class Define
         public const string PARRY_STUN             = "PARRY_STUN";
         public const string STUN_DAMAGE_TAKEN_MULT = "STUN_DAMAGE_TAKEN_MULT";
         public const string PARRY_COMBO_BONUS      = "PARRY_COMBO_BONUS";
+        // 상점·광고·월정액(P1)
+        public const string HOTTIME_MINUTES             = "HOTTIME_MINUTES";
+        public const string HOTTIME_ADS_PER_DAY         = "HOTTIME_ADS_PER_DAY";
+        public const string HOTTIME_CRYSTAL_COST        = "HOTTIME_CRYSTAL_COST";
+        public const string HOT_GOLD_MULT               = "HOT_GOLD_MULT";
+        public const string HOT_EXP_MULT                = "HOT_EXP_MULT";
+        public const string HOT_ATK_PCT                 = "HOT_ATK_PCT";
+        public const string FREE_CRYSTAL_AD             = "FREE_CRYSTAL_AD";
+        public const string FREE_CRYSTAL_ADS_PER_DAY    = "FREE_CRYSTAL_ADS_PER_DAY";
+        public const string MANDRAKE_CRYSTAL_COST       = "MANDRAKE_CRYSTAL_COST";
+        public const string OFFLINE_AD_MULT             = "OFFLINE_AD_MULT";
+        public const string MONTHLY_DAYS                = "MONTHLY_DAYS";
+        public const string MONTHLY_DAILY_CRYSTAL       = "MONTHLY_DAILY_CRYSTAL";
+        public const string MONTHLY_OFFLINE_BONUS_HOURS = "MONTHLY_OFFLINE_BONUS_HOURS";
+        public const string CRYSTAL_FIRST_BUY_MULT      = "CRYSTAL_FIRST_BUY_MULT";
     }
     #endregion
 

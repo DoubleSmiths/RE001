@@ -527,7 +527,6 @@ namespace Data
         public int    PriceKRW;
         public int    Crystal;
         public int    Mandrake;
-        public int    HpPotion;
         public string NameKey;
     }
 

@@ -970,8 +970,7 @@ public class DataTransformer : EditorWindow
                 PriceKRW   = ConvertValue<int>(C(row, 3)),
                 Crystal    = ConvertValue<int>(C(row, 4)),
                 Mandrake   = ConvertValue<int>(C(row, 5)),
-                HpPotion   = ConvertValue<int>(C(row, 6)),
-                NameKey    = C(row, 7),
+                NameKey    = C(row, 6),
             });
         }
         WriteJsonStr("ProductData", loader);

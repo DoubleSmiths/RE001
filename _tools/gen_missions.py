@@ -87,25 +87,26 @@ def mission_rows():
 
 
 # 인앱 상품 — 설계서 4.7. 성장·시즌 패스, 치장, 유물 소환권은 해당 시스템(P2)과 함께 넣는다.
+#  설계서의 시작 패키지 '회복물약 10'은 뺐다 — 이 게임의 물약은 개수가 아니라 단계 선택 + 재사용 대기라 줄 게 없다.
 #  Kind: Pack(1회) / StepUp(순서대로 1회) / Monthly(30일) / AdFree(영구) / Crystal(반복, 종류별 첫 구매 2배)
 PRODUCT_HEADER = [
     ('DataId', 'int', '번호'), ('ProductKey', 'string', '스토어 상품 ID'), ('Kind', 'string', '종류'),
     ('PriceKRW', 'int', '가격(원)'), ('Crystal', 'int', '크리스탈'), ('Mandrake', 'int', '만드라고라'),
-    ('HpPotion', 'int', '회복물약'), ('NameKey', 'string', '이름 로컬라이즈 키'),
+    ('NameKey', 'string', '이름 로컬라이즈 키'),
 ]
 PRODUCTS = [
-    (5001, 'starter_pack',  'Pack',      1100,  300, 5, 10, 'ProductStarterText'),
-    (5002, 'stepup_1',      'StepUp',    1100,  150, 0,  0, 'ProductStepUp1Text'),
-    (5003, 'stepup_2',      'StepUp',    3300,  450, 0,  0, 'ProductStepUp2Text'),
-    (5004, 'stepup_3',      'StepUp',    5500,  800, 0,  0, 'ProductStepUp3Text'),
-    (5005, 'monthly_pass',  'Monthly',   5500,  300, 0,  0, 'ProductMonthlyText'),
-    (5006, 'ad_free',       'AdFree',    9900,    0, 0,  0, 'ProductAdFreeText'),
-    (5101, 'crystal_60',    'Crystal',   1100,   60, 0,  0, 'ProductCrystalFormat'),
-    (5102, 'crystal_330',   'Crystal',   5500,  330, 0,  0, 'ProductCrystalFormat'),
-    (5103, 'crystal_700',   'Crystal',  11000,  700, 0,  0, 'ProductCrystalFormat'),
-    (5104, 'crystal_2200',  'Crystal',  33000, 2200, 0,  0, 'ProductCrystalFormat'),
-    (5105, 'crystal_3800',  'Crystal',  55000, 3800, 0,  0, 'ProductCrystalFormat'),
-    (5106, 'crystal_8000',  'Crystal', 110000, 8000, 0,  0, 'ProductCrystalFormat'),
+    (5001, 'starter_pack', 'Pack',      1100,  300, 5, 'ProductStarterText'),
+    (5002, 'stepup_1',     'StepUp',    1100,  150, 0, 'ProductStepUp1Text'),
+    (5003, 'stepup_2',     'StepUp',    3300,  450, 0, 'ProductStepUp2Text'),
+    (5004, 'stepup_3',     'StepUp',    5500,  800, 0, 'ProductStepUp3Text'),
+    (5005, 'monthly_pass', 'Monthly',   5500,  300, 0, 'ProductMonthlyText'),
+    (5006, 'ad_free',      'AdFree',    9900,    0, 0, 'ProductAdFreeText'),
+    (5101, 'crystal_60',   'Crystal',   1100,   60, 0, 'ProductCrystalFormat'),
+    (5102, 'crystal_330',  'Crystal',   5500,  330, 0, 'ProductCrystalFormat'),
+    (5103, 'crystal_700',  'Crystal',  11000,  700, 0, 'ProductCrystalFormat'),
+    (5104, 'crystal_2200', 'Crystal',  33000, 2200, 0, 'ProductCrystalFormat'),
+    (5105, 'crystal_3800', 'Crystal',  55000, 3800, 0, 'ProductCrystalFormat'),
+    (5106, 'crystal_8000', 'Crystal', 110000, 8000, 0, 'ProductCrystalFormat'),
 ]
 
 

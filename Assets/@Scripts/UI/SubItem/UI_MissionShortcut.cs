@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// v2 HUD 재화 줄의 미션 버튼(ADR0030, 빌더: Tools/Remake V2/Build Mission Popup).
-//  누르면 미션 창을 연다. 받을 것(완료한 미션·출석)이 있으면 모서리에 '!' 를 띄운다 — 0.5초마다 확인.
+// v2 HUD 재화 줄의 미션·상점 버튼(ADR0030, 빌더: Tools/Remake V2/Build Mission Popup).
+//  누르면 미션 창을 그 탭으로 연다. 받을 것이 있으면 모서리에 빨간 점 — 0.5초마다 확인.
 public class UI_MissionShortcut : UI_Base
 {
     public UI_MissionPopup.Tab _tab;
@@ -18,7 +18,9 @@ public class UI_MissionShortcut : UI_Base
             return false;
 
         gameObject.BindEvent(Open);
-        _badge = Util.FindChild(gameObject, "MissionBadge", true);
+        // 알림 점은 이름이 ...Badge 인 자식(MissionBadge / ShopBadge — 한 프리팹 안에서 이름이 겹치지 않게)
+        foreach (Transform child in transform)
+            if (child.name.EndsWith("Badge")) _badge = child.gameObject;
         if (_badge != null) _badge.SetActive(false);
         return true;
     }
@@ -35,7 +37,9 @@ public class UI_MissionShortcut : UI_Base
         _poll -= Time.unscaledDeltaTime;
         if (_poll > 0f) return;
         _poll = POLL_INTERVAL;
-        bool show = Managers.Mission != null && Managers.Mission.HasClaimable;
+        bool show = _tab == UI_MissionPopup.Tab.Shop
+            ? Managers.Shop != null && Managers.Shop.HasFreeReward          // 상점 버튼: 무료 크리스탈·월정액·오프라인 2배
+            : Managers.Mission != null && Managers.Mission.HasClaimable;   // 미션 버튼: 완료한 미션·출석
         if (_badge != null && _badge.activeSelf != show) _badge.SetActive(show);
     }
 }
