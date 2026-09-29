@@ -17,7 +17,9 @@ def main():
         path = ROOT / entry["target"]
         before = DOCS / "before" / (entry["id"] + ".png")
         meta = path.with_suffix(".png.meta")
-        assert hashlib.sha256(meta.read_bytes()).hexdigest() == entry["meta_sha256"], f"Importer changed: {path}"
+        # 기록된 해시는 CRLF 체크아웃에서 쟀다 — 줄바꿈을 CRLF 로 맞춰 비교해야 LF 체크아웃에서도 같은 판정이 난다
+        meta_crlf = meta.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+        assert hashlib.sha256(meta_crlf).hexdigest() == entry["meta_sha256"], f"Importer changed: {path}"
         with Image.open(path) as image, Image.open(before) as old:
             assert image.size == old.size == tuple(entry["size"]), f"Dimensions changed: {path}"
             assert image.mode == "RGBA", f"Missing alpha channel: {path}"
