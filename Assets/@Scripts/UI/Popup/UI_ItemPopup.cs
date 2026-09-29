@@ -114,6 +114,11 @@ public class UI_ItemPopup : UI_Popup
         var dividerRT = GetImage((int)Images.__1).rectTransform;
         dividerRT.anchoredPosition = new Vector2(dividerRT.anchoredPosition.x,
             top - ITEM_SOURCE_TEXT_HEIGHT - ITEM_SOURCE_DIVIDER_GAP);
+        // 설명은 옮긴 장식선 바로 아래에서 아래로 자란다(프리팹은 위쪽 정렬·줄바꿈).
+        //  예전엔 작은 칸 한가운데 기준이라 여러 줄이면 위로도 자라 장식선을 가로질렀다.
+        var descRT = GetText((int)Texts.ItemPopupItemDesc).rectTransform;
+        descRT.anchoredPosition = new Vector2(descRT.anchoredPosition.x,
+            dividerRT.anchoredPosition.y - dividerRT.sizeDelta.y - ITEM_SOURCE_DIVIDER_GAP);
         var rarity = GetText((int)Texts.ItemPopupItemDesc_Rare).rectTransform;
         rarity.anchoredPosition = new Vector2(left, rarity.anchoredPosition.y);
         ApplyFont(found, FontType.UI);

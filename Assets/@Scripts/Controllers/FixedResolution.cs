@@ -14,6 +14,7 @@ public class FixedResolution : MonoBehaviour
 
     Camera _camera;
     int _width, _height;
+    Rect _rect;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot()
@@ -39,9 +40,11 @@ public class FixedResolution : MonoBehaviour
         Apply();
     }
 
+    // 화면 크기가 바뀌었거나, 다른 컴포넌트가 rect 를 덮어썼으면 다시 적용한다.
+    //  GameScene 메인 카메라의 PixelPerfectCamera 가 시작할 때 rect 를 전체 화면으로 되돌려 여백이 사라졌다.
     void Update()
     {
-        if (Screen.width != _width || Screen.height != _height)
+        if (Screen.width != _width || Screen.height != _height || _camera.rect != _rect)
             Apply();
     }
 
@@ -64,6 +67,7 @@ public class FixedResolution : MonoBehaviour
             rect.x = (1f - rect.width) / 2f;
         }
         _camera.rect = rect;
+        _rect = rect;
     }
 
     void CreateBarCamera()
