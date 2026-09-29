@@ -178,6 +178,41 @@ public static class RemakeV2UIBuilder
         }
     }
 
+    // 막기 입력 칸: 게임 화면(재화 줄 아래 ~ 지면 아래 캐릭터 상태 줄 위)을 덮는 투명 Image.
+    //  In-Frame 의 첫 자식으로 둬서 다른 HUD 가 전부 그 위에 그려지고 먼저 눌린다.
+    static readonly Vector2 GUARD_AREA_POS  = new Vector2(0f, -19f);
+    const float GUARD_AREA_HEIGHT = 158f;
+
+    [MenuItem("Tools/Remake V2/Build Guard Input")]
+    public static void BuildGuardInput()
+    {
+        GameObject root = PrefabUtility.LoadPrefabContents(GAME_SCENE);
+        try
+        {
+            Transform frame = Find(root.transform, "In-Frame");
+            Transform old = Find(root.transform, "GuardTapArea", false);
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+
+            var area = new GameObject("GuardTapArea", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            area.SetParent(frame, false);
+            area.SetAsFirstSibling();
+            area.anchorMin = new Vector2(0f, 1f);
+            area.anchorMax = Vector2.one;
+            area.pivot = new Vector2(0.5f, 1f);
+            area.anchoredPosition = GUARD_AREA_POS;
+            area.sizeDelta = new Vector2(0f, GUARD_AREA_HEIGHT);
+            area.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0f);   // 보이지 않지만 누름은 받는다
+            area.gameObject.AddComponent<UI_GuardInput>();
+
+            PrefabUtility.SaveAsPrefabAsset(root, GAME_SCENE);
+            Debug.Log("[RemakeV2] 막기 입력 칸 조립 완료 — UI_GameScene/In-Frame/GuardTapArea");
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
     static void Align(RectTransform rt, Vector2 anchor, float x, TextAlignmentOptions alignment)
     {
         rt.anchorMin = rt.anchorMax = rt.pivot = anchor;

@@ -206,6 +206,12 @@ public class ObjectManager
         SpawnDamageFont(pos, amount.ToString(), DamageFontMode.Heal, parent);
     }
 
+    // v2 가드 판정 글자(PARRY!/BLOCK, ADR0030) — 기존 데미지 폰트의 모양(치명 알림·빗나감)을 빌린다.
+    public void ShowCallout(Vector2 pos, string text, DamageFontMode mode, Transform parent = null)
+    {
+        SpawnDamageFont(pos, text, mode, parent);
+    }
+
     void SpawnDamageFont(Vector2 pos, string display, DamageFontMode mode, Transform parent)
     {
         if (mode == DamageFontMode.Critical)

@@ -9869,6 +9869,21 @@
       "TextKey": "StageNextLockedFormat",
       "Kor": "다음 스테이지: {0}",
       "Eng": "NEXT STAGE: {0}"
+    },
+    {
+      "TextKey": "ParryText",
+      "Kor": "패링!",
+      "Eng": "PARRY!"
+    },
+    {
+      "TextKey": "BlockText",
+      "Kor": "막기",
+      "Eng": "BLOCK"
+    },
+    {
+      "TextKey": "GuardHintText",
+      "Kor": "'!'가 뜨면 화면을 눌러 막기\n딱 맞추면 패링!",
+      "Eng": "TAP WHEN \"!\" SHOWS TO BLOCK\nPERFECT TIMING = PARRY!"
     }
   ]
 }

@@ -249,6 +249,10 @@ LITERAL_KEYS = [
     ('BossDefeatText', '보스 처치!', 'BOSS DEFEATED!'),
     ('BossFailText', '보스를 놓쳤다! 훈련 후 재도전', 'BOSS ESCAPED! TRAIN UP'),
     ('StageNextLockedFormat', '다음 스테이지: {0}', 'NEXT STAGE: {0}'),
+    # v2 가드·패링(ADR0030) — PlayerController / UI_GuardInput
+    ('ParryText', '패링!', 'PARRY!'),
+    ('BlockText', '막기', 'BLOCK'),
+    ('GuardHintText', '\'!\'가 뜨면 화면을 눌러 막기\n딱 맞추면 패링!', 'TAP WHEN "!" SHOWS TO BLOCK\nPERFECT TIMING = PARRY!'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

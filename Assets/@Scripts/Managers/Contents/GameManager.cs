@@ -101,6 +101,8 @@ public class GameData
     public int       StageKillCount;
     public List<int> ClearedStages = new List<int>();
     public bool      BossAutoChallenge = true;
+    // v2 가드·패링 도움말을 이미 보여 줬는가(첫 공격 예고 '!' 때 한 번)
+    public bool      GuardHintSeen;
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -1385,6 +1387,12 @@ public class GameManager
         var order = StageOrder;
         int i = order.IndexOf(nodeId);
         return i >= 0 && i + 1 < order.Count ? order[i + 1] : 0;
+    }
+
+    public bool GuardHintSeen
+    {
+        get => _gameData.GuardHintSeen;
+        set { _gameData.GuardHintSeen = value; SaveGame(); }
     }
 
     public string StageLabel(int nodeId)

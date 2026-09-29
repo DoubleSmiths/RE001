@@ -156,6 +156,8 @@ public class PlayerController : CreatureController
     public void StopBattle()
     {
         _inBattle = false;
+        _guardStart = -999f;
+        if (_sprite != null) { _sprite.DOKill(); _sprite.color = Color.white; }
         _abilityRunner?.OnBattleEnd();   // 슬39: 전투 종료 — 임시 버프/쿨 정리
         Hp = MaxHp;
         OnHpChanged?.Invoke(Hp, MaxHp);
@@ -164,6 +166,87 @@ public class PlayerController : CreatureController
         transform.position = _originalPos;
         Managers.UI?.RefreshTimeScale();
     }
+
+    #region 가드·패링 (v2 — Postknight 식 손맛, ADR0030)
+    // 막기 입력(UI_GuardInput: 전투 화면 탭 / Space)을 누른 순간부터 GUARD_DURATION 동안 막는다.
+    //  처음 PARRY_WINDOW 안에 공격이 닿으면 패링 — 피해 0, 적 기절, 확정 치명 반격, 콤보 가산.
+    //  나머지 구간이면 막기 — 피해 감소. 한 번 막으면 끝이고 재사용 대기(GUARD_COOLDOWN)로 연타를 막는다.
+    //  아무것도 안 누르면 예전처럼 맞는다 — 손을 쓰면 확실히 이득, 안 써도 벌은 없다.
+    public enum GuardResult { None, Block, Parry }
+    public event System.Action<GuardResult> OnGuard;   // 막기/패링이 실제로 일어났을 때(미션·도움말용)
+
+    static readonly Color GUARD_TINT = new Color(0.55f, 0.8f, 1f, 1f);
+    const float PARRY_HITSTOP = 0.08f;   // 패링 순간 멈칫(실시간 초) — 반격이 그 뒤에 들어간다
+    const float GUARD_CALLOUT_RAISE = 1.1f;
+
+    float _guardStart = -999f;
+    float _guardReadyAt;
+
+    float GuardDuration => Managers.Data.Balance(BalanceKey.GUARD_DURATION, 0.45f);
+    public bool CanGuard => _inBattle && State != Define.State.Dead && Time.time >= _guardReadyAt;
+
+    public bool TryGuard()
+    {
+        if (!CanGuard) return false;
+        _guardStart   = Time.time;
+        _guardReadyAt = Time.time + Managers.Data.Balance(BalanceKey.GUARD_COOLDOWN, 1f);
+        if (_sprite != null)
+        {
+            _sprite.DOKill();
+            _sprite.color = GUARD_TINT;   // 막는 동안 푸른빛이 서서히 빠진다
+            _sprite.DOColor(Color.white, GuardDuration).SetEase(Ease.InQuad).SetLink(gameObject);
+        }
+        return true;
+    }
+
+    // 몬스터 공격이 닿는 순간 MonsterController.AttackTrigger 가 묻는다.
+    public GuardResult ResolveGuard()
+    {
+        float t = Time.time - _guardStart;
+        if (t < 0f || t >= GuardDuration) return GuardResult.None;
+        _guardStart = -999f;
+        var result = t < Managers.Data.Balance(BalanceKey.PARRY_WINDOW, 0.2f) ? GuardResult.Parry : GuardResult.Block;
+
+        // 반격의 '치명타!' 알림과 같은 자리면 글자가 겹친다 — 한 줄 위에 띄운다
+        Vector3 calloutPos = transform.position + Vector3.up * (DamageFontYOffset + CRIT_CALLOUT_RAISE + GUARD_CALLOUT_RAISE);
+        if (result == GuardResult.Parry)
+        {
+            Managers.Object.ShowCallout(calloutPos, Util.Localize("ParryText"), DamageFontMode.CriticalCallout, transform);
+            Managers.Sound?.PlaySFX("SFX_SwordBlock", 1.25f);
+        }
+        else
+        {
+            Managers.Object.ShowCallout(calloutPos, Util.Localize("BlockText"), DamageFontMode.Miss, transform);
+            Managers.Sound?.PlaySFX("SFX_SwordBlock", 0.85f);
+        }
+        OnGuard?.Invoke(result);
+        return result;
+    }
+
+    // 패링 반격 — 짧게 멈칫한 뒤 확정 치명타 한 방 + 콤보 가산. 기절한 적은 받는 피해가 늘어 있다.
+    public void ParryCounter(MonsterController target)
+    {
+        Managers.Combo?.AddBonusHits(Mathf.RoundToInt(Managers.Data.Balance(BalanceKey.PARRY_COMBO_BONUS, 3f)));
+        StartCoroutine(CoParryCounter(target));
+    }
+
+    IEnumerator CoParryCounter(MonsterController target)
+    {
+        if (_anim != null) _anim.speed = 0f;
+        yield return new WaitForSecondsRealtime(PARRY_HITSTOP);
+        if (_anim != null) _anim.speed = 1f;
+        if (target == null || target.State == Define.State.Dead || State == Define.State.Dead) yield break;
+
+        PlayMotion("Attack", 1.5f);
+        Managers.Sound?.PlaySFX("Sound_PlayerAttack");
+        float prevDmgAmp = DmgAmp;
+        DmgAmp += ComboDmgBoostBonus();
+        BattleMath.DamageResult result = BattleMath.Resolve(this, target, AttackType.Physical, guaranteedCrit: true);
+        DmgAmp = prevDmgAmp;
+        target.TakeHit(result, this);
+        OnHitLanded?.Invoke(result.FinalDamage);
+    }
+    #endregion
 
     // 마을 내 장소 이동(길드/연금공방/모험가협회 등) — 페이드 암전 중 호출.
     //  Play("Escape")로 시작한 달리기 애니/이동을 멈추고 즉시 원위치+Idle로 되돌려,

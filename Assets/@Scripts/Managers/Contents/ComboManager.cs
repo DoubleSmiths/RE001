@@ -159,6 +159,12 @@ public class ComboManager
     /// <summary>테스트/에디터용: 실제 플레이어 없이 수동 타격 시뮬레이션.</summary>
     public void SimulateHit(float damage) => HandleHit(damage);
 
+    /// <summary>v2 패링 보상(ADR0030) — 피해 없이 콤보 수만 올린다(단계·타이머는 실제 타격과 똑같이 오른다).</summary>
+    public void AddBonusHits(int hits)
+    {
+        for (int i = 0; i < hits; i++) HandleHit(0f);
+    }
+
     void HandleHit(float damage)
     {
         bool wasIdle = (Combo == 0);      // IDLE → ACTIVE 진입 감지
