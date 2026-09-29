@@ -161,6 +161,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged += RefreshNotify;
         RefreshNotify();
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged += OnLanguageChanged;
 
         ChangeMap();
         // 슬라이드 57 — 진입 직후엔 Player Idle 고정 (배경 스크롤도 정지).
@@ -184,6 +186,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         EndBattle();
         if (Managers.Quest != null)
             Managers.Quest.OnNotifyChanged -= RefreshNotify;
+        if (Managers.Game != null)
+            Managers.Game.OnLanguageChanged -= OnLanguageChanged;
         UnbindComboUI();
         UnhookPlayerLogEvents();
         UnbindDropListUI();
@@ -208,13 +212,11 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             if (i == 0 || i == 1 || i == 4 || i == 6 || i == 8 || i == 9 || i == 10 || i == 11 || i == 12 || i == 17 || i == 18) ApplyFont(tmp, FontType.UI);
             //if (tmp.name == "ReturnButtonText") ApplyFont(tmp, FontType.UI);
 
-            string enumKey = System.Enum.GetName(typeof(Texts), i);
             // 동적 갱신 대상은 빈 문자열로 시작, 아닌 것은 Localize
             if (IsDynamicText((Texts)i))
                 tmp.text = "";
-            else
-                tmp.text = Util.Localize(enumKey);
         }
+        RefreshStaticTexts();
 
         // 콤보 라벨 스타일 (슬라이드 47): 초기 색 흰색, 검정 아웃라인 underlay.
         var comboLabel = GetText((int)Texts.ComboText);
@@ -223,6 +225,26 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
             comboLabel.color = COMBO_IDLE_COLOR;
             Util.SetTMPUnderlay(comboLabel, COMBO_OUTLINE, COMBO_OUTLINE_X, COMBO_OUTLINE_Y);
         }
+    }
+
+    // 고정 라벨(전투 기록·전투 시간 등)은 enum 이름이 곧 로컬라이즈 키다.
+    void RefreshStaticTexts()
+    {
+        for (int i = 0; i < System.Enum.GetValues(typeof(Texts)).Length; i++)
+        {
+            var tmp = GetText(i);
+            if (tmp == null || IsDynamicText((Texts)i)) continue;
+            tmp.text = Util.Localize(System.Enum.GetName(typeof(Texts), i));
+        }
+    }
+
+    // 전투 중 언어를 바꾸면 고정 라벨·귀환/여정 버튼이 예전 언어로 남아 있었다.
+    void OnLanguageChanged()
+    {
+        RefreshStaticTexts();
+        RefreshReturnButtonText(false);
+        var travelTmp = GetText((int)Texts.TravelButtonText);
+        if (travelTmp != null) travelTmp.text = Util.Localize(LocalizeKey.TravelBtnText);
     }
 
     static bool IsDynamicText(Texts t)
