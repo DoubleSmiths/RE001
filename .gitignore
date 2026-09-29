@@ -69,6 +69,9 @@ mono_crash.*
 # Builds
 *.apk
 *.aab
+# 서명 키 — 절대 커밋 금지(_tools/make_upload_keystore.ps1 로 저장소 밖에 만든다)
+*.keystore
+*.jks
 *.unitypackage
 *.unitypackage.meta
 *.app
