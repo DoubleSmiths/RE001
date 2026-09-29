@@ -18,23 +18,23 @@
 |---|---|
 | 게임명 확정과 상표 검색 (KIPRIS, USPTO, EUIPO) | "Minimon" 계열의 기존 상표와 충돌하는지 확인한다. 스토어 제목, 로고, 도메인이 이름을 따라간다 |
 | 패키지명 | Google Play에 출시한 뒤에는 바꿀 수 없다 |
-| Player Settings의 회사명·제품명 (현재 `DefaultCompany` / `RE001`) | Windows 저장 경로 `LocalLow\<회사>\<제품>`, 레지스트리, Steam Cloud 경로, 창 제목이 여기서 정해진다. 출시 후 바꾸면 기존 세이브를 찾지 못한다. GitHub 조직명 `DoubleSmiths`를 회사명으로 쓸지도 여기서 정한다. exe 이름은 이 값과 별개로 `BuildScript`의 출력 파일명(`MinimonQuest.exe`)이 정한다 |
+| Player Settings의 회사명·제품명 (현재 임시값 `DoubleSmiths` / `Minimon Quest`, 2026-09-29 적용) | Windows 저장 경로 `LocalLow\<회사>\<제품>`, 레지스트리, Steam Cloud 경로, 창 제목이 여기서 정해진다. 출시 후 바꾸면 기존 세이브를 찾지 못한다. GitHub 조직명 `DoubleSmiths`를 회사명으로 쓸지도 여기서 정한다. exe 이름은 이 값과 별개로 `BuildScript`의 출력 파일명(`MinimonQuest.exe`)이 정한다 |
 | 판매 방식 | Google Play는 무료로 한 번 출시하면 유료로 바꿀 수 없다. 바꾸려면 새 패키지명이 필요하다 |
 | Play 개발자 계정 종류 | **개인**: 신분증 확인이 필요하다. 2023-11-13 이후 만든 계정은 비공개 테스트(12명 × 14일 연속)를 통과해야 프로덕션에 출시할 수 있다. **조직**: D-U-N-S 번호가 필요하고 이 테스트 요건은 없다 |
 | 한국 등급 — Steam | Google Play는 IARC 설문으로 GRAC 등급까지 받는다. **Steam은 국내 자체등급분류사업자가 아니다.** 한국에 팔려면 게임물관리위원회(GRAC) 등급분류(유료)를 받아야 한다. 다른 방법은 자체등급분류 권한이 있는 PC 플랫폼(Microsoft Store, Epic, STOVE 등)에서 등급을 받아 쓰는 것이다. 청소년이용불가가 아닌 경우에만 가능하므로, 진행 전에 GRAC에 절차를 문의한다 |
 
 ## 1. 공통 출시 차단 항목
 
-- [ ] **포켓몬 음원 2개 제거 확인.** `BGM_Minion_battle.mp3`와 `SFX_MinimonCatch.mp3`는 ID3 태그상 "Pokemon Red / Junichi Masuda"(트랙 24/51, 27/51)에서 추출한 음원이다. 자체 합성 칩튠 `BGM_MinimonCapture.mp3`와 `SFX_MinimonCaught.mp3`(생성기 `_tools/gen_chiptune.py`)로 교체하는 중이다. 빌드 전에 세 가지를 확인한다.
+- [x] **포켓몬 음원 2개 제거 확인.** (커밋 `0b3d162a` — 파일·어드레서블 항목 삭제, 잡기 BGM 재생 클립 확인) `BGM_Minion_battle.mp3`와 `SFX_MinimonCatch.mp3`는 ID3 태그상 "Pokemon Red / Junichi Masuda"(트랙 24/51, 27/51)에서 추출한 음원이다. 자체 합성 칩튠 `BGM_MinimonCapture.mp3`와 `SFX_MinimonCaught.mp3`(생성기 `_tools/gen_chiptune.py`)로 교체하는 중이다. 빌드 전에 세 가지를 확인한다.
   - 옛 파일 두 개와 그 어드레서블 `Sound` 그룹 항목이 모두 사라졌다.
   - `UI_TamePopup`이 새 파일을 재생한다.
   - 빌드 산출물에 옛 주소가 남아 있지 않다.
 - [ ] **구매 영수증 확인.** `Slime_Die.mp3`와 `Slime_OnHit.mp3`는 SmartSound FX(MONSTERS) © 2019 음원이다. 이 두 파일은 몬스터 503종 모두의 피격·사망음이다. `Sound_Miss.mp3`, `Sound_PlayerAttack.mp3`, `Sound_Smash.mp3`는 Medieval Fantasy Audio Bundle(Evil Mind Entertainment, 2013) 음원이다. 구매 내역(예: Unity Asset Store)과 라이선스의 크레딧 조건을 확인한다. 확인하지 못하면 교체한다.
 - [ ] **출처 미상 음원 확인.** 나머지 BGM 5곡(`BGM_1`, `BGM_2`, `BGM_BWF`, `BGM_Village1`, `BGM_BreezeForest`), ENV 2개, SFX 51개는 메타데이터가 없다. 모든 음원은 초기 커밋 `e191a5ba` "[SETTING] 프로젝트 세팅"(2026-03-06)으로 한꺼번에 들어왔다. 파일마다 출처를 기록하거나 교체한다.
 - [ ] 그 밖의 `UNKNOWN — VERIFY` 항목(픽셀 UI·배경 팩, 셰이더 2종)의 출처와 라이선스를 확인하고, 결과를 `Third_Party_Notices.md`에 기록한다.
-- [ ] `Assets/IMPORTS/EpicVictoryEffects/Fonts/calibril.ttf`(Microsoft 폰트)를 삭제한다. EmojiOne을 계속 쓸지도 정한다.
-- [ ] Unity Diagnostics를 끈다(`Project Settings > Services > Diagnostics` → Disabled). 빌드한 뒤 네트워크 통신이 0건인지 확인한다. 이 작업이 끝나야 `Privacy_Policy.md`와 `Google_Play_Data_Safety.md`의 A안이 사실이 된다.
-- [ ] 게임 안 크레딧 화면에 `Assets/@Resources/Data/Credits.txt`를 표시하고, 설정 또는 크레딧 화면에 개인정보처리방침 링크를 넣는다(Release_Readiness 7번). Google Play는 앱 안의 링크도 요구한다.
+- [ ] `Assets/IMPORTS/EpicVictoryEffects/Fonts/calibril.ttf`(Microsoft 폰트)를 삭제한다. (확인: 에셋 데모 씬 2개만 참조 — 빌드 목록에 없어 **출시물에는 포함되지 않는다**) EmojiOne을 계속 쓸지도 정한다.
+- [x] Unity Diagnostics를 끈다(`Project Settings > Services > Diagnostics` → Disabled). (2026-09-29 `m_EngineDiagnosticsEnabled: 0` 커밋) 빌드한 뒤 네트워크 통신이 0건인지 확인한다. 이 작업이 끝나야 `Privacy_Policy.md`와 `Google_Play_Data_Safety.md`의 A안이 사실이 된다.
+- [x] 게임 안 크레딧 화면에 `Assets/@Resources/Data/Credits.txt`를 표시하고(설정 → 크레딧, 어드레서블 등록 완료), 설정 또는 크레딧 화면에 개인정보처리방침 링크를 넣는다(Release_Readiness 7번). Google Play는 앱 안의 링크도 요구한다.
   - `Credits.txt`는 어드레서블에 등록해야 런타임에서 읽힌다.
   - `{version}`은 실제 버전으로 바꿔 표시한다.
   - `Documents/Store/Third_Party_Notices.txt`와 내용이 같으므로 한쪽을 고치면 다른 쪽도 고친다.
@@ -53,7 +53,7 @@
 
 ### 2-2. 빌드 (AAB)
 
-- [ ] **targetSdk 36.** 2026-08-31부터 신규 앱과 업데이트에 필수다(연장을 요청하면 2026-11-01까지). 현재 설정은 `AndroidTargetSdkVersion: 0`으로 설치된 최고 SDK를 따르며, 9/9 APK는 36이었다. 36으로 명시해 고정한다.
+- [x] **targetSdk 36.** (ProjectSettings `AndroidTargetSdkVersion: 36` 고정) 2026-08-31부터 신규 앱과 업데이트에 필수다(연장을 요청하면 2026-11-01까지). 현재 설정은 `AndroidTargetSdkVersion: 0`으로 설치된 최고 SDK를 따르며, 9/9 APK는 36이었다. 36으로 명시해 고정한다.
 - [ ] minSdk는 현재 값 25를 그대로 써도 된다.
 - [ ] App Bundle로 출력한다. `BuildScript.AndroidBundle`이 `MinimonQuest.aab`를 만든다(메뉴 `Tools/Build/안드로이드 AAB (구글 플레이)`).
   - batchmode로 실행한다: `-executeMethod BuildScript.AndroidBundle -versionCode <N>`.

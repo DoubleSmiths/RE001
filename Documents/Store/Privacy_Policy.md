@@ -2,14 +2,10 @@
 
 > **게시 전에 이 인용 블록을 지운다.** 공개 URL(HTML 페이지, PDF 불가)에 게시하고, 그 링크를 Play Console과 게임 안(설정 또는 크레딧 화면)에 모두 넣는다. Google Play 정책이 둘 다 요구한다.
 >
-> 1. **Unity 진단 데이터를 먼저 끈다.** 현재 작업 트리 상태는 다음과 같다.
->    - `ProjectSettings/UnityConnectSettings.asset`: `m_Enabled: 1`. 커밋본은 `0`이었고 커밋되지 않은 변경이다. `InsightsSettings.m_EngineDiagnosticsEnabled: 1`.
->    - `ProjectSettings/ProjectSettings.asset`: `cloudProjectId`가 설정돼 있다. Unity Cloud 프로젝트에 연결된 상태다.
->
->    이 조합이면 Unity 6.2+의 Diagnostics(충돌 로그, 원격 측정, 구성 메타데이터)가 플레이어 빌드에서 Unity로 전송될 수 있다. `Edit > Project Settings > Services > Diagnostics`를 **Disabled**로 둔다. Build Profiles에 재정의가 있으면 거기도 바꾼다. 빌드한 뒤에는 네트워크 모니터로 `*.unity3d.com` 통신이 없는지 확인한다.
->
->    진단을 켜 둘 거라면 본문의 **[선택 조항 A]**를 남기고 `Google_Play_Data_Safety.md`의 B안으로 답한다.
-> 2. `<회사명>\<제품명>`을 확정된 Player Settings 값으로 바꾼다. 지금은 기본값 `DefaultCompany\RE001`이다. 패키지명도 확정값으로 바꾼다.
+> 1. **Unity 진단 데이터: 끔(2026-09-29).** `UnityConnectSettings.asset` 의 `m_EngineDiagnosticsEnabled: 0` 을 커밋했다.
+>    (서비스 연결 `m_Enabled: 1` 은 에디터 로그인 때 생긴 로컬 변경이다.) 빌드한 뒤 네트워크 모니터로 `*.unity3d.com` 통신이
+>    없는지 한 번 확인하면 본문의 A안(수집 없음)이 사실로 확정된다. 진단을 다시 켜면 **[선택 조항 A]**와 데이터 보안 B안으로 바꾼다.
+> 2. 저장 경로의 `<회사명>\<제품명>` 은 현재 임시값 `DoubleSmiths\Minimon Quest` 다. 확정되면 여기와 본문을 같이 바꾼다.
 > 3. `[개발자/회사명]`, `[연락처 이메일]`, `[시행일]`을 채운다. 스토어에 표시되는 개발자 이름이 본문에 그대로 나와야 한다. Google Play 요건이다.
 > 4. 이 초안은 "유료, 광고 없음, 인앱 결제 없음"을 전제로 한다. 무료+광고나 인앱 결제로 바꾸면 방침을 다시 쓴다. 광고·결제 SDK는 데이터를 수집한다.
 
