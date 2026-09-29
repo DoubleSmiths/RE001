@@ -310,6 +310,11 @@ public class UI_CharacterPopup : UI_Popup
         // 팝업 타이틀
         GetText((int)Texts.title).text = Util.Localize(LocalizeKey.CharPopupTitleText);
 
+        // '능력 상세정보' 버튼 라벨 — 노드 이름이 "Text" 라 enum 바인딩 밖이라 영어에서도 한국어로 남았다
+        var detailBtn = Util.FindChild(gameObject, "StatDetailBtn", true);
+        var detailTxt = detailBtn != null ? detailBtn.GetComponentInChildren<TMP_Text>(true) : null;
+        if (detailTxt != null) { detailTxt.text = Util.Localize(LocalizeKey.CharPopupAttributeDetailText); ApplyFont(detailTxt, FontType.UI); }
+
         // 4대 스탯 그룹 라벨 (첫 번째 TMP_Text = 라벨)
         SetGroupLabel(GetImage((int)Images.STRStatGroup).gameObject, Util.Localize(LocalizeKey.StrengthText));
         SetGroupLabel(GetImage((int)Images.VITStatGroup).gameObject, Util.Localize(LocalizeKey.VitialityText));

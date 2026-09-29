@@ -9724,6 +9724,36 @@
       "TextKey": "EquipmentTitleText",
       "Kor": "장비",
       "Eng": "EQUIPMENT"
+    },
+    {
+      "TextKey": "InventoryTitleText",
+      "Kor": "소지품",
+      "Eng": "INVENTORY"
+    },
+    {
+      "TextKey": "InventorySortText",
+      "Kor": "정리",
+      "Eng": "SORT"
+    },
+    {
+      "TextKey": "MonsterSkillNeedLinkText",
+      "Kor": "100% 동기화 필요",
+      "Eng": "REQUIRES 100% LINK"
+    },
+    {
+      "TextKey": "MonsterSkillFullLockText",
+      "Kor": "하수인 또는 완벽분석 필요",
+      "Eng": "REQUIRES MINIMON OR FULL LOG"
+    },
+    {
+      "TextKey": "NotOwnedText",
+      "Kor": "미보유",
+      "Eng": "NOT OWNED"
+    },
+    {
+      "TextKey": "InfoBtnText",
+      "Kor": "정보",
+      "Eng": "INFO"
     }
   ]
 }

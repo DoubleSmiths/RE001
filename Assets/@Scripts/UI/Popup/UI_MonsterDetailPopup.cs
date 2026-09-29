@@ -420,7 +420,12 @@ public class UI_MonsterDetailPopup : UI_Popup
         var q = GetText((int)Texts.MonsterDetailPopupSkillBoxFullLockQuestion);
         if (q != null) { q.text = "?"; ApplyFont(q, Define.FontType.UI); }
         var req = GetText((int)Texts.MonsterDetailPopupSkillBoxFullLockReq);
-        if (req != null) { req.color = Util.HexToColor("6C6C6C"); ApplyFont(req, Define.FontType.UI); }
+        if (req != null) { req.color = Util.HexToColor("6C6C6C"); ApplyFont(req, Define.FontType.UI); req.text = Util.Localize("MonsterSkillFullLockText"); }
+        // 아래 둘은 프리팹에 박힌 한국어라 영어에서도 그대로 나왔다
+        var needLink = GetText((int)Texts.MonsterDetailPopupSkillText);
+        if (needLink != null) { needLink.text = Util.Localize("MonsterSkillNeedLinkText"); ApplyFont(needLink, Define.FontType.UI); }
+        var loot = GetText((int)Texts.DropItemBoxText);
+        if (loot != null) { loot.text = Util.Localize(LocalizeKey.LootText); ApplyFont(loot, Define.FontType.UI); }
 
         // 슬라이드 79: 고유기술 이름 — CreatureData.UniqueSkillName (FullLock 시엔 위 UI가 덮음)
         var skillName = GetText((int)Texts.MonsterDetailPopupSkillName);

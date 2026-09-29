@@ -264,6 +264,8 @@ public class UI_MinionInfoPopup : UI_Popup
         // 보유 여부. 미포획이면 BlockImg("미보유") 오버레이가 몬스터 박스를 덮음.
         bool owned = Managers.MinMon.IsOwned(dataId);
         GetImage((int)Images.BlockImg).gameObject.SetActive(!owned);
+        var blockTxt = GetText((int)Texts.BlockImgText);
+        if (blockTxt != null) { blockTxt.text = Util.Localize("NotOwnedText"); ApplyFont(blockTxt, Define.FontType.UI); }
 
         var nameTxt = GetText((int)Texts.MinionInfoPopupNameText);
         if (nameTxt != null && data != null)

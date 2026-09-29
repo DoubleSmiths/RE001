@@ -107,8 +107,8 @@ SKILL_ENG = {
     'Skill5135DescText': 'Increases experience gained.',
     'Skill5136DescText': 'Increases gold gained.',
     'Skill5137DescText': 'Increases item drop rate.',
-    'Skill5138DescText': 'Increases minion catch success rate.',
-    'Skill5140DescText': 'Increases the number of attracted minions you can hold.',
+    'Skill5138DescText': 'Increases Minimon catch success rate.',
+    'Skill5140DescText': 'Increases the number of attracted Minimon you can hold.',
     'Skill5141DescText': 'Reduces potion cooldown.',
     'Skill5143DescText': 'Increases equipment enhancement success rate.',
     'Skill5144DescText': 'Increases movement speed.',
@@ -169,7 +169,7 @@ NEW_KEYS = [
     ('AbilityStatExpGainText', '경험치 획득량', 'EXP gain'),
     ('AbilityStatGoldGainText', '골드 획득량', 'gold gain'),
     ('AbilityStatDropRateText', '아이템 드롭률', 'item drop rate'),
-    ('AbilityStatInterestMaxText', '관심 미니몬 보관 수', 'attracted minion capacity'),
+    ('AbilityStatInterestMaxText', '관심 미니몬 보관 수', 'attracted Minimon capacity'),
     ('AbilityStatPotionCooldownText', '물약 재사용 대기시간', 'potion cooldown'),
     ('AbilityStatEnhanceLuckText', '강화 성공률', 'enhancement success rate'),
     ('AbilityStatMoveSpeedText', '이동 속도', 'movement speed'),
@@ -214,6 +214,13 @@ LITERAL_KEYS = [
     ('FullscreenText', '전체 화면', 'FULLSCREEN'),
     ('ThanksForPlayingText', '플레이해 주셔서 감사합니다!', 'Thank you for playing!'),
     ('EquipmentTitleText', '장비', 'EQUIPMENT'),
+    # 영어 모드 전수 스캔(2026-09-29)에서 프리팹에 박힌 한국어로 남아 있던 라벨
+    ('InventoryTitleText', '소지품', 'INVENTORY'),
+    ('InventorySortText', '정리', 'SORT'),
+    ('MonsterSkillNeedLinkText', '100% 동기화 필요', 'REQUIRES 100% LINK'),
+    ('MonsterSkillFullLockText', '하수인 또는 완벽분석 필요', 'REQUIRES MINIMON OR FULL LOG'),
+    ('NotOwnedText', '미보유', 'NOT OWNED'),
+    ('InfoBtnText', '정보', 'INFO'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

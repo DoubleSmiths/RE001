@@ -161,6 +161,12 @@ public class UI_InventoryPopup : UI_Popup
         var bagTxt = GetText((int)Texts.ImportantBagBtnText);
         if (bagTxt != null)
             bagTxt.text = Util.Localize(Define.LocalizeKey.RequisiteBagText);
+
+        // 제목('소지품')·정리 버튼 — 프리팹에 박힌 한국어라 영어에서도 그대로 나왔다
+        var title = GetText((int)Texts.title);
+        if (title != null) { title.text = Util.Localize("InventoryTitleText"); ApplyFont(title, Define.FontType.UI); }
+        var sortTxt = GetButton((int)Buttons.InventorySortBtn)?.GetComponentInChildren<TMPro.TMP_Text>(true);
+        if (sortTxt != null) { sortTxt.text = Util.Localize("InventorySortText"); ApplyFont(sortTxt, Define.FontType.UI); }
     }
 
     private ItemData GetItemData(int dataId)

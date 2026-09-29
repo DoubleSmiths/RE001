@@ -469,11 +469,9 @@ public class UI_PotionPopup : UI_Popup
     void RefreshTexts()
     {
         if (_titleText != null) _titleText.text = Util.Localize(Define.LocalizeKey.BtmPotionBtnText);
-        string infoLabel = Managers.Game.Language == Define.Language.Korean ? "정보" : "INFO";
-        var hpInfoTxt  = GetText((int)Texts.Txt_Button_02);
-        var spdInfoTxt = GetText((int)Texts.Txt_Button_1_01);
-        if (hpInfoTxt  != null) hpInfoTxt.text  = infoLabel;
-        if (spdInfoTxt != null) spdInfoTxt.text = infoLabel;
+        string infoLabel = Util.Localize("InfoBtnText");
+        foreach (var t in GetComponentsInChildren<TMPro.TMP_Text>(true))
+            if (t.name == "Txt_Button_02" || t.name == "Txt_Button_1_01") t.text = infoLabel;
     }
 
     void UsePotion(Slot s)
