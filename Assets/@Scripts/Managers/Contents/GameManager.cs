@@ -573,9 +573,17 @@ public class GameManager
         if (!_gameData.UnlockedBtnIds.Contains(btnId))
         {
             _gameData.UnlockedBtnIds.Add(btnId);
+            // 수도원이 열리는 순간 첫 축성은 바로 할 수 있게 한다(ADR0029). 예전엔 해금 시점 숙련도가
+            //  절반쯤(실측 48/100)이라 직업 능력을 보여 주고도 수십 마리를 더 잡아야 첫 선택을 할 수 있었다.
+            if (btnId == UNLOCK_MONASTERY_BUTTON && !HasAnyClassAbility())
+                AddClassProficiency(CLASS_PROFICIENCY_MAX);
             SaveGame();
         }
     }
+
+    bool HasAnyClassAbility()
+        => _gameData.LearnedAbilities.Exists(id =>
+            Managers.Data.SkillDic.TryGetValue(id, out var skill) && skill.Source == AbilitySource.Class);
 
     // ── 이벤트 ──
     public event Action OnLanguageChanged;
