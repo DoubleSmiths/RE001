@@ -94,9 +94,18 @@ def train_total(cap):
     return TRAIN_STATS * sum(train_cost(L) for L in range(1, cap + 1))
 
 
+def base_levels():
+    """원래(v2 배수 전) 필요 경험치. gen_level_curve 적용 뒤엔 JSON 이 늘어난 값이라 xlsx 의 BaseRequiredExp 를 읽는다."""
+    import openpyxl
+    ws = openpyxl.load_workbook(a.ROOT / "Assets/@Resources/Data/Excel/LevelData.xlsx", read_only=True).worksheets[0]
+    rows = list(ws.iter_rows(values_only=True))
+    col = 2 if rows[0][2:3] == ("BaseRequiredExp",) else 1
+    return {r[0]: r[col] for r in rows[3:] if r[0] is not None}
+
+
 def main():
     md = "--md" in sys.argv
-    levels = {r['Level']: r['RequiredExp'] for r in a.rows('LevelData')}
+    levels = base_levels()
     rates = best_node_rates()
     now = cumulative(rates, levels, lambda lv: 1.0)
     v2 = cumulative(rates, levels, curve_mult)
