@@ -441,8 +441,10 @@ public static class RemakeV2UIBuilder
             {
                 var tmp = rt.GetComponent<TMP_Text>();
                 tmp.alignment = align;
-                tmp.textWrappingMode = TextWrappingModes.NoWrap;
-                tmp.enableAutoSizing = true;   // 긴 미션 이름도 한 줄에
+                // 왼쪽은 두 줄까지(줄 높이 16 = 6pt 두 줄) — 한 줄 고정이면 긴 의뢰·안내 문장이 3.5pt 까지 줄다가 말줄임으로 잘렸다
+                tmp.textWrappingMode = rt == left ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+                if (rt == left) tmp.margin = new Vector4(0f, 1.5f, 0f, 1.5f);   // 픽셀 글꼴은 글자 높이가 줄 간격보다 커서 세 줄이면 테두리에 걸렸다
+                tmp.enableAutoSizing = true;   // 긴 미션 이름도 칸 안에
                 tmp.fontSizeMin = 3.5f;
                 tmp.fontSizeMax = 6f;
                 tmp.overflowMode = TextOverflowModes.Ellipsis;   // 최소 크기로도 넘치면 옆 칸을 덮지 말고 말줄임
