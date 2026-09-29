@@ -296,6 +296,12 @@ public class UI_PotionDetailPopup : UI_Popup
         _backBtn       = GetButton((int)Buttons.BackBtn)?.gameObject;
         _nextLvlBtnLabel = GetText((int)Texts.Txt_NextLvlBtn_05);
 
+        // 프리팹에 박힌 한국어 라벨(획득처 '연금공방' / [물약개선] / [제작]) — 영어에서도 그대로 나왔다
+        void SetLabel(TMP_Text t, string key) { if (t == null) return; t.text = Localize(key); ApplyFont(t, FontType.UI); }
+        SetLabel(GetText((int)Texts.WhereToFindTxt), LocalizeKey.AlchemyText);
+        SetLabel(GetText((int)Texts.Txt_CraftBtn_06), LocalizeKey.CraftText);
+        SetLabel(_nextLvlBtnLabel, "PotionUpgradeText");
+
         // ReqItemBox1_1 ~ 5 및 아이콘 캐시
         var list     = new List<RectTransform>();
         var iconList = new List<Image>();

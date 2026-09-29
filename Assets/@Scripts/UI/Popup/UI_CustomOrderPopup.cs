@@ -156,6 +156,12 @@ public class UI_CustomOrderPopup : UI_Popup
         GetButton((int)Buttons.CustomOrderPotionBtn).gameObject.BindEvent(OnClickPotion);
         GetButton((int)Buttons.CustomOrderSkillBtn).gameObject.BindEvent(OnClickSkill);
 
+        // 물약/기술 탭 라벨 — 프리팹에 박힌 한국어라 영어에서도 그대로 나왔다
+        var potionTab = GetText((int)Texts.Txt_CustomOrderPotionBtn_02);
+        if (potionTab != null) { potionTab.text = Util.Localize(LocalizeKey.BtmPotionBtnText); ApplyFont(potionTab, FontType.UI); }
+        var skillTab = GetText((int)Texts.Txt_CustomOrderSkillBtn_02);
+        if (skillTab != null) { skillTab.text = Util.Localize(LocalizeKey.AbilityCodex_BtmText_Skill); ApplyFont(skillTab, FontType.UI); }
+
         return true;
     }
 
@@ -195,7 +201,7 @@ public class UI_CustomOrderPopup : UI_Popup
             DOVirtual.DelayedCall(0.5f, () =>
             {
                 if (_talkText == null) return;
-                _typing.PlayTyping(_talkText, "\"무엇을 만들어드릴까요?\"", DialogueEmotion.Normal);
+                _typing.PlayTyping(_talkText, Util.Localize("CustomOrderGreetingText"), DialogueEmotion.Normal);
             }).SetTarget(this).SetLink(gameObject).SetUpdate(true);
         }
 

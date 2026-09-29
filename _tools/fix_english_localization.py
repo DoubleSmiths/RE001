@@ -221,6 +221,8 @@ LITERAL_KEYS = [
     ('MonsterSkillFullLockText', '하수인 또는 완벽분석 필요', 'REQUIRES MINIMON OR FULL LOG'),
     ('NotOwnedText', '미보유', 'NOT OWNED'),
     ('InfoBtnText', '정보', 'INFO'),
+    ('PotionUpgradeText', '물약개선', 'UPGRADE'),
+    ('CustomOrderGreetingText', '"무엇을 만들어드릴까요?"', '"What shall I brew for you?"'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.
