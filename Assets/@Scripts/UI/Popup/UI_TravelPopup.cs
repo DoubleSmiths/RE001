@@ -172,6 +172,21 @@ public class UI_TravelPopup : UI_Popup
         //    Managers.Game.OnItemChanged -= OnInventoryChanged;
             Managers.Game.OnLanguageChanged -= OnLanguageChanged;
         }
+
+        foreach (var go in _spawnedTownButtons) ReleaseButton(go);
+        foreach (var go in _spawnedFieldButtons) ReleaseButton(go);
+        foreach (var go in _spawnedMapButtons) ReleaseButton(go);
+    }
+
+    // 닫힌(비활성) 패널 아래 만든 버튼은 Awake 가 돌지 않아, 파괴돼도 Unity 가 OnDestroy 를 부르지 않는다.
+    //  그런데 SetInfo 가 Init 을 직접 불러 언어 변경 구독은 걸리므로, 여정 창을 열 때마다 필드 버튼 25개의
+    //  구독이 그대로 쌓였다(3회 열면 +150). 파괴 전에 정리를 직접 부른다 — 두 번 불려도 해제는 무해하다.
+    static void ReleaseButton(GameObject go)
+    {
+        if (go == null) return;
+        var ui = go.GetComponent<UI_Base>();
+        if (ui != null) ui.OnDestroy();
+        Destroy(go);
     }
 
     public void SetInfo()
@@ -512,7 +527,7 @@ public class UI_TravelPopup : UI_Popup
     {
         // 기존 인스턴스 정리.
         foreach (GameObject go in _spawnedTownButtons)
-            Destroy(go);
+            ReleaseButton(go);
 
         _spawnedTownButtons.Clear();
 
@@ -550,7 +565,7 @@ public class UI_TravelPopup : UI_Popup
     void BuildFieldButtons()
     {
         foreach (var go in _spawnedFieldButtons)
-            if (go != null) Destroy(go);
+            ReleaseButton(go);
         _spawnedFieldButtons.Clear();
 
         GameObject parent = GetObject((int)GameObjects.FieldSelectContent);
@@ -588,7 +603,7 @@ public class UI_TravelPopup : UI_Popup
     void BuildMapButtons()
     {
         foreach (GameObject go in _spawnedMapButtons)
-            if (go != null) Destroy(go);
+            ReleaseButton(go);
         _spawnedMapButtons.Clear();
 
         if (_selectedFieldId == 0) return;   // 그룹 미선택 시 spawn X
