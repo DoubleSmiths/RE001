@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: stopresent
+  companyName: DoubleSmiths
   productName: Minimon Quest
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -167,8 +167,8 @@ PlayerSettings:
   androidMaxAspectRatio: 2.4
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.stopresent.minimonquest
-    Standalone: com.stopresent.minimonquest
+    Android: com.doublesmiths.minimonquest
+    Standalone: com.doublesmiths.minimonquest
   buildNumber:
     Standalone: 0
     VisionOS: 0

@@ -12,7 +12,7 @@
 param(
     [string]$OutPath = (Join-Path $env:USERPROFILE '.minimonquest\upload.keystore'),
     [string]$Alias = 'upload',
-    [string]$DName = 'CN=Minimon Quest, O=stopresent, C=KR'
+    [string]$DName = 'CN=Minimon Quest, O=DoubleSmiths, C=KR'
 )
 $ErrorActionPreference = 'Stop'
 
