@@ -506,7 +506,7 @@ public class UI_GameScene : UI_Scene
 
         _currentBtnGroup.Setup(this);
 
-        // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_Minion_battle은 별도)
+        // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_MinimonCapture는 별도)
         Managers.Sound?.PlayBgm(area == AreaType.Battle ? "BGM_BWF" : "BGM_Village1");
 
         Debug.Log($"[UI_GameScene] SwapAreaBtnGroup success. area={area}, prefab={prefabName}");

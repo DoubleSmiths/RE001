@@ -39,6 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 118fe030a3d031c43a10ed10158bdfe2
+    m_Address: BGM_MinimonCapture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 181fd26773f4bc34c8ee85f3c606293f
     m_Address: WaterWhip_Ori
     m_ReadOnly: 0
@@ -165,12 +171,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6385500eaea17b046b87f2cdfbbfac3e
-    m_Address: SFX_MinimonCatch
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 64f58ca01ed882c4db755c7e5b898c09
     m_Address: SFX_CuriousCaution2
     m_ReadOnly: 0
@@ -285,12 +285,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a72330b0a6c9cdc40b14f8852076da80
-    m_Address: BGM_Minion_battle
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: af3b5ecc1451f3441a88ed95c00e8c55
     m_Address: SFX_LightHammer
     m_ReadOnly: 0
@@ -377,6 +371,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f2ce0ea9c7ad0514d935636c583c8b98
     m_Address: SFX_FlameOn
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f72c4120e5b3e9a4cb29bcc07dc35507
+    m_Address: SFX_MinimonCaught
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

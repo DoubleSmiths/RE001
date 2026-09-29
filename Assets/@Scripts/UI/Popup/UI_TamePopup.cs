@@ -106,8 +106,10 @@ public class UI_TamePopup : UI_Popup
         if (base.Init() == false)
             return false;
 
-        // 잡기 시작 — 잡기 전용 BGM(BGM_Minion_battle). 닫을 때 OnDestroy에서 원래 BGM 복귀.
-        Managers.Sound?.PushBgm("BGM_Minion_battle");
+        // 잡기 시작 — 잡기 전용 BGM. 닫을 때 OnDestroy에서 원래 BGM 복귀.
+        //  (예전 BGM_Minion_battle·SFX_MinimonCatch 는 포켓몬스터 원곡 추출본이라 출시 불가 — 자작 칩튠으로 교체,
+        //   _tools/gen_chiptune.py)
+        Managers.Sound?.PushBgm("BGM_MinimonCapture");
 
         BindImage(typeof(Images));
         BindText(typeof(Texts));
@@ -494,7 +496,7 @@ public class UI_TamePopup : UI_Popup
         if (success)
         {
             // 슬36-1: 미니몬 Caught Anim — prefab "Monster Caught"(Move Y Yoyo 0.18s ×4 = 0.72s)
-            Managers.Sound?.PlaySFX("SFX_MinimonCatch");   // 포획 성공
+            Managers.Sound?.PlaySFX("SFX_MinimonCaught");   // 포획 성공
             PlayAnim(_slimeTr?.gameObject, "Monster Caught");
             yield return new WaitForSecondsRealtime(0.72f);
 
