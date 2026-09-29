@@ -53,15 +53,21 @@ public class UI_MonsterHPBar : UI_Base
         BindObject(typeof(GameObjects));
 
         RefreshTexts();
-        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
 
         return true;
     }
 
-    public override void OnDestroy()
+    // 풀링되는 HP 바다 — 언어 구독은 켜져 있는 동안만 둔다. Init 에서 걸고 OnDestroy 에서만 풀면 풀에 잠든 바가
+    //  구독을 쥔 채 쌓였다(UI 품질 스캔 '구독 누수': 플레이어가 쓰러져 새 바가 만들어질 때마다 +1).
+    void OnEnable()
+    {
+        if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
+    }
+
+    void OnDisable()
     {
         if (Managers.Game != null) Managers.Game.OnLanguageChanged -= RefreshTexts;
-        base.OnDestroy();
+        Unwatch();
     }
 
     // enum Texts: MonsterNameDisplay — 동적 (CreatureData.Name SetInfo에서 set), Battle 폰트만.
@@ -71,8 +77,16 @@ public class UI_MonsterHPBar : UI_Base
         if (name != null) ApplyFont(name, Define.FontType.Battle);
     }
 
+    // 지켜보는 몬스터 — 바가 풀로 돌아가 다른 몬스터에 다시 쓰일 때 예전 몬스터의 HP 변화가 새 바를 움직이지 않게 끊는다.
+    MonsterController _monster;
+    bool _closing;
+    int  _useToken;
+
     public void SetInfo(MonsterController monster)
     {
+        Unwatch();
+        _useToken++;
+        _closing = false;
         if (Managers.Data.CreatureDic.TryGetValue(monster.DataId, out var data))
             GetText((int)Texts.MonsterNameDisplay).text = Util.Localize(data.Name);
 
@@ -80,23 +94,41 @@ public class UI_MonsterHPBar : UI_Base
         UpdateHp(monster.Hp, monster.MaxHp);
         PlayOpenAnimation(monster.Rarity);
 
-        monster.OnHpChanged += (cur, max) =>
-        {
-            UpdateHp(cur, max);
-            if (cur <= 0)
-                PlayCloseAnimation();
-        };
+        _monster = monster;
+        monster.OnHpChanged += OnMonsterHpChanged;
+    }
+
+    void OnMonsterHpChanged(float cur, float max)
+    {
+        UpdateHp(cur, max);
+        if (cur <= 0)
+            PlayCloseAnimation();
+    }
+
+    void Unwatch()
+    {
+        if (_monster != null) _monster.OnHpChanged -= OnMonsterHpChanged;
+        _monster = null;
     }
 
     // 슬라이드 66/67 — 몬스터 사망 또는 Player 사망 시 HP Bar는 DOPlayBackwards로 사라짐.
     // prefab의 DOTweenAnimation(Move OutBack From x0 y0 z0)를 역방향 재생 → 원위치(0,0,0)로 되돌아감.
+    //  닫기는 한 번만(몬스터와 플레이어가 같이 쓰러지면 두 번 불렸다). 늦게 도착한 반납 예약은 그 사이 다른 몬스터에
+    //  다시 쓰인 바를 치우지 않는다(_useToken).
     public void PlayCloseAnimation()
     {
+        if (_closing) return;
+        _closing = true;
+        Unwatch();
+        int token = _useToken;
         var anim = GetComponent<DOTweenAnimation>();
         if (anim != null)
         {
             anim.DOPlayBackwards();
-            DG.Tweening.DOVirtual.DelayedCall(anim.duration, () => Managers.Resource.Destroy(gameObject));
+            DG.Tweening.DOVirtual.DelayedCall(anim.duration, () =>
+            {
+                if (this != null && token == _useToken) Managers.Resource.Destroy(gameObject);
+            });
         }
         else
         {
