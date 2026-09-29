@@ -286,6 +286,32 @@ def material_items():
     return out
 
 
+# v2 유물 30종(ADR0035) — _tools/gen_relics.py 의 RELICS 와 같은 순서·같은 DataId. 파일명 = Relic{DataId}
+OUT_RELIC = os.path.join(BASE, "Assets", "@Resources", "Sprite", "Icon", "Relic", "Generated")
+RELIC_LOOK = [
+    (8001, "a rusty old sword hilt relic"), (8002, "a wolf fang charm on a leather cord"),
+    (8003, "an engraved bronze warrior crest"), (8004, "a runestone glowing with red flame runes"),
+    (8005, "an ornate golden gauntlet set with a ruby"), (8006, "a radiant golden sun crown with light rays"),
+    (8007, "a smooth mossy green pebble"), (8008, "a small glass jar of red berries"),
+    (8009, "a glowing green acorn"), (8010, "a large crystallized red heart"),
+    (8011, "a luminous golden-green world tree leaf"),
+    (8012, "a broken piece of a wooden shield"), (8013, "a small turtle shell"),
+    (8014, "an iron shoulder pauldron"), (8015, "a silver chalice with a blue gem"),
+    (8016, "a sharp chipped flint stone"), (8017, "a hawk eye amber pendant"),
+    (8018, "a pair of vampire fangs on a silver chain"), (8019, "a cursed black and violet dagger with a glowing edge"),
+    (8020, "an old copper coin with a square hole"), (8021, "a small leather coin purse"),
+    (8022, "a golden lucky horseshoe"), (8023, "a golden toad statue holding a coin"),
+    (8024, "an old worn leather journal"), (8025, "round brass sage spectacles"),
+    (8026, "an ornate hourglass with glowing blue sand"), (8027, "an unrolled scroll covered in glowing star charts"),
+    (8028, "a torn burlap loot sack"), (8029, "a brass grappling hook"),
+    (8030, "a small clay honey pot dripping golden honey"),
+]
+
+
+def relic_items():
+    return [(f"Relic{did}", f"{look}, a mysterious ancient relic treasure") for did, look in RELIC_LOOK]
+
+
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "equipment"
     limit = None
@@ -299,8 +325,10 @@ def main():
         run(material_items(), OUT_MATERIAL, limit)
     elif what == "monster":
         run(monster_items(), OUT_MONSTER, limit, size=128)  # 인게임 캐릭터라 아이콘보다 크게
+    elif what == "relic":
+        run(relic_items(), OUT_RELIC, limit)
     else:
-        raise SystemExit("사용법: python _tools/aether_icons.py [equipment|skill|monster] [--limit N]")
+        raise SystemExit("사용법: python _tools/aether_icons.py [equipment|skill|monster|material|relic] [--limit N]")
 
 
 if __name__ == "__main__":

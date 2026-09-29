@@ -1939,6 +1939,20 @@ public class Define
         public const string DUNGEON_MANDRAKE_KILLS = "DUNGEON_MANDRAKE_KILLS";
         public const string DUNGEON_TODAY_MULT     = "DUNGEON_TODAY_MULT";
         public const string DUNGEON_SPAWN_DELAY    = "DUNGEON_SPAWN_DELAY";
+        // 유물 소환(ADR0035)
+        public const string RELIC_COST_ONE         = "RELIC_COST_ONE";
+        public const string RELIC_COST_TEN         = "RELIC_COST_TEN";
+        public const string RELIC_ADS_PER_DAY      = "RELIC_ADS_PER_DAY";
+        public const string RELIC_PITY             = "RELIC_PITY";
+        public const string RELIC_MAX_LEVEL        = "RELIC_MAX_LEVEL";
+        public const string RELIC_RATE_COMMON      = "RELIC_RATE_COMMON";
+        public const string RELIC_RATE_RARE        = "RELIC_RATE_RARE";
+        public const string RELIC_RATE_EPIC        = "RELIC_RATE_EPIC";
+        public const string RELIC_RATE_LEGENDARY   = "RELIC_RATE_LEGENDARY";
+        public const string RELIC_REFUND_COMMON    = "RELIC_REFUND_COMMON";
+        public const string RELIC_REFUND_RARE      = "RELIC_REFUND_RARE";
+        public const string RELIC_REFUND_EPIC      = "RELIC_REFUND_EPIC";
+        public const string RELIC_REFUND_LEGENDARY = "RELIC_REFUND_LEGENDARY";
     }
     #endregion
 

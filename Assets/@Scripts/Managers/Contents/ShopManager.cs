@@ -36,7 +36,7 @@ public static class IapService
 //  세이브: GameData.Shop(ShopSaveData). 광고 횟수는 기기 현지 날짜로 하루마다 비운다.
 public class ShopManager
 {
-    public const string AD_HOT = "hot_", AD_FREE_CRYSTAL = "free_crystal", AD_OFFLINE = "offline_double", AD_DUNGEON = "dungeon_";
+    public const string AD_HOT = "hot_", AD_FREE_CRYSTAL = "free_crystal", AD_OFFLINE = "offline_double", AD_DUNGEON = "dungeon_", AD_RELIC = "relic";
     const int BUFF_KEY_HOT = -200;   // 버프 아이콘 키 — 물약(-100)과 겹치지 않게, 종류별 -200/-201/-202
     const int HOT_KINDS = 3;
 

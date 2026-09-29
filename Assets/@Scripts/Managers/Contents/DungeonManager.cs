@@ -145,7 +145,7 @@ public class DungeonManager
         switch (RunKind)
         {
             case DungeonKind.Gold:
-                int gold = Mathf.RoundToInt(RunKills * avgGold * B(BalanceKey.DUNGEON_GOLD_MULT, 4f) * mult);
+                int gold = Mathf.RoundToInt(RunKills * avgGold * B(BalanceKey.DUNGEON_GOLD_MULT, 4f) * mult * (Managers.Relic?.GoldMult ?? 1f));
                 g.Gold += gold;
                 reward = string.Format(Util.Localize("RewardGoldFormat"), gold);
                 break;

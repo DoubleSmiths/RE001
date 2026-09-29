@@ -107,6 +107,15 @@ public class DungeonSaveData
     public int[] BestKills = new int[3];   // 한 번에 가장 많이 잡은 수
 }
 
+// v2 유물(ADR0035). Levels: 유물 DataId → 레벨(1~최대). Pity: 마지막 전설 뒤로 뽑은 수(천장).
+[Serializable]
+public class RelicSaveData
+{
+    public Dictionary<int, int> Levels = new Dictionary<int, int>();
+    public int Pity;
+    public int Summons;
+}
+
 // ──────────────────────────────────────────────
 //  세이브 데이터
 // ──────────────────────────────────────────────
@@ -147,6 +156,8 @@ public class GameData
     public ShopSaveData Shop = new ShopSaveData();
     // v2 요일 던전
     public DungeonSaveData Dungeon = new DungeonSaveData();
+    // v2 유물
+    public RelicSaveData Relic = new RelicSaveData();
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -739,7 +750,7 @@ public class GameManager
             return result;
         }
         result.Exp  = avgExp * result.Kills;
-        result.Gold = Mathf.RoundToInt(avgGold * result.Kills);
+        result.Gold = Mathf.RoundToInt(avgGold * result.Kills * (Managers.Relic?.GoldMult ?? 1f));   // 유물 골드 %(핫타임은 곱하지 않는다)
 
         Gold += result.Gold;                       // setter가 저장까지 처리
         Player?.GainExp(result.Exp);
@@ -786,7 +797,7 @@ public class GameManager
         if (!TryGetAreaAverage(_gameData.LastBattleAreaId, out float avgExp, out float avgGold)) return;
 
         // 켜 둔 채 쌓이는 방치 처치도 처치다 — 핫타임 배수를 곱한다(오프라인 정산에는 곱하지 않는다)
-        int gold = Mathf.RoundToInt(avgGold * kills * (Managers.Shop?.GoldMult ?? 1f));
+        int gold = Mathf.RoundToInt(avgGold * kills * (Managers.Shop?.GoldMult ?? 1f) * (Managers.Relic?.GoldMult ?? 1f));
         float exp = avgExp * kills * (Managers.Shop?.ExpMult ?? 1f);
 
         Gold += gold;                 // setter가 OnResourceChanged를 쏴 HUD 골드가 실시간으로 오른다
@@ -1464,6 +1475,7 @@ public class GameManager
     public MissionSaveData MissionSave => _gameData.Missions;
     public ShopSaveData    ShopSave    => _gameData.Shop;
     public DungeonSaveData DungeonSave => _gameData.Dungeon;
+    public RelicSaveData   RelicSave   => _gameData.Relic;
     public int LastBattleAreaId => _gameData.LastBattleAreaId;
     public int FirstStageNode => StageOrder.Count > 0 ? StageOrder[0] : 0;
 
@@ -2142,6 +2154,8 @@ public class GameManager
         d.Dungeon              ??= new DungeonSaveData();   // v2 요일 던전 이전 세이브엔 없다
         d.Dungeon.Used          = Fit(d.Dungeon.Used, 3);
         d.Dungeon.BestKills     = Fit(d.Dungeon.BestKills, 3);
+        d.Relic                ??= new RelicSaveData();     // v2 유물 이전 세이브엔 없다
+        d.Relic.Levels         ??= new Dictionary<int, int>();
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

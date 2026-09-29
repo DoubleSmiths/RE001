@@ -31,6 +31,8 @@ public static class GeneratedIconRegistrar
         //  ⚠️ 원본이 있는 Background/Town을 통째로 넣으면 안 된다 — 아래 임포트 규칙이 PPU를 64로
         //     맞추는데 Background_Village1은 PPU 39라 배경 크기가 바뀐다. 새 그림만 따로 둔다.
         "Assets/@Resources/Sprite/Background/VillageBG",
+        // v2 유물 30종(ADR0035) — _tools/aether_icons.py relic
+        "Assets/@Resources/Sprite/Icon/Relic/Generated",
     };
 
     // 폴더별 PPU. 기본은 64지만, 저작 배경을 대체하는 그림은 **그 배경과 같은 값**이어야

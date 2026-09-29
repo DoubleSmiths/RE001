@@ -11,6 +11,7 @@ using static Define;
 //  상점 탭: 핫타임 3종(광고가 남았으면 광고, 아니면 크리스탈), 무료 크리스탈·오프라인 2배(광고), 월정액 매일 보상,
 //  만드라고라(크리스탈), 인앱 상품. 광고·결제 줄은 모의가 되는 빌드(에디터·개발)에서만 보인다(AdService/IapService).
 //  던전 탭(ADR0034): 요일 던전 3종 — 무료 입장이 남았으면 입장, 없으면 광고, 그다음 크리스탈. 누르면 창을 닫고 전투로 간다.
+//  유물 탭(ADR0035): 1회·10회·광고 소환, 확률 공개 화면(등급·종류별 확률, 전설 천장), 30종 목록(아이콘·레벨·효과).
 public class UI_MissionPopup : UI_Popup
 {
     #region Enum
@@ -40,9 +41,9 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
-    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
+    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
 
-    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText" };
+    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText" };
     static readonly string[] HOT_KEYS = { "HotGoldText", "HotExpText", "HotAtkText" };   // HotTime 순서
     static readonly Color TAB_ON      = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color TAB_OFF     = new Color32(0xB8, 0xB8, 0xB8, 0xFF);
@@ -53,6 +54,7 @@ public class UI_MissionPopup : UI_Popup
     const int   GUIDE_PREVIEW    = 2;       // 가이드 다음 단계 미리보기 수
     const float SHOP_TICK        = 1f;      // 상점 탭: 핫타임 남은 시간 갱신 주기(초)
     const string TAB_ALERT       = "<color=#FF6A6A>!</color>";
+    const float ROW_ICON_TEXT_INSET = 17f;   // 아이콘이 있는 줄의 왼쪽 글자 시작(아이콘 13 + 여백)
     float _shopTick;
 
     Tab _tab;
@@ -94,6 +96,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Mission != null) Managers.Mission.OnChanged += Refresh;
         if (Managers.Shop != null) Managers.Shop.OnChanged += Refresh;
         if (Managers.Dungeon != null) Managers.Dungeon.OnChanged += Refresh;
+        if (Managers.Relic != null) Managers.Relic.OnChanged += Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged += Refresh;
@@ -116,6 +119,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Mission != null) Managers.Mission.OnChanged -= Refresh;
         if (Managers.Shop != null) Managers.Shop.OnChanged -= Refresh;
         if (Managers.Dungeon != null) Managers.Dungeon.OnChanged -= Refresh;
+        if (Managers.Relic != null) Managers.Relic.OnChanged -= Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged -= Refresh;
@@ -134,6 +138,7 @@ public class UI_MissionPopup : UI_Popup
     {
         if (_tab == tab) return;
         _tab = tab;
+        _relicRates = false;   // 유물 탭은 늘 목록부터
         Managers.Sound?.PlaySFX("SFX_BtnSelect");
         Refresh();
     }
@@ -145,10 +150,11 @@ public class UI_MissionPopup : UI_Popup
         var mission = Managers.Mission;
         if (mission == null) return;
 
-        GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText" : "MissionTitleText");
+        GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText"
+                                                     : _tab == Tab.Relic ? "RelicTitleText" : "MissionTitleText");
         GetText((int)Texts.ClaimAllTxt).text = Util.Localize("MissionClaimAllText");
-        // 상점·던전 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장이라 한꺼번에 누르면 안 된다
-        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon);
+        // 상점·던전·유물 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장·소환이라 한꺼번에 누르면 안 된다
+        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic);
         for (int i = 0; i < _tabTexts.Count && i < TAB_KEYS.Length; i++)
         {
             _tabTexts[i].text  = Util.Localize(TAB_KEYS[i]);
@@ -169,6 +175,7 @@ public class UI_MissionPopup : UI_Popup
                 break;
             case Tab.Shop: n = ShopRows(); break;
             case Tab.Dungeon: n = DungeonRows(); break;
+            case Tab.Relic: n = _relicRates ? RelicRateRows() : RelicRows(); break;
         }
         for (int i = n; i < _rows.Count; i++) _rows[i].SetActive(false);
 
@@ -181,7 +188,7 @@ public class UI_MissionPopup : UI_Popup
     // 지금 탭에서 받을 수 있는 줄을 전부 받는다(가이드는 받으면 다음 단계가 열리니 더 없을 때까지).
     void OnClickClaimAll()
     {
-        if (_tab == Tab.Shop || _tab == Tab.Dungeon) return;
+        if (_tab == Tab.Shop || _tab == Tab.Dungeon || _tab == Tab.Relic) return;
         bool got = false;
         for (int guard = 0; guard < 64; guard++)
         {
@@ -370,6 +377,117 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
+    #region 유물 탭 (ADR0035)
+    static readonly Color[] GRADE_COLORS =
+    {
+        new Color32(0xD8, 0xD8, 0xD8, 0xFF),   // 일반
+        new Color32(0x6A, 0xB8, 0xFF, 0xFF),   // 희귀
+        new Color32(0xC0, 0x7A, 0xFF, 0xFF),   // 영웅
+        new Color32(0xFF, 0xC8, 0x3A, 0xFF),   // 전설
+    };
+    static readonly Dictionary<string, string> EFFECT_KEYS = new Dictionary<string, string>
+    {
+        { "Atk", "RelicAtkFormat" }, { "Hp", "RelicHpFormat" }, { "Def", "RelicDefFormat" }, { "CritDmg", "RelicCritDmgFormat" },
+        { "Gold", "RelicGoldFormat" }, { "Exp", "RelicExpFormat" }, { "Drop", "RelicDropFormat" }, { "Interest", "RelicInterestFormat" },
+    };
+    const string RELIC_NEW = "<color=#FFE06A>NEW</color>";
+    const string RELIC_UP  = "<color=#7FE0FF>UP</color>";
+
+    bool _relicRates;                                             // 확률 공개 화면
+    readonly Dictionary<int, bool> _relicFresh = new Dictionary<int, bool>();   // 이번 소환에서 얻은 유물 → 처음이면 true
+
+    int RelicRows()
+    {
+        var rm = Managers.Relic;
+        int n = 0;
+        SetRow(n++, Util.Localize("RelicSummonOneText"), Crystal(rm.CostOne), CrystalColor(rm.CostOne), 1f, () => SummonRelic(1, RelicManager.Pay.Crystal));
+        SetRow(n++, Util.Localize("RelicSummonTenText"), Crystal(rm.CostTen), CrystalColor(rm.CostTen), 1f, () => SummonRelic(10, RelicManager.Pay.Crystal));
+        if (AdService.Available)
+        {
+            int ads = rm.AdLeft;
+            if (ads > 0) SetRow(n++, Util.Localize("RelicSummonAdText"), string.Format(Util.Localize("AdWatchFormat"), ads), TEXT_READY, 1f, () => SummonRelic(1, RelicManager.Pay.Ad));
+            else         SetRow(n++, Util.Localize("RelicSummonAdText"), Util.Localize("AttendanceTomorrowText"), TEXT_DONE, ROW_DONE_ALPHA, null);
+        }
+        SetRow(n++, string.Format(Util.Localize("RelicRatesRowFormat"), rm.Pity, rm.PityLimit), Util.Localize("RelicViewText"), TEXT_READY, 1f,
+               () => { _relicRates = true; Refresh(); });
+
+        foreach (var r in SortedRelics())
+        {
+            int g = RelicManager.GradeIndex(r.Grade), lv = rm.Level(r.DataId);
+            string grade = Util.Localize(RelicManager.GRADE_KEYS[g]), name = Util.Localize(r.NameKey);
+            var icon = Managers.Resource.Load<Sprite>(r.IconLabel);
+            if (lv <= 0)
+            {
+                SetRow(n++, "[" + grade + "] " + name, Util.Localize("RelicNotOwnedText"), TEXT_DONE, ROW_DONE_ALPHA, null, icon);
+                continue;
+            }
+            string left = string.Format(Util.Localize("RelicRowFormat"), grade, name, lv);
+            if (_relicFresh.TryGetValue(r.DataId, out bool isNew)) left += "  " + (isNew ? RELIC_NEW : RELIC_UP);
+            SetRow(n++, left, Effect(r, rm.Value(r, lv)), GRADE_COLORS[g], 1f, null, icon);
+        }
+        return n;
+    }
+
+    // 확률 공개(게임산업법·Google Play) — 등급 확률, 종류별 확률, 천장. 표의 숫자를 그대로 보여 준다(BalanceConfig RELIC_RATE_*).
+    int RelicRateRows()
+    {
+        var rm = Managers.Relic;
+        int n = 0;
+        SetRow(n++, Util.Localize("RelicBackText"), "", TEXT_READY, 1f, () => { _relicRates = false; Refresh(); });
+        for (int g = RelicManager.GRADE_COUNT - 1; g >= 0; g--)
+        {
+            int count = rm.GradeCount(g);
+            SetRow(n++, string.Format(Util.Localize("RelicGradeRateFormat"), Util.Localize(RelicManager.GRADE_KEYS[g]), rm.GradeRate(g), count,
+                                      count > 0 ? rm.GradeRate(g) / count : 0f), "", GRADE_COLORS[g], 1f, null);
+        }
+        SetRow(n++, string.Format(Util.Localize("RelicPityInfoFormat"), rm.PityLimit, rm.Pity), "", TEXT_REWARD, 1f, null);
+        foreach (var r in SortedRelics())
+            SetRow(n++, Util.Localize(r.NameKey), string.Format("{0:0.###}%", rm.ItemRate(r)), GRADE_COLORS[RelicManager.GradeIndex(r.Grade)], 1f, null,
+                   Managers.Resource.Load<Sprite>(r.IconLabel));
+        return n;
+    }
+
+    static List<Data.RelicData> SortedRelics()
+    {
+        var list = new List<Data.RelicData>(Managers.Data.RelicDic.Values);
+        list.Sort((a, b) =>
+        {
+            int ga = RelicManager.GradeIndex(a.Grade), gb = RelicManager.GradeIndex(b.Grade);
+            return ga != gb ? gb.CompareTo(ga) : a.DataId.CompareTo(b.DataId);   // 전설부터
+        });
+        return list;
+    }
+
+    static string Effect(Data.RelicData r, float value)
+        => EFFECT_KEYS.TryGetValue(r.StatType, out string key) ? string.Format(Util.Localize(key), value) : "+" + value.ToString("0.#");
+
+    void SummonRelic(int count, RelicManager.Pay pay)
+    {
+        var pulls = Managers.Relic.Summon(count, pay);
+        if (pulls == null)
+        {
+            Managers.Sound?.PlaySFX("SFX_Fail");
+            if (pay == RelicManager.Pay.Crystal) Managers.UI.ShowToast(Util.Localize("NotEnoughCrystalText"));
+            return;
+        }
+        _relicFresh.Clear();
+        var byGrade = new int[RelicManager.GRADE_COUNT];
+        int refund = 0;
+        foreach (var pull in pulls)
+        {
+            byGrade[pull.Grade]++;
+            refund += pull.Refund;
+            if (!_relicFresh.ContainsKey(pull.Id)) _relicFresh[pull.Id] = pull.IsNew;
+        }
+        bool legend = byGrade[RelicManager.LEGENDARY] > 0;
+        Managers.Sound?.PlaySFX(legend ? "SFX_Success2" : "SFX_BtnSelect");
+        string msg = string.Format(Util.Localize("RelicResultFormat"), pulls.Count, byGrade[3], byGrade[2], byGrade[1], byGrade[0]);
+        if (refund > 0) msg += string.Format(Util.Localize("RelicRefundFormat"), refund);
+        Managers.UI.ShowToast(legend ? Util.Localize("RelicLegendText") + "  " + msg : msg);
+        Refresh();   // 소환은 OnChanged 로도 그리지만 NEW/UP 표시를 여기서 확정한다
+    }
+    #endregion
+
     void Claim(Data.MissionData m)
     {
         if (Managers.Mission.TryClaim(m)) Managers.Sound?.PlaySFX("SFX_Success2");
@@ -390,7 +508,7 @@ public class UI_MissionPopup : UI_Popup
     };
 
     // 줄은 템플릿 복제본을 재사용한다. 누름은 줄마다 한 번만 걸고, 그 줄의 현재 동작(_rowActions)을 부른다.
-    void SetRow(int index, string left, string right, Color rightColor, float alpha, Action onClick)
+    void SetRow(int index, string left, string right, Color rightColor, float alpha, Action onClick, Sprite icon = null)
     {
         while (_rows.Count <= index)
         {
@@ -410,5 +528,17 @@ public class UI_MissionPopup : UI_Popup
         texts[1].color = rightColor;
         Util.GetOrAddComponent<CanvasGroup>(row).alpha = alpha;
         _rowActions[index] = onClick;
+
+        // 줄 아이콘(유물 등) — 있으면 켜고 왼쪽 글자를 그만큼 민다. 템플릿의 원래 여백은 처음 한 번 기억한다.
+        var iconTr = row.transform.Find("MissionRowIcon");
+        if (iconTr == null) return;
+        var leftRt = texts[0].rectTransform;
+        if (_leftInset < 0f) _leftInset = leftRt.offsetMin.x;
+        bool hasIcon = icon != null;
+        iconTr.gameObject.SetActive(hasIcon);
+        if (hasIcon) iconTr.GetComponent<UnityEngine.UI.Image>().sprite = icon;
+        leftRt.offsetMin = new Vector2(hasIcon ? ROW_ICON_TEXT_INSET : _leftInset, leftRt.offsetMin.y);
     }
+
+    float _leftInset = -1f;
 }

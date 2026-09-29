@@ -543,6 +543,32 @@ namespace Data
     }
     #endregion
 
+    #region RelicData (v2 유물 30종 — _tools/gen_relics.py, ADR0035)
+    [Serializable]
+    public class RelicData
+    {
+        public int    DataId;
+        public string NameKey;
+        public string Grade;       // Common / Rare / Epic / Legendary
+        public string StatType;    // Atk / Hp / Def / CritDmg / Gold / Exp / Drop / Interest
+        public float  Base;        // 1레벨 값
+        public float  PerLevel;    // 레벨당 값
+        public string IconLabel;
+    }
+
+    [Serializable]
+    public class RelicDataLoader : ILoader<int, RelicData>
+    {
+        public List<RelicData> relics = new List<RelicData>();
+        public Dictionary<int, RelicData> MakeDict()
+        {
+            var dict = new Dictionary<int, RelicData>();
+            foreach (var r in relics) dict[r.DataId] = r;
+            return dict;
+        }
+    }
+    #endregion
+
     #region ShopItemData
     [Serializable]
     // 마을 상점 판매 목록 (_tools/gen_shop_items.py 생성).

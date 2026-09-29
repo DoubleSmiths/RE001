@@ -10254,6 +10254,291 @@
       "TextKey": "MissionDungeonFormat",
       "Kor": "요일 던전 {0}회",
       "Eng": "Dungeon runs x{0}"
+    },
+    {
+      "TextKey": "MissionRelicTabText",
+      "Kor": "유물",
+      "Eng": "RELICS"
+    },
+    {
+      "TextKey": "RelicTitleText",
+      "Kor": "유물",
+      "Eng": "RELICS"
+    },
+    {
+      "TextKey": "RelicSummonOneText",
+      "Kor": "유물 소환 1회",
+      "Eng": "SUMMON x1"
+    },
+    {
+      "TextKey": "RelicSummonTenText",
+      "Kor": "유물 소환 10회",
+      "Eng": "SUMMON x10"
+    },
+    {
+      "TextKey": "RelicSummonAdText",
+      "Kor": "광고 보고 1회 소환",
+      "Eng": "SUMMON x1 (AD)"
+    },
+    {
+      "TextKey": "RelicRatesRowFormat",
+      "Kor": "확률 보기 · 전설 천장 {0}/{1}",
+      "Eng": "RATES · LEGEND PITY {0}/{1}"
+    },
+    {
+      "TextKey": "RelicViewText",
+      "Kor": "보기",
+      "Eng": "VIEW"
+    },
+    {
+      "TextKey": "RelicBackText",
+      "Kor": "← 목록으로",
+      "Eng": "← BACK"
+    },
+    {
+      "TextKey": "RelicGradeCommonText",
+      "Kor": "일반",
+      "Eng": "COMMON"
+    },
+    {
+      "TextKey": "RelicGradeRareText",
+      "Kor": "희귀",
+      "Eng": "RARE"
+    },
+    {
+      "TextKey": "RelicGradeEpicText",
+      "Kor": "영웅",
+      "Eng": "EPIC"
+    },
+    {
+      "TextKey": "RelicGradeLegendaryText",
+      "Kor": "전설",
+      "Eng": "LEGEND"
+    },
+    {
+      "TextKey": "RelicRowFormat",
+      "Kor": "[{0}] {1} Lv.{2}",
+      "Eng": "[{0}] {1} Lv.{2}"
+    },
+    {
+      "TextKey": "RelicNotOwnedText",
+      "Kor": "미획득",
+      "Eng": "NOT OWNED"
+    },
+    {
+      "TextKey": "RelicAtkFormat",
+      "Kor": "공격력 +{0}%",
+      "Eng": "ATK +{0}%"
+    },
+    {
+      "TextKey": "RelicHpFormat",
+      "Kor": "체력 +{0}%",
+      "Eng": "HP +{0}%"
+    },
+    {
+      "TextKey": "RelicDefFormat",
+      "Kor": "방어력 +{0}%",
+      "Eng": "DEF +{0}%"
+    },
+    {
+      "TextKey": "RelicCritDmgFormat",
+      "Kor": "치명 피해 +{0}%p",
+      "Eng": "CRIT DMG +{0}%"
+    },
+    {
+      "TextKey": "RelicGoldFormat",
+      "Kor": "골드 +{0}%",
+      "Eng": "GOLD +{0}%"
+    },
+    {
+      "TextKey": "RelicExpFormat",
+      "Kor": "경험치 +{0}%",
+      "Eng": "EXP +{0}%"
+    },
+    {
+      "TextKey": "RelicDropFormat",
+      "Kor": "획득률 +{0}%p",
+      "Eng": "DROP +{0}%"
+    },
+    {
+      "TextKey": "RelicInterestFormat",
+      "Kor": "관심 확률 +{0}%",
+      "Eng": "INTEREST +{0}%"
+    },
+    {
+      "TextKey": "RelicGradeRateFormat",
+      "Kor": "{0} {1}% · {2}종 · 각 {3:0.###}%",
+      "Eng": "{0} {1}% · {2} KINDS · {3:0.###}% EACH"
+    },
+    {
+      "TextKey": "RelicPityInfoFormat",
+      "Kor": "전설 천장: {0}회 안에 전설 1개 확정 (지금 {1}회째)",
+      "Eng": "LEGEND PITY: ONE WITHIN {0} SUMMONS (NOW {1})"
+    },
+    {
+      "TextKey": "RelicResultFormat",
+      "Kor": "유물 {0}회: 전설 {1} · 영웅 {2} · 희귀 {3} · 일반 {4}",
+      "Eng": "{0} SUMMONS: LEGEND {1} · EPIC {2} · RARE {3} · COMMON {4}"
+    },
+    {
+      "TextKey": "RelicRefundFormat",
+      "Kor": " · 최대 레벨 환급 크리스탈 {0}",
+      "Eng": " · MAX LV REFUND {0} CRYSTALS"
+    },
+    {
+      "TextKey": "RelicLegendText",
+      "Kor": "전설 유물!",
+      "Eng": "LEGENDARY!"
+    },
+    {
+      "TextKey": "Relic8001NameText",
+      "Kor": "녹슨 칼자루",
+      "Eng": "Rusty Hilt"
+    },
+    {
+      "TextKey": "Relic8002NameText",
+      "Kor": "늑대 송곳니 부적",
+      "Eng": "Wolf Fang Charm"
+    },
+    {
+      "TextKey": "Relic8003NameText",
+      "Kor": "전사의 문장",
+      "Eng": "Warrior's Crest"
+    },
+    {
+      "TextKey": "Relic8004NameText",
+      "Kor": "불꽃 룬석",
+      "Eng": "Flame Runestone"
+    },
+    {
+      "TextKey": "Relic8005NameText",
+      "Kor": "용사의 건틀릿",
+      "Eng": "Hero's Gauntlet"
+    },
+    {
+      "TextKey": "Relic8006NameText",
+      "Kor": "태양의 왕관",
+      "Eng": "Crown of the Sun"
+    },
+    {
+      "TextKey": "Relic8007NameText",
+      "Kor": "이끼 낀 조약돌",
+      "Eng": "Mossy Pebble"
+    },
+    {
+      "TextKey": "Relic8008NameText",
+      "Kor": "산딸기 병",
+      "Eng": "Berry Jar"
+    },
+    {
+      "TextKey": "Relic8009NameText",
+      "Kor": "생명의 도토리",
+      "Eng": "Acorn of Life"
+    },
+    {
+      "TextKey": "Relic8010NameText",
+      "Kor": "거인의 심장",
+      "Eng": "Giant's Heart"
+    },
+    {
+      "TextKey": "Relic8011NameText",
+      "Kor": "세계수의 잎",
+      "Eng": "World Tree Leaf"
+    },
+    {
+      "TextKey": "Relic8012NameText",
+      "Kor": "방패 조각",
+      "Eng": "Shield Shard"
+    },
+    {
+      "TextKey": "Relic8013NameText",
+      "Kor": "거북 등딱지",
+      "Eng": "Turtle Shell"
+    },
+    {
+      "TextKey": "Relic8014NameText",
+      "Kor": "철갑 견장",
+      "Eng": "Iron Pauldron"
+    },
+    {
+      "TextKey": "Relic8015NameText",
+      "Kor": "수호자의 성배",
+      "Eng": "Guardian's Chalice"
+    },
+    {
+      "TextKey": "Relic8016NameText",
+      "Kor": "날 선 부싯돌",
+      "Eng": "Sharp Flint"
+    },
+    {
+      "TextKey": "Relic8017NameText",
+      "Kor": "매의 눈",
+      "Eng": "Hawk's Eye"
+    },
+    {
+      "TextKey": "Relic8018NameText",
+      "Kor": "흡혈 송곳니",
+      "Eng": "Vampire Fang"
+    },
+    {
+      "TextKey": "Relic8019NameText",
+      "Kor": "파멸의 단검",
+      "Eng": "Dagger of Ruin"
+    },
+    {
+      "TextKey": "Relic8020NameText",
+      "Kor": "구리 동전",
+      "Eng": "Copper Coin"
+    },
+    {
+      "TextKey": "Relic8021NameText",
+      "Kor": "가죽 지갑",
+      "Eng": "Leather Purse"
+    },
+    {
+      "TextKey": "Relic8022NameText",
+      "Kor": "행운의 편자",
+      "Eng": "Lucky Horseshoe"
+    },
+    {
+      "TextKey": "Relic8023NameText",
+      "Kor": "황금 두꺼비",
+      "Eng": "Golden Toad"
+    },
+    {
+      "TextKey": "Relic8024NameText",
+      "Kor": "낡은 일지",
+      "Eng": "Old Journal"
+    },
+    {
+      "TextKey": "Relic8025NameText",
+      "Kor": "현자의 안경",
+      "Eng": "Sage's Spectacles"
+    },
+    {
+      "TextKey": "Relic8026NameText",
+      "Kor": "푸른 모래시계",
+      "Eng": "Blue Hourglass"
+    },
+    {
+      "TextKey": "Relic8027NameText",
+      "Kor": "별의 두루마리",
+      "Eng": "Star Scroll"
+    },
+    {
+      "TextKey": "Relic8028NameText",
+      "Kor": "찢어진 자루",
+      "Eng": "Torn Sack"
+    },
+    {
+      "TextKey": "Relic8029NameText",
+      "Kor": "수집가의 갈고리",
+      "Eng": "Collector's Hook"
+    },
+    {
+      "TextKey": "Relic8030NameText",
+      "Kor": "달콤한 꿀단지",
+      "Eng": "Honey Pot"
     }
   ]
 }

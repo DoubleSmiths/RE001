@@ -254,6 +254,71 @@
       "Key": "DUNGEON_SPAWN_DELAY",
       "Value": 0.3,
       "Desc": "던전에서 몬스터가 쓰러진 뒤 다음이 나오기까지(초)"
+    },
+    {
+      "Key": "RELIC_COST_ONE",
+      "Value": 30.0,
+      "Desc": "유물 1회 소환 크리스탈"
+    },
+    {
+      "Key": "RELIC_COST_TEN",
+      "Value": 270.0,
+      "Desc": "유물 10회 소환 크리스탈(10% 할인)"
+    },
+    {
+      "Key": "RELIC_ADS_PER_DAY",
+      "Value": 1.0,
+      "Desc": "유물 광고 소환 하루 횟수(1회 소환)"
+    },
+    {
+      "Key": "RELIC_PITY",
+      "Value": 150.0,
+      "Desc": "전설 천장 — 전설 없이 이 수 −1 번을 뽑으면 다음은 전설 확정"
+    },
+    {
+      "Key": "RELIC_MAX_LEVEL",
+      "Value": 10.0,
+      "Desc": "유물 최대 레벨 — 넘치는 중복은 크리스탈 환급"
+    },
+    {
+      "Key": "RELIC_RATE_COMMON",
+      "Value": 70.0,
+      "Desc": "일반 등급 확률(%) — 화면에 그대로 공개된다"
+    },
+    {
+      "Key": "RELIC_RATE_RARE",
+      "Value": 24.0,
+      "Desc": "희귀 등급 확률(%)"
+    },
+    {
+      "Key": "RELIC_RATE_EPIC",
+      "Value": 5.5,
+      "Desc": "영웅 등급 확률(%)"
+    },
+    {
+      "Key": "RELIC_RATE_LEGENDARY",
+      "Value": 0.5,
+      "Desc": "전설 등급 확률(%)"
+    },
+    {
+      "Key": "RELIC_REFUND_COMMON",
+      "Value": 2.0,
+      "Desc": "최대 레벨 일반 유물 중복 환급 크리스탈"
+    },
+    {
+      "Key": "RELIC_REFUND_RARE",
+      "Value": 5.0,
+      "Desc": "최대 레벨 희귀 유물 중복 환급 크리스탈"
+    },
+    {
+      "Key": "RELIC_REFUND_EPIC",
+      "Value": 15.0,
+      "Desc": "최대 레벨 영웅 유물 중복 환급 크리스탈"
+    },
+    {
+      "Key": "RELIC_REFUND_LEGENDARY",
+      "Value": 50.0,
+      "Desc": "최대 레벨 전설 유물 중복 환급 크리스탈"
     }
   ]
 }

@@ -301,10 +301,11 @@ public static class RemakeV2UIBuilder
     const string SHOP_POPUP    = "Assets/@Resources/Prefab/UI/Popup/UI_ShopPopup.prefab";
     const string MISSION_POPUP = "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab";
     const string QUEST_ICON    = "Assets/@Resources/Sprite/Icon/Menu Icon/Quest Icon.PNG";
-    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop", "Dungeon" };   // UI_MissionPopup.Tab 순서
+    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop", "Dungeon", "Relic" };   // UI_MissionPopup.Tab 순서
     const string SHOP_ICON = "Assets/@Resources/Sprite/Icon/Menu Icon/Shop_Icon.png";
     const float MISSION_TABS_TOP = 27f, MISSION_TAB_HEIGHT = 12f, MISSION_TABS_WIDTH = 124f;
     const float MISSION_ROW_HEIGHT = 16f, MISSION_RIGHT_WIDTH = 38f;
+    const float MISSION_ROW_ICON = 13f, MISSION_ROW_ICON_INSET = 2f;
 
     [MenuItem("Tools/Remake V2/Build Mission Popup")]
     public static void BuildMissionPopup()
@@ -438,6 +439,16 @@ public static class RemakeV2UIBuilder
                 tmp.fontSizeMin = 3.5f;
                 tmp.fontSizeMax = 6f;
             }
+            // 줄 왼쪽 아이콘(유물 탭 등, ADR0035) — 쓰는 줄만 켠다. 켜면 UI_MissionPopup 이 왼쪽 글자를 아이콘만큼 민다
+            var icon = NewImage("MissionRowIcon", row);
+            icon.anchorMin = icon.anchorMax = icon.pivot = new Vector2(0f, 0.5f);
+            icon.anchoredPosition = new Vector2(MISSION_ROW_ICON_INSET, 0f);
+            icon.sizeDelta = new Vector2(MISSION_ROW_ICON, MISSION_ROW_ICON);
+            var iconImg = icon.GetComponent<Image>();
+            iconImg.preserveAspect = true;
+            iconImg.raycastTarget = false;
+            icon.gameObject.SetActive(false);
+
             var element = row.gameObject.GetComponent<LayoutElement>();
             if (element == null) element = row.gameObject.AddComponent<LayoutElement>();
             element.preferredHeight = MISSION_ROW_HEIGHT;

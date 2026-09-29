@@ -1,0 +1,274 @@
+﻿{
+  "relics": [
+    {
+      "DataId": 8001,
+      "NameKey": "Relic8001NameText",
+      "Grade": "Common",
+      "StatType": "Atk",
+      "Base": 1.0,
+      "PerLevel": 0.5,
+      "IconLabel": "Relic8001"
+    },
+    {
+      "DataId": 8002,
+      "NameKey": "Relic8002NameText",
+      "Grade": "Common",
+      "StatType": "Atk",
+      "Base": 1.0,
+      "PerLevel": 0.5,
+      "IconLabel": "Relic8002"
+    },
+    {
+      "DataId": 8003,
+      "NameKey": "Relic8003NameText",
+      "Grade": "Rare",
+      "StatType": "Atk",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8003"
+    },
+    {
+      "DataId": 8004,
+      "NameKey": "Relic8004NameText",
+      "Grade": "Rare",
+      "StatType": "Atk",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8004"
+    },
+    {
+      "DataId": 8005,
+      "NameKey": "Relic8005NameText",
+      "Grade": "Epic",
+      "StatType": "Atk",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8005"
+    },
+    {
+      "DataId": 8006,
+      "NameKey": "Relic8006NameText",
+      "Grade": "Legendary",
+      "StatType": "Atk",
+      "Base": 8.0,
+      "PerLevel": 4.0,
+      "IconLabel": "Relic8006"
+    },
+    {
+      "DataId": 8007,
+      "NameKey": "Relic8007NameText",
+      "Grade": "Common",
+      "StatType": "Hp",
+      "Base": 1.0,
+      "PerLevel": 0.5,
+      "IconLabel": "Relic8007"
+    },
+    {
+      "DataId": 8008,
+      "NameKey": "Relic8008NameText",
+      "Grade": "Common",
+      "StatType": "Hp",
+      "Base": 1.0,
+      "PerLevel": 0.5,
+      "IconLabel": "Relic8008"
+    },
+    {
+      "DataId": 8009,
+      "NameKey": "Relic8009NameText",
+      "Grade": "Rare",
+      "StatType": "Hp",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8009"
+    },
+    {
+      "DataId": 8010,
+      "NameKey": "Relic8010NameText",
+      "Grade": "Epic",
+      "StatType": "Hp",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8010"
+    },
+    {
+      "DataId": 8011,
+      "NameKey": "Relic8011NameText",
+      "Grade": "Legendary",
+      "StatType": "Hp",
+      "Base": 8.0,
+      "PerLevel": 4.0,
+      "IconLabel": "Relic8011"
+    },
+    {
+      "DataId": 8012,
+      "NameKey": "Relic8012NameText",
+      "Grade": "Common",
+      "StatType": "Def",
+      "Base": 1.0,
+      "PerLevel": 0.5,
+      "IconLabel": "Relic8012"
+    },
+    {
+      "DataId": 8013,
+      "NameKey": "Relic8013NameText",
+      "Grade": "Common",
+      "StatType": "Def",
+      "Base": 1.0,
+      "PerLevel": 0.5,
+      "IconLabel": "Relic8013"
+    },
+    {
+      "DataId": 8014,
+      "NameKey": "Relic8014NameText",
+      "Grade": "Rare",
+      "StatType": "Def",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8014"
+    },
+    {
+      "DataId": 8015,
+      "NameKey": "Relic8015NameText",
+      "Grade": "Epic",
+      "StatType": "Def",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8015"
+    },
+    {
+      "DataId": 8016,
+      "NameKey": "Relic8016NameText",
+      "Grade": "Common",
+      "StatType": "CritDmg",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8016"
+    },
+    {
+      "DataId": 8017,
+      "NameKey": "Relic8017NameText",
+      "Grade": "Rare",
+      "StatType": "CritDmg",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8017"
+    },
+    {
+      "DataId": 8018,
+      "NameKey": "Relic8018NameText",
+      "Grade": "Epic",
+      "StatType": "CritDmg",
+      "Base": 8.0,
+      "PerLevel": 4.0,
+      "IconLabel": "Relic8018"
+    },
+    {
+      "DataId": 8019,
+      "NameKey": "Relic8019NameText",
+      "Grade": "Legendary",
+      "StatType": "CritDmg",
+      "Base": 16.0,
+      "PerLevel": 8.0,
+      "IconLabel": "Relic8019"
+    },
+    {
+      "DataId": 8020,
+      "NameKey": "Relic8020NameText",
+      "Grade": "Common",
+      "StatType": "Gold",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8020"
+    },
+    {
+      "DataId": 8021,
+      "NameKey": "Relic8021NameText",
+      "Grade": "Common",
+      "StatType": "Gold",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8021"
+    },
+    {
+      "DataId": 8022,
+      "NameKey": "Relic8022NameText",
+      "Grade": "Rare",
+      "StatType": "Gold",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8022"
+    },
+    {
+      "DataId": 8023,
+      "NameKey": "Relic8023NameText",
+      "Grade": "Epic",
+      "StatType": "Gold",
+      "Base": 8.0,
+      "PerLevel": 4.0,
+      "IconLabel": "Relic8023"
+    },
+    {
+      "DataId": 8024,
+      "NameKey": "Relic8024NameText",
+      "Grade": "Common",
+      "StatType": "Exp",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8024"
+    },
+    {
+      "DataId": 8025,
+      "NameKey": "Relic8025NameText",
+      "Grade": "Rare",
+      "StatType": "Exp",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8025"
+    },
+    {
+      "DataId": 8026,
+      "NameKey": "Relic8026NameText",
+      "Grade": "Rare",
+      "StatType": "Exp",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8026"
+    },
+    {
+      "DataId": 8027,
+      "NameKey": "Relic8027NameText",
+      "Grade": "Epic",
+      "StatType": "Exp",
+      "Base": 8.0,
+      "PerLevel": 4.0,
+      "IconLabel": "Relic8027"
+    },
+    {
+      "DataId": 8028,
+      "NameKey": "Relic8028NameText",
+      "Grade": "Common",
+      "StatType": "Drop",
+      "Base": 2.0,
+      "PerLevel": 1.0,
+      "IconLabel": "Relic8028"
+    },
+    {
+      "DataId": 8029,
+      "NameKey": "Relic8029NameText",
+      "Grade": "Rare",
+      "StatType": "Drop",
+      "Base": 4.0,
+      "PerLevel": 2.0,
+      "IconLabel": "Relic8029"
+    },
+    {
+      "DataId": 8030,
+      "NameKey": "Relic8030NameText",
+      "Grade": "Common",
+      "StatType": "Interest",
+      "Base": 3.0,
+      "PerLevel": 1.5,
+      "IconLabel": "Relic8030"
+    }
+  ]
+}

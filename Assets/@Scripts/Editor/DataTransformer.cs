@@ -777,6 +777,7 @@ public class DataTransformer : EditorWindow
         ParseShopItemDataSheet   (ReadXlsx($"{baseDir}/ShopItemData.xlsx"));
         ParseBalanceConfigSheet  (ReadXlsx($"{baseDir}/BalanceConfig.xlsx"));
         ParseMissionDataSheet    (ReadXlsx($"{baseDir}/MissionData.xlsx"));
+        ParseRelicDataSheet      (ReadXlsx($"{baseDir}/RelicData.xlsx"));
         ParseProductDataSheet    (ReadXlsx($"{baseDir}/ProductData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
@@ -953,6 +954,28 @@ public class DataTransformer : EditorWindow
             });
         }
         WriteJsonStr("MissionData", loader);
+    }
+
+    // v2 유물 30종 (_tools/gen_relics.py 가 만든 표, ADR0035)
+    static void ParseRelicDataSheet(List<List<string>> rows)
+    {
+        var loader = new RelicDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.relics.Add(new RelicData
+            {
+                DataId    = ConvertValue<int>(C(row, 0)),
+                NameKey   = C(row, 1),
+                Grade     = C(row, 2),
+                StatType  = C(row, 3),
+                Base      = ConvertValue<float>(C(row, 4)),
+                PerLevel  = ConvertValue<float>(C(row, 5)),
+                IconLabel = C(row, 6),
+            });
+        }
+        WriteJsonStr("RelicData", loader);
     }
 
     static void ParseProductDataSheet(List<List<string>> rows)

@@ -13,6 +13,7 @@ public static class V2DataAddressableRegistrar
         ("Data",     "Assets/@Resources/Data/JsonData/BalanceConfig.json"),
         ("Data",     "Assets/@Resources/Data/JsonData/MissionData.json"),
         ("Data",     "Assets/@Resources/Data/JsonData/ProductData.json"),
+        ("Data",     "Assets/@Resources/Data/JsonData/RelicData.json"),   // 유물 30종(ADR0035)
         ("Material", BOSS_OUTLINE_MAT),   // 스테이지 보스 금빛 테두리(BossOutline)
         ("UI",       "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab"),   // 미션·출석 창
     };

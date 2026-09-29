@@ -29,7 +29,8 @@ public class MinMonManager
         if (!IsOwned(dataId) && Managers.Data.MinMonDic.TryGetValue(dataId, out var minion)
             && minion.FirstInterestKillCount > 0 && GetKillCount(dataId) >= minion.FirstInterestKillCount)
             return AddInterest(dataId);
-        if (UnityEngine.Random.value > cd.InterestRate)
+        // 유물 '관심 확률'(ADR0035)은 몬스터 관심 확률에 곱한다
+        if (UnityEngine.Random.value > cd.InterestRate * (Managers.Relic?.InterestMult ?? 1f))
             return InterestResult.NotInterested;
         return AddInterest(dataId);
     }

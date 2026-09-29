@@ -454,7 +454,8 @@ public class MonsterController : CreatureController
         if (_target != null)
         {
             // v2 핫타임(골드·경험치 2배)은 처치 보상에만 곱한다
-            if (_data != null) Managers.Game.Gold += Mathf.RoundToInt(_rewardGold * (Managers.Shop?.GoldMult ?? 1f));
+            //  유물 골드 %(ADR0035)는 처치·방치·오프라인·던전 모두에 곱한다
+            if (_data != null) Managers.Game.Gold += Mathf.RoundToInt(_rewardGold * (Managers.Shop?.GoldMult ?? 1f) * (Managers.Relic?.GoldMult ?? 1f));
             _target.GainExp(_rewardExp * (Managers.Shop?.ExpMult ?? 1f));
         }
         OnDied?.Invoke();
