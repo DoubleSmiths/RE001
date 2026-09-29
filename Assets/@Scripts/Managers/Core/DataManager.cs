@@ -77,6 +77,18 @@ public class DataManager
         SubQuestUnlockDic = LoadJson<SubQuestUnlockLoader, int, List<SubQuestUnlockData>> ("SubQuestUnlockData").MakeDict();
         ComboStageDic     = LoadJson<ComboStageDataLoader, int, ComboStageData>          ("ComboData").MakeDict();
         BuffDic           = LoadJson<BuffDataLoader,       int, BuffData>                ("BuffData").MakeDict();
+        BalanceDic        = LoadJson<BalanceConfigLoader,  string, BalanceConfigData>    ("BalanceConfig").MakeDict();
+    }
+
+    // v2 밸런스 값(ADR0030). 키가 없으면 한 번만 알리고 fallback — 수치 누락이 게임을 멈추지 않게.
+    public Dictionary<string, BalanceConfigData> BalanceDic { get; private set; } = new Dictionary<string, BalanceConfigData>();
+    readonly HashSet<string> _missingBalanceKeys = new HashSet<string>();
+
+    public float Balance(string key, float fallback = 0f)
+    {
+        if (BalanceDic.TryGetValue(key, out var d)) return d.Value;
+        if (_missingBalanceKeys.Add(key)) Debug.LogError($"[DataManager] BalanceConfig 에 '{key}' 없음 — {fallback} 사용");
+        return fallback;
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

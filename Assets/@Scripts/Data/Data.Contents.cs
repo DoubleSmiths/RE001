@@ -468,6 +468,30 @@ namespace Data
     }
     #endregion
 
+    #region BalanceConfig
+    // v2 밸런스 스칼라 값(키·값). 코드에 수치를 박지 않고 여기서 읽는다 — 키는 Define.BalanceKey (ADR0030).
+    [Serializable]
+    public class BalanceConfigData
+    {
+        public string Key;
+        public float  Value;
+        public string Desc;
+    }
+
+    [Serializable]
+    public class BalanceConfigLoader : ILoader<string, BalanceConfigData>
+    {
+        public List<BalanceConfigData> items = new List<BalanceConfigData>();
+        public Dictionary<string, BalanceConfigData> MakeDict()
+        {
+            var dict = new Dictionary<string, BalanceConfigData>();
+            foreach (var d in items)
+                if (!string.IsNullOrEmpty(d.Key)) dict[d.Key] = d;
+            return dict;
+        }
+    }
+    #endregion
+
     #region ShopItemData
     [Serializable]
     // 마을 상점 판매 목록 (_tools/gen_shop_items.py 생성).

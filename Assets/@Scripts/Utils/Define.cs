@@ -1826,6 +1826,40 @@ public class Define
     public const int SPEED_POTION_ID_MIN = 40000;
     public const int IMPORTANT_ITEM_ID_MIN = 20000;
 
+    #region BalanceKey (v2 밸런스 — BalanceConfig 표의 키, ADR0030)
+    public static class BalanceKey
+    {
+        // 훈련
+        public const string TRAIN_COST_BASE     = "TRAIN_COST_BASE";
+        public const string TRAIN_COST_COEF     = "TRAIN_COST_COEF";
+        public const string TRAIN_COST_POW      = "TRAIN_COST_POW";
+        public const string TRAIN_CAP_PER_LEVEL = "TRAIN_CAP_PER_LEVEL";
+        public const string TRAIN_ATK_PCT       = "TRAIN_ATK_PCT";
+        public const string TRAIN_HP_PCT        = "TRAIN_HP_PCT";
+        public const string TRAIN_DEF_PCT       = "TRAIN_DEF_PCT";
+        public const string TRAIN_CRITDMG_PCT   = "TRAIN_CRITDMG_PCT";
+        // 스테이지·보스
+        public const string STAGE_KILLS_TO_BOSS          = "STAGE_KILLS_TO_BOSS";
+        public const string BOSS_HP_MULT                 = "BOSS_HP_MULT";
+        public const string BOSS_ATK_MULT                = "BOSS_ATK_MULT";
+        public const string BOSS_DEF_MULT                = "BOSS_DEF_MULT";
+        public const string BOSS_SCALE                   = "BOSS_SCALE";
+        public const string BOSS_TIME_LIMIT              = "BOSS_TIME_LIMIT";
+        public const string BOSS_FIRST_CRYSTAL_BASE      = "BOSS_FIRST_CRYSTAL_BASE";
+        public const string BOSS_FIRST_CRYSTAL_PER_FIELD = "BOSS_FIRST_CRYSTAL_PER_FIELD";
+        public const string BOSS_REPEAT_GOLD_KILLS       = "BOSS_REPEAT_GOLD_KILLS";
+        // 가드·패링
+        public const string ATTACK_TELEGRAPH       = "ATTACK_TELEGRAPH";
+        public const string GUARD_DURATION         = "GUARD_DURATION";
+        public const string PARRY_WINDOW           = "PARRY_WINDOW";
+        public const string GUARD_COOLDOWN         = "GUARD_COOLDOWN";
+        public const string BLOCK_DAMAGE_MULT      = "BLOCK_DAMAGE_MULT";
+        public const string PARRY_STUN             = "PARRY_STUN";
+        public const string STUN_DAMAGE_TAKEN_MULT = "STUN_DAMAGE_TAKEN_MULT";
+        public const string PARRY_COMBO_BONUS      = "PARRY_COMBO_BONUS";
+    }
+    #endregion
+
     #region Ground (접지)
     // 캐릭터의 **발이 닿는** 월드 Y. 지면 타일(JungleTileset) 윗면 높이다.
     //  플레이어·몬스터·동행 미니몬 전부 이 값 하나를 쓴다. 아트마다 다르던 바닥 여백은

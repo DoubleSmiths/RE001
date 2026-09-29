@@ -775,6 +775,7 @@ public class DataTransformer : EditorWindow
         ParseEquipEnhanceDataSheet(ReadXlsx($"{baseDir}/EquipEnhanceData.xlsx"));
         ParseForgeRecipeDataSheet(ReadXlsx($"{baseDir}/ForgeRecipeData.xlsx"));
         ParseShopItemDataSheet   (ReadXlsx($"{baseDir}/ShopItemData.xlsx"));
+        ParseBalanceConfigSheet  (ReadXlsx($"{baseDir}/BalanceConfig.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
@@ -927,6 +928,23 @@ public class DataTransformer : EditorWindow
             loader.items.Add(d);
         }
         WriteJsonStr("ShopItemData", loader);
+    }
+
+    static void ParseBalanceConfigSheet(List<List<string>> rows)
+    {
+        var loader = new BalanceConfigLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.items.Add(new BalanceConfigData
+            {
+                Key   = C(row, 0),
+                Value = ConvertValue<float>(C(row, 1)),
+                Desc  = C(row, 2),
+            });
+        }
+        WriteJsonStr("BalanceConfig", loader);
     }
 
     static void ParseMinMonDataSheet(List<List<string>> rows)
