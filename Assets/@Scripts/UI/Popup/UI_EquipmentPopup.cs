@@ -106,6 +106,10 @@ public class UI_EquipmentPopup : UI_Popup
         // 배경 클릭 = 닫기
         GetButton((int)Buttons.EquipmentPopupBackground).gameObject.BindEvent(OnClickBG);
 
+        // 제목(프리팹 고정 'EQUIPMENT') — 한국어에서도 영문으로 나오던 것
+        var title = Util.FindChild(gameObject, "EquipmentPopupTitle", true)?.GetComponentInChildren<TMP_Text>(true);
+        if (title != null) { ApplyFont(title, FontType.UI); title.text = Util.Localize("EquipmentTitleText"); }
+
         // 슬롯 Open 버튼 → 해당 슬롯 리스트만 표시
         foreach (var (btn, list) in s_slotMap)
         {

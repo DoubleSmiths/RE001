@@ -10,16 +10,22 @@ public class UI_TtitleScene : UI_Scene
     {
         Panel,
         LoadingIcon,
+        TitleLogo,
     }
 
     enum Buttons
     {
         StartButton,
+        SettingButton,
+        QuitButton,
     }
 
     enum Texts
     {
-        StartText
+        StartText,
+        SettingText,
+        QuitText,
+        VersionText,
     }
 
     enum GameObjects
@@ -27,6 +33,12 @@ public class UI_TtitleScene : UI_Scene
         Slider,
     }
     #endregion
+
+    // 언어별 로고 — 씬에 직접 물려 있어 빌드에 포함된다(Tools/Release/타이틀 화면 구성).
+    [SerializeField] Sprite _logoKo;
+    [SerializeField] Sprite _logoEn;
+
+    const string TITLE_BGM = "BGM_BreezeForest";
 
     bool isPreload = false;
 
@@ -40,14 +52,28 @@ public class UI_TtitleScene : UI_Scene
         BindButton(typeof(Buttons));
         BindObject(typeof(GameObjects));
 
-        GetObject((int)GameObjects.Slider).GetComponent<Slider>().value = 0;
-        // 테스트
+        var slider = GetObject((int)GameObjects.Slider).GetComponent<Slider>();
+        slider.value = 0;
+        slider.interactable = false;    // 진행 표시일 뿐 — 손잡이를 끌 수 있으면 안 된다
+
         GetButton((int)Buttons.StartButton).gameObject.BindEvent(() =>
         {
             if (isPreload)
                 Managers.Scene.LoadScene(Define.Scene.GameScene, transform);
         });
+        GetButton((int)Buttons.SettingButton).gameObject.BindEvent(() =>
+        {
+            if (isPreload && Managers.UI.GetPopupCount() == 0)
+                Managers.UI.ShowPopupUI<UI_SettingPopup>();
+        });
+        GetButton((int)Buttons.QuitButton).gameObject.BindEvent(QuitGame);
+
+        // 프리로드가 끝나기 전에는 누를 게 없다.
         GetButton((int)Buttons.StartButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.SettingButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.QuitButton).gameObject.SetActive(false);
+
+        GetText((int)Texts.VersionText).text = "v" + Application.version;
 
         RefreshTexts();
         if (Managers.Game != null) Managers.Game.OnLanguageChanged += RefreshTexts;
@@ -63,12 +89,31 @@ public class UI_TtitleScene : UI_Scene
 
     void RefreshTexts()
     {
-        var startTmp = GetText((int)Texts.StartText);
-        if (startTmp != null)
-        {
-            ApplyFont(startTmp, FontType.UI);
-            startTmp.text = Util.Localize(LocalizeKey.StartText);
-        }
+        SetTextLocalized(Texts.StartText, LocalizeKey.StartText);
+        SetTextLocalized(Texts.SettingText, "SettingText");
+        SetTextLocalized(Texts.QuitText, "QuitGameText");
+
+        // 로고: 사전 준비 전(Awake)에도 Language 는 PlayerPrefs·기기 언어로 바로 알 수 있다.
+        bool korean = Managers.Game == null
+            ? Application.systemLanguage == SystemLanguage.Korean
+            : Managers.Game.Language == Language.Korean;
+        var logo = GetImage((int)Images.TitleLogo);
+        if (logo != null && _logoKo != null && _logoEn != null)
+            logo.sprite = korean ? _logoKo : _logoEn;
+    }
+
+    void SetTextLocalized(Texts text, string key)
+    {
+        var tmp = GetText((int)text);
+        if (tmp == null) return;
+        ApplyFont(tmp, FontType.UI);
+        tmp.text = Util.Localize(key);
+    }
+
+    static void QuitGame()
+    {
+        Managers.Game?.FlushSave();
+        Application.Quit();
     }
 
     private void Awake()
@@ -78,12 +123,15 @@ public class UI_TtitleScene : UI_Scene
 
     private void Start()
     {
+        // 로고는 로딩 중에도 살짝 떠 있게 — 첫 화면이 멈춰 보이지 않도록.
+        var logoRT = GetImage((int)Images.TitleLogo).rectTransform;
+        logoRT.DOAnchorPosY(logoRT.anchoredPosition.y + 4f, 1.6f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo).SetLink(gameObject).Play();
+
         Managers.Resource.LoadAllAsync<Object>("PreLoad", (key, count, totalCount) =>
         {
             GetObject((int)GameObjects.Slider).GetComponent<Slider>().value = (float)count / totalCount;
             if (count == totalCount)
             {
-                GetButton((int)Buttons.StartButton).gameObject.SetActive(true);
                 isPreload = true;
                 Managers.Data.Init();
                 Managers.Game.Init();
@@ -101,16 +149,28 @@ public class UI_TtitleScene : UI_Scene
                 Managers.Game.OnLanguageChanged += RefreshTexts;
                 RefreshTexts();
 
-                StartAnimation();
+                ShowMenu();
             }
         });
     }
 
-    void StartAnimation()
+    // 로딩 표시(스피너·진행바)를 치우고 메뉴를 띄운다. 종료 버튼은 PC 에만 — 모바일은 OS 가 앱을 닫는다.
+    void ShowMenu()
     {
-        GetText((int)Texts.StartText).DOFade(0, 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutCubic).Play();
-        //GetImage((int)Images.LoadingIcon).gameObject.SetActive(false);
-        //GetImage((int)Images.Panel).DOFade(0, 1f).OnComplete(
-        //    () => { GetImage((int)Images.Panel).gameObject.SetActive(false); });
+        GetImage((int)Images.LoadingIcon).gameObject.SetActive(false);
+        GetObject((int)GameObjects.Slider).SetActive(false);
+
+        GetButton((int)Buttons.StartButton).gameObject.SetActive(true);
+        GetButton((int)Buttons.SettingButton).gameObject.SetActive(true);
+        GetButton((int)Buttons.QuitButton).gameObject.SetActive(!Application.isMobilePlatform);
+        if (Application.isMobilePlatform)
+        {
+            // 종료 버튼이 없으면 설정 버튼을 가운데로
+            var settingRT = GetButton((int)Buttons.SettingButton).GetComponent<RectTransform>();
+            settingRT.anchoredPosition = new Vector2(0f, settingRT.anchoredPosition.y);
+        }
+
+        GetText((int)Texts.StartText).DOFade(0.25f, 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutCubic).SetLink(gameObject).Play();
+        Managers.Sound.PlayBgm(TITLE_BGM);
     }
 }

@@ -189,6 +189,9 @@ public class GameData
     // [치트] 만능 키 — 모든 잠금 게이트를 무시한다. 세이브에 남겨 재시작해도 유지된다.
     //  (여정 노드 조건처럼 "데이터를 채우는" 게 아니라 "판정을 건너뛰는" 종류의 해금은 이 플래그로 처리)
     public bool AllUnlocked = false;
+
+    // 마지막 협회 임무를 마친 뒤 엔딩(감사 인사 + 크레딧)을 한 번 봤는가
+    public bool EndingSeen = false;
 }
 
 // ──────────────────────────────────────────────
@@ -232,7 +235,7 @@ public class GameManager
     public bool IsBGSoundOn
     {
         get => _gameData._isBGSoundOn;
-        set { _gameData._isBGSoundOn = value; SaveGame(); }
+        set { _gameData._isBGSoundOn = value; SaveGame(); Managers.Sound?.ApplyBgmEnabled(value); }
     }
 
     public bool IsSFXOn
@@ -1323,6 +1326,12 @@ public class GameManager
     // ────────────────────────────────────────
     //  [치트] 만능 키 — 모든 컨텐츠 해금
     // ────────────────────────────────────────
+    public bool EndingSeen
+    {
+        get => _gameData.EndingSeen;
+        set { _gameData.EndingSeen = value; SaveGame(); }
+    }
+
     public bool AllUnlocked
     {
         get => _gameData.AllUnlocked;
