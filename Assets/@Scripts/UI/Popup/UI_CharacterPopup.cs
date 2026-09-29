@@ -474,6 +474,9 @@ public class UI_CharacterPopup : UI_Popup
         _detailOpen = !_detailOpen;
         GameObject frame = GetImage((int)Images.StatDetailFrame).gameObject;
         frame.SetActive(_detailOpen);
+        // v2 훈련 패널과 상세 패널은 창 높이(432)에 같이 들어가지 않는다 — 상세를 펼치는 동안 훈련을 접는다.
+        GameObject training = Util.FindChild(gameObject, "TrainingFrame", true);
+        if (training != null) training.SetActive(!_detailOpen);
 
         if (_detailOpen)
         {

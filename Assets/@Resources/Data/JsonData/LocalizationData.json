@@ -9774,6 +9774,51 @@
       "TextKey": "SwitchToItemsText",
       "Kor": "필요 재료",
       "Eng": "ITEMS"
+    },
+    {
+      "TextKey": "TrainingTitleText",
+      "Kor": "훈련",
+      "Eng": "TRAINING"
+    },
+    {
+      "TextKey": "TrainingCapFormat",
+      "Kor": "상한 Lv.{0}",
+      "Eng": "CAP Lv.{0}"
+    },
+    {
+      "TextKey": "TrainAtkText",
+      "Kor": "공격력",
+      "Eng": "ATK"
+    },
+    {
+      "TextKey": "TrainHpText",
+      "Kor": "체력",
+      "Eng": "HP"
+    },
+    {
+      "TextKey": "TrainDefText",
+      "Kor": "방어력",
+      "Eng": "DEF"
+    },
+    {
+      "TextKey": "TrainCritDmgText",
+      "Kor": "치명 피해",
+      "Eng": "CRIT DMG"
+    },
+    {
+      "TextKey": "TrainingRowFormat",
+      "Kor": "{0}  Lv.{1}  +{2}%",
+      "Eng": "{0}  Lv.{1}  +{2}%"
+    },
+    {
+      "TextKey": "TrainingCostFormat",
+      "Kor": "{0:N0} 골드",
+      "Eng": "{0:N0} G"
+    },
+    {
+      "TextKey": "TrainingMaxText",
+      "Kor": "상한",
+      "Eng": "MAX"
     }
   ]
 }

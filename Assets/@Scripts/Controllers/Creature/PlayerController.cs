@@ -576,6 +576,8 @@ public class PlayerController : CreatureController
 
         // 슬38: 장착(기억)된 능력의 스탯 보너스 가산
         Managers.Ability?.ApplyTo(this);
+        // v2 훈련(골드 강화) — 가산이 끝난 값에 % 로 곱한다(ADR0030)
+        Managers.Game?.ApplyTraining(this);
         // 재계산된 스탯에 아직 사용 중인 능력의 임시 버프를 다시 적용한다.
         _abilityRunner?.OnStatsReset();
 

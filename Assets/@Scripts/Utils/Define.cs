@@ -251,6 +251,15 @@ public class Define
         Max,
     }
 
+    // v2 훈련(골드 강화) 스탯 — GameData.TrainingLevels 인덱스 순서 (ADR0030)
+    public enum TrainingStat
+    {
+        Attack,
+        Health,
+        Defense,
+        CritDamage,
+    }
+
     public enum UIEvent
     {
         Click,

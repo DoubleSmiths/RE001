@@ -228,6 +228,16 @@ LITERAL_KEYS = [
     ('RankFormat', '{0}단계', 'RANK {0}'),
     # 물약 상세 전환 버튼(폭 30) — 'REQ. ITEMS' 는 버튼 밖으로 넘친다. 절 제목(ItemNeededText)은 그대로 둔다
     ('SwitchToItemsText', '필요 재료', 'ITEMS'),
+    # v2 훈련 패널(ADR0030) — UI_TrainingPanel
+    ('TrainingTitleText', '훈련', 'TRAINING'),
+    ('TrainingCapFormat', '상한 Lv.{0}', 'CAP Lv.{0}'),
+    ('TrainAtkText', '공격력', 'ATK'),
+    ('TrainHpText', '체력', 'HP'),
+    ('TrainDefText', '방어력', 'DEF'),
+    ('TrainCritDmgText', '치명 피해', 'CRIT DMG'),
+    ('TrainingRowFormat', '{0}  Lv.{1}  +{2}%', '{0}  Lv.{1}  +{2}%'),
+    ('TrainingCostFormat', '{0:N0} 골드', '{0:N0} G'),
+    ('TrainingMaxText', '상한', 'MAX'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

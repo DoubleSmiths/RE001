@@ -93,6 +93,8 @@ public class GameData
     public int    Mandrake    = 0;   // 슬31/37: [가랏! 만드라고라!] 확정 포획용 소비 아이템 보유 수
     // 캐릭터창 스탯 분배 누적치(영구). 0=STR(물공) 1=VIT(HP) 2=DEX(명중) 3=MAG(마공)
     public int[]  StatInvest  = new int[4];
+    // v2 훈련(골드 강화) 단계. 0=공격% 1=체력% 2=방어% 3=치명피해%p (ADR0030)
+    public int[]  TrainingLevels = new int[4];
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -1203,6 +1205,61 @@ public class GameManager
     }
     #endregion
 
+    #region 훈련 (v2 — 골드 무한 강화, ADR0030)
+    // 골드의 목적지. 30초마다 무언가를 올리게 하되, 상한(레벨 × 2)으로 지역 난이도를 지킨다.
+    public const int TRAINING_STAT_COUNT = 4;
+    public event Action OnTrainingChanged;
+
+    public int TrainingLevel(TrainingStat stat) => _gameData.TrainingLevels[(int)stat];
+    public int TrainingCap => Mathf.FloorToInt(Level * Managers.Data.Balance(BalanceKey.TRAIN_CAP_PER_LEVEL, 2f));
+
+    // 다음 단계(nextLevel)로 올리는 비용 = BASE + COEF × nextLevel^POW
+    public int TrainingCost(int nextLevel)
+    {
+        var d = Managers.Data;
+        double cost = d.Balance(BalanceKey.TRAIN_COST_BASE, 10f)
+                    + d.Balance(BalanceKey.TRAIN_COST_COEF, 0.8f) * Math.Pow(nextLevel, d.Balance(BalanceKey.TRAIN_COST_POW, 1.65f));
+        return (int)Math.Min(int.MaxValue, Math.Round(cost));
+    }
+
+    // 단계당 가산(%, 치명피해는 %p)
+    public float TrainingPerLevel(TrainingStat stat) => stat switch
+    {
+        TrainingStat.Attack     => Managers.Data.Balance(BalanceKey.TRAIN_ATK_PCT, 0.2f),
+        TrainingStat.Health     => Managers.Data.Balance(BalanceKey.TRAIN_HP_PCT, 0.25f),
+        TrainingStat.Defense    => Managers.Data.Balance(BalanceKey.TRAIN_DEF_PCT, 0.15f),
+        _                       => Managers.Data.Balance(BalanceKey.TRAIN_CRITDMG_PCT, 0.5f),
+    };
+
+    public float TrainingBonus(TrainingStat stat) => TrainingLevel(stat) * TrainingPerLevel(stat);
+
+    public bool TryTrain(TrainingStat stat)
+    {
+        int next = TrainingLevel(stat) + 1;
+        if (next > TrainingCap) return false;
+        int cost = TrainingCost(next);
+        if (Gold < cost) return false;
+        Gold -= cost;
+        _gameData.TrainingLevels[(int)stat] = next;
+        SaveGame();
+        Player?.RefreshStats(fullHeal: false);
+        OnTrainingChanged?.Invoke();
+        return true;
+    }
+
+    // PlayerController.RefreshStats 가 장비·능력까지 더한 뒤 부른다 — 임시 버프보다 먼저 곱한다.
+    public void ApplyTraining(PlayerController p)
+    {
+        if (p == null || _gameData.TrainingLevels == null) return;
+        float atk = 1f + TrainingBonus(TrainingStat.Attack) / 100f;
+        p.PhysicalAtk *= atk;
+        p.MagicAtk    *= atk;
+        p.MaxHp       *= 1f + TrainingBonus(TrainingStat.Health) / 100f;
+        p.Def         *= 1f + TrainingBonus(TrainingStat.Defense) / 100f;
+        p.CritDamage  += TrainingBonus(TrainingStat.CritDamage);
+    }
+    #endregion
+
     public bool HasItem(int dataId, int count = 1)
     {
         var existing = Inventory.Find(i => i.DataId == dataId);
@@ -1833,6 +1890,7 @@ public class GameManager
         d.UnlockedBtnIds       ??= new List<string>();
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
+        d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다
         d.BestiarySkillGrade    = Fit(d.BestiarySkillGrade, 4);
         d.BestiarySkillNew      = Fit(d.BestiarySkillNew, 4);
         d.BestiarySkillUnlocked = Fit(d.BestiarySkillUnlocked, 4);
