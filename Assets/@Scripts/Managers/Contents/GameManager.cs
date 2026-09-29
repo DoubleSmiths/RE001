@@ -72,6 +72,19 @@ public class MinMonSaveData
     public int CritGrade     = -1;
 }
 
+// v2 미션·출석(ADR0030) — MissionManager 가 읽고 쓴다. 일일·주간 진행과 받음 표시는 주기마다 비운다.
+[Serializable]
+public class MissionSaveData
+{
+    public int DailyKey;                                           // 마지막 일일 초기화 날짜(yyyyMMdd, 기기 현지 시각)
+    public int WeeklyKey;                                          // 마지막 주간 초기화 주의 월요일(yyyyMMdd)
+    public Dictionary<int, int> Progress = new Dictionary<int, int>();       // 일일·주간 미션 진행
+    public List<int> Claimed = new List<int>();                              // 받은 미션(가이드는 누적)
+    public Dictionary<string, int> Lifetime = new Dictionary<string, int>(); // 누적 이벤트 수(가이드 판정)
+    public int AttendanceIndex;                                    // 다음에 받을 출석 칸(0~6)
+    public int AttendanceKey;                                      // 마지막으로 출석 보상을 받은 날(yyyyMMdd)
+}
+
 // ──────────────────────────────────────────────
 //  세이브 데이터
 // ──────────────────────────────────────────────
@@ -103,6 +116,8 @@ public class GameData
     public bool      BossAutoChallenge = true;
     // v2 가드·패링 도움말을 이미 보여 줬는가(첫 공격 예고 '!' 때 한 번)
     public bool      GuardHintSeen;
+    // v2 미션·출석
+    public MissionSaveData Missions = new MissionSaveData();
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -746,6 +761,7 @@ public class GameManager
         Player.GainExp(exp);          // OnExpChanged로 EXP 바도 함께 오른다
         IdleKillCount += kills;
         OnIdleAccrued?.Invoke(kills);
+        Managers.Mission?.Notify(MissionEvent.KillMonster, kills);   // 켜 둔 채 쌓인 방치 처치도 센다(오프라인 정산은 세지 않는다)
 
         // 숫자만 오르면 왜 오르는지 알 수 없다 — 일정 주기마다 묶어서 알린다(매번 띄우면 스팸).
         _batchKills += kills; _batchGold += gold; _batchExp += exp;
@@ -960,6 +976,7 @@ public class GameManager
 
         r.GoldCost = GetEnhanceCost(equip);
         Gold -= r.GoldCost;          // CanEnhance에서 잔액을 이미 확인함
+        Managers.Mission?.Notify(MissionEvent.Enhance);   // v2 미션 — 강화 시도(성공 여부 무관)
         RemoveItem(scrollId, 1);
 
         // 요구 재료 소모. 데이터가 비어 있던 시절엔 강화가 골드와 주문서만 먹었다 —
@@ -1265,6 +1282,7 @@ public class GameManager
         SaveGame();
         Player?.RefreshStats(fullHeal: false);
         OnTrainingChanged?.Invoke();
+        Managers.Mission?.Notify(MissionEvent.Train);
         return true;
     }
 
@@ -1290,6 +1308,7 @@ public class GameManager
     public int  StageKills(int nodeId) => _gameData.StageNodeId == nodeId ? _gameData.StageKillCount : 0;
     public bool IsBossReady(int nodeId) => StageKills(nodeId) >= StageKillsToBoss;
     public bool IsStageCleared(int nodeId) => _gameData.ClearedStages.Contains(nodeId);
+    public int  ClearedStageCount => _gameData.ClearedStages.Count;
 
     public bool BossAutoChallenge
     {
@@ -1332,6 +1351,8 @@ public class GameManager
         _gameData.StageKillCount = 0;
         SaveGame();
         OnStageChanged?.Invoke();
+        Managers.Mission?.Notify(MissionEvent.BossClear);
+        if (firstClear) Managers.Mission?.Notify(MissionEvent.NewStage);
         return firstClear;
     }
 
@@ -1407,6 +1428,8 @@ public class GameManager
         int i = order.IndexOf(nodeId);
         return i >= 0 && i + 1 < order.Count ? order[i + 1] : 0;
     }
+
+    public MissionSaveData MissionSave => _gameData.Missions;
 
     public bool GuardHintSeen
     {
@@ -2052,6 +2075,10 @@ public class GameManager
         d.MetQuestConditions   ??= new List<int>();
         d.UnlockedBtnIds       ??= new List<string>();
         d.ClearedStages        ??= new List<int>();
+        d.Missions             ??= new MissionSaveData();
+        d.Missions.Progress    ??= new Dictionary<int, int>();
+        d.Missions.Claimed     ??= new List<int>();
+        d.Missions.Lifetime    ??= new Dictionary<string, int>();
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

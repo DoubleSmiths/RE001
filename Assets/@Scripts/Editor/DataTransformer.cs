@@ -776,6 +776,8 @@ public class DataTransformer : EditorWindow
         ParseForgeRecipeDataSheet(ReadXlsx($"{baseDir}/ForgeRecipeData.xlsx"));
         ParseShopItemDataSheet   (ReadXlsx($"{baseDir}/ShopItemData.xlsx"));
         ParseBalanceConfigSheet  (ReadXlsx($"{baseDir}/BalanceConfig.xlsx"));
+        ParseMissionDataSheet    (ReadXlsx($"{baseDir}/MissionData.xlsx"));
+        ParseProductDataSheet    (ReadXlsx($"{baseDir}/ProductData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
         ParseSpeedPotionDataSheet(ReadXlsx($"{baseDir}/SpeedPotionData.xlsx"));
@@ -928,6 +930,51 @@ public class DataTransformer : EditorWindow
             loader.items.Add(d);
         }
         WriteJsonStr("ShopItemData", loader);
+    }
+
+    // v2 미션·출석 / 인앱 상품 (_tools/gen_missions.py 가 만든 표, ADR0030)
+    static void ParseMissionDataSheet(List<List<string>> rows)
+    {
+        var loader = new MissionDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.missions.Add(new MissionData
+            {
+                DataId      = ConvertValue<int>(C(row, 0)),
+                Kind        = C(row, 1),
+                Order       = ConvertValue<int>(C(row, 2)),
+                Event       = C(row, 3),
+                Goal        = ConvertValue<int>(C(row, 4)),
+                RewardType  = C(row, 5),
+                RewardValue = ConvertValue<int>(C(row, 6)),
+                TitleKey    = C(row, 7),
+            });
+        }
+        WriteJsonStr("MissionData", loader);
+    }
+
+    static void ParseProductDataSheet(List<List<string>> rows)
+    {
+        var loader = new ProductDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.products.Add(new ProductData
+            {
+                DataId     = ConvertValue<int>(C(row, 0)),
+                ProductKey = C(row, 1),
+                Kind       = C(row, 2),
+                PriceKRW   = ConvertValue<int>(C(row, 3)),
+                Crystal    = ConvertValue<int>(C(row, 4)),
+                Mandrake   = ConvertValue<int>(C(row, 5)),
+                HpPotion   = ConvertValue<int>(C(row, 6)),
+                NameKey    = C(row, 7),
+            });
+        }
+        WriteJsonStr("ProductData", loader);
     }
 
     static void ParseBalanceConfigSheet(List<List<string>> rows)

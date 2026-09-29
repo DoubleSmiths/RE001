@@ -64,6 +64,7 @@ public class MinMonManager
     {
         if (!Managers.Data.MinMonDic.TryGetValue(dataId, out var data))
             return false;
+        Managers.Mission?.Notify(Define.MissionEvent.CaptureTry);   // v2 미션 — 포획 시도(성공 여부 무관)
 
         MinMonSaveData save = GetSaveData(dataId);
 

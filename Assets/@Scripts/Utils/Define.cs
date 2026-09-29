@@ -252,6 +252,23 @@ public class Define
     }
 
     // v2 훈련(골드 강화) 스탯 — GameData.TrainingLevels 인덱스 순서 (ADR0030)
+    // v2 미션 이벤트(ADR0030) — MissionData.Event 문자열과 이름이 같아야 한다(_tools/gen_missions.py).
+    public enum MissionEvent
+    {
+        KillMonster,
+        BossClear,
+        NewStage,
+        Train,
+        CaptureTry,
+        Enhance,
+        Parry,
+        DailyAllClear,   // 일일 완료 상자를 연 날(주간 미션용)
+        DailyChest,      // 진행 = 받은 일일 미션 수(계산값)
+        ReachLevel,      // 진행 = 현재 레벨(계산값, 가이드)
+        Discover,        // 진행 = 발견한 몬스터 수(계산값, 가이드)
+        Attendance,
+    }
+
     public enum TrainingStat
     {
         Attack,

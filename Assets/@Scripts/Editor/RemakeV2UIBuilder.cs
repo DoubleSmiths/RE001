@@ -213,6 +213,240 @@ public static class RemakeV2UIBuilder
         }
     }
 
+    // ── 미션·출석 창 ──
+    //  틀: 마을 상점 창(UI_ShopPopup) 복제 — 창 그림·제목·스크롤 목록·열림 연출이 그대로 필요하다.
+    //  탭·줄: 상태 창의 '능력 상세정보' 긴 버튼 복제. 이미 만들어져 있으면 생성 부분만 다시 만든다(GUID·어드레서블 유지).
+    const string SHOP_POPUP    = "Assets/@Resources/Prefab/UI/Popup/UI_ShopPopup.prefab";
+    const string MISSION_POPUP = "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab";
+    const string QUEST_ICON    = "Assets/@Resources/Sprite/Icon/Menu Icon/Quest Icon.PNG";
+    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance" };   // UI_MissionPopup.Tab 순서
+    const float MISSION_TABS_TOP = 27f, MISSION_TAB_HEIGHT = 12f, MISSION_TABS_WIDTH = 124f;
+    const float MISSION_ROW_HEIGHT = 16f, MISSION_RIGHT_WIDTH = 38f;
+
+    [MenuItem("Tools/Remake V2/Build Mission Popup")]
+    public static void BuildMissionPopup()
+    {
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(MISSION_POPUP) == null && !AssetDatabase.CopyAsset(SHOP_POPUP, MISSION_POPUP))
+            throw new System.Exception("[RemakeV2] 상점 창 복제 실패");
+
+        GameObject charRoot = PrefabUtility.LoadPrefabContents(CHARACTER_POPUP);
+        GameObject root = PrefabUtility.LoadPrefabContents(MISSION_POPUP);
+        try
+        {
+            // 처음 복제했을 때만: 상점 전용 부품을 걷어 내고 이름을 미션 창 것으로
+            var shop = root.GetComponent<UI_ShopPopup>();
+            if (shop != null) Object.DestroyImmediate(shop);
+            RenameIf(root.transform, "ShopPopupBackground", "MissionPopupBackground");
+            RenameIf(root.transform, "ShopPopupFrame", "MissionPopupFrame");
+            RenameIf(root.transform, "ShopPopupTitle", "MissionPopupTitle");
+            RenameIf(root.transform, "ShopPopup", "MissionPopup");
+            RenameIf(root.transform, "ShopList", "MissionList");
+            RenameIf(root.transform, "Img_ShopList_01", "Img_MissionList_01");
+            // 창 그림(BAR_Bag) 오른쪽 아래에 버튼 자리가 그려져 있다 — 가방의 '정리' 버튼을 '모두 받기'로 쓴다
+            //  (먼저 만든 창에는 이 버튼을 지웠었다 — 없으면 상점 창에서 다시 가져온다)
+            if (Find(root.transform, "ClaimAllBtn", false) == null)
+            {
+                Transform sort = Find(root.transform, "ShopSortBtn", false);
+                if (sort == null)
+                {
+                    GameObject shopRoot = PrefabUtility.LoadPrefabContents(SHOP_POPUP);
+                    try { sort = Object.Instantiate(Find(shopRoot.transform, "ShopSortBtn").gameObject, Find(root.transform, "MissionPopupFrame")).transform; }
+                    finally { PrefabUtility.UnloadPrefabContents(shopRoot); }
+                }
+                sort.name = "ClaimAllBtn";
+                RenameIf(sort, "Text", "ClaimAllTxt");
+            }
+            Find(root.transform, "ClaimAllBtn").gameObject.SetActive(true);
+            foreach (var n in new[] { "ImportantBagBtn", "ImportantThingsBox" })
+            {
+                var t = Find(root.transform, n, false);
+                if (t != null) Object.DestroyImmediate(t.gameObject);
+            }
+
+            // 목록: 격자 → 세로 줄, 샘플 칸 비우기, 탭 자리만큼 아래로
+            Transform content = Find(root.transform, "Content");
+            for (int i = content.childCount - 1; i >= 0; i--) Object.DestroyImmediate(content.GetChild(i).gameObject);
+            var grid = content.GetComponent<GridLayoutGroup>();
+            if (grid != null) Object.DestroyImmediate(grid);
+            var vlg = content.GetComponent<VerticalLayoutGroup>();   // ?? 는 Unity 가짜 null 을 못 거른다
+            if (vlg == null) vlg = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            vlg.spacing = 3f;
+            vlg.padding = new RectOffset(2, 2, 2, 2);
+            vlg.childAlignment = TextAnchor.UpperCenter;
+            vlg.childControlWidth = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childControlHeight = false;
+            vlg.childForceExpandHeight = false;
+            var fitter = content.GetComponent<ContentSizeFitter>();
+            if (fitter == null) fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var list = (RectTransform)Find(root.transform, "MissionList");
+            list.sizeDelta = new Vector2(list.sizeDelta.x, -62.5f);   // 위 41 · 아래 21.5 여백 — 원래 위 26 에 탭 줄 15
+            list.anchoredPosition = new Vector2(list.anchoredPosition.x, -9.75f);
+
+            // 이전에 만든 탭·줄 템플릿 제거 후 다시
+            Transform frame = Find(root.transform, "MissionPopupFrame");
+            foreach (var n in new[] { "MissionTabs", "MissionRowTemplate" })
+            {
+                var t = Find(root.transform, n, false);
+                if (t != null) Object.DestroyImmediate(t.gameObject);
+            }
+            Transform rowSrc = Find(charRoot.transform, "StatDetailBtn");
+
+            var tabs = new GameObject("MissionTabs", typeof(RectTransform), typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();
+            tabs.SetParent(frame, false);
+            tabs.anchorMin = tabs.anchorMax = tabs.pivot = new Vector2(0.5f, 1f);
+            tabs.anchoredPosition = new Vector2(0f, -MISSION_TABS_TOP);
+            tabs.sizeDelta = new Vector2(MISSION_TABS_WIDTH, MISSION_TAB_HEIGHT);
+            var hlg = tabs.GetComponent<HorizontalLayoutGroup>();
+            hlg.spacing = 2f;
+            hlg.childControlWidth = hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = hlg.childForceExpandHeight = true;
+            foreach (string name in MISSION_TABS)
+            {
+                var tab = Object.Instantiate(rowSrc.gameObject, tabs).transform;
+                tab.name = name + "TabBtn";
+                Rename(tab, "StatDetailBtnBackgroundImage", name + "TabBg");
+                Rename(tab, "StatDetailBtnMask", name + "TabMask");
+                Rename(tab, "StatDetailBtnGrow", name + "TabGrow");
+                Find(tab, name + "TabMask").gameObject.SetActive(false);
+                var label = (RectTransform)Find(tab, "Text");
+                label.name = name + "TabTxt";
+                label.anchorMin = Vector2.zero;   // 원본 글자 칸은 폭 0(ContentSizeFitter 몫)이라 한 글자씩 줄바꿈됐다
+                label.anchorMax = Vector2.one;
+                label.offsetMin = label.offsetMax = Vector2.zero;
+                var tmp = label.GetComponent<TMP_Text>();
+                tmp.textWrappingMode = TextWrappingModes.NoWrap;
+                tmp.alignment = TextAlignmentOptions.Center;
+                tmp.enableAutoSizing = true;
+                tmp.fontSizeMin = 4f;
+                tmp.fontSizeMax = 6f;
+            }
+
+            // 줄 템플릿 — 왼쪽 제목·진행, 오른쪽 상태·보상
+            var row = (RectTransform)Object.Instantiate(rowSrc.gameObject, Find(root.transform, "MissionPopup")).transform;
+            row.name = "MissionRowTemplate";
+            row.sizeDelta = new Vector2(row.sizeDelta.x, MISSION_ROW_HEIGHT);
+            Rename(row, "StatDetailBtnBackgroundImage", "MissionRowBg");
+            Rename(row, "StatDetailBtnMask", "MissionRowMask");
+            Rename(row, "StatDetailBtnGrow", "MissionRowGrow");
+            Find(row, "MissionRowMask").gameObject.SetActive(false);
+            var left = (RectTransform)Find(row, "Text");
+            left.name = "MissionRowLeftTxt";
+            var right = (RectTransform)Object.Instantiate(left.gameObject, row).transform;
+            right.name = "MissionRowRightTxt";
+            left.anchorMin = new Vector2(0f, 0f);
+            left.anchorMax = new Vector2(1f, 1f);
+            left.pivot = new Vector2(0f, 0.5f);
+            left.offsetMin = new Vector2(TEXT_INSET, 0f);
+            left.offsetMax = new Vector2(-(MISSION_RIGHT_WIDTH + TEXT_INSET), 0f);
+            right.anchorMin = new Vector2(1f, 0f);
+            right.anchorMax = new Vector2(1f, 1f);
+            right.pivot = new Vector2(1f, 0.5f);
+            right.anchoredPosition = new Vector2(-TEXT_INSET, 0f);
+            right.sizeDelta = new Vector2(MISSION_RIGHT_WIDTH, 0f);
+            foreach (var (rt, align) in new[] { (left, TextAlignmentOptions.MidlineLeft), (right, TextAlignmentOptions.MidlineRight) })
+            {
+                var tmp = rt.GetComponent<TMP_Text>();
+                tmp.alignment = align;
+                tmp.textWrappingMode = TextWrappingModes.NoWrap;
+                tmp.enableAutoSizing = true;   // 긴 미션 이름도 한 줄에
+                tmp.fontSizeMin = 3.5f;
+                tmp.fontSizeMax = 6f;
+            }
+            var element = row.gameObject.GetComponent<LayoutElement>();
+            if (element == null) element = row.gameObject.AddComponent<LayoutElement>();
+            element.preferredHeight = MISSION_ROW_HEIGHT;
+            row.gameObject.SetActive(false);
+
+            // 복제한 동작 부품 정리(폭을 바꾸는 ContentSizeFitter, 채움 앵커를 움직이는 Slider, EXP 글자 Animator)
+            foreach (var t in new Transform[] { tabs, row })
+            {
+                foreach (var c in t.GetComponentsInChildren<ContentSizeFitter>(true)) Object.DestroyImmediate(c);
+                foreach (var c in t.GetComponentsInChildren<Animator>(true)) Object.DestroyImmediate(c);
+            }
+
+            if (root.GetComponent<UI_MissionPopup>() == null) root.AddComponent<UI_MissionPopup>();
+            PrefabUtility.SaveAsPrefabAsset(root, MISSION_POPUP);
+            Debug.Log("[RemakeV2] 미션 창 조립 완료 — " + MISSION_POPUP);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+            PrefabUtility.UnloadPrefabContents(charRoot);
+        }
+
+        BuildMissionShortcut();
+    }
+
+    // HUD 재화 줄에 미션 버튼 — 설정 버튼을 복제해 아이콘만 바꾼다(인스펙터 클릭 연결은 비운다).
+    static readonly Vector2 MISSION_BTN_POS = new Vector2(44f, 0f);
+
+    static void BuildMissionShortcut()
+    {
+        GameObject root = PrefabUtility.LoadPrefabContents(GAME_SCENE);
+        try
+        {
+            Transform bar = Find(root.transform, "CurrencyBar");
+            Transform old = Find(root.transform, "MissionBtn", false);
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+
+            var btn = (RectTransform)Object.Instantiate(Find(bar, "OptionBtn").gameObject, bar).transform;
+            btn.name = "MissionBtn";
+            btn.anchoredPosition = MISSION_BTN_POS;
+            for (int i = btn.childCount - 1; i >= 0; i--) Object.DestroyImmediate(btn.GetChild(i).gameObject);   // 설정 버튼의 아이콘 자식들
+            var img = btn.GetComponent<Image>();
+            img.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(QUEST_ICON);
+            img.type = Image.Type.Simple;
+            img.preserveAspect = true;
+            var button = btn.GetComponent<Button>();
+            if (button != null) button.onClick = new Button.ButtonClickedEvent();
+
+            // 알림 점: 빨간 원(Unity 기본 Knob) + 흰 '!' — 글자만 두면 얇은 선처럼 보여 알아보기 어려웠다
+            var badge = new GameObject("MissionBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            badge.SetParent(btn, false);
+            badge.anchorMin = badge.anchorMax = badge.pivot = new Vector2(1f, 1f);
+            badge.anchoredPosition = new Vector2(1.5f, 1.5f);
+            badge.sizeDelta = new Vector2(7f, 7f);
+            var dot = badge.GetComponent<Image>();
+            dot.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+            dot.color = new Color32(0xE8, 0x2A, 0x2A, 0xFF);
+            dot.raycastTarget = false;
+            var mark = (RectTransform)Object.Instantiate(Find(bar, "MainGoldText").gameObject, badge).transform;
+            mark.name = "MissionBadgeTxt";
+            mark.anchorMin = Vector2.zero;
+            mark.anchorMax = Vector2.one;
+            mark.offsetMin = mark.offsetMax = Vector2.zero;
+            foreach (var c in mark.GetComponents<ContentSizeFitter>()) Object.DestroyImmediate(c);
+            var tmp = mark.GetComponent<TMP_Text>();
+            tmp.text = "!";
+            tmp.fontSize = 6f;
+            tmp.enableAutoSizing = false;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+            tmp.raycastTarget = false;
+            badge.gameObject.SetActive(false);
+
+            var shortcut = btn.gameObject.GetComponent<UI_MissionShortcut>();
+            if (shortcut == null) shortcut = btn.gameObject.AddComponent<UI_MissionShortcut>();
+            shortcut._tab = UI_MissionPopup.Tab.Daily;
+
+            PrefabUtility.SaveAsPrefabAsset(root, GAME_SCENE);
+            Debug.Log("[RemakeV2] HUD 미션 버튼 조립 완료 — CurrencyBar/MissionBtn");
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
+    static void RenameIf(Transform root, string from, string to)
+    {
+        var t = Find(root, from, false);
+        if (t != null) t.name = to;
+    }
+
     static void Align(RectTransform rt, Vector2 anchor, float x, TextAlignmentOptions alignment)
     {
         rt.anchorMin = rt.anchorMax = rt.pivot = anchor;

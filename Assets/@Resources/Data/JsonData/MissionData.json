@@ -1,0 +1,594 @@
+﻿{
+  "missions": [
+    {
+      "DataId": 1001,
+      "Kind": "Daily",
+      "Order": 1,
+      "Event": "KillMonster",
+      "Goal": 300,
+      "RewardType": "Crystal",
+      "RewardValue": 15,
+      "TitleKey": "MissionKillFormat"
+    },
+    {
+      "DataId": 1002,
+      "Kind": "Daily",
+      "Order": 2,
+      "Event": "BossClear",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 10,
+      "TitleKey": "MissionBossFormat"
+    },
+    {
+      "DataId": 1003,
+      "Kind": "Daily",
+      "Order": 3,
+      "Event": "Train",
+      "Goal": 20,
+      "RewardType": "Crystal",
+      "RewardValue": 10,
+      "TitleKey": "MissionTrainFormat"
+    },
+    {
+      "DataId": 1004,
+      "Kind": "Daily",
+      "Order": 4,
+      "Event": "CaptureTry",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 5,
+      "TitleKey": "MissionCaptureFormat"
+    },
+    {
+      "DataId": 1005,
+      "Kind": "Daily",
+      "Order": 5,
+      "Event": "Enhance",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 10,
+      "TitleKey": "MissionEnhanceFormat"
+    },
+    {
+      "DataId": 1006,
+      "Kind": "Daily",
+      "Order": 6,
+      "Event": "Parry",
+      "Goal": 10,
+      "RewardType": "Crystal",
+      "RewardValue": 10,
+      "TitleKey": "MissionParryFormat"
+    },
+    {
+      "DataId": 1007,
+      "Kind": "Daily",
+      "Order": 7,
+      "Event": "DailyChest",
+      "Goal": 6,
+      "RewardType": "Crystal",
+      "RewardValue": 40,
+      "TitleKey": "MissionDailyChestText"
+    },
+    {
+      "DataId": 2001,
+      "Kind": "Weekly",
+      "Order": 1,
+      "Event": "BossClear",
+      "Goal": 20,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionBossFormat"
+    },
+    {
+      "DataId": 2002,
+      "Kind": "Weekly",
+      "Order": 2,
+      "Event": "NewStage",
+      "Goal": 3,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 2003,
+      "Kind": "Weekly",
+      "Order": 3,
+      "Event": "CaptureTry",
+      "Goal": 3,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionCaptureFormat"
+    },
+    {
+      "DataId": 2004,
+      "Kind": "Weekly",
+      "Order": 4,
+      "Event": "DailyAllClear",
+      "Goal": 5,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionDailyAllFormat"
+    },
+    {
+      "DataId": 2005,
+      "Kind": "Weekly",
+      "Order": 5,
+      "Event": "KillMonster",
+      "Goal": 1500,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionKillFormat"
+    },
+    {
+      "DataId": 3001,
+      "Kind": "Guide",
+      "Order": 1,
+      "Event": "Train",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 20,
+      "TitleKey": "MissionTrainFormat"
+    },
+    {
+      "DataId": 3002,
+      "Kind": "Guide",
+      "Order": 2,
+      "Event": "BossClear",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionBossFormat"
+    },
+    {
+      "DataId": 3003,
+      "Kind": "Guide",
+      "Order": 3,
+      "Event": "Parry",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionParryFormat"
+    },
+    {
+      "DataId": 3004,
+      "Kind": "Guide",
+      "Order": 4,
+      "Event": "ReachLevel",
+      "Goal": 10,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3005,
+      "Kind": "Guide",
+      "Order": 5,
+      "Event": "NewStage",
+      "Goal": 3,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3006,
+      "Kind": "Guide",
+      "Order": 6,
+      "Event": "CaptureTry",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionCaptureFormat"
+    },
+    {
+      "DataId": 3007,
+      "Kind": "Guide",
+      "Order": 7,
+      "Event": "Discover",
+      "Goal": 10,
+      "RewardType": "Crystal",
+      "RewardValue": 40,
+      "TitleKey": "MissionDiscoverFormat"
+    },
+    {
+      "DataId": 3008,
+      "Kind": "Guide",
+      "Order": 8,
+      "Event": "Enhance",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionEnhanceFormat"
+    },
+    {
+      "DataId": 3009,
+      "Kind": "Guide",
+      "Order": 9,
+      "Event": "ReachLevel",
+      "Goal": 20,
+      "RewardType": "Crystal",
+      "RewardValue": 40,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3010,
+      "Kind": "Guide",
+      "Order": 10,
+      "Event": "NewStage",
+      "Goal": 5,
+      "RewardType": "Crystal",
+      "RewardValue": 40,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3011,
+      "Kind": "Guide",
+      "Order": 11,
+      "Event": "Train",
+      "Goal": 50,
+      "RewardType": "Crystal",
+      "RewardValue": 40,
+      "TitleKey": "MissionTrainFormat"
+    },
+    {
+      "DataId": 3012,
+      "Kind": "Guide",
+      "Order": 12,
+      "Event": "Discover",
+      "Goal": 20,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "MissionDiscoverFormat"
+    },
+    {
+      "DataId": 3013,
+      "Kind": "Guide",
+      "Order": 13,
+      "Event": "ReachLevel",
+      "Goal": 30,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3014,
+      "Kind": "Guide",
+      "Order": 14,
+      "Event": "BossClear",
+      "Goal": 10,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "MissionBossFormat"
+    },
+    {
+      "DataId": 3015,
+      "Kind": "Guide",
+      "Order": 15,
+      "Event": "NewStage",
+      "Goal": 10,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3016,
+      "Kind": "Guide",
+      "Order": 16,
+      "Event": "Parry",
+      "Goal": 20,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "MissionParryFormat"
+    },
+    {
+      "DataId": 3017,
+      "Kind": "Guide",
+      "Order": 17,
+      "Event": "ReachLevel",
+      "Goal": 40,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3018,
+      "Kind": "Guide",
+      "Order": 18,
+      "Event": "Discover",
+      "Goal": 50,
+      "RewardType": "Crystal",
+      "RewardValue": 80,
+      "TitleKey": "MissionDiscoverFormat"
+    },
+    {
+      "DataId": 3019,
+      "Kind": "Guide",
+      "Order": 19,
+      "Event": "Enhance",
+      "Goal": 10,
+      "RewardType": "Crystal",
+      "RewardValue": 60,
+      "TitleKey": "MissionEnhanceFormat"
+    },
+    {
+      "DataId": 3020,
+      "Kind": "Guide",
+      "Order": 20,
+      "Event": "NewStage",
+      "Goal": 15,
+      "RewardType": "Crystal",
+      "RewardValue": 80,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3021,
+      "Kind": "Guide",
+      "Order": 21,
+      "Event": "ReachLevel",
+      "Goal": 50,
+      "RewardType": "Crystal",
+      "RewardValue": 80,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3022,
+      "Kind": "Guide",
+      "Order": 22,
+      "Event": "Train",
+      "Goal": 300,
+      "RewardType": "Crystal",
+      "RewardValue": 80,
+      "TitleKey": "MissionTrainFormat"
+    },
+    {
+      "DataId": 3023,
+      "Kind": "Guide",
+      "Order": 23,
+      "Event": "BossClear",
+      "Goal": 50,
+      "RewardType": "Crystal",
+      "RewardValue": 100,
+      "TitleKey": "MissionBossFormat"
+    },
+    {
+      "DataId": 3024,
+      "Kind": "Guide",
+      "Order": 24,
+      "Event": "NewStage",
+      "Goal": 25,
+      "RewardType": "Crystal",
+      "RewardValue": 100,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3025,
+      "Kind": "Guide",
+      "Order": 25,
+      "Event": "ReachLevel",
+      "Goal": 70,
+      "RewardType": "Crystal",
+      "RewardValue": 100,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3026,
+      "Kind": "Guide",
+      "Order": 26,
+      "Event": "Discover",
+      "Goal": 100,
+      "RewardType": "Crystal",
+      "RewardValue": 120,
+      "TitleKey": "MissionDiscoverFormat"
+    },
+    {
+      "DataId": 3027,
+      "Kind": "Guide",
+      "Order": 27,
+      "Event": "Parry",
+      "Goal": 100,
+      "RewardType": "Crystal",
+      "RewardValue": 100,
+      "TitleKey": "MissionParryFormat"
+    },
+    {
+      "DataId": 3028,
+      "Kind": "Guide",
+      "Order": 28,
+      "Event": "NewStage",
+      "Goal": 35,
+      "RewardType": "Crystal",
+      "RewardValue": 120,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3029,
+      "Kind": "Guide",
+      "Order": 29,
+      "Event": "ReachLevel",
+      "Goal": 100,
+      "RewardType": "Crystal",
+      "RewardValue": 120,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3030,
+      "Kind": "Guide",
+      "Order": 30,
+      "Event": "CaptureTry",
+      "Goal": 30,
+      "RewardType": "Crystal",
+      "RewardValue": 120,
+      "TitleKey": "MissionCaptureFormat"
+    },
+    {
+      "DataId": 3031,
+      "Kind": "Guide",
+      "Order": 31,
+      "Event": "NewStage",
+      "Goal": 50,
+      "RewardType": "Crystal",
+      "RewardValue": 150,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3032,
+      "Kind": "Guide",
+      "Order": 32,
+      "Event": "ReachLevel",
+      "Goal": 130,
+      "RewardType": "Crystal",
+      "RewardValue": 150,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3033,
+      "Kind": "Guide",
+      "Order": 33,
+      "Event": "Discover",
+      "Goal": 200,
+      "RewardType": "Crystal",
+      "RewardValue": 150,
+      "TitleKey": "MissionDiscoverFormat"
+    },
+    {
+      "DataId": 3034,
+      "Kind": "Guide",
+      "Order": 34,
+      "Event": "NewStage",
+      "Goal": 65,
+      "RewardType": "Crystal",
+      "RewardValue": 150,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3035,
+      "Kind": "Guide",
+      "Order": 35,
+      "Event": "ReachLevel",
+      "Goal": 170,
+      "RewardType": "Crystal",
+      "RewardValue": 170,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3036,
+      "Kind": "Guide",
+      "Order": 36,
+      "Event": "NewStage",
+      "Goal": 80,
+      "RewardType": "Crystal",
+      "RewardValue": 170,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3037,
+      "Kind": "Guide",
+      "Order": 37,
+      "Event": "ReachLevel",
+      "Goal": 210,
+      "RewardType": "Crystal",
+      "RewardValue": 180,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3038,
+      "Kind": "Guide",
+      "Order": 38,
+      "Event": "NewStage",
+      "Goal": 100,
+      "RewardType": "Crystal",
+      "RewardValue": 200,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 3039,
+      "Kind": "Guide",
+      "Order": 39,
+      "Event": "ReachLevel",
+      "Goal": 250,
+      "RewardType": "Crystal",
+      "RewardValue": 200,
+      "TitleKey": "MissionLevelFormat"
+    },
+    {
+      "DataId": 3040,
+      "Kind": "Guide",
+      "Order": 40,
+      "Event": "NewStage",
+      "Goal": 125,
+      "RewardType": "Crystal",
+      "RewardValue": 200,
+      "TitleKey": "MissionStageFormat"
+    },
+    {
+      "DataId": 4001,
+      "Kind": "Attendance",
+      "Order": 1,
+      "Event": "Attendance",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "AttendanceDayFormat"
+    },
+    {
+      "DataId": 4002,
+      "Kind": "Attendance",
+      "Order": 2,
+      "Event": "Attendance",
+      "Goal": 2,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "AttendanceDayFormat"
+    },
+    {
+      "DataId": 4003,
+      "Kind": "Attendance",
+      "Order": 3,
+      "Event": "Attendance",
+      "Goal": 3,
+      "RewardType": "Mandrake",
+      "RewardValue": 2,
+      "TitleKey": "AttendanceDayFormat"
+    },
+    {
+      "DataId": 4004,
+      "Kind": "Attendance",
+      "Order": 4,
+      "Event": "Attendance",
+      "Goal": 4,
+      "RewardType": "Crystal",
+      "RewardValue": 100,
+      "TitleKey": "AttendanceDayFormat"
+    },
+    {
+      "DataId": 4005,
+      "Kind": "Attendance",
+      "Order": 5,
+      "Event": "Attendance",
+      "Goal": 5,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "AttendanceDayFormat"
+    },
+    {
+      "DataId": 4006,
+      "Kind": "Attendance",
+      "Order": 6,
+      "Event": "Attendance",
+      "Goal": 6,
+      "RewardType": "Crystal",
+      "RewardValue": 50,
+      "TitleKey": "AttendanceDayFormat"
+    },
+    {
+      "DataId": 4007,
+      "Kind": "Attendance",
+      "Order": 7,
+      "Event": "Attendance",
+      "Goal": 7,
+      "RewardType": "Crystal",
+      "RewardValue": 300,
+      "TitleKey": "AttendanceDayFormat"
+    }
+  ]
+}

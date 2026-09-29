@@ -211,6 +211,7 @@ public class PlayerController : CreatureController
         Vector3 calloutPos = transform.position + Vector3.up * (DamageFontYOffset + CRIT_CALLOUT_RAISE + GUARD_CALLOUT_RAISE);
         if (result == GuardResult.Parry)
         {
+            Managers.Mission?.Notify(MissionEvent.Parry);
             Managers.Object.ShowCallout(calloutPos, Util.Localize("ParryText"), DamageFontMode.CriticalCallout, transform);
             Managers.Sound?.PlaySFX("SFX_SwordBlock", 1.25f);
         }

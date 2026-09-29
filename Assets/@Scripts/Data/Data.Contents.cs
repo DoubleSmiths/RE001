@@ -492,6 +492,58 @@ namespace Data
     }
     #endregion
 
+    #region MissionData / ProductData (v2 미션·출석·인앱 상품 — _tools/gen_missions.py, ADR0030)
+    [Serializable]
+    public class MissionData
+    {
+        public int    DataId;
+        public string Kind;          // Daily / Weekly / Guide / Attendance
+        public int    Order;
+        public string Event;         // Define.MissionEvent 이름
+        public int    Goal;
+        public string RewardType;    // Crystal / Mandrake / Gold
+        public int    RewardValue;
+        public string TitleKey;      // {0} = Goal
+    }
+
+    [Serializable]
+    public class MissionDataLoader : ILoader<int, MissionData>
+    {
+        public List<MissionData> missions = new List<MissionData>();
+        public Dictionary<int, MissionData> MakeDict()
+        {
+            var dict = new Dictionary<int, MissionData>();
+            foreach (var m in missions) dict[m.DataId] = m;
+            return dict;
+        }
+    }
+
+    [Serializable]
+    public class ProductData
+    {
+        public int    DataId;
+        public string ProductKey;    // 스토어 상품 ID
+        public string Kind;          // Pack / StepUp / Monthly / AdFree / Crystal
+        public int    PriceKRW;
+        public int    Crystal;
+        public int    Mandrake;
+        public int    HpPotion;
+        public string NameKey;
+    }
+
+    [Serializable]
+    public class ProductDataLoader : ILoader<int, ProductData>
+    {
+        public List<ProductData> products = new List<ProductData>();
+        public Dictionary<int, ProductData> MakeDict()
+        {
+            var dict = new Dictionary<int, ProductData>();
+            foreach (var p in products) dict[p.DataId] = p;
+            return dict;
+        }
+    }
+    #endregion
+
     #region ShopItemData
     [Serializable]
     // 마을 상점 판매 목록 (_tools/gen_shop_items.py 생성).

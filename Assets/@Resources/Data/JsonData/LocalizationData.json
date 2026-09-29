@@ -9884,6 +9884,141 @@
       "TextKey": "GuardHintText",
       "Kor": "'!'가 뜨면 화면을 눌러 막기\n딱 맞추면 패링!",
       "Eng": "TAP WHEN \"!\" SHOWS TO BLOCK\nPERFECT TIMING = PARRY!"
+    },
+    {
+      "TextKey": "MissionTitleText",
+      "Kor": "미션",
+      "Eng": "MISSIONS"
+    },
+    {
+      "TextKey": "MissionDailyTabText",
+      "Kor": "일일",
+      "Eng": "DAILY"
+    },
+    {
+      "TextKey": "MissionWeeklyTabText",
+      "Kor": "주간",
+      "Eng": "WEEKLY"
+    },
+    {
+      "TextKey": "MissionGuideTabText",
+      "Kor": "가이드",
+      "Eng": "GUIDE"
+    },
+    {
+      "TextKey": "MissionAttendanceTabText",
+      "Kor": "출석",
+      "Eng": "LOGIN"
+    },
+    {
+      "TextKey": "MissionKillFormat",
+      "Kor": "몬스터 {0}마리 처치",
+      "Eng": "Defeat monsters x{0}"
+    },
+    {
+      "TextKey": "MissionBossFormat",
+      "Kor": "보스 {0}회 처치",
+      "Eng": "Defeat bosses x{0}"
+    },
+    {
+      "TextKey": "MissionStageFormat",
+      "Kor": "스테이지 {0}곳 돌파",
+      "Eng": "Clear stages x{0}"
+    },
+    {
+      "TextKey": "MissionTrainFormat",
+      "Kor": "훈련 {0}회",
+      "Eng": "Train x{0}"
+    },
+    {
+      "TextKey": "MissionCaptureFormat",
+      "Kor": "포획 {0}회 시도",
+      "Eng": "Capture attempts x{0}"
+    },
+    {
+      "TextKey": "MissionEnhanceFormat",
+      "Kor": "장비 강화 {0}회",
+      "Eng": "Enhance gear x{0}"
+    },
+    {
+      "TextKey": "MissionParryFormat",
+      "Kor": "패링 {0}회",
+      "Eng": "Parry x{0}"
+    },
+    {
+      "TextKey": "MissionDailyAllFormat",
+      "Kor": "일일 미션 완료 {0}일",
+      "Eng": "Finish all dailies x{0} days"
+    },
+    {
+      "TextKey": "MissionDailyChestText",
+      "Kor": "일일 미션 모두 완료",
+      "Eng": "Finish all daily missions"
+    },
+    {
+      "TextKey": "MissionLevelFormat",
+      "Kor": "레벨 {0} 달성",
+      "Eng": "Reach Lv.{0}"
+    },
+    {
+      "TextKey": "MissionDiscoverFormat",
+      "Kor": "도감 {0}종 발견",
+      "Eng": "Discover {0} species"
+    },
+    {
+      "TextKey": "AttendanceDayFormat",
+      "Kor": "{0}일째",
+      "Eng": "Day {0}"
+    },
+    {
+      "TextKey": "MissionClaimText",
+      "Kor": "받기",
+      "Eng": "CLAIM"
+    },
+    {
+      "TextKey": "MissionDoneText",
+      "Kor": "완료",
+      "Eng": "DONE"
+    },
+    {
+      "TextKey": "MissionNextText",
+      "Kor": "다음",
+      "Eng": "NEXT"
+    },
+    {
+      "TextKey": "MissionGuideDoneText",
+      "Kor": "가이드를 모두 마쳤다!",
+      "Eng": "All guide steps done!"
+    },
+    {
+      "TextKey": "AttendanceClaimedText",
+      "Kor": "받음",
+      "Eng": "GOT"
+    },
+    {
+      "TextKey": "AttendanceTomorrowText",
+      "Kor": "내일",
+      "Eng": "TOMORROW"
+    },
+    {
+      "TextKey": "RewardCrystalFormat",
+      "Kor": "크리스탈 {0}",
+      "Eng": "{0} CRYSTALS"
+    },
+    {
+      "TextKey": "RewardMandrakeFormat",
+      "Kor": "만드라고라 {0}",
+      "Eng": "{0} MANDRAKE"
+    },
+    {
+      "TextKey": "RewardGoldFormat",
+      "Kor": "골드 {0:N0}",
+      "Eng": "{0:N0} GOLD"
+    },
+    {
+      "TextKey": "MissionClaimAllText",
+      "Kor": "모두 받기",
+      "Eng": "CLAIM ALL"
     }
   ]
 }

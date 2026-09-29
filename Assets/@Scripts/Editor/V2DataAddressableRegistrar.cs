@@ -11,7 +11,10 @@ public static class V2DataAddressableRegistrar
     static readonly (string group, string path)[] ENTRIES =
     {
         ("Data",     "Assets/@Resources/Data/JsonData/BalanceConfig.json"),
+        ("Data",     "Assets/@Resources/Data/JsonData/MissionData.json"),
+        ("Data",     "Assets/@Resources/Data/JsonData/ProductData.json"),
         ("Material", BOSS_OUTLINE_MAT),   // 스테이지 보스 금빛 테두리(BossOutline)
+        ("UI",       "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab"),   // 미션·출석 창
     };
 
     const string BOSS_OUTLINE_MAT    = "Assets/Material/BossOutline.mat";

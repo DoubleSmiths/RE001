@@ -358,6 +358,7 @@ public class MonsterController : CreatureController
             _target.GainExp(_rewardExp);
         }
         OnDied?.Invoke();
+        Managers.Mission?.Notify(MissionEvent.KillMonster);
 
         // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
         // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.

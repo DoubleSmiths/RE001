@@ -14,6 +14,7 @@ public class Managers : MonoBehaviour
     QuestManager    _quest    = new QuestManager();
     SubQuestManager _subQuest = new SubQuestManager();
     ComboManager    _combo    = new ComboManager();
+    MissionManager  _mission  = new MissionManager();   // v2 미션·출석(ADR0030)
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -23,6 +24,7 @@ public class Managers : MonoBehaviour
     public static QuestManager    Quest    { get { return Instance?._quest; } }
     public static SubQuestManager SubQuest { get { return Instance?._subQuest; } }
     public static ComboManager    Combo    { get { return Instance?._combo; } }
+    public static MissionManager  Mission  { get { return Instance?._mission; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 

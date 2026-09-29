@@ -63,6 +63,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 589c58a189d454d46adff8c379de04e6
+    m_Address: ProductData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ec9fdb0acc6c89418d1bc82da7ccca9
     m_Address: LevelData
     m_ReadOnly: 0
@@ -197,6 +203,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eac39a9ae29364446bbaae3d42f8f39e
     m_Address: SpeedPotion
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f543b709a480e614e80706de27f0663a
+    m_Address: MissionData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
