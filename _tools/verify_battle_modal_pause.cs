@@ -1,7 +1,7 @@
 // 실행: python _tools/unity_exec.py _tools/verify_battle_modal_pause.cs --allow-async
 // 새 Play 세션의 마을 / 팝업 없음 / 임시 버프와 일회성 모션 종료 후 실행한다. 약 36초간 입력 금지.
 // 귀환 후 남은 종료된 Coroutine 핸들도 안전상 거부한다. 기존 실행 중 코루틴은 복원할 수 없기 때문이다.
-// AttackTrigger는 직접 호출하지 않는다. 실제 Animator 이벤트가 낸 OnHitLanded와 대상 HP를 측정한다.
+// AttackTrigger는 직접 호출하지 않는다. 실제 판정 경로(CoSwing — ADR0033 이후 클립 이벤트는 꺼져 있다)가 낸 OnHitLanded와 대상 HP를 측정한다.
 var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
 var game = Managers.Game;
 var player = game.Player;
@@ -52,9 +52,11 @@ Require(attackClips.Length == 1 && attackClips[0].events.Count(e => e.functionNa
 Require(UnityEngine.Mathf.Abs(attackClips[0].length - 61f / 60f) < 0.01f
     && UnityEngine.Mathf.Abs(attackClips[0].events.First(e => e.functionName == "AttackTrigger").time - 0.5f) < 0.01f,
     "Independent authored attack contract: 61/60-second clip including final sample, hit at 0.5 seconds");
-var autoAttack = typeof(PlayerController).GetMethod("AutoAttack", flags);
+// 탭 공격(ADR0033) 이후 자동 공격은 UpdateAttack(AUTO 켬)이다. 복제 세이브에서 AutoBattle 을 켜고 그 진입점을 돌린다.
+var autoAttack = typeof(PlayerController).GetMethod("UpdateAttack", flags);
+var clearHitStop = typeof(CreatureController).GetMethod("ClearHitStop", flags);
 var playerUpdate = typeof(PlayerController).GetMethod("Update", flags);
-Require(autoAttack != null && playerUpdate != null, "Automatic attack and Update entrypoints exist");
+Require(autoAttack != null && clearHitStop != null && playerUpdate != null, "Automatic attack (UpdateAttack), hit-stop and Update entrypoints exist");
 var dataField = Field(typeof(GameManager), "_gameData");
 var pathField = Field(typeof(GameManager), "_path");
 var sceneField = Field(typeof(UIManager), "_sceneUI");
@@ -133,6 +135,10 @@ System.Collections.IEnumerator Run()
         SetPlayer("_inBattle", false);
         SetPlayer("_attackTarget", null);
         SetPlayer("_lastAtkTime", UnityEngine.Time.time - 10f);
+        SetPlayer("_nextSwingAt", 0f);
+        SetPlayer("_tapQueuedAt", -999f);
+        clearHitStop.Invoke(player, null);
+        if (target != null) clearHitStop.Invoke(target, null);
         SetPlayer("<PotionAtkSpeedBonus>k__BackingField", potionBonus);
         SetCombo("<AtkSpeedBonus>k__BackingField", comboBonus);
         player.AtkSpeed = speed;
@@ -160,6 +166,7 @@ System.Collections.IEnumerator Run()
         isolated.AbilityLevels.Clear();
         isolated.CompanionMinMonId = -1;
         isolated.LastBattleAreaId = 0;
+        isolated.AutoBattle = true;   // 탭 없이 자동으로 베는 경로를 잰다
         isolated.AutoPotionMemorized = isolated.AutoPotionOn = false;
         isolated.SpdPotionRevealed = true;
         isolated.SpdPotionPopupAnimPlayed = true;

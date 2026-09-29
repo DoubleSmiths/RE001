@@ -314,10 +314,13 @@ public class MonsterController : CreatureController
     IEnumerator CoAttack()
     {
         _attackHitDone = false;
-        // 타격 직전에 앞으로 내딛는다 — 제자리에서 모션만 돌면 언제 맞는지 읽히지 않는다
+        // 타격 직전에 앞으로 내딛는다 — 제자리에서 모션만 돌면 언제 맞는지 읽히지 않는다.
+        //  맞아서 멈칫한(히트스톱) 동안은 공격 시계도 멈춘다 — 안 그러면 모션은 굳어 있는데 돌진·피해만 제시간에 들어갔다.
         yield return new WaitForSeconds(ATTACK_HIT_DELAY - LUNGE_OUT);
+        while (InHitStop) yield return null;
         if (State == Define.State.Attack) Nudge(-MONSTER_LUNGE, LUNGE_OUT, LUNGE_BACK);
         yield return new WaitForSeconds(LUNGE_OUT);
+        while (InHitStop) yield return null;
         AttackTrigger();
 
         // ⚠️ 0.25+0.15=0.40초 뒤에 Idle로 넘기는데 아키타입 Attack 클립은 0.46초다.

@@ -21,7 +21,7 @@
 - **애니 속도는 `SetAnimSpeed`, 즉시 재생은 `PlayStateClip`**(ADR0033): 히트스톱이 `_anim.speed` 를 0 으로 잡고 있다가 기억한 값으로 되돌린다.
 - **상태 전환은 반드시 `State` property setter로**: setter가 Animator CrossFade를 수행하므로 `_state` 필드 직접 변경 금지. 클립 이름은 "Idle"/"Run"/"Attack"/"Die"/"OnHit"로 하드코딩되어 있어 Animator 클립명과 일치해야 한다. 참고: Slime Animator에는 "Run"이 없어 MonsterController는 공격 후 Idle로 복귀한다.
 - **데미지 흐름**: 공격자는 `BattleMath.Resolve(attacker, target, AttackType)` → `target.TakeHit(result, attacker)`. 사전 계산된 raw 데미지는 `BattleMath.FromRawDamage()` 경유(`OnDamaged` shim, AbilityRunner BonusDamage). 데미지 폰트는 Player/Minion 공격 시에만 표시되고 Monster 공격은 팝업 없음(슬63) — `TakeHit`의 `attackerIsMonster` 분기.
-- **플레이어 타격 시점 = Animation Event**: Player Attack.anim의 0.5s 키프레임이 `AttackTrigger()`를 호출한다. 일반 피격은 진행 중인 공격을 취소하지 않는다(ADR0024). 새 공격 시작 시 이전 피격 복귀 코루틴을 끝내며, 피해·피격 소리·사망은 기존 경로를 유지한다. 공속·콤보·물약 합산 배율은 공격 시작 때 캡처해 애니메이션과 종료 타이머에 같이 적용한다. 몬스터는 `CoAttack`의 0.25초 대기 후 `AttackTrigger()`를 호출하며 `_attackHitDone`으로 Animation Event와 중복 타격을 막는다.
+- **플레이어 타격 시점 = `CoSwing` 이 잡는 칼 닿는 시각**(ADR0033): `StartSwing` 이 클립 시작 지점(탭 0.235·AUTO 0)과 휘두르기 길이로 애니 속도를 정하고, `ATTACK_IMPACT_TIME`(0.5초, 클립 이벤트와 같은 시각)에 `AttackTrigger()` 를 부른다. 클립의 AttackTrigger 이벤트는 **끈다**(`fireEvents=false` — 판정 직후 새 베기를 시작한 프레임에 이전 재생의 이벤트가 새 베기의 판정으로 들어오는 경합이 있었다). `_swingHitDone` 은 한 번 베기에 한 번만 맞게 하는 가드. 휘두르기 중 맞붙은 적은 판정 순간에 다시 찾는다. AUTO 베기는 칼이 닿은 뒤 탭이 끊고 들어갈 수 있다. 일반 피격은 진행 중인 공격을 취소하지 않는다(ADR0024). 새 공격 시작 시 이전 피격 복귀 코루틴을 끝낸다. 공속·콤보·물약 합산 배율은 공격 시작 때 캡처한다. 귀환 연출 동안은 `LeaveBattle()` 로 입력을 막는다. 몬스터는 `CoAttack`의 0.25초 대기(히트스톱 동안은 멈춤) 후 앞으로 내딛으며 `AttackTrigger()`를 호출하고 `_attackHitDone`으로 Animation Event와 중복 타격을 막는다.
 - **몬스터 클립 이름 규칙**: `CacheClipLengths()`는 클립 이름의 "Attack"/"Die" 포함 여부로 길이를 찾는다 — 새 몬스터 Animator의 공격/사망 클립 이름에 해당 문자열 필수(못 찾으면 슬라임 기준 0.4/0.5s 기본값으로 동작).
 - **engage 판정은 collider 충돌 flag**: `MonsterController.OnCollisionEnter2D`가 `_hasEngaged`를 set하고, Player/Companion은 거리 폴링 대신 `Managers.Object.MonsterTransform` 자식을 순회하며 `HasEngaged`로 타겟을 찾는다.
 - **풀 반환은 `Managers.Resource.Destroy(gameObject)`**: MonsterController 사망(`max(0.5s, Die클립)` 후), Companion 해제(`PlayerController.RefreshCompanion`) 모두 이 경로.
@@ -32,7 +32,7 @@
 - `PlayerStatusDic`이 DataId 키라 레벨 조회에 실질적으로 안 잡혀 `RefreshStats`는 거의 항상 fallback 식(하드코딩 밸런스)을 사용한다는 주석이 있음 — 밸런스 수정 시 이 fallback 블록이 실효 코드다.
 
 ### Common Patterns
-- **State property setter + CrossFade**: 상태 변경 즉시 애니메이션 전환. 코루틴(`CoResetStateAfterAttack`, `CoReturnAfterOnHit`)으로 일정 시간 후 Idle 복귀하되 "그 사이 상태가 바뀌었으면 건드리지 않음" 가드.
+- **State property setter + CrossFade**: 상태 변경 즉시 애니메이션 전환. 코루틴(`CoSwing`, `CoReturnAfterOnHit`)으로 일정 시간 후 Idle 복귀하되 "그 사이 상태가 바뀌었으면 건드리지 않음" 가드.
 - **`if (!base.Init()) return false;` + ObjectType 설정**: 모든 서브클래스 Init의 첫 줄.
 - **GetOrAddComponent**: `CreatureController.Init`이 `_rb`/`_anim`/`_sprite` 확보, PlayerController가 AbilityRunner 부착.
 - **데이터 드리븐 런타임 교체**: `RuntimeAnimatorController`를 `Managers.Resource.Load`로 로드해 교체 (MonsterController `_data.AnimController`, CompanionController `PetAnimLabel` — 동일 패턴, 실패 시 프리팹 기본 유지). SFX 키도 CreatureData(`AttackSfx`/`OnHitSfx`/`DieSfx`)에서.

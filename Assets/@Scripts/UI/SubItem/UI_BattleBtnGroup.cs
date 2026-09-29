@@ -66,7 +66,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
     enum Buttons
     {
-        ATTACKBTN,      // 테스트용 수동 타격. 실제 전투는 PlayerController.AutoAttack 자동.
+        ATTACKBTN,      // 테스트용 수동 타격. 실제 전투는 화면 탭(UI_BattleInput)·AUTO(PlayerController.UpdateAttack).
         ReturnButton,   // 슬라이드 51: 귀환 (2단계 확인 후 마을 복귀)
         TravelButton,   // 슬라이드 52: 여정 팝업 오픈
     }
@@ -824,6 +824,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
 
         // 1-2. Player Run + 화면 밖 좌측 이동 (Fade Out 0.5s 와 동기)
         var player = Managers.Game?.Player;
+        if (player != null) player.LeaveBattle();   // 달려 나가는 동안 탭·AUTO 공격을 받지 않는다(ADR0033)
         if (player != null && player.State != State.Dead)
         {
             player.State = State.Moving;

@@ -89,6 +89,10 @@ public class PlayerController : CreatureController
         // 슬39: 능력 발동 런너 부착 (RefreshStats 전에 준비돼야 OnStatsReset 콜백 가능)
         _abilityRunner = gameObject.GetOrAddComponent<AbilityRunner>();
         _abilityRunner.Setup(this);
+        // 칼이 닿는 판정은 CoSwing 이 잡는다(ADR0033). 클립의 AttackTrigger 이벤트까지 켜 두면, 판정 직후(클립 0.49초)
+        //  다음 베기를 시작한 프레임에 애니메이터가 이전 재생의 0.5초 이벤트를 새 베기의 판정으로 쏴 곧바로 맞았다.
+        //  플레이어 클립의 이벤트는 AttackTrigger 하나뿐이다.
+        if (_anim != null) _anim.fireEvents = false;
         // 슬라이드 62/63 — Monster→Player Miss popup, 추후 heal popup 등이 사용할 머리 위 offset.
         // Player prefab YAML에 직렬화 안 된 경우를 대비해 명시적으로 set (CreatureController 기본 2.5).
         DamageFontYOffset = 2.5f;
@@ -261,6 +265,16 @@ public class PlayerController : CreatureController
         OnHitLanded?.Invoke(result.FinalDamage);
     }
 
+    // 귀환·이동 연출(화면 밖으로 달려 나감, UI_BattleBtnGroup.BeginExitTransit) 동안 공격·입력을 받지 않는다.
+    //  전투 정리(StopBattle)는 화면이 검어진 뒤다 — 그 사이 누르면 달려 나가면서 칼을 휘두르고 멈춰 선 몬스터를 벴다.
+    public void LeaveBattle()
+    {
+        _inBattle = false;
+        _tapQueuedAt = -999f;
+        if (_attackResetCo != null) { StopCoroutine(_attackResetCo); _attackResetCo = null; }
+        SetAnimSpeed(1f);
+    }
+
     // 막기 재사용 대기 남은 비율(1=방금 막음 → 0=다시 막을 수 있음) — 방패 버튼의 어둡게 덮는 칸
     public float GuardCooldownNormalized
     {
@@ -431,6 +445,7 @@ public class PlayerController : CreatureController
     float _tapQueuedAt = -999f;
     float _nextSwingAt;
     bool  _swingHitDone;
+    bool  _autoSwing;   // 지금 베기가 AUTO 가 시작한 것인가 — 칼이 닿은 뒤엔 탭이 끊고 들어간다
     float _lastHitStop;
     float _attackClipLength = -1f;
 
@@ -449,28 +464,31 @@ public class PlayerController : CreatureController
     void UpdateAttack()
     {
         if (Managers.UI != null && Managers.UI.IsBattlePaused) return;
-        if (Time.time < _nextSwingAt) return;   // 베는 중
+        bool tapped = Time.time - _tapQueuedAt <= Managers.Data.Balance(BalanceKey.TAP_INPUT_BUFFER, 0.25f);
+        // 베는 중 — 단 AUTO 베기는 칼이 닿은 뒤라면 탭이 끊고 들어간다. 안 그러면 AUTO 1초 휘두르기 앞쪽 0.75초 동안의
+        //  탭이 입력 기억(0.25초)을 넘겨 버려졌다("AUTO 켬 — 누르면 더 빨리 벤다"가 거짓말이 됐다).
+        if (Time.time < _nextSwingAt && !(tapped && _autoSwing && _swingHitDone)) return;
 
         float speedMul = AttackSpeedMul;
         // 슬라이드 59 — 콜라이더 충돌로 engaged된 monster를 찾아 공격. 거리 폴링 대신 HasEngaged flag로 통일.
         MonsterController target = FindEngagedMonster();
 
-        if (Time.time - _tapQueuedAt <= Managers.Data.Balance(BalanceKey.TAP_INPUT_BUFFER, 0.25f))
+        if (tapped)
         {
             _tapQueuedAt = -999f;
-            StartSwing(target, Managers.Data.Balance(BalanceKey.TAP_ATTACK_INTERVAL, 0.28f) / speedMul, TAP_SWING_START);
+            StartSwing(target, Managers.Data.Balance(BalanceKey.TAP_ATTACK_INTERVAL, 0.28f) / speedMul, TAP_SWING_START, auto: false);
             return;
         }
 
         if (target == null || Managers.Game == null || !Managers.Game.AutoBattle) return;
-        float cooldown = AtkCooldown / speedMul;
-        if (Time.time < _lastAtkTime + cooldown) return;
-        StartSwing(target, cooldown, 0f);
+        if (Time.time < _lastAtkTime + AtkCooldown / speedMul) return;
+        // 휘두르기 길이는 클립(1초)을 공속으로 줄인 값 — 다음 공격까지의 간격(AtkCooldown)과는 따로다(예전 자동 공격과 같은 뜻)
+        StartSwing(target, ATTACK_CLIP_LENGTH / speedMul, 0f, auto: true);
     }
 
     // 한 번 베기: duration 동안 클립을 startNormalized 부터 끝까지 튼다. 칼이 닿는 시각(ATTACK_IMPACT_TIME)에 판정한다.
-    //  판정은 코드가 잡는다 — 클립의 AttackTrigger 이벤트도 같은 함수로 들어오지만 한 번 베기에 한 번만 맞는다(_swingHitDone).
-    void StartSwing(MonsterController target, float duration, float startNormalized)
+    //  판정은 코드가 잡는다 — 클립 이벤트는 Init 에서 껐다. _swingHitDone 은 한 번 베기에 한 번만 맞게 하는 가드.
+    void StartSwing(MonsterController target, float duration, float startNormalized, bool auto)
     {
         duration = Mathf.Max(0.05f, duration);
         float clipLen = AttackClipLength();
@@ -482,6 +500,7 @@ public class PlayerController : CreatureController
         _nextSwingAt  = Time.time + duration;
         _attackTarget = target;         // 슬라이드 61 — 판정 시점에 데미지 적용하기 위해 락온(없으면 허공 베기)
         _swingHitDone = false;
+        _autoSwing    = auto;
         _lastHitStop  = 0f;
         // 이전 Idle 피격의 복귀가 새 공격을 중간에 Idle로 덮어쓰지 않게 한다.
         if (_onHitCo != null)
@@ -851,6 +870,8 @@ public class PlayerController : CreatureController
         _swingHitDone = true;
 
         Managers.Sound?.PlaySFX("Sound_PlayerAttack");   // 플레이어 공격(허공을 베도 칼 소리는 난다)
+        // 허공으로 시작했는데 휘두르는 사이(약 0.09초) 적이 맞붙었으면 그 적을 벤다 — 칼이 닿는 게 보이는데 빗나가던 것
+        if (_attackTarget == null) _attackTarget = FindEngagedMonster();
         if (_attackTarget == null) return;
         if (_attackTarget.State == Define.State.Dead) return;
         if (!_attackTarget.HasEngaged) return;          // engagement가 풀렸으면 silent miss
