@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXCEL = os.path.join(ROOT, 'Assets', '@Resources', 'Data', 'Excel')
 
 # 미션 이벤트 이름은 Define.MissionEvent 와 같아야 한다.
-#  KillMonster BossClear NewStage Train CaptureTry Enhance Parry DailyAllClear DailyChest ReachLevel Discover Attendance DungeonClear
+#  KillMonster BossClear NewStage Train CaptureTry Enhance Parry DailyAllClear DailyChest ReachLevel Discover Attendance DungeonClear BondRequest
 TITLE = {
     'KillMonster':   'MissionKillFormat',
     'BossClear':     'MissionBossFormat',
@@ -33,10 +33,11 @@ TITLE = {
     'Discover':      'MissionDiscoverFormat',
     'Attendance':    'AttendanceDayFormat',
     'DungeonClear':  'MissionDungeonFormat',
+    'BondRequest':   'MissionBondFormat',
 }
 
-# 일일 — 크리스탈 70 + 완료 상자 40 (설계서 4.5)
-#  요일 던전(ADR0034)은 상자 뒤에 붙였다 — DataId 는 순번이라 가운데 끼우면 오늘 받은 상자(1007)가 다른 미션이 된다.
+# 일일 — 크리스탈 80 + 완료 상자 40 (설계서 4.5)
+#  요일 던전(ADR0034)·배달 의뢰(ADR0036)는 상자 뒤에 붙였다 — DataId 는 순번이라 가운데 끼우면 오늘 받은 상자(1007)가 다른 미션이 된다.
 DAILY = [
     ('KillMonster', 300, 'Crystal', 15),
     ('BossClear',     1, 'Crystal', 10),
@@ -44,8 +45,9 @@ DAILY = [
     ('CaptureTry',    1, 'Crystal',  5),
     ('Enhance',       1, 'Crystal', 10),
     ('Parry',        10, 'Crystal', 10),
-    ('DailyChest',    7, 'Crystal', 40),   # 다른 일일 7개를 모두 받으면 열린다
+    ('DailyChest',    8, 'Crystal', 40),   # 다른 일일 8개를 모두 받으면 열린다
     ('DungeonClear',  1, 'Crystal', 10),
+    ('BondRequest',   1, 'Crystal', 10),
 ]
 # 주간 — 크리스탈 300
 WEEKLY = [
@@ -70,6 +72,7 @@ GUIDE = [
 #  DataId 를 따로 둬서 받은 기록(Claimed = DataId)이 밀리지 않는다. 이미 지나간 유저에겐 이 단계가 다음 가이드로 뜬다(새 기능 안내).
 GUIDE_EXTRA = [
     (3101, 25, 'DungeonClear', 1, 30),   # 요일 던전(ADR0034) — 보스 1회 다음
+    (3102, 35, 'BondRequest', 1, 30),    # 마을 배달 의뢰(ADR0036) — 패링 1회 다음
 ]
 # 출석 7일 반복: 50 → 50 → 만드라고라 2 → 100 → 50 → 50 → 300
 ATTENDANCE = [('Crystal', 50), ('Crystal', 50), ('Mandrake', 2), ('Crystal', 100), ('Crystal', 50), ('Crystal', 50), ('Crystal', 300)]

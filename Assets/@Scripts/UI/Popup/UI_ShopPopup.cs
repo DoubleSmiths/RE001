@@ -109,7 +109,7 @@ public class UI_ShopPopup : UI_Popup
             UI_InvSlot slot = Managers.UI.MakeSubItem<UI_InvSlot>(content.transform, pooling: false);
             ShopItemData captured = s;
 
-            int price = _sellMode ? s.SellPrice : s.Price;
+            int price = _sellMode ? s.SellPrice : Managers.Game.ShopPrice(s);   // 상점 주인 호감도 할인가(ADR0036)
             bool enabled = _sellMode
                 ? Managers.Game.GetItemCount(s.ItemId) > 0
                 : string.IsNullOrEmpty(Managers.Game.GetBuyBlockReason(s));

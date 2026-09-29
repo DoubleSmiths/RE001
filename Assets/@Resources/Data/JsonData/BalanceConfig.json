@@ -319,6 +319,86 @@
       "Key": "RELIC_REFUND_LEGENDARY",
       "Value": 50.0,
       "Desc": "최대 레벨 전설 유물 중복 환급 크리스탈"
+    },
+    {
+      "Key": "BOND_POINTS_PER_LEVEL",
+      "Value": 20.0,
+      "Desc": "마을 사람 호감도 한 단계 = 이 점수"
+    },
+    {
+      "Key": "BOND_MAX_LEVEL",
+      "Value": 10.0,
+      "Desc": "호감도 최대 단계"
+    },
+    {
+      "Key": "BOND_REQUESTS_PER_DAY",
+      "Value": 3.0,
+      "Desc": "하루 배달 의뢰 수(현지 00시에 새로)"
+    },
+    {
+      "Key": "BOND_REQUEST_AFFECTION",
+      "Value": 10.0,
+      "Desc": "의뢰를 끝내면 그 사람 호감도 +"
+    },
+    {
+      "Key": "BOND_REQUEST_CRYSTAL",
+      "Value": 10.0,
+      "Desc": "크리스탈이 붙은 의뢰의 크리스탈"
+    },
+    {
+      "Key": "BOND_REQUEST_CRYSTAL_CHANCE",
+      "Value": 0.25,
+      "Desc": "의뢰에 크리스탈이 붙을 확률"
+    },
+    {
+      "Key": "BOND_DELIVER_GOLD_PER_ITEM",
+      "Value": 3.0,
+      "Desc": "재료 배달 골드 = 지역 평균 골드 × 개수 × 이 값"
+    },
+    {
+      "Key": "BOND_HUNT_GOLD_PER_KILL",
+      "Value": 2.0,
+      "Desc": "소포 전달 골드 = 지역 평균 골드 × 마리 × 이 값"
+    },
+    {
+      "Key": "BOND_GIFTS_PER_DAY",
+      "Value": 3.0,
+      "Desc": "사람마다 하루 선물 횟수"
+    },
+    {
+      "Key": "BOND_GIFT_ITEMS",
+      "Value": 5.0,
+      "Desc": "선물 한 번 = 가장 많은 재료 이 개수"
+    },
+    {
+      "Key": "BOND_GIFT_AFFECTION",
+      "Value": 2.0,
+      "Desc": "선물 한 번 호감도 +"
+    },
+    {
+      "Key": "BOND_PERK_RECEPTIONIST",
+      "Value": 10.0,
+      "Desc": "접수원 호감도 단계당 의뢰 보상 +%"
+    },
+    {
+      "Key": "BOND_PERK_ALCHEMIST",
+      "Value": 3.0,
+      "Desc": "연금술사 호감도 단계당 회복력 +%"
+    },
+    {
+      "Key": "BOND_PERK_BLACKSMITH",
+      "Value": 3.0,
+      "Desc": "대장장이 호감도 단계당 강화 비용 -%"
+    },
+    {
+      "Key": "BOND_PERK_PRIEST",
+      "Value": 10.0,
+      "Desc": "수도원 사제 호감도 단계당 처치 숙련도 +1 확률 %"
+    },
+    {
+      "Key": "BOND_PERK_SHOPKEEPER",
+      "Value": 2.0,
+      "Desc": "상점 주인 호감도 단계당 마을 상점 가격 -%"
     }
   ]
 }

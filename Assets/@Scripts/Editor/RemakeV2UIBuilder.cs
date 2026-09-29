@@ -301,9 +301,12 @@ public static class RemakeV2UIBuilder
     const string SHOP_POPUP    = "Assets/@Resources/Prefab/UI/Popup/UI_ShopPopup.prefab";
     const string MISSION_POPUP = "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab";
     const string QUEST_ICON    = "Assets/@Resources/Sprite/Icon/Menu Icon/Quest Icon.PNG";
-    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop", "Dungeon", "Relic" };   // UI_MissionPopup.Tab 순서
+    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop", "Dungeon", "Relic", "Town" };   // UI_MissionPopup.Tab 순서
     const string SHOP_ICON = "Assets/@Resources/Sprite/Icon/Menu Icon/Shop_Icon.png";
     const float MISSION_TABS_TOP = 27f, MISSION_TAB_HEIGHT = 12f, MISSION_TABS_WIDTH = 124f;
+    //  탭이 8개가 되어 한 줄이면 영어 이름(DUNGEON·RELICS)이 13칸에 안 들어간다 — 4개씩 두 줄. 목록은 한 줄만큼 내린다.
+    const int   MISSION_TAB_COLUMNS = 4;
+    const float MISSION_TAB_SPACING = 2f;
     const float MISSION_ROW_HEIGHT = 16f, MISSION_RIGHT_WIDTH = 38f;
     const float MISSION_ROW_ICON = 13f, MISSION_ROW_ICON_INSET = 2f;
 
@@ -366,8 +369,10 @@ public static class RemakeV2UIBuilder
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             var list = (RectTransform)Find(root.transform, "MissionList");
-            list.sizeDelta = new Vector2(list.sizeDelta.x, -62.5f);   // 위 41 · 아래 21.5 여백 — 원래 위 26 에 탭 줄 15
-            list.anchoredPosition = new Vector2(list.anchoredPosition.x, -9.75f);
+            int tabRows = (MISSION_TABS.Length + MISSION_TAB_COLUMNS - 1) / MISSION_TAB_COLUMNS;
+            float extra = (tabRows - 1) * (MISSION_TAB_HEIGHT + MISSION_TAB_SPACING);
+            list.sizeDelta = new Vector2(list.sizeDelta.x, -62.5f - extra);   // 위 41(+탭 줄) · 아래 21.5 여백 — 원래 위 26 에 탭 줄 15
+            list.anchoredPosition = new Vector2(list.anchoredPosition.x, -9.75f - extra / 2f);
 
             // 이전에 만든 탭·줄 템플릿 제거 후 다시
             Transform frame = Find(root.transform, "MissionPopupFrame");
@@ -378,15 +383,17 @@ public static class RemakeV2UIBuilder
             }
             Transform rowSrc = Find(charRoot.transform, "StatDetailBtn");
 
-            var tabs = new GameObject("MissionTabs", typeof(RectTransform), typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();
+            var tabs = new GameObject("MissionTabs", typeof(RectTransform), typeof(GridLayoutGroup)).GetComponent<RectTransform>();
             tabs.SetParent(frame, false);
             tabs.anchorMin = tabs.anchorMax = tabs.pivot = new Vector2(0.5f, 1f);
             tabs.anchoredPosition = new Vector2(0f, -MISSION_TABS_TOP);
-            tabs.sizeDelta = new Vector2(MISSION_TABS_WIDTH, MISSION_TAB_HEIGHT);
-            var hlg = tabs.GetComponent<HorizontalLayoutGroup>();
-            hlg.spacing = 2f;
-            hlg.childControlWidth = hlg.childControlHeight = true;
-            hlg.childForceExpandWidth = hlg.childForceExpandHeight = true;
+            tabs.sizeDelta = new Vector2(MISSION_TABS_WIDTH, tabRows * MISSION_TAB_HEIGHT + (tabRows - 1) * MISSION_TAB_SPACING);
+            var grid2 = tabs.GetComponent<GridLayoutGroup>();
+            grid2.cellSize = new Vector2((MISSION_TABS_WIDTH - (MISSION_TAB_COLUMNS - 1) * MISSION_TAB_SPACING) / MISSION_TAB_COLUMNS, MISSION_TAB_HEIGHT);
+            grid2.spacing = new Vector2(MISSION_TAB_SPACING, MISSION_TAB_SPACING);
+            grid2.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid2.constraintCount = MISSION_TAB_COLUMNS;
+            grid2.childAlignment = TextAnchor.UpperCenter;
             foreach (string name in MISSION_TABS)
             {
                 var tab = Object.Instantiate(rowSrc.gameObject, tabs).transform;
@@ -438,6 +445,7 @@ public static class RemakeV2UIBuilder
                 tmp.enableAutoSizing = true;   // 긴 미션 이름도 한 줄에
                 tmp.fontSizeMin = 3.5f;
                 tmp.fontSizeMax = 6f;
+                tmp.overflowMode = TextOverflowModes.Ellipsis;   // 최소 크기로도 넘치면 옆 칸을 덮지 말고 말줄임
             }
             // 줄 왼쪽 아이콘(유물 탭 등, ADR0035) — 쓰는 줄만 켠다. 켜면 UI_MissionPopup 이 왼쪽 글자를 아이콘만큼 민다
             var icon = NewImage("MissionRowIcon", row);

@@ -116,6 +116,30 @@ public class RelicSaveData
     public int Summons;
 }
 
+// v2 마을 사람들(ADR0036). Points: 사람별 호감도 점수(BondManager.Npc 순서). 의뢰·선물 횟수는 DayKey 가 바뀌면 새로.
+[Serializable]
+public class BondRequest
+{
+    public int  Npc;        // BondManager.Npc
+    public int  Kind;       // 0 재료 배달 · 1 소포 전달(그 스테이지에서 N마리)
+    public int  ItemId;     // 재료 배달
+    public int  Node;       // 소포 전달 스테이지
+    public int  Goal;
+    public int  Progress;   // 소포 전달 처치 수
+    public int  Gold;
+    public int  Crystal;
+    public bool Claimed;
+}
+
+[Serializable]
+public class BondSaveData
+{
+    public int[] Points = new int[5];
+    public int   DayKey;
+    public int[] Gifts  = new int[5];   // 오늘 준 선물 수
+    public List<BondRequest> Requests = new List<BondRequest>();
+}
+
 // ──────────────────────────────────────────────
 //  세이브 데이터
 // ──────────────────────────────────────────────
@@ -158,6 +182,8 @@ public class GameData
     public DungeonSaveData Dungeon = new DungeonSaveData();
     // v2 유물
     public RelicSaveData Relic = new RelicSaveData();
+    // v2 마을 사람들
+    public BondSaveData Bond = new BondSaveData();
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -954,7 +980,8 @@ public class GameManager
         int next = equip.EnhanceLevel + 1;                       // 다음 강화 단계 (1~9)
         int gradeIdx = equip.EquipmentData != null ? (int)equip.EquipmentData.Grade : 0;
         float gradeMul = 1f + gradeIdx * 0.6f;                   // 상위 등급일수록 비싸게
-        return Mathf.RoundToInt(ENHANCE_GOLD_BASE * Mathf.Pow(next, 1.8f) * gradeMul);
+        //  대장장이 호감도(ADR0036)만큼 깎아 준다
+        return Mathf.RoundToInt(ENHANCE_GOLD_BASE * Mathf.Pow(next, 1.8f) * gradeMul * (Managers.Bond?.EnhanceCostMult ?? 1f));
     }
 
     public bool CanEnhance(Equipment equip, int scrollId)
@@ -1253,12 +1280,16 @@ public class GameManager
         return list;
     }
 
+    // 마을 상점 구매가 — 상점 주인 호감도(ADR0036)만큼 깎는다. 가격을 보여 주는 곳·파는 곳이 모두 이 값을 쓴다(판매가는 그대로).
+    public int ShopPrice(Data.ShopItemData shop)
+        => shop == null ? 0 : Mathf.Max(1, Mathf.RoundToInt(shop.Price * (Managers.Bond?.ShopPriceMult ?? 1f)));
+
     /// <summary>구매가 막힌 이유. 살 수 있으면 빈 문자열.</summary>
     public string GetBuyBlockReason(Data.ShopItemData shop, int count = 1)
     {
         if (shop == null) return Util.Localize(LocalizeKey.ShopNotForSaleText);
         if (Level < shop.UnlockLevel) return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), shop.UnlockLevel);
-        if (Gold < shop.Price * count) return Util.Localize(Define.LocalizeKey.ShopNotEnoughGoldText);
+        if (Gold < ShopPrice(shop) * count) return Util.Localize(Define.LocalizeKey.ShopNotEnoughGoldText);
         return string.Empty;
     }
 
@@ -1267,7 +1298,7 @@ public class GameManager
         if (count <= 0) return false;
         if (!string.IsNullOrEmpty(GetBuyBlockReason(shop, count))) return false;
 
-        Gold -= shop.Price * count;
+        Gold -= ShopPrice(shop) * count;
         AddItem(shop.ItemId, count);
         SaveGame();
         return true;
@@ -1476,6 +1507,7 @@ public class GameManager
     public ShopSaveData    ShopSave    => _gameData.Shop;
     public DungeonSaveData DungeonSave => _gameData.Dungeon;
     public RelicSaveData   RelicSave   => _gameData.Relic;
+    public BondSaveData    BondSave    => _gameData.Bond;
     public int LastBattleAreaId => _gameData.LastBattleAreaId;
     public int FirstStageNode => StageOrder.Count > 0 ? StageOrder[0] : 0;
 
@@ -2156,6 +2188,11 @@ public class GameManager
         d.Dungeon.BestKills     = Fit(d.Dungeon.BestKills, 3);
         d.Relic                ??= new RelicSaveData();     // v2 유물 이전 세이브엔 없다
         d.Relic.Levels         ??= new Dictionary<int, int>();
+        d.Bond                 ??= new BondSaveData();      // v2 마을 사람들 이전 세이브엔 없다
+        d.Bond.Points           = Fit(d.Bond.Points, 5);
+        d.Bond.Gifts            = Fit(d.Bond.Gifts, 5);
+        d.Bond.Requests        ??= new List<BondRequest>();
+        d.Bond.Requests.RemoveAll(r => r == null);
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

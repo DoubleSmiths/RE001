@@ -65,7 +65,7 @@
       "Kind": "Daily",
       "Order": 7,
       "Event": "DailyChest",
-      "Goal": 7,
+      "Goal": 8,
       "RewardType": "Crystal",
       "RewardValue": 40,
       "TitleKey": "MissionDailyChestText"
@@ -79,6 +79,16 @@
       "RewardType": "Crystal",
       "RewardValue": 10,
       "TitleKey": "MissionDungeonFormat"
+    },
+    {
+      "DataId": 1009,
+      "Kind": "Daily",
+      "Order": 9,
+      "Event": "BondRequest",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 10,
+      "TitleKey": "MissionBondFormat"
     },
     {
       "DataId": 2001,
@@ -539,6 +549,16 @@
       "RewardType": "Crystal",
       "RewardValue": 30,
       "TitleKey": "MissionDungeonFormat"
+    },
+    {
+      "DataId": 3102,
+      "Kind": "Guide",
+      "Order": 35,
+      "Event": "BondRequest",
+      "Goal": 1,
+      "RewardType": "Crystal",
+      "RewardValue": 30,
+      "TitleKey": "MissionBondFormat"
     },
     {
       "DataId": 4001,

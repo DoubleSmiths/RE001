@@ -107,8 +107,9 @@ public class UI_ShopConfirmPopup : UI_Popup
         if (_sellMode)
             return Managers.Game.GetItemCount(_shop.ItemId);
 
-        if (_shop.Price <= 0) return 1;
-        return Managers.Game.Gold / _shop.Price;
+        int price = Managers.Game.ShopPrice(_shop);   // 상점 주인 호감도 할인가(ADR0036)
+        if (price <= 0) return 1;
+        return Managers.Game.Gold / price;
     }
 
     void OnSliderChanged(float v)
@@ -141,7 +142,7 @@ public class UI_ShopConfirmPopup : UI_Popup
             icon.gameObject.SetActive(sp != null);
         }
 
-        int unit = _sellMode ? _shop.SellPrice : _shop.Price;
+        int unit = _sellMode ? _shop.SellPrice : Managers.Game.ShopPrice(_shop);
 
         var countTxt = GetText((int)Texts.ShopConfirmCountText);
         if (countTxt != null)

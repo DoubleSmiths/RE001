@@ -10539,6 +10539,96 @@
       "TextKey": "Relic8030NameText",
       "Kor": "달콤한 꿀단지",
       "Eng": "Honey Pot"
+    },
+    {
+      "TextKey": "MissionTownTabText",
+      "Kor": "마을",
+      "Eng": "TOWN"
+    },
+    {
+      "TextKey": "BondTitleText",
+      "Kor": "마을 사람들",
+      "Eng": "VILLAGERS"
+    },
+    {
+      "TextKey": "BondRequestHeaderText",
+      "Kor": "오늘의 배달 의뢰 · 매일 00시에 새로",
+      "Eng": "ERRANDS OF THE DAY · NEW EVERY DAY"
+    },
+    {
+      "TextKey": "BondDeliverFormat",
+      "Kor": "{0}: {1} {2}개 배달",
+      "Eng": "{0}: DELIVER {2} {1}"
+    },
+    {
+      "TextKey": "BondHuntFormat",
+      "Kor": "{0}: {1}에서 {2}마리",
+      "Eng": "{0}: DEFEAT {2} IN {1}"
+    },
+    {
+      "TextKey": "BondDeliverText",
+      "Kor": "배달",
+      "Eng": "DELIVER"
+    },
+    {
+      "TextKey": "BondPeopleHeaderFormat",
+      "Kor": "마을 사람들 · 선물 = 가장 많은 재료 {0}개",
+      "Eng": "VILLAGERS · GIFT = {0} OF YOUR MOST COMMON MATERIAL"
+    },
+    {
+      "TextKey": "BondNpcFormat",
+      "Kor": "{0} Lv.{1} ({2})",
+      "Eng": "{0} Lv.{1} ({2})"
+    },
+    {
+      "TextKey": "BondGiftFormat",
+      "Kor": "선물 {0}",
+      "Eng": "GIFT {0}"
+    },
+    {
+      "TextKey": "BondPerkReceptionistFormat",
+      "Kor": "의뢰 보상 +{0}%",
+      "Eng": "ERRAND REWARD +{0}%"
+    },
+    {
+      "TextKey": "BondPerkAlchemistFormat",
+      "Kor": "회복력 +{0}%",
+      "Eng": "RECOVERY +{0}%"
+    },
+    {
+      "TextKey": "BondPerkBlacksmithFormat",
+      "Kor": "강화 비용 -{0}%",
+      "Eng": "ENHANCE COST -{0}%"
+    },
+    {
+      "TextKey": "BondPerkPriestFormat",
+      "Kor": "숙련도 +1 확률 {0}%",
+      "Eng": "EXTRA PROFICIENCY {0}%"
+    },
+    {
+      "TextKey": "BondPerkShopkeeperFormat",
+      "Kor": "상점 가격 -{0}%",
+      "Eng": "SHOP PRICE -{0}%"
+    },
+    {
+      "TextKey": "BondDoneFormat",
+      "Kor": "{0}의 의뢰 완료! {1}",
+      "Eng": "ERRAND DONE FOR {0}! {1}"
+    },
+    {
+      "TextKey": "BondNoGiftText",
+      "Kor": "선물할 재료가 모자라다",
+      "Eng": "NOT ENOUGH MATERIALS TO GIFT"
+    },
+    {
+      "TextKey": "BondLevelUpFormat",
+      "Kor": "{0} 호감도 Lv.{1}!",
+      "Eng": "{0} BOND Lv.{1}!"
+    },
+    {
+      "TextKey": "MissionBondFormat",
+      "Kor": "배달 의뢰 {0}건",
+      "Eng": "Errands x{0}"
     }
   ]
 }

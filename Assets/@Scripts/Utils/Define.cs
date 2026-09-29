@@ -268,6 +268,7 @@ public class Define
         Discover,        // 진행 = 발견한 몬스터 수(계산값, 가이드)
         Attendance,
         DungeonClear,    // v2 요일 던전을 끝까지 치렀다(ADR0034)
+        BondRequest,     // v2 마을 배달 의뢰를 끝냈다(ADR0036)
     }
 
     // v2 요일 던전(ADR0034, 설계서 4.8) — 순서가 DungeonSaveData 배열 칸이다
@@ -1953,6 +1954,23 @@ public class Define
         public const string RELIC_REFUND_RARE      = "RELIC_REFUND_RARE";
         public const string RELIC_REFUND_EPIC      = "RELIC_REFUND_EPIC";
         public const string RELIC_REFUND_LEGENDARY = "RELIC_REFUND_LEGENDARY";
+        // 마을 사람들 — 호감도·배달 의뢰(ADR0036)
+        public const string BOND_POINTS_PER_LEVEL       = "BOND_POINTS_PER_LEVEL";
+        public const string BOND_MAX_LEVEL              = "BOND_MAX_LEVEL";
+        public const string BOND_REQUESTS_PER_DAY       = "BOND_REQUESTS_PER_DAY";
+        public const string BOND_REQUEST_AFFECTION      = "BOND_REQUEST_AFFECTION";
+        public const string BOND_REQUEST_CRYSTAL        = "BOND_REQUEST_CRYSTAL";
+        public const string BOND_REQUEST_CRYSTAL_CHANCE = "BOND_REQUEST_CRYSTAL_CHANCE";
+        public const string BOND_DELIVER_GOLD_PER_ITEM  = "BOND_DELIVER_GOLD_PER_ITEM";
+        public const string BOND_HUNT_GOLD_PER_KILL     = "BOND_HUNT_GOLD_PER_KILL";
+        public const string BOND_GIFTS_PER_DAY          = "BOND_GIFTS_PER_DAY";
+        public const string BOND_GIFT_ITEMS             = "BOND_GIFT_ITEMS";
+        public const string BOND_GIFT_AFFECTION         = "BOND_GIFT_AFFECTION";
+        public const string BOND_PERK_RECEPTIONIST      = "BOND_PERK_RECEPTIONIST";
+        public const string BOND_PERK_ALCHEMIST         = "BOND_PERK_ALCHEMIST";
+        public const string BOND_PERK_BLACKSMITH        = "BOND_PERK_BLACKSMITH";
+        public const string BOND_PERK_PRIEST            = "BOND_PERK_PRIEST";
+        public const string BOND_PERK_SHOPKEEPER        = "BOND_PERK_SHOPKEEPER";
     }
     #endregion
 

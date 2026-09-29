@@ -18,6 +18,7 @@ public class Managers : MonoBehaviour
     ShopManager     _shop     = new ShopManager();      // v2 상점·핫타임·월정액(ADR0030)
     DungeonManager  _dungeon  = new DungeonManager();   // v2 요일 던전(ADR0034)
     RelicManager    _relic    = new RelicManager();     // v2 유물 소환(ADR0035)
+    BondManager     _bond     = new BondManager();      // v2 마을 사람들(ADR0036)
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -31,6 +32,7 @@ public class Managers : MonoBehaviour
     public static ShopManager     Shop     { get { return Instance?._shop; } }
     public static DungeonManager  Dungeon  { get { return Instance?._dungeon; } }
     public static RelicManager    Relic    { get { return Instance?._relic; } }
+    public static BondManager     Bond     { get { return Instance?._bond; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 

@@ -12,6 +12,7 @@ using static Define;
 //  만드라고라(크리스탈), 인앱 상품. 광고·결제 줄은 모의가 되는 빌드(에디터·개발)에서만 보인다(AdService/IapService).
 //  던전 탭(ADR0034): 요일 던전 3종 — 무료 입장이 남았으면 입장, 없으면 광고, 그다음 크리스탈. 누르면 창을 닫고 전투로 간다.
 //  유물 탭(ADR0035): 1회·10회·광고 소환, 확률 공개 화면(등급·종류별 확률, 전설 천장), 30종 목록(아이콘·레벨·효과).
+//  마을 탭(ADR0036): 오늘의 배달 의뢰 3건(재료 배달·소포 전달), 마을 사람 5명의 호감도·혜택·선물.
 public class UI_MissionPopup : UI_Popup
 {
     #region Enum
@@ -41,9 +42,9 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
-    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
+    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
 
-    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText" };
+    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText" };
     static readonly string[] HOT_KEYS = { "HotGoldText", "HotExpText", "HotAtkText" };   // HotTime 순서
     static readonly Color TAB_ON      = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color TAB_OFF     = new Color32(0xB8, 0xB8, 0xB8, 0xFF);
@@ -97,6 +98,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Shop != null) Managers.Shop.OnChanged += Refresh;
         if (Managers.Dungeon != null) Managers.Dungeon.OnChanged += Refresh;
         if (Managers.Relic != null) Managers.Relic.OnChanged += Refresh;
+        if (Managers.Bond != null) Managers.Bond.OnChanged += Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged += Refresh;
@@ -120,6 +122,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Shop != null) Managers.Shop.OnChanged -= Refresh;
         if (Managers.Dungeon != null) Managers.Dungeon.OnChanged -= Refresh;
         if (Managers.Relic != null) Managers.Relic.OnChanged -= Refresh;
+        if (Managers.Bond != null) Managers.Bond.OnChanged -= Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged -= Refresh;
@@ -151,10 +154,10 @@ public class UI_MissionPopup : UI_Popup
         if (mission == null) return;
 
         GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText"
-                                                     : _tab == Tab.Relic ? "RelicTitleText" : "MissionTitleText");
+                                                     : _tab == Tab.Relic ? "RelicTitleText" : _tab == Tab.Town ? "BondTitleText" : "MissionTitleText");
         GetText((int)Texts.ClaimAllTxt).text = Util.Localize("MissionClaimAllText");
         // 상점·던전·유물 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장·소환이라 한꺼번에 누르면 안 된다
-        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic);
+        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic && _tab != Tab.Town);
         for (int i = 0; i < _tabTexts.Count && i < TAB_KEYS.Length; i++)
         {
             _tabTexts[i].text  = Util.Localize(TAB_KEYS[i]);
@@ -163,6 +166,8 @@ public class UI_MissionPopup : UI_Popup
         // 오늘 무료 입장이 남은 던전이 있으면 탭 이름 옆에 빨간 '!'
         if ((int)Tab.Dungeon < _tabTexts.Count && Managers.Dungeon != null && Managers.Dungeon.HasFreeEntry)
             _tabTexts[(int)Tab.Dungeon].text += TAB_ALERT;
+        if ((int)Tab.Town < _tabTexts.Count && Managers.Bond != null && Managers.Bond.HasReady)
+            _tabTexts[(int)Tab.Town].text += TAB_ALERT;
 
         int n = 0;
         switch (_tab)
@@ -176,6 +181,7 @@ public class UI_MissionPopup : UI_Popup
             case Tab.Shop: n = ShopRows(); break;
             case Tab.Dungeon: n = DungeonRows(); break;
             case Tab.Relic: n = _relicRates ? RelicRateRows() : RelicRows(); break;
+            case Tab.Town: n = TownRows(); break;
         }
         for (int i = n; i < _rows.Count; i++) _rows[i].SetActive(false);
 
@@ -188,7 +194,7 @@ public class UI_MissionPopup : UI_Popup
     // 지금 탭에서 받을 수 있는 줄을 전부 받는다(가이드는 받으면 다음 단계가 열리니 더 없을 때까지).
     void OnClickClaimAll()
     {
-        if (_tab == Tab.Shop || _tab == Tab.Dungeon || _tab == Tab.Relic) return;
+        if (_tab == Tab.Shop || _tab == Tab.Dungeon || _tab == Tab.Relic || _tab == Tab.Town) return;
         bool got = false;
         for (int guard = 0; guard < 64; guard++)
         {
@@ -335,6 +341,70 @@ public class UI_MissionPopup : UI_Popup
     static string Crystal(int cost) => string.Format(Util.Localize("RewardCrystalFormat"), cost);
     static Color CrystalColor(int cost) => Managers.Game.Crystal >= cost ? TEXT_REWARD : TEXT_DONE;
     static string Clock(TimeSpan t) => t.TotalHours >= 1 ? $"{(int)t.TotalHours}:{t.Minutes:00}:{t.Seconds:00}" : $"{t.Minutes:00}:{t.Seconds:00}";
+    #endregion
+
+    #region 마을 탭 (ADR0036)
+    static readonly string[] PERK_KEYS = { "BondPerkReceptionistFormat", "BondPerkAlchemistFormat", "BondPerkBlacksmithFormat", "BondPerkPriestFormat", "BondPerkShopkeeperFormat" };
+
+    int TownRows()
+    {
+        var bm = Managers.Bond;
+        int n = 0;
+        SetRow(n++, Util.Localize("BondRequestHeaderText"), "", TEXT_DONE, 1f, null);
+        foreach (var r in bm.Requests)
+        {
+            string who = Util.Localize(BondManager.NAME_KEYS[r.Npc]);
+            string what = r.Kind == BondManager.KIND_DELIVER
+                ? string.Format(Util.Localize("BondDeliverFormat"), who, ItemName(r.ItemId), r.Goal)
+                : string.Format(Util.Localize("BondHuntFormat"), who, StageShort(r.Node), r.Goal);
+            string left = what + "  (" + Mathf.Min(bm.Progress(r), r.Goal) + "/" + r.Goal + ")";
+            if (r.Crystal > 0) left += "  " + string.Format(Util.Localize("RewardCrystalFormat"), r.Crystal);
+            var req = r;
+            if (r.Claimed)         SetRow(n++, left, Util.Localize("MissionDoneText"), TEXT_DONE, ROW_DONE_ALPHA, null);
+            else if (bm.IsReady(r)) SetRow(n++, left, Util.Localize(r.Kind == BondManager.KIND_DELIVER ? "BondDeliverText" : "MissionClaimText"), TEXT_READY, 1f, () => CompleteRequest(req));
+            else                   SetRow(n++, left, Reward("Gold", r.Gold), TEXT_REWARD, 1f, null);
+        }
+
+        SetRow(n++, string.Format(Util.Localize("BondPeopleHeaderFormat"), bm.GiftItems), "", TEXT_DONE, 1f, null);
+        bool hasGift = bm.GiftItemId() > 0;
+        for (int i = 0; i < BondManager.NPC_COUNT; i++)
+        {
+            var npc = (BondManager.Npc)i;
+            int lv = bm.Level(npc);
+            string progress = lv >= bm.MaxLevel ? "MAX" : bm.Points(npc) + "/" + (lv + 1) * bm.PointsPerLevel;
+            string left = string.Format(Util.Localize("BondNpcFormat"), Util.Localize(BondManager.NAME_KEYS[i]), lv, progress)
+                        + "  " + string.Format(Util.Localize(PERK_KEYS[i]), bm.Perk(npc));
+            int gifts = bm.GiftsLeft(npc);
+            if (gifts > 0 && hasGift) SetRow(n++, left, string.Format(Util.Localize("BondGiftFormat"), gifts), TEXT_READY, 1f, () => Gift(npc));
+            else                      SetRow(n++, left, gifts > 0 ? string.Format(Util.Localize("BondGiftFormat"), gifts) : Util.Localize("AttendanceTomorrowText"), TEXT_DONE, 1f, null);
+        }
+        return n;
+    }
+
+    // '1-1' — 지역 이름까지 붙이면 크리스탈 표시와 함께 줄이 넘쳐 오른쪽 보상 칸을 덮었다
+    static string StageShort(int node)
+        => Managers.Game.TryGetStageNumber(node, out int field, out int floor) ? field + "-" + floor : Managers.Game.StageLabel(node);
+
+    static string ItemName(int itemId)
+        => Managers.Data.ItemDic.TryGetValue(itemId, out var d) ? Util.Localize(d.Name) : itemId.ToString();
+
+    void CompleteRequest(BondRequest r)
+    {
+        if (!Managers.Bond.TryComplete(r)) { Managers.Sound?.PlaySFX("SFX_Fail"); return; }
+        Managers.Sound?.PlaySFX("SFX_Success2");
+        Managers.UI.ShowToast(string.Format(Util.Localize("BondDoneFormat"), Util.Localize(BondManager.NAME_KEYS[r.Npc]), Reward("Gold", r.Gold)));
+    }
+
+    void Gift(BondManager.Npc npc)
+    {
+        if (!Managers.Bond.TryGift(npc))
+        {
+            Managers.Sound?.PlaySFX("SFX_Fail");
+            Managers.UI.ShowToast(Util.Localize("BondNoGiftText"));
+            return;
+        }
+        Managers.Sound?.PlaySFX("SFX_Success2");
+    }
     #endregion
 
     #region 던전 탭 (ADR0034)

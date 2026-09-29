@@ -462,8 +462,10 @@ public class MonsterController : CreatureController
         Managers.Mission?.Notify(MissionEvent.KillMonster);
 
         // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
+        //  수도원 사제 호감도(ADR0036)만큼의 확률로 +1 더.
         // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.
-        Managers.Game.AddClassProficiency(1);
+        Managers.Game.AddClassProficiency(1 + (Random.value < (Managers.Bond?.ExtraProficiencyChance ?? 0f) ? 1 : 0));
+        Managers.Bond?.OnKill(Managers.Game.CurrentTravelAreaId);   // 마을 '소포 전달' 의뢰 처치 수
 
         // v2 스테이지 보스는 외형만 빌린 '스테이지 수호자'다 — 그 종의 드롭·도감 기록·관심(포획) 판정은 하지 않는다.
         //  (우두머리 외형은 드롭 확정·관심 40%라, 보스마다 돌리면 포획·재료 경제가 몰래 몇 배로 바뀌었다)
