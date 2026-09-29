@@ -90,6 +90,10 @@
 전체화면(1920x1080 좌우 검은 여백)·창 복귀·종료 저장(.bak 회전) 확인, Player.log 에러 0.
 Android AAB 는 targetSdk 36/minSdk 25/세로/한국어 앱 이름(bundletool)·16KB 정렬 통과 — **실기기 미검증**.
 
+**최종 확인(HEAD `572a6618`)**: AAB·Windows 재빌드 성공(에러 0), AAB 16KB 정렬 PASS, Windows 실행 Player.log 에러 0.
+새 세이브 장시간 실행: 첫 임무 → 여정 해금 → 10배속 자연 사냥 214초(게임 시간 약 24분) Lv1→25, 154처치,
+사냥터 4곳 이동 동안 콘솔 에러 0 → 재시작 후 레벨·골드·처치·아이템·숙련도 동일(모아 쓰기·종료 저장 확인).
+
 ## 남은 일 — 사용자 결정·외부 작업 (코드로 할 수 없는 것)
 
 1. **이름·회사·패키지 확정**(현재 임시 `Minimon Quest` / `DoubleSmiths` / `com.doublesmiths.minimonquest`) — 구글 플레이 패키지명은 출시 후 변경 불가. 상표 검색.
