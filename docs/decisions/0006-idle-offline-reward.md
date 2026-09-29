@@ -59,7 +59,10 @@
 
 ## 결과
 
-- 새 전투 지역을 추가하면 `UI_GameScene.EnterArea`가 자동으로 `MarkBattleArea`를 남긴다.
+- 새 전투 지역을 추가하면 `UI_GameScene.SwapAreaBtnGroup`이 자동으로 `MarkBattleArea`를 남긴다.
+  (2026-09-29 수정: 처음엔 `EnterArea`에만 걸었는데 전투 진입은 전부 `EnterAreaWithFade` 경로라
+  `LastBattleAreaId`가 0으로 남아 실제 플레이에서는 오프라인 보상·방치 누적이 한 번도 돌지 않았다.
+  두 경로가 모두 지나는 `SwapAreaBtnGroup`으로 옮겼다. 위 검증은 지역 값을 직접 넣고 한 것이었다.)
 - 몬스터 경험치·골드를 조정하면 방치 수익도 같이 변한다([[0003]]의 상대값 설계와 연동).
 - 안내는 전용 팝업 없이 토스트를 재사용한다. 연출 스펙이 정해지면 그때 전용 프리팹으로.
 - 검증(플레이 모드 실측): 3시간 → 1,350처치 / EXP 100,170 / 골드 28,822.

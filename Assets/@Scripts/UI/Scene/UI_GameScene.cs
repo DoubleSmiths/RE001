@@ -294,13 +294,6 @@ public class UI_GameScene : UI_Scene
 
     public void EnterArea(AreaType area)
     {
-        // 방치 보상은 "마지막으로 사냥하던 지역" 기준으로 정산한다(GameManager.ClaimOfflineReward).
-        if (area == AreaType.Battle)
-            Managers.Game?.MarkBattleArea(Managers.Game.CurrentTravelAreaId);
-
-        // 전투 밖에서는 방치 누적이 돌아간다(GameManager.TickIdle). 전투 중엔 실제 전투가 보상하므로 끈다.
-        Managers.Game?.SetInBattleArea(area == AreaType.Battle);
-
         // 구역이 바뀔 때마다 플레이어를 지면에 다시 세운다.
         //  Idle/Move 클립에는 위치 커브가 있고 Run/Attack에는 없다 → 마을에선 클립이 y를 잡아주지만
         //  전투(Run)에선 잡아주는 게 없어 씬에 저작된 옛 y가 그대로 남아 **공중을 걷고 있었다**.
@@ -505,6 +498,15 @@ public class UI_GameScene : UI_Scene
         }
 
         _currentBtnGroup.Setup(this);
+
+        // 방치 보상은 "마지막으로 사냥하던 지역" 기준으로 정산하고(GameManager.ClaimOfflineReward),
+        //  전투 밖에서만 방치 누적이 돈다(TickIdle — 전투 중엔 실제 전투가 보상한다).
+        //  ⚠️ 예전엔 이 두 줄이 EnterArea 에만 있었는데 전투 진입은 전부 EnterAreaWithFade 라
+        //     지역이 한 번도 기록되지 않아(LastBattleAreaId 0) 오프라인 보상·방치 누적이 실제로는 한 번도 돌지 않았다.
+        //     두 경로가 모두 지나는 여기서 처리한다.
+        if (area == AreaType.Battle)
+            Managers.Game?.MarkBattleArea(Managers.Game.CurrentTravelAreaId);
+        Managers.Game?.SetInBattleArea(area == AreaType.Battle);
 
         // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_MinimonCapture는 별도)
         Managers.Sound?.PlayBgm(area == AreaType.Battle ? "BGM_BWF" : "BGM_Village1");
