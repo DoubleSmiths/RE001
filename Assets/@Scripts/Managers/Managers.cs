@@ -109,9 +109,17 @@ public class Managers : MonoBehaviour
     }
 
     // 방치 보상 기준 시각 기록. 모바일은 종료 대신 일시정지로 빠지는 경우가 많아 둘 다 건다.
+    //  복귀(paused=false)하면 자리를 비운 시간을 정산한다 — 프로세스가 살아 있으면 GameScene 이 다시 로드되지 않아
+    //  예전엔 홈으로 나갔다 온 시간이 통째로 사라졌다(다음 일시정지의 MarkSeen 이 기준 시각을 덮어썼다).
     void OnApplicationPause(bool paused)
     {
-        if (paused && s_instance == this) _game?.MarkSeen();
+        if (s_instance != this) return;
+        if (paused) { _game?.MarkSeen(); return; }
+
+        var scene = _ui?.SceneUI as UI_GameScene;
+        if (_game == null || _game.Player == null || scene == null) return;   // Player 는 Unity == 로 파괴 여부까지 본다
+        var reward = _game.ClaimOfflineReward();
+        if (reward.Kills > 0) scene.ShowOfflineReward(reward);
     }
 
     void OnApplicationQuit()

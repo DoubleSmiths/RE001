@@ -104,7 +104,8 @@ public class ObjectManager
     }
 
     // 그 노드에 나오는 몬스터 — 서식지가 노드 이름이나 부모 이름(입구/지역 둘 다)과 같고 출현 확률이 0보다 큰 것.
-    System.Collections.Generic.List<Data.CreatureData> FieldPool(int nodeId)
+    //  스폰·보스·방치/오프라인 보상(GameManager.TryGetAreaAverage)이 모두 이 풀을 쓴다.
+    public System.Collections.Generic.List<Data.CreatureData> FieldPool(int nodeId)
     {
         var pool = new System.Collections.Generic.List<Data.CreatureData>();
         var data = Managers.Data;
@@ -125,24 +126,26 @@ public class ObjectManager
         return pool;
     }
 
-    // v2 스테이지 보스(ADR0030). 모습은 그 노드에서 체력이 가장 높은 몬스터, 능력치는 그 노드 몬스터의
-    //  출현 가중 평균에 보스 배율을 곱한다. 가장 센 개체의 능력치에 곱하면 우두머리(체력 5~7배)가 사는
-    //  노드만 보스가 터무니없이 세진다 — 평균을 쓰면 어느 스테이지든 "일반 처치 8번 분량"으로 난이도가 고르다.
+    // v2 스테이지 보스(ADR0030). 모습은 그 노드에서 체력이 가장 높은 몬스터, 능력치는 전부 그 노드 몬스터의
+    //  출현 가중 평균(체력·공격·방어엔 보스 배율). 가장 센 개체의 능력치를 쓰면 우두머리(체력 5~7배, 공격 주기 0.9초,
+    //  물리저항 36% 등)가 사는 노드만 보스가 튀었다 — 평균이면 어느 스테이지든 "일반 처치 8번 분량"으로 고르다.
     public MonsterController SpawnStageBoss(int nodeId, Vector3 pos)
     {
         var pool = FieldPool(nodeId);
         if (pool.Count == 0) return null;
 
         Data.CreatureData look = pool[0];
-        float w = 0f, hp = 0f, atk = 0f, matk = 0f, def = 0f;
+        float weight = 0f;
         foreach (var c in pool)
         {
             if (c.MaxHp > look.MaxHp) look = c;
-            w    += c.EncounterRate;
-            hp   += c.MaxHp       * c.EncounterRate;
-            atk  += c.PhysicalAtk * c.EncounterRate;
-            matk += c.MagicAtk    * c.EncounterRate;
-            def  += c.Def         * c.EncounterRate;
+            weight += c.EncounterRate;
+        }
+        float Avg(System.Func<Data.CreatureData, float> stat)
+        {
+            float sum = 0f;
+            foreach (var c in pool) sum += stat(c) * c.EncounterRate;
+            return sum / weight;
         }
 
         MonsterController boss = SpawnMonster(look.DataId, pos);
@@ -151,15 +154,26 @@ public class ObjectManager
         var d = Managers.Data;
         float atkMul = d.Balance(Define.BalanceKey.BOSS_ATK_MULT, 1.5f);
         float kills  = d.Balance(Define.BalanceKey.BOSS_REWARD_KILLS, 10f);
-        Managers.Game.TryGetAreaAverage(nodeId, out float avgExp, out float avgGold);
-        boss.MakeStageBoss(
-            maxHp: hp / w * d.Balance(Define.BalanceKey.BOSS_HP_MULT, 8f),
-            atk:   atk / w * atkMul,
-            matk:  matk / w * atkMul,
-            def:   def / w * d.Balance(Define.BalanceKey.BOSS_DEF_MULT, 1.2f),
-            scale: d.Balance(Define.BalanceKey.BOSS_SCALE, 1.35f),
-            rewardExp:  avgExp * kills,
-            rewardGold: Mathf.RoundToInt(avgGold * kills));
+        if (!Managers.Game.TryGetAreaAverage(nodeId, out float avgExp, out float avgGold))
+            Debug.LogWarning($"[Stage] 노드 {nodeId} 평균 보상을 못 구했다 — 보스 보상 0");
+        boss.MakeStageBoss(new MonsterController.StageBossStats
+        {
+            MaxHp          = Avg(c => c.MaxHp) * d.Balance(Define.BalanceKey.BOSS_HP_MULT, 8f),
+            PhysicalAtk    = Avg(c => c.PhysicalAtk) * atkMul,
+            MagicAtk       = Avg(c => c.MagicAtk) * atkMul,
+            Def            = Avg(c => c.Def) * d.Balance(Define.BalanceKey.BOSS_DEF_MULT, 1.2f),
+            CritRate       = Avg(c => c.CritRate),
+            CritDamage     = Avg(c => c.CritDamage),
+            Accuracy       = Avg(c => c.Accuracy),
+            Evasion        = Avg(c => c.Evasion),
+            PhysicalResist = Avg(c => c.PhysicalResist),
+            MagicResist    = Avg(c => c.MagicResist),
+            DmgAmp         = Avg(c => c.DmgAmp),
+            AttackDelay    = Avg(c => c.MonsterAttackDelay),
+            Scale          = d.Balance(Define.BalanceKey.BOSS_SCALE, 1.35f),
+            RewardExp      = avgExp * kills,
+            RewardGold     = Mathf.RoundToInt(avgGold * kills),
+        });
         return boss;
     }
 

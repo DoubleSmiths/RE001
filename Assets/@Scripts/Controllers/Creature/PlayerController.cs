@@ -223,6 +223,15 @@ public class PlayerController : CreatureController
         return result;
     }
 
+    // v2 스테이지 보스가 나오면 체력을 가득 채운다 — 앞선 사냥에서 깎인 채로 들어가 새 캐릭터가 1-1 첫 보스에 쓰러졌다.
+    //  보스의 벽은 30초 제한(화력)이지 누적 피해가 아니다.
+    public void RefillHp()
+    {
+        if (State == Define.State.Dead) return;
+        Hp = MaxHp;
+        OnHpChanged?.Invoke(Hp, MaxHp);
+    }
+
     // 패링 반격 — 짧게 멈칫한 뒤 확정 치명타 한 방 + 콤보 가산. 기절한 적은 받는 피해가 늘어 있다.
     public void ParryCounter(MonsterController target)
     {

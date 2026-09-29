@@ -83,20 +83,37 @@ public class MonsterController : CreatureController
     // ────────────────────────────────────────
     const float GROUND_SCROLL_SPEED = 5f;   // 슬라이드 58 — Ground Layer Speed = 5
 
-    // 능력치·보상·크기를 보스로 바꾼다. 몬스터는 풀링하지 않아(스폰마다 새 인스턴스) 되돌릴 필요가 없다.
-    public void MakeStageBoss(float maxHp, float atk, float matk, float def, float scale, float rewardExp, int rewardGold)
+    // 스테이지 보스 능력치 — ObjectManager.SpawnStageBoss 가 노드 몬스터의 출현 가중 평균으로 채운다.
+    public struct StageBossStats
     {
-        IsStageBoss = true;
-        MaxHp       = maxHp;
-        Hp          = maxHp;
-        PhysicalAtk = atk;
-        MagicAtk    = matk;
-        Def         = def;
-        Rarity      = CreatureRarity.Boss;   // HP 바가 우두머리 모양(색·크기·재질)이 된다
-        _rewardExp  = rewardExp;
-        _rewardGold = rewardGold;
-        transform.localScale *= scale;
-        DamageFontYOffset    *= scale;
+        public float MaxHp, PhysicalAtk, MagicAtk, Def;
+        public float CritRate, CritDamage, Accuracy, Evasion, PhysicalResist, MagicResist, DmgAmp, AttackDelay;
+        public float Scale, RewardExp;
+        public int   RewardGold;
+    }
+
+    // 능력치·보상·크기를 보스로 바꾼다(모습·효과음·애니메이터만 원래 몬스터 것). 몬스터는 풀링하지 않아 되돌릴 필요가 없다.
+    public void MakeStageBoss(StageBossStats s)
+    {
+        IsStageBoss        = true;
+        MaxHp              = s.MaxHp;
+        Hp                 = s.MaxHp;
+        PhysicalAtk        = s.PhysicalAtk;
+        MagicAtk           = s.MagicAtk;
+        Def                = s.Def;
+        CritRate           = s.CritRate;
+        CritDamage         = s.CritDamage;
+        Accuracy           = s.Accuracy;
+        Evasion            = s.Evasion;
+        PhysicalResist     = s.PhysicalResist;
+        MagicResist        = s.MagicResist;
+        DmgAmp             = s.DmgAmp;
+        MonsterAttackDelay = s.AttackDelay;
+        Rarity             = CreatureRarity.Boss;   // HP 바가 우두머리 모양(색·크기·재질)이 된다
+        _rewardExp         = s.RewardExp;
+        _rewardGold        = s.RewardGold;
+        transform.localScale *= s.Scale;
+        DamageFontYOffset    *= s.Scale;
         gameObject.AddComponent<BossOutline>();
     }
 
@@ -342,6 +359,18 @@ public class MonsterController : CreatureController
         }
         OnDied?.Invoke();
 
+        // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
+        // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.
+        Managers.Game.AddClassProficiency(1);
+
+        // v2 스테이지 보스는 외형만 빌린 '스테이지 수호자'다 — 그 종의 드롭·도감 기록·관심(포획) 판정은 하지 않는다.
+        //  (우두머리 외형은 드롭 확정·관심 40%라, 보스마다 돌리면 포획·재료 경제가 몰래 몇 배로 바뀌었다)
+        if (IsStageBoss)
+        {
+            StartCoroutine(CoDestroyAfterDie(Mathf.Max(0.5f, ClipLength("Die", 0.5f) + 0.1f)));
+            return;
+        }
+
         // 아이템 드롭
         if (_data != null && _data.DropItemId > 0 && Random.value <= _data.DropChance)
         {
@@ -351,10 +380,6 @@ public class MonsterController : CreatureController
 
         // 슬9: 사냥 성공 시 Kill Count 증가 (기록도/분석률 = KillCount/MaxKillCount)
         Managers.MinMon.AddKill(DataId);
-
-        // 전직: 처치당 직업 숙련도 +1 — 만충 시 수도원 [축성]으로 직업 능력 습득.
-        // ponytail: 상승량 고정 1 — 몬스터별 차등은 데이터 엑셀화 후속.
-        Managers.Game.AddClassProficiency(1);
 
         // 슬23~25: 관심 체크 — 사냥 성공 시 InterestRate로 관심 판정 → 포획 가능 창고 저장 + Side UI 알림
         if (_data != null)

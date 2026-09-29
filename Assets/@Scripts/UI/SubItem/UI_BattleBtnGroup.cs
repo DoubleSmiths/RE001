@@ -906,6 +906,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         {
             PlayerController player = Managers.Game.Player;
             if (player == null) yield break;
+            // 쓰러진 뒤 마을로 돌아가기 전(약 1초)에는 다음 몬스터를 내지 않는다
+            if (player.State == State.Dead) { yield return null; continue; }
 
             // Y는 지면 상수 하나. 플레이어 y를 따라가게 두면 플레이어가 어긋난 순간
             //  몬스터까지 같이 떠오른다(실제로 그렇게 둘 다 공중에 떠 있었다).
@@ -951,8 +953,6 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     //    - 처치: 첫 돌파면 크리스탈 + 다음 스테이지로 자동 이동, 이미 돌파한 곳이면 보상만 받고 머문다.
     //    - 시간 초과: 보스가 물러나고 처치 수는 0, 자동 도전이 꺼진다. 쓰러지면 같은 실패(귀환은 PlayerController).
     // ────────────────────────────────────────
-    const string FIELD_BGM = "BGM_BWF";            // UI_GameScene.SwapAreaBtnGroup 의 전투 구역 곡
-    const string BOSS_BGM  = "BGM_Boss";
     const float  STAGE_ADVANCE_DELAY = 1.5f;       // 돌파 알림을 읽을 틈을 두고 다음 스테이지로
     bool _stageAdvancing;
 
@@ -962,7 +962,7 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         if (boss == null)
         {
             Debug.LogWarning($"[Stage] 노드 {nodeId} 에 보스로 세울 몬스터가 없다 — 처치 수만 비운다");
-            Managers.Game.FailStage(nodeId);
+            Managers.Game.FailStage(nodeId, stopAutoChallenge: false);
             yield break;
         }
 
@@ -977,12 +977,13 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         };
 
         Managers.UI.ShowToast(Util.Localize("BossAppearText"));
-        Managers.Sound?.PlayBgm(BOSS_BGM);
+        Managers.Sound?.PlayBgm(BGM_BOSS);
+        PlayerController player = Managers.Game.Player;
+        if (player != null) player.RefillHp();   // 보스전은 가득 찬 체력으로 — 벽은 제한 시간이다
 
         // 전투 정지(도감 등) 중엔 Time.deltaTime 이 0 이라 제한 시간도 멈춘다.
         float limit = Managers.Data.Balance(BalanceKey.BOSS_TIME_LIMIT, 30f);
         float left  = limit;
-        PlayerController player = Managers.Game.Player;
         bool playerDown = false;
         Managers.Game.SetBossFight(true, left, limit);
         while (!killed && left > 0f)
@@ -999,30 +1000,30 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         {
             Managers.Game.FailStage(nodeId);
             Managers.UI.ShowToast(Util.Localize("BossFailText"));
-            if (playerDown) yield break;   // 마을 귀환이 몬스터·HP 바·곡을 정리한다
+            if (boss != null) boss.Retreat();   // 쓰러진 뒤 동행 미니몬이 마저 잡아 보상이 나가지 않게 여기서도 물린다
+            if (playerDown) yield break;         // 마을 귀환이 HP 바·곡을 정리한다
 
-            if (boss != null) boss.Retreat();
             if (bar != null) bar.PlayCloseAnimation();
-            Managers.Sound?.PlayBgm(FIELD_BGM);
+            Managers.Sound?.PlayBgm(BGM_BATTLE);
             yield return new WaitUntil(() => monsterRoot.childCount == 0);
             yield break;
         }
 
-        int crystals = Managers.Game.ClearStage(nodeId);
-        Managers.UI.ShowToast(crystals > 0
+        bool firstClear = Managers.Game.ClearStage(nodeId, out int crystals);
+        Managers.UI.ShowToast(firstClear
             ? string.Format(Util.Localize("StageClearFormat"), crystals)
             : Util.Localize("BossDefeatText"));
-        Managers.Sound?.PlayBgm(FIELD_BGM);
+        Managers.Sound?.PlayBgm(BGM_BATTLE);
         yield return new WaitUntil(() => monsterRoot.childCount == 0);
 
-        // 이미 돌파한 곳에서는 머문다 — 포획·재료 파밍 자리를 멋대로 옮기지 않는다.
-        if (crystals <= 0) yield break;
+        // 다음 스테이지가 아직 안 깬 곳이고 열려 있으면 그리로 간다(개척). 이미 깬 곳으로는 옮기지 않는다 —
+        //  포획·재료 파밍 자리를 멋대로 옮기지 않는다. 레벨이 모자라 머물렀다면 레벨을 채운 뒤의 재돌파 때 간다.
         int next = Managers.Game.NextStage(nodeId);
-        if (next <= 0) yield break;   // 마지막 스테이지
+        if (next <= 0 || Managers.Game.IsStageCleared(next)) yield break;
         string lockReason = Managers.Game.GetTravelLockReason(next);
         if (!string.IsNullOrEmpty(lockReason))
         {
-            Managers.UI.ShowToast(string.Format(Util.Localize("StageNextLockedFormat"), lockReason));
+            if (firstClear) Managers.UI.ShowToast(string.Format(Util.Localize("StageNextLockedFormat"), lockReason));
             yield break;
         }
 
@@ -1030,6 +1031,9 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         var scene = Managers.UI.SceneUI as UI_GameScene;
         if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle)) yield break;
         _stageAdvancing = true;
+        // 여정 팝업으로 들어갈 때와 같은 입장 신호(퀘스트 안내용 버튼 ID)
+        if (Managers.Data.TravelNodeDic.TryGetValue(next, out var nextNode) && !string.IsNullOrEmpty(nextNode.EnterBtnId))
+            Managers.Quest?.CheckButtonClick(nextNode.EnterBtnId);
         Managers.Game.CurrentTravelAreaId = next;   // 스폰 지역은 이 값으로 정해진다 — 전환보다 먼저
         scene.EnterAreaWithFade(AreaType.Battle);
     }

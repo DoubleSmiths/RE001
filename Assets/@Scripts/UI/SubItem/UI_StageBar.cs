@@ -24,12 +24,14 @@ public class UI_StageBar : UI_Base
     static readonly Color NAME_CLEARED = new Color32(0xFF, 0xE0, 0x8A, 0xFF);
     static readonly Color TEXT_READY   = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color FILL_WAITING = new Color(0.4f, 0.4f, 0.4f, 1f);
-    const float BLINK_SPEED = 6f;   // 라디안/초 — 도전 대기 깜빡임
+    const float BLINK_HZ = 2f;      // 도전 대기 깜빡임 — 켜짐/꺼짐 두 단계만(매 프레임 색을 바꾸면 HUD 캔버스가 매번 다시 배칭된다)
 
     CanvasGroup _group;
     int  _shownNode = -1, _shownKills = -1, _shownTenths = -1;
     Mode _shownMode = (Mode)(-1);
     bool _dirty = true;
+    bool _shown = true;
+    bool _blinkOn;
 
     void Awake() => Init();
 
@@ -90,8 +92,12 @@ public class UI_StageBar : UI_Base
 
         int node = g.CurrentTravelAreaId;
         bool show = g.InBattleArea && g.TryGetStageNumber(node, out _, out _);
-        _group.alpha = show ? 1f : 0f;
-        _group.blocksRaycasts = show;
+        if (show != _shown)
+        {
+            _shown = show;
+            _group.alpha = show ? 1f : 0f;
+            _group.blocksRaycasts = show;
+        }
         if (!show) return;
 
         Mode mode  = CurrentMode(g, node);
@@ -110,9 +116,12 @@ public class UI_StageBar : UI_Base
 
         if (mode == Mode.ChallengeReady)
         {
-            var c = TEXT_READY;
-            c.a = 0.55f + 0.45f * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * BLINK_SPEED));
-            GetText((int)Texts.StageCountTxt).color = c;
+            bool on = (int)(Time.unscaledTime * BLINK_HZ * 2f) % 2 == 0;
+            if (on != _blinkOn)
+            {
+                _blinkOn = on;
+                GetText((int)Texts.StageCountTxt).color = on ? TEXT_READY : new Color(TEXT_READY.r, TEXT_READY.g, TEXT_READY.b, 0.45f);
+            }
         }
 
         _shownNode = node; _shownMode = mode; _shownKills = kills; _shownTenths = tenths;

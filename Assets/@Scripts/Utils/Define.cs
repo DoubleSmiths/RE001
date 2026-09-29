@@ -1835,6 +1835,12 @@ public class Define
     public const int SPEED_POTION_ID_MIN = 40000;
     public const int IMPORTANT_ITEM_ID_MIN = 20000;
 
+    #region Sound (구역 배경음 — 주소 = 파일 이름)
+    public const string BGM_VILLAGE = "BGM_Village1";
+    public const string BGM_BATTLE  = "BGM_BWF";
+    public const string BGM_BOSS    = "BGM_Boss";   // v2 스테이지 보스(ADR0030)
+    #endregion
+
     #region BalanceKey (v2 밸런스 — BalanceConfig 표의 키, ADR0030)
     public static class BalanceKey
     {

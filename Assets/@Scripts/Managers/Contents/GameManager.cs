@@ -652,8 +652,14 @@ public class GameManager
     public OfflineReward LastOfflineReward { get; private set; }
 
     /// <summary>마지막 접속 이후 경과분을 정산해 지급한다. Init에서 1회 호출.</summary>
+    // 이번 실행에서 오프라인 정산을 마쳤는가. 마친 뒤부터는 저장할 때마다 기준 시각(LastSeenTicks)을 갱신한다 —
+    //  예전엔 일시정지·종료 때만 기록해서, 앱이 비정상 종료되면 다음 실행이 이미 플레이한 세션 시간을 또 지급했다.
+    //  정산 전에 갱신하면 방금 비운 시간을 지워 버리므로 정산 뒤부터다.
+    bool _offlineSettled;
+
     public OfflineReward ClaimOfflineReward()
     {
+        _offlineSettled = true;
         var result = new OfflineReward();
         if (_gameData.LastSeenTicks <= 0)
         {
@@ -720,6 +726,8 @@ public class GameManager
     public void TickIdle(float deltaTime)
     {
         if (_inBattleArea || Player == null || _gameData == null) return;
+        // 앱 복귀 첫 프레임의 unscaledDeltaTime 엔 백그라운드 시간 전체가 들어온다 — 그 시간은 오프라인 정산 몫이다.
+        deltaTime = Mathf.Min(deltaTime, IDLE_MAX_FRAME_SECONDS);
         if (_gameData.LastBattleAreaId <= 0) return;      // 전투 경험이 없으면 누적 대상 없음
 
         _idleKillProgress += deltaTime / OFFLINE_KILL_INTERVAL * OFFLINE_RATE;
@@ -745,6 +753,7 @@ public class GameManager
     }
 
     const float IDLE_NOTIFY_INTERVAL = 60f;   // 방치 요약 알림 주기(초)
+    const float IDLE_MAX_FRAME_SECONDS = 1f;  // 방치 누적이 한 프레임에 셀 수 있는 최대 시간
     float _idleNotifyTimer;
     int   _batchKills, _batchGold;
     float _batchExp;
@@ -774,21 +783,23 @@ public class GameManager
     /// <summary>방치 요약 알림 (주기적). 인자: 이번 구간 성과, 지역 이름.</summary>
     public event System.Action<OfflineReward, string> OnIdleBatch;
 
-    /// <summary>해당 전투 노드에 출현하는 몬스터의 평균 경험치·골드.</summary>
+    /// <summary>해당 전투 노드에서 한 마리 잡을 때의 기대 경험치·골드 — 실제 스폰 풀(ObjectManager.FieldPool)의 출현 가중 평균.</summary>
+    //  예전엔 출현 확률을 무시한 단순 평균이라 드물게 나오는 희귀·우두머리가 끼인 노드(125곳 중 27곳)에서 기대값의
+    //  약 2배를 줬다 — 방치·오프라인 보상이 "직접 사냥보다 낮게"라는 의도를 넘었고 보스 보상도 부풀었다.
     public bool TryGetAreaAverage(int nodeId, out float avgExp, out float avgGold)
     {
         avgExp = 0f; avgGold = 0f;
-        if (Managers.Data?.TravelNodeDic == null) return false;
-        if (!Managers.Data.TravelNodeDic.TryGetValue(nodeId, out var tn)) return false;
+        var pool = Managers.Object?.FieldPool(nodeId);
+        if (pool == null || pool.Count == 0) return false;
 
-        int n = 0;
-        foreach (var c in Managers.Data.CreatureDic.Values)
+        float weight = 0f;
+        foreach (var c in pool)
         {
-            if (c == null || c.Habitat != tn.Name || c.EncounterRate <= 0f) continue;
-            avgExp += c.TotalExp; avgGold += c.RewardGold; n++;
+            avgExp  += c.TotalExp   * c.EncounterRate;
+            avgGold += c.RewardGold * c.EncounterRate;
+            weight  += c.EncounterRate;
         }
-        if (n == 0) return false;
-        avgExp /= n; avgGold /= n;
+        avgExp /= weight; avgGold /= weight;
         return true;
     }
 
@@ -1294,18 +1305,25 @@ public class GameManager
 
     public void AddStageKill(int nodeId)
     {
-        if (_gameData.StageNodeId != nodeId) { _gameData.StageNodeId = nodeId; _gameData.StageKillCount = 0; }
+        if (_gameData.StageNodeId != nodeId)
+        {
+            // 새 스테이지 — 처치 수는 0부터, 다른 곳에서 꺼진 자동 도전은 다시 켠다(실패는 그 스테이지 이야기다)
+            _gameData.StageNodeId = nodeId;
+            _gameData.StageKillCount = 0;
+            _gameData.BossAutoChallenge = true;
+        }
         if (_gameData.StageKillCount >= StageKillsToBoss) return;   // 보스를 기다리는 동안은 더 세지 않는다
         _gameData.StageKillCount++;
         SaveGame();
         OnStageChanged?.Invoke();
     }
 
-    // 보스 처치 — 첫 돌파면 크리스탈을 주고 그 양을, 이미 돌파한 곳이면 0 을 돌려준다.
-    public int ClearStage(int nodeId)
+    // 보스 처치 — 첫 돌파면 true 와 준 크리스탈(crystals), 이미 돌파한 곳이면 false.
+    public bool ClearStage(int nodeId, out int crystals)
     {
-        int crystals = 0;
-        if (!_gameData.ClearedStages.Contains(nodeId))
+        crystals = 0;
+        bool firstClear = !_gameData.ClearedStages.Contains(nodeId);
+        if (firstClear)
         {
             _gameData.ClearedStages.Add(nodeId);
             crystals = StageFirstClearCrystals(nodeId);
@@ -1314,15 +1332,15 @@ public class GameManager
         _gameData.StageKillCount = 0;
         SaveGame();
         OnStageChanged?.Invoke();
-        return crystals;
+        return firstClear;
     }
 
     // 시간 초과·사망 — 처치 수를 비우고 자동 도전을 끈다(같은 벽에 30초씩 계속 부딪히지 않게).
     //  스테이지 막대를 누르면 다시 켜진다 — 그 사이 훈련으로 강해지라는 신호다.
-    public void FailStage(int nodeId)
+    public void FailStage(int nodeId, bool stopAutoChallenge = true)
     {
         if (_gameData.StageNodeId == nodeId) _gameData.StageKillCount = 0;
-        _gameData.BossAutoChallenge = false;
+        if (stopAutoChallenge) _gameData.BossAutoChallenge = false;
         SaveGame();
         OnStageChanged?.Invoke();
     }
@@ -1360,7 +1378,8 @@ public class GameManager
             foreach (var n in Managers.Data.TravelNodeDic.Values)
                 if (string.Equals(n.AreaType, nameof(AreaType.Battle), StringComparison.OrdinalIgnoreCase)) order.Add(n.Id);
             order.Sort();
-            return _stageOrder = order;
+            if (order.Count > 0) _stageOrder = order;   // 데이터가 오기 전 빈 결과는 굳히지 않는다
+            return order;
         }
     }
 
@@ -1890,6 +1909,7 @@ public class GameManager
         try
         {
             _gameData.SaveVersion = SAVE_VERSION;
+            if (_offlineSettled) _gameData.LastSeenTicks = DateTime.UtcNow.Ticks;
             // 이름을 바꾸기 전에 디스크까지 내린다(fsync). 안 하면 전원이 나갔을 때 방금 이름 바꾼 본 파일과
             //  2~3초 전 .bak 이 둘 다 빈 파일일 수 있다(ext4 지연 할당).
             // 파일에 바로 직렬화한다 — 예전엔 JSON 전체 문자열(UTF-16)과 바이트 배열을 만들어 저장 한 번에 수백 KB 를

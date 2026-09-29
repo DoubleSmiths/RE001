@@ -509,7 +509,7 @@ public class UI_GameScene : UI_Scene
         Managers.Game?.SetInBattleArea(area == AreaType.Battle);
 
         // 지역별 배경음 — 마을=BGM_Village1 / 필드(여정)=BGM_BWF. (잡기 전용 BGM_MinimonCapture는 별도)
-        Managers.Sound?.PlayBgm(area == AreaType.Battle ? "BGM_BWF" : "BGM_Village1");
+        Managers.Sound?.PlayBgm(area == AreaType.Battle ? BGM_BATTLE : BGM_VILLAGE);
 
         Debug.Log($"[UI_GameScene] SwapAreaBtnGroup success. area={area}, prefab={prefabName}");
         return true;
