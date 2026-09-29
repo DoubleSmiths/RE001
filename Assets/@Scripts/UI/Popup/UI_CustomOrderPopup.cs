@@ -156,6 +156,10 @@ public class UI_CustomOrderPopup : UI_Popup
         GetButton((int)Buttons.CustomOrderPotionBtn).gameObject.BindEvent(OnClickPotion);
         GetButton((int)Buttons.CustomOrderSkillBtn).gameObject.BindEvent(OnClickSkill);
 
+        // 제목 — 프리팹에 영어('CUSTOM ORDER')로 박혀 한국어에서도 영어였다
+        var title = GetText((int)Texts.CustomOrderPopupTitle);
+        if (title != null) { title.text = Util.Localize(LocalizeKey.CommissionText); ApplyFont(title, FontType.UI); }
+
         // 물약/기술 탭 라벨 — 프리팹에 박힌 한국어라 영어에서도 그대로 나왔다
         var potionTab = GetText((int)Texts.Txt_CustomOrderPotionBtn_02);
         if (potionTab != null) { potionTab.text = Util.Localize(LocalizeKey.BtmPotionBtnText); ApplyFont(potionTab, FontType.UI); }
