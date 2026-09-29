@@ -56,8 +56,14 @@ public class UI_CreditsPopup : UI_Popup
     }
 
     // 마지막 임무를 마쳤을 때 — 제목을 감사 인사로
+    const float TITLE_MAX_WIDTH = 140f;   // 액자(160) 안쪽 폭
+
     public void ShowAsEnding()
     {
-        GetText((int)Texts.CreditsTitleText).text = Util.Localize("ThanksForPlayingText");
+        var title = GetText((int)Texts.CreditsTitleText);
+        title.text = Util.Localize("ThanksForPlayingText");
+        // 감사 인사는 '크레딧'보다 훨씬 길어 제목 띠 양쪽으로 넘쳤다 — 폭에 맞춰 글자를 줄인다.
+        float w = title.GetPreferredValues(title.text).x;
+        if (w > TITLE_MAX_WIDTH) title.fontSize *= TITLE_MAX_WIDTH / w;
     }
 }
