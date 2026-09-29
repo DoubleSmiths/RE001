@@ -39,12 +39,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 118fe030a3d031c43a10ed10158bdfe2
-    m_Address: BGM_MinimonCapture
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 181fd26773f4bc34c8ee85f3c606293f
     m_Address: WaterWhip_Ori
     m_ReadOnly: 0
@@ -173,6 +167,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 64f58ca01ed882c4db755c7e5b898c09
     m_Address: SFX_CuriousCaution2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 66f4803fc35dfa64fb54e5d7a69676f5
+    m_Address: BGM_MinimonCapture
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

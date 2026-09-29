@@ -16,7 +16,15 @@ public static class SoundAddressableRegistrar
         var settings = AddressableAssetSettingsDefaultObject.Settings;
         if (settings == null) { Debug.LogError("[Sound] Addressable settings 없음"); return; }
 
-        var group = settings.DefaultGroup;
+        // ⚠️ 기본 그룹(DefaultGroup)은 UI 다 — 예전엔 여기에 넣어서 실행하면 사운드 65개가 전부 UI 그룹으로 옮겨졌다.
+        var group = settings.FindGroup("Sound");
+        if (group == null) { Debug.LogError("[Sound] 'Sound' 어드레서블 그룹 없음"); return; }
+
+        // 지워진 파일의 항목을 치운다(형식을 바꿔 다시 구운 BGM 처럼 새 파일로 대체된 경우).
+        foreach (var stale in new System.Collections.Generic.List<UnityEditor.AddressableAssets.Settings.AddressableAssetEntry>(group.entries))
+            if (string.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(stale.guid)) || AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(stale.guid)) == null)
+                group.RemoveAssetEntry(stale);
+
         var guids = AssetDatabase.FindAssets("t:AudioClip", new[] { "Assets/@Resources/Sound" });
         int n = 0;
         foreach (var g in guids)

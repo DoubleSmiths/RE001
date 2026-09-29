@@ -25,7 +25,7 @@
 
 ## 1. 공통 출시 차단 항목
 
-- [x] **포켓몬 음원 2개 제거 확인.** (커밋 `0b3d162a` — 파일·어드레서블 항목 삭제, 잡기 BGM 재생 클립 확인) `BGM_Minion_battle.mp3`와 `SFX_MinimonCatch.mp3`는 ID3 태그상 "Pokemon Red / Junichi Masuda"(트랙 24/51, 27/51)에서 추출한 음원이다. 자체 합성 칩튠 `BGM_MinimonCapture.mp3`와 `SFX_MinimonCaught.mp3`(생성기 `_tools/gen_chiptune.py`)로 교체하는 중이다. 빌드 전에 세 가지를 확인한다.
+- [x] **포켓몬 음원 2개 제거 확인.** (커밋 `0b3d162a` — 파일·어드레서블 항목 삭제, 잡기 BGM 재생 클립 확인) `BGM_Minion_battle.mp3`와 `SFX_MinimonCatch.mp3`는 ID3 태그상 "Pokemon Red / Junichi Masuda"(트랙 24/51, 27/51)에서 추출한 음원이다. 자체 합성 칩튠 `BGM_MinimonCapture.wav`(루프라 무손실 WAV — MP3 는 Unity 가 인코더 지연을 무시해 루프마다 52ms 틈이 났다)와 `SFX_MinimonCaught.mp3`(생성기 `_tools/gen_chiptune.py`)로 교체했다. 빌드 전에 세 가지를 확인한다.
   - 옛 파일 두 개와 그 어드레서블 `Sound` 그룹 항목이 모두 사라졌다.
   - `UI_TamePopup`이 새 파일을 재생한다.
   - 빌드 산출물에 옛 주소가 남아 있지 않다.

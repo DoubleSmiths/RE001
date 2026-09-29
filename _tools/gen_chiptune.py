@@ -26,8 +26,10 @@
   필요: numpy, PATH 의 ffmpeg(libmp3lame). 노이즈 시드 고정 → 결정론적.
 
 ## 루프 주의
-  MP3 는 인코더 지연/패딩을 LAME 헤더로만 알린다. 헤더를 무시하는 디코더에선 루프 지점에 수십 ms 틈이 생긴다.
-  인게임에서 틈이 들리면 master() 의 코덱을 libvorbis, 출력을 .ogg 로 바꿔 다시 굽는다(곡은 샘플 단위로 이어지게 렌더된다).
+  MP3 는 인코더 지연/패딩을 LAME 헤더로만 알린다. **Unity 임포터는 이 헤더를 무시한다** — MP3 로 구운 BGM 이
+  Unity 에서 2,016,000 → 2,018,304 샘플(+52ms)로 늘어 루프마다 틈이 났다(2026-09-29 실측).
+  그래서 루프 BGM 은 무손실 WAV(16bit)로 굽고 압축은 Unity 임포터(Vorbis)에 맡긴다 — 샘플 수가 그대로다.
+  (이 ffmpeg 에는 libvorbis 가 없고 내장 vorbis 인코더는 실험용이다.) 한 번 울리는 징글은 MP3 그대로 둔다.
 """
 import os
 import re
@@ -41,7 +43,7 @@ SR = 44100
 SEED = 20260929
 BASE = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 SOUND = os.path.join(BASE, "Assets", "@Resources", "Sound")
-OUT_BGM = os.path.join(SOUND, "BGM", "BGM_MinimonCapture.mp3")
+OUT_BGM = os.path.join(SOUND, "BGM", "BGM_MinimonCapture.wav")   # 루프 — WAV (위 '루프 주의')
 OUT_SFX = os.path.join(SOUND, "SFX", "UI", "Minimon", "SFX_MinimonCaught.mp3")
 FFMPEG = shutil.which("ffmpeg")
 
@@ -342,8 +344,9 @@ def master(x, target, path):
     """192kbps MP3 로 굽고 디코드한 결과로 다시 재서, target LUFS 와 트루피크 ≤ -1 dBTP 를 둘 다 만족할 때까지 게인을 고친다.
     (MP3 가 고역을 깎아 라우드니스가 조금 변하므로 굽기 전 측정만으로는 맞지 않는다.)"""
     gain = 10 ** ((target - loudness(x)[0]) / 20)
+    codec = ["-c:a", "pcm_s16le"] if path.endswith(".wav") else ["-c:a", "libmp3lame", "-b:a", "192k"]
     for _ in range(5):
-        ff(["-y", *RAW, "-i", "-", "-c:a", "libmp3lame", "-b:a", "192k", path], x * gain)
+        ff(["-y", *RAW, "-i", "-", *codec, path], x * gain)
         y = np.frombuffer(ff(["-i", path, *RAW[:2], "-ac", "1", "-"]).stdout, "<f4")
         assert y.size == x.size, f"{path}: 디코드 길이 {y.size} != {x.size} — 갭리스(LAME) 헤더가 안 먹었다"
         lufs, tp = loudness(y)
