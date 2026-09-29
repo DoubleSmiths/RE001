@@ -506,7 +506,7 @@ public class UI_PotionDetailPopup : UI_Popup
         _spdTextsGroup.SetActive(!isHP);
 
         SetName(Localize(data.Name));
-        _rankText.text = $"{data.Step}{Localize(LocalizeKey.RankText)}";
+        _rankText.text = string.Format(Localize("RankFormat"), data.Step);   // 한 '1단계' / 영 'RANK 1'
         _rankText.color = Color.white;
 
         // 현재 단계에 맞춰 Gauge 채우기 (S37 스펙) — 미리보기 아니므로 초록 없음
@@ -708,7 +708,7 @@ public class UI_PotionDetailPopup : UI_Popup
             _backBtn?.SetActive(false);
             _maxLvlTxt?.gameObject.SetActive(false);
             _descText.gameObject.SetActive(true);
-            if (_switchBtnLabel != null) _switchBtnLabel.text = Localize(LocalizeKey.ItemNeededText);
+            if (_switchBtnLabel != null) _switchBtnLabel.text = Localize("SwitchToItemsText");   // 버튼 폭 30 — 'REQ. ITEMS' 는 넘쳤다
         }
         else
         {
@@ -777,7 +777,7 @@ public class UI_PotionDetailPopup : UI_Popup
 
         // 이름/단계/아이콘은 다음 값으로 교체. 단, 변경부 하이라이트 및 점멸 적용.
         SetName(Localize(next.Name));
-        _rankText.text = $"{next.Step}{Localize(LocalizeKey.RankText)}";
+        _rankText.text = string.Format(Localize("RankFormat"), next.Step);
         _rankText.color = next.Grade != curr.Grade
             ? new Color32(0x00, 0xFF, 0x00, 0xFF)
             : Color.white;

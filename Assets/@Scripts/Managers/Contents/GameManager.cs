@@ -1488,9 +1488,12 @@ public class GameManager
 
     // FailMessage가 비어 있어도 잠금 사유는 반드시 비어있지 않은 문자열이어야 한다
     //  (호출부가 문자열 유무로 해금 여부를 판정하므로).
+    //  FailMessage 는 한국어 문장 데이터(148행 전부 레벨 조건)라, 한국어가 아니면 키 문구로 대신한다 —
+    //  예전엔 영어 모드에서도 잠긴 지역마다 '레벨 13 이상이어야 갈 수 있습니다.'가 붙었다.
     static string LockText(Data.TravelConditionData cond)
     {
-        if (!string.IsNullOrEmpty(cond.FailMessage)) return cond.FailMessage;
+        bool korean = Managers.Game != null && Managers.Game.Language == Define.Language.Korean;
+        if (korean && !string.IsNullOrEmpty(cond.FailMessage)) return cond.FailMessage;
         if (cond.Type == "LEVEL_REQUIRED") return string.Format(Util.Localize(LocalizeKey.RequiredLevelFormat), cond.Value);
         return Util.Localize(LocalizeKey.TravelLockedText);
     }
