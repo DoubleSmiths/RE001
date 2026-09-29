@@ -608,6 +608,7 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.BestiaryButtonText).text = Localize(LocalizeKey.BtmMinimonCodexBtnText);
         // PlayerLv prefix 등 동적 텍스트도 언어 변경 시 재갱신
         RefreshPlayerBar();
+        RefreshQuestFollow(Managers.Quest.CurrentQuestID);   // 추적 재료 이름
     }
 
     public void RefreshBTMButtonGroup()
@@ -844,7 +845,10 @@ public class UI_GameScene : UI_Scene
         int itemId = int.Parse(quest.FollowItemID);
         int current = Managers.Game.GetItemCount(itemId);
 
-        GetText((int)Texts.Quest_NeedItemNameTxt).text = quest.FollowItemName;
+        // 퀘스트 시트의 FollowItemName 은 한국어 표시 문자열이다 — 영어에서도 한글이 나왔다. 아이템 이름 키로 표시.
+        GetText((int)Texts.Quest_NeedItemNameTxt).text = Managers.Data.ItemDic.TryGetValue(itemId, out var followItem)
+            ? Util.Localize(followItem.Name)
+            : quest.FollowItemName;
 
         // 보유 개수 색상: 0=빨강 / 0<보유<필요=주황 / 보유≥필요=초록. (TMP는 lime 등 미지원 → hex)
         // 표기는 (보유/필요) 한 쌍 괄호 + 슬래시, 전체에 색 적용 — 예: (1/2)

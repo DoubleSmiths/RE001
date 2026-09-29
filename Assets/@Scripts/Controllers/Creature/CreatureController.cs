@@ -204,7 +204,7 @@ public abstract class CreatureController : BaseController
                     Managers.Object.ShowCriHitEffect(transform.position);
 
                     Managers.Object.ShowCritEffect(attacker.transform.position);
-                    Vector3 attackerFontPos = attacker.transform.position + Vector3.up * attacker.DamageFontYOffset;
+                    Vector3 attackerFontPos = attacker.transform.position + Vector3.up * (attacker.DamageFontYOffset + CRIT_CALLOUT_RAISE);
                     Managers.Object.ShowCriticalCallout(attackerFontPos, attacker.transform);
                 }
                 else

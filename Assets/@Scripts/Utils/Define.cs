@@ -120,6 +120,10 @@ public class Define
     public const float ABILITY_PERCENT_BASE = 100f;
     public const float MIN_PLAYER_ATTACK_SPEED_MULTIPLIER = 0.1f;
     public const int DOTWEEN_TWEENER_CAPACITY = 7812;
+
+    // 치명타 "Critical!" 알림을 공격자 머리 위로 이만큼 더 올린다(월드 단위).
+    //  근접 거리에서 피격자 쪽 피해 숫자와 같은 높이라 글자가 겹쳤다(영어 'Critical' 은 특히 길다).
+    public const float CRIT_CALLOUT_RAISE = 0.7f;
     public const float BESTIARY_LAYOUT_EPSILON = 0.001f;
     public const int DOTWEEN_SEQUENCE_CAPACITY = 625;
     public const string COMPANION_ABILITY_BORROWED_TEXT = "CompanionAbilityBorrowedText";
