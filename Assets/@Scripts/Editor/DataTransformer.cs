@@ -20,9 +20,7 @@ public class DataTransformer : EditorWindow
     public static void DeleteGameData()
     {
         PlayerPrefs.DeleteAll();
-        string path = Application.persistentDataPath + "/SaveData.json";
-        if (File.Exists(path))
-            File.Delete(path);
+        GameManager.DeleteSaveFiles();   // 본 파일만 지우면 .bak 에서 복구된다
     }
 
 

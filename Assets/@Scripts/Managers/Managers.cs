@@ -77,6 +77,9 @@ public class Managers : MonoBehaviour
         // 방치 누적 — 전투 구역 밖에서도 사냥이 계속되게. 팝업으로 timeScale이 0이 되어도
         // 멈추면 안 되므로 unscaledDeltaTime을 쓴다.
         _game?.TickIdle(Time.unscaledDeltaTime);
+
+        // 세터들이 표시만 해 둔 저장을 주기적으로 한 번에 기록
+        _game?.TickSave(Time.unscaledDeltaTime);
     }
 
     // 방치 보상 기준 시각 기록. 모바일은 종료 대신 일시정지로 빠지는 경우가 많아 둘 다 건다.

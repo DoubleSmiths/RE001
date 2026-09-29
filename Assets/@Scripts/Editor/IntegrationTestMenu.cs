@@ -403,19 +403,17 @@ public static class IntegrationTestMenu
     static void SaveNow()
     {
         if (!RequirePlayMode()) return;
-        Managers.Game.SaveGame();
+        Managers.Game.SaveGameNow();
         Debug.Log($"[Save] {Application.persistentDataPath}/SaveData.json 저장 완료");
     }
 
     [MenuItem("Test/Integration/Save - 세이브 데이터 삭제 (재시작 필요)", false, 501)]
     static void DeleteSave()
     {
-        string path = Application.persistentDataPath + "/SaveData.json";
+        string path = GameManager.SavePath;
         if (System.IO.File.Exists(path))
         {
-            System.IO.File.Delete(path);
-            PlayerPrefs.SetInt("ISFIRST", 1);
-            PlayerPrefs.Save();
+            GameManager.DeleteSaveFiles();   // 본 파일만 지우면 .bak 에서 복구된다
             Debug.Log($"[Save] 삭제 완료: {path}  — Play 다시 누르면 첫 실행 상태");
         }
         else Debug.Log("[Save] 파일 없음");

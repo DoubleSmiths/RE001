@@ -14,6 +14,8 @@ public class InventoryItem
     public int DataId;
     public int Count;
     public bool isNew;
+    // 값은 isNew 필드가 저장한다. 프로퍼티까지 직렬화하면 로드 중에 세터(저장·이벤트)가 돌 수 있다.
+    [JsonIgnore]
     public bool IsNew
     {
         get => isNew;
@@ -50,6 +52,9 @@ public class Equipment
         }
     }
 
+    // ⚠️ 저장 금지 — 데이터표 행을 그대로 돌려주는 get-only 참조라, 저장하면 행 사본이 세이브에 남고
+    //  로드 때 Newtonsoft 가 그 사본을 **공유 EquipmentDic 객체에 덮어써** 밸런스 수정이 되돌아갔다.
+    [JsonIgnore]
     public Data.EquipmentData EquipmentData => Managers.Data.EquipmentDic.TryGetValue(DataId, out var d) ? d : null;
 }
 
@@ -73,6 +78,9 @@ public class MinMonSaveData
 [Serializable]
 public class GameData
 {
+    // 세이브 형식 버전 — 0 = 버전 필드 도입 전 세이브. 기록할 때 GameManager.SAVE_VERSION 으로 채운다.
+    public int SaveVersion = 0;
+
     // 기본
     public string PlayerName = "여행자";
     public int    AdventurerRank = 0;   // 슬7: 모험가 등급 0~99 (0=BLANK)
@@ -363,10 +371,27 @@ public class GameManager
     public List<int> DiscoveredMonsterIds => _gameData.DiscoveredMonsterIds;
 
     // ── 언어 ──
+    //  처음 실행은 기기 언어를 따른다(한국어 기기만 한국어, 나머지는 영어).
+    //  Util.Localize 가 문자열마다 읽으므로 PlayerPrefs(윈도우는 레지스트리)를 매번 읽지 않고 캐시한다.
+    Define.Language? _language;
     public Define.Language Language
     {
-        get => (Define.Language)PlayerPrefs.GetInt("Language", (int)Define.Language.Korean);
-        set { PlayerPrefs.SetInt("Language", (int)value); OnLanguageChanged?.Invoke(); }
+        get
+        {
+            if (_language == null)
+            {
+                var systemDefault = Application.systemLanguage == SystemLanguage.Korean ? Define.Language.Korean : Define.Language.English;
+                _language = (Define.Language)PlayerPrefs.GetInt("Language", (int)systemDefault);
+            }
+            return _language.Value;
+        }
+        set
+        {
+            _language = value;
+            PlayerPrefs.SetInt("Language", (int)value);
+            PlayerPrefs.Save();
+            OnLanguageChanged?.Invoke();
+        }
     }
 
     // ── 퀘스트 ──
@@ -563,7 +588,8 @@ public class GameManager
     // ────────────────────────────────────────
     public void Init()
     {
-        _path = Application.persistentDataPath + "/SaveData.json";
+        FlushSave();    // 타이틀 재진입 등으로 다시 불릴 때 아직 안 쓴 변경을 먼저 기록한다
+        _path = SavePath;
 
         if (LoadGame())
         {
@@ -572,11 +598,11 @@ public class GameManager
             return;
         }
 
-        // 할때마다 처음상태로 하고싶으면 1로 바꿔야하는 것.
-        PlayerPrefs.SetInt("ISFIRST", 0);
+        // 새 게임 — 세이브 파일이 없을 때만 온다(예전의 PlayerPrefs "ISFIRST" 판정은 폐기).
+        FirstSetting();
         EnsurePotionState();
         EnsureStarterEquipment();
-        SaveGame();
+        SaveGameNow();
     }
 
     // ────────────────────────────────────────
@@ -744,7 +770,7 @@ public class GameManager
     public void MarkSeen()
     {
         _gameData.LastSeenTicks = System.DateTime.UtcNow.Ticks;
-        SaveGame();
+        SaveGameNow();  // 일시정지/종료 직전에 불리므로 모아 쓰기를 기다리지 않는다
     }
 
     /// <summary>전투 지역 진입 시 호출 — 방치 보상 정산 기준이 된다.</summary>
@@ -1586,37 +1612,179 @@ public class GameManager
     // ────────────────────────────────────────
     //  세이브 / 로드
     // ────────────────────────────────────────
+    //  저장은 "변경 표시 → 모아서 기록"이다. 세터마다 SaveGame()을 부르는 기존 패턴은 그대로 두고,
+    //  실제 디스크 기록은 FlushSave 가 SAVE_FLUSH_INTERVAL 마다 한 번만 한다.
+    //  (예전엔 처치 1회에 3~6번, 자동물약 슬라이더를 끄는 동안 매 프레임 90KB를 동기 기록했다)
+    //  일시정지·종료(MarkSeen)와 새 게임 생성은 SaveGameNow 로 즉시 기록한다.
+    //
+    //  기록은 임시 파일에 다 쓴 뒤 이름을 바꾸고, 직전 정상본은 .bak 으로 남긴다.
+    //  쓰는 도중 앱이 죽어도 온전한 파일 하나는 반드시 남는다.
+    public const int SAVE_VERSION = 1;
+    const float SAVE_FLUSH_INTERVAL = 2f;
+
+    public static string SavePath => Application.persistentDataPath + "/SaveData.json";
+
+    // 기본값(Auto)은 필드 초기값이 든 리스트에 로드한 값을 **이어 붙인다** —
+    //  ActivationManager(초기값 7칸)가 로드할 때마다 7칸씩 늘어나 해금 표시가 사라졌다.
+    static readonly JsonSerializerSettings s_saveJson = new JsonSerializerSettings
+    {
+        ObjectCreationHandling = ObjectCreationHandling.Replace,
+    };
+
+    bool  _saveDirty;
+    float _saveTimer;
+
     public void SaveGame()
     {
         if (_path == null) return;
-        File.WriteAllText(_path, JsonConvert.SerializeObject(_gameData));
+        _saveDirty = true;
+    }
+
+    public void SaveGameNow()
+    {
+        SaveGame();
+        FlushSave();
+    }
+
+    /// <summary>Managers.Update 에서 매 프레임. 변경이 있으면 주기마다 한 번 기록한다.</summary>
+    public void TickSave(float unscaledDeltaTime)
+    {
+        if (!_saveDirty) return;
+        _saveTimer += unscaledDeltaTime;
+        if (_saveTimer >= SAVE_FLUSH_INTERVAL)
+            FlushSave();
+    }
+
+    public void FlushSave()
+    {
+        _saveTimer = 0f;
+        if (_path == null || !_saveDirty) return;
+        _saveDirty = false;
+
+        string tmp = _path + ".tmp", bak = _path + ".bak";
+        try
+        {
+            _gameData.SaveVersion = SAVE_VERSION;
+            File.WriteAllText(tmp, JsonConvert.SerializeObject(_gameData, s_saveJson));
+            if (File.Exists(_path))
+            {
+                if (File.Exists(bak)) File.Delete(bak);
+                File.Move(_path, bak);
+            }
+            File.Move(tmp, _path);
+        }
+        catch (Exception e)
+        {
+            // 저장 실패가 게임 진행(보상 지급 등)을 끊으면 안 된다 — 기록하고 다음 주기에 다시 시도.
+            _saveDirty = true;
+            Debug.LogError($"[Save] 저장 실패: {e.Message}");
+        }
+    }
+
+    /// <summary>세이브 파일 일체 삭제(에디터 초기화 메뉴용). 손상 격리본은 남긴다.</summary>
+    public static void DeleteSaveFiles()
+    {
+        foreach (string f in new[] { SavePath, SavePath + ".tmp", SavePath + ".bak" })
+            if (File.Exists(f)) File.Delete(f);
     }
 
     public bool LoadGame()
     {
-        if (PlayerPrefs.GetInt("ISFIRST", 1) == 1)
+        // 본 파일 → (본 파일이 이름 바꾸기 도중 사라졌다면) 임시 파일 → 직전 백업 순으로 읽는다.
+        //  읽을 수 없는 파일은 지우지 않고 옆으로 치운다 — 예전엔 예외가 그대로 새어 나가
+        //  빈 데이터가 손상된 세이브를 덮어썼다.
+        GameData data = null;
+        foreach (string candidate in new[] { _path, _path + ".tmp", _path + ".bak" })
         {
-            string path = Application.persistentDataPath + "/SaveData.json";
-            if (File.Exists(path))
-                File.Delete(path);
-
-            FirstSetting();
-
-            return false;
+            if (!File.Exists(candidate)) continue;
+            try
+            {
+                data = JsonConvert.DeserializeObject<GameData>(File.ReadAllText(candidate), s_saveJson);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Save] 읽기 실패 {Path.GetFileName(candidate)}: {e.Message}");
+                data = null;
+            }
+            if (data != null)
+            {
+                if (candidate != _path) Debug.LogWarning($"[Save] {Path.GetFileName(candidate)} 에서 복구");
+                break;
+            }
+            if (!candidate.EndsWith(".tmp")) QuarantineSave(candidate);
         }
-
-        if (!File.Exists(_path))
+        if (data == null)
             return false;
 
-        GameData data = JsonConvert.DeserializeObject<GameData>(File.ReadAllText(_path));
-        if (data != null)
-            _gameData = data;
-
+        _gameData = data;
+        NormalizeSave();
         EnsurePotionState();
         RebuildEquippedFromOwned();   // 장착 딕셔너리를 보유 리스트 참조로 재구성
         Managers.Ability.RestoreMinionRewards();
 
         return true;
+    }
+
+    static void QuarantineSave(string path)
+    {
+        try
+        {
+            string dest = $"{path}.corrupt-{DateTime.Now:yyyyMMdd-HHmmss}";
+            File.Move(path, dest);
+            Debug.LogError($"[Save] 읽을 수 없는 세이브를 보관: {Path.GetFileName(dest)}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[Save] 손상 세이브 보관 실패: {e.Message}");
+        }
+    }
+
+    // 옛 세이브·손으로 고친 세이브의 모양을 현재 코드가 기대하는 모양으로 맞춘다. 여러 번 돌려도 같다.
+    void NormalizeSave()
+    {
+        var d = _gameData;
+        if (d.SaveVersion > SAVE_VERSION)
+            Debug.LogWarning($"[Save] 더 새 버전의 세이브({d.SaveVersion} > {SAVE_VERSION})");
+
+        // v0: 로드마다 이어 붙어 늘어난 칸 정리 — 마지막 세션이 읽고 쓴 앞쪽 칸만 남긴다.
+        int keys = Enum.GetValues(typeof(ActivationKey)).Length;
+        d.ActivationManager ??= new List<int>();
+        if (d.ActivationManager.Count > keys) d.ActivationManager.RemoveRange(keys, d.ActivationManager.Count - keys);
+        while (d.ActivationManager.Count < keys) d.ActivationManager.Add(0);
+
+        // 명시적 null 과 길이가 모자란 고정 배열(인덱스로 접근) 보정
+        d.PlayerName           ??= "";
+        d.OwnedEquipments      ??= new List<Equipment>();
+        d.Inventory            ??= new List<InventoryItem>();
+        d.OwnedMinMons         ??= new List<MinMonSaveData>();
+        d.InterestedMinMons    ??= new List<int>();
+        d.MaxStarGranted       ??= new List<int>();
+        d.LearnedAbilities     ??= new List<int>();
+        d.EquippedAbilities    ??= new List<int>();
+        d.AbilityLevels        ??= new Dictionary<int, int>();
+        d.DiscoveredMonsterIds ??= new List<int>();
+        d.MetQuestConditions   ??= new List<int>();
+        d.UnlockedBtnIds       ??= new List<string>();
+        d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
+        d.StatInvest            = Fit(d.StatInvest, 4);
+        d.BestiarySkillGrade    = Fit(d.BestiarySkillGrade, 4);
+        d.BestiarySkillNew      = Fit(d.BestiarySkillNew, 4);
+        d.BestiarySkillUnlocked = Fit(d.BestiarySkillUnlocked, 4);
+        d.OwnedEquipments.RemoveAll(e => e == null);
+        d.Inventory.RemoveAll(i => i == null);
+        d.OwnedMinMons.RemoveAll(m => m == null);
+
+        // 레벨 상한 도입 전에 상한을 넘긴 세이브(스탯 폴백 구간) 복구
+        int maxLevel = Managers.Data != null ? Managers.Data.MaxPlayerLevel : int.MaxValue;
+        d.Level = Mathf.Clamp(d.Level, 1, maxLevel);
+    }
+
+    static T[] Fit<T>(T[] arr, int length)
+    {
+        if (arr != null && arr.Length >= length) return arr;
+        var fitted = new T[length];
+        if (arr != null) Array.Copy(arr, fitted, arr.Length);
+        return fitted;
     }
 
     public void FirstSetting()

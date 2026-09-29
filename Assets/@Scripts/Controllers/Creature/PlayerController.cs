@@ -463,7 +463,10 @@ public class PlayerController : CreatureController
 
     void CheckLevelUp()
     {
-        while (Managers.Game.Exp >= _expRequired)
+        // 상한(LevelData 마지막 레벨)에서 멈춘다 — 넘어가면 레벨 조회가 실패해 폴백 공식으로 떨어지고
+        //  Lv301 에서 최대 HP 가 22,780 → 6,100 으로 곤두박질쳤다. 상한에선 경험치 바를 가득 찬 채로 둔다.
+        int maxLevel = Managers.Data != null ? Managers.Data.MaxPlayerLevel : int.MaxValue;
+        while (Managers.Game.Level < maxLevel && Managers.Game.Exp >= _expRequired)
         {
             Managers.Game.Exp  -= _expRequired;
             Managers.Game.Level++;
@@ -478,6 +481,9 @@ public class PlayerController : CreatureController
             // _expRequired는 위 RefreshStats()가 LevelData(없으면 fallback 식)로 이미 갱신함.
             // 여기서 또 ×1.2 하면 세션 내 연속 레벨업과 재접속 시 요구 경험치가 달라지는 버그가 있었음.
         }
+
+        if (Managers.Game.Level >= maxLevel && Managers.Game.Exp > _expRequired)
+            Managers.Game.Exp = _expRequired;
     }
 
     /// <summary>그 레벨에 도달하며 받는 능력점수를 지급한다.

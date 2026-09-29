@@ -27,6 +27,8 @@ public class DataManager
     public Dictionary<int, ShopItemData>      ShopItemDic       { get; private set; } = new Dictionary<int, ShopItemData>();
     public Dictionary<int, LevelData>          LevelDic          { get; private set; } = new Dictionary<int, LevelData>();
     public Dictionary<int, PlayerStatusData>   PlayerStatusDic   { get; private set; } = new Dictionary<int, PlayerStatusData>();
+    // 레벨 상한 = LevelData 의 마지막 레벨. 데이터가 없으면 상한 없음.
+    public int MaxPlayerLevel { get; private set; } = int.MaxValue;
     public Dictionary<string, DialogueScriptGroup>       DialogueScriptDic { get; private set; } = new Dictionary<string, DialogueScriptGroup>();
     public Dictionary<string, LocalizationEntry>         LocalizationDic   { get; private set; } = new Dictionary<string, LocalizationEntry>();
     public Dictionary<int, QuestData>                QuestDic          { get; private set; } = new Dictionary<int, QuestData>();
@@ -57,6 +59,12 @@ public class DataManager
         ShopItemDic       = LoadJson<ShopItemDataLoader,      int,    ShopItemData>       ("ShopItemData").MakeDict();
         //CraftRecipeDic    = LoadJson<CraftRecipeDataLoader,   int,    CraftRecipeData>    ("CraftRecipeData").MakeDict();
         LevelDic          = LoadJson<LevelDataLoader,         int,    LevelData>          ("LevelData").MakeDict();
+        MaxPlayerLevel    = int.MaxValue;
+        if (LevelDic.Count > 0)
+        {
+            MaxPlayerLevel = 0;
+            foreach (int lv in LevelDic.Keys) MaxPlayerLevel = Mathf.Max(MaxPlayerLevel, lv);
+        }
         PlayerStatusDic   = LoadJson<PlayerStatusDataLoader,  int,    PlayerStatusData>   ("PlayerStatusData").MakeDict();
         DialogueScriptDic = LoadJson<DialogueScriptLoader,    string, DialogueScriptGroup>("DialogueScriptData").MakeDict();
         LocalizationDic   = LoadJson<LocalizationLoader,      string, LocalizationEntry>  ("LocalizationData").MakeDict();

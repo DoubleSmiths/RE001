@@ -187,7 +187,7 @@ public static class FullSystemAudit
         int invBefore = g.Inventory.Count;
         int abilBefore = g.LearnedAbilities.Count;
 
-        g.SaveGame();
+        g.SaveGameNow();
         yield return null;
 
         string path = Application.persistentDataPath + "/SaveData.json";
