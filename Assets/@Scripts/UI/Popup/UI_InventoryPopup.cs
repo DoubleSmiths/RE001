@@ -84,6 +84,10 @@ public class UI_InventoryPopup : UI_Popup
         RefreshImportantBagNewTxt();
         Managers.Game.OnLanguageChanged += SetText;   // 언어 변경 시 귀중품 라벨 재적용
 
+        // 제목·정리 버튼은 언어 폰트를 따른다. 등록은 한 번만 — 이후 언어 변경 때 UI_Base 가 폰트를 다시 입힌다.
+        ApplyFont(GetText((int)Texts.title), Define.FontType.UI);
+        ApplyFont(GetButton((int)Buttons.InventorySortBtn)?.GetComponentInChildren<TMPro.TMP_Text>(true), Define.FontType.UI);
+
         SetInfo();
         SetText();
 
@@ -147,11 +151,11 @@ public class UI_InventoryPopup : UI_Popup
     public override void OnDestroy()
     {
         base.OnDestroy();
+        if (Managers.Game == null) return;   // 가방을 연 채 종료 — 매니저가 먼저 정리됐다
 
         // 가방을 닫는 순간 — 직접 확인 안 한 것 포함 모든 NEW 표시 해제(가방 버튼/내부/귀중품).
         Managers.Game.ClearAllItemNew();
 
-        if (Managers.Game == null) return;   // 가방을 연 채 종료 — 매니저가 먼저 정리됐다
         Managers.Game.OnInventoryNewChanged -= RefreshImportantBagNewTxt;
         Managers.Game.OnLanguageChanged -= SetText;
     }
@@ -165,9 +169,9 @@ public class UI_InventoryPopup : UI_Popup
 
         // 제목('소지품')·정리 버튼 — 프리팹에 박힌 한국어라 영어에서도 그대로 나왔다
         var title = GetText((int)Texts.title);
-        if (title != null) { title.text = Util.Localize("InventoryTitleText"); ApplyFont(title, Define.FontType.UI); }
+        if (title != null) title.text = Util.Localize("InventoryTitleText");
         var sortTxt = GetButton((int)Buttons.InventorySortBtn)?.GetComponentInChildren<TMPro.TMP_Text>(true);
-        if (sortTxt != null) { sortTxt.text = Util.Localize("InventorySortText"); ApplyFont(sortTxt, Define.FontType.UI); }
+        if (sortTxt != null) sortTxt.text = Util.Localize("InventorySortText");
     }
 
     private ItemData GetItemData(int dataId)

@@ -242,9 +242,24 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
     void OnLanguageChanged()
     {
         RefreshStaticTexts();
-        RefreshReturnButtonText(false);
+        RefreshReturnButtonText(_returnConfirming);   // 귀환 확인 대기 중이면 확인 문구를 유지한다
         var travelTmp = GetText((int)Texts.TravelButtonText);
         if (travelTmp != null) travelTmp.text = Util.Localize(LocalizeKey.TravelBtnText);
+        RefreshComboLabels();
+    }
+
+    // 콤보 이름·버프 라벨은 랭크가 바뀔 때만 채워져 언어를 바꿔도 콤보가 끝날 때까지 예전 언어로 남았다.
+    //  지금 보이는 것만 다시 쓴다(끊겨서 비운 칸은 그대로, 랭크업 연출은 다시 틀지 않는다).
+    void RefreshComboLabels()
+    {
+        var stage = Managers.Combo?.GetCurrentStage();
+        if (stage == null) return;
+        var title = GetText((int)Texts.ComboTitle);
+        if (title != null && title.text != "") title.text = Util.Localize(stage.NameKey);
+        var asLbl = GetText((int)Texts.ASBoostText);
+        if (asLbl != null && asLbl.text != "") asLbl.text = Util.Localize(LocalizeKey.AttackSpeedText);
+        var dmgLbl = GetText((int)Texts.DMGBoostText);
+        if (dmgLbl != null && dmgLbl.text != "") dmgLbl.text = Util.Localize(LocalizeKey.DmgBoostText);
     }
 
     static bool IsDynamicText(Texts t)

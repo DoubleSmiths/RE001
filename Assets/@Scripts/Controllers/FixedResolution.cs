@@ -43,6 +43,7 @@ public class FixedResolution : MonoBehaviour
 
     // 화면 크기가 바뀌었거나, 다른 컴포넌트가 rect 를 덮어썼으면 다시 적용한다.
     //  GameScene 메인 카메라의 PixelPerfectCamera 가 시작할 때 rect 를 전체 화면으로 되돌려 여백이 사라졌다.
+    //  ⚠️ 그 컴포넌트는 꺼 둔 채 저장돼 있다. 켜면 매 프레임 렌더 직전(Update 뒤)에 rect 를 되돌려 여백이 사라진다.
     void Update()
     {
         if (Screen.width != _width || Screen.height != _height || Screen.safeArea != _safe || _camera.rect != _rect)
