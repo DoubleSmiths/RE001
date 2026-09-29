@@ -11,9 +11,12 @@ if "--allow-async" in args:
     options.append("--allow-async")
 code = pathlib.Path(args[0]).read_text(encoding="utf-8-sig") if args else sys.stdin.read()
 cli = pathlib.Path.home() / "AppData/Local/unity-cli/unity-cli.exe"
+# stdin 이 터미널이 아니면 unity-cli 는 인자 대신 stdin 을 읽는다 — 코드를 stdin 으로 넘긴다
+#  (인자로 넘기면 상속된 stdin 을 기다리며 멈추거나 빈 응답이 났다).
 result = subprocess.run(
-    [str(cli), "exec", code, "--usings", "System.Linq", "--project",
+    [str(cli), "exec", "--usings", "System.Linq", "--project",
      str(pathlib.Path(__file__).resolve().parent.parent), "--timeout", "30000"] + options,
+    input=code.encode("utf-8"),
     capture_output=True,
 )
 sys.stdout.write(result.stdout.decode("utf-8", errors="replace"))

@@ -1,7 +1,7 @@
 """스토어 스크린샷 합성 — 게임 캡처(세로)를 스토어 규격에 맞춰 캡션과 함께 배치한다.
 
   입력: Documents/Store/Screenshots/raw/<ko|en>/<이름>.png  (게임뷰 1080x2340 세로 캡처, 게임 언어별)
-  출력: Documents/Store/Screenshots/play_<언어>_<이름>.png   1080x2160 (구글 플레이: 긴 변 ≤ 짧은 변 x2)
+  출력: Documents/Store/Screenshots/play_<언어>_<이름>.png   1080x1920 (구글 플레이 권장 9:16 — 추천 노출 자격)
         Documents/Store/Screenshots/steam_<언어>_<이름>.png  1920x1080 (스팀: 16:9)
 
   캡션은 CAPTIONS 에서 이름으로 찾는다(없으면 캡션 없이 배치).
@@ -89,9 +89,9 @@ def fit_caption(text, max_w):
 
 
 def play(shot, caption, lang):
-    W, H = 1080, 2160
+    W, H = 1080, 1920
     canvas = backdrop((W, H))
-    top = 260
+    top = 220
     fr = framed(shot, H - top - 40)
     if fr.width > W - 40:
         fr = framed(shot.resize((W - 52, round(shot.height * (W - 52) / shot.width))), round((H - top - 40) * 0.98))

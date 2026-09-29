@@ -49,14 +49,16 @@ UPM이 `path ... Received undefined`로 실패하면 패키지 캐시를 지우�
 unity-cli editor refresh --compile          # 스크립트 재컴파일, 완료까지 대기
 unity-cli console --type error --lines 30   # 컴파일/런타임 에러 확인  ← 컴파일 검증의 기본 경로
 unity-cli menu "Tools/ParseAllLocal (로컬 전체 파싱)"   # 에디터 메뉴 실행
-unity-cli exec "return Managers.Data.SkillDic.Count;"  # C# 즉시 실행 (top-level 문, 인자 방식만)
+printf '%s' "return Managers.Data.SkillDic.Count;" | unity-cli exec  # C# 즉시 실행 (top-level 문)
 unity-cli editor play --wait                # 플레이 모드 진입
 unity-cli screenshot --view game            # 게임뷰 캡처
 ```
 
 - **Unity Editor가 켜져 있어야 한다.** 꺼져 있으면 `Error: no Unity instances running` → 사용자에게 에디터 실행을 요청한다. 일상 작업에서 임의로 batchmode를 돌리지 않는다(에디터를 닫아야 해서 작업 흐름이 깨진다).
 - 코드 수정 후에는 `editor refresh --compile` → `console --type error` 순으로 반드시 확인. 정독만으로 완료를 주장하지 않는다.
-- `exec` 는 **인자 방식만 동작한다** — stdin 파이프도 `--file` 플래그도 없다.
+- `exec` 는 **stdin 이 터미널이 아니면(에이전트 셸) 인자를 무시하고 stdin 을 읽는다** — 인자로 넘기면 멈추거나 빈 응답이 난다.
+  코드를 파이프로 넘기거나(`printf '%s' "$code" | unity-cli exec`) 인자를 쓸 땐 `< /dev/null` 을 붙인다. `--file` 플래그는 없다.
+  비동기(코루틴) 코드는 `--allow-async` 가 필요하다.
 
 ### 플레이어 빌드는 batchmode로 (`Assets/@Scripts/Editor/BuildScript.cs`)
 
