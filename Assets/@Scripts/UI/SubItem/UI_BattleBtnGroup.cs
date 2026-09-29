@@ -917,7 +917,8 @@ public class UI_BattleBtnGroup : UI_AreaBtnGroup
         //  "fake null"이라 널 조건 연산자를 그대로 통과하고, 그 뒤 접근에서
         //  MissingReferenceException이 난다(씬 전환·플레이 종료 시 실제로 발생했다).
         //  Unity가 오버로드한 == 비교만이 파괴 여부까지 판정한다.
-        var player = Managers.Game.Player;
+        //  Managers.Game 은 일반 C# 객체라 ?. 가 안전하다 — 종료 중(@Managers 파괴 후)엔 null 이다.
+        var player = Managers.Game?.Player;
         if (player != null)
             player.StopBattle();
 

@@ -151,6 +151,7 @@ public class UI_InventoryPopup : UI_Popup
         // 가방을 닫는 순간 — 직접 확인 안 한 것 포함 모든 NEW 표시 해제(가방 버튼/내부/귀중품).
         Managers.Game.ClearAllItemNew();
 
+        if (Managers.Game == null) return;   // 가방을 연 채 종료 — 매니저가 먼저 정리됐다
         Managers.Game.OnInventoryNewChanged -= RefreshImportantBagNewTxt;
         Managers.Game.OnLanguageChanged -= SetText;
     }
