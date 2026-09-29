@@ -68,7 +68,7 @@
 #### IP·권리 위험 (사용자 확인 필요)
 - 포획 화면: 주인공이 쓴 **빨간·흰색 모자**와 "앗! 야생의 ~이(가) 나타났다!" 연출이 포켓몬스터 트레이너/조우 화면을 닮았다.
   음원은 교체했지만 모자 스프라이트는 사용자 판단 전까지 두었다(스토어 이미지에서는 제외).
-- 출처 미상 에셋(BGM 5곡·효과음 다수·UI 팩·일부 스프라이트)은 `Documents/Store/Third_Party_Notices.md` 에 UNKNOWN 으로 표시.
+- 출처 미상 에셋(BGM 5곡·효과음 다수·UI 팩·일부 스프라이트)은 `Documents/Store/Third_Party_Notices.md` 에 UNKNOWN 으로 표시. (BGM 은 이후 `game/remake-v2` 에서 자작곡 4곡으로 교체)
 
 ### 2026-09-29 오후 (Claude) — 빌드 실측·리뷰 반영
 
@@ -132,7 +132,7 @@ Windows 실행: 타이틀 → 시작 → 여정 → 탐험 → 산들바람 숲 
 1. **이름·회사·패키지 확정**(현재 임시 `Minimon Quest` / `DoubleSmiths` / `com.doublesmiths.minimonquest`) — 구글 플레이 패키지명은 출시 후 변경 불가. 상표 검색.
 2. **판매 방식 확정**(현재 유료·인앱 없음 가정). 무료+광고/인앱이면 SDK·개인정보처리방침·데이터 보안 답변이 바뀐다.
 3. **업로드 키 생성**: `powershell -File _tools/make_upload_keystore.ps1` → 환경변수 4개 → `BuildScript.AndroidBundle -versionCode N`.
-4. **권리 확인**(`Documents/Store/Third_Party_Notices.md` 의 UNKNOWN/VERIFY): 출처 미상 BGM 5곡·SFX 51개·UI 팩·폰트(Ria Sans 등),
+4. **권리 확인**(`Documents/Store/Third_Party_Notices.md` 의 UNKNOWN/VERIFY): ~~출처 미상 BGM 5곡~~(v2 에서 자작곡으로 교체)·SFX 51개·UI 팩·폰트(Ria Sans 등),
    SmartSound FX·Medieval Fantasy Audio Bundle 구매 영수증, AetherForge 이용약관 보관. 포획 화면의 "야생의 ~이(가) 나타났다!" 연출도 검토.
 5. **실기기 검증**(Android): 터치·뒤로가기·노치·백그라운드 복귀·발열/프레임·장시간 플레이. 스팀 덱은 선택.
 6. **스토어 등록**: `Documents/Store/Release_Checklist.md` 순서대로(플레이 비공개 테스트 12명×14일, 개인정보처리방침 URL 게시,
