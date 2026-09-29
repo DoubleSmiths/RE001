@@ -139,10 +139,16 @@ public class Managers : MonoBehaviour
         if (reward.Kills > 0) scene.ShowOfflineReward(reward);
     }
 
+    // 종료 정리(OnDestroy)가 시작되기 전에 불린다(에디터에선 플레이 종료). 종료 플래그를 여기서 세워야
+    //  전투 그룹 OnDestroy → 던전·시련·심연 Finish → 결과 토스트가 닫히는 씬에 새 오브젝트를 만들지 않는다.
     void OnApplicationQuit()
     {
-        if (s_instance == this) _game?.MarkSeen();
+        if (s_instance != this) return;
+        s_shuttingDown = true;
+        _game?.MarkSeen();
     }
+
+    public static bool IsShuttingDown => s_shuttingDown;
 
     #region Core
     DataManager     _data     = new DataManager();

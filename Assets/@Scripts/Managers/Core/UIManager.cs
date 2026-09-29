@@ -221,6 +221,7 @@ public class UIManager
 
     public UI_Toast ShowToast(string msg)
     {
+        if (Managers.IsShuttingDown) return null;   // 종료 정리 중(OnDestroy → Finish 결과 알림) — 닫히는 씬에 새로 만들지 않는다
         string name = typeof(UI_Toast).Name;
         GameObject go = Managers.Resource.Instantiate($"{name}", pooling: false);
         UI_Toast popup = Util.GetOrAddComponent<UI_Toast>(go);
@@ -228,6 +229,11 @@ public class UIManager
         // Screen Space - Camera 인데 카메라가 비어 있으면 Overlay 처럼 화면 전체(레터박스 여백 포함)에 그려진다.
         var canvas = go.GetComponent<Canvas>();
         if (canvas != null && canvas.worldCamera == null) canvas.worldCamera = Camera.main;
+        // 토스트는 HUD·팝업 위 — 프리팹 값(100) 그대로라 화면 UI(1001)·큰 팝업(장비 등)에 가려졌다.
+        //  알림은 누르는 것이 아니므로 레이캐스트는 끈다(위로 올라와도 아래 탭 공격·버튼을 막지 않게).
+        if (canvas != null) canvas.sortingOrder = ++_toastOrder;
+        var raycaster = go.GetComponent<GraphicRaycaster>();
+        if (raycaster != null) raycaster.enabled = false;
         popup.SetInfo(msg);
         _toasts.Add(popup);
         go.transform.SetParent(Root.transform);

@@ -86,6 +86,9 @@ public class UI_Toast : UI_Base
             tmp.fontSizeMax = tmp.fontSize;
             tmp.fontSizeMin = tmp.fontSize * TOAST_MIN_FONT_RATIO;
             tmp.enableAutoSizing = true;
+            // 글자 칸의 ContentSizeFitter(가로 = 선호 크기)가 칸을 글자만큼 늘려 자동 크기가 한 번도 줄이지 못했다 — 띠 폭에 묶는다(넘치면 두 줄)
+            var fitter = tmp.GetComponent<UnityEngine.UI.ContentSizeFitter>();
+            if (fitter != null) fitter.enabled = false;
         }
         tmp.text = msg;
         Refresh();
