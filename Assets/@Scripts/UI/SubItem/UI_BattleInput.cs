@@ -7,6 +7,7 @@ using static Define;
 //  · 전투 화면(BattleTapArea)을 누르면 벤다. PC 는 Space·Z 도.
 //  · 방패 버튼(BattleGuardBtn)을 누르면 막는다(가드·패링, ADR0030). PC 는 X·Shift 도. 재사용 대기는 어둡게 덮어 보여 준다.
 //  · AUTO 버튼(BattleAutoBtn)으로 자동 전투를 켜고 끈다(GameData.AutoBattle) — 켜 두면 예전처럼 알아서 벤다.
+//    첫 스테이지 돌파(첫 보스) 전에는 숨긴다(ADR0038) — 돌파하면 GameManager.ClearStage 가 열고 켠다.
 //  세 칸은 형제다 — 버튼이 탭 칸의 자식이면 누름 이벤트가 탭 칸까지 올라가 방패 한 번이 막기+공격이 된다.
 //  HUD(스테이지 막대·퀘스트·HP 바·버프)는 이 묶음보다 뒤 형제라 위에 그려지고 먼저 눌린다.
 //  마을에서는 버튼을 숨기고 탭 칸의 레이캐스트를 끈다. 첫 공격 예고 '!'에 '방패로 막기' 도움말.
@@ -90,7 +91,7 @@ public class UI_BattleInput : UI_Base
         _shown = battle;
         _tapHintAt = float.MaxValue;   // 다음 전투의 첫 맞붙음부터 다시
         GetImage((int)Images.BattleTapArea).raycastTarget = battle;
-        GetObject((int)GameObjects.BattleAutoBtn).SetActive(battle);
+        GetObject((int)GameObjects.BattleAutoBtn).SetActive(battle && Managers.Game != null && Managers.Game.AutoUnlocked);
         GetObject((int)GameObjects.BattleGuardBtn).SetActive(battle);
     }
 
@@ -113,7 +114,7 @@ public class UI_BattleInput : UI_Base
     void ToggleAuto()
     {
         var g = Managers.Game;
-        if (g == null) return;
+        if (g == null || !g.AutoUnlocked) return;
         g.AutoBattle = !g.AutoBattle;
         Managers.UI.ShowToast(Util.Localize(g.AutoBattle ? "AutoBattleOnText" : "AutoBattleOffText"));
     }
@@ -121,6 +122,7 @@ public class UI_BattleInput : UI_Base
     void RefreshAuto()
     {
         bool on = Managers.Game != null && Managers.Game.AutoBattle;
+        GetObject((int)GameObjects.BattleAutoBtn).SetActive(_shown && Managers.Game != null && Managers.Game.AutoUnlocked);   // 해금되는 순간(ADR0038) 바로 보인다
         GetImage((int)Images.BattleAutoBtn).color = on ? Color.white : AUTO_OFF_TINT;
         var txt = GetText((int)Texts.BattleAutoTxt);
         txt.text  = Util.Localize("AutoBattleText");

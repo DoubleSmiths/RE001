@@ -256,6 +256,7 @@ LITERAL_KEYS = [
     # v2 탭 공격(ADR0033) — UI_BattleInput
     ('TapHintText', '화면을 누르면 공격! 연타로 몰아치자', 'TAP TO ATTACK! KEEP TAPPING!'),
     ('AutoBattleText', 'AUTO', 'AUTO'),
+    ('AutoUnlockText', '자동 전투가 열렸다! 이제 알아서 싸운다 · AUTO 로 끄고 켠다', 'AUTO BATTLE UNLOCKED! TOGGLE IT WITH AUTO'),
     ('AutoBattleOnText', '자동 전투 켬 - 누르면 더 빨리 벤다', 'AUTO ON - TAP TO STRIKE FASTER'),
     ('AutoBattleOffText', '자동 전투 끔 - 눌러서 공격', 'AUTO OFF - TAP TO ATTACK'),
     # v2 요일 던전(ADR0034) — UI_MissionPopup 던전 탭 / UI_StageBar / DungeonManager / MissionData

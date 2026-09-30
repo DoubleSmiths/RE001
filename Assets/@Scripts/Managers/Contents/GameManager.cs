@@ -174,6 +174,8 @@ public class GameData
     // v2 탭 공격(ADR0033): 자동 전투 켬 여부, 첫 전투 '눌러서 공격' 도움말을 보여 줬는가
     public bool      AutoBattle;
     public bool      TapHintSeen;
+    // AUTO 해금(ADR0038) — 첫 스테이지 돌파(첫 보스) 뒤에 AUTO 버튼이 열리고 켜진다
+    public bool      AutoUnlocked;
     // v2 미션·출석
     public MissionSaveData Missions = new MissionSaveData();
     // v2 상점·광고·월정액
@@ -1425,11 +1427,19 @@ public class GameManager
             crystals = StageFirstClearCrystals(nodeId);
             Crystal += crystals;
         }
+        // AUTO 해금(ADR0038) — 첫 보스까지는 눌러서 싸우며 손맛을 익히고, 그 뒤로는 알아서 싸운다(끄고 켜기는 AUTO 버튼)
+        bool autoUnlock = firstClear && !_gameData.AutoUnlocked;
+        if (autoUnlock) _gameData.AutoUnlocked = true;
         _gameData.StageKillCount = 0;
         SaveGame();
         OnStageChanged?.Invoke();
         Managers.Mission?.Notify(MissionEvent.BossClear);
         if (firstClear) Managers.Mission?.Notify(MissionEvent.NewStage);
+        if (autoUnlock)
+        {
+            AutoBattle = true;   // OnAutoBattleChanged → 전투 입력이 AUTO 버튼을 보인다
+            Managers.UI?.ShowToast(Util.Localize("AutoUnlockText"));
+        }
         return firstClear;
     }
 
@@ -1551,6 +1561,8 @@ public class GameManager
 
     // v2 탭 공격(ADR0033) — 켜 두면 예전처럼 알아서 베고(AtkCooldown), 누르면 그보다 빨리 벤다.
     public event Action OnAutoBattleChanged;
+    public bool AutoUnlocked => _gameData.AutoUnlocked;
+
     public bool AutoBattle
     {
         get => _gameData.AutoBattle;
@@ -2207,6 +2219,7 @@ public class GameManager
         d.MetQuestConditions   ??= new List<int>();
         d.UnlockedBtnIds       ??= new List<string>();
         d.ClearedStages        ??= new List<int>();
+        if (d.AutoBattle || d.ClearedStages.Count > 0) d.AutoUnlocked = true;   // AUTO 해금(ADR0038) 전 세이브 — 켜 봤거나 한 곳이라도 돌파했으면 열어 둔다
         d.Missions             ??= new MissionSaveData();
         d.Missions.Progress    ??= new Dictionary<int, int>();
         d.Missions.Claimed     ??= new List<int>();
