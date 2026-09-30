@@ -495,6 +495,11 @@ LITERAL_KEYS = [
     # v2 광고 SDK(ADR0044) — 광고가 아직 준비되지 않았을 때 / 동의가 필요한 나라의 개인정보 설정 줄
     ('AdNotReadyText', '광고를 불러오는 중입니다. 잠시 후 다시 눌러 주세요', 'AD IS LOADING. TRY AGAIN IN A MOMENT'),
     ('AdPrivacyText', '광고 개인정보 설정', 'AD PRIVACY SETTINGS'),
+    # v2 유물 소환 연출(ADR0045) — UI_RelicSummonPopup
+    ('RelicSummonTitleText', '유물 소환', 'RELIC SUMMON'),
+    ('RelicSummonPityFormat', '전설 확정까지 {0}회', 'LEGENDARY GUARANTEED IN {0}'),
+    ('RelicSummonRefundFormat', '최대 레벨 유물 → 크리스탈 {0} 돌려받음', 'MAXED RELICS → {0} CRYSTALS BACK'),
+    ('RelicSummonAgainFormat', '{0}회 더 ({1})', 'x{0} AGAIN ({1})'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

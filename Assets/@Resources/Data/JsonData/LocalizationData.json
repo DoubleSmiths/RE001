@@ -11029,6 +11029,26 @@
       "TextKey": "AdPrivacyText",
       "Kor": "광고 개인정보 설정",
       "Eng": "AD PRIVACY SETTINGS"
+    },
+    {
+      "TextKey": "RelicSummonTitleText",
+      "Kor": "유물 소환",
+      "Eng": "RELIC SUMMON"
+    },
+    {
+      "TextKey": "RelicSummonPityFormat",
+      "Kor": "전설 확정까지 {0}회",
+      "Eng": "LEGENDARY GUARANTEED IN {0}"
+    },
+    {
+      "TextKey": "RelicSummonRefundFormat",
+      "Kor": "최대 레벨 유물 → 크리스탈 {0} 돌려받음",
+      "Eng": "MAXED RELICS → {0} CRYSTALS BACK"
+    },
+    {
+      "TextKey": "RelicSummonAgainFormat",
+      "Kor": "{0}회 더 ({1})",
+      "Eng": "x{0} AGAIN ({1})"
     }
   ]
 }

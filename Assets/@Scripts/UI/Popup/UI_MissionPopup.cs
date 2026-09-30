@@ -662,7 +662,7 @@ public class UI_MissionPopup : UI_Popup
     #endregion
 
     #region 유물 탭 (ADR0035)
-    static readonly Color[] GRADE_COLORS =
+    public static readonly Color[] GRADE_COLORS =   // 소환 연출(UI_RelicSummonPopup)도 쓴다
     {
         new Color32(0xD8, 0xD8, 0xD8, 0xFF),   // 일반
         new Color32(0x6A, 0xB8, 0xFF, 0xFF),   // 희귀
@@ -761,20 +761,13 @@ public class UI_MissionPopup : UI_Popup
             return;
         }
         _relicFresh.Clear();
-        var byGrade = new int[RelicManager.GRADE_COUNT];
-        int refund = 0;
         foreach (var pull in pulls)
-        {
-            byGrade[pull.Grade]++;
-            refund += pull.Refund;
             if (!_relicFresh.ContainsKey(pull.Id)) _relicFresh[pull.Id] = pull.IsNew;
-        }
-        bool legend = byGrade[RelicManager.LEGENDARY] > 0;
-        Managers.Sound?.PlaySFX(legend ? "SFX_Success2" : "SFX_BtnSelect");
-        string msg = string.Format(Util.Localize("RelicResultFormat"), pulls.Count, byGrade[3], byGrade[2], byGrade[1], byGrade[0]);
-        if (refund > 0) msg += string.Format(Util.Localize("RelicRefundFormat"), refund);
-        Managers.UI.ShowToast(legend ? Util.Localize("RelicLegendText") + "  " + msg : msg);
         Refresh();   // 소환은 OnChanged 로도 그리지만 NEW/UP 표시를 여기서 확정한다
+        // 결과는 카드 연출로(ADR0045) — [한 번 더]는 같은 값으로 다시. 광고 소환은 하루 한 번이라 없다
+        int count = pulls.Count;
+        Managers.UI.ShowPopupUI<UI_RelicSummonPopup>()
+            .SetInfo(pulls, pay == RelicManager.Pay.Ad ? null : () => SummonRelic(count, pay));
     }
     #endregion
 

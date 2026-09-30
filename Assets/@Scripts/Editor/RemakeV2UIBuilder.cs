@@ -576,5 +576,156 @@ public static class RemakeV2UIBuilder
     }
 
     static void Rename(Transform root, string from, string to) => Find(root, from).name = to;
+
+    // ── 유물 소환 연출 창(ADR0045) ──
+    //  틀: 미션 창을 복제해 목록·탭·줄 템플릿을 걷어 낸다(창 그림·제목·배경 누르기·버튼 모양·열림 연출 그대로).
+    //  가운데 5×2 카드 격자와 카드 템플릿(빛줄기·등급 빛·칸·아이콘·이름·NEW), 아래 한 줄(천장·환급), '모두 받기' 자리는 [한 번 더].
+    //  이미 만들어져 있으면 생성 부분만 다시 만든다(GUID·어드레서블 유지).
+    const string RELIC_SUMMON_POPUP = "Assets/@Resources/Prefab/UI/Popup/UI_RelicSummonPopup.prefab";
+    const string SUMMON_SLOT_SPRITE = "Assets/@Resources/Sprite/UI/Inventory_Slot_IconFrame.png";
+    const string SUMMON_GLOW_SPRITE = "Assets/@Resources/Sprite/UI/shop_frame_glow.png";
+    const string SUMMON_RAYS_SPRITE = "Assets/AssetKits/ParticleImage/Demo/Sprites/GlowRays.png";
+    const float SUMMON_CARD_W = 22f, SUMMON_CARD_H = 35f, SUMMON_GAP_X = 2f, SUMMON_GAP_Y = 5f;   // 5장 = 118 — 창 안쪽 폭(약 124) 안
+    const float SUMMON_GRID_Y = 14f, SUMMON_NAME_H = 12f, SUMMON_INFO_H = 14f;   // 격자는 창 가운데에서 조금 위
+    const int   SUMMON_COLUMNS = 5, SUMMON_ROWS = 2;
+
+    [MenuItem("Tools/Remake V2/Build Relic Summon Popup")]
+    public static void BuildRelicSummonPopup()
+    {
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(RELIC_SUMMON_POPUP) == null && !AssetDatabase.CopyAsset(MISSION_POPUP, RELIC_SUMMON_POPUP))
+            throw new System.Exception("[RemakeV2] 미션 창 복제 실패");
+
+        GameObject root = PrefabUtility.LoadPrefabContents(RELIC_SUMMON_POPUP);
+        try
+        {
+            var mission = root.GetComponent<UI_MissionPopup>();
+            if (mission != null) Object.DestroyImmediate(mission);
+            RenameIf(root.transform, "MissionPopupBackground", "SummonPopupBackground");
+            RenameIf(root.transform, "MissionPopupFrame", "SummonPopupFrame");
+            RenameIf(root.transform, "MissionPopupTitle", "SummonPopupTitle");
+            RenameIf(root.transform, "MissionPopup", "SummonPopup");
+            RenameIf(root.transform, "ClaimAllBtn", "Btn_SummonAgain");
+            RenameIf(root.transform, "ClaimAllTxt", "Txt_SummonAgain");
+            foreach (var n in new[] { "MissionList", "MissionTabs", "MissionRowTemplate", "SummonGrid", "SummonCardTemplate", "Txt_SummonInfo" })
+            {
+                var t = Find(root.transform, n, false);
+                if (t != null) Object.DestroyImmediate(t.gameObject);
+            }
+
+            Transform frame = Find(root.transform, "SummonPopupFrame");
+            var textSrc = Find(root.transform, "Txt_SummonAgain").gameObject;
+
+            // 카드 격자
+            float gridW = SUMMON_COLUMNS * SUMMON_CARD_W + (SUMMON_COLUMNS - 1) * SUMMON_GAP_X;
+            float gridH = SUMMON_ROWS * SUMMON_CARD_H + (SUMMON_ROWS - 1) * SUMMON_GAP_Y;
+            var grid = new GameObject("SummonGrid", typeof(RectTransform), typeof(GridLayoutGroup)).GetComponent<RectTransform>();
+            grid.SetParent(frame, false);
+            grid.anchorMin = grid.anchorMax = grid.pivot = new Vector2(0.5f, 0.5f);
+            grid.anchoredPosition = new Vector2(0f, SUMMON_GRID_Y);
+            grid.sizeDelta = new Vector2(gridW, gridH);
+            var gl = grid.GetComponent<GridLayoutGroup>();
+            gl.cellSize = new Vector2(SUMMON_CARD_W, SUMMON_CARD_H);
+            gl.spacing = new Vector2(SUMMON_GAP_X, SUMMON_GAP_Y);
+            gl.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            gl.constraintCount = SUMMON_COLUMNS;
+            gl.childAlignment = TextAnchor.MiddleCenter;
+
+            // 카드 템플릿(창 안, 격자 밖 — 꺼 두고 복제해서 쓴다)
+            var card = new GameObject("SummonCardTemplate", typeof(RectTransform)).GetComponent<RectTransform>();
+            card.SetParent(Find(root.transform, "SummonPopup"), false);
+            card.sizeDelta = new Vector2(SUMMON_CARD_W, SUMMON_CARD_H);
+            float slot = SUMMON_CARD_W - 2f;
+
+            var rays = NewImage("Img_SummonCardRays", card);    // 전설: 뒤에서 도는 빛줄기
+            rays.anchorMin = rays.anchorMax = rays.pivot = new Vector2(0.5f, 1f);
+            rays.pivot = new Vector2(0.5f, 0.5f);
+            rays.anchoredPosition = new Vector2(0f, -1f - slot / 2f);
+            rays.sizeDelta = new Vector2(slot * 1.9f, slot * 1.9f);
+            var raysImg = rays.GetComponent<Image>();
+            raysImg.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SUMMON_RAYS_SPRITE);
+            raysImg.color = new Color32(0xFF, 0xD8, 0x6A, 0xC8);
+            raysImg.raycastTarget = false;
+            rays.gameObject.SetActive(false);
+
+            var glow = NewImage("Img_SummonCardGlow", card);     // 희귀부터: 등급 색 빛
+            glow.anchorMin = Vector2.zero; glow.anchorMax = Vector2.one;
+            glow.offsetMin = new Vector2(-3f, -3f); glow.offsetMax = new Vector2(3f, 3f);
+            var glowImg = glow.GetComponent<Image>();
+            glowImg.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SUMMON_GLOW_SPRITE);
+            glowImg.type = Image.Type.Sliced;
+            glowImg.raycastTarget = false;
+            glow.gameObject.SetActive(false);
+
+            var bg = NewImage("Img_SummonCardBg", card);
+            bg.anchorMin = bg.anchorMax = bg.pivot = new Vector2(0.5f, 1f);
+            bg.anchoredPosition = new Vector2(0f, -1f);
+            bg.sizeDelta = new Vector2(slot, slot);
+            var bgImg = bg.GetComponent<Image>();
+            bgImg.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SUMMON_SLOT_SPRITE);
+            bgImg.raycastTarget = false;
+
+            var icon = NewImage("Img_SummonCardIcon", bg);
+            icon.anchorMin = icon.anchorMax = icon.pivot = new Vector2(0.5f, 0.5f);
+            icon.sizeDelta = new Vector2(slot - 5f, slot - 5f);
+            var iconImg = icon.GetComponent<Image>();
+            iconImg.preserveAspect = true;
+            iconImg.raycastTarget = false;
+
+            var name = (RectTransform)Object.Instantiate(textSrc, card).transform;
+            name.name = "Txt_SummonCardName";
+            name.anchorMin = new Vector2(0f, 0f); name.anchorMax = new Vector2(1f, 0f); name.pivot = new Vector2(0.5f, 0f);
+            name.anchoredPosition = Vector2.zero;
+            name.sizeDelta = new Vector2(4f, SUMMON_NAME_H);
+            StyleText(name, TextAlignmentOptions.Top, 3f, 4.2f, TextWrappingModes.Normal);
+
+            var badge = (RectTransform)Object.Instantiate(textSrc, card).transform;
+            badge.name = "Txt_SummonCardBadge";
+            badge.anchorMin = badge.anchorMax = badge.pivot = new Vector2(1f, 1f);
+            badge.anchoredPosition = new Vector2(1f, 1f);
+            badge.sizeDelta = new Vector2(14f, 6f);
+            StyleText(badge, TextAlignmentOptions.TopRight, 2.2f, 3.6f, TextWrappingModes.NoWrap);
+            card.gameObject.SetActive(false);
+
+            // 아래 한 줄: 천장 · 환급
+            var info = (RectTransform)Object.Instantiate(textSrc, frame).transform;
+            info.name = "Txt_SummonInfo";
+            info.anchorMin = info.anchorMax = new Vector2(0.5f, 0.5f);
+            info.pivot = new Vector2(0.5f, 1f);
+            info.anchoredPosition = new Vector2(0f, SUMMON_GRID_Y - gridH / 2f - 5f);
+            info.sizeDelta = new Vector2(gridW, SUMMON_INFO_H);
+            StyleText(info, TextAlignmentOptions.Center, 3.5f, 5.5f, TextWrappingModes.Normal);
+
+            // [한 번 더] 글자는 창 그림에 그려진 버튼 자리 안에서 줄어들게(자리는 그대로)
+            StyleText((RectTransform)textSrc.transform, TextAlignmentOptions.Center, 3f, 5.5f, TextWrappingModes.NoWrap);
+            var againTxt = (RectTransform)textSrc.transform;
+            againTxt.anchorMin = Vector2.zero; againTxt.anchorMax = Vector2.one;
+            againTxt.offsetMin = new Vector2(2f, 0f); againTxt.offsetMax = new Vector2(-2f, 0f);
+            foreach (var c in textSrc.GetComponents<ContentSizeFitter>()) Object.DestroyImmediate(c);
+            foreach (var c in card.GetComponentsInChildren<ContentSizeFitter>(true)) Object.DestroyImmediate(c);
+            foreach (var c in info.GetComponentsInChildren<ContentSizeFitter>(true)) Object.DestroyImmediate(c);
+
+            if (root.GetComponent<UI_RelicSummonPopup>() == null) root.AddComponent<UI_RelicSummonPopup>();
+            PrefabUtility.SaveAsPrefabAsset(root, RELIC_SUMMON_POPUP);
+            Debug.Log("[RemakeV2] 유물 소환 연출 창 조립 완료 — " + RELIC_SUMMON_POPUP);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
+    static void StyleText(RectTransform rt, TextAlignmentOptions align, float min, float max, TextWrappingModes wrap)
+    {
+        var tmp = rt.GetComponent<TMP_Text>();
+        tmp.text = "";
+        tmp.alignment = align;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = min;
+        tmp.fontSizeMax = max;
+        tmp.textWrappingMode = wrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
+        tmp.margin = Vector4.zero;
+        tmp.raycastTarget = false;
+    }
 }
 #endif

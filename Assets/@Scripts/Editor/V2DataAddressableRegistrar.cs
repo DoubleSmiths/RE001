@@ -18,6 +18,7 @@ public static class V2DataAddressableRegistrar
         ("Data",     "Assets/@Resources/Data/JsonData/CostumeData.json"), // 의상 8벌(ADR0043)
         ("Material", BOSS_OUTLINE_MAT),   // 스테이지 보스 금빛 테두리(BossOutline)
         ("UI",       "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab"),   // 미션·출석 창
+        ("UI",       "Assets/@Resources/Prefab/UI/Popup/UI_RelicSummonPopup.prefab"),   // 유물 소환 연출(ADR0045)
     };
 
     const string BOSS_OUTLINE_MAT    = "Assets/Material/BossOutline.mat";
