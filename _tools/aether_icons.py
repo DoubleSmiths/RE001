@@ -20,6 +20,8 @@ API 계약 (실측으로 확인 — 공식 문서의 JSON 예시는 실제와 �
   python _tools/aether_icons.py equipment      # 장비 60종
   python _tools/aether_icons.py skill          # 스킬 아이콘
   python _tools/aether_icons.py equipment --limit 5   # 일부만 (비용 확인용)
+  python _tools/aether_icons.py skill-concepts --out <dir>   # 겹치던 스킬 아이콘을 이름 뜻대로 다시(아래 SKILL_CONCEPTS)
+새로 만든 그림은 넣은 뒤 python _tools/clean_ai_pixel_art.py --write 로 가장자리·색을 다듬는다(ADR0047).
 이미 파일이 있으면 건너뛴다(중단 후 재실행 가능).
 """
 import io
@@ -236,6 +238,71 @@ def skill_items():
     return out
 
 
+# 스킬 이름 뜻대로 그린 상징(2026-09-30). 처음엔 능력치·효과 종류로만 모양을 정해(STAT_LOOK·EFFECT_LOOK)
+#  버프 계열이 전부 '힘의 깃발', 공격 기억이 전부 '불타는 검'이 됐다 — 67개 중 50개 가까이가 여섯 모양에 몰렸다.
+#  틀(금테 둥근 메달)은 그대로 두고 가운데 상징만 스킬마다 다르게.
+SKILL_CONCEPTS = {
+    5002: "a muscular fist gripping a glowing red crystal",
+    5003: "a dagger striking the exact center of a red bullseye",
+    5005: "two crossed swords parrying with a bright white spark",
+    5007: "a roaring flaming warrior helmet",
+    5008: "a cracked shield with a sword planted in the ground beside it",
+    5013: "three crossed weapons: a sword, an axe and a spear",
+    5014: "two mirrored glowing blades crossed in an X",
+    5015: "a radiant multifaceted gem with many colored facets",
+    5100: "a lightning bolt splitting a sword blade",
+    5101: "a flurry of small fists striking in rapid succession",
+    5102: "a glowing hourglass with a sword reflected in the glass",
+    5103: "a hammer striking an anvil with circular shockwave rings",
+    5104: "a flowing red river of energy shaped like a blade",
+    5105: "glowing golden chains breaking apart",
+    5106: "an arrow stuck beside a target next to an open book",
+    5107: "a wise glowing third eye above an open book",
+    5108: "a round buckler deflecting an arrow with sparks",
+    5109: "a dark footprint trailing purple shadow smoke",
+    5110: "a clenched fist covered in rough stone plates",
+    5111: "a cracked red heart on the edge of a cliff",
+    5112: "a downward stabbing dagger above a small skull",
+    5113: "an iron heart bound by a steel band",
+    5114: "a sunset glow with green healing sparkles",
+    5115: "swirling breath of wind around a sword hilt",
+    5116: "an opening eye bursting with golden light",
+    5117: "a meditating figure inside a calm blue aura",
+    5118: "a winged boot with speed lines",
+    5119: "a massive brick wall with an iron tower shield",
+    5120: "a razor-sharp blade edge with a single gleaming glint",
+    5121: "a warrior silhouette with three fading blue afterimages",
+    5122: "a crystal breaking into flying shards",
+    5123: "a flexing arm with bulging muscles",
+    5127: "a glowing crosshair over a crack in armor",
+    5128: "an executioner's axe with a red glint",
+    5132: "two cupped hands holding a green healing light",
+    5133: "a glowing crystal jar holding small floating stars",
+    5134: "a sturdy oak trunk bound with an iron band",
+    5136: "a stack of gold coins beside a merchant's scale",
+    5137: "a four-leaf clover with a sparkle",
+    5138: "a human hand and a small monster paw touching",
+    5140: "a pink flower releasing heart-shaped scent swirls",
+    5141: "a mortar and pestle with fresh green herbs",
+    5142: "three glowing hit sparks linked by a line",
+    5143: "a monocle over a glowing anvil",
+    5144: "a pair of light sandals with small feathers",
+    5200: "a heavy war hammer smashing down with debris",
+    5201: "a green healing leaf wrapped with a bandage",
+    5202: "blood-red berserker eyes wreathed in flames",
+    5203: "a whirling green tornado carrying leaves",
+    5204: "a castle gate with a raised shield emblem",
+    5205: "a giant red crescent sword slash",
+    7001: "a coiled leather whip with a sparkling star",
+    7002: "a tiny cute monster holding up a shiny gold coin",
+}
+
+
+def skill_concept_items():
+    return [(f"Skill{did}", f"{look}, framed in a circular gold medallion, fantasy RPG skill icon")
+            for did, look in SKILL_CONCEPTS.items()]
+
+
 # 지역별 몬스터 원형 30종. 500종 각각을 생성하는 대신 원형 + 티어 색변주로 구분한다
 # (색 변주는 애니메이션 클립의 SpriteRenderer 색 커브로 준다 — 텍스처를 늘리지 않는다).
 MONSTER_ARCHETYPES = [
@@ -327,8 +394,13 @@ def main():
         run(monster_items(), OUT_MONSTER, limit, size=128)  # 인게임 캐릭터라 아이콘보다 크게
     elif what == "relic":
         run(relic_items(), OUT_RELIC, limit)
+    elif what == "skill-concepts":
+        # 기존 파일을 건너뛰지 않도록 따로 받은 뒤 확인하고 옮긴다(--out 필수)
+        if "--out" not in sys.argv:
+            raise SystemExit("skill-concepts 는 --out <폴더> 가 필요하다(확인 후 Icon/Skill/Generated 로 옮긴다)")
+        run(skill_concept_items(), sys.argv[sys.argv.index("--out") + 1], limit)
     else:
-        raise SystemExit("사용법: python _tools/aether_icons.py [equipment|skill|monster|material|relic] [--limit N]")
+        raise SystemExit("사용법: python _tools/aether_icons.py [equipment|skill|monster|material|relic|skill-concepts --out DIR] [--limit N]")
 
 
 if __name__ == "__main__":
