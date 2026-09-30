@@ -72,6 +72,7 @@ public class UI_ItemPopup : UI_Popup
 
     int _itemId = -1;
     bool _showGlow;
+    float _mainBaseHeight = -1f;
 
     private void Awake()
     {
@@ -189,8 +190,15 @@ public class UI_ItemPopup : UI_Popup
         // 발견 장소
         GetText((int)Texts.ItemPopupItemDesc_Found).text = ItemSourceGuide.GetFoundLocation(id, data.FoundLocation);
 
-        // 설명
-        GetText((int)Texts.ItemPopupItemDesc).text = Localize(data.Description);
+        // 설명 — 긴 설명(통행증 등 4~6줄)이 창 아래 테두리를 뚫었다. 넘치는 만큼 창(ItemPopupMain)을 늘린다.
+        //  창 안 요소는 모두 위쪽 기준이라 제자리에 있고, 창은 가운데 기준이라 위아래로 고르게 커진다.
+        var desc = GetText((int)Texts.ItemPopupItemDesc);
+        desc.text = Localize(data.Description);
+        desc.ForceMeshUpdate();
+        var main = (RectTransform)GetObject((int)GameObjects.ItemPopupMain).transform;
+        if (_mainBaseHeight < 0f) _mainBaseHeight = main.sizeDelta.y;
+        float need = -desc.rectTransform.anchoredPosition.y + desc.preferredHeight + ITEM_DESC_BOTTOM_PAD;
+        main.sizeDelta = new Vector2(main.sizeDelta.x, Mathf.Max(_mainBaseHeight, need));
 
         // 아이템 아이콘
         Sprite sprite = Managers.Resource.Load<Sprite>(data.SpriteName);

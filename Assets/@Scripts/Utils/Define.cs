@@ -108,6 +108,7 @@ public class Define
     public const float ITEM_SOURCE_TEXT_HEIGHT = 24f;
     public const float ITEM_SOURCE_DIVIDER_GAP = 4f;
     public const float ITEM_SOURCE_MIN_FONT_SIZE = 5f;
+    public const float ITEM_DESC_BOTTOM_PAD = 8f;   // 아이템 창 설명 끝 ~ 창 아래 테두리(긴 설명이면 창을 이만큼 남기고 늘린다)
     public const string GROWTH_ITEM_RARITY_LABEL_TEXT = "GrowthItemRarityLabelText";
     public const string GROWTH_ITEM_FOUND_LABEL_TEXT = "GrowthItemFoundLabelText";
     public const float CLASS_GUIDE_FONT_SIZE = 6f;
