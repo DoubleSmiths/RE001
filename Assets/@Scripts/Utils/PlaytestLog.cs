@@ -9,6 +9,8 @@ using UnityEngine;
 // 비공개 테스트용 기기 안 플레이 기록(ADR0046) — 서버·SDK 없이 persistentDataPath/playtest_log.txt 에 한 줄씩 남긴다.
 //  줄 = 시각(UTC) \t 누적 플레이(초) \t 사건 \t 내용. 사건: session_start/pause/resume/end, level, stage_clear(첫 돌파),
 //  boss_fail, death, quest, ad, summon, iap(모의), auto_unlock. 파일이 MAX_BYTES 를 넘으면 앞 절반을 버린다.
+//  줄은 메모리에 모았다가 FLUSH_INTERVAL 마다·멈춤·끝·요약 직전에 한 번에 쓴다 — 첫 처치에 레벨이 100번 넘게 오르는
+//   세이브에서 줄마다 파일을 열었더니 그 한 프레임이 50ms 로 늘어 탭 공격 타이밍 검사가 떨어졌다.
 //  설정 → [플레이 기록] 이 Summary() 를 보여 주고 클립보드로 복사한다 — 테스터가 설문지에 붙여 넣는다(Documents/Playtest).
 //  기록은 기기 밖으로 나가지 않는다(수집이 아니다 — 스토어 데이터 보안 답은 그대로).
 public static class PlaytestLog
@@ -16,10 +18,13 @@ public static class PlaytestLog
     const long MAX_BYTES = 512 * 1024;
     const string PLAYTIME_KEY = "PLAYTEST_SECONDS";
     const int RECENT_LINES = 15;
+    const float FLUSH_INTERVAL = 10f;
     static readonly int[] LEVEL_MARKS = { 5, 10, 20, 30, 50, 100, 150, 200, 300 };
 
     static float s_sessionStart = -1f;   // 지금 세션이 시작한 realtimeSinceStartup(멈춤·시작 전이면 -1)
     static bool  s_started;              // 게임 씬에 한 번이라도 들어왔나 — 켜자마자 오는 '재개'를 세지 않게
+    static readonly StringBuilder s_pending = new StringBuilder();
+    static float s_flushTimer;
 
     static string FilePath => Path.Combine(Application.persistentDataPath, "playtest_log.txt");
 
@@ -27,22 +32,35 @@ public static class PlaytestLog
         => PlayerPrefs.GetFloat(PLAYTIME_KEY, 0f) + (s_sessionStart >= 0f ? Time.realtimeSinceStartup - s_sessionStart : 0f);
 
     public static void Event(string name, string data = "")
+        => s_pending.Append($"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ssZ}\t{(int)PlaySeconds}\t{name}\t{data?.Replace('\t', ' ').Replace('\n', ' ')}\n");
+
+    // Managers.Update 가 부른다 — 모아 둔 줄을 주기적으로 쓴다
+    public static void Tick(float unscaledDeltaTime)
     {
+        if (s_pending.Length == 0) return;
+        s_flushTimer += unscaledDeltaTime;
+        if (s_flushTimer >= FLUSH_INTERVAL) Flush();
+    }
+
+    public static void Flush()
+    {
+        s_flushTimer = 0f;
+        if (s_pending.Length == 0) return;
         try
         {
-            string line = $"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ssZ}\t{(int)PlaySeconds}\t{name}\t{data?.Replace('\t', ' ').Replace('\n', ' ')}\n";
             var info = new FileInfo(FilePath);
             if (info.Exists && info.Length > MAX_BYTES)
             {
                 var keep = File.ReadAllLines(FilePath);
                 File.WriteAllLines(FilePath, keep.Skip(keep.Length / 2));
             }
-            File.AppendAllText(FilePath, line);
+            File.AppendAllText(FilePath, s_pending.ToString());
         }
         catch (Exception e)
         {
             Debug.LogWarning("[PlaytestLog] 기록 실패: " + e.Message);   // 기록은 부가 기능 — 게임을 멈추지 않는다
         }
+        s_pending.Clear();
     }
 
     public static void SessionStart(string data)
@@ -57,6 +75,7 @@ public static class PlaytestLog
         if (s_sessionStart < 0f) return;
         Event("session_pause");
         Commit();
+        Flush();   // 앱이 백그라운드에서 죽어도 남게
     }
 
     public static void SessionResume()
@@ -71,6 +90,7 @@ public static class PlaytestLog
         if (s_sessionStart < 0f) return;
         Event("session_end");
         Commit();
+        Flush();
     }
 
     // 지금까지의 세션 시간을 누적(PlayerPrefs)에 넣고 세션을 닫는다
@@ -86,6 +106,7 @@ public static class PlaytestLog
     // 설문지에 붙여 넣을 요약 — 총 시간·세션, 레벨 도달 시각, 돌파·막힌 곳·쓰러짐, 광고·소환·구매, 최근 기록
     public static string Summary()
     {
+        Flush();
         var rows = new List<Row>();
         try
         {

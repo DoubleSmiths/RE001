@@ -118,6 +118,7 @@ public class Managers : MonoBehaviour
 
         // 세터들이 표시만 해 둔 저장을 주기적으로 한 번에 기록
         _game?.TickSave(Time.unscaledDeltaTime);
+        PlaytestLog.Tick(Time.unscaledDeltaTime);   // 비공개 테스트 기록도 모아서(ADR0046)
 
         // v2 핫타임이 끝나는 순간(실제 시간) 공격력·버프 아이콘을 되돌린다
         _shop?.Tick();
