@@ -28,6 +28,7 @@ public class UI_SettingPopup : UI_Popup
         SettingPopupFullscreenText,
         SettingPopupCreditsText,
         SettingPopupQuitText,
+        SettingPopupPlaytestText,
         Txt_SettingPopupTitle_02,
     }
 
@@ -48,6 +49,7 @@ public class UI_SettingPopup : UI_Popup
         SettingPopupFullscreenONBtn,
         SettingPopupCreditsBtn,
         SettingPopupQuitBtn,
+        SettingPopupPlaytestBtn,
     }
 
     enum GameObjects
@@ -105,6 +107,7 @@ public class UI_SettingPopup : UI_Popup
         // 시스템: 크레딧·게임 종료·(PC) 전체 화면 — Tools/Release 로 프리팹에 추가된 줄
         GetButton((int)Buttons.SettingPopupCreditsBtn).gameObject.BindEvent(() => Managers.UI.ShowPopupUI<UI_CreditsPopup>());
         GetButton((int)Buttons.SettingPopupQuitBtn).gameObject.BindEvent(OnClickQuit);
+        GetButton((int)Buttons.SettingPopupPlaytestBtn).gameObject.BindEvent(OnClickPlaytest);
         GetButton((int)Buttons.SettingPopupFullscreenONBtn).gameObject.BindEvent(() => OnClickButtonAnim(GetButton((int)Buttons.SettingPopupFullscreenONBtn)));
         GetButton((int)Buttons.SettingPopupFullscreenONBtn).gameObject.BindEvent(OnClickFullscreen);
         if (Application.isMobilePlatform)
@@ -147,6 +150,7 @@ public class UI_SettingPopup : UI_Popup
         SetTextLocalized(Texts.SettingPopupFullscreenText, "FullscreenText");
         SetTextLocalized(Texts.SettingPopupCreditsText, "CreditsText");
         SetTextLocalized(Texts.SettingPopupQuitText, "QuitGameText");
+        SetTextLocalized(Texts.SettingPopupPlaytestText, "SettingPopupPlaytestText");
         // GameObject — enum 잘못 박힌 entry로 보임. 텍스트 용도 아님 → 폰트만 적용.
         var dummyTmp = GetText((int)Texts.GameObject);
         if (dummyTmp != null) ApplyFont(dummyTmp, FontType.UI);
@@ -257,6 +261,15 @@ public class UI_SettingPopup : UI_Popup
     {
         Managers.Game?.FlushSave();
         Application.Quit();
+    }
+
+    // 비공개 테스트(ADR0046) — 기기 안 플레이 기록 요약을 보여 주고 클립보드로(설문지에 붙여 넣기)
+    void OnClickPlaytest()
+    {
+        string summary = PlaytestLog.Summary();
+        GUIUtility.systemCopyBuffer = summary;
+        Managers.UI.ShowPopupUI<UI_CreditsPopup>().ShowText(Util.Localize("PlaytestTitleText"), summary);
+        Managers.UI.ShowToast(Util.Localize("PlaytestCopiedText"));
     }
 
 }

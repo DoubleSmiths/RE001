@@ -133,7 +133,8 @@ public class Managers : MonoBehaviour
     void OnApplicationPause(bool paused)
     {
         if (s_instance != this) return;
-        if (paused) { _game?.MarkSeen(); return; }
+        if (paused) { _game?.MarkSeen(); PlaytestLog.SessionPause(); return; }
+        PlaytestLog.SessionResume();   // 비공개 테스트 기록(ADR0046)
 
         var scene = _ui?.SceneUI as UI_GameScene;
         if (_game == null || _game.Player == null || scene == null) return;   // Player 는 Unity == 로 파괴 여부까지 본다
@@ -148,6 +149,7 @@ public class Managers : MonoBehaviour
         if (s_instance != this) return;
         s_shuttingDown = true;
         _game?.MarkSeen();
+        PlaytestLog.SessionEnd();
     }
 
     public static bool IsShuttingDown => s_shuttingDown;

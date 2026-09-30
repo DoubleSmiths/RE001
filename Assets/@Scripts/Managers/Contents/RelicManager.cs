@@ -86,6 +86,7 @@ public class RelicManager
         var player = Managers.Game.Player;   // 공격·체력 등이 바로 오른다(== 로 파괴 여부까지)
         if (player != null) player.RefreshStats(fullHeal: false);
         OnChanged?.Invoke();
+        PlaytestLog.Event("summon", $"{count} legendary={pulls.FindAll(p => p.Grade == LEGENDARY).Count}");   // 비공개 테스트 기록(ADR0046)
         return pulls;
     }
 

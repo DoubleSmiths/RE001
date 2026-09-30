@@ -671,6 +671,7 @@ public class PlayerController : CreatureController
             Managers.Game.Exp  -= _expRequired;
             Managers.Game.Level++;
             GrantStatusPoint(Managers.Game.Level);
+            PlaytestLog.Event("level", Managers.Game.Level.ToString());   // 비공개 테스트 기록(ADR0046)
 
             // 슬라이드 68 #2-3 — Now HP를 Max HP로 회복. RefreshStats 전 prevHp 캡쳐해서 회복량 계산.
             float prevHp = Hp;
@@ -827,6 +828,7 @@ public class PlayerController : CreatureController
     protected override void OnDead()
     {
         base.OnDead();   // State=Dead → Die clip
+        PlaytestLog.Event("death", Managers.Game.StageLabel(Managers.Game.CurrentTravelAreaId));
 
         // 1-2. 살아있는 모든 monster Idle 고정
         Transform monsterRoot = Managers.Object?.MonsterTransform;

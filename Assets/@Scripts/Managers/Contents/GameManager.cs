@@ -1477,6 +1477,8 @@ public class GameManager
         _gameData.StageKillCount = 0;
         SaveGame();
         OnStageChanged?.Invoke();
+        if (firstClear) PlaytestLog.Event("stage_clear", StageLabel(nodeId));   // 비공개 테스트 기록(ADR0046)
+        if (autoUnlock) PlaytestLog.Event("auto_unlock");
         Managers.Mission?.Notify(MissionEvent.BossClear);
         if (firstClear) Managers.Mission?.Notify(MissionEvent.NewStage);
         if (autoUnlock)
@@ -1491,6 +1493,7 @@ public class GameManager
     //  스테이지 막대를 누르면 다시 켜진다 — 그 사이 훈련으로 강해지라는 신호다.
     public void FailStage(int nodeId, bool stopAutoChallenge = true)
     {
+        PlaytestLog.Event("boss_fail", StageLabel(nodeId));
         if (_gameData.StageNodeId == nodeId) _gameData.StageKillCount = 0;
         if (stopAutoChallenge) _gameData.BossAutoChallenge = false;
         SaveGame();

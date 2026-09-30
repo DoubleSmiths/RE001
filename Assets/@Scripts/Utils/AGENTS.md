@@ -15,6 +15,7 @@
 | `CameraShake.cs` | 타격 카메라 흔들림(ADR0033) `CameraShake.Play(세기, 시간)`. 설정 `IsShakeOn` 을 따르고, 겹치면 앞 흔들림을 끊고 원위치에서 다시(위치 누적 방지), 실시간(SetUpdate). HUD 캔버스는 Screen Space - Camera 라 월드만 흔들린다 |
 | `Extension.cs` | GameObject/BaseController 확장 — `GetOrAddComponent`, `BindEvent`(UI_Base.BindEvent 위임), `IsValid`, `DestroyChilds`(Managers.Resource.Destroy 사용), `IList.Shuffle` |
 | `UI_ParticlePlay.cs` | OnEnable 시 `UIParticleSystem.DOPlay()` 호출하는 소형 MonoBehaviour (unity-ui-extensions + DOTween) |
+| `PlaytestLog.cs` | 비공개 테스트용 기기 안 플레이 기록(ADR0046). `Event(name, data)` — persistentDataPath/playtest_log.txt 에 시각·누적 플레이 초·사건·내용(512KB 넘으면 앞 절반 버림). 세션 `SessionStart/Pause/Resume/End`(GameScene·Managers), 레벨·스테이지 첫 돌파·보스 실패·쓰러짐·퀘스트·광고·소환·구매(모의)·AUTO 해금을 각 지점이 부른다. `Summary()` 는 설정 [플레이 기록]이 보여 주고 복사한다. 기기 밖으로 보내지 않는다 |
 
 ## For AI Agents
 

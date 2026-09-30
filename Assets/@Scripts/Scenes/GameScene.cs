@@ -70,6 +70,7 @@ public class GameScene : BaseScene
         _game.Player = _player;
         Managers.Combo.Init(); // 내부에서 Player.OnHitLanded를 구독한다.
         if (_player == null) return;
+        PlaytestLog.SessionStart($"v{Application.version} lv{_game.Level} quest{_game.CurrentQuestID} stages{_game.ClearedStageCount}");   // ADR0046
 
         // 데이터 로드 전에 실행된 Awake의 스탯을 저장된 진행도로 다시 계산한다.
         _player.RefreshStats();

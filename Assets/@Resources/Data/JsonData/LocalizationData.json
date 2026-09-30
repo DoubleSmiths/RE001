@@ -11049,6 +11049,56 @@
       "TextKey": "RelicSummonAgainFormat",
       "Kor": "{0}회 더 ({1})",
       "Eng": "x{0} AGAIN ({1})"
+    },
+    {
+      "TextKey": "SettingPopupPlaytestText",
+      "Kor": "플레이 기록",
+      "Eng": "PLAY LOG"
+    },
+    {
+      "TextKey": "PlaytestTitleText",
+      "Kor": "플레이 기록",
+      "Eng": "PLAY LOG"
+    },
+    {
+      "TextKey": "PlaytestCopiedText",
+      "Kor": "플레이 기록을 복사했다 — 설문지에 붙여 넣어 주세요",
+      "Eng": "PLAY LOG COPIED — PASTE IT INTO THE SURVEY"
+    },
+    {
+      "TextKey": "PlaytestTimeFormat",
+      "Kor": "{0}시간 {1}분",
+      "Eng": "{0}h {1}m"
+    },
+    {
+      "TextKey": "PlaytestTotalFormat",
+      "Kor": "총 플레이 {0} · 접속 {1}회 · 한 번에 평균 {2}",
+      "Eng": "PLAYED {0} · {1} SESSIONS · AVG {2}"
+    },
+    {
+      "TextKey": "PlaytestLevelFormat",
+      "Kor": "Lv{0} {1}",
+      "Eng": "LV{0} AT {1}"
+    },
+    {
+      "TextKey": "PlaytestStageFormat",
+      "Kor": "스테이지 {0}곳 돌파(마지막 {1}) · 보스 실패 {2}회 · 쓰러짐 {3}회",
+      "Eng": "{0} STAGES CLEARED (LAST {1}) · BOSS FAILS {2} · DEATHS {3}"
+    },
+    {
+      "TextKey": "PlaytestHardestFormat",
+      "Kor": "가장 막힌 곳: {0}",
+      "Eng": "TOUGHEST: {0}"
+    },
+    {
+      "TextKey": "PlaytestEconomyFormat",
+      "Kor": "광고 {0}회 · 유물 소환 {1}회 · 구매(테스트) {2}회",
+      "Eng": "ADS {0} · SUMMONS {1} · PURCHASES (TEST) {2}"
+    },
+    {
+      "TextKey": "PlaytestRecentText",
+      "Kor": "최근 기록",
+      "Eng": "RECENT"
     }
   ]
 }

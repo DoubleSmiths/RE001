@@ -231,6 +231,7 @@ public class QuestManager
 
     void CompleteQuest(int questId)
     {
+        PlaytestLog.Event("quest", questId.ToString());   // 비공개 테스트 기록(ADR0046)
         int nextId = questId + 1;
         SetCurrentQuest(nextId);   // 먼저 퀘스트 전환 → CurrentQuestID = nextId
 

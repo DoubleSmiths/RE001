@@ -58,6 +58,15 @@ public class UI_CreditsPopup : UI_Popup
     // 마지막 임무를 마쳤을 때 — 제목을 감사 인사로
     const float TITLE_MAX_WIDTH = 140f;   // 액자(160) 안쪽 폭
 
+    // 크레딧 창을 글 보기로 — 설정의 [플레이 기록](ADR0046)
+    public void ShowText(string titleText, string bodyText)
+    {
+        GetText((int)Texts.CreditsTitleText).text = titleText;
+        GetText((int)Texts.CreditsBodyText).text = bodyText;
+        Canvas.ForceUpdateCanvases();
+        GetObject((int)GameObjects.CreditsScroll).GetComponent<UnityEngine.UI.ScrollRect>().verticalNormalizedPosition = 1f;
+    }
+
     public void ShowAsEnding()
     {
         var title = GetText((int)Texts.CreditsTitleText);

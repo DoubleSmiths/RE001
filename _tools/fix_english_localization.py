@@ -500,6 +500,17 @@ LITERAL_KEYS = [
     ('RelicSummonPityFormat', '전설 확정까지 {0}회', 'LEGENDARY GUARANTEED IN {0}'),
     ('RelicSummonRefundFormat', '최대 레벨 유물 → 크리스탈 {0} 돌려받음', 'MAXED RELICS → {0} CRYSTALS BACK'),
     ('RelicSummonAgainFormat', '{0}회 더 ({1})', 'x{0} AGAIN ({1})'),
+    # 비공개 테스트 플레이 기록(ADR0046) — 설정 [플레이 기록], PlaytestLog.Summary
+    ('SettingPopupPlaytestText', '플레이 기록', 'PLAY LOG'),
+    ('PlaytestTitleText', '플레이 기록', 'PLAY LOG'),
+    ('PlaytestCopiedText', '플레이 기록을 복사했다 — 설문지에 붙여 넣어 주세요', 'PLAY LOG COPIED — PASTE IT INTO THE SURVEY'),
+    ('PlaytestTimeFormat', '{0}시간 {1}분', '{0}h {1}m'),
+    ('PlaytestTotalFormat', '총 플레이 {0} · 접속 {1}회 · 한 번에 평균 {2}', 'PLAYED {0} · {1} SESSIONS · AVG {2}'),
+    ('PlaytestLevelFormat', 'Lv{0} {1}', 'LV{0} AT {1}'),
+    ('PlaytestStageFormat', '스테이지 {0}곳 돌파(마지막 {1}) · 보스 실패 {2}회 · 쓰러짐 {3}회', '{0} STAGES CLEARED (LAST {1}) · BOSS FAILS {2} · DEATHS {3}'),
+    ('PlaytestHardestFormat', '가장 막힌 곳: {0}', 'TOUGHEST: {0}'),
+    ('PlaytestEconomyFormat', '광고 {0}회 · 유물 소환 {1}회 · 구매(테스트) {2}회', 'ADS {0} · SUMMONS {1} · PURCHASES (TEST) {2}'),
+    ('PlaytestRecentText', '최근 기록', 'RECENT'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

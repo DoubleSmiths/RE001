@@ -237,15 +237,19 @@ public static class ReleaseSetup
             var fsBtn = etc.Find("SettingPopupFullscreenONBtn") as RectTransform;
             fsBtn.anchoredPosition = new Vector2(fsBtn.anchoredPosition.x, -48.25f);
 
-            // 첫 줄: [크레딧] [게임 종료]
+            // 첫 줄: [크레딧] [플레이 기록] [게임 종료] — 플레이 기록은 비공개 테스트용(ADR0046)
             TMP_FontAsset font = etc.Find("SettingPopupEtcTitle").GetComponent<TMP_Text>().font;
-            MakeTextButton(etc, "SettingPopupCreditsBtn", "SettingPopupCreditsText", font, new Vector2(0.5f, 1f), new Vector2(-26f, -26f));
-            MakeTextButton(etc, "SettingPopupQuitBtn", "SettingPopupQuitText", font, new Vector2(0.5f, 1f), new Vector2(26f, -26f));
-            foreach (string b in new[] { "SettingPopupCreditsBtn", "SettingPopupQuitBtn" })
+            MakeTextButton(etc, "SettingPopupCreditsBtn", "SettingPopupCreditsText", font, new Vector2(0.5f, 1f), new Vector2(-42f, -26f));
+            MakeTextButton(etc, "SettingPopupPlaytestBtn", "SettingPopupPlaytestText", font, new Vector2(0.5f, 1f), new Vector2(0f, -26f));
+            MakeTextButton(etc, "SettingPopupQuitBtn", "SettingPopupQuitText", font, new Vector2(0.5f, 1f), new Vector2(42f, -26f));
+            foreach (string b in new[] { "SettingPopupCreditsBtn", "SettingPopupPlaytestBtn", "SettingPopupQuitBtn" })
             {
                 var rt = etc.Find(b) as RectTransform;
-                rt.sizeDelta = new Vector2(48f, 14f);
-                rt.Find(b.Replace("Btn", "Text")).GetComponent<TMP_Text>().fontSize = 7;
+                rt.sizeDelta = new Vector2(38f, 14f);
+                var label = rt.Find(b.Replace("Btn", "Text")).GetComponent<TMP_Text>();
+                label.enableAutoSizing = true;   // 영어 'PLAY LOG'·'CREDITS' 도 칸 안에
+                label.fontSizeMin = 4f;
+                label.fontSizeMax = 7f;
             }
 
             PrefabUtility.SaveAsPrefabAsset(root, SETTING_POPUP);

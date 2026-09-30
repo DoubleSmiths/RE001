@@ -143,6 +143,7 @@ public static class IapService
     {
         if (!Available) { onDone?.Invoke(false); return; }
         Debug.Log($"[IAP] 모의 구매 — {productKey}");
+        PlaytestLog.Event("iap", productKey);
         onDone?.Invoke(true);
     }
 }
@@ -257,6 +258,7 @@ public class ShopManager
             if (!success) return;   // 끝까지 보지 않고 닫았다
             Save.AdViews.TryGetValue(placement, out int seen);
             Save.AdViews[placement] = seen + 1;
+            PlaytestLog.Event("ad", placement);   // 비공개 테스트 기록(ADR0046)
             onReward();
             Managers.Game.SaveGame();
             Managers.Sound?.PlaySFX("SFX_Success2");
