@@ -11,6 +11,7 @@ using static Define;
 //  세 칸은 형제다 — 버튼이 탭 칸의 자식이면 누름 이벤트가 탭 칸까지 올라가 방패 한 번이 막기+공격이 된다.
 //  HUD(스테이지 막대·퀘스트·HP 바·버프)는 이 묶음보다 뒤 형제라 위에 그려지고 먼저 눌린다.
 //  마을에서는 버튼을 숨기고 탭 칸의 레이캐스트를 끈다. 첫 공격 예고 '!'에 '방패로 막기' 도움말.
+//  방패 버튼은 평소 반투명(GUARD_IDLE_ALPHA) — 덩치 큰 몬스터·보스를 가리지 않게. 공격 예고 때만 또렷해졌다가 돌아간다.
 //  '눌러서 공격' 도움말은 처음 맞붙을 때 띄우고, **한 번이라도 누를 때까지** TAP_HINT_REPEAT 초마다 다시 띄운다(AUTO 가 켜져 있으면 쉰다).
 //  한 번(3초)만 띄우던 때는 놓친 새 유저가 가만히 맞기만 했다(8초에 HP 100→44).
 public class UI_BattleInput : UI_Base
@@ -26,6 +27,9 @@ public class UI_BattleInput : UI_Base
     bool _shown;
     const float TAP_HINT_REPEAT = 4f;
     float _tapHintAt = float.MaxValue;   // 다음 '눌러서 공격' 도움말 시각(맞붙기 전·누른 뒤엔 MaxValue)
+    const float GUARD_IDLE_ALPHA = 0.55f;
+    const float GUARD_ALERT_HOLD = 1.2f;   // 예고 뒤 또렷하게 두는 시간(초)
+    CanvasGroup _guardGroup;
 
     void Awake() => Init();
 
@@ -40,6 +44,8 @@ public class UI_BattleInput : UI_Base
 
         GetObject((int)GameObjects.BattleTapArea).BindEvent(Attack, type: UIEvent.PointerDown);
         GetObject((int)GameObjects.BattleGuardBtn).BindEvent(Guard, type: UIEvent.PointerDown);
+        _guardGroup = GetObject((int)GameObjects.BattleGuardBtn).GetOrAddComponent<CanvasGroup>();
+        _guardGroup.alpha = GUARD_IDLE_ALPHA;
         GetObject((int)GameObjects.BattleAutoBtn).BindEvent(ToggleAuto);
 
         MonsterController.OnAttackTelegraph += OnTelegraph;
@@ -142,6 +148,9 @@ public class UI_BattleInput : UI_Base
         var btn = GetObject((int)GameObjects.BattleGuardBtn).transform;
         btn.DOKill(true);
         btn.DOPunchScale(Vector3.one * 0.18f, 0.3f, 6, 0.6f).SetUpdate(true).SetLink(btn.gameObject);
+        _guardGroup.DOKill();
+        _guardGroup.alpha = 1f;
+        _guardGroup.DOFade(GUARD_IDLE_ALPHA, 0.4f).SetDelay(GUARD_ALERT_HOLD).SetUpdate(true).SetLink(btn.gameObject);
 
         var g = Managers.Game;
         if (g == null || g.GuardHintSeen) return;
