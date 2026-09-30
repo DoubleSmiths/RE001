@@ -38,6 +38,10 @@ Android 대상이라 EDM4U(의존성 관리자)가 처음 들어오면 '자동 �
 - **계정이 생기면**: ① AdMob 에 앱 등록(플레이 스토어 연결) → 앱 ID · 보상형 광고 단위 ID ② `Define.ADMOB_APP_ID_ANDROID` ·
   `ADMOB_REWARDED_ANDROID` 교체 ③ `Tools/Ads/Set Up AdMob` ④ AdMob '개인정보 보호 및 메시지'에서 GDPR 메시지 게시 ⑤ 스토어 문서
   (`Documents/Store/` 데이터 보안·개인정보처리방침·앱 콘텐츠 '광고 있음'·광고 ID '예') 갱신 ⑥ app-ads.txt 를 개발자 웹사이트에.
+- ⚠️ 플러그인 11.x 의 콜백은 `MobileAds.RaiseAction` → `MobileAdsEventExecutor` 큐로 가는데, 그 실행기는 `MobileAds.Initialize`
+  (`MobileAds.Instance`)가 처음 만든다. 동의(UMP) 콜백은 초기화 **전에** 오므로 `Init` 이 실행기를 먼저 만든다 — 없으면 새 설치에서
+  동의 콜백이 큐에만 쌓여 광고가 영영 시작되지 않는다(업스트림 이슈 #3940, 코드 리뷰로 발견). 미리 받은 광고는 55분이 지나면 버리고
+  새로 받는다(1시간 만료 — `CanShowAd` 는 만료를 모른다). SDK 시작 예외는 잡아서 타이틀 로딩을 멈추지 않게 했다.
 - ⚠️ Unity 6 은 scoped registry 가 처음 들어온 프로젝트를 대화형으로 열 때 'Importing a scoped registry' 알림 창을 한 번 띄운다
   (정보 창 — Close). 닫기 전엔 unity-cli 가 붙지 못한다. 배치 모드에선 뜨지 않는다.
 - 플레이 서비스 광고 라이브러리가 매니페스트에 `AD_ID` 권한을 넣는다 — 계정 전에 출시하면 Play Console '광고 ID' 질문에

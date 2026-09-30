@@ -4,6 +4,7 @@ using UnityEngine;
 using static Define;
 #if UNITY_ANDROID && !UNITY_EDITOR
 using GoogleMobileAds.Api;
+using GoogleMobileAds.Common;
 using GoogleMobileAds.Ump.Api;
 #endif
 
@@ -16,6 +17,8 @@ public static class AdService
 #if UNITY_ANDROID && !UNITY_EDITOR
     static bool s_started, s_initStarted, s_ready, s_loading, s_showing;
     static RewardedAd s_ad;
+    static DateTime s_loadedAt;
+    const double AD_FRESH_MINUTES = 55;   // 미리 받아 둔 광고는 1시간이 지나면 못 띄운다(CanShowAd 는 만료를 모른다) — 그 전에 새로
     static bool IsTestUnit => ADMOB_REWARDED_ANDROID.StartsWith(ADMOB_TEST_PUBLISHER);
 
     public static bool Available => Managers.Game.ShopSave.AdFree || (s_ready && (Debug.isDebugBuild || !IsTestUnit));
@@ -30,17 +33,29 @@ public static class AdService
         // 광고 단위가 아직 구글 테스트 ID 면 출시 빌드는 SDK 를 깨우지 않는다 — 광고 없음·수집 없음(스토어 데이터 보안 A안) 그대로
         if (IsTestUnit && !Debug.isDebugBuild) return;
         s_started = true;
-        MobileAds.RaiseAdEventsOnUnityMainThread = true;
-        ConsentInformation.Update(new ConsentRequestParameters(), updateError =>
+        try
         {
-            if (updateError != null) Debug.LogWarning("[Ad] 동의 정보 갱신 실패: " + updateError.Message);
-            ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
+            // 콜백을 메인 스레드로 돌리는 실행기는 MobileAds.Initialize 가 처음 만든다 — 동의(UMP) 콜백은 그보다 먼저 오므로
+            //  직접 만들어 둔다. 없으면 새 설치(동의 전)에서 동의 콜백이 큐에만 쌓여 광고가 끝내 시작되지 않는다.
+            MobileAdsEventExecutor.Initialize();
+#pragma warning disable 0618   // 플러그인 11.x 에서 폐기 예고 — 대체 API(ExecuteInUpdate)를 이 플래그가 대신 불러 준다
+            MobileAds.RaiseAdEventsOnUnityMainThread = true;
+#pragma warning restore 0618
+            ConsentInformation.Update(new ConsentRequestParameters(), updateError =>
             {
-                if (formError != null) Debug.LogWarning("[Ad] 동의 양식 실패: " + formError.Message);
-                StartAds();
+                if (updateError != null) Debug.LogWarning("[Ad] 동의 정보 갱신 실패: " + updateError.Message);
+                ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
+                {
+                    if (formError != null) Debug.LogWarning("[Ad] 동의 양식 실패: " + formError.Message);
+                    StartAds();
+                });
             });
-        });
-        StartAds();   // 지난번에 받은 동의로 바로 시작할 수 있으면 기다리지 않는다
+            StartAds();   // 지난번에 받은 동의로 바로 시작할 수 있으면 기다리지 않는다
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("[Ad] 광고 SDK 시작 실패 — 광고 없이 계속한다: " + e);   // 타이틀 로딩을 멈추지 않게
+        }
     }
 
     static void StartAds()
@@ -59,6 +74,7 @@ public static class AdService
             s_loading = false;
             if (error != null || ad == null) { Debug.LogWarning("[Ad] 보상형 광고 로드 실패: " + error?.GetMessage()); return; }
             s_ad = ad;
+            s_loadedAt = DateTime.UtcNow;
         });
     }
 
@@ -66,6 +82,11 @@ public static class AdService
     public static bool ShowRewarded(string placement, Action<bool> onDone)
     {
         if (Managers.Game.ShopSave.AdFree) { onDone?.Invoke(true); return true; }
+        if (s_ad != null && !s_showing && (DateTime.UtcNow - s_loadedAt).TotalMinutes > AD_FRESH_MINUTES)
+        {
+            s_ad.Destroy();   // 오래 둔 광고 — 띄우면 조용히 실패하므로 버리고 새로 받는다
+            s_ad = null;
+        }
         if (!Available || s_showing || s_ad == null || !s_ad.CanShowAd()) { Load(); return false; }
         var ad = s_ad;
         s_ad = null;
