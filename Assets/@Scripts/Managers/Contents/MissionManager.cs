@@ -9,6 +9,7 @@ using static Define;
 public class MissionManager
 {
     public const string DAILY = "Daily", WEEKLY = "Weekly", GUIDE = "Guide", ATTENDANCE = "Attendance";
+    public const string PASS = "Pass", ACHIEVE = "Achieve";   // 성장 패스(ADR0039)·업적(ADR0040) — 가이드처럼 누적·상태로 판정
     public const int ATTENDANCE_DAYS = 7;
 
     public event Action OnChanged;
@@ -54,7 +55,7 @@ public class MissionManager
             case nameof(MissionEvent.Discover):   return g.DiscoveredMonsterIds.Count;
             case nameof(MissionEvent.DailyChest): return ClaimedDailyCount();
         }
-        if (m.Kind == GUIDE)
+        if (m.Kind == GUIDE || m.Kind == PASS || m.Kind == ACHIEVE)
         {
             if (m.Event == nameof(MissionEvent.NewStage)) return g.ClearedStageCount;
             return Save.Lifetime.TryGetValue(m.Event, out int n) ? n : 0;
@@ -79,6 +80,7 @@ public class MissionManager
     {
         if (m == null || m.Kind == ATTENDANCE) return false;
         RollPeriods();
+        if (m.Kind == PASS) return TryClaimPass(m);
         if (IsClaimed(m) || !IsDone(m)) return false;
         if (m.Kind == GUIDE && m != CurrentGuide) return false;   // 사다리는 순서대로
 
@@ -99,6 +101,53 @@ public class MissionManager
             default:         Managers.Game.Crystal       += value; break;
         }
     }
+
+    #region 성장 패스(ADR0039) — 스테이지 5곳마다 무료 줄 + (프리미엄을 샀으면) 프리미엄 줄
+    //  프리미엄은 인앱 상품 Kind "Pass" 를 샀는지로 판단한다(ShopManager). 나중에 사면 이미 받은 칸의 프리미엄 줄만 다시 받을 수 있다.
+    public Data.ProductData PassProduct
+    {
+        get
+        {
+            if (Managers.Data?.ProductDic == null) return null;
+            foreach (var p in Managers.Data.ProductDic.Values) if (p.Kind == "Pass") return p;
+            return null;
+        }
+    }
+    public bool PassPremium { get { var p = PassProduct; return p != null && Managers.Shop != null && Managers.Shop.IsBought(p); } }
+    public bool IsPremiumClaimed(Data.MissionData m) => Save.PremiumClaimed.Contains(m.DataId);
+    public bool CanClaimPass(Data.MissionData m)
+        => IsDone(m) && (!IsClaimed(m) || (PassPremium && m.PremiumValue > 0 && !IsPremiumClaimed(m)));
+    public bool HasPassClaimable
+    {
+        get
+        {
+            foreach (var m in List(PASS)) if (CanClaimPass(m)) return true;
+            return false;
+        }
+    }
+
+    bool TryClaimPass(Data.MissionData m)
+    {
+        if (!IsDone(m)) return false;
+        bool got = false;
+        if (!IsClaimed(m))
+        {
+            Save.Claimed.Add(m.DataId);
+            Grant(m.RewardType, m.RewardValue);
+            got = true;
+        }
+        if (PassPremium && m.PremiumValue > 0 && !IsPremiumClaimed(m))
+        {
+            Save.PremiumClaimed.Add(m.DataId);
+            Grant(m.PremiumType, m.PremiumValue);
+            got = true;
+        }
+        if (!got) return false;
+        Managers.Game.SaveGame();
+        OnChanged?.Invoke();
+        return true;
+    }
+    #endregion
 
     #region 출석 — 하루 한 번, 7칸을 차례로 돈다(빠진 날이 있어도 다음 칸부터 이어서 받는다)
     public int  AttendanceIndex => Save.AttendanceIndex;
@@ -131,6 +180,7 @@ public class MissionManager
         {
             if (Managers.Data?.MissionDic == null || Managers.Game == null) return false;
             if (CanAttend) return true;
+            if (HasPassClaimable) return true;
             foreach (var m in List(DAILY))  if (IsDone(m) && !IsClaimed(m)) return true;
             foreach (var m in List(WEEKLY)) if (IsDone(m) && !IsClaimed(m)) return true;
             var guide = CurrentGuide;

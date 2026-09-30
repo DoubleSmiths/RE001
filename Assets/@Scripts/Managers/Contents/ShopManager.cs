@@ -227,7 +227,8 @@ public class ShopManager
     {
         switch (p.Kind)
         {
-            case "Pack":    return !IsBought(p);
+            case "Pack":
+            case "Pass":    return !IsBought(p);   // 성장 패스(ADR0039) — 한 번 사면 프리미엄 줄이 영구히 열린다
             case "StepUp":  return !IsBought(p) && PreviousStepBought(p);
             case "Monthly": return !MonthlyActive;
             case "AdFree":  return !Save.AdFree;

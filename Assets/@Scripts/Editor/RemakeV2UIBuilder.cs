@@ -301,11 +301,12 @@ public static class RemakeV2UIBuilder
     const string SHOP_POPUP    = "Assets/@Resources/Prefab/UI/Popup/UI_ShopPopup.prefab";
     const string MISSION_POPUP = "Assets/@Resources/Prefab/UI/Popup/UI_MissionPopup.prefab";
     const string QUEST_ICON    = "Assets/@Resources/Sprite/Icon/Menu Icon/Quest Icon.PNG";
-    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop", "Dungeon", "Relic", "Town" };   // UI_MissionPopup.Tab 순서
+    static readonly string[] MISSION_TABS = { "Daily", "Weekly", "Guide", "Attendance", "Shop", "Dungeon", "Relic", "Town", "Pass" };   // UI_MissionPopup.Tab 순서
     const string SHOP_ICON = "Assets/@Resources/Sprite/Icon/Menu Icon/Shop_Icon.png";
     const float MISSION_TABS_TOP = 27f, MISSION_TAB_HEIGHT = 12f, MISSION_TABS_WIDTH = 124f;
-    //  탭이 8개가 되어 한 줄이면 영어 이름(DUNGEON·RELICS)이 13칸에 안 들어간다 — 4개씩 두 줄. 목록은 한 줄만큼 내린다.
-    const int   MISSION_TAB_COLUMNS = 4;
+    //  탭이 8개가 되어 한 줄이면 영어 이름(DUNGEON·RELICS)이 13칸에 안 들어간다 — 두 줄. 목록은 한 줄만큼 내린다.
+    //  성장 패스·업적(ADR0039·0040)으로 10개 — 5개씩 두 줄(칸 23, 글자는 4~6pt 자동 크기).
+    const int   MISSION_TAB_COLUMNS = 5;
     const float MISSION_TAB_SPACING = 2f;
     const float MISSION_ROW_HEIGHT = 16f, MISSION_RIGHT_WIDTH = 38f;
     const float MISSION_ROW_ICON = 13f, MISSION_ROW_ICON_INSET = 2f;

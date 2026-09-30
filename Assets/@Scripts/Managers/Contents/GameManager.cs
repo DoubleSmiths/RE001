@@ -83,6 +83,8 @@ public class MissionSaveData
     public Dictionary<string, int> Lifetime = new Dictionary<string, int>(); // 누적 이벤트 수(가이드 판정)
     public int AttendanceIndex;                                    // 다음에 받을 출석 칸(0~6)
     public int AttendanceKey;                                      // 마지막으로 출석 보상을 받은 날(yyyyMMdd)
+    public List<int> PremiumClaimed = new List<int>();                       // 성장 패스 프리미엄 줄을 받은 칸(ADR0039)
+    public string Honor = "";                                                // 달고 있는 칭호 키(업적, 없으면 빈칸)
 }
 
 // v2 상점·광고·월정액(ADR0030) — ShopManager 가 읽고 쓴다.
@@ -1534,6 +1536,7 @@ public class GameManager
         set { _gameData.AbyssBest = Mathf.Max(0, value); SaveGame(); }
     }
     public int  LastStageNode    => StageOrder.Count > 0 ? StageOrder[StageOrder.Count - 1] : 0;
+    public int  StageCount       => StageOrder.Count;
     public bool AllStagesCleared => StageOrder.Count > 0 && StageOrder.TrueForAll(IsStageCleared);   // 여정 잠금은 레벨·퀘스트라 건너뛴 스테이지가 있을 수 있다
 
     // 레벨 조건(LEVEL_REQUIRED)이 이 레벨 이하인 마지막 스테이지 — 시련 시험관의 능력치 기준(ADR0037)
@@ -2224,6 +2227,8 @@ public class GameManager
         d.Missions.Progress    ??= new Dictionary<int, int>();
         d.Missions.Claimed     ??= new List<int>();
         d.Missions.Lifetime    ??= new Dictionary<string, int>();
+        d.Missions.PremiumClaimed ??= new List<int>();
+        d.Missions.Honor       ??= "";
         d.Shop                 ??= new ShopSaveData();
         d.Shop.HotUntil         = Fit(d.Shop.HotUntil, 3);
         d.Shop.AdViews         ??= new Dictionary<string, int>();

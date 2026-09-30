@@ -504,6 +504,9 @@ namespace Data
         public string RewardType;    // Crystal / Mandrake / Gold
         public int    RewardValue;
         public string TitleKey;      // {0} = Goal
+        public string PremiumType;   // 성장 패스(Pass, ADR0039): 프리미엄 줄 보상(Crystal/Mandrake/Gold)
+        public int    PremiumValue;
+        public string HonorKey;      // 업적(Achieve): 받으면 얻는 칭호의 로컬라이즈 키(없으면 빈칸)
     }
 
     [Serializable]

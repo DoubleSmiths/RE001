@@ -10704,6 +10704,36 @@
       "TextKey": "AutoUnlockText",
       "Kor": "자동 전투가 열렸다! 이제 알아서 싸운다 · AUTO 로 끄고 켠다",
       "Eng": "AUTO BATTLE UNLOCKED! TOGGLE IT WITH AUTO"
+    },
+    {
+      "TextKey": "MissionPassTabText",
+      "Kor": "패스",
+      "Eng": "PASS"
+    },
+    {
+      "TextKey": "PassTitleText",
+      "Kor": "성장 패스",
+      "Eng": "GROWTH PASS"
+    },
+    {
+      "TextKey": "PassHeaderFormat",
+      "Kor": "스테이지 돌파 {0}/{1} · 5곳마다 보상",
+      "Eng": "STAGES {0}/{1} · REWARD EVERY 5"
+    },
+    {
+      "TextKey": "PassPremiumOnText",
+      "Kor": "프리미엄",
+      "Eng": "PREMIUM"
+    },
+    {
+      "TextKey": "PassPremiumFormat",
+      "Kor": "프리미엄 {0}",
+      "Eng": "PREMIUM {0}"
+    },
+    {
+      "TextKey": "ProductGrowthPassText",
+      "Kor": "성장 패스",
+      "Eng": "GROWTH PASS"
     }
   ]
 }

@@ -951,6 +951,9 @@ public class DataTransformer : EditorWindow
                 RewardType  = C(row, 5),
                 RewardValue = ConvertValue<int>(C(row, 6)),
                 TitleKey    = C(row, 7),
+                PremiumType  = C(row, 8),
+                PremiumValue = ConvertValue<int>(C(row, 9)),
+                HonorKey     = C(row, 10),
             });
         }
         WriteJsonStr("MissionData", loader);

@@ -338,6 +338,13 @@ LITERAL_KEYS = [
     ('AbyssStartFormat', '심연으로 (최고 {0}층)', 'INTO THE ABYSS (BEST F{0})'),
     ('AbyssBossFormat', '심연 {0}층 수문장!', 'ABYSS F{0} GUARDIAN!'),
     ('AbyssResultFormat', '심연 {0}층에서 멈췄다 · 최고 {1}층 · 크리스탈 +{2}', 'STOPPED AT F{0} · BEST F{1} · +{2} CRYSTALS'),
+    # v2 성장 패스(ADR0039) — UI_MissionPopup 패스 탭 / ProductData
+    ('MissionPassTabText', '패스', 'PASS'),
+    ('PassTitleText', '성장 패스', 'GROWTH PASS'),
+    ('PassHeaderFormat', '스테이지 돌파 {0}/{1} · 5곳마다 보상', 'STAGES {0}/{1} · REWARD EVERY 5'),
+    ('PassPremiumOnText', '프리미엄', 'PREMIUM'),
+    ('PassPremiumFormat', '프리미엄 {0}', 'PREMIUM {0}'),
+    ('ProductGrowthPassText', '성장 패스', 'GROWTH PASS'),
     ('Relic8001NameText', '녹슨 칼자루', "Rusty Hilt"),
     ('Relic8002NameText', '늑대 송곳니 부적', "Wolf Fang Charm"),
     ('Relic8003NameText', '전사의 문장', "Warrior's Crest"),

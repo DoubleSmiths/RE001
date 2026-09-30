@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """v2 미션·출석·인앱 상품 표 생성기 (ADR0030, 설계서 4.5·4.7).
 
-  MissionData.xlsx  — 일일(00시 초기화) 6 + 완료 상자, 주간(월요일 00시) 5, 가이드 40단계 사다리, 7일 출석.
+  MissionData.xlsx  — 일일(00시 초기화) 6 + 완료 상자, 주간(월요일 00시) 5, 가이드 40단계 사다리, 7일 출석,
+                      성장 패스 25단계(ADR0039 — 무료 줄 + 프리미엄 줄).
   ProductData.xlsx  — 인앱 상품 목록(가격 표시·구성). 실제 결제는 스토어 계정이 생긴 뒤(P3) — 지금은 개발 빌드 모의 구매.
 
   수치를 바꿀 때는 여기를 고치고 다시 돌린 뒤 Unity Tools/ParseAllLocal.
@@ -74,6 +75,11 @@ GUIDE_EXTRA = [
     (3101, 25, 'DungeonClear', 1, 30),   # 요일 던전(ADR0034) — 보스 1회 다음
     (3102, 35, 'BondRequest', 1, 30),    # 마을 배달 의뢰(ADR0036) — 패링 1회 다음
 ]
+# 성장 패스(ADR0039) — 스테이지 5곳(한 필드)을 돌파할 때마다 한 칸, 125곳이면 25칸.
+#  무료 줄: 크리스탈 20(다섯 번째 칸마다 만드라고라 2 — 포획 재료는 무료 줄에만). 프리미엄 줄(12,000원): 크리스탈 150.
+#  전체: 무료 크리스탈 400 + 만드라고라 10, 프리미엄 크리스탈 3,750(1,100원에 60개 기준 약 5.7배 가치).
+PASS_STEP = 5
+PASS = [(i, ('Mandrake', 2) if i % 5 == 0 else ('Crystal', 20), ('Crystal', 150)) for i in range(1, 26)]
 # 출석 7일 반복: 50 → 50 → 만드라고라 2 → 100 → 50 → 50 → 300
 ATTENDANCE = [('Crystal', 50), ('Crystal', 50), ('Mandrake', 2), ('Crystal', 100), ('Crystal', 50), ('Crystal', 50), ('Crystal', 300)]
 
@@ -81,6 +87,8 @@ MISSION_HEADER = [
     ('DataId', 'int', '번호'), ('Kind', 'string', '종류(Daily/Weekly/Guide/Attendance)'), ('Order', 'int', '순서'),
     ('Event', 'string', '이벤트(Define.MissionEvent)'), ('Goal', 'int', '목표'), ('RewardType', 'string', '보상(Crystal/Mandrake/Gold)'),
     ('RewardValue', 'int', '보상량'), ('TitleKey', 'string', '제목 로컬라이즈 키({0}=목표)'),
+    ('PremiumType', 'string', '프리미엄 보상(Pass)'), ('PremiumValue', 'int', '프리미엄 보상량'),
+    ('HonorKey', 'string', '칭호 로컬라이즈 키(Achieve)'),
 ]
 
 
@@ -96,12 +104,16 @@ def mission_rows():
         rows.append((data_id, 'Guide', order, ev, goal, 'Crystal', rv, TITLE[ev]))
     for i, (rt, rv) in enumerate(ATTENDANCE, 1):
         rows.append((4000 + i, 'Attendance', i, 'Attendance', i, rt, rv, TITLE['Attendance']))
+    rows = [r + (None, 0, None) for r in rows]   # 프리미엄·칭호 칸은 패스·업적만 쓴다(빈 칸 — 엑셀이 None 으로 돌려준다)
+    for i, (ft, fv), (pt, pv) in PASS:
+        rows.append((6000 + i, 'Pass', i, 'NewStage', PASS_STEP * i, ft, fv, TITLE['NewStage'], pt, pv, None))
     return rows
 
 
 # 인앱 상품 — 설계서 4.7. 성장·시즌 패스, 치장, 유물 소환권은 해당 시스템(P2)과 함께 넣는다.
 #  설계서의 시작 패키지 '회복물약 10'은 뺐다 — 이 게임의 물약은 개수가 아니라 단계 선택 + 재사용 대기라 줄 게 없다.
 #  Kind: Pack(1회) / StepUp(순서대로 1회) / Monthly(30일) / AdFree(영구) / Crystal(반복, 종류별 첫 구매 2배)
+#        / Pass(1회 — 성장 패스 프리미엄 줄을 연다, ADR0039. 상점 목록이 아니라 패스 탭에 보인다)
 PRODUCT_HEADER = [
     ('DataId', 'int', '번호'), ('ProductKey', 'string', '스토어 상품 ID'), ('Kind', 'string', '종류'),
     ('PriceKRW', 'int', '가격(원)'), ('Crystal', 'int', '크리스탈'), ('Mandrake', 'int', '만드라고라'),
@@ -114,6 +126,7 @@ PRODUCTS = [
     (5004, 'stepup_3',     'StepUp',    5500,  800, 0, 'ProductStepUp3Text'),
     (5005, 'monthly_pass', 'Monthly',   5500,  300, 0, 'ProductMonthlyText'),
     (5006, 'ad_free',      'AdFree',    9900,    0, 0, 'ProductAdFreeText'),
+    (5007, 'growth_pass',  'Pass',     12000,    0, 0, 'ProductGrowthPassText'),
     (5101, 'crystal_60',   'Crystal',   1100,   60, 0, 'ProductCrystalFormat'),
     (5102, 'crystal_330',  'Crystal',   5500,  330, 0, 'ProductCrystalFormat'),
     (5103, 'crystal_700',  'Crystal',  11000,  700, 0, 'ProductCrystalFormat'),
@@ -153,6 +166,10 @@ def main():
     weekly = sum(r[6] for r in mission_rows() if r[1] == 'Weekly')
     guide = sum(r[6] for r in mission_rows() if r[1] == 'Guide')
     print(f'일일 크리스탈 {daily} (상자 포함) · 주간 {weekly} · 가이드 {len(GUIDE) + len(GUIDE_EXTRA)}단계 합계 {guide} · 출석 7일 {ATTENDANCE}')
+    pf = sum(r[6] for r in mission_rows() if r[1] == 'Pass' and r[5] == 'Crystal')
+    pm = sum(r[6] for r in mission_rows() if r[1] == 'Pass' and r[5] == 'Mandrake')
+    pp = sum(r[9] for r in mission_rows() if r[1] == 'Pass')
+    print(f'성장 패스 {len(PASS)}칸 · 무료 크리스탈 {pf} + 만드라고라 {pm} · 프리미엄 크리스탈 {pp}')
 
     ok = True
     for path, header, rows, sheet in targets:

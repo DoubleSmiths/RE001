@@ -42,9 +42,9 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
-    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
+    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town, Pass }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
 
-    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText" };
+    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText", "MissionPassTabText" };
     static readonly string[] HOT_KEYS = { "HotGoldText", "HotExpText", "HotAtkText" };   // HotTime 순서
     static readonly Color TAB_ON      = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color TAB_OFF     = new Color32(0xB8, 0xB8, 0xB8, 0xFF);
@@ -62,6 +62,7 @@ public class UI_MissionPopup : UI_Popup
     GameObject _template;
     readonly List<GameObject> _rows = new List<GameObject>();
     readonly List<Action> _rowActions = new List<Action>();
+    readonly List<bool> _rowClaims = new List<bool>();   // '모두 받기'가 눌러도 되는 줄(받기) — 결제·광고 줄은 false
     readonly List<TMP_Text> _tabTexts = new List<TMP_Text>();
 
     void Awake() => Init();
@@ -158,7 +159,8 @@ public class UI_MissionPopup : UI_Popup
         if (mission == null) return;
 
         GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText"
-                                                     : _tab == Tab.Relic ? "RelicTitleText" : _tab == Tab.Town ? "BondTitleText" : "MissionTitleText");
+                                                     : _tab == Tab.Relic ? "RelicTitleText" : _tab == Tab.Town ? "BondTitleText"
+                                                     : _tab == Tab.Pass ? "PassTitleText" : "MissionTitleText");
         GetText((int)Texts.ClaimAllTxt).text = Util.Localize("MissionClaimAllText");
         // 상점·던전·유물 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장·소환이라 한꺼번에 누르면 안 된다
         GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic && _tab != Tab.Town);
@@ -173,6 +175,8 @@ public class UI_MissionPopup : UI_Popup
             _tabTexts[(int)Tab.Dungeon].text += TAB_ALERT;
         if ((int)Tab.Town < _tabTexts.Count && Managers.Bond != null && Managers.Bond.HasReady)
             _tabTexts[(int)Tab.Town].text += TAB_ALERT;
+        if ((int)Tab.Pass < _tabTexts.Count && mission.HasPassClaimable)
+            _tabTexts[(int)Tab.Pass].text += TAB_ALERT;
 
         int n = 0;
         switch (_tab)
@@ -187,6 +191,7 @@ public class UI_MissionPopup : UI_Popup
             case Tab.Dungeon: n = DungeonRows(); break;
             case Tab.Relic: n = _relicRates ? RelicRateRows() : RelicRows(); break;
             case Tab.Town: n = TownRows(); break;
+            case Tab.Pass: n = PassRows(); break;
         }
         for (int i = n; i < _rows.Count; i++) _rows[i].SetActive(false);
 
@@ -205,7 +210,7 @@ public class UI_MissionPopup : UI_Popup
         {
             Action next = null;
             for (int i = 0; i < _rowActions.Count && i < _rows.Count; i++)
-                if (_rows[i].activeSelf && _rowActions[i] != null) { next = _rowActions[i]; break; }
+                if (_rows[i].activeSelf && _rowActions[i] != null && _rowClaims[i]) { next = _rowActions[i]; break; }
             if (next == null) break;
             next();   // 받으면 OnChanged → Refresh 로 줄이 다시 그려진다
             got = true;
@@ -299,7 +304,8 @@ public class UI_MissionPopup : UI_Popup
                Crystal(shop.MandrakeCost), CrystalColor(shop.MandrakeCost), 1f, () => Done(shop.BuyMandrake()));
 
         if (IapService.Available)
-            foreach (var p in shop.Products) ProductRow(n++, p);
+            foreach (var p in shop.Products)
+                if (p.Kind != "Pass") ProductRow(n++, p);   // 성장 패스는 패스 탭에서 판다
         return n;
     }
 
@@ -409,6 +415,40 @@ public class UI_MissionPopup : UI_Popup
             return;
         }
         Managers.Sound?.PlaySFX("SFX_Success2");
+    }
+    #endregion
+
+    #region 패스 탭 (ADR0039)
+    // 맨 위: 돌파 수 + 프리미엄(샀으면 표시, 아니면 가격 — 누르면 결제). 아래: 5곳마다 한 칸(무료 줄 · 프리미엄 줄).
+    //  출시 빌드(결제 연결 전)엔 프리미엄 줄을 숨긴다 — 무료 줄은 그대로 받는다.
+    int PassRows()
+    {
+        var mission = Managers.Mission;
+        var g = Managers.Game;
+        var pass = mission.PassProduct;
+        bool premium = mission.PassPremium;
+        bool canBuy = pass != null && IapService.Available && Managers.Shop.CanBuy(pass);
+        bool showPremium = premium || IapService.Available;
+        int n = 0;
+        string head = string.Format(Util.Localize("PassHeaderFormat"), g.ClearedStageCount, g.StageCount);
+        if (premium)     SetRow(n++, head, Util.Localize("PassPremiumOnText"), TEXT_READY, 1f, null);
+        else if (canBuy) SetRow(n++, head, string.Format(Util.Localize("PriceFormat"), pass.PriceKRW), TEXT_READY, 1f, () => Buy(pass), claim: false);
+        else             SetRow(n++, head, "", TEXT_DONE, 1f, null);
+
+        foreach (var m in mission.List(MissionManager.PASS))
+        {
+            string left = Title(m) + "  " + Reward(m.RewardType, m.RewardValue);
+            if (showPremium && m.PremiumValue > 0)
+            {
+                string prem = string.Format(Util.Localize("PassPremiumFormat"), Reward(m.PremiumType, m.PremiumValue));
+                left += "  " + (premium ? prem : $"<color=#8A8A8A>{prem}</color>");
+            }
+            var mm = m;
+            if (mission.CanClaimPass(m)) SetRow(n++, left, Util.Localize("MissionClaimText"), TEXT_READY, 1f, () => Claim(mm));
+            else if (mission.IsDone(m))  SetRow(n++, left, Util.Localize("MissionDoneText"), TEXT_DONE, ROW_DONE_ALPHA, null);
+            else                         SetRow(n++, left, Mathf.Min(mission.Progress(m), m.Goal) + "/" + m.Goal, TEXT_REWARD, 1f, null);
+        }
+        return n;
     }
     #endregion
 
@@ -599,7 +639,7 @@ public class UI_MissionPopup : UI_Popup
     };
 
     // 줄은 템플릿 복제본을 재사용한다. 누름은 줄마다 한 번만 걸고, 그 줄의 현재 동작(_rowActions)을 부른다.
-    void SetRow(int index, string left, string right, Color rightColor, float alpha, Action onClick, Sprite icon = null)
+    void SetRow(int index, string left, string right, Color rightColor, float alpha, Action onClick, Sprite icon = null, bool claim = true)
     {
         while (_rows.Count <= index)
         {
@@ -609,6 +649,7 @@ public class UI_MissionPopup : UI_Popup
             foreach (var t in go.GetComponentsInChildren<TMP_Text>(true)) ApplyFont(t, FontType.UI);
             _rows.Add(go);
             _rowActions.Add(null);
+            _rowClaims.Add(false);
         }
 
         var row = _rows[index];
@@ -619,6 +660,7 @@ public class UI_MissionPopup : UI_Popup
         texts[1].color = rightColor;
         Util.GetOrAddComponent<CanvasGroup>(row).alpha = alpha;
         _rowActions[index] = onClick;
+        _rowClaims[index] = claim;
 
         // 줄 아이콘(유물 등) — 있으면 켜고 왼쪽 글자를 그만큼 민다. 템플릿의 원래 여백은 처음 한 번 기억한다.
         var iconTr = row.transform.Find("MissionRowIcon");
