@@ -29,8 +29,8 @@
   - 옛 파일 두 개와 그 어드레서블 `Sound` 그룹 항목이 모두 사라졌다.
   - `UI_TamePopup`이 새 파일을 재생한다.
   - 빌드 산출물에 옛 주소가 남아 있지 않다.
-- [ ] **구매 영수증 확인.** `Slime_Die.mp3`와 `Slime_OnHit.mp3`는 SmartSound FX(MONSTERS) © 2019 음원이다. 이 두 파일은 몬스터 503종 모두의 피격·사망음이다. `Sound_Miss.mp3`, `Sound_PlayerAttack.mp3`, `Sound_Smash.mp3`는 Medieval Fantasy Audio Bundle(Evil Mind Entertainment, 2013) 음원이다. 구매 내역(예: Unity Asset Store)과 라이선스의 크레딧 조건을 확인한다. 확인하지 못하면 교체한다.
-- [ ] **출처 미상 음원 확인.** BGM 은 전부 자작곡이다(2026-09-29 `game/remake-v2`: 타이틀·마을·필드·보스 4곡을 `_tools/gen_bgm_suite.py` 로 작곡, 옛 BGM 5곡·ENV 2개와 그 어드레서블 항목 삭제). 남은 SFX 51개는 메타데이터가 없다. 모든 음원은 초기 커밋 `e191a5ba` "[SETTING] 프로젝트 세팅"(2026-03-06)으로 한꺼번에 들어왔다. 파일마다 출처를 기록하거나 교체한다.
+- [x] **구매 영수증 확인.** (2026-09-30 해당 5개를 자작 효과음으로 교체 — `_tools/gen_sfx.py`, ADR0048. 영수증 확인이 필요 없어졌다) `Slime_Die.mp3`와 `Slime_OnHit.mp3`는 SmartSound FX(MONSTERS) © 2019 음원이다. 이 두 파일은 몬스터 503종 모두의 피격·사망음이다. `Sound_Miss.mp3`, `Sound_PlayerAttack.mp3`, `Sound_Smash.mp3`는 Medieval Fantasy Audio Bundle(Evil Mind Entertainment, 2013) 음원이다. 구매 내역(예: Unity Asset Store)과 라이선스의 크레딧 조건을 확인한다. 확인하지 못하면 교체한다.
+- [x] **출처 미상 음원 확인.** (2026-09-30 효과음 56개 전부 자작 합성음으로 교체 — `_tools/gen_sfx.py`, ADR0048) BGM 은 전부 자작곡이다(2026-09-29 `game/remake-v2`: 타이틀·마을·필드·보스 4곡을 `_tools/gen_bgm_suite.py` 로 작곡, 옛 BGM 5곡·ENV 2개와 그 어드레서블 항목 삭제). 남은 SFX 51개는 메타데이터가 없다. 모든 음원은 초기 커밋 `e191a5ba` "[SETTING] 프로젝트 세팅"(2026-03-06)으로 한꺼번에 들어왔다. 파일마다 출처를 기록하거나 교체한다.
 - [ ] 그 밖의 `UNKNOWN — VERIFY` 항목(픽셀 UI·배경 팩, 셰이더 2종)의 출처와 라이선스를 확인하고, 결과를 `Third_Party_Notices.md`에 기록한다.
 - [ ] `Assets/IMPORTS/EpicVictoryEffects/Fonts/calibril.ttf`(Microsoft 폰트)를 삭제한다. (확인: 에셋 데모 씬 2개만 참조 — 빌드 목록에 없어 **출시물에는 포함되지 않는다**) EmojiOne을 계속 쓸지도 정한다.
 - [x] Unity Diagnostics를 끈다(`Project Settings > Services > Diagnostics` → Disabled). (2026-09-29 `m_EngineDiagnosticsEnabled: 0` 커밋) 빌드한 뒤 네트워크 통신이 0건인지 확인한다. 이 작업이 끝나야 `Privacy_Policy.md`와 `Google_Play_Data_Safety.md`의 A안이 사실이 된다.
