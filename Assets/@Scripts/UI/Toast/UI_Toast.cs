@@ -96,6 +96,26 @@ public class UI_Toast : UI_Base
 
     const float TOAST_MIN_FONT_RATIO = 0.5f;
 
+    // 뒤에 온 알림이 같은 자리에 겹치면 둘 다 읽을 수 없었다(첫 전투의 '눌러서 공격' + '방패로 막기' 등) —
+    //  앞선 알림은 한 칸씩 아래로 비켜 준다(UIManager.ShowToast). 띠의 등장 연출(StageTitle Move)과 겹치지 않게 그 부모를 옮긴다.
+    RectTransform _stackRoot;
+    float _stackBaseY;
+    int _stacked;
+
+    public void MakeRoom()
+    {
+        if (_stackRoot == null)
+        {
+            _stackRoot = transform.Find("FIXED/In_Frame") as RectTransform;
+            if (_stackRoot == null) return;
+            _stackBaseY = _stackRoot.anchoredPosition.y;
+        }
+        _stacked++;
+        _stackRoot.DOKill();
+        _stackRoot.DOAnchorPosY(_stackBaseY - _stacked * Define.TOAST_STACK_STEP, Define.TOAST_STACK_DURATION)
+                  .SetUpdate(true).SetLink(gameObject);
+    }
+
     void Refresh()
     {
 

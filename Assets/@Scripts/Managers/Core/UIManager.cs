@@ -235,6 +235,8 @@ public class UIManager
         var raycaster = go.GetComponent<GraphicRaycaster>();
         if (raycaster != null) raycaster.enabled = false;
         popup.SetInfo(msg);
+        foreach (var older in _toasts)
+            if (older != null) older.MakeRoom();   // 앞선 알림은 한 칸 아래로 — 같은 자리에 겹치면 둘 다 못 읽었다
         _toasts.Add(popup);
         go.transform.SetParent(Root.transform);
         CoroutineManager.StartCoroutine(CoCloseToastUI(popup));

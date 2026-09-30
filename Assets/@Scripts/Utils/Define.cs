@@ -109,6 +109,8 @@ public class Define
     public const float ITEM_SOURCE_DIVIDER_GAP = 4f;
     public const float ITEM_SOURCE_MIN_FONT_SIZE = 5f;
     public const float ITEM_DESC_BOTTOM_PAD = 8f;   // 아이템 창 설명 끝 ~ 창 아래 테두리(긴 설명이면 창을 이만큼 남기고 늘린다)
+    public const float TOAST_STACK_STEP = 38f;      // 알림이 겹쳐 뜨면 앞선 것을 이만큼 아래로(띠 높이 35 + 틈)
+    public const float TOAST_STACK_DURATION = 0.15f;   // 그때 비키는 시간
     public const string GROWTH_ITEM_RARITY_LABEL_TEXT = "GrowthItemRarityLabelText";
     public const string GROWTH_ITEM_FOUND_LABEL_TEXT = "GrowthItemFoundLabelText";
     public const float CLASS_GUIDE_FONT_SIZE = 6f;

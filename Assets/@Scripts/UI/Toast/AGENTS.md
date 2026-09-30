@@ -21,6 +21,7 @@
 - `OnDestroy` override 시 `base.OnDestroy()` 호출 유지 (`OnLanguageChanged` 구독 해제).
 - **그리는 순서·입력**: `UIManager.ShowToast` 가 캔버스 순서를 토스트 전용(`TOAST_ORDER_BASE` 2000+, HUD·팝업 위)으로 올리고 `GraphicRaycaster` 를 끈다. 프리팹 값(100) 그대로면 화면 UI(1001)·큰 팝업에 가려졌고, 레이캐스트가 켜진 채 올리면 3초 동안 아래 탭 공격·버튼을 막는다.
 - **긴 문장**: `StageTitle_Txt` 의 ContentSizeFitter(가로 = 선호 크기)를 `SetInfo` 에서 끈다. 켜 두면 칸이 글자만큼 늘어나 자동 크기(최소 0.5배)가 한 번도 줄이지 못하고 화면 밖으로 넘쳤다. 지금은 띠 폭(164) 안에서 두 줄까지 줄어든다.
+- **겹쳐 뜰 때**: 새 알림이 뜨면 앞선 알림은 `MakeRoom()` 으로 한 칸(`TOAST_STACK_STEP`)씩 아래로 비킨다 — 같은 자리에 겹치면 둘 다 못 읽었다(첫 전투의 '눌러서 공격'+'방패로 막기'). 등장 연출(StageTitle Move)과 겹치지 않게 부모 `FIXED/In_Frame` 을 옮긴다.
 - **확인할 때**: `unity-cli exec` 안에서 바로 띄운 토스트는 exec 컴파일로 멈춘 프레임(수 초) 때문에 트윈이 한 번에 끝나 안 보인다 — 코루틴에서 0.5초 기다린 뒤 띄워 찍는다.
 
 ### Common Patterns
