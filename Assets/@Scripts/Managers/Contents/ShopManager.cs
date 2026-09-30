@@ -2,19 +2,114 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static Define;
+#if UNITY_ANDROID && !UNITY_EDITOR
+using GoogleMobileAds.Api;
+using GoogleMobileAds.Ump.Api;
+#endif
 
-// 보상형 광고(설계서 4.6). 지금은 모의다 — 에디터·개발 빌드는 바로 성공한다.
-//  출시 빌드는 광고 SDK 를 붙이기 전까지 광고 자리를 숨긴다(Available=false). 광고 제거를 샀으면 광고 없이 즉시 보상.
+// 보상형 광고(설계서 4.6, ADR0044). 광고 제거를 샀으면 광고 없이 바로 보상.
+//  안드로이드 기기: AdMob 보상형 — 타이틀에서 Init() 이 UMP 동의(필요한 나라만 양식) → SDK 초기화 → 한 편 미리 로드.
+//   광고가 **닫힌 뒤** onDone(보상 받았는가)을 부른다(비동기). 광고 단위가 테스트 ID 인 채면 출시 빌드는 Available=false.
+//  에디터·그 밖의 플랫폼: 모의 — 에디터·개발 빌드는 바로 성공, 출시 빌드(스팀 PC)는 광고 없음.
 public static class AdService
 {
-    public static bool Available => Managers.Game.ShopSave.AdFree || Application.isEditor || Debug.isDebugBuild;
+#if UNITY_ANDROID && !UNITY_EDITOR
+    static bool s_started, s_initStarted, s_ready, s_loading, s_showing;
+    static RewardedAd s_ad;
+    static bool IsTestUnit => ADMOB_REWARDED_ANDROID.StartsWith(ADMOB_TEST_PUBLISHER);
 
-    public static void ShowRewarded(string placement, Action<bool> onDone)
+    public static bool Available => Managers.Game.ShopSave.AdFree || (s_ready && (Debug.isDebugBuild || !IsTestUnit));
+    public static bool IsShowing => s_showing;
+    // 유럽 등 동의가 필요한 곳은 설정을 다시 고를 자리를 둬야 한다(상점 탭 맨 아래 줄)
+    public static bool PrivacyOptionsRequired
+        => s_started && ConsentInformation.PrivacyOptionsRequirementStatus == PrivacyOptionsRequirementStatus.Required;
+
+    public static void Init()
     {
-        if (!Available) { onDone?.Invoke(false); return; }
+        if (s_started) return;
+        // 광고 단위가 아직 구글 테스트 ID 면 출시 빌드는 SDK 를 깨우지 않는다 — 광고 없음·수집 없음(스토어 데이터 보안 A안) 그대로
+        if (IsTestUnit && !Debug.isDebugBuild) return;
+        s_started = true;
+        MobileAds.RaiseAdEventsOnUnityMainThread = true;
+        ConsentInformation.Update(new ConsentRequestParameters(), updateError =>
+        {
+            if (updateError != null) Debug.LogWarning("[Ad] 동의 정보 갱신 실패: " + updateError.Message);
+            ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
+            {
+                if (formError != null) Debug.LogWarning("[Ad] 동의 양식 실패: " + formError.Message);
+                StartAds();
+            });
+        });
+        StartAds();   // 지난번에 받은 동의로 바로 시작할 수 있으면 기다리지 않는다
+    }
+
+    static void StartAds()
+    {
+        if (s_initStarted || !ConsentInformation.CanRequestAds()) return;
+        s_initStarted = true;
+        MobileAds.Initialize(_ => { s_ready = true; Load(); });
+    }
+
+    static void Load()
+    {
+        if (!s_ready || s_loading || s_ad != null) return;
+        s_loading = true;
+        RewardedAd.Load(ADMOB_REWARDED_ANDROID, new AdRequest(), (ad, error) =>
+        {
+            s_loading = false;
+            if (error != null || ad == null) { Debug.LogWarning("[Ad] 보상형 광고 로드 실패: " + error?.GetMessage()); return; }
+            s_ad = ad;
+        });
+    }
+
+    // 광고를 띄웠으면 true(보상은 닫힌 뒤 onDone), 띄우지 못했으면 false(onDone 은 부르지 않는다 — 부른 쪽이 '불러오는 중'을 알린다)
+    public static bool ShowRewarded(string placement, Action<bool> onDone)
+    {
+        if (Managers.Game.ShopSave.AdFree) { onDone?.Invoke(true); return true; }
+        if (!Available || s_showing || s_ad == null || !s_ad.CanShowAd()) { Load(); return false; }
+        var ad = s_ad;
+        s_ad = null;
+        s_showing = true;
+        bool earned = false, finished = false;
+        void Finish()
+        {
+            if (finished) return;
+            finished = true;
+            s_showing = false;
+            ad.Destroy();
+            Load();   // 다음 편을 미리
+            onDone?.Invoke(earned);
+        }
+        ad.OnAdFullScreenContentClosed += Finish;
+        ad.OnAdFullScreenContentFailed += e => { Debug.LogWarning("[Ad] 보상형 광고 표시 실패: " + e?.GetMessage()); Finish(); };
+        Debug.Log($"[Ad] 보상형 광고 — {placement}");
+        ad.Show(_ => earned = true);
+        return true;
+    }
+
+    public static void ShowPrivacyOptions(Action onDone)
+        => ConsentForm.ShowPrivacyOptionsForm(e =>
+        {
+            if (e != null) Debug.LogWarning("[Ad] 개인정보 설정 양식 실패: " + e.Message);
+            onDone?.Invoke();
+        });
+#else
+    public static bool Available => Managers.Game.ShopSave.AdFree || Application.isEditor || Debug.isDebugBuild;
+    public static bool IsShowing => false;
+    public static bool PrivacyOptionsRequired => false;
+
+    public static void Init() { }
+
+    public static bool ShowRewarded(string placement, Action<bool> onDone)
+    {
+        if (!Available) return false;
         if (!Managers.Game.ShopSave.AdFree) Debug.Log($"[Ad] 모의 보상형 광고 — {placement}");
         onDone?.Invoke(true);
+        return true;
     }
+
+    public static void ShowPrivacyOptions(Action onDone) => onDone?.Invoke();
+#endif
 }
 
 // 인앱 결제(설계서 4.7). 스토어 결제(Google Play Billing·Steamworks)는 계정이 생긴 뒤(P3).
@@ -130,23 +225,22 @@ public class ShopManager
         return Math.Max(0, perDay - seen);
     }
 
-    // 광고를 보고 보상 — 한도가 남아 있을 때만. 모의 광고는 즉시 끝나 결과를 바로 돌려준다(실제 SDK 는 OnChanged 로 본다).
-    //  요일 던전의 광고 입장(DungeonManager)도 이 길을 쓴다 — 하루 횟수 세기·광고 제거 상품이 한곳에서 처리된다.
+    // 광고를 보고 보상 — 한도가 남아 있을 때만. 돌려주는 값은 '광고를 띄웠는가'이고 보상(onReward)은 광고가 **닫힌 뒤** 온다
+    //  (AdMob 은 비동기, 모의·광고 제거는 그 자리에서). 요일 던전 입장·유물 소환도 onReward 안에서 진행한다(ADR0044).
+    //  하루 횟수 세기·광고 제거 상품이 한곳에서 처리된다.
     public bool WatchAd(string placement, int perDay, Action onReward)
     {
-        if (!AdService.Available || AdLeft(placement, perDay) <= 0) return false;
-        bool rewarded = false;
-        AdService.ShowRewarded(placement, success =>
+        if (!AdService.Available || AdService.IsShowing || AdLeft(placement, perDay) <= 0) return false;
+        return AdService.ShowRewarded(placement, success =>
         {
-            if (!success) return;
+            if (!success) return;   // 끝까지 보지 않고 닫았다
             Save.AdViews.TryGetValue(placement, out int seen);
             Save.AdViews[placement] = seen + 1;
-            rewarded = true;
             onReward();
             Managers.Game.SaveGame();
+            Managers.Sound?.PlaySFX("SFX_Success2");
             OnChanged?.Invoke();
         });
-        return rewarded;
     }
 
     public int  FreeCrystalAmount  => (int)B(BalanceKey.FREE_CRYSTAL_AD, 30f);

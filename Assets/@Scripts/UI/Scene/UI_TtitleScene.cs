@@ -135,6 +135,7 @@ public class UI_TtitleScene : UI_Scene
                 isPreload = true;
                 Managers.Data.Init();
                 Managers.Game.Init();
+                AdService.Init();   // 안드로이드: UMP 동의 → AdMob 초기화 → 보상형 한 편 미리 로드(ADR0044). 에디터·PC 는 아무것도 안 한다
                 Managers.Font.Init();
                 Managers.Sound.Init();
                 Managers.Quest.Init();

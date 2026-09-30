@@ -292,7 +292,7 @@ public class UI_MissionPopup : UI_Popup
             int ads = shop.HotAdsLeft(k);
             var kind = k;
             if (AdService.Available && ads > 0)
-                SetRow(n++, left, string.Format(Util.Localize("AdWatchFormat"), ads), TEXT_READY, 1f, () => Done(shop.HotByAd(kind)));
+                SetRow(n++, left, string.Format(Util.Localize("AdWatchFormat"), ads), TEXT_READY, 1f, () => AdStarted(shop.HotByAd(kind)));
             else
                 SetRow(n++, left, Crystal(shop.HotCrystalCost), CrystalColor(shop.HotCrystalCost), 1f, () => Done(shop.HotByCrystal(kind)));
         }
@@ -301,10 +301,10 @@ public class UI_MissionPopup : UI_Popup
         {
             int free = shop.FreeCrystalAdsLeft;
             string freeLeft = string.Format(Util.Localize("FreeCrystalFormat"), shop.FreeCrystalAmount);
-            if (free > 0) SetRow(n++, freeLeft, string.Format(Util.Localize("AdWatchFormat"), free), TEXT_READY, 1f, () => Done(shop.FreeCrystalByAd()));
+            if (free > 0) SetRow(n++, freeLeft, string.Format(Util.Localize("AdWatchFormat"), free), TEXT_READY, 1f, () => AdStarted(shop.FreeCrystalByAd()));
             else          SetRow(n++, freeLeft, Util.Localize("AttendanceTomorrowText"), TEXT_DONE, ROW_DONE_ALPHA, null);
             if (shop.OfflineDoubleAvailable)
-                SetRow(n++, Util.Localize("OfflineDoubleText"), string.Format(Util.Localize("AdWatchFormat"), 1), TEXT_READY, 1f, () => Done(shop.DoubleOffline()));
+                SetRow(n++, Util.Localize("OfflineDoubleText"), string.Format(Util.Localize("AdWatchFormat"), 1), TEXT_READY, 1f, () => AdStarted(shop.DoubleOffline()));
         }
 
         if (shop.MonthlyActive)
@@ -320,6 +320,9 @@ public class UI_MissionPopup : UI_Popup
         if (IapService.Available)
             foreach (var p in shop.Products)
                 if (p.Kind != "Pass") ProductRow(n++, p);   // 성장 패스는 패스 탭에서 판다
+        // 동의가 필요한 나라(유럽 등)는 광고 개인정보 설정을 다시 고를 자리를 둔다(UMP, ADR0044)
+        if (AdService.PrivacyOptionsRequired)
+            SetRow(n++, Util.Localize("AdPrivacyText"), "", TEXT_READY, 1f, () => AdService.ShowPrivacyOptions(Refresh), claim: false);
         return n;
     }
 
@@ -353,6 +356,14 @@ public class UI_MissionPopup : UI_Popup
             string name = p.Kind == "Crystal" ? string.Format(Util.Localize(p.NameKey), p.Crystal) : Util.Localize(p.NameKey);
             Managers.UI.ShowToast(string.Format(Util.Localize("ShopBoughtFormat"), name));
         });
+    }
+
+    // 광고 줄을 누른 결과 — 띄우지 못했으면(아직 불러오는 중) 알린다. 보상은 광고가 닫힌 뒤 ShopManager.WatchAd 가 준다
+    void AdStarted(bool started)
+    {
+        if (started) return;
+        Managers.Sound?.PlaySFX("SFX_Fail");
+        Managers.UI.ShowToast(Util.Localize("AdNotReadyText"));
     }
 
     // 상점 줄을 누른 결과 — 크리스탈이 모자라 실패하면 알린다
@@ -615,9 +626,24 @@ public class UI_MissionPopup : UI_Popup
     }
 
     // 값을 치르고 창을 닫은 뒤 전투로 — 새 전투 그룹이 뜨면서 던전이 시작된다(UI_BattleBtnGroup.CoDungeon)
+    //  광고 입장은 광고가 닫힌 뒤에 예약한다(ADR0044) — 그사이 창이 닫혀도 EnterBattle 은 창 상태를 쓰지 않는다.
     void EnterDungeon(DungeonKind k, DungeonManager.Pay pay)
-        => EnterBattle(() => Managers.Dungeon.TryEnter(k, pay),
+    {
+        if (pay == DungeonManager.Pay.Ad)
+        {
+            var scene = Managers.UI.SceneUI as UI_GameScene;
+            if (scene == null || !scene.CanEnterAreaTransition(AreaType.Battle) || Managers.Dungeon.IsBusy)
+            {
+                Managers.Sound?.PlaySFX("SFX_Fail");
+                Managers.UI.ShowToast(Util.Localize("DungeonBusyText"));
+                return;
+            }
+            AdStarted(Managers.Dungeon.WatchAd(k, () => EnterBattle(() => Managers.Dungeon.TryEnter(k, pay))));
+            return;
+        }
+        EnterBattle(() => Managers.Dungeon.TryEnter(k, pay),
             pay == DungeonManager.Pay.Crystal && Managers.Game.Crystal < Managers.Dungeon.CrystalCost ? "NotEnoughCrystalText" : "DungeonBusyText");
+    }
 
     // 입장 예약(요일 던전·승급 시험·심연) 후 창을 닫고 전투로 — 새 전투 그룹의 StartBattle 이 예약된 판을 시작한다
     void EnterBattle(Func<bool> tryEnter, string failKey = "DungeonBusyText")
@@ -719,9 +745,15 @@ public class UI_MissionPopup : UI_Popup
     static string Effect(Data.RelicData r, float value)
         => EFFECT_KEYS.TryGetValue(r.StatType, out string key) ? string.Format(Util.Localize(key), value) : "+" + value.ToString("0.#");
 
+    // 광고 소환은 광고가 닫힌 뒤에 뽑는다(ADR0044)
     void SummonRelic(int count, RelicManager.Pay pay)
     {
-        var pulls = Managers.Relic.Summon(count, pay);
+        if (pay == RelicManager.Pay.Ad) { AdStarted(Managers.Relic.WatchAd(() => ShowPulls(Managers.Relic.Summon(1, pay), pay))); return; }
+        ShowPulls(Managers.Relic.Summon(count, pay), pay);
+    }
+
+    void ShowPulls(List<RelicManager.Pull> pulls, RelicManager.Pay pay)
+    {
         if (pulls == null)
         {
             Managers.Sound?.PlaySFX("SFX_Fail");

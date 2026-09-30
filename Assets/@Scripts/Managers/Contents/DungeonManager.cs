@@ -52,6 +52,14 @@ public class DungeonManager
     public int  Best(DungeonKind k)     => Save.BestKills[(int)k];
     static string AdPlacement(DungeonKind k) => ShopManager.AD_DUNGEON + k;
 
+    // 이미 예약·진행 중이거나 시련·심연(ADR0037)이 잡혀 있으면 새로 들어가지 않는다 — 새 전투 그룹은 하나만 시작한다
+    public bool IsBusy => IsRunning || _pending
+                          || (Managers.Promotion != null && (Managers.Promotion.IsPending || Managers.Promotion.IsRunning))
+                          || (Managers.Abyss != null && (Managers.Abyss.IsPending || Managers.Abyss.IsRunning));
+
+    // 광고 입장(ADR0044) — 광고를 끝까지 보면 onPaid(부른 쪽이 TryEnter(k, Pay.Ad) 로 예약하고 전투로 간다). 띄우지 못하면 false.
+    public bool WatchAd(DungeonKind k, Action onPaid) => !IsBusy && Managers.Shop.WatchAd(AdPlacement(k), AdsPerDay, onPaid);
+
     public bool HasFreeEntry
     {
         get
@@ -79,10 +87,7 @@ public class DungeonManager
     // 값을 치르고 입장을 예약한다 — 전투 화면 전환은 부른 쪽(UI_MissionPopup)이 하고, 새 전투 그룹이 Begin 으로 시작한다.
     public bool TryEnter(DungeonKind k, Pay pay)
     {
-        if (IsRunning || _pending) return false;
-        // 시련·심연(ADR0037)과 한꺼번에 예약하지 않는다 — 새 전투 그룹은 하나만 시작한다
-        if (Managers.Promotion != null && (Managers.Promotion.IsPending || Managers.Promotion.IsRunning)) return false;
-        if (Managers.Abyss != null && (Managers.Abyss.IsPending || Managers.Abyss.IsRunning)) return false;
+        if (IsBusy) return false;
         int node = PickNode();
         if (node <= 0) return false;
         bool paid;
@@ -93,7 +98,7 @@ public class DungeonManager
                 if (paid) Save.Used[(int)k]++;
                 break;
             case Pay.Ad:
-                paid = Managers.Shop.WatchAd(AdPlacement(k), AdsPerDay, () => { });
+                paid = true;   // 광고는 WatchAd 로 먼저 끝까지 봤다(광고가 닫힌 뒤 부른다)
                 break;
             default:
                 paid = ShopManager.SpendCrystal(CrystalCost);

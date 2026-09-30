@@ -2038,6 +2038,15 @@ public class Define
     public const float COSTUME_WHITE_VAL = 0.3f;
     #endregion
 
+    #region Ads (AdMob 보상형 광고, ADR0044)
+    // ⚠️ 지금은 구글 공식 **테스트** ID — 테스트 광고만 나온다. 출시 전에 AdMob 계정의 앱 ID·보상형 광고 단위 ID 로 바꾸고
+    //  Tools/Ads/Set Up AdMob 을 한 번 돌린다(앱 ID 는 GoogleMobileAdsSettings 자산과 매니페스트로 들어간다).
+    //  출시 빌드는 광고 단위가 테스트 ID 인 채면 광고 줄을 숨긴다(AdService.Available) — 테스트 광고를 실사용자에게 내보내지 않게.
+    public const string ADMOB_APP_ID_ANDROID   = "ca-app-pub-3940256099942544~3347511713";
+    public const string ADMOB_REWARDED_ANDROID = "ca-app-pub-3940256099942544/5224354917";
+    public const string ADMOB_TEST_PUBLISHER   = "ca-app-pub-3940256099942544";
+    #endregion
+
     #region Ground (접지)
     // 캐릭터의 **발이 닿는** 월드 Y. 지면 타일(JungleTileset) 윗면 높이다.
     //  플레이어·몬스터·동행 미니몬 전부 이 값 하나를 쓴다. 아트마다 다르던 바닥 여백은

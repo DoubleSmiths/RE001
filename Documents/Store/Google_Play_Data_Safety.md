@@ -13,6 +13,7 @@
 | `ProjectSettings.asset` | `submitAnalytics: 1`. 숨은 레거시 하드웨어 통계 플래그다. Unity 포럼 답변에 따르면 Analytics를 끄면 함께 꺼진다. 아래 네트워크 실측에서 전송 0건 |
 | 9월 9일 APK (`Builds/Android/RE001.apk`, aapt2) | 권한은 `INTERNET` 하나다. Unity가 자동으로 넣는다. 나머지는 Android 기본 `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`이다. `AD_ID` 권한은 없다. `android:allowBackup`은 지정하지 않았다(기본값 true) |
 | 2026-09-29 AAB (`Builds/Android/MinimonQuest.aab`, bundletool) | 권한은 같다: `INTERNET`(Addressables 때문에 Unity 자동) + `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. `AD_ID` 없음 |
+| 2026-09-30 APK — AdMob SDK 포함(ADR0044, aapt2) | 광고 라이브러리가 권한을 더한다: `ACCESS_NETWORK_STATE`, `com.google.android.gms.permission.AD_ID`, `ACCESS_ADSERVICES_AD_ID`·`ATTRIBUTION`·`TOPICS`(Privacy Sandbox), `WAKE_LOCK`, `FOREGROUND_SERVICE`. 매니페스트 `APPLICATION_ID` = 구글 테스트 앱 ID. 테스트 ID 인 출시 빌드는 SDK 를 초기화하지 않지만 권한은 매니페스트에 남는다 — 콘솔의 광고 ID·포그라운드 서비스 질문을 이 목록으로 답한다 |
 | 2026-09-29 Windows 빌드 실행(타이틀 → 게임 씬, 45초) | 프로세스의 TCP 연결·UDP 엔드포인트 **0건**(`Get-NetTCPConnection`/`Get-NetUDPEndpoint` 1초 간격). 외부 전송이 없다 |
 
 **전제: Unity Diagnostics를 끈다(2026-09-29 적용 — 위 표).** `Edit > Project Settings > Services > Diagnostics`를 Disabled로 두고, Build Profiles 재정의도 확인한다. Unity 문서에 따르면 Unity Cloud에 연결된 6.2+ 프로젝트는 기본 켜짐이다. 수집 항목은 충돌 로그, 원격 측정, 구성 메타데이터다. 끄지 않으면 A안이 거짓 신고가 된다.
@@ -41,6 +42,24 @@ Unity가 수집 항목을 구체적으로 공개하지 않아 정확히 신고�
 | 처리 방식 | 수집됨, 필수(이용자가 끌 수 없음), 목적은 분석(Analytics) |
 | 전송 중 암호화 | 예 (HTTPS). 빌드에서 확인한다 |
 | 삭제 요청 방법 | 제공 방법을 적는다(Unity 대시보드). 없으면 "아니요" |
+
+## C안 — AdMob 광고를 켠 경우 (ADR0044)
+
+지금 빌드는 광고 단위가 구글 테스트 ID 라 출시 빌드에서 SDK 를 깨우지 않는다 — 그동안은 A안 그대로다. 실제 ID 로 광고를 켜면
+Google Mobile Ads SDK 가 수집·공유하는 항목을 앱이 신고해야 한다(Google 은 SDK 의 수집도 앱 책임으로 본다). 구글이 공개한
+SDK 신고 안내(아래 출처)를 기준으로, 제출 직전에 최신 안내와 한 번 더 맞춘다.
+
+| 항목 | 답 |
+|---|---|
+| 수집 여부 | 예 |
+| 데이터 유형 | 위치 → 대략적인 위치(IP 주소로 추정) · 앱 활동 → 앱 상호작용 · 앱 정보 및 성능 → 비정상 종료 로그, 진단 · 기기 또는 기타 ID(광고 ID 등) |
+| 공유 | 예 — 광고 목적으로 Google 과 공유 |
+| 목적 | 광고 또는 마케팅, 분석, 사기 방지·보안·규정 준수 |
+| 처리 방식 | 필수(광고를 보는 이용자) · 전송 중 암호화 예 |
+| 앱 콘텐츠 | 광고: **예, 앱에 광고가 있습니다** · 광고 ID: **예**(광고) |
+
+개인정보처리방침에는 "보상형 광고를 볼 때 Google(AdMob)이 광고 식별자·기기 정보·대략적 위치를 광고·분석·부정 방지에 처리한다,
+유럽 등에서는 동의를 받으며 상점 탭 '광고 개인정보 설정'에서 바꿀 수 있다"는 조항과 Google 개인정보처리방침 링크를 넣는다.
 
 ## 앱 콘텐츠 (App content) 체크리스트
 
@@ -71,4 +90,4 @@ Unity가 수집 항목을 구체적으로 공개하지 않아 정확히 신고�
 - [ ] Diagnostics를 끈 빌드를 실기기로 1회 실행하고 네트워크 모니터링으로 전송이 0건인지 확인한다. Android는 PCAPdroid 같은 도구를 쓴다. (Windows 빌드는 2026-09-29 0건 확인 — 위 표. 출시용 AAB 로 안드로이드에서 한 번 더.)
 - [ ] SDK(광고, 결제, 분석, Steamworks 등)를 추가하면 이 양식을 다시 작성한다. Google은 SDK가 하는 수집·공유까지 앱 책임으로 본다.
 
-출처: [Data safety 도움말](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en) · [사용자 데이터 정책(개인정보처리방침 게시 위치)](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en) · [Unity Diagnostics 설정](https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/editor-settings-reference/comp-manager-group/diagnostics-settings) · [Unity Developer Data 수집 설정](https://docs.unity.com/en-us/cloud/developer-data-framework/data-collection-settings) · [Disable HW Statistics 포럼 답변](https://discussions.unity.com/t/does-disable-hw-statistics-option-also-disable-analytics/731757/22)
+출처: [Google Mobile Ads SDK 데이터 신고 안내](https://developers.google.com/admob/android/privacy/play-data-disclosure) · [Data safety 도움말](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en) · [사용자 데이터 정책(개인정보처리방침 게시 위치)](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en) · [Unity Diagnostics 설정](https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/editor-settings-reference/comp-manager-group/diagnostics-settings) · [Unity Developer Data 수집 설정](https://docs.unity.com/en-us/cloud/developer-data-framework/data-collection-settings) · [Disable HW Statistics 포럼 답변](https://discussions.unity.com/t/does-disable-hw-statistics-option-also-disable-analytics/731757/22)

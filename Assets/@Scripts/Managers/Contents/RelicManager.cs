@@ -43,6 +43,8 @@ public class RelicManager
     public int Pity      => Save.Pity;
     public int AdsPerDay => (int)B(BalanceKey.RELIC_ADS_PER_DAY, 1f);
     public int AdLeft    => Managers.Shop.AdLeft(ShopManager.AD_RELIC, AdsPerDay);
+    // 광고 소환(ADR0044) — 광고를 끝까지 보면 onPaid(부른 쪽이 Summon(1, Pay.Ad) 로 뽑는다). 띄우지 못하면 false.
+    public bool WatchAd(Action onPaid) => Managers.Shop.WatchAd(ShopManager.AD_RELIC, AdsPerDay, onPaid);
     public int Level(int id) => Save.Levels.TryGetValue(id, out int lv) ? lv : 0;
     public int OwnedCount => Save.Levels.Count;
 
@@ -73,7 +75,7 @@ public class RelicManager
         if (Managers.Data?.RelicDic == null || Managers.Data.RelicDic.Count == 0) return null;
         count = count >= 10 ? 10 : 1;
         bool paid = pay == Pay.Ad
-            ? count == 1 && Managers.Shop.WatchAd(ShopManager.AD_RELIC, AdsPerDay, () => { })
+            ? count == 1   // 광고는 WatchAd 로 먼저 끝까지 봤다
             : ShopManager.SpendCrystal(count == 10 ? CostTen : CostOne);
         if (!paid) return null;
 
