@@ -9,7 +9,9 @@ using static Define;
 //  · AUTO 버튼(BattleAutoBtn)으로 자동 전투를 켜고 끈다(GameData.AutoBattle) — 켜 두면 예전처럼 알아서 벤다.
 //  세 칸은 형제다 — 버튼이 탭 칸의 자식이면 누름 이벤트가 탭 칸까지 올라가 방패 한 번이 막기+공격이 된다.
 //  HUD(스테이지 막대·퀘스트·HP 바·버프)는 이 묶음보다 뒤 형제라 위에 그려지고 먼저 눌린다.
-//  마을에서는 버튼을 숨기고 탭 칸의 레이캐스트를 끈다. 첫 맞붙음에 '눌러서 공격', 첫 공격 예고 '!'에 '방패로 막기' 도움말.
+//  마을에서는 버튼을 숨기고 탭 칸의 레이캐스트를 끈다. 첫 공격 예고 '!'에 '방패로 막기' 도움말.
+//  '눌러서 공격' 도움말은 처음 맞붙을 때 띄우고, **한 번이라도 누를 때까지** TAP_HINT_REPEAT 초마다 다시 띄운다(AUTO 가 켜져 있으면 쉰다).
+//  한 번(3초)만 띄우던 때는 놓친 새 유저가 가만히 맞기만 했다(8초에 HP 100→44).
 public class UI_BattleInput : UI_Base
 {
     enum GameObjects { BattleTapArea, BattleAutoBtn, BattleGuardBtn }
@@ -21,6 +23,8 @@ public class UI_BattleInput : UI_Base
     static readonly Color AUTO_OFF_TINT = new Color(0.45f, 0.45f, 0.45f, 1f);
 
     bool _shown;
+    const float TAP_HINT_REPEAT = 4f;
+    float _tapHintAt = float.MaxValue;   // 다음 '눌러서 공격' 도움말 시각(맞붙기 전·누른 뒤엔 MaxValue)
 
     void Awake() => Init();
 
@@ -72,11 +76,19 @@ public class UI_BattleInput : UI_Base
 
         var player = Managers.Game.Player;
         GetImage((int)Images.BattleGuardCool).fillAmount = player != null ? player.GuardCooldownNormalized : 0f;
+
+        var g = Managers.Game;
+        if (!g.TapHintSeen && !g.AutoBattle && Time.unscaledTime >= _tapHintAt)
+        {
+            _tapHintAt = Time.unscaledTime + TAP_HINT_REPEAT;
+            Managers.UI.ShowToast(Util.Localize("TapHintText"));
+        }
     }
 
     void SetShown(bool battle)
     {
         _shown = battle;
+        _tapHintAt = float.MaxValue;   // 다음 전투의 첫 맞붙음부터 다시
         GetImage((int)Images.BattleTapArea).raycastTarget = battle;
         GetObject((int)GameObjects.BattleAutoBtn).SetActive(battle);
         GetObject((int)GameObjects.BattleGuardBtn).SetActive(battle);
@@ -84,8 +96,11 @@ public class UI_BattleInput : UI_Base
 
     static void Attack()
     {
-        var player = Managers.Game?.Player;   // ?. 는 파괴된 오브젝트(fake null)를 걸러내지 못한다 — == 로 확인
-        if (player != null) player.RequestAttack();
+        var g = Managers.Game;
+        var player = g?.Player;   // ?. 는 파괴된 오브젝트(fake null)를 걸러내지 못한다 — == 로 확인
+        if (player == null) return;
+        player.RequestAttack();
+        if (!g.TapHintSeen) g.TapHintSeen = true;   // 한 번 눌러 봤으면 도움말은 끝(저장은 이때 한 번)
     }
 
     static void Guard()
@@ -116,8 +131,7 @@ public class UI_BattleInput : UI_Base
     {
         var g = Managers.Game;
         if (g == null || g.TapHintSeen) return;
-        g.TapHintSeen = true;
-        Managers.UI.ShowToast(Util.Localize("TapHintText"));
+        _tapHintAt = Mathf.Min(_tapHintAt, Time.unscaledTime);   // 곧바로 띄우고, 누를 때까지 Update 가 되풀이한다
     }
 
     void OnTelegraph()
