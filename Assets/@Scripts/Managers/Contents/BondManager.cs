@@ -55,7 +55,7 @@ public class BondManager
         {
             if (Managers.Game == null || Managers.Data == null) return false;
             foreach (var r in Save.Requests) if (!r.Claimed && IsReady(r)) return true;
-            return false;
+            return HasPendingScene;   // 볼 차례인 이야기(ADR0042)도 마을 탭 '!'·미션 버튼 점
         }
     }
 
@@ -126,17 +126,78 @@ public class BondManager
         return _materials.Contains(itemId);
     }
 
-    public bool TryGift(Npc n)
+    // 좋아하는 재료(BondNpcData, ADR0042)를 가진 게 있으면 그걸 먼저 건넨다 — 호감도 × BOND_GIFT_LIKED_MULT
+    public int LikedGiftItemId(Npc n)
     {
-        if (GiftsLeft(n) <= 0) return false;
-        int id = GiftItemId();
-        if (id <= 0) return false;
+        if (Managers.Data?.BondNpcDic == null || !Managers.Data.BondNpcDic.TryGetValue((int)n, out var d)) return 0;
+        int best = 0, bestCount = 0;
+        foreach (int id in d.LikedItems)
+        {
+            int count = Managers.Game.GetItemCount(id);
+            if (count >= GiftItems && count > bestCount) { best = id; bestCount = count; }
+        }
+        return best;
+    }
+
+    // 준 호감도(0 이면 못 줬다) — 좋아하는 재료였는지는 LastGiftLiked
+    public bool LastGiftLiked { get; private set; }
+    public int TryGift(Npc n)
+    {
+        if (GiftsLeft(n) <= 0) return 0;
+        int liked = LikedGiftItemId(n);
+        int id = liked > 0 ? liked : GiftItemId();
+        if (id <= 0) return 0;
         Managers.Game.RemoveItem(id, GiftItems);
         Save.Gifts[(int)n]++;
-        AddPoints(n, (int)B(BalanceKey.BOND_GIFT_AFFECTION, 2f));
+        int points = (int)B(BalanceKey.BOND_GIFT_AFFECTION, 2f);
+        LastGiftLiked = liked > 0;
+        if (LastGiftLiked) points = Mathf.RoundToInt(points * B(BalanceKey.BOND_GIFT_LIKED_MULT, 2f));
+        AddPoints(n, points);
         Managers.Game.SaveGame();
         OnChanged?.Invoke();
-        return true;
+        return points;
+    }
+    #endregion
+
+    #region 이야기 장면(ADR0042) — 호감도 BOND_SCENE_LEVEL_1~3(3·6·10)단계마다 하나. 그 사람의 [대화]를 누르면 잡담 대신 나오고(한 번),
+    //  다 보면 크리스탈 BOND_SCENE_CRYSTAL_1~3. 대사는 DialogueData.xlsx 의 Bond{사람}{번호}Text 시트(_tools/gen_bond.py).
+    public const int SCENE_COUNT = 3;
+    static readonly string[] SCENE_PREFIX = { "BondReceptionist", "BondAlchemist", "BondBlacksmith", "BondPriest", "BondShopkeeper" };   // Npc 순서
+    static readonly float[] SCENE_LEVEL_DEFAULT   = { 3f, 6f, 10f };
+    static readonly float[] SCENE_CRYSTAL_DEFAULT = { 30f, 60f, 150f };
+
+    public int ScenesSeen(Npc n) => Save.ScenesSeen[(int)n];
+    public int SceneLevel(int scene) => (int)B(BalanceKey.BOND_SCENE_LEVEL_PREFIX + scene, SCENE_LEVEL_DEFAULT[scene - 1]);
+    public string SceneKey(Npc n, int scene) => $"{SCENE_PREFIX[(int)n]}{scene}Text";
+
+    // 지금 볼 차례인 이야기 번호(1~3), 없으면 0
+    public int PendingScene(Npc n)
+    {
+        if (Managers.Game == null) return 0;
+        int next = ScenesSeen(n) + 1;
+        return next <= SCENE_COUNT && Level(n) >= SceneLevel(next) ? next : 0;
+    }
+
+    public bool HasPendingScene
+    {
+        get
+        {
+            if (Managers.Game == null) return false;
+            for (int i = 0; i < NPC_COUNT; i++) if (PendingScene((Npc)i) > 0) return true;
+            return false;
+        }
+    }
+
+    // 이야기를 끝까지 본 뒤(대화창 onFinished) — 본 것으로 적고 크리스탈
+    public void FinishScene(Npc n, int scene)
+    {
+        if (scene != ScenesSeen(n) + 1) return;   // 두 번 받지 않는다
+        Save.ScenesSeen[(int)n] = scene;
+        int crystals = (int)B(BalanceKey.BOND_SCENE_CRYSTAL_PREFIX + scene, SCENE_CRYSTAL_DEFAULT[scene - 1]);
+        Managers.Game.Crystal += crystals;
+        Managers.Game.SaveGame();
+        Managers.UI?.ShowToast(string.Format(Util.Localize("BondSceneDoneFormat"), Util.Localize(NAME_KEYS[(int)n]), crystals));
+        OnChanged?.Invoke();
     }
     #endregion
 

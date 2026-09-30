@@ -1275,6 +1275,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // 슬라이드 30: 메인 퀘스트 [1] 시에만 [대화] 버튼으로 퀘스트 진행.
         // 그 외에는 GuildNormalText에서 한 줄 랜덤 선택하여 잡담 대사 재생.
         bool isFirstQuest = Managers.Quest.CurrentQuestID == FIRST_GUILD_QUEST_ID;
+        if (!isFirstQuest && TryPlayBondScene(BondManager.Npc.Receptionist, Util.Localize(LocalizeKey.NpcReceptionistNameText), null, "recep_normal"))
+            return;
 
         string groupKey = isFirstQuest
             ? Managers.Quest.GetCurrentDialogueID()   // "GuildQuest1Text"
@@ -1295,6 +1297,9 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
         // 서브퀘스트 1(연금공방 첫 방문) 활성 상태면 전용 대사 + 종료 시 BTN_ALCHEMY_TALK 트리거.
         // 그 외에는 AlchemyNormalText에서 한 줄 랜덤.
         bool isSubQuestActive = Managers.SubQuest != null && Managers.SubQuest.IsActive;
+        if (!isSubQuestActive && TryPlayBondScene(BondManager.Npc.Alchemist, Util.Localize(LocalizeKey.NpcAlchemistNameText), null, "alch_happy",
+                () => Managers.Quest.CheckButtonClick(BTN_ALCHEMY_TALK)))   // 잡담처럼 '말 걸기' 신호는 그대로
+            return;
         int  subQuestBefore   = Managers.SubQuest != null ? Managers.SubQuest.CurrentSubQuestID : 0;
         string subDlg = isSubQuestActive ? Managers.SubQuest.GetCurrentDialogueID() : null;
 
@@ -1340,6 +1345,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnClickVillage1ForgeTalkButton()
     {
         Managers.Quest.CheckButtonClick(VILLAGE1_FORGE_TALK_VFX);
+        if (TryPlayBondScene(BondManager.Npc.Blacksmith, Util.Localize(LocalizeKey.NpcBlacksmithNameText), GetImage((int)Images.Village1ForgeTalkButtonIcon)?.sprite, null))
+            return;
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ForgeNormalText",
             speakerName: Util.Localize(LocalizeKey.NpcBlacksmithNameText),
@@ -1351,6 +1358,8 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnClickVillage1MonasteryTalkButton()
     {
         Managers.Quest.CheckButtonClick(VILLAGE1_MONASTERY_TALK_VFX);
+        if (TryPlayBondScene(BondManager.Npc.Priest, Util.Localize(LocalizeKey.NpcMonasteryPriestNameText), GetImage((int)Images.Village1MonasteryTalkButtonIcon)?.sprite, null))
+            return;
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "MonasteryNormalText",
             speakerName: Util.Localize(LocalizeKey.NpcMonasteryPriestNameText),
@@ -1362,12 +1371,33 @@ public class UI_Village1BtnGroup : UI_AreaBtnGroup
     void OnClickVillage1ShopTalkButton()
     {
         Managers.Quest.CheckButtonClick(VILLAGE1_SHOP_TALK_VFX);
+        if (TryPlayBondScene(BondManager.Npc.Shopkeeper, Util.Localize(LocalizeKey.NpcShopkeeperNameText), GetImage((int)Images.Village1ShopTalkButtonIcon)?.sprite, null))
+            return;
         Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
             groupKey: "ShopNormalText",
             speakerName: Util.Localize(LocalizeKey.NpcShopkeeperNameText),
             portrait: GetImage((int)Images.Village1ShopTalkButtonIcon)?.sprite,
             onFinished: null,
             randomSingleLine: true);
+    }
+
+    // 호감도 이야기 장면(ADR0042) — 볼 차례인 이야기가 있으면 잡담 대신 처음부터 끝까지 튼다. 다 보면 BondManager.FinishScene(크리스탈).
+    //  portrait 가 null 이면 대화창 애니메이터(animState)로 얼굴을 그린다(접수원·연금술사).
+    bool TryPlayBondScene(BondManager.Npc npc, string speaker, Sprite portrait, string animState, System.Action after = null)
+    {
+        var bm = Managers.Bond;
+        int scene = bm != null ? bm.PendingScene(npc) : 0;
+        if (scene <= 0) return false;
+        string key = bm.SceneKey(npc, scene);
+        if (Managers.Data.DialogueScriptDic == null || !Managers.Data.DialogueScriptDic.ContainsKey(key)) return false;
+        Managers.UI.ShowPopupUI<UI_DialoguePopup>().SetInfo(
+            groupKey: key,
+            speakerName: speaker,
+            portrait: portrait,
+            onFinished: () => { bm.FinishScene(npc, scene); after?.Invoke(); },
+            randomSingleLine: false,
+            portraitAnimState: animState);
+        return true;
     }
 
     void OnClickVillage1GuildQuestButton()

@@ -10572,8 +10572,8 @@
     },
     {
       "TextKey": "BondPeopleHeaderFormat",
-      "Kor": "마을 사람들 · 선물 = 가장 많은 재료 {0}개",
-      "Eng": "VILLAGERS · GIFT = {0} OF YOUR MOST COMMON MATERIAL"
+      "Kor": "마을 사람들 · 선물 = 재료 {0}개 (♡ 좋아하는 재료면 호감도 2배)",
+      "Eng": "VILLAGERS · GIFT = {0} MATERIALS (♡ LIKED = DOUBLE BOND)"
     },
     {
       "TextKey": "BondNpcFormat",
@@ -10904,6 +10904,21 @@
       "TextKey": "OffDutyHelpResultFormat",
       "Kor": "마을 일: 모두의 호감도 +{0}",
       "Eng": "TOWN WORK: BOND +{0} WITH ALL"
+    },
+    {
+      "TextKey": "BondSceneNewText",
+      "Kor": "새 이야기!",
+      "Eng": "NEW STORY!"
+    },
+    {
+      "TextKey": "BondSceneDoneFormat",
+      "Kor": "{0}와(과)의 이야기 · 크리스탈 +{1}",
+      "Eng": "A STORY WITH {0} · +{1} CRYSTALS"
+    },
+    {
+      "TextKey": "BondLikedGiftFormat",
+      "Kor": "{0}: 좋아한다! 호감도 +{1}",
+      "Eng": "{0}: LOVES IT! BOND +{1}"
     }
   ]
 }

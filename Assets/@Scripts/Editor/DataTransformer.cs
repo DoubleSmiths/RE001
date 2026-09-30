@@ -778,6 +778,7 @@ public class DataTransformer : EditorWindow
         ParseBalanceConfigSheet  (ReadXlsx($"{baseDir}/BalanceConfig.xlsx"));
         ParseMissionDataSheet    (ReadXlsx($"{baseDir}/MissionData.xlsx"));
         ParseRelicDataSheet      (ReadXlsx($"{baseDir}/RelicData.xlsx"));
+        ParseBondNpcDataSheet    (ReadXlsx($"{baseDir}/BondNpcData.xlsx"));
         ParseProductDataSheet    (ReadXlsx($"{baseDir}/ProductData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
@@ -957,6 +958,24 @@ public class DataTransformer : EditorWindow
             });
         }
         WriteJsonStr("MissionData", loader);
+    }
+
+    // v2 마을 사람 5명의 좋아하는 재료 (_tools/gen_bond.py 가 만든 표, ADR0042)
+    static void ParseBondNpcDataSheet(List<List<string>> rows)
+    {
+        var loader = new BondNpcDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.npcs.Add(new BondNpcData
+            {
+                DataId     = ConvertValue<int>(C(row, 0)),
+                NameKey    = C(row, 1),
+                LikedItems = Csv<int>(C(row, 2)),
+            });
+        }
+        WriteJsonStr("BondNpcData", loader);
     }
 
     // v2 유물 30종 (_tools/gen_relics.py 가 만든 표, ADR0035)

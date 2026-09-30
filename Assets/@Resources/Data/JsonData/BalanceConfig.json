@@ -489,6 +489,41 @@
       "Key": "OFFDUTY_HELP_POINTS_PER_HOUR",
       "Value": 1.0,
       "Desc": "마을 일: 오프라인 1시간당 마을 사람 모두의 호감도"
+    },
+    {
+      "Key": "BOND_SCENE_LEVEL_1",
+      "Value": 3.0,
+      "Desc": "마을 사람 이야기 1 이 열리는 호감도 단계"
+    },
+    {
+      "Key": "BOND_SCENE_LEVEL_2",
+      "Value": 6.0,
+      "Desc": "이야기 2 가 열리는 호감도 단계"
+    },
+    {
+      "Key": "BOND_SCENE_LEVEL_3",
+      "Value": 10.0,
+      "Desc": "이야기 3 이 열리는 호감도 단계"
+    },
+    {
+      "Key": "BOND_SCENE_CRYSTAL_1",
+      "Value": 30.0,
+      "Desc": "이야기 1 을 다 보면 크리스탈"
+    },
+    {
+      "Key": "BOND_SCENE_CRYSTAL_2",
+      "Value": 60.0,
+      "Desc": "이야기 2 를 다 보면 크리스탈"
+    },
+    {
+      "Key": "BOND_SCENE_CRYSTAL_3",
+      "Value": 150.0,
+      "Desc": "이야기 3 을 다 보면 크리스탈"
+    },
+    {
+      "Key": "BOND_GIFT_LIKED_MULT",
+      "Value": 2.0,
+      "Desc": "좋아하는 재료를 선물하면 호감도 배수"
     }
   ]
 }

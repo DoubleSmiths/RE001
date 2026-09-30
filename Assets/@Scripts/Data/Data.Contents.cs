@@ -546,6 +546,28 @@ namespace Data
     }
     #endregion
 
+    #region BondNpcData (v2 마을 사람 5명의 좋아하는 재료 — _tools/gen_bond.py, ADR0042)
+    [Serializable]
+    public class BondNpcData
+    {
+        public int       DataId;       // BondManager.Npc
+        public string    NameKey;
+        public List<int> LikedItems = new List<int>();
+    }
+
+    [Serializable]
+    public class BondNpcDataLoader : ILoader<int, BondNpcData>
+    {
+        public List<BondNpcData> npcs = new List<BondNpcData>();
+        public Dictionary<int, BondNpcData> MakeDict()
+        {
+            var dict = new Dictionary<int, BondNpcData>();
+            foreach (var n in npcs) dict[n.DataId] = n;
+            return dict;
+        }
+    }
+    #endregion
+
     #region RelicData (v2 유물 30종 — _tools/gen_relics.py, ADR0035)
     [Serializable]
     public class RelicData

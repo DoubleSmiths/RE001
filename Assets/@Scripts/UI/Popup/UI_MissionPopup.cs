@@ -397,9 +397,14 @@ public class UI_MissionPopup : UI_Popup
             string progress = lv >= bm.MaxLevel ? "MAX" : bm.Points(npc) + "/" + (lv + 1) * bm.PointsPerLevel;
             string left = string.Format(Util.Localize("BondNpcFormat"), Util.Localize(BondManager.NAME_KEYS[i]), lv, progress)
                         + "  " + string.Format(Util.Localize(PERK_KEYS[i]), bm.Perk(npc));
+            // 이야기 장면(ADR0042) — 볼 차례면 표시(그 사람의 [대화]에서 본다). 좋아하는 재료가 있으면 선물에 ♡ 와 재료 이름
+            if (bm.PendingScene(npc) > 0) left += "  <color=#FFD24A>" + Util.Localize("BondSceneNewText") + "</color>";
+            int liked = bm.LikedGiftItemId(npc);
+            if (liked > 0) left += "  ♡ " + ItemName(liked);
             int gifts = bm.GiftsLeft(npc);
-            if (gifts > 0 && hasGift) SetRow(n++, left, string.Format(Util.Localize("BondGiftFormat"), gifts), TEXT_READY, 1f, () => Gift(npc));
-            else                      SetRow(n++, left, gifts > 0 ? string.Format(Util.Localize("BondGiftFormat"), gifts) : Util.Localize("AttendanceTomorrowText"), TEXT_DONE, 1f, null);
+            string giftText = string.Format(Util.Localize("BondGiftFormat"), gifts) + (liked > 0 ? " ♡" : "");
+            if (gifts > 0 && (hasGift || liked > 0)) SetRow(n++, left, giftText, TEXT_READY, 1f, () => Gift(npc));
+            else                                     SetRow(n++, left, gifts > 0 ? giftText : Util.Localize("AttendanceTomorrowText"), TEXT_DONE, 1f, null);
         }
         return n;
     }
@@ -431,13 +436,16 @@ public class UI_MissionPopup : UI_Popup
 
     void Gift(BondManager.Npc npc)
     {
-        if (!Managers.Bond.TryGift(npc))
+        int points = Managers.Bond.TryGift(npc);
+        if (points <= 0)
         {
             Managers.Sound?.PlaySFX("SFX_Fail");
             Managers.UI.ShowToast(Util.Localize("BondNoGiftText"));
             return;
         }
         Managers.Sound?.PlaySFX("SFX_Success2");
+        if (Managers.Bond.LastGiftLiked)   // 좋아하는 재료였다(ADR0042)
+            Managers.UI.ShowToast(string.Format(Util.Localize("BondLikedGiftFormat"), Util.Localize(BondManager.NAME_KEYS[(int)npc]), points));
     }
     #endregion
 

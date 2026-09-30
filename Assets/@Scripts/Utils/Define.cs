@@ -1982,6 +1982,10 @@ public class Define
         public const string BOND_PERK_BLACKSMITH        = "BOND_PERK_BLACKSMITH";
         public const string BOND_PERK_PRIEST            = "BOND_PERK_PRIEST";
         public const string BOND_PERK_SHOPKEEPER        = "BOND_PERK_SHOPKEEPER";
+        // 이야기 장면·좋아하는 선물(ADR0042) — 번호는 1~3
+        public const string BOND_SCENE_LEVEL_PREFIX     = "BOND_SCENE_LEVEL_";     // + 번호 — 그 이야기가 열리는 호감도 단계
+        public const string BOND_SCENE_CRYSTAL_PREFIX   = "BOND_SCENE_CRYSTAL_";   // + 번호 — 다 보면 받는 크리스탈
+        public const string BOND_GIFT_LIKED_MULT        = "BOND_GIFT_LIKED_MULT";
         // 시련(승급 시험)·심연(ADR0037)
         public const string PROMO_MAX_TIER          = "PROMO_MAX_TIER";
         public const string PROMO_LEVEL_STEP        = "PROMO_LEVEL_STEP";

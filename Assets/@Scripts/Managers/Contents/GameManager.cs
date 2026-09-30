@@ -140,6 +140,7 @@ public class BondSaveData
     public int   DayKey;
     public int[] Gifts  = new int[5];   // 오늘 준 선물 수
     public List<BondRequest> Requests = new List<BondRequest>();
+    public int[] ScenesSeen = new int[5];   // 이야기 장면을 몇 번째까지 봤나(0~3, ADR0042)
 }
 
 // ──────────────────────────────────────────────
@@ -2286,6 +2287,7 @@ public class GameManager
         d.Bond                 ??= new BondSaveData();      // v2 마을 사람들 이전 세이브엔 없다
         d.Bond.Points           = Fit(d.Bond.Points, 5);
         d.Bond.Gifts            = Fit(d.Bond.Gifts, 5);
+        d.Bond.ScenesSeen       = Fit(d.Bond.ScenesSeen, 5);
         d.Bond.Requests        ??= new List<BondRequest>();
         d.Bond.Requests.RemoveAll(r => r == null);
         d.PromotionTier         = Mathf.Max(0, d.PromotionTier);   // 시련(ADR0037) — 위쪽은 PromotionManager 가 MaxTier 로 자른다

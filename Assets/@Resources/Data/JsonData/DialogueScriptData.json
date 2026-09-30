@@ -1054,6 +1054,401 @@
           "Eng": "You may set down your weapon here."
         }
       ]
+    },
+    {
+      "GroupKey": "BondReceptionist1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "…또 오셨군요.\n요즘은 오시는 게 반갑다고 해 두죠.",
+          "Eng": "...You again.\nLet's say I'm glad to see you these days."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "협회 규정상 사적인 대화는 금지지만,\n잠깐이면 괜찮겠죠.",
+          "Eng": "Guild rules forbid personal chats,\nbut a moment should be fine."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "사실 이 일, 처음엔 사흘만 하고\n그만둘 생각이었어요.",
+          "Eng": "Truth is, I meant to quit this job\nafter three days."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "그런데 돌아오지 않은 모험가 명단을\n정리하다 보니… 그만둘 수가 없더군요.",
+          "Eng": "Then I started filing the list of adventurers\nwho never came back... and couldn't leave."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "그러니까 당신은 그 명단에 이름 올리지 마세요.\n서류가 늘어나니까요.",
+          "Eng": "So don't you end up on that list.\nIt means more paperwork."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondReceptionist2Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "오늘은 제가 먼저 말을 걸죠.\n드문 일이니 기억해 두세요.",
+          "Eng": "Today I'll speak first.\nIt's rare, so remember it."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "제 책상 서랍엔 오래된 통행증이 하나 있어요.\n제 것이었죠.",
+          "Eng": "There's an old pass in my desk drawer.\nIt was mine."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "저도 모험가였어요.\n산들바람 숲 너머까지는 못 갔지만요.",
+          "Eng": "I was an adventurer too.\nI never made it past Breezewood Forest."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "그래서 당신이 새 통행증을 받아 갈 때마다\n조금 부럽기도 해요.",
+          "Eng": "So every time you take a new pass,\nI'm a little jealous."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "…방금 한 말은 서류에 남기지 마세요.",
+          "Eng": "...Don't put that in any report."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondReceptionist3Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "당신이 없는 동안\n협회가 너무 조용했어요.",
+          "Eng": "The guild was far too quiet\nwhile you were away."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "규정집 어디에도 없지만,\n이건 제 개인 인장이에요.",
+          "Eng": "It's in no rulebook,\nbut this is my personal seal."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "이걸 찍은 서류는 제가 무조건 먼저\n처리해 드려요. 특별 대우죠.",
+          "Eng": "Any form stamped with it goes to the top\nof my pile. Special treatment."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "…고맙다는 말, 한 번만 할게요.\n늘 무사히 돌아와 줘서 고마워요.",
+          "Eng": "...I'll say thanks just once.\nThank you for always coming back."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "자, 다음 임무 받으러 가시죠.\n제 모험가님.",
+          "Eng": "Now, go get your next assignment.\nMy adventurer."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondAlchemist1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "어머~ 오늘은 물약 말고\n저를 보러 오신 거죠? 후훗♡",
+          "Eng": "Oh my~ You came to see me today,\nnot a potion, right? Heehee♡"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "비밀 하나 알려 드릴게요.\n저, 쓴 약은 못 먹어요.",
+          "Eng": "Here's a secret.\nI can't stand bitter medicine."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "그래서 제 물약엔 몰래 꿀을\n조금씩 넣어요. 다들 몰랐죠?",
+          "Eng": "So I sneak a little honey into every potion.\nNobody noticed, right?"
+        },
+        {
+          "TextKey": 4,
+          "Kor": "당신 것엔 두 방울 넣어 드릴게요.\n특별 손님이니까요♡",
+          "Eng": "Yours gets two drops.\nYou're a special customer♡"
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondAlchemist2Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "요즘 새 물약을 연구하고 있어요.\n이름은… 아직 비밀♡",
+          "Eng": "I'm working on a new potion lately.\nIts name is... a secret♡"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "스승님이 늘 말씀하셨어요.\n좋은 약은 마실 사람을 생각하며 만든다고.",
+          "Eng": "My teacher always said good medicine\nis made thinking of the one who drinks it."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "그래서 요즘 자꾸 당신 생각을 하나 봐요.\n…연구 때문이에요, 연구!",
+          "Eng": "Maybe that's why I keep thinking of you.\n...For research, of course. Research!"
+        },
+        {
+          "TextKey": 4,
+          "Kor": "완성되면 제일 먼저 맛보게 해 드릴게요.\n약속♡",
+          "Eng": "When it's done, you'll be the first to taste it.\nPromise♡"
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondAlchemist3Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "짠~ 드디어 완성했어요!\n이름은 '돌아오는 길'이에요.",
+          "Eng": "Ta-da~ It's finally done!\nI call it 'The Way Back.'"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "효과요? 마시면 무슨 일이 있어도\n이 공방으로 돌아오고 싶어져요.",
+          "Eng": "The effect? Whoever drinks it\nwill always want to come back here."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "…농담이에요, 반쯤은요.\n나머지 반은 제 진심이고요♡",
+          "Eng": "...I'm joking. Half joking.\nThe other half is how I really feel♡"
+        },
+        {
+          "TextKey": 4,
+          "Kor": "다치면 꼭 여기로 와요.\n제가 전부 고쳐 줄 테니까.",
+          "Eng": "If you ever get hurt, come straight here.\nI'll fix everything."
+        },
+        {
+          "TextKey": 5,
+          "Kor": "후훗, 오늘은 공짜예요.\n대신 내일도 와야 해요?",
+          "Eng": "Heehee, today's on the house.\nBut you have to come tomorrow too, okay?"
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondBlacksmith1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "또 왔군. 앉아.\n불 좀 쬐고 가.",
+          "Eng": "Back again. Sit.\nWarm yourself by the fire."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "칼 자국을 보면 어떻게 싸우는지 보여.\n요즘 많이 늘었어.",
+          "Eng": "Your blade's nicks tell me how you fight.\nYou've gotten better."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "처음엔 막 휘두르기만 하더니,\n이젠 벨 곳을 알고 베는군.",
+          "Eng": "At first you just swung.\nNow you know where to cut."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "…칭찬이야.\n자주 안 하니까 잘 들어 둬.",
+          "Eng": "...That was praise.\nI don't give it often, so remember it."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondBlacksmith2Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "이 망치, 우리 아버지 거야.",
+          "Eng": "This hammer was my father's."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "아버진 기사단 무기를 만들었지.\n그 무기 든 기사들은 아무도 돌아오지 못했고.",
+          "Eng": "He forged for the knights.\nNone of the knights who carried his blades came home."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "그래서 난 더 단단하게 두드려.\n들고 간 사람이 살아서 돌아오게.",
+          "Eng": "So I strike harder.\nSo whoever carries my work comes back alive."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "넌 매번 돌아오잖아.\n그게 내 망치질이 맞다는 증거야.",
+          "Eng": "You come back every time.\nThat's proof my hammer's right."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondBlacksmith3Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "받아.\n남은 쇳조각으로 만든 부적이야.",
+          "Eng": "Take this.\nA charm I made from leftover steel."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "모양은 투박해도,\n내가 만든 것 중 제일 단단해.",
+          "Eng": "It's crude,\nbut it's the toughest thing I've ever made."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "…너 주려고 만든 거 아니야.\n그냥 쇳조각이 남아서 만든 거야.",
+          "Eng": "...I didn't make it for you.\nJust had scraps left over."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "그래도 부러지면 가져와.\n몇 번이고 다시 만들어 줄 테니까.",
+          "Eng": "But if it breaks, bring it back.\nI'll make it again, as many times as it takes."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondPriest1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "어서 오세요.\n오늘은 기도 대신 이야기를 나눌까요.",
+          "Eng": "Welcome.\nShall we talk today instead of praying?"
+        },
+        {
+          "TextKey": 2,
+          "Kor": "이 수도원의 종은 백 년 동안\n한 번도 멈춘 적이 없답니다.",
+          "Eng": "This monastery's bell hasn't stopped\nonce in a hundred years."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "저는 매일 아침 그 종을 치며,\n떠난 이들이 돌아오기를 빌어요.",
+          "Eng": "Every morning I ring it\nand pray for those who left to return."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "요즘은 그 기도에\n당신의 이름도 넣고 있습니다.",
+          "Eng": "Lately,\nyour name is in that prayer too."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondPriest2Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "고백하자면,\n저는 한때 칼을 들었던 사람입니다.",
+          "Eng": "I confess,\nI once carried a sword."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "지키지 못한 것이 많아서,\n칼 대신 종을 잡았지요.",
+          "Eng": "I failed to protect too much,\nso I traded the blade for the bell."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "당신을 보면 그때의 제가 떠오릅니다.\n하지만 당신은 다르겠지요.",
+          "Eng": "You remind me of who I was.\nBut you will be different."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "당신은 멈추지 않으니까요.\n두려워도 앞으로 가니까요.",
+          "Eng": "Because you don't stop.\nEven afraid, you keep going."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondPriest3Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "오늘은 제가 당신을 위해\n축복을 올리겠습니다.",
+          "Eng": "Today I will offer\na blessing for you."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "사람을 지키는 것은 힘이 아니라,\n돌아올 곳이 있다는 사실입니다.",
+          "Eng": "It is not strength that protects us,\nbut having a place to return to."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "이 마을이, 그리고 이 수도원이\n당신의 돌아올 곳이 되기를.",
+          "Eng": "May this village, and this monastery,\nbe yours to return to."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "…종소리가 들리면,\n제가 당신을 생각하고 있다는 뜻이에요.",
+          "Eng": "...When you hear the bell,\nknow that I am thinking of you."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondShopkeeper1Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "오, 단골손님!\n오늘은 구경만 해도 돼요. 특별히요.",
+          "Eng": "Oh, my regular!\nYou can just browse today. As a favor."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "장사에서 제일 중요한 게 뭔지 아세요?\n손님 얼굴 기억하기예요.",
+          "Eng": "Know the most important thing in trade?\nRemembering faces."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "손님 얼굴은… 음,\n늘 흙투성이라 기억하기 쉬워요.",
+          "Eng": "Yours is... well,\nalways covered in dirt, so it's easy."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "농담이에요!\n다음엔 좋은 물건 먼저 보여 드릴게요.",
+          "Eng": "Just kidding!\nNext time you'll get first look at the good stuff."
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondShopkeeper2Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "사실 이 가게,\n원래는 제 할머니 가게였어요.",
+          "Eng": "Truth is,\nthis shop was my grandmother's."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "할머니는 손해를 봐도\n모험가한테는 물약을 싸게 팔았죠.",
+          "Eng": "She sold potions cheap to adventurers,\neven at a loss."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "저는 장사꾼이라 그렇게는 못 하지만…\n당신한텐 조금 깎아 드릴게요.",
+          "Eng": "I'm a merchant, so I can't do that...\nbut for you, a small discount."
+        },
+        {
+          "TextKey": 4,
+          "Kor": "비밀이에요.\n다른 손님들이 알면 저 망해요!",
+          "Eng": "Keep it secret.\nIf the others find out, I'm ruined!"
+        }
+      ]
+    },
+    {
+      "GroupKey": "BondShopkeeper3Text",
+      "Lines": [
+        {
+          "TextKey": 1,
+          "Kor": "이거 받으세요.\n할머니 가게에서 제일 오래된 금화예요.",
+          "Eng": "Take this.\nThe oldest gold coin from grandma's shop."
+        },
+        {
+          "TextKey": 2,
+          "Kor": "장사꾼이 돈을 그냥 주다니,\n저도 제가 믿기지 않네요.",
+          "Eng": "A merchant giving money away.\nI can't believe it myself."
+        },
+        {
+          "TextKey": 3,
+          "Kor": "당신 덕분에 이 마을에 손님이 늘었어요.\n이건 투자예요, 투자!",
+          "Eng": "Thanks to you, this town has more customers.\nCall it an investment!"
+        },
+        {
+          "TextKey": 4,
+          "Kor": "앞으로도 우리 가게\n제일 좋은 손님으로 남아 주세요.",
+          "Eng": "Stay my very best customer,\nokay?"
+        }
+      ]
     }
   ]
 }
