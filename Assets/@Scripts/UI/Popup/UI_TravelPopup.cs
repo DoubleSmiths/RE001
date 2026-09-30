@@ -99,6 +99,7 @@ public class UI_TravelPopup : UI_Popup
     static readonly Color COLOR_DESTINATION = new Color32(0xFF, 0xA3, 0x00, 0xFF);      // FFA300 행선지가 선택되었을 때
     static readonly Color COLOR_CURRENT = new Color32(0x23, 0x7B, 0x00, 0xFF);          // 237B00 해당 버튼의 장소가 현재 플레이어가 있는 장소일 시
     static readonly Color COLOR_GROUP_SELECT = new Color32(0xFF, 0xC5, 0x00, 0xFF);     // FFC500 선택 되었을 때
+    const float MAP_NAME_MIN_FONT_RATIO = 0.6f;   // 지명 칸 자동 크기 하한(원래 크기 대비)
     static readonly Color COLOR_BUTTON_DEFAULT = new Color32(0x95, 0x95, 0x95, 0xFF);   // 959595 클릭 가능 버튼들의 기본 색상
     static readonly Color COLOR_ROOT_IDLE = new Color32(0xFF, 0xFF, 0xFF, 0xFF);        // FFFFFF (대분류 버튼 본체)
     static readonly Color COLOR_ROOT_ICON = new Color32(0xFF, 0xFF, 0xFF, 80);          // FFFFFF alpha 80 (대분류 아이콘)
@@ -132,6 +133,15 @@ public class UI_TravelPopup : UI_Popup
         BindObject(typeof(GameObjects));
 
         ApplySharedFonts();
+
+        // 긴 영어 지명(Throne of Dawn Depths)이 이름 칸을 넘었다 — 글자 칸이 ContentSizeFitter 로 글자만큼 늘어나
+        //  칸 폭에 묶이지 않았다(UI_Toast 와 같은 원인). 끄고 칸 폭에 맞춰 줄인다(최대 = 원래 크기).
+        var mapName = GetText((int)Texts.MapSelectPopupMapNameText);
+        var mapNameFitter = mapName.GetComponent<ContentSizeFitter>();
+        if (mapNameFitter != null) mapNameFitter.enabled = false;
+        mapName.fontSizeMax = mapName.fontSize;
+        mapName.fontSizeMin = mapName.fontSize * MAP_NAME_MIN_FONT_RATIO;
+        mapName.enableAutoSizing = true;
 
         GetButton((int)Buttons.MapSelectBackground).gameObject.BindEvent(OnClickBG);
         GetButton((int)Buttons.TownCategoryButton).gameObject.BindEvent(OnClickTownCategory);
