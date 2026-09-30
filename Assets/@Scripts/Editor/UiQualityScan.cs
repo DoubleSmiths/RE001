@@ -73,6 +73,12 @@ public static class UiQualityScan
         }
         if (shopItem != null)
             list.Add(("shopconfirm", () => Managers.UI.ShowPopupUI<UI_ShopConfirmPopup>().SetInfo(shopItem, false)));
+        // v2 허브(ADR0030~0037) — 미션 창 탭마다 줄 글이 다르다
+        foreach (UI_MissionPopup.Tab tab in Enum.GetValues(typeof(UI_MissionPopup.Tab)))
+        {
+            var t = tab;
+            list.Add(("mission_" + t, () => Managers.UI.ShowPopupUI<UI_MissionPopup>().SetInfo(t)));
+        }
         return list;
     }
 
