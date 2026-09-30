@@ -10859,6 +10859,51 @@
       "TextKey": "HonorGetManyFormat",
       "Kor": "칭호 획득! [{0}] 외 {1}개",
       "Eng": "NEW TITLES! [{0}] +{1}"
+    },
+    {
+      "TextKey": "OffDutyRowFormat",
+      "Kor": "비번 일정: {0} — {1}",
+      "Eng": "OFF-DUTY: {0} — {1}"
+    },
+    {
+      "TextKey": "OffDutyHuntText",
+      "Kor": "사냥",
+      "Eng": "HUNT"
+    },
+    {
+      "TextKey": "OffDutyHuntDesc",
+      "Kor": "골드·경험치",
+      "Eng": "GOLD & EXP"
+    },
+    {
+      "TextKey": "OffDutyGatherText",
+      "Kor": "채집",
+      "Eng": "GATHER"
+    },
+    {
+      "TextKey": "OffDutyGatherDesc",
+      "Kor": "재료 (골드·경험치 20%)",
+      "Eng": "MATERIALS (20% GOLD & EXP)"
+    },
+    {
+      "TextKey": "OffDutyHelpText",
+      "Kor": "마을 일",
+      "Eng": "TOWN WORK"
+    },
+    {
+      "TextKey": "OffDutyHelpDesc",
+      "Kor": "모두의 호감도 (골드·경험치 20%)",
+      "Eng": "BOND WITH ALL (20% GOLD & EXP)"
+    },
+    {
+      "TextKey": "OffDutyGatherResultFormat",
+      "Kor": "채집: 재료 {0}개 · {1}",
+      "Eng": "GATHERED {0} MATERIALS · {1}"
+    },
+    {
+      "TextKey": "OffDutyHelpResultFormat",
+      "Kor": "마을 일: 모두의 호감도 +{0}",
+      "Eng": "TOWN WORK: BOND +{0} WITH ALL"
     }
   ]
 }

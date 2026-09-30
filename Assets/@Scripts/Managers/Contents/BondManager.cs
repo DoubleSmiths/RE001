@@ -140,6 +140,15 @@ public class BondManager
     }
     #endregion
 
+    // 비번 일정 '마을 일'(ADR0041) — 모두에게 호감도(단계가 오르면 사람마다 알림)
+    public void AddToAll(int amount)
+    {
+        if (amount <= 0 || Managers.Game == null) return;
+        for (int i = 0; i < NPC_COUNT; i++) AddPoints((Npc)i, amount);
+        Managers.Game.SaveGame();
+        OnChanged?.Invoke();
+    }
+
     void AddPoints(Npc n, int amount)
     {
         var s = Managers.Game.BondSave;

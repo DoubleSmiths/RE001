@@ -369,6 +369,10 @@ public class UI_MissionPopup : UI_Popup
     {
         var bm = Managers.Bond;
         int n = 0;
+        // 비번 일정(ADR0041) — 접속하지 않는 동안 할 일. 누르면 사냥 → 채집 → 마을 일 순으로 바뀐다('모두 받기' 없음 탭)
+        var duty = Managers.Game.OffDuty;
+        SetRow(n++, string.Format(Util.Localize("OffDutyRowFormat"), Util.Localize(OFF_DUTY_KEYS[(int)duty]), Util.Localize(OFF_DUTY_DESC_KEYS[(int)duty])),
+               Util.Localize("HonorChangeText"), TEXT_READY, 1f, ChangeOffDuty, claim: false);
         SetRow(n++, Util.Localize("BondRequestHeaderText"), "", TEXT_DONE, 1f, null);
         foreach (var r in bm.Requests)
         {
@@ -398,6 +402,17 @@ public class UI_MissionPopup : UI_Popup
             else                      SetRow(n++, left, gifts > 0 ? string.Format(Util.Localize("BondGiftFormat"), gifts) : Util.Localize("AttendanceTomorrowText"), TEXT_DONE, 1f, null);
         }
         return n;
+    }
+
+    static readonly string[] OFF_DUTY_KEYS      = { "OffDutyHuntText", "OffDutyGatherText", "OffDutyHelpText" };   // Define.OffDutyKind 순서
+    static readonly string[] OFF_DUTY_DESC_KEYS = { "OffDutyHuntDesc", "OffDutyGatherDesc", "OffDutyHelpDesc" };
+
+    void ChangeOffDuty()
+    {
+        var g = Managers.Game;
+        g.OffDuty = (OffDutyKind)(((int)g.OffDuty + 1) % OFF_DUTY_KEYS.Length);
+        Managers.Sound?.PlaySFX("SFX_BtnSelect");
+        Refresh();
     }
 
     // '1-1' — 지역 이름까지 붙이면 크리스탈 표시와 함께 줄이 넘쳐 오른쪽 보상 칸을 덮었다

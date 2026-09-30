@@ -186,6 +186,10 @@ public class ShopManager
             Managers.Game.Gold += Mathf.RoundToInt(_lastOffline.Gold * extra);
             var p = Managers.Game.Player;
             if (p != null) p.GainExp(_lastOffline.Exp * extra);
+            // 비번 일정(ADR0041) — 채집한 재료·마을 일 호감도도 같은 배수
+            if (_lastOffline.Items != null)
+                foreach (var kv in _lastOffline.Items) Managers.Game.AddItem(kv.Key, Mathf.RoundToInt(kv.Value * extra));
+            if (_lastOffline.BondEach > 0) Managers.Bond?.AddToAll(Mathf.RoundToInt(_lastOffline.BondEach * extra));
         });
     }
     #endregion

@@ -474,6 +474,21 @@
       "Key": "ABYSS_BOSS_CRYSTAL_MULT",
       "Value": 5.0,
       "Desc": "심연 보스 층 크리스탈 배수"
+    },
+    {
+      "Key": "OFFDUTY_SIDE_REWARD_MULT",
+      "Value": 0.2,
+      "Desc": "비번 일정이 채집·마을 일일 때 오프라인 골드·경험치 배수"
+    },
+    {
+      "Key": "OFFDUTY_GATHER_PER_KILL",
+      "Value": 0.15,
+      "Desc": "채집: 오프라인 처치 1마리당 재료 수(그 지역 드롭 재료, 출현 가중)"
+    },
+    {
+      "Key": "OFFDUTY_HELP_POINTS_PER_HOUR",
+      "Value": 1.0,
+      "Desc": "마을 일: 오프라인 1시간당 마을 사람 모두의 호감도"
     }
   ]
 }

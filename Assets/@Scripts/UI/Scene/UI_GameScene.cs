@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -290,6 +291,19 @@ public class UI_GameScene : UI_Scene
         string msg = string.Format(Util.Localize(LocalizeKey.OfflineRewardFormat), time, r.Kills, r.Exp, r.Gold);
         if (r.Capped)
             msg += "\n" + string.Format(Util.Localize(LocalizeKey.OfflineRewardCapFormat), GameManager.OFFLINE_MAX_HOURS);
+        // 비번 일정(ADR0041) — 채집한 재료(많은 순 두 가지)·마을 일 호감도
+        if (r.Items != null && r.Items.Count > 0)
+        {
+            int total = 0;
+            foreach (var kv in r.Items) total += kv.Value;
+            var top = new List<KeyValuePair<int, int>>(r.Items);
+            top.Sort((a, b) => b.Value.CompareTo(a.Value));
+            var names = new List<string>();
+            for (int i = 0; i < top.Count && i < 2; i++)
+                if (Managers.Data.ItemDic.TryGetValue(top[i].Key, out var item)) names.Add($"{Util.Localize(item.Name)} {top[i].Value}");
+            msg += "\n" + string.Format(Util.Localize("OffDutyGatherResultFormat"), total, string.Join(" · ", names));
+        }
+        if (r.BondEach > 0) msg += "\n" + string.Format(Util.Localize("OffDutyHelpResultFormat"), r.BondEach);
         Managers.UI.ShowToast(msg);
     }
 

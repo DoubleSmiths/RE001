@@ -191,6 +191,8 @@ public class GameData
     // v2 시련(승급 시험) 단계 · 심연 최고 층(ADR0037)
     public int PromotionTier;
     public int AbyssBest;
+    // v2 비번 일정(ADR0041) — Define.OffDutyKind(0 사냥 · 1 채집 · 2 마을 일)
+    public int OffDuty;
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -735,6 +737,9 @@ public class GameManager
         public float  Exp;
         public int    Gold;
         public bool   Capped;      // 상한에 걸렸는가 (UI에서 안내용)
+        public OffDutyKind Duty;                 // 비번 일정(ADR0041)
+        public Dictionary<int, int> Items;       // 채집한 재료(아이템 → 개수, 채집일 때만)
+        public int    BondEach;                  // 마을 일로 오른 호감도(사람마다, 마을 일일 때만)
     }
 
     public OfflineReward LastOfflineReward { get; private set; }
@@ -782,8 +787,17 @@ public class GameManager
             MarkSeen();
             return result;
         }
-        result.Exp  = avgExp * result.Kills;
-        result.Gold = Mathf.RoundToInt(avgGold * result.Kills * (Managers.Relic?.GoldMult ?? 1f));   // 유물 골드 %(핫타임은 곱하지 않는다)
+        // 비번 일정(ADR0041) — 사냥이 아니면 골드·경험치는 조금만, 대신 재료나 호감도
+        result.Duty = OffDuty;
+        float side = result.Duty == OffDutyKind.Hunt ? 1f : Managers.Data.Balance(BalanceKey.OFFDUTY_SIDE_REWARD_MULT, 0.2f);
+        result.Exp  = avgExp * result.Kills * side;
+        result.Gold = Mathf.RoundToInt(avgGold * result.Kills * (Managers.Relic?.GoldMult ?? 1f) * side);   // 유물 골드 %(핫타임은 곱하지 않는다)
+        if (result.Duty == OffDutyKind.Gather) result.Items = GatherOffline(_gameData.LastBattleAreaId, result.Kills);
+        if (result.Duty == OffDutyKind.Help && Managers.Bond != null)
+        {
+            result.BondEach = Mathf.FloorToInt((float)(capped / 3600.0) * Managers.Data.Balance(BalanceKey.OFFDUTY_HELP_POINTS_PER_HOUR, 1f));
+            Managers.Bond.AddToAll(result.BondEach);
+        }
 
         Gold += result.Gold;                       // setter가 저장까지 처리
         Player?.GainExp(result.Exp);
@@ -793,6 +807,30 @@ public class GameManager
         Managers.Shop?.OnOfflineClaimed(result);   // 상점 탭에 '오프라인 보상 2배(광고)'가 열린다
         Debug.Log($"[방치보상] {capped / 3600.0:F1}시간 → {result.Kills}처치, EXP {result.Exp:N0}, 골드 {result.Gold:N0}");
         return result;
+    }
+
+    // 비번 일정 '채집'(ADR0041) — 오프라인 처치 수 × OFFDUTY_GATHER_PER_KILL 개를 그 지역 몬스터의 드롭 재료로(출현 가중).
+    //  퀘스트 필수품은 주지 않는다(퀘스트는 직접 사냥으로 모은다).
+    Dictionary<int, int> GatherOffline(int nodeId, int kills)
+    {
+        var got = new Dictionary<int, int>();
+        int count = Mathf.RoundToInt(kills * Managers.Data.Balance(BalanceKey.OFFDUTY_GATHER_PER_KILL, 0.15f));
+        var pool = Managers.Object?.FieldPool(nodeId);
+        if (pool == null || count <= 0) return got;
+        var droppers = pool.FindAll(c => c.DropItemId > 0 && !Managers.Data.RequisiteItemDic.ContainsKey(c.DropItemId));
+        float total = 0f;
+        foreach (var c in droppers) total += c.EncounterRate;
+        if (droppers.Count == 0 || total <= 0f) return got;
+        for (int i = 0; i < count; i++)
+        {
+            float pick = UnityEngine.Random.value * total;
+            var c = droppers[droppers.Count - 1];
+            foreach (var d in droppers) { if ((pick -= d.EncounterRate) <= 0f) { c = d; break; } }
+            got.TryGetValue(c.DropItemId, out int n);
+            got[c.DropItemId] = n + 1;
+        }
+        foreach (var kv in got) AddItem(kv.Key, kv.Value);
+        return got;
     }
 
     // ── 방치 누적 (게임을 켜둔 채 전투 구역 밖에 있을 때) ──
@@ -1535,6 +1573,13 @@ public class GameManager
         get => _gameData.AbyssBest;
         set { _gameData.AbyssBest = Mathf.Max(0, value); SaveGame(); }
     }
+    // v2 비번 일정(ADR0041) — 접속하지 않는 동안 할 일(마을 탭 맨 위 줄에서 바꾼다)
+    public OffDutyKind OffDuty
+    {
+        get => (OffDutyKind)_gameData.OffDuty;
+        set { _gameData.OffDuty = (int)value; SaveGame(); }
+    }
+
     public int  LastStageNode    => StageOrder.Count > 0 ? StageOrder[StageOrder.Count - 1] : 0;
     public int  StageCount       => StageOrder.Count;
     public bool AllStagesCleared => StageOrder.Count > 0 && StageOrder.TrueForAll(IsStageCleared);   // 여정 잠금은 레벨·퀘스트라 건너뛴 스테이지가 있을 수 있다
@@ -2245,6 +2290,7 @@ public class GameManager
         d.Bond.Requests.RemoveAll(r => r == null);
         d.PromotionTier         = Mathf.Max(0, d.PromotionTier);   // 시련(ADR0037) — 위쪽은 PromotionManager 가 MaxTier 로 자른다
         d.AbyssBest             = Mathf.Max(0, d.AbyssBest);
+        d.OffDuty               = Mathf.Clamp(d.OffDuty, 0, Enum.GetValues(typeof(OffDutyKind)).Length - 1);
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

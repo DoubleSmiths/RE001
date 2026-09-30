@@ -282,6 +282,14 @@ public class Define
         Material,
     }
 
+    // v2 비번 일정(ADR0041) — 접속하지 않는 동안 할 일. 순서가 GameData.OffDuty 값이다(끝에만 붙인다)
+    public enum OffDutyKind
+    {
+        Hunt,     // 사냥 — 골드·경험치(예전 오프라인 정산 그대로)
+        Gather,   // 채집 — 마지막 사냥 지역의 몬스터 재료, 골드·경험치는 OFFDUTY_SIDE_REWARD_MULT
+        Help,     // 마을 일 — 마을 사람 모두의 호감도, 골드·경험치는 OFFDUTY_SIDE_REWARD_MULT
+    }
+
     // v2 핫타임(ADR0030, 설계서 4.6) — 광고 또는 크리스탈로 30분 켠다
     public enum HotTime
     {
@@ -1990,6 +1998,10 @@ public class Define
         public const string ABYSS_BOSS_TIME         = "ABYSS_BOSS_TIME";
         public const string ABYSS_CRYSTAL_PER_FLOOR = "ABYSS_CRYSTAL_PER_FLOOR";
         public const string ABYSS_BOSS_CRYSTAL_MULT = "ABYSS_BOSS_CRYSTAL_MULT";
+        // 비번 일정(ADR0041)
+        public const string OFFDUTY_SIDE_REWARD_MULT     = "OFFDUTY_SIDE_REWARD_MULT";
+        public const string OFFDUTY_GATHER_PER_KILL      = "OFFDUTY_GATHER_PER_KILL";
+        public const string OFFDUTY_HELP_POINTS_PER_HOUR = "OFFDUTY_HELP_POINTS_PER_HOUR";
     }
     #endregion
 
