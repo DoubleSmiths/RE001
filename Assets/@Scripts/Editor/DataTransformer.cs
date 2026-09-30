@@ -779,6 +779,7 @@ public class DataTransformer : EditorWindow
         ParseMissionDataSheet    (ReadXlsx($"{baseDir}/MissionData.xlsx"));
         ParseRelicDataSheet      (ReadXlsx($"{baseDir}/RelicData.xlsx"));
         ParseBondNpcDataSheet    (ReadXlsx($"{baseDir}/BondNpcData.xlsx"));
+        ParseCostumeDataSheet    (ReadXlsx($"{baseDir}/CostumeData.xlsx"));
         ParseProductDataSheet    (ReadXlsx($"{baseDir}/ProductData.xlsx"));
         ParseMinMonDataSheet     (ReadXlsx($"{baseDir}/MinMonData.xlsx"));
         ParseHPPotionDataSheet   (ReadXlsx($"{baseDir}/HPPotionData.xlsx"));
@@ -976,6 +977,29 @@ public class DataTransformer : EditorWindow
             });
         }
         WriteJsonStr("BondNpcData", loader);
+    }
+
+    // v2 의상 8벌 (_tools/gen_costumes.py 가 만든 표, ADR0043)
+    static void ParseCostumeDataSheet(List<List<string>> rows)
+    {
+        var loader = new CostumeDataLoader();
+        for (int y = 3; y < rows.Count; y++)
+        {
+            var row = rows[y];
+            if (row.Count == 0 || string.IsNullOrEmpty(row[0])) continue;
+            loader.costumes.Add(new CostumeData
+            {
+                DataId      = ConvertValue<int>(C(row, 0)),
+                NameKey     = C(row, 1),
+                Hue         = ConvertValue<float>(C(row, 2)),
+                Sat         = ConvertValue<float>(C(row, 3)),
+                Val         = ConvertValue<float>(C(row, 4)),
+                Tint        = C(row, 5),
+                Unlock      = C(row, 6),
+                UnlockValue = ConvertValue<int>(C(row, 7)),
+            });
+        }
+        WriteJsonStr("CostumeData", loader);
     }
 
     // v2 유물 30종 (_tools/gen_relics.py 가 만든 표, ADR0035)

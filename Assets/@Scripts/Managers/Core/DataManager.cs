@@ -82,6 +82,7 @@ public class DataManager
         ProductDic        = LoadJson<ProductDataLoader,    int,    ProductData>          ("ProductData").MakeDict();   // v2 인앱 상품 목록
         RelicDic          = LoadJson<RelicDataLoader,      int,    RelicData>            ("RelicData").MakeDict();     // v2 유물 30종
         BondNpcDic        = LoadJson<BondNpcDataLoader,    int,    BondNpcData>          ("BondNpcData").MakeDict();   // v2 좋아하는 선물(ADR0042)
+        CostumeDic        = LoadJson<CostumeDataLoader,    int,    CostumeData>          ("CostumeData").MakeDict();   // v2 의상 8벌(ADR0043)
     }
 
     // v2 밸런스 값(ADR0030). 키가 없으면 한 번만 알리고 fallback — 수치 누락이 게임을 멈추지 않게.
@@ -90,6 +91,7 @@ public class DataManager
     public Dictionary<int, ProductData> ProductDic { get; private set; } = new Dictionary<int, ProductData>();
     public Dictionary<int, RelicData>   RelicDic   { get; private set; } = new Dictionary<int, RelicData>();
     public Dictionary<int, BondNpcData> BondNpcDic { get; private set; } = new Dictionary<int, BondNpcData>();
+    public Dictionary<int, CostumeData> CostumeDic { get; private set; } = new Dictionary<int, CostumeData>();
     readonly HashSet<string> _missingBalanceKeys = new HashSet<string>();
 
     public float Balance(string key, float fallback = 0f)

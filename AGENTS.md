@@ -120,6 +120,7 @@ DataManager.Init() → Dictionary<int, XxxData>  (Managers.Data.XxxDic)
 
 - **Core** (범용): `Data` `Font` `Pool` `Resource` `Scene` `Sound` `UI`
 - **Contents** (게임 로직): `Game` `Object` `MinMon` `Ability` `Quest` `SubQuest` `Combo`
+  + v2: `Mission` `Shop` `Dungeon` `Relic` `Bond` `Promotion` `Abyss` `Costume`
 
 `Managers.Awake()`는 씬에 배치된 중복 `@Managers`를 파괴한다 (씬 재진입 시 콤보 Tick이 죽던 버그 대응). `Update()`에서 `_combo.Tick()`만 돌린다.
 

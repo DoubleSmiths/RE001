@@ -194,6 +194,9 @@ public class GameData
     public int AbyssBest;
     // v2 비번 일정(ADR0041) — Define.OffDutyKind(0 사냥 · 1 채집 · 2 마을 일)
     public int OffDuty;
+    // v2 의상(ADR0043) — 얻은 의상(크리스탈로 산 것 + 달성해 알림을 띄운 것) · 입은 의상(0 = 기본)
+    public List<int> Costumes = new List<int>();
+    public int       CostumeId;
 
     // 환경설정
     public bool _isBGSoundOn        = true;
@@ -1580,6 +1583,13 @@ public class GameManager
         get => (OffDutyKind)_gameData.OffDuty;
         set { _gameData.OffDuty = (int)value; SaveGame(); }
     }
+    // v2 의상(ADR0043) — 목록은 CostumeManager 만 고친다(고친 뒤 SaveGame)
+    public List<int> Costumes => _gameData.Costumes;
+    public int CostumeId
+    {
+        get => _gameData.CostumeId;
+        set { _gameData.CostumeId = value; SaveGame(); }
+    }
 
     public int  LastStageNode    => StageOrder.Count > 0 ? StageOrder[StageOrder.Count - 1] : 0;
     public int  StageCount       => StageOrder.Count;
@@ -2293,6 +2303,7 @@ public class GameManager
         d.PromotionTier         = Mathf.Max(0, d.PromotionTier);   // 시련(ADR0037) — 위쪽은 PromotionManager 가 MaxTier 로 자른다
         d.AbyssBest             = Mathf.Max(0, d.AbyssBest);
         d.OffDuty               = Mathf.Clamp(d.OffDuty, 0, Enum.GetValues(typeof(OffDutyKind)).Length - 1);
+        d.Costumes             ??= new List<int>();          // 의상(ADR0043) 이전 세이브엔 없다 — 입은 의상이 없거나 못 가진 것이면 CostumeManager 가 기본으로 본다
         d.BestiarySkillUnlocked ??= new GameData().BestiarySkillUnlocked;   // 기본 해금(idx3) 유지
         d.StatInvest            = Fit(d.StatInvest, 4);
         d.TrainingLevels        = Fit(d.TrainingLevels, TRAINING_STAT_COUNT);   // v2 이전 세이브엔 없다

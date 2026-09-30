@@ -298,6 +298,14 @@ public class PlayerController : CreatureController
         State = Define.State.Idle;   // setter가 CrossFade(Idle)로 Escape 애니 덮음
     }
 
+    // 의상(ADR0043) — 애니메이터가 이번 프레임에 끼운 원본 스프라이트를 입은 의상 색 사본으로 바꾼다(기본 의상이면 그대로)
+    void LateUpdate()
+    {
+        if (_sprite == null || Managers.Costume == null) return;
+        var skin = Managers.Costume.Skin(_sprite.sprite);
+        if (skin != _sprite.sprite) _sprite.sprite = skin;
+    }
+
     // ────────────────────────────────────────
     //  Update
     // ────────────────────────────────────────
@@ -783,6 +791,7 @@ public class PlayerController : CreatureController
 
         Hp = fullHeal ? MaxHp : Mathf.Min(Hp, MaxHp);
         OnHpChanged?.Invoke(Hp, MaxHp);
+        Managers.Costume?.CheckNew();   // v2 의상(ADR0043) — 레벨업·시련 통과로 새로 얻은 의상 알림(치장이라 능력치는 없다)
         // _expRequired가 갱신됐으니 EXP 슬라이더도 같은 시점에 신호 발화.
         // (BindPlayer가 늦게 구독한 경우엔 BindPlayer 안에서 초기 1회를 별도로 호출.)
         OnExpChanged?.Invoke(Managers.Game.Exp, _expRequired);

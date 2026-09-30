@@ -219,6 +219,7 @@ public class UI_GameScene : UI_Scene
             Managers.Game.OnStatusPointChanged -= RefreshCharacterNewIcon;
         }
         if (Managers.Mission != null) Managers.Mission.OnChanged -= RefreshPlayerName;
+        if (Managers.Costume != null) Managers.Costume.OnChanged -= RefreshPortrait;
 
         if (Managers.MinMon != null)
         {
@@ -553,6 +554,13 @@ public class UI_GameScene : UI_Scene
         Managers.Game.OnInventoryNewChanged += RefreshBTMButtonGroup;
         Managers.Game.OnItemChanged += OnFollowItemChanged;
         if (Managers.Mission != null) Managers.Mission.OnChanged += RefreshPlayerName;   // 칭호를 바꾸거나 얻으면
+        // 의상(ADR0043) — HUD 초상화도 입은 의상 색으로. 프리팹 원본은 의상 탭 줄 아이콘의 바탕이 된다.
+        if (Managers.Costume != null)
+        {
+            Managers.Costume.Portrait = GetImage((int)Images.PortraitImg).sprite;
+            Managers.Costume.OnChanged += RefreshPortrait;
+            RefreshPortrait();
+        }
     }
 
     // ────────────────────────────────────────
@@ -620,6 +628,13 @@ public class UI_GameScene : UI_Scene
         // TODO: 직업에 따라 PortraitImg 스프라이트 교체
         // Managers.Resource.LoadAsync<Sprite>($"Portrait_{jobType}", sprite =>
         //     GetImage((int)Images.PortraitImg).sprite = sprite);
+    }
+
+    void RefreshPortrait()
+    {
+        var cm = Managers.Costume;
+        if (cm == null || cm.Portrait == null) return;
+        GetImage((int)Images.PortraitImg).sprite = cm.Preview(cm.Equipped);
     }
 
     // ────────────────────────────────────────

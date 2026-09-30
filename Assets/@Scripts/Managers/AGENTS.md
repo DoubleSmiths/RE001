@@ -28,6 +28,14 @@
 | Contents | `Managers.Quest` | `QuestManager` | 메인퀘스트 진행/Notify/Unlock |
 | Contents | `Managers.SubQuest` | `SubQuestManager` | 서브퀘스트 상태머신 |
 | Contents | `Managers.Combo` | `ComboManager` | 콤보 Rank/타이머/버프 (Managers.Update가 Tick) |
+| Contents | `Managers.Mission` | `MissionManager` | v2 미션·출석·가이드·성장 패스·업적(ADR0030·0039·0040) |
+| Contents | `Managers.Shop` | `ShopManager` | v2 상점·핫타임·월정액, 광고·결제 모의(ADR0030) |
+| Contents | `Managers.Dungeon` | `DungeonManager` | v2 요일 던전(ADR0034) |
+| Contents | `Managers.Relic` | `RelicManager` | v2 유물 소환(ADR0035) |
+| Contents | `Managers.Bond` | `BondManager` | v2 마을 사람 호감도·의뢰·이야기(ADR0036·0042) |
+| Contents | `Managers.Promotion` | `PromotionManager` | v2 시련(ADR0037) |
+| Contents | `Managers.Abyss` | `AbyssManager` | v2 심연(ADR0037) |
+| Contents | `Managers.Costume` | `CostumeManager` | v2 의상 — 주인공 그림 재채색, 능력치 없음(ADR0043) |
 
 `TimeManager`는 주석 처리되어 미등록. `CoroutineManager`(Contents/ 폴더 소재)는 Managers.cs에 등록되지 않은 독립 static MonoBehaviour이다.
 

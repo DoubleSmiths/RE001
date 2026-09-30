@@ -13,6 +13,7 @@ using static Define;
 //  던전 탭(ADR0034): 요일 던전 3종 — 무료 입장이 남았으면 입장, 없으면 광고, 그다음 크리스탈. 누르면 창을 닫고 전투로 간다.
 //  유물 탭(ADR0035): 1회·10회·광고 소환, 확률 공개 화면(등급·종류별 확률, 전설 천장), 30종 목록(아이콘·레벨·효과).
 //  마을 탭(ADR0036): 오늘의 배달 의뢰 3건(재료 배달·소포 전달), 마을 사람 5명의 호감도·혜택·선물.
+//  의상 탭(ADR0043): 모은 수 + 8벌(초상화 미리보기) — 입기 / 크리스탈로 사기(두 번 눌러 확인) / 달성 조건. 능력치 없는 치장.
 public class UI_MissionPopup : UI_Popup
 {
     #region Enum
@@ -42,9 +43,9 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
-    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town, Pass, Achieve }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
+    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town, Pass, Achieve, Costume }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
 
-    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText", "MissionPassTabText", "MissionAchieveTabText" };
+    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText", "MissionPassTabText", "MissionAchieveTabText", "MissionCostumeTabText" };
     static readonly string[] HOT_KEYS = { "HotGoldText", "HotExpText", "HotAtkText" };   // HotTime 순서
     static readonly Color TAB_ON      = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color TAB_OFF     = new Color32(0xB8, 0xB8, 0xB8, 0xFF);
@@ -102,6 +103,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Bond != null) Managers.Bond.OnChanged += Refresh;
         if (Managers.Promotion != null) Managers.Promotion.OnChanged += Refresh;
         if (Managers.Abyss != null) Managers.Abyss.OnChanged += Refresh;
+        if (Managers.Costume != null) Managers.Costume.OnChanged += Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged += Refresh;
@@ -128,6 +130,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Bond != null) Managers.Bond.OnChanged -= Refresh;
         if (Managers.Promotion != null) Managers.Promotion.OnChanged -= Refresh;
         if (Managers.Abyss != null) Managers.Abyss.OnChanged -= Refresh;
+        if (Managers.Costume != null) Managers.Costume.OnChanged -= Refresh;
         if (Managers.Game != null)
         {
             Managers.Game.OnLanguageChanged -= Refresh;
@@ -147,6 +150,7 @@ public class UI_MissionPopup : UI_Popup
         if (_tab == tab) return;
         _tab = tab;
         _relicRates = false;   // 유물 탭은 늘 목록부터
+        _armedCostume = -1;    // 의상 구매 확인은 탭을 떠나면 풀린다
         Managers.Sound?.PlaySFX("SFX_BtnSelect");
         Refresh();
     }
@@ -160,10 +164,11 @@ public class UI_MissionPopup : UI_Popup
 
         GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText"
                                                      : _tab == Tab.Relic ? "RelicTitleText" : _tab == Tab.Town ? "BondTitleText"
-                                                     : _tab == Tab.Pass ? "PassTitleText" : _tab == Tab.Achieve ? "AchieveTitleText" : "MissionTitleText");
+                                                     : _tab == Tab.Pass ? "PassTitleText" : _tab == Tab.Achieve ? "AchieveTitleText"
+                                                     : _tab == Tab.Costume ? "CostumeTitleText" : "MissionTitleText");
         GetText((int)Texts.ClaimAllTxt).text = Util.Localize("MissionClaimAllText");
         // 상점·던전·유물 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장·소환이라 한꺼번에 누르면 안 된다
-        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic && _tab != Tab.Town);
+        GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic && _tab != Tab.Town && _tab != Tab.Costume);
         for (int i = 0; i < _tabTexts.Count && i < TAB_KEYS.Length; i++)
         {
             _tabTexts[i].text  = Util.Localize(TAB_KEYS[i]);
@@ -195,6 +200,7 @@ public class UI_MissionPopup : UI_Popup
             case Tab.Town: n = TownRows(); break;
             case Tab.Pass: n = PassRows(); break;
             case Tab.Achieve: n = AchieveRows(); break;
+            case Tab.Costume: n = CostumeRows(); break;
         }
         for (int i = n; i < _rows.Count; i++) _rows[i].SetActive(false);
 
@@ -207,7 +213,7 @@ public class UI_MissionPopup : UI_Popup
     // 지금 탭에서 받을 수 있는 줄을 전부 받는다(가이드는 받으면 다음 단계가 열리니 더 없을 때까지).
     void OnClickClaimAll()
     {
-        if (_tab == Tab.Shop || _tab == Tab.Dungeon || _tab == Tab.Relic || _tab == Tab.Town) return;
+        if (_tab == Tab.Shop || _tab == Tab.Dungeon || _tab == Tab.Relic || _tab == Tab.Town || _tab == Tab.Costume) return;
         bool got = false;
         Managers.Mission.BeginClaimBatch();   // 칭호를 여럿 얻으면 알림은 끝에 한 번(ADR0040)
         try
@@ -518,6 +524,58 @@ public class UI_MissionPopup : UI_Popup
     {
         Managers.Mission.CycleHonor();   // OnChanged → 이 창과 HUD 이름 자리가 다시 그려진다
         Managers.Sound?.PlaySFX("SFX_BtnSelect");
+    }
+    #endregion
+
+    #region 의상 탭 (ADR0043)
+    // 맨 위: 모은 수. 아래: 8벌 — 초상화 미리보기 · 이름. 오른쪽: 착용 중 / 입기 / 크리스탈 값 / 달성 조건.
+    //  크리스탈 의상은 한 번 누르면 '구매 확인'으로 바뀌고 한 번 더 눌러야 산다(비싼 값을 잘못 누르지 않게).
+    int _armedCostume = -1;
+
+    int CostumeRows()
+    {
+        var cm = Managers.Costume;
+        int n = 0, owned = 0;
+        foreach (var c in cm.List) if (cm.IsOwned(c)) owned++;
+        SetRow(n++, Util.Localize("CostumeTotalText"), string.Format(Util.Localize("CostumeCountFormat"), owned, cm.List.Count), TEXT_REWARD, 1f, null);
+
+        int worn = cm.Equipped?.DataId ?? -1;   // 데이터가 다시 읽혀도 맞게 번호로 비교
+        foreach (var c in cm.List)
+        {
+            string left = Util.Localize(c.NameKey);
+            var icon = cm.Preview(c);
+            if (c.DataId == worn)   SetRow(n++, left, Util.Localize("CostumeWornText"), TEXT_DONE, 1f, null, icon, claim: false);
+            else if (cm.IsOwned(c)) SetRow(n++, left, Util.Localize("CostumeWearText"), TEXT_READY, 1f, () => WearCostume(c), icon, claim: false);
+            else if (c.Unlock == CostumeManager.UNLOCK_CRYSTAL)
+            {
+                bool armed = _armedCostume == c.DataId;
+                SetRow(n++, left, armed ? Util.Localize("CostumeBuyConfirmText") : Crystal(c.UnlockValue),
+                       armed ? TEXT_READY : CrystalColor(c.UnlockValue), 1f, () => BuyCostume(c), icon, claim: false);
+            }
+            else SetRow(n++, left, cm.UnlockText(c), TEXT_DONE, ROW_DONE_ALPHA, null, icon, claim: false);
+        }
+        return n;
+    }
+
+    void WearCostume(Data.CostumeData c)
+    {
+        _armedCostume = -1;
+        Managers.Costume.Equip(c);   // OnChanged → 이 창과 HUD 초상화가 다시 그려진다
+        Managers.Sound?.PlaySFX("SFX_BtnSelect");
+    }
+
+    void BuyCostume(Data.CostumeData c)
+    {
+        if (Managers.Game.Crystal < c.UnlockValue) { _armedCostume = -1; Done(false); Refresh(); return; }
+        if (_armedCostume != c.DataId)
+        {
+            _armedCostume = c.DataId;
+            Managers.Sound?.PlaySFX("SFX_BtnSelect");
+            Refresh();
+            return;
+        }
+        _armedCostume = -1;
+        Done(Managers.Costume.TryBuy(c));   // 사면 바로 입는다 — OnChanged 로 다시 그려진다
     }
     #endregion
 

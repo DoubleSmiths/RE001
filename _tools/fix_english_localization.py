@@ -471,6 +471,27 @@ LITERAL_KEYS = [
     ('ProductMonthlyText', '월정액 (30일)', 'MONTHLY PASS (30D)'),
     ('ProductAdFreeText', '광고 제거', 'REMOVE ADS'),
     ('ProductCrystalFormat', '크리스탈 {0}', '{0} CRYSTALS'),
+    # v2 의상(ADR0043) — UI_MissionPopup 의상 탭 / CostumeData.NameKey / CostumeManager 알림
+    ('MissionCostumeTabText', '의상', 'OUTFITS'),
+    ('CostumeTitleText', '의상실', 'WARDROBE'),
+    ('CostumeTotalText', '모은 의상', 'COLLECTED'),
+    ('CostumeCountFormat', '{0}/{1}벌', '{0}/{1}'),
+    ('CostumeWornText', '착용 중', 'WORN'),
+    ('CostumeWearText', '입기', 'WEAR'),
+    ('CostumeBuyConfirmText', '다시 눌러 구매', 'TAP TO CONFIRM'),
+    ('CostumeLevelFormat', 'Lv {0} 달성', 'REACH LV {0}'),
+    ('CostumePromotionFormat', '시련 {0}단계', 'TRIAL {0}'),
+    ('CostumeAbyssFormat', '심연 {0}층', 'ABYSS {0}F'),
+    ('CostumeNewFormat', '새 의상: {0}! 미션 창 의상 탭에서 입을 수 있다', 'NEW OUTFIT: {0}! WEAR IT FROM THE OUTFITS TAB'),
+    ('CostumeBoughtFormat', '{0} 획득! 바로 입었다', '{0} GET! NOW WEARING IT'),
+    ('CostumeBaseName', '떠돌이 모험가', 'WANDERER'),
+    ('CostumeCrimsonName', '진홍 기사', 'CRIMSON KNIGHT'),
+    ('CostumeForestName', '숲의 수호자', 'FOREST WARDEN'),
+    ('CostumeFrostName', '서리 방랑자', 'FROST NOMAD'),
+    ('CostumeNightName', '밤의 추적자', 'NIGHT STALKER'),
+    ('CostumeSakuraName', '벚꽃 검사', 'BLOSSOM BLADE'),
+    ('CostumeGoldName', '황금 영웅', 'GOLDEN HERO'),
+    ('CostumeAbyssName', '심연 순례자', 'ABYSS PILGRIM'),
 ]
 
 # 영문이 Kor 과 같아도 되는 행. 한글 없는 원문(숫자/기호/NEW/MISS)은 자동 허용이라 예외가 생길 때만 키를 적는다.

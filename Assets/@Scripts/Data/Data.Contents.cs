@@ -568,6 +568,33 @@ namespace Data
     }
     #endregion
 
+    #region CostumeData (v2 의상 8벌 — 주인공 그림 재채색, _tools/gen_costumes.py, ADR0043)
+    [Serializable]
+    public class CostumeData
+    {
+        public int    DataId;
+        public string NameKey;
+        public float  Hue;           // 가죽·천 색상 이동(도)
+        public float  Sat;           // 가죽·천 채도 배수
+        public float  Val;           // 가죽·천 밝기 배수
+        public string Tint;          // 흰 옷·머리·강철에 곱할 색(RRGGBB, 빈칸 = 그대로)
+        public string Unlock;        // Default / Crystal / Level / Promotion / Abyss
+        public int    UnlockValue;   // 크리스탈 값 · 레벨 · 시련 단계 · 심연 층 (능력치는 없다 — 치장)
+    }
+
+    [Serializable]
+    public class CostumeDataLoader : ILoader<int, CostumeData>
+    {
+        public List<CostumeData> costumes = new List<CostumeData>();
+        public Dictionary<int, CostumeData> MakeDict()
+        {
+            var dict = new Dictionary<int, CostumeData>();
+            foreach (var c in costumes) dict[c.DataId] = c;
+            return dict;
+        }
+    }
+    #endregion
+
     #region RelicData (v2 유물 30종 — _tools/gen_relics.py, ADR0035)
     [Serializable]
     public class RelicData

@@ -1,0 +1,84 @@
+﻿{
+  "costumes": [
+    {
+      "DataId": 1,
+      "NameKey": "CostumeBaseName",
+      "Hue": 0.0,
+      "Sat": 1.0,
+      "Val": 1.0,
+      "Tint": "",
+      "Unlock": "Default",
+      "UnlockValue": 0
+    },
+    {
+      "DataId": 2,
+      "NameKey": "CostumeCrimsonName",
+      "Hue": -15.0,
+      "Sat": 1.25,
+      "Val": 1.1,
+      "Tint": "",
+      "Unlock": "Crystal",
+      "UnlockValue": 300
+    },
+    {
+      "DataId": 3,
+      "NameKey": "CostumeForestName",
+      "Hue": 95.0,
+      "Sat": 0.9,
+      "Val": 0.95,
+      "Tint": "E6FFD9",
+      "Unlock": "Level",
+      "UnlockValue": 50
+    },
+    {
+      "DataId": 4,
+      "NameKey": "CostumeFrostName",
+      "Hue": 185.0,
+      "Sat": 0.8,
+      "Val": 1.15,
+      "Tint": "CCEBFF",
+      "Unlock": "Crystal",
+      "UnlockValue": 450
+    },
+    {
+      "DataId": 5,
+      "NameKey": "CostumeNightName",
+      "Hue": 240.0,
+      "Sat": 0.6,
+      "Val": 0.6,
+      "Tint": "6B6B80",
+      "Unlock": "Promotion",
+      "UnlockValue": 3
+    },
+    {
+      "DataId": 6,
+      "NameKey": "CostumeSakuraName",
+      "Hue": -40.0,
+      "Sat": 0.7,
+      "Val": 1.35,
+      "Tint": "FFD9E6",
+      "Unlock": "Crystal",
+      "UnlockValue": 600
+    },
+    {
+      "DataId": 7,
+      "NameKey": "CostumeGoldName",
+      "Hue": 15.0,
+      "Sat": 1.3,
+      "Val": 1.3,
+      "Tint": "FFEDB3",
+      "Unlock": "Crystal",
+      "UnlockValue": 900
+    },
+    {
+      "DataId": 8,
+      "NameKey": "CostumeAbyssName",
+      "Hue": 250.0,
+      "Sat": 1.1,
+      "Val": 0.8,
+      "Tint": "CCB3FF",
+      "Unlock": "Abyss",
+      "UnlockValue": 30
+    }
+  ]
+}

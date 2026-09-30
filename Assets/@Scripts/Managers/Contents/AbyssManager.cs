@@ -67,6 +67,7 @@ public class AbyssManager
             float mult = IsBossFloor ? B(BalanceKey.ABYSS_BOSS_CRYSTAL_MULT, 5f) : 1f;
             int crystals = Mathf.RoundToInt(B(BalanceKey.ABYSS_CRYSTAL_PER_FLOOR, 5f) * mult);
             Managers.Game.AbyssBest = Floor;
+            Managers.Costume?.CheckNew();   // 심연 의상(ADR0043) — 목표 층을 넘기면 알림
             Managers.Game.Crystal += crystals;
             _runCrystals += crystals;
         }

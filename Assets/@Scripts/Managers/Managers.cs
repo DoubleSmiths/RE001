@@ -21,6 +21,7 @@ public class Managers : MonoBehaviour
     BondManager     _bond     = new BondManager();      // v2 마을 사람들(ADR0036)
     PromotionManager _promotion = new PromotionManager(); // v2 시련(승급 시험, ADR0037)
     AbyssManager    _abyss    = new AbyssManager();     // v2 심연(ADR0037)
+    CostumeManager  _costume  = new CostumeManager();   // v2 의상(치장, ADR0043)
     //TimeManager   _time;
 
     public static GameManager     Game     { get { return Instance?._game; } }
@@ -37,6 +38,7 @@ public class Managers : MonoBehaviour
     public static BondManager     Bond     { get { return Instance?._bond; } }
     public static PromotionManager Promotion { get { return Instance?._promotion; } }
     public static AbyssManager    Abyss    { get { return Instance?._abyss; } }
+    public static CostumeManager  Costume  { get { return Instance?._costume; } }
     //public static TimeManager   Time   { get { return Instance?._time; } }
     #endregion
 

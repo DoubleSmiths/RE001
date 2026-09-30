@@ -2027,6 +2027,17 @@ public class Define
     public const float ATTACK_IMPACT_TIME = 0.5f;   // 플레이어 Attack 클립에서 칼이 닿는 시각(초, 클립의 AttackTrigger 이벤트와 같다)
     #endregion
 
+    #region Costume (의상 재채색 — 주인공 그림의 부위를 색으로 가른다, ADR0043)
+    // HSV(0~1). 가죽·천 = 채도 CLOTH_SAT 이상이면서 (밝기 SKIN_VAL 이하 또는 색상 SKIN_HUE 이상 — 밝은 붉은 기는 살갗).
+    //  흰 옷·머리·강철 = 채도 WHITE_SAT 미만 · 밝기 WHITE_VAL 이상(살갗은 채도 0.16 이상이라 빠진다). 밝기 LINE_VAL 미만은 외곽선.
+    public const float COSTUME_LINE_VAL  = 0.12f;
+    public const float COSTUME_CLOTH_SAT = 0.33f;
+    public const float COSTUME_SKIN_VAL  = 0.6f;
+    public const float COSTUME_SKIN_HUE  = 24f / 360f;
+    public const float COSTUME_WHITE_SAT = 0.15f;
+    public const float COSTUME_WHITE_VAL = 0.3f;
+    #endregion
+
     #region Ground (접지)
     // 캐릭터의 **발이 닿는** 월드 Y. 지면 타일(JungleTileset) 윗면 높이다.
     //  플레이어·몬스터·동행 미니몬 전부 이 값 하나를 쓴다. 아트마다 다르던 바닥 여백은
