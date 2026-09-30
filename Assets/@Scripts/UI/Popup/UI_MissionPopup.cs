@@ -42,9 +42,9 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
-    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town, Pass }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
+    public enum Tab { Daily, Weekly, Guide, Attendance, Shop, Dungeon, Relic, Town, Pass, Achieve }   // 끝에만 붙인다 — 바로가기 버튼이 번호로 저장한다
 
-    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText", "MissionPassTabText" };
+    static readonly string[] TAB_KEYS = { "MissionDailyTabText", "MissionWeeklyTabText", "MissionGuideTabText", "MissionAttendanceTabText", "MissionShopTabText", "MissionDungeonTabText", "MissionRelicTabText", "MissionTownTabText", "MissionPassTabText", "MissionAchieveTabText" };
     static readonly string[] HOT_KEYS = { "HotGoldText", "HotExpText", "HotAtkText" };   // HotTime 순서
     static readonly Color TAB_ON      = new Color32(0xFF, 0xD2, 0x4A, 0xFF);
     static readonly Color TAB_OFF     = new Color32(0xB8, 0xB8, 0xB8, 0xFF);
@@ -160,7 +160,7 @@ public class UI_MissionPopup : UI_Popup
 
         GetText((int)Texts.title).text = Util.Localize(_tab == Tab.Shop ? "ShopTitleText" : _tab == Tab.Dungeon ? "DungeonTitleText"
                                                      : _tab == Tab.Relic ? "RelicTitleText" : _tab == Tab.Town ? "BondTitleText"
-                                                     : _tab == Tab.Pass ? "PassTitleText" : "MissionTitleText");
+                                                     : _tab == Tab.Pass ? "PassTitleText" : _tab == Tab.Achieve ? "AchieveTitleText" : "MissionTitleText");
         GetText((int)Texts.ClaimAllTxt).text = Util.Localize("MissionClaimAllText");
         // 상점·던전·유물 탭에는 '모두 받기'가 없다 — 줄 동작이 광고 보기·크리스탈 소비·결제·입장·소환이라 한꺼번에 누르면 안 된다
         GetButton((int)Buttons.ClaimAllBtn).gameObject.SetActive(_tab != Tab.Shop && _tab != Tab.Dungeon && _tab != Tab.Relic && _tab != Tab.Town);
@@ -177,6 +177,8 @@ public class UI_MissionPopup : UI_Popup
             _tabTexts[(int)Tab.Town].text += TAB_ALERT;
         if ((int)Tab.Pass < _tabTexts.Count && mission.HasPassClaimable)
             _tabTexts[(int)Tab.Pass].text += TAB_ALERT;
+        if ((int)Tab.Achieve < _tabTexts.Count && mission.HasAchieveClaimable)
+            _tabTexts[(int)Tab.Achieve].text += TAB_ALERT;
 
         int n = 0;
         switch (_tab)
@@ -192,6 +194,7 @@ public class UI_MissionPopup : UI_Popup
             case Tab.Relic: n = _relicRates ? RelicRateRows() : RelicRows(); break;
             case Tab.Town: n = TownRows(); break;
             case Tab.Pass: n = PassRows(); break;
+            case Tab.Achieve: n = AchieveRows(); break;
         }
         for (int i = n; i < _rows.Count; i++) _rows[i].SetActive(false);
 
@@ -206,15 +209,20 @@ public class UI_MissionPopup : UI_Popup
     {
         if (_tab == Tab.Shop || _tab == Tab.Dungeon || _tab == Tab.Relic || _tab == Tab.Town) return;
         bool got = false;
-        for (int guard = 0; guard < 64; guard++)
+        Managers.Mission.BeginClaimBatch();   // 칭호를 여럿 얻으면 알림은 끝에 한 번(ADR0040)
+        try
         {
-            Action next = null;
-            for (int i = 0; i < _rowActions.Count && i < _rows.Count; i++)
-                if (_rows[i].activeSelf && _rowActions[i] != null && _rowClaims[i]) { next = _rowActions[i]; break; }
-            if (next == null) break;
-            next();   // 받으면 OnChanged → Refresh 로 줄이 다시 그려진다
-            got = true;
+            for (int guard = 0; guard < 64; guard++)
+            {
+                Action next = null;
+                for (int i = 0; i < _rowActions.Count && i < _rows.Count; i++)
+                    if (_rows[i].activeSelf && _rowActions[i] != null && _rowClaims[i]) { next = _rowActions[i]; break; }
+                if (next == null) break;
+                next();   // 받으면 OnChanged → Refresh 로 줄이 다시 그려진다
+                got = true;
+            }
         }
+        finally { Managers.Mission.EndClaimBatch(); }
         if (!got) Managers.Sound?.PlaySFX("SFX_Fail");
     }
 
@@ -223,7 +231,7 @@ public class UI_MissionPopup : UI_Popup
         var mission = Managers.Mission;
         int progress = Mathf.Min(mission.Progress(m), m.Goal);
         bool claimed = mission.IsClaimed(m), done = mission.IsDone(m);
-        string left = $"{Title(m)}  ({progress}/{m.Goal})";
+        string left = $"{Title(m)}  ({progress:N0}/{m.Goal:N0})";
         if (claimed)   SetRow(index, left, Util.Localize("MissionDoneText"), TEXT_DONE, ROW_DONE_ALPHA, null);
         else if (done) SetRow(index, left, Util.Localize("MissionClaimText"), TEXT_READY, 1f, () => Claim(m));
         else           SetRow(index, left, Reward(m.RewardType, m.RewardValue), TEXT_REWARD, 1f, null);
@@ -452,6 +460,44 @@ public class UI_MissionPopup : UI_Popup
     }
     #endregion
 
+    #region 업적 탭 (ADR0040)
+    // 맨 위: 달고 있는 칭호 · 모은 수 (누르면 다음 칭호로 — '모두 받기'는 누르지 않는다). 아래: 분야마다 지금 단계 한 줄.
+    int AchieveRows()
+    {
+        var mission = Managers.Mission;
+        var honors = mission.Honors;
+        string eq = mission.EquippedHonorKey;
+        int n = 0;
+        string head = string.Format(Util.Localize("HonorRowFormat"),
+            string.IsNullOrEmpty(eq) ? Util.Localize("HonorNoneText") : Util.Localize(eq), honors.Count, mission.HonorTotal);
+        if (honors.Count > 0) SetRow(n++, head, Util.Localize("HonorChangeText"), TEXT_READY, 1f, ChangeHonor, claim: false);
+        else                  SetRow(n++, head, "", TEXT_DONE, 1f, null);
+
+        foreach (var ev in mission.AchieveEvents)
+        {
+            var m = mission.CurrentAchieve(ev);
+            if (m == null)
+            {
+                SetRow(n++, Title(mission.LastAchieve(ev)), Util.Localize("MissionDoneText"), TEXT_DONE, ROW_DONE_ALPHA, null);
+                continue;
+            }
+            // 진행 수는 오른쪽 칸 — 왼쪽(이름 · 보상 · 칭호)이 두 줄 안에 들어가게
+            int progress = Mathf.Min(mission.Progress(m), m.Goal);
+            string left = $"{Title(m)}  {Reward(m.RewardType, m.RewardValue)}";
+            if (!string.IsNullOrEmpty(m.HonorKey)) left += " · " + string.Format(Util.Localize("HonorTagFormat"), Util.Localize(m.HonorKey));
+            if (mission.IsDone(m)) SetRow(n++, left, Util.Localize("MissionClaimText"), TEXT_READY, 1f, () => Claim(m));
+            else                   SetRow(n++, left, $"{progress:N0}/{m.Goal:N0}", TEXT_REWARD, 1f, null);
+        }
+        return n;
+    }
+
+    void ChangeHonor()
+    {
+        Managers.Mission.CycleHonor();   // OnChanged → 이 창과 HUD 이름 자리가 다시 그려진다
+        Managers.Sound?.PlaySFX("SFX_BtnSelect");
+    }
+    #endregion
+
     #region 던전 탭 (ADR0034)
     int DungeonRows()
     {
@@ -629,7 +675,7 @@ public class UI_MissionPopup : UI_Popup
         if (Managers.Mission.TryAttend()) Managers.Sound?.PlaySFX("SFX_Success2");
     }
 
-    static string Title(Data.MissionData m) => string.Format(Util.Localize(m.TitleKey), m.Goal);
+    static string Title(Data.MissionData m) => string.Format(Util.Localize(m.TitleKey), m.Goal.ToString("N0"));   // 100,000
 
     public static string Reward(string type, int value) => type switch
     {

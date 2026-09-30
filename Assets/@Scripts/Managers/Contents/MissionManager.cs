@@ -83,9 +83,16 @@ public class MissionManager
         if (m.Kind == PASS) return TryClaimPass(m);
         if (IsClaimed(m) || !IsDone(m)) return false;
         if (m.Kind == GUIDE && m != CurrentGuide) return false;   // 사다리는 순서대로
+        if (m.Kind == ACHIEVE && m != CurrentAchieve(m.Event)) return false;   // 업적도 분야마다 순서대로
 
         Save.Claimed.Add(m.DataId);
         Grant(m.RewardType, m.RewardValue);
+        if (m.Kind == ACHIEVE && !string.IsNullOrEmpty(m.HonorKey))
+        {
+            if (string.IsNullOrEmpty(Save.Honor)) Save.Honor = m.HonorKey;   // 첫 칭호는 바로 단다 — HUD 에서 곧바로 보이게
+            if (_batchHonors != null) _batchHonors.Add(m.HonorKey);
+            else Managers.UI?.ShowToast(string.Format(Util.Localize("HonorGetFormat"), Util.Localize(m.HonorKey)));
+        }
         if (m.Event == nameof(MissionEvent.DailyChest)) Notify(MissionEvent.DailyAllClear);   // 주간 '일일 완료 N일'
         Managers.Game.SaveGame();
         OnChanged?.Invoke();
@@ -149,6 +156,90 @@ public class MissionManager
     }
     #endregion
 
+    #region 업적·칭호(ADR0040) — 분야(이벤트)마다 단계 사다리, 칭호가 붙은 단계를 받으면 그 칭호를 얻는다
+    // 분야 순서 = 표 순서(Order). 한 분야의 받지 않은 첫 단계(다 받았으면 null)
+    public List<string> AchieveEvents
+    {
+        get
+        {
+            var list = new List<string>();
+            foreach (var m in List(ACHIEVE)) if (!list.Contains(m.Event)) list.Add(m.Event);
+            return list;
+        }
+    }
+
+    public Data.MissionData CurrentAchieve(string ev)
+    {
+        foreach (var m in List(ACHIEVE)) if (m.Event == ev && !IsClaimed(m)) return m;
+        return null;
+    }
+
+    public Data.MissionData LastAchieve(string ev)
+    {
+        Data.MissionData last = null;
+        foreach (var m in List(ACHIEVE)) if (m.Event == ev) last = m;
+        return last;
+    }
+
+    public bool HasAchieveClaimable
+    {
+        get
+        {
+            foreach (var ev in AchieveEvents)
+            {
+                var m = CurrentAchieve(ev);
+                if (m != null && IsDone(m)) return true;
+            }
+            return false;
+        }
+    }
+
+    // 얻은 칭호(받은 단계 순) · 전체 수 · 달고 있는 칭호(얻지 못한 키가 세이브에 있으면 무시)
+    public List<string> Honors
+    {
+        get
+        {
+            var list = new List<string>();
+            foreach (var m in List(ACHIEVE)) if (!string.IsNullOrEmpty(m.HonorKey) && IsClaimed(m)) list.Add(m.HonorKey);
+            return list;
+        }
+    }
+    public int HonorTotal
+    {
+        get
+        {
+            int n = 0;
+            foreach (var m in List(ACHIEVE)) if (!string.IsNullOrEmpty(m.HonorKey)) n++;
+            return n;
+        }
+    }
+    public string EquippedHonorKey => !string.IsNullOrEmpty(Save.Honor) && Honors.Contains(Save.Honor) ? Save.Honor : "";
+
+    // '모두 받기' 동안 얻은 칭호 — 알림 다섯 개가 창을 덮지 않게 끝에 한 번('[사냥꾼] 외 4개')
+    List<string> _batchHonors;
+    public void BeginClaimBatch() => _batchHonors = new List<string>();
+    public void EndClaimBatch()
+    {
+        var got = _batchHonors;
+        _batchHonors = null;
+        if (got == null || got.Count == 0) return;
+        string first = Util.Localize(got[0]);
+        Managers.UI?.ShowToast(got.Count == 1 ? string.Format(Util.Localize("HonorGetFormat"), first)
+                                              : string.Format(Util.Localize("HonorGetManyFormat"), first, got.Count - 1));
+    }
+
+    // 없음 → 첫 칭호 → … → 마지막 → 없음
+    public void CycleHonor()
+    {
+        var list = Honors;
+        if (list.Count == 0) return;
+        int i = list.IndexOf(EquippedHonorKey);
+        Save.Honor = i + 1 < list.Count ? list[i + 1] : "";
+        Managers.Game.SaveGame();
+        OnChanged?.Invoke();
+    }
+    #endregion
+
     #region 출석 — 하루 한 번, 7칸을 차례로 돈다(빠진 날이 있어도 다음 칸부터 이어서 받는다)
     public int  AttendanceIndex => Save.AttendanceIndex;
     public bool CanAttend { get { RollPeriods(); return Save.AttendanceKey != TodayKey; } }
@@ -180,7 +271,7 @@ public class MissionManager
         {
             if (Managers.Data?.MissionDic == null || Managers.Game == null) return false;
             if (CanAttend) return true;
-            if (HasPassClaimable) return true;
+            if (HasPassClaimable || HasAchieveClaimable) return true;
             foreach (var m in List(DAILY))  if (IsDone(m) && !IsClaimed(m)) return true;
             foreach (var m in List(WEEKLY)) if (IsDone(m) && !IsClaimed(m)) return true;
             var guide = CurrentGuide;

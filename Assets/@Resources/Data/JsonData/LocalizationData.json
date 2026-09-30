@@ -10734,6 +10734,131 @@
       "TextKey": "ProductGrowthPassText",
       "Kor": "성장 패스",
       "Eng": "GROWTH PASS"
+    },
+    {
+      "TextKey": "MissionAchieveTabText",
+      "Kor": "업적",
+      "Eng": "FEATS"
+    },
+    {
+      "TextKey": "AchieveTitleText",
+      "Kor": "업적",
+      "Eng": "ACHIEVEMENTS"
+    },
+    {
+      "TextKey": "HonorRowFormat",
+      "Kor": "칭호: {0}  ({1}/{2} 모음)",
+      "Eng": "TITLE: {0}  ({1}/{2})"
+    },
+    {
+      "TextKey": "HonorNoneText",
+      "Kor": "없음",
+      "Eng": "NONE"
+    },
+    {
+      "TextKey": "HonorChangeText",
+      "Kor": "바꾸기",
+      "Eng": "CHANGE"
+    },
+    {
+      "TextKey": "HonorTagFormat",
+      "Kor": "칭호 [{0}]",
+      "Eng": "TITLE [{0}]"
+    },
+    {
+      "TextKey": "HonorGetFormat",
+      "Kor": "칭호 획득! [{0}]",
+      "Eng": "NEW TITLE! [{0}]"
+    },
+    {
+      "TextKey": "HonorHunterText",
+      "Kor": "사냥꾼",
+      "Eng": "HUNTER"
+    },
+    {
+      "TextKey": "HonorSlayerText",
+      "Kor": "마물 학살자",
+      "Eng": "SLAYER"
+    },
+    {
+      "TextKey": "HonorLegendText",
+      "Kor": "전설의 사냥꾼",
+      "Eng": "LEGEND"
+    },
+    {
+      "TextKey": "HonorBossHunterText",
+      "Kor": "보스 사냥꾼",
+      "Eng": "BOSSBANE"
+    },
+    {
+      "TextKey": "HonorPioneerText",
+      "Kor": "개척자",
+      "Eng": "PIONEER"
+    },
+    {
+      "TextKey": "HonorConquerorText",
+      "Kor": "대륙 정복자",
+      "Eng": "CONQUEROR"
+    },
+    {
+      "TextKey": "HonorMaxText",
+      "Kor": "만렙 여행자",
+      "Eng": "MAX LEVEL"
+    },
+    {
+      "TextKey": "HonorScholarText",
+      "Kor": "마물 학자",
+      "Eng": "SCHOLAR"
+    },
+    {
+      "TextKey": "HonorCodexText",
+      "Kor": "살아있는 도감",
+      "Eng": "CODEX"
+    },
+    {
+      "TextKey": "HonorTamerText",
+      "Kor": "조련사",
+      "Eng": "TAMER"
+    },
+    {
+      "TextKey": "HonorParryText",
+      "Kor": "패링 달인",
+      "Eng": "PARRY ACE"
+    },
+    {
+      "TextKey": "HonorIronWallText",
+      "Kor": "철벽",
+      "Eng": "IRON WALL"
+    },
+    {
+      "TextKey": "HonorGrinderText",
+      "Kor": "수련광",
+      "Eng": "GRINDER"
+    },
+    {
+      "TextKey": "HonorSmithText",
+      "Kor": "대장간 단골",
+      "Eng": "SMITHY"
+    },
+    {
+      "TextKey": "HonorDungeonText",
+      "Kor": "던전 탐험가",
+      "Eng": "DELVER"
+    },
+    {
+      "TextKey": "HonorFixerText",
+      "Kor": "마을의 해결사",
+      "Eng": "FIXER"
+    },
+    {
+      "TextKey": "HonorDiligentText",
+      "Kor": "성실한 여행자",
+      "Eng": "DILIGENT"
+    },
+    {
+      "TextKey": "HonorGetManyFormat",
+      "Kor": "칭호 획득! [{0}] 외 {1}개",
+      "Eng": "NEW TITLES! [{0}] +{1}"
     }
   ]
 }

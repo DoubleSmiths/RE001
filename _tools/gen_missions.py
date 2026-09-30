@@ -2,7 +2,7 @@
 """v2 미션·출석·인앱 상품 표 생성기 (ADR0030, 설계서 4.5·4.7).
 
   MissionData.xlsx  — 일일(00시 초기화) 6 + 완료 상자, 주간(월요일 00시) 5, 가이드 40단계 사다리, 7일 출석,
-                      성장 패스 25단계(ADR0039 — 무료 줄 + 프리미엄 줄).
+                      성장 패스 25단계(ADR0039 — 무료 줄 + 프리미엄 줄), 업적 12분야 사다리(ADR0040 — 칭호 17종).
   ProductData.xlsx  — 인앱 상품 목록(가격 표시·구성). 실제 결제는 스토어 계정이 생긴 뒤(P3) — 지금은 개발 빌드 모의 구매.
 
   수치를 바꿀 때는 여기를 고치고 다시 돌린 뒤 Unity Tools/ParseAllLocal.
@@ -80,6 +80,23 @@ GUIDE_EXTRA = [
 #  전체: 무료 크리스탈 400 + 만드라고라 10, 프리미엄 크리스탈 3,750(1,100원에 60개 기준 약 5.7배 가치).
 PASS_STEP = 5
 PASS = [(i, ('Mandrake', 2) if i % 5 == 0 else ('Crystal', 20), ('Crystal', 150)) for i in range(1, 26)]
+# 업적(ADR0040) — 분야(이벤트)마다 단계 사다리: 받지 않은 첫 단계만 보이고, 받으면 다음 단계가 열린다.
+#  (목표, 크리스탈, 칭호 키 또는 None). 칭호는 받은 단계에서 얻고, 하나를 골라 HUD 이름 자리에 단다.
+#  레벨·도감·돌파 수는 상태로, 나머지는 누적 기록(MissionSaveData.Lifetime)으로 판정한다.
+ACHIEVE = [
+    ('KillMonster',   [(100, 10, None), (1000, 30, 'HonorHunterText'), (5000, 60, None), (20000, 100, 'HonorSlayerText'), (100000, 200, 'HonorLegendText')]),
+    ('BossClear',     [(10, 20, None), (50, 50, 'HonorBossHunterText'), (200, 100, None), (500, 200, None)]),
+    ('NewStage',      [(10, 20, None), (30, 50, 'HonorPioneerText'), (60, 80, None), (100, 120, None), (125, 300, 'HonorConquerorText')]),
+    ('ReachLevel',    [(50, 30, None), (100, 60, None), (200, 120, None), (300, 300, 'HonorMaxText')]),
+    ('Discover',      [(50, 30, None), (150, 80, 'HonorScholarText'), (300, 150, None), (503, 300, 'HonorCodexText')]),
+    ('CaptureTry',    [(10, 20, None), (50, 50, 'HonorTamerText'), (200, 120, None)]),
+    ('Parry',         [(20, 20, None), (100, 50, 'HonorParryText'), (500, 100, None), (2000, 200, 'HonorIronWallText')]),
+    ('Train',         [(50, 10, None), (300, 30, None), (1000, 60, 'HonorGrinderText'), (5000, 150, None)]),
+    ('Enhance',       [(10, 20, None), (50, 50, 'HonorSmithText'), (200, 120, None)]),
+    ('DungeonClear',  [(10, 20, None), (50, 60, 'HonorDungeonText'), (200, 150, None)]),
+    ('BondRequest',   [(10, 20, None), (50, 60, 'HonorFixerText'), (150, 150, None)]),
+    ('DailyAllClear', [(7, 30, None), (30, 80, 'HonorDiligentText'), (100, 200, None)]),
+]
 # 출석 7일 반복: 50 → 50 → 만드라고라 2 → 100 → 50 → 50 → 300
 ATTENDANCE = [('Crystal', 50), ('Crystal', 50), ('Mandrake', 2), ('Crystal', 100), ('Crystal', 50), ('Crystal', 50), ('Crystal', 300)]
 
@@ -107,6 +124,9 @@ def mission_rows():
     rows = [r + (None, 0, None) for r in rows]   # 프리미엄·칭호 칸은 패스·업적만 쓴다(빈 칸 — 엑셀이 None 으로 돌려준다)
     for i, (ft, fv), (pt, pv) in PASS:
         rows.append((6000 + i, 'Pass', i, 'NewStage', PASS_STEP * i, ft, fv, TITLE['NewStage'], pt, pv, None))
+    for c, (ev, tiers) in enumerate(ACHIEVE, 1):
+        for t, (goal, crystal, honor) in enumerate(tiers, 1):
+            rows.append((7000 + c * 10 + t, 'Achieve', c * 10 + t, ev, goal, 'Crystal', crystal, TITLE[ev], None, 0, honor))
     return rows
 
 
@@ -170,6 +190,8 @@ def main():
     pm = sum(r[6] for r in mission_rows() if r[1] == 'Pass' and r[5] == 'Mandrake')
     pp = sum(r[9] for r in mission_rows() if r[1] == 'Pass')
     print(f'성장 패스 {len(PASS)}칸 · 무료 크리스탈 {pf} + 만드라고라 {pm} · 프리미엄 크리스탈 {pp}')
+    ac = [r for r in mission_rows() if r[1] == 'Achieve']
+    print(f'업적 {len(ACHIEVE)}분야 {len(ac)}단계 · 크리스탈 {sum(r[6] for r in ac)} · 칭호 {sum(1 for r in ac if r[10])}종')
 
     ok = True
     for path, header, rows, sheet in targets:

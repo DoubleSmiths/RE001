@@ -217,6 +217,7 @@ public class UI_GameScene : UI_Scene
             Managers.Game.OnItemChanged -= OnFollowItemChanged;
             Managers.Game.OnStatusPointChanged -= RefreshCharacterNewIcon;
         }
+        if (Managers.Mission != null) Managers.Mission.OnChanged -= RefreshPlayerName;
 
         if (Managers.MinMon != null)
         {
@@ -537,6 +538,7 @@ public class UI_GameScene : UI_Scene
         Managers.Game.OnLanguageChanged += RefreshTexts;
         Managers.Game.OnInventoryNewChanged += RefreshBTMButtonGroup;
         Managers.Game.OnItemChanged += OnFollowItemChanged;
+        if (Managers.Mission != null) Managers.Mission.OnChanged += RefreshPlayerName;   // 칭호를 바꾸거나 얻으면
     }
 
     // ────────────────────────────────────────
@@ -578,11 +580,20 @@ public class UI_GameScene : UI_Scene
     // ────────────────────────────────────────
     //  플레이어 바 (HP / EXP / 레벨)
     // ────────────────────────────────────────
+    // 달고 있는 칭호(업적, ADR0040)가 있으면 이름 대신 금색 칭호 — 없으면 이름
+    void RefreshPlayerName()
+    {
+        string honor = Managers.Mission?.EquippedHonorKey;
+        GetText((int)Texts.PlayerRankText).text = string.IsNullOrEmpty(honor)
+            ? Managers.Game.PlayerName
+            : $"<color=#FFD24A>{Util.Localize(honor)}</color>";
+    }
+
     void RefreshPlayerBar()
     {
         int lv = Managers.Game.Level;
         GetText((int)Texts.PlayerLevelText).text = $"{Util.Localize(LocalizeKey.PlayerLvPrefix)}{lv}";
-        GetText((int)Texts.PlayerRankText).text = Managers.Game.PlayerName;
+        RefreshPlayerName();
 
         // 슬7: 모험가 등급 (0이면 BLANK 표기)
         var rankTxt = GetText((int)Texts.RankTxt);
